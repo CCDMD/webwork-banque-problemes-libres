@@ -1,0 +1,78 @@
+## DESCRIPTION
+## Évaluer la limite d'une fonction de la forme |x+a|/(x+a)
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Limite d'une forme indéterminée)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/Rochester/setLimitsRates2Limits/s1_3_48a.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(One-sided limits - concept of)
+## ZDate(6/3/2002)
+## ZMLT(limits_one_sided_heavyside)
+## ZMLTleader(1)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS('limite','forme indéterminée','valeur absolue')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+#"PGcourse.pl"    #Générer une autre version du problème
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 0;
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+$a = non_zero_random(-10,10);
+
+$f = Formula("abs(x-$a)/(x-$a)")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer les limites. Si une limite n'existe pas, entrer ${BBOLD}nep$EBOLD. $PAR
+\( \displaystyle \lim_{ x \rightarrow $a^+ } \frac { | x - $a| }{ x - $a } = \) \{ans_rule(25) \} $PAR
+\( \displaystyle \lim_{ x \rightarrow $a^- } \frac { | x - $a| }{ x - $a } = \) \{ans_rule(25) \} $PAR
+\( \displaystyle \lim_{ x \rightarrow $a } \frac { | x - $a| }{ x - $a } = \) \{ans_rule(25) \} $PAR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute(1)->cmp);
+ANS(Compute(-1)->cmp);
+ANS(Compute("nep")->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La fonction \(|x-$a|\) se définie par morceaux de la façon suivante :
+\[ |x-$a| = \begin{cases} 
+x-$a &\text{si } x\geq $a\\ -(x-$a)&\text{si }x<$a
+\end{cases}\]
+Ainsi,
+$PAR
+a) \(\displaystyle \lim_{ x \rightarrow $a^+ } \frac { | x - $a| }{ x - $a } 
+\overset{x>$a}{=} \lim_{ x \rightarrow $a^+ } \frac {  x - $a }{ x - $a } = \lim_{ x \to $a^+ } 1 = 1\)
+$PAR
+b) \(\displaystyle \lim_{ x \rightarrow $a^- } \frac { | x - $a| }{ x - $a } 
+\overset{x<$a}{=} \lim_{ x \rightarrow $a^- } \frac { -(x - $a) }{ x - $a } = \lim_{ x \to $a^- } -1 = -1\)
+$PAR
+c) Étant donné que les limites de la fonction, lorsque \(x\) tend par la gauche et par la droite de \($a\) sont différentes, on en déduit que \(\lim_{ x \to $a } \frac { | x - $a| }{ x - $a }\) n'existe pas.
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

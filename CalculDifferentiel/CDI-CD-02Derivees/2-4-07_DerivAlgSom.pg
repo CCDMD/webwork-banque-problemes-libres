@@ -1,0 +1,81 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions algébriques - Somme et différence)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/Union/setDervBasic/s2_2_22.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Derivatives of polynomials and power functions)
+## ZDate(8/23/07)
+## ZInstitution(Union College)
+## ZMLT(Poly_invert_eval)
+###############Source###############
+## KEYWORDS('dérivation')
+## Level(2)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+Context()->noreduce('(-x)-y','(-x)+y');
+
+$a = random(2,7,1);
+$b = random(2,8,1);
+$c = random(2,7,1);
+$point = random(1,5,1);
+
+$f=Formula("$a + $b/x +$c/x^2");
+
+###################################
+# Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \( f(x) = \displaystyle $f \).  Déteminer \(f'(x)\).
+$PAR
+\(f'(x) =\) \{ans_rule(48) \}
+$PAR
+Évaluer \( f'( $point ) \).
+$PAR
+\( f'( $point ) = \)\{ans_rule(48) \}
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+
+$fprime=$f->D('x');
+$ans1 = Formula("-$b/x^2 -2*$c/x^3")->reduce;
+
+$fprimeatpoint=Real($fprime->eval(x=>$point));
+
+ANS($ans1->cmp);
+ANS($fprimeatpoint->cmp);
+
+###################################
+
+COMMENT('MathObject version');
+ENDDOCUMENT();
+

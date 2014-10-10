@@ -1,0 +1,124 @@
+## DESCRIPTION
+## Trouver les limites d'une fonction par parties en traçant le graphique
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Approche graphique)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:   Library/UMN/calculusStewartCCC/s_2_2_7.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(One-sided limits - concept of)
+## ZDate(08/29/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(limits_one_sided_three_line_spline)
+## ZMLTleader(1)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS('limite','fonction par morceaux','par parties','graphique')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+ # "PGcourse.pl",     #Générer une autre version du problème
+  "answerHints.pl",
+  "PGgraphmacros.pl",
+);
+#####################################################################
+
+TEXT(beginproblem());
+
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+#####################################################################
+
+$a = random(1,5,1);
+$b = random(1,5,1);
+
+$c = Compute("2+$b");
+
+###############################################################
+
+$ans1 = Compute("-1-$a");
+$ans2 = Compute("1+$b");
+$ans3 = Compute("nep");
+$ans4 = Compute("1+$b");
+$ans5 = Compute("-1-$a");
+
+###############################################################
+Context()->texStrings;
+
+$showHints = 5;
+
+
+BEGIN_TEXT
+Esquisser le graphique de la fonction afin de calculer les limites ci-dessous.  Si une limite n'existe pas, entrer ${BBOLD}nep$EBOLD.
+\[
+f(x) = 
+\begin{cases}
+x-$a &\text{si } x \le -1 \\
+x^2+$b &\text{si } -1 < x \le 1 \\
+$c-x &\text{si } x > 1
+\end{cases}
+\]
+$PAR
+$BBOLD 1. $EBOLD \(\displaystyle \lim_{x \to -1^{-}}f(x) = \) \{ans_rule(20)\}
+$PAR
+$BBOLD 2. $EBOLD  \(\displaystyle \lim_{x \to -1^{+}}f(x) = \) \{ans_rule(20)\}
+$PAR
+$BBOLD 3. $EBOLD  \(\displaystyle \lim_{x \to -1}f(x) = \) \{ans_rule(20)\}
+$PAR
+$BBOLD 4. $EBOLD  \(\displaystyle \lim_{x \to 1}f(x) = \) \{ans_rule(20)\}
+$PAR
+$BBOLD 5. $EBOLD  \( f(-1) = \) \{ans_rule(20)\}
+$PAR
+$BBOLD Un indice sera donné si ce problème n'est pas réussi après $showHints tentatives.$EBOLD
+END_TEXT
+
+Context()->normalStrings;
+
+#####################################################################
+
+ANS( $ans1->cmp );
+ANS( $ans2->cmp );
+ANS( $ans3->cmp );
+ANS( $ans4->cmp );
+ANS( $ans5->cmp );
+
+
+############## Indice
+
+$graph1 = init_graph(-10,-10,10,10,'axes'=>[0,0],'ticks'=>[20,20],'grid'=>[20,20],'size'=>[500,500]);
+
+$p1 = FEQ("x-$a for x in [-10,-1] using color:blue weight:2");
+$p2 = FEQ("x^2+$b for x in (-1,1> using color:blue weight:2");
+$p3 = FEQ("$c-x for x in <1,10] using color:blue weight:2");
+
+plot_functions($graph1,$p1,$p2,$p3);
+
+
+
+BEGIN_HINT
+Le graphique de cette fonction définie par parties est illustré ci-dessous.
+$BCENTER
+\{image(insertGraph($graph1),width=>400,height=>400,tex_size=>500)\}
+$PAR $BITALIC Cliquer sur le graphique pour agrandir l'image$EITALIC
+$ECENTER
+END_HINT
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

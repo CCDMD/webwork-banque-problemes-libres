@@ -1,0 +1,83 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivabilité et continuité)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/3_Differentiation/3.2_The_Derivative_as_a_Function/3.2.71.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Conceptual understanding of derivatives)
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Sam Hathaway)
+## ZMLT(DifferentiabilityFormula)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "PGauxiliaryFunctions.pl",
+  "PGgraphmacros.pl",
+);
+
+
+$c = random(-4,4,1);
+$f = Formula("|x-$c|")->reduce;
+
+TEXT(beginproblem());
+
+Context()->strings->add(aucune=>{});
+
+$f_for_graph = "abs(x-$c)";
+$xmin = $c-5;
+$xmax = $c+5;
+$ymin = -1;
+$ymax = 9;
+$graph = init_graph(
+    $xmin, $ymin,
+    $xmax, $ymax,
+    grid => [10,10],
+    axes => [0,0],
+    pixels => [400,400],
+);
+plot_functions($graph, "$f_for_graph for x in [$xmin,$xmax] using color:red and weight:2");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Trouver les valeurs \( c \) (s'il y en a) pour lesquelles \( f'(c) \) n'existe pas.
+$PAR
+\[ f(x)=$f \]
+$PAR
+\( c = \) \{ans_rule()\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(List($c)->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Voici le courbe de \( f(x)=$f \).
+$PAR
+\{ image(insertGraph($graph),width=>200,height=>200) \}
+$PAR
+Sa dérivée n'existe pas en \( x=$c \). À cette valeur de \( x \), la courbe présente un point anguleux.
+END_SOLUTION
+
+ENDDOCUMENT();

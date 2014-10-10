@@ -1,0 +1,79 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Pente et droite tangente)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UCSB/Stewart5_3_1/Stewart5_3_1_50.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Derivatives of polynomials and power functions)
+## ZInstitution(UCSB)
+## ZMLT(tangent_goes_through_here)
+## ZLevel(4)
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "PGauxiliaryFunctions.pl",
+);
+
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+$a = random(1,5,1);
+$x0 = random(1,5);
+$c = random(1,5);
+$y0 = $a - $c*$c + $x0*$x0 + $x0;
+
+# Point de tangence à la courbe
+$x1 = $x0 - $c;  ## la plus petite pente
+$x2 = $x0 + $c;
+
+$f = Formula("x^2+x+$a")->reduce;
+
+### f'(x) = 2x + 1, et les pentes des tangentes
+
+$m1 = 2*$x1 + 1;
+$m2 = 2*$x2 + 1;
+
+### Ordonnées à l'origine
+
+$b1 = $y0 - $m1*$x0;
+$b2 = $y0 - $m2*$x0;
+
+### équation de pente
+$ans1 = Compute("$m1*x+$b1")->reduce;
+$ans2 = Compute("$m2*x+$b2")->reduce;
+
+BEGIN_TEXT
+Déterminer l'équation de deux droites passant par le point \(($x0,$y0)\) qui sont tangentes à la parabole \(y=x^2+x+$a\). 
+
+$PAR
+\(y=\) \{ans_rule(20)\} (entrer l'équation de la droite ayant la pente LA PLUS PETITE)
+$PAR
+\(y=\) \{ans_rule(20)\} (entrer l'équation de la droite ayant la pente LA PLUS GRANDE) 
+
+END_TEXT
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+
+
+ENDDOCUMENT();

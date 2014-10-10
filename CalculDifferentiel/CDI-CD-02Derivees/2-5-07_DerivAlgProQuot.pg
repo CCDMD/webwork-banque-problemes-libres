@@ -1,0 +1,72 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions algébriques – Produit et quotient)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UCSB/Stewart5_3_2/Stewart5_3_2_11.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Product rule (without trigonometric functions))
+## ZInstitution(UCSB)
+## ZMLT(prodruleNoTrigpolyNegExpo)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+  "PGauxiliaryFunctions.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$a=non_zero_random(-10,10,1);
+$b=non_zero_random(-10,10,1);
+
+$n = random(2,4);
+
+Context()->variables->are(y=>'Real');
+Context()->noreduce('(-x)-y');
+
+$F = Formula("(1/(y^($n)) - $a/(y^(2*$n)) )*(y+$b*y^($n+1))")->reduce;
+
+$c1 = ($a*$b-1)*($n-1);
+$c2 = $a*(2*$n-1);
+
+$DF = Formula("$b+$c1/(y^($n))+$c2/(y^(2*$n))")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$PAR
+Dériver :
+\[
+F(y)= $F
+\]
+$PAR
+
+\(F'(y) =\) \{ans_rule(50)\}
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($DF->cmp);
+
+ENDDOCUMENT();
+

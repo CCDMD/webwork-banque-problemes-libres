@@ -1,0 +1,165 @@
+## DESCRIPTION
+## Estimation d'une limite à l'aide d'un tableau de valeurs
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Approche intuitive - Estimation)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/Michigan/Chap1Sec8/Q15.pg
+## ZAuthor('Gavin LaRose');
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Estimating limits numerically)
+## ZInstitution(University of Michigan)
+## ZMLT(limit_numerical_fill_table_and_guess)
+## ZMLTleader(1)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS('limite','limite intuitive','estimation')
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"PGgraphmacros.pl",
+"unionTables.pl",
+# "parserNumberWithUnits.pl",
+# "parserFormulaWithUnits.pl", 
+# "parserFormulaUpToConstant.pl",
+"PGcourse.pl",   #Générer une autre version du problème
+);
+
+Context("Numeric");
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,7,1);
+$asq = $a*$a;
+$func = Compute("(x^2 - $asq)/(x - $a)");
+
+@xvals = ();
+@vals = ();
+foreach my $x ( -0.1, -0.01, -0.001, -0.0001, 0.0001, 0.001, 0.01, 0.1 ) {
+    push( @xvals, $a+$x );
+    push( @vals, $func->eval( x=>$a+$x ) );
+}
+
+$limit = Compute("2*$a");
+
+## this time the window is easy to calculate; the function is, for x ne a,
+##    linear: f(x) = x + a.
+$delta = Compute("0.01");
+$y0 = $limit - $delta;
+$y1 = $limit + $delta;
+
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit la fonction \(f(x) = \displaystyle $func\).
+$PAR
+${BBOLD}a)$EBOLD
+Remplir le tableau des différentes valeurs de \(f(x)\) :
+$BR
+$BCENTER
+\{
+BeginTable(border=>1, tex_border=>"1pt", padding => 5).
+AlignedRow(["\(x = \)","\($xvals[0]\)","\($xvals[1]\)","\($xvals[2]\)","\($xvals[3]\)","\($xvals[4]\)","\($xvals[5]\)","\($xvals[6]\)","\($xvals[7]\)"], align=>CENTER, separation=>0).
+AlignedRow(["\(f(x) = \)", ans_rule(5), ans_rule(5), ans_rule(5), ans_rule(5),
+	ans_rule(5), ans_rule(5), ans_rule(5), ans_rule(5)], separation=>0, align=>CENTER).
+EndTable()
+\}
+$ECENTER
+$PAR
+
+${BBOLD}b)$EBOLD
+D'après le tableau des valeurs, quelle serait la limite de \(f(x)\)
+lorsque \(x\) tend vers \($a\)?
+$PAR
+\(\lim\limits_{x\to $a}\,\displaystyle $func = \) \{ ans_rule(10) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($vals[0]->cmp() );    ANS($vals[1]->cmp() );
+ANS($vals[2]->cmp() );	   ANS($vals[3]->cmp() );
+ANS($vals[4]->cmp() );	   ANS($vals[5]->cmp() );
+ANS($vals[6]->cmp() );	   ANS($vals[7]->cmp() );
+
+ANS($limit->cmp() );
+
+
+$gr = init_graph( $a-$delta, 2*$a-$delta, $a+$delta, 2*$a+$delta,
+		  axes=>[$a,$limit-.005],
+		  ticks=>[4,4], size=>[250,250] );
+$amd = $a - $delta;      $ame = $a - $delta/100;
+$apd = $a + $delta;      $ape = $a + $delta/100;
+$lmd = $limit - $delta;  $lpd = $limit + $delta;
+add_functions($gr,
+	      "$func for x in <$amd,$ame> using color:blue " .
+	        "and weight:2",
+	      "$func for x in <$ape,$apd> using color:blue " .
+	        "and weight:2");
+$gr->stamps( open_circle($a,$limit,'blue') );
+$gr->lb( new Label($amd,$limit-0.005,"$amd",'black',"left","top") );
+$gr->lb( new Label($apd,$limit-0.005,"$apd",'black',"right","top") );
+$gr->lb( new Label($a,$limit+0.01,"$lpd",'black',"left","top") );
+$gr->lb( new Label($a,$limit-0.01,"$lmd",'black',"right","bottom") );
+
+$lmd = $limit - $delta;
+$lpd = $limit + $delta;
+
+$y = 2*$a;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+${BBOLD}a)$EBOLD
+Les valeurs de \(f(x)\) sont :
+$BR
+\{
+BeginTable(border=>1, tex_border=>"1pt", padding => 5).
+AlignedRow(["\(x = \)","\($xvals[0]\)","\($xvals[1]\)","\($xvals[2]\)","\($xvals[3]\)","\($xvals[4]\)","\($xvals[5]\)","\($xvals[6]\)","\($xvals[7]\)"], align=>CENTER, separation=>0).
+AlignedRow(["\(f(x) = \)", $vals[0], $vals[1], $vals[2], $vals[3],
+	$vals[4], $vals[5], $vals[6], $vals[7]], separation=>0, align=>CENTER).
+EndTable()
+\}
+$PAR
+
+${BBOLD}(b)$EBOLD
+D'après les valeurs du tableau, la limite serait égale à \($limit\).
+$PAR
+Si on représente \(f(x)\), on obtient le graphique ci-dessous. On remarque que \(x=$a\) n'appartient pas au domaine de \(f\) car 
+il y a division par 0 en cette valeur. De plus, si on simplifie l'équation de \(f\) :
+\[ $func = \frac{(x-$a)(x+$a)}{(x-$a)} = x+$a \;\text{ si }x\neq $a,\]
+on obtient l'équation de la droite \(y=x+$a\) pour toutes valeurs réelles de \(x\) sauf \($a\).
+$BR
+Ainsi, il y aura un trou au point \(($a,$y)\) dans son graphique. 
+$BR $BR
+${BCENTER}
+\{ image( insertGraph( $gr ), tex_size=>250, height=>250, width=>250,
+          extra_html_tags=>'alt="graph of a line ' .
+          'with a positive slope, on ' .
+          'the x domain [-' . $amd . ',' . $apd . '] and y range [' .
+          $lmd . ',' . $lpd . ']; the curve has a discontinuity at (' .
+          $a . ',' . $limit . '), and function leaves the graphed window ' .
+	  'at the bottom-left and top-right corners of the graph."' ) \}
+$ECENTER
+$BR
+Cela confirme notre estimation de la limite.
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

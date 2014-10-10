@@ -1,0 +1,92 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation en chaîne (sans fonctions trigonométriques))
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Rochester/setDerivatives5ChainRule/s2_5_8_mo.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Chain rule (without trigonometric functions))
+## ZInstitution(Rochester)
+## ZMLT(Chain-SqrtOfPoly2)
+## ZMLTleader(1)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS()
+## Level(2)    
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "PGcourse.pl",      # Customization file for the course
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Numeric");
+
+$a1 = random(2,5,1);
+$b1 = random(2,5,1);
+
+### discriminant < 0 donc l'expression dans la racine est tjrs > 0
+do {$c1 = random(1,8,1);} until( $c1 > $b1*$b1/(4*$a1) );    
+
+$x1 = non_zero_random(-5,5,1);
+
+
+$f = Compute("sqrt( $a1*x^2 + $b1*x + $c1 )");
+$Df = $f->D;
+$Dfx1 = $Df->eval(x=>$x1);
+
+##############################################################
+#
+#  Text
+#
+#
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \[ f(x) = $f\]
+$PAR
+\( f'( x ) = \) \{ans_rule(40) \}
+$PAR
+\( f'( $x1 ) = \) \{ans_rule(40) \}
+
+END_TEXT
+Context()->normalStrings;
+
+
+##############################################################
+#
+#  Answers
+#
+#
+ANS(
+$Df->cmp,
+$Dfx1->cmp,
+);
+
+
+
+COMMENT('MathObject version');
+
+ENDDOCUMENT();

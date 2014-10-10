@@ -1,0 +1,73 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions algébriques - Somme et différence)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/Rochester/setDerivatives2Formulas/s2_2_34a.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Product rule (without trigonometric functions))
+## ZInstitution(ASU)
+## ZMLT(prodruleNoTrigpolyFracExp)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a1 = random(2,7,1);
+$b1 = random(2,8,1);
+$c1 = random(2,7,1);
+$d1 = random(2,6,1);
+$n1 = random(3,7,1);
+$xn = random(2,4,1);
+$x1 = $xn * $xn;
+
+$f = Formula("$a1*sqrt(x)*(x^3-$b1*sqrt(x)+$c1)")->reduce;
+
+$funct1 = Formula("7/2*$a1*sqrt(x^5)-$a1*$b1+($a1*$c1/2)/sqrt(x)");
+$funct1->{limits} = [1,6];
+
+
+$Df = $f->D('x')->reduce;
+$deriv1 = Real($Df->eval(x=>"$x1"));
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit \( f(x) = $f \). Déteminer \(f'(x)\).
+$PAR
+\(f'(x) =\) \{ans_rule(48) \}
+$PAR
+Évaluer  \( f'( $x1 ) \).
+$PAR \( f'( $x1 ) =\) \{ans_rule(25) \}
+$BR
+END_TEXT
+
+
+ANS($funct1->cmp);
+ANS($deriv1->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

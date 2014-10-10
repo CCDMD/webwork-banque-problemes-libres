@@ -1,0 +1,72 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions algébriques – Produit et quotient)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UCSB/Stewart5_3_2/Stewart5_3_2_13.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Quotient rule (without trigonometric functions))
+## ZInstitution(UCSB)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS()
+## Level(2)    
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+  "PGauxiliaryFunctions.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$a=random(2,6);
+$b=non_zero_random(-10,10,1);
+$c=non_zero_random(-10,10,1);
+
+$n = random(2,5);
+
+Context()->variables->are(t=>'Real');
+Context()->noreduce('(-x)-y');
+
+$y = Formula("t^($n)/($a*t^($n)-$b*t+$c)")->reduce;
+
+$c1 = $b-$b*$n;
+$c2 = $c*$n;
+
+$Dy = Formula("($c1*t^($n)+$c2*t^($n-1))/($a*t^($n)-$b*t+$c)^2")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$PAR
+Dériver :
+\[
+y= \displaystyle $y
+\]
+$PAR
+
+\(y'= \) \{ans_rule(50)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Dy->cmp);
+
+ENDDOCUMENT();
+

@@ -1,0 +1,81 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions algébriques – Produit et quotient)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UCSB/Stewart5_3_2/Stewart5_3_2_31.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Derivatives involving multiple rules (no chain rule))
+## ZInstitution(UCSB)
+## ZMLT(derMultRulesConceptual)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+  "PGauxiliaryFunctions.pl"
+);
+
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$a=random(-8,8,1);
+$b=random(-8,8,1);
+$c=random(2,8,1)*random(-1,1,2);
+$d=random(-8,8,1);
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+BEGIN_TEXT
+
+$PAR
+Si \( f(5)=$a \), \( g(5)=$b \), \( f'(5)=$c \) et \( g'(5)= $d \), calculer : $BR
+$PAR
+
+\((fg)'(5)=\) \{ans_rule(20)\} $BR
+\(\left(\frac{f}{g}\right)'(5)=\) \{ans_rule(20)\} $BR
+\(\left(\frac{g}{f}\right)'(5)=\) \{ans_rule(20)\}
+$PAR
+[Note : Si une valeur n'existe pas, écrire ${BBOLD}nep $EBOLD.]
+
+END_TEXT
+
+$ans1 = Real( $a * $d + $b * $c );
+
+$n1 = $b * $c - $a * $d;
+$d1 = $b*$b;
+
+if($b!=0) {
+$ans2 = Compute("$n1/$d1")->reduce;
+} else { $ans2=Compute("nep"); }
+
+$n2 = -$n1;
+$d2 = $a*$a;
+
+if($a!=0) {
+$ans3 = Compute("$n2/$d2")->reduce;
+} else { $ans3 = Compute("nep"); }
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+
+ENDDOCUMENT();

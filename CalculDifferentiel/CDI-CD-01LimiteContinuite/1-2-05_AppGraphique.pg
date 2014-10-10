@@ -1,0 +1,149 @@
+## DESCRIPTION
+## Trouver les limites d'une fonction à partir d'un graphique, avec l'infini
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Approche graphique)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UMN/calculusStewartCCC/s_2_5_4.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Finding limits using graphs)
+## ZDate(09/16/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(limits_graphs_asymptotes)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS('limite','graphique','infini')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+#  "PGcourse.pl", 
+);
+#####################################################################
+
+TEXT(beginproblem());
+
+#### Afin d'obtenir des points, toutes les réponses doivent être correctes
+install_problem_grader(~~&std_problem_grader);
+$showPartialCorrectAnswers = 0;
+
+#####################################################################
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+
+$a = non_zero_random(-7,-5,1);
+$b = non_zero_random(1,3,1);
+$c = non_zero_random(-3,3,1);
+
+$a1 = Compute("$a+2");
+$a2 = Compute("$a+4");
+
+$ans1 = Compute("-INF");
+$ans2 = Compute("3");
+$ans3 = Compute("nep");
+$ans4 = Compute("-1");
+$ans5 = Compute("-INF");
+$ans6 = Compute("-INF");
+$ans7 = Compute("-INF");
+$ans8 = Compute("INF");
+$ans9 = Compute("-INF");
+$ans10 = Compute("nep");
+$ans11 = Compute("$c");
+$ans12 = Compute("$b");
+
+###############################################################
+
+$w = 500;  # graph size
+$h = 300;
+$tw = 400; # graph size in TeX
+
+$graph1 = init_graph(-10,-6,10,6,'axes'=>[0,0],'ticks'=>[20,12],'grid'=>[20,12],'size'=>[667,400]);
+
+$p1 = FEQ("1/(x-$a)+$b for x in <-10,$a> using color:blue weight:2");
+$p2 = FEQ("-(x-$a)^2+3 for x in [$a,$a1) using color:blue weight:2");
+$p3 = FEQ("2/(x-$a2) for x in ($a1,$a2> using color:blue weight:2");
+$p4 = FEQ("1/[(x-$a2)^2(x-2)] for x in <$a2,0> using color:blue weight:2");
+$p5 = FEQ("1/[(x-$a2)(x-2)^2]+(1/(2$a)) for x in <0,2> using color:blue weight:2");
+$p6 = FEQ("-1/(x-2)^2+$c for x in <2,10> using color:blue weight:2");
+
+plot_functions($graph1,$p1,$p2,$p3,$p4,$p5,$p6);
+
+
+###############################################################
+Context()->texStrings;
+
+BEGIN_TEXT
+Soit la fonction \(f\) définie par le graphique suivant.
+$PAR
+$BCENTER
+\{image(insertGraph($graph1),width=>$w,height=>$h,tex_size=>$tw)\}
+$PAR $BITALIC Cliquer sur le graphique pour agrandir l'image.$EITALIC
+$ECENTER 
+$PAR
+Déterminer les limites ci-dessous. Entrer $BBOLD inf $EBOLD pour \(\infty\), $BBOLD -inf $EBOLD pour \(-\infty\)  et ${BBOLD}nep$EBOLD si la limite n'existe pas.
+$PAR
+\{
+ColumnTable(
+$BBOLD."1. ".$EBOLD."\(\displaystyle \lim_{x \to $a^{-}}f(x) = \)".ans_rule(20).
+$PAR.
+$BBOLD."2. ".$EBOLD."\(\displaystyle \lim_{x \to $a^{+}}f(x) = \)".ans_rule(20).
+$PAR.
+$BBOLD."3. ".$EBOLD."\(\displaystyle \lim_{x \to $a} f(x) = \)".ans_rule(20).
+$PAR.
+$BBOLD."4. ".$EBOLD."\(\displaystyle \lim_{x \to $a1}f(x) = \)".ans_rule(20).
+$PAR.
+$BBOLD."5. ".$EBOLD."\(\displaystyle \lim_{x \to $a2^{-}}f(x) = \)".ans_rule(20).
+$PAR.
+$BBOLD."6. ".$EBOLD."\(\displaystyle \lim_{x \to $a2^{+}}f(x) = \)".ans_rule(20)
+,
+$BBOLD."7. ".$EBOLD."\(\displaystyle \lim_{x \to $a2} f(x) = \)".ans_rule(20).
+$PAR.
+$BBOLD."8. ".$EBOLD."\(\displaystyle \lim_{x \to 2^{-}}f(x) = \)".ans_rule(20).
+$PAR.
+$BBOLD."9. ".$EBOLD."\(\displaystyle \lim_{x \to 2^{+}}f(x) = \)".ans_rule(20).
+$PAR.
+$BBOLD."10. ".$EBOLD."\(\displaystyle \lim_{x \to 2} f(x) = \)".ans_rule(20).
+$PAR.
+$BBOLD."11. ".$EBOLD."\(\displaystyle \lim_{x \to \infty}f(x) = \)".ans_rule(20).
+$PAR.
+$BBOLD."12. ".$EBOLD."\(\displaystyle \lim_{x \to -\infty}f(x) = \)".ans_rule(20)
+,
+indent => 0, separation => 30, valign => "TOP"
+)
+\}
+END_TEXT
+
+Context()->normalStrings;
+
+#####################################################################
+
+ANS( $ans1->cmp );
+ANS( $ans2->cmp );
+ANS( $ans3->cmp );
+ANS( $ans4->cmp );
+ANS( $ans5->cmp );
+ANS( $ans6->cmp );
+ANS( $ans7->cmp );
+ANS( $ans8->cmp );
+ANS( $ans9->cmp );
+ANS( $ans10->cmp );
+ANS( $ans11->cmp );
+ANS( $ans12->cmp );
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

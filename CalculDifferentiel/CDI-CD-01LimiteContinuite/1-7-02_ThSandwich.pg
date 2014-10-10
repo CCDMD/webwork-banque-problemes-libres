@@ -1,0 +1,99 @@
+## DESCRIPTION
+## Théorème Sandwich
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Théorème des gendarmes ou du sandwich)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:Library/Rochester/setLimitsRates2Limits/ur_lr_2_11_mo.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Squeeze theorem)
+## ZDate(6/3/2002)
+## ZMLT(limits_squeeze_linear_and_quadratic)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS('limite','sandwich','gendarmes')
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "PGchoicemacros.pl",
+   #"source.pl",         # used to display problem source button
+   "PGcourse.pl",      # Customization file for the course
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Numeric");
+
+
+$a = random(2,4,1);
+$b = random(6,8,1);
+$c = random(-6,-2,1);
+# coefficients of quadratic  x^2 + a1x + a2 passing through c at a
+$a1 = $b-$a;
+$a2 = -$a*$b+$c;
+# coefficients of line b1x +b2  passing through c at a and tangent to quadratic above.
+$b1 = $a + $b;
+$b2 = -$a*($a +$b) + $c;
+
+$lhs = Compute("${b1} x +$b2 ")->reduce;
+$rhs = Compute("x^2 + ${a1} x + $a2")->reduce;
+
+$ans = Real($c);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Si \[ $lhs \le f(x) \le $rhs \]  déterminer
+\(\displaystyle \lim_{x\to $a} f(x) \) = \{ans_rule(20) \}
+$PAR
+
+Quel théorème utilise-t-on pour obtenir la réponse? $BR
+\{ ans_rule(50) \}
+
+                  	                  
+END_TEXT
+Context()->normalStrings;
+
+ANS($ans->cmp);
+
+# there doesn't seem to be an easy way to handle short phrase
+# answers using MathObjects -- since 
+# the parser will try to restrict the answer to words which
+# are specically allowed in the context.
+# create a special answer evaluator.
+
+$ans_eval = new AnswerEvaluator();
+$ans_eval->install_evaluator( sub {
+	my $rh_ans = shift;
+	my $student_answer = $rh_ans->{student_ans};
+	my $score = ( $student_answer =~ /gendarme/  or 
+	          $student_answer =~/sandwich/ );
+    $rh_ans->{score} = $score;   # correct if one of these words is mentioned in the answer.
+    $rh_ans->{correct_ans} = "Le théorème des gendarmes ou théorème sandwich";
+    $rh_ans->{ans_message} = "La fonction est coincée entre deux autres fonctions dont les limites peuvent être calculées.";
+    return $rh_ans;
+    }
+);
+
+ANS($ans_eval);
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

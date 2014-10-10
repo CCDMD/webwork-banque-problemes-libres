@@ -1,0 +1,97 @@
+## DESCRIPTION
+## Rendre un fonction continue avec une discontinuité non essentielle
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Continuité - Types de discontinuité)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/Union/setLimitContinuity/ur_lr_5_2.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Continuity - classifying discontinuities)
+## ZDate(8/23/07)
+## ZInstitution(Union College)
+## ZAuthor(K. Lesh)
+## ZMLT(removable)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS('limite','discontinuité','par morceaux','non essentielle')
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "unionInclude.pl",
+  "contextPiecewiseFunction.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+Context("PiecewiseFunction");
+
+$a = random(1,5,1);
+$b = random(3,9,1);
+$b1 = $b-1;
+$ab = $a*$b;
+$c = random(1,10,1);
+
+$f = "\begin{cases} \frac{$b}{x}+\frac{-${b1}x + $ab}{x(x-$a)} &\text{si }x\ne 0 \text{ et } x\ne 4\\
+   $c &\text{si } x = 0\end{cases}";
+
+Context("Numeric");
+
+###################################
+# Main text
+
+
+Context()->texStrings;
+BEGIN_TEXT
+On dit qu'une fonction \( f \) a une discontinuité ${BBOLD}non essentielle$EBOLD
+en \(x=a\) si les deux conditions suivantes sont respectées :
+    \{BeginList("OL")\}
+    $ITEM
+      \(f\) est non définie ou discontinue en \(x=a\).
+    $ITEMSEP
+
+    $ITEM
+      Il est possible de définir ou redéfinir \(f(a)\) de telle façon que la nouvelle fonction ${BBOLD}soit$EBOLD continue en \(x=a\).
+    \{EndList("OL")\}
+$HR
+Montrer que \[ f(x) = $f \] a une discontinuité non essentielle en \(x=0\), en effectuant les deux étapes suivantes.
+$PAR
+a) vérifier la condition (1) de la définition, puis
+$PAR
+b) vérifier la condition (2) de la définition en déterminant une valeur \(f(0)\) qui rendrait \(f\) continue en \(x=0\).
+$PAR
+\(f(0)=\)\{ans_rule(15)\} rendrait \(f\) continue en \(x=0\).
+$PAR
+${BBOLD}Indice :$EBOLD Faire \(\displaystyle\lim_{x\to 0} f(x)\) et lever l'indétermination \(\frac{0}{0}\) en additionnant les deux fractions et en simplifiant.
+$PAR
+Au cas où vous vous posiez la question, la discontinuité en \( x=$a \) ${BBOLD}n'est pas$EBOLD une discontinuité non essentielle.
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+$ans = -1/$a;
+ANS(num_cmp($ans));
+
+###################################
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

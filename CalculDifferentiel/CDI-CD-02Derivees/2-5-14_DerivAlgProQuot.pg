@@ -1,0 +1,127 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions algébriques – Produit et quotient)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UCSB/Stewart5_3_2/Stewart5_3_2_35/Stewart5_3_2_35.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Derivatives involving multiple rules (no chain rule))
+## ZInstitution(UCSB)
+## ZMLT(derMultRulesGraphical)
+## ZLevel(4)
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+  "PGcourse.pl",
+  "PGauxiliaryFunctions.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$refreshCachedImages = 1;
+
+$y1 = random(1,5);
+$r2 = 2*$y1;
+
+
+## 1ere valeur de x pour calcul du nombre dérivée : x=1
+### 2e valeur de x pour calcul du nombre dérivé
+$x2 = random(4,6);   
+$y2 = random(1,$r2-1);
+
+$a1 = $y1;    #pente de la 2e droite de f
+$a2 = ($y2-$r2)/($x2-2);   #pente de la 3e droite de f
+$b2 = $r2 - 2*$a2;         #ord à l'origine de la 3e droite
+
+$f0 = Formula("-0.25*x");
+$f1 = Formula("$a1*x");    # passe par les points (1,y1) (2,2y1)
+$f2 = Formula("$a2*x+$b2");   #passe par les points (2,2y1) et (x2,y2)
+
+
+$y3 = random(1,8);
+$y4 = random(1,8);
+
+$c1 = -$y3;   #pente de la 1ere droite de g
+$d1 = -2*$c1;   #ord à l'origine de la 1ere droite
+$c2 = $y4/($x2-2);   #pente de la 2e droite de g
+$d2 = -2*$c2;    #ord à l'origine de la 2e droite
+
+
+$g1 = Formula("$c1*x + $d1");   #passe par les points (1,y3) et (2,0)
+$g2 = Formula("$c2*x + $d2");   #passe par les points (2,0) et (x2,y4)
+
+$gr = init_graph(-2,-2,7,11,axes=>[0,0],grid=>[9,13],size=>[400,400]);
+$gr->lb('reset');
+
+plot_functions($gr,
+"$f0 for x in <-2,0> using color:red and weight:2",
+"$f1 for x in <0,2>  using color:red and weight:2",
+"$f2 for x in <2,7>  using color:red and weight:2",
+"$g1 for x in <-2,2>  using color:blue and weight:2",
+"$g2 for x in <2,7>  using color:blue and weight:2",
+);
+
+foreach my $i (1..6) {
+     $gr->lb(new Label($i,-.1,$i,'black','center','top'));
+}
+
+foreach my $i (1..10) {
+     $gr->lb(new Label(-.2,$i,$i,'black','center','middle'));
+}
+
+$gr->lb(new Label(1.8,$r2+0.5,"f",'red','center','top'));
+$gr->lb(new Label($x2,$y4-0.4,"g",'blue','center','top'));
+$gr->lb(new Label(6.5,.5,"x",'black','center','middle'));
+$gr->lb(new Label(.2,10,"y",'black','center','bottom'));
+
+$fig = image(insertGraph($gr), width => 400, height => 400, tex_size => 310);
+
+
+
+BEGIN_TEXT
+$PAR
+Soient \(f\) et \(g\) deux fonctions définies par le graphique ci-dessous, et soient
+$BR
+\[u(x)=f(x)g(x) \text{ et } v(x)=\frac{f(x)}{g(x)}.\]
+
+$PAR
+a) Trouver \(u^{\prime }(1)\) : \{ans_rule(50)\} $PAR
+
+b) Trouver \(v^{\prime }($x2)\) : \{ans_rule(50)\} $PAR
+$PAR
+$BCENTER
+$fig
+$ECENTER
+END_TEXT
+
+$ans1 = Real(0);
+
+$Img2 = $g2->eval(x=>$x2);
+$Imf2 = $f2->eval(x=>$x2);
+
+$ans2 = ($a2*$Img2 - $Imf2*$c2)/$Img2**2;
+
+ANS($ans1->cmp);
+ANS(Compute("$ans2")->cmp);
+
+ENDDOCUMENT();

@@ -1,0 +1,100 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Pente et droite tangente)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/NAU/setCalcI/slope_from_graph.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Conceptual understanding of derivatives)
+## ZInstitution(NAU)
+## ZAuthor(Jim Swift)
+## ZMLT(GraphsSlopes)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS()
+## Level(2)    
+## Language(fr)
+
+
+
+DOCUMENT();
+loadMacros("PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGgraphmacros.pl",
+		   "MathObjects.pl",
+		   "PGcourse.pl",
+);
+          
+TEXT(beginproblem()); 
+$showPartialCorrectAnswers = 0;
+$refreshCachedImages = 1;
+#####################################################################>>>
+#
+#  The function is f(x) = c1 e^{k1 x} + c2 e^{k2 x)
+#
+#####################################################################>>>
+
+do{$c1 = random(-2.1,2.1,.2);
+   $k1 = random(.1,2,.1);
+   $c2 = random(-2.1,2.1,.2);
+   $k2 = random(-2, -.1, .1);
+   $a = random(-2,2,1);
+   
+  
+   $fa = $c1*exp($k1*$a) + $c2*exp($k2*$a);
+   $fp = $k1*$c1*exp($k1*$a) + $k2*$c2*exp($k2*$a);
+   $fpp = $k1*$k1*$c1*exp($k1*$a) + $k2*$k2*$c2*exp($k2*$a);
+   $curvature = abs($fpp)/(1 + $fp*$fp)**1.5;
+}
+while(abs($fa) > 2 || abs($fp) > 1.5 || $curvature > 3 || $curvature < .2 );
+$xmin = -3;
+$xmax = 3;
+$ymin = -2;
+$ymax = 2;
+if($fa > 1 || ($c1 > 0 && $c2 > 0))
+{
+   $ymin = -1;
+   $ymax = 3;
+};
+if($fa < -1 || ($c1 < 0 && $c2 < 0)) 
+{
+   $ymin = -3;
+   $ymax = 1;
+};
+$xpixels = 390;
+$ypixels = $xpixels*2/3;
+$funx = "$c1*exp($k1*x) + $c2*exp($k2*x)";
+
+$graph = init_graph($xmin,$ymin,$xmax,$ymax,
+                    'axes'=>[0,0],'grid'=>[$xmax-$xmin,$ymax-$ymin],'pixels'=>[$xpixels,$ypixels]);
+
+$f1 = "$funx for x in <$xmin,$xmax> using color:blue and weight:2";
+
+($fRef) = plot_functions( $graph, $f1);
+$fRef -> steps(90); # This makes more steps in the domain.  
+
+# The following shows how you would change the number of steps. 
+#$fRef -> steps(30); # This makes more steps in the domain.  
+
+BEGIN_TEXT
+Estimer la pente de la droite tangente à la courbe en \(x = $a\).
+$PAR
+$BCENTER
+\{ image(insertGraph($graph),width => $xpixels, height => $ypixels) \} $PAR
+$ECENTER
+$BR
+La pente est approximativement égale à \{ ans_rule(5) \}.$BR
+(La différence entre la réponse et la vraie pente doit être inférieure à 0.1.  Arrondir la réponse au dixième près.)
+END_TEXT
+ANS( Real($fp)->cmp(tolType=> 'absolute', tolerance=>0.1 ));
+ENDDOCUMENT();

@@ -1,0 +1,87 @@
+## DESCRIPTION
+## Trouver les discontinuités - fonctions par morceaux
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Continuité - Types de discontinuité)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/UCSB/Stewart5_2_5/Stewart5_2_5_38.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Continuity - concept of)
+## ZInstitution(UCSB)
+## ZMLT(cc-h)
+## ZLevel(4)
+###############Source###############
+## KEYWORDS('limite','discontinuité','fonctions par morceaux','par parties')
+## Level(4)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+"PGcourse.pl",   #Générer une autre version du problème
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 0;
+$a = non_zero_random(-6,6);
+$b=  non_zero_random($a+1,$a+6,1);
+
+$aa = $a*$a;
+
+$n = random($aa,$aa+20);
+$d = $n-$aa;
+$m = Compute("$d/$a")->reduce;
+
+
+#### écriture de la fraction en latex
+
+if(floor($m)-$m != 0) 
+{ 
+($num,$den) = reduce($d,$a);
+$frac = "\frac{$num}{$den}"; }
+else { $frac = $m; }
+
+Context("Numeric");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$PAR
+
+Déterminer les valeurs de \(x\) où \(f\) est discontinue. $PAR
+
+\[ f(x) = \begin{cases}
+        x + $frac        & \textrm{si }x \leq $a \\
+        \frac{$n}{x}         & \textrm{si }$a < x < $b\\
+        \sqrt{x-$b}  & \textrm{si }x \geq $b
+        \end{cases}\]
+
+$PAR
+
+S'il y a plus d'une discontinuité, séparer les valeurs par des virgules.
+$PAR
+\{ans_rule(10)\}
+
+END_TEXT
+Context()->normalStrings;
+
+
+if($a < 0 && 0 < $b) {
+ANS(List("0,$b")->cmp);
+} else {
+ANS(List("$b")->cmp);
+}
+
+ENDDOCUMENT();

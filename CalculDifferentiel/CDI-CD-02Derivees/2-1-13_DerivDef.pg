@@ -1,0 +1,97 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).<
+
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Définition de la dérivée)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UVA-Stew5e/setUVA-Stew5e-C02S08-Derivatives/2-8-19.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Definition of the derivative)
+## ZDate(5/26/2005)
+## ZInstitution(UVA)
+## ZAuthor(Jeff Holt)
+## ZMLT(defDerFormulaGivenRepresent)
+## ZLevel(4)
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros("PGstandard.pl",
+           "MathObjects.pl",
+           "parserMultiAnswer.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Numeric');
+Context()->variables->add(h=>'Real');
+
+$b = random(2,9);
+$bsqu = Compute("($b)^2");
+
+$Funct = Formula("sqrt(x)");
+$Funct->{limits} = [0,5];
+
+$mp = MultiAnswer($Funct, Compute("$bsqu"))->with(
+  singleResult => 1,
+  checker => sub {
+      my ( $correct, $student, $self ) = @_;
+      my ( $f1stu, $f2stu ) = @{$student};
+      my ( $f1, $f2 ) = @{$correct};
+
+      #Correct given limit.
+      $CorrDeriv = Formula("(sqrt($bsqu + h) - ($b))/ h");
+
+      $f_b_h_stu = Formula($f1stu)->substitute(x=>Formula("$f2stu + h"));
+      $f_b_stu = $f1stu->eval(x=>$f2stu);
+
+      #Construct limit the student is claiming.
+      $DerivStu = Formula("(($f_b_h_stu) - ($f_b_stu))/ h");
+      
+      #Check if the given function evaluated at the given point fits the
+      #  desired limit. There technically could be many correct answers:
+      #e.g. Limit ((4 + h)^3 - 64) / h.
+      #
+      # f(x) = x^3, a = 4 is correct.
+      # f(x) = (x + 2)^3, a = 2 is also correct.
+      # f(x) = x^3 + constant, a = 4 should also be correct.
+      if ($CorrDeriv == $DerivStu) {
+          return 1; } 
+      else {
+          return 0; }
+      }
+);
+
+BEGIN_TEXT
+La limite
+\[
+    \lim_{h\rightarrow 0}\frac{\sqrt{$bsqu+h} - $b}{h}
+\]
+représente la dérivée d'une fonction  \(f(x)\) pour une certaine valeur \(a\).
+Déterminer la fonction \(f\) et la valeur de \(a\).
+$BR
+$BR
+\(f(x)\) = \{ $mp->ans_rule(25) \}
+$BR
+$BR
+\(a\) = \{ $mp->ans_rule(25) \}
+END_TEXT
+
+ANS($mp->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

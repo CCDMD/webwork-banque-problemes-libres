@@ -1,0 +1,256 @@
+## DESCRIPTION
+## Déterminer la limite à l'aide d'un graphique
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Approche graphique)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/Michigan/Chap1Sec8/Q01.pg
+## ZAuthor('Gavin LaRose');
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Finding limits using graphs)
+## ZInstitution(University of Michigan)
+## ZMLT(limits_graphs_curvy_spline)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS('limite','graphique','fonction par morceaux','par parties')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"PGgraphmacros.pl",
+# "parserNumberWithUnits.pl",
+# "parserFormulaWithUnits.pl", 
+# "parserFormulaUpToConstant.pl",
+ "PGcourse.pl",    #Générer une autre version du problème
+);
+
+Context("Numeric");
+Context()->strings->add("nep"=>{});
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+## we graph y = x^2 - a, or y = a - x^2, for x in [-3,b], where b = 1 or 2
+##    and y = = m (x - b) + (y0 +/- 1), where y0 = the quadratic at x=b
+##    we put in other discontinuities at x=0 and x=c, c = 3 or 4.
+##    we put a value for one of these two
+
+$grDescr = "graph of a piecewise defined function, which is ";
+
+$a = random(5,10,1);
+$b = random(1,2,1);
+$c = random(3,4,1);
+$m = random(2,4,1);
+
+$whichquad = random(0,1);
+if ( $whichquad ) {
+    $yquad = Compute("$a - x^2");
+    $grDescr .= "a downward opening quadratic function, with vertex " .
+        "at (0,$a), for x in [-3,$b].  ";
+} else {
+    $yquad = Compute("x^2 - $a");
+    $grDescr .= "an upward opening quadratic function, with vertex " .
+	    "at (0,-$a), for x in [-3,$b].  ";
+}
+
+$y0 = $yquad->eval( x=>$c );
+$ll = $y0 + list_random(-1,1);
+$yline = Compute("$m*(x - $b) + $ll");
+
+$ldescr = "the function is a line with slope $m for x greater than $b, " .
+    "starting with an open circle at ($b, $ll).  there is a hole in the " .
+    "line at x=$c";
+
+## and we put in a value for the function at
+$whichval = random(0,1);
+if ( $whichval ) {
+    $x1 = 0;
+    $q0 = $yquad->eval( x=>$b );
+    if ( $whichquad ) {
+	$y1 = $a + non_zero_random(-2,2);
+	$grDescr .= "there is a hole at the vertex " .
+	    "and point plotted at (0,$y1).  the quadratic ends with a " .
+	    "filled circle at its the endpoint ($b,$q0). ";
+    } else {
+	$y1 = -$a + random(1,4,1);
+	$grDescr .= "there is a hole at the vertex " .
+	    "and point plotted at (0,$y1).  the quadratic ends with a " .
+	    "filled circle at its endpoint ($b,$q0). ";
+    }
+    $ldescr .= ".";
+} else {
+    $x1 = $c;
+    $y1 = $yline->eval( x=>$c ) + non_zero_random(-2,2);
+    $ldescr .= ", and a point plotted at ($c, $y1).";
+}
+
+$grDescr .= $ldescr;
+
+## the minimum value we have to show is
+$ymin = ( $whichquad ) ? -1 : -1 - $a;
+## unless the line is less than this...
+$ymin = $yline->eval(x=>$b)-1 if ( $yline->eval(x=>$b) < $ymin );
+
+$qmax = ( $y1 > $a ) ? $y1 : $a;
+$lmax = ( ! $whichval && $y1 > $yline->eval( x=>5 ) ) ? $y1 :
+    $yline->eval( x=>5 );
+## the maximum is
+if ( $whichquad ) {
+    if ( $lmax > $qmax ) {
+	$ymax = $lmax + 1;
+    } else {
+	$ymax = $qmax + 1;
+    }
+} else {
+    $ymax = $lmax + 1;
+}
+
+## then the graph is
+$ygrid = $ymax - $ymin;
+if ( $ygrid > 10 ) {
+    ## make sure that there are an even number of gridlines above
+    ##    and below the x-axis
+    $ymax++ if ( $ymax/2 != int($ymax/2) );
+    $ymin-- if ( $ymin/2 != int($ymin/2) );
+    $ygrid = ( $ymax - $ymin )/2;
+}
+$gr = init_graph(-3,$ymin,5,$ymax, axes=>[0,0],
+		 grid=>[8,$ygrid], size=>[250,250]);
+add_functions( $gr,
+	       "$yquad for x in <-3,0) using color:blue and weight:2",
+	       "$yquad for x in <0,$b] using color:blue and weight:2",
+	       "$yline for x in ($b,$c) using color:blue and weight:2",
+	       "$yline for x in ($c,5> using color:blue and weight:2" );
+$gr->stamps( closed_circle($x1,$y1,'blue') );
+
+
+## déterminer l'image à 0, $b et $c
+
+if($x1==0) {
+$im0 = Compute("$y1");
+$imc = String("nep");
+} else {
+$imc = Compute("$y1");
+$im0 = String("nep");
+}
+$imb = $yquad->eval( x=>$b );
+
+
+
+
+## we ask for the limits at -2, 0, $b and $c
+$limitnb = $yquad->eval( x=>-$b );
+$limit0  = $yquad->eval( x=>0 );
+$limitb  = String("nep");
+$limitc  = $yline->eval( x=>$c );
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit la fonction \(f(x)\) définie par le graphique suivant. 
+$BR
+${BCENTER}
+\{ image(insertGraph( $gr ), tex_size=>350, height=>250, width=>250,
+	 extra_html_tags=>'alt="' . $grDescr . '"') \}
+$ECENTER
+$BR
+Trouver, si elle existe, la valeur de chaque quantité.  Si une valeur n'existe pas, entrer
+${BBOLD}nep$EBOLD dans la case réponse.
+$PAR
+${BBOLD}a)$EBOLD
+\( f(0) =\)  \{ ans_rule(15) \}
+$BR
+${BBOLD}b)$EBOLD
+\( f($b) =\)  \{ ans_rule(15) \}
+$BR
+${BBOLD}c)$EBOLD
+\( f($c) =\)  \{ ans_rule(15) \}
+$BR
+${BBOLD}d)$EBOLD
+\( \lim\limits_{x \rightarrow -$b} f(x)= \)  \{ ans_rule(15) \}
+$BR
+${BBOLD}e)$EBOLD
+\( \lim\limits_{x \rightarrow 0} f(x)= \)  \{ ans_rule(15) \}
+$BR
+${BBOLD}f)$EBOLD
+\( \lim\limits_{x \rightarrow $b} f(x)= \)  \{ ans_rule(15) \}
+$BR
+${BBOLD}g)$EBOLD
+\( \lim\limits_{x \rightarrow $c} f(x)= \)  \{ ans_rule(15) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($im0->cmp() );
+ANS($imb->cmp() );
+ANS($imc->cmp() );
+
+ANS($limitnb->cmp() );
+ANS($limit0->cmp() );
+ANS($limitb->cmp() );
+ANS($limitc->cmp() );
+
+$limitbleft = $yquad->eval( x=>$b );
+$limitbright = $yline->eval( x=>$b );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+${BBOLD}(a)$EBOLD
+\{
+if($x1==0) {
+"Lorsque \(x=0\), la fonction est égale à \($im0\), c'est-à-dire la valeur \(y\) du point plein."
+} else {
+"Lorsque \(x=0\), la fonction n'existe pas car il y a un point vide en \(x=0\)."
+}
+\}
+$PAR
+
+${BBOLD}(b)$EBOLD
+
+Lorsque \(x=$b\), la fonction est égale à \($imb\), c'est-à-dire la valeur \(y\) du point plein sur la fonction quadratique.
+$PAR
+
+${BBOLD}(c)$EBOLD
+\{
+if($x1==$c) {
+"Lorsque \(x=$c\), la fonction est égale à \($imc\), c'est-à-dire la valeur \(y\) du point plein."
+} else {
+"Lorsque \(x=$c\), la fonction n'existe pas car il y a un point vide en \(x=$c\)."
+}
+\}
+$PAR
+
+${BBOLD}(d)$EBOLD
+Lorsque \(x\) s'approche de \(-$b\) par la gauche ou par la droite, les valeurs de \(f(x)\) s'approchent de plus en plus de \($limitnb\), alors la limite est égale approximativement à \($limitnb\).
+$PAR
+
+${BBOLD}(e)$EBOLD
+Lorsque \(x\) s'approche de 0 par la gauche ou par la droite,  les valeurs de \(f(x)\) s'approchent de plus en plus de \($limit0\).  (Rappelons que pour déterminer une limite, nous cherchons à évaluer la fonction tout près de \(x\) et non pas au point \(x\).)
+La limite est égale approximativement à \($limit0\).
+$PAR
+
+${BBOLD}(f)$EBOLD
+Lorsque \(x\) s'approche de $b,  les valeurs de  \(f(x)\)  s'approchent de plus en plus de  \($limitbleft\) à gauche de \(x = $b\)  et s'approchent de plus en plus de \($limitbright\) à droite de \(x = $b\).
+Donc, la limite n'existe pas.
+$PAR
+
+${BBOLD}(g)$EBOLD
+Lorsque \(x\) s'approche de $c par la gauche ou par la droite, les valeurs de  \(f(x)\)  s'approchent de plus en plus de $limitc.  (Encore une fois, rappelons que nous ne cherchons pas à évaluer la fonction au point \(x = $c\).)  La limite est égale approximativement à $limitc.
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

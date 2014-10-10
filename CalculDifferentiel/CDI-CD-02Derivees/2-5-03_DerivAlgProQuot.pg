@@ -1,0 +1,62 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions algébriques – Produit et quotient)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/UCSB/Stewart5_3_2/Stewart5_3_2_2.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Quotient rule (without trigonometric functions))
+## ZInstitution(UCSB)
+## ZMLT(quotRuleNoTrigRadical)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS()
+## Level(2)    
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+  "PGauxiliaryFunctions.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$a=random(1,10,1)*random(-1,1,2);
+#$b=random(1,10,1)*random(-1,1,2);
+
+$n=random(1,4);
+
+$f = Formula("(x-$a*x^($n)*sqrt(x))/sqrt(x)")->reduce;
+$Df = $f->D('x')->reduce;
+$Df->{limits}=[1,6];
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer la dérivée de \(\displaystyle F(x)=$f\).$BR 
+$PAR
+Vous pouvez procéder de deux façons : (1) simplifer l'expression avant de dériver, ou (2) utiliser la règle de dérivation du quotient. Quel que soit le procédé, vous devriez obtenir la même réponse.
+$PAR
+
+\(F'(x)=\) \{ans_rule(40)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Df->cmp);
+
+ENDDOCUMENT();

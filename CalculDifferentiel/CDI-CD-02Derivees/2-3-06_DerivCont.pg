@@ -1,0 +1,84 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivabilité et continuité)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UCSB/Stewart5_3_1/Stewart5_3_1_55.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Conceptual understanding of derivatives)
+## ZInstitution(UCSB)
+## ZMLT(diffblepoint)
+###############Source###############
+## KEYWORDS('non dérivable','dérivabilité','limite')
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+"PGcourse.pl");
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(non=>{}, oui=>{} );
+
+$a=random(1,6,1);
+do{$b = random(1,7);} until($b!=$a);
+
+$bp1 = $b+1;
+$poly = Compute("x^2 - ($a+$bp1) x + $a*$bp1")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Soit
+\[
+ f(x) = 
+\begin{cases}
+$a-x      & \textrm{si }x \leq $b \\
+$poly & \textrm{si }x > $b
+\end{cases}
+\]
+$BR
+Évaluer les limites des dérivées suivantes :
+$PAR
+\( \displaystyle \lim_{x\to $b^{+}} f'(x) =\) \{ans_rule(20)\} $BR
+$BR
+\( \displaystyle \lim_{x\to $b^{-}} f'(x) =\) \{ans_rule(20)\} $BR
+$PAR
+Selon les réponses précédentes, la fonction \(f\) est-elle dérivable en \(x=$b\)?
+Entrer ${BBOLD}oui${EBOLD} ou ${BBOLD}non${EBOLD}.
+
+$PAR
+
+\{ans_rule(20)\}
+
+END_TEXT
+Context()->normalStrings;
+
+$ans1 = $b-$a-1;
+
+ANS(Compute("$ans1")->cmp);
+ANS(Compute("-1")->cmp);
+
+ANS(Compute("non")->cmp);
+
+ENDDOCUMENT();

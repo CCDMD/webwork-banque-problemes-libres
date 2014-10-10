@@ -1,0 +1,118 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Interprétation graphique de la dérivée)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  /Library/UCSB/Stewart5_3_1/Stewart5_3_1_35.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Conceptual understanding of derivatives)
+## ZInstitution(UCSB)
+## ZAuthor(Spyro Roubos)
+## ZMLT(graphsderivatives)
+###############Source###############
+## KEYWORDS('dérivée','graphique')
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGgraphmacros.pl",
+"unionTables.pl",
+"parserPopUp.pl",
+"MathObjects.pl",
+);
+
+TEXT(&beginproblem);
+
+$refreshCachedImages = 1;
+
+$gr  = init_graph(-5,-5,5,5,axes=>[0,0],grid=>[10,10],size=>[300,300]);
+$gr[0] = init_graph(-5,-5,5,5,axes=>[0,0],grid=>[10,10],size=>[300,300]);
+$gr[1] = init_graph(-5,-5,5,5,axes=>[0,0],grid=>[10,10],size=>[300,300]);
+$gr[2] = init_graph(-5,-5,5,5,axes=>[0,0],grid=>[10,10],size=>[300,300]);
+
+#Fonctions
+$f[0] = Formula("x+1/x");
+$f[1] = Formula("x - 1/x");
+$f[2] = Formula("-x - 1/x");
+
+
+#DERIVATIVES
+add_functions($gr[0], "1-x^(-2) for x in <-5,-0.3>"." using color:red and weight:2");
+add_functions($gr[0], "1-x^(-2) for x in <0.3,5>"." using color:red and weight:2");
+add_functions($gr[1], "1 + x^(-2) for x in <-5,-0.3>"." using color:red and weight:2");
+add_functions($gr[1], "1 + x^(-2) for x in <0.3,5>"." using color:red and weight:2");
+add_functions($gr[2], "-1 + x^(-2) for x in <-5,-0.3>"." using color:red and weight:2");
+add_functions($gr[2], "-1 + x^(-2) for x in <0.3,5>"." using color:red and weight:2");
+
+for $i (0..2) {
+  $fig[$i]=image(insertGraph($gr[$i]),
+  width=>200,height=>200,tex_size=>250);
+}
+
+@eqn =("\( f(x) = x + \dfrac{1}{x} \)",  "\(\displaystyle f(x) = x-\frac{1}{x} \)", 
+       "\( f(x) = -x - \dfrac{1}{x} \)");
+
+@perm = NchooseK(3,3);
+
+@fig = @fig[@perm];
+@eqn = @eqn[@perm];
+@f = @f[@perm];
+
+
+## choix randomisé de la fonction et de sa dérivée
+$k = random(0,2);
+
+add_functions($gr, "$f[$k] for x in <-5,5>"." using color:blue and weight:2");
+	   	   
+@letter = ("A", "B", "C");
+
+
+### réponse
+$popup = PopUp(["?","A","B","C"], $letter[$k]);
+
+BEGIN_TEXT
+
+$PAR
+
+Voici le graphique de la fonction $eqn[$k] $SPACE: $PAR
+
+\{ image( insertGraph($gr), width=>200,height=>200,tex_size=>300 ) \}
+
+$PAR
+
+Lequel des graphiques suivants représente \(f'(x)\)? $BR
+\{
+BeginTable().
+  AlignedRow([$fig[0],$fig[1],$fig[2]]).
+  TableSpace(5,0).
+  AlignedRow(["A","B","C"]).
+EndTable().
+$BR.$BCENTER."(Cliquer sur le graphique pour agrandir l'image)".$ECENTER
+\}
+
+$PAR
+\{ $popup->menu() \}
+
+END_TEXT
+install_problem_grader(~~&std_problem_grader);
+$showPartialCorrectAnswers = 0;
+
+ANS( $popup->cmp() );
+
+ENDDOCUMENT();

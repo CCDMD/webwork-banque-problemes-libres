@@ -1,0 +1,68 @@
+## DESCRIPTION
+## Calcul d'une limite, forme indéterminée 0/0
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Limite d'une forme indéterminée)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/UCSB/Stewart5_2_3/Stewart5_2_3_15.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Evaluating limits - factoring)
+## ZInstitution(UCSB)
+## ZMLT(elf-h)
+## ZMLTleader(1)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS('limite','forme indéterminée','fonction rationnelle')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+#"PGcourse.pl"   #Générer une autre version du problème
+);
+####  forme  (t-a)(t+a)/(t-a)(bt+c)
+
+TEXT(&beginproblem);
+$a=non_zero_random(-10,10,1);
+do {
+  $b=non_zero_random(-3,3,1);
+  $c=non_zero_random(-10,10,1);
+} until(-$c!=$b*$a);
+
+Context()->variables->are(t=>"Real");
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+Context()->noreduce('(-x)-y','(-x)+y');   
+
+$num = Formula("t^2 -$a*$a")->reduce;
+$den = Formula("$b*t^2 + (-$a*$b+$c)*t - $a*$c")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Évaluer la limite, si elle existe. Si la limite n'existe pas, entrer $BBOLD nep $EBOLD  dans la case réponse.
+\[ \lim_{t\to $a} \frac{$num}{$den}\]
+$BR$BR
+
+Réponse : \{ans_rule(10)\}
+
+END_TEXT
+Context()->normalStrings;
+
+$nu = 2*$a;
+$de = $a*$b+$c;
+
+ANS(Compute("$nu/$de")->cmp);
+
+ENDDOCUMENT();

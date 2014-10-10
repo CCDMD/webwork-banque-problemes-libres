@@ -1,0 +1,82 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Pente et droite tangente)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UCSB/Stewart5_3_1/Stewart5_3_1_45.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Derivatives of polynomials and power functions)
+## ZInstitution(UCSB)
+## ZMLT(where_horizontal_tangent)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "PGauxiliaryFunctions.pl",
+);
+
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+
+do {
+
+$a = random(3,12,3);  #divisible par 3
+$b = non_zero_random(-7,7);
+do{$c = non_zero_random(-6,6);} until($b!=-$c);
+
+} until($a%2 == 0 || ($b+$c)%2 == 0) ;  ### un des deux est divisible par 2
+
+
+$a1 = $a/3;
+$b1 = $a*($b+$c)/2 ;
+$c1 = $a*$b*$c;
+$d1 = non_zero_random(-20,20);
+$f = Formula("$a1*x^3-$b1*x^2+$c1*x+$d1")->reduce;
+
+#### f'(x) = a(x-b)(x-c);
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer l'abscisse des points de la courbe \(y=$f\) où la tangente est horizontale.$PAR
+Énumérer les valeurs de \(x\) ci-dessous. S'il y en a plusieurs, les séparer à l'aide de virgules.
+
+$PAR
+
+\(x=\) \{ans_rule(20)\}
+
+END_TEXT
+Context()->normalStrings;
+
+if($b==$c){
+$ans = Compute("$b");
+} else { 
+$ans = Compute("$b,$c");
+}
+
+
+ANS($ans->cmp);
+
+
+ENDDOCUMENT();

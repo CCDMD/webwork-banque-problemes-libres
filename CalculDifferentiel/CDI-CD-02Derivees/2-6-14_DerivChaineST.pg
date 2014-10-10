@@ -1,0 +1,105 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation en chaîne (sans fonctions trigonométriques))
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UCSB/Stewart5_3_5/Stewart5_3_5_55.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Chain rule (without trigonometric functions))
+## ZInstitution(UCSB)
+## ZMLT(Chain-ComposeTables)
+## ZLevel(4)
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+foreach $i (0..4) {
+$a1[$i]= non_zero_random(-9,9);
+}
+
+while($a1[1]==$a1[0]){ $a1[1] = non_zero_random(-9,9);}
+while($a1[2]==$a1[0] || $a1[2]==$a1[1]){ $a1[2] = non_zero_random(-9,9);}
+
+$a2[0] = $a1[2];   #g(a1[0])
+foreach $j (1..4) {
+$a2[$j]= non_zero_random(-9,9);
+}
+
+$a3[0] = $a1[1];    #f(a1[0])
+foreach $k (1..4) {
+$a3[$k]= non_zero_random(-9,9);
+}
+
+$ans2 = Real("$a1[3]*$a3[4]");
+$ans1 = Real("$a2[3]*$a1[4]");
+
+($n1,$n2,$n3) = num_sort($a1[0],$a2[0],$a3[0]);
+
+if($n1 == $a1[0]){ @c1 = @a1; }
+elsif ($n1 == $a2[0]) { @c1 = @a2; }
+else { @c1 = @a3; }
+
+if($n2 == $a1[0]){ @c2 = @a1; }
+elsif ($n2 == $a2[0]) { @c2 = @a2; }
+else { @c2 = @a3; }
+
+if($n3 == $a1[0]){ @c3 = @a1; }
+elsif ($n3 == $a2[0]) { @c3 = @a2; }
+else { @c3 = @a3; }
+
+BEGIN_TEXT
+
+$PAR
+
+Voici un tableau de valeurs pour \(f,  g,  f'\) et \(g'\)  : $BR
+\[
+\begin{array}{|c|c|c|c|c|}
+\hline
+x & f(x) & g(x) & f'(x) & g'(x) \\
+\hline
+$c1[0] & $c1[1] & $c1[2] & $c1[3] & $c1[4] \\ 
+$c2[0] & $c2[1] & $c2[2] & $c2[3] & $c2[4]\\
+$c3[0] & $c3[1] & $c3[2] & $c3[3] & $c3[4] \\
+\hline
+\end{array}\] $BR
+
+a) Si \(h(x)=f(g(x))\), calculer \(h'($a1[0])\). $BR
+b) Si \(H(x)=g(f(x))\), calculer \(H'($a1[0])\).
+
+$PAR
+
+a) \(h'($a1[0]) =\) \{ans_rule(10)\} $BR
+b) \(H'($a1[0]) =\) \{ans_rule(10)\}
+
+END_TEXT
+
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+
+ENDDOCUMENT();

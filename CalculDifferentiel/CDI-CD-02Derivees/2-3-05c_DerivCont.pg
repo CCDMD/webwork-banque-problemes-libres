@@ -1,0 +1,112 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivabilité et continuité)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/OSU/high_school_apcalc/dchmwk3/prob8.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Definition of the derivative)
+## ZInstitution(OSU)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS('non dérivable','dérivabilité','limite')
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+"PGcourse.pl");
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+
+$a = random(1,9,1);
+$b = random(1,7,1);
+$c = random(2,8,1);
+$d = random(2,5,1);
+
+### borne
+$e = random(-3,3);
+
+
+$f1 = Formula("-$a*x^2+$b*x")->reduce;
+$f2 = Formula("$c*x^2-$d")->reduce;
+
+$fe = $f2->eval(x=>$e);
+
+$limf1num = Formula("$f1 -$fe");
+$num1e = $limf1num->eval(x=>$e);
+
+if( $num1e == 0) { ## Continuité en x=e
+$Df1 = $f1->D;
+$ans2 = $Df1->eval(x=>$e);
+} elsif ($num1e < 0) {
+$ans2 = Compute("inf");
+} else {
+$ans2 = Compute("-inf");
+}
+
+$Df2 = $f2->D;
+$ans4 = $Df2->eval(x=>$e);
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit
+\[f(x)= \left\lbrace
+\begin{array}{ll}
+$f1 &\mbox{si }x< $e\\
+$f2   &\mbox{si }x\ge $e\\
+\end{array}\right.
+\]
+Selon la définition de la dérivée, pour déterminer \(f'($e)\),
+il faut évaluer la limite à gauche 
+$PAR
+\(\displaystyle \lim_{x\to $e^-}\)\{ans_rule(40)\} \( = \) \{ans_rule(10)\}
+$BR $BR
+et la limite à droite
+$BR
+\(\displaystyle  \lim_{x\to $e^+}\)\{ans_rule(40)\} \( = \) \{ans_rule(10)\}
+$BR $BR
+On en déduit que \(f'($e) =\)\{ans_rule(30)\} 
+$BR
+Écrire ${BBOLD}nep$EBOLD si la dérivée n'existe pas.
+END_TEXT
+Context()->normalStrings;
+
+$ans1 = Compute("($f1 -$fe)/(x-$e)")->reduce;
+$ans3 = Compute("($f2 - $fe)/(x-$e)")->reduce;
+
+
+if($ans2 == $ans4 ){
+$ans5 = $ans4;   ### cas impossible ?
+} else  {
+$ans5 = Compute("nep");
+}
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+ANS($ans4->cmp);
+ANS($ans5->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

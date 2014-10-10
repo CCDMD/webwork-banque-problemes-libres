@@ -1,0 +1,108 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivabilité et continuité)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/ASU-topics/setDerivativeFunction/3-3-54.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Conceptual understanding of derivatives)
+## ZInstitution(ASU)
+## ZMLT(diffblepoint)
+###############Source###############
+## KEYWORDS('non dérivable','dérivabilité','discontinuité','continuité')
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGauxiliaryFunctions.pl",
+		   "MathObjects.pl",
+		   "PGcourse.pl");
+
+
+TEXT(beginproblem());
+
+Context()->strings->add(aucune=>{}, none => {alias => "aucune"} );
+
+		   
+
+$b = non_zero_random(-4,4);
+
+$d = 3*$b*$b ;   #non dérivable en b
+
+$a = list_random($d,2*$b*$b);
+
+$c = $a*$b - $b*$b*$b;
+
+			
+Context()->texStrings;
+BEGIN_TEXT
+Soit
+\[ f(x) = \begin{cases}
+             {$a} - x^2 &\text{si } x \geq $b\\
+            \frac{$c}{x} & \text{si }x < $b \end{cases}\]
+$PAR
+
+a) Déterminer la ou les valeurs \(x\) pour lesquelles \(f\) est discontinue.  S'il n'y a pas de telle valeur, entrer ${BBOLD}aucune$EBOLD. S'il y a plus d'une valeur, les séparer par une virgule.
+$PAR
+\(x\) = \{ans_rule(20)\}
+$PAR
+b) Trouver la fonction dérivée \(f'(x)\) pour les valeurs \(x > $b\).
+$PAR
+\(f'(x) = \)  \{ans_rule(20)\}
+$PAR
+c) Trouver la fonction dérivée \(f'(x)\)  pour les valeurs \(x < $b\).
+$PAR
+\(f'(x) = \)  \{ans_rule(20)\}
+$PAR
+d) Déterminer la valeur \(x\) pour laquelle \(f\) est non dérivable.  S'il n'y a pas de telle valeur, entrer ${BBOLD}aucune$EBOLD. S'il y a plus d'une valeur, les séparer par une virgule.
+$BR
+$BR
+\(x\) = \{ans_rule(20)\}
+$BR
+
+END_TEXT
+
+
+install_problem_grader(~~&std_problem_grader);
+$showPartialCorrectAnswers = 1;
+
+if($b > 0) {
+$ans1=List(0);
+} else {
+$ans1 = Compute("aucune");
+}
+
+$ans2=Formula("-2x")->reduce;
+$ans3=Formula("-$c/x^2")->reduce;
+
+if($b > 0) {
+	if($a == $d) {
+		$ans4=List(0);
+	} else {
+		$ans4=Compute("0,$b");
+	} 
+} else {  # b < 0 donc pas de disc en x=0
+	$ans4=Compute("aucune");
+}
+
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+ANS($ans4->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
