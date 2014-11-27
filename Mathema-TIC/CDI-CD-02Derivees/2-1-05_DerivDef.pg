@@ -1,0 +1,131 @@
+##DESCRIPTION
+##  understanding derivatives graphically 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Définition de la dérivée)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/CSUOhio/appletDemonstrationProblems/graphSketch5.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Conceptual understanding of derivatives)
+## ZDate(6/12/2012)
+## ZInstitution(Cleveland State University)
+## ZAuthor(Barbara Margolius)
+## ZMLT(DerivSketch)
+## ZMLTleader(1)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS()
+## Level(2)    
+## Language(fr)
+
+
+########################################################################
+# This work is supported in part by the National Science Foundation 
+# under the grant DUE-0941388.
+########################################################################
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "AppletObjects.pl",
+  "MathObjects.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+Context("Numeric"); 
+
+$ans =Compute("1");
+
+
+$pos = 1; #function should be positive 
+$inc = 0;  #function should be decreasing
+$cup = 2; #don't care whether concave up or down
+
+$boardMessage = "Tracer une fonction positive ayant une fonction dérivée négative.";
+
+$showMM = 'false';	# don't display x and y ranges
+
+###################################
+# Create  link to applet 
+###################################
+    $appletName = "graphSketch";
+    $applet =  FlashApplet(
+       codebase              => findAppletCodebase("$appletName.swf"),
+       appletName            => $appletName,
+       appletId              => $appletName,
+       setStateAlias         => 'setXML',
+       getStateAlias         => 'getXML',
+       setConfigAlias        => 'setConfig',
+       getConfigAlias        => 'getConfig',
+       maxInitializationAttempts => 5,   # number of attempts to initialize applet
+       answerBoxAlias        => 'answerBox',
+       height                => '550',
+       width                 => '550',
+       bgcolor               => '#ededed',
+       debugMode             =>  0,
+       submitActionScript  =>  
+  qq{getQE("answerBox").value=getApplet("$appletName").getAnswer() },
+     );
+###################################
+# Configure applet
+###################################
+ 
+#initialization data - problem setup
+#  $pos - 0 to require negative function
+#	  1 to require positive function
+#         2 to not require the function to be either positive or negative
+#  $inc - 0 to require decreasing function
+#	  1 to require increasing function
+#         2 to not require the function to be either increasing or decreasing
+#  $cup - 0 to require concave down function
+#	  1 to require concave up function
+#         2 to not require the function to be either concave up or concave down
+#  the student can also be required to have the curve go through one or two points.  Syntax is
+#  <pts><pt xval='1' yval='2' showIt='true'/></pts> to display the point (1,2) and require the function to go through it
+#  
+#	$boardMessage - instructions to display in applet.
+#	$showMM - displays x and y ranges.  Not usually needed.  Might be helpful if curve is to go through particular points.
+
+$applet->configuration(qq{<xml><pos>$pos</pos><inc>$inc</inc><cup>$cup</cup><boardMessage>$boardMessage</boardMessage><showMM>$showMM</showMM><bland>true</bland></xml>});
+$applet->initialState(qq{<xml><pos>$pos</pos><inc>$inc</inc><cup>$cup</cup><boardMessage>$boardMessage</boardMessage><showMM>$showMM</showMM><bland>true</bland></xml>});
+
+
+TEXT( MODES(TeX=>'object code', HTML=>$applet->insertAll(
+  debug=>0,
+  includeAnswerBox=>1,
+#   reinitialize_button=>$permissionLevel>=10,
+   )));
+
+
+
+#######################De Sylvie : Beaucoup de texte anglais intégré dans l'applet. Je n'y ai pas accès.Si vous avez des problèmes à traduire certaines parties, envoyez-les-moi dans un fichier Word. Je vous renverrai la traduction française et vous pourrez l'insérer dans l'applet. 
+
+BEGIN_TEXT
+
+$BR  $boardMessage
+
+$BR Cliquer sur 'SCORE' pour vérifier le graphique. Lorsqu'il est correct, cliquer sur le bouton 'soumettre les réponses'.  
+
+$BR  Lorsque le graphique est presque correct (peu de parties en rouge), cliquer sur le bouton 'SMOOTH' peut améliorer la situation.
+
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+#
+#  Answers
+#
+## answer evaluators
+
+NAMED_ANS('answerBox'=>$ans->cmp());
+
+COMMENT("Ce problème fait appel à l'application Flash. Cliquez sur 'try it' pour voir ce qui s'affichera pour l'étudiant.");
+
+ENDDOCUMENT();       

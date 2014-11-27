@@ -1,0 +1,98 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Limite d'une forme indéterminée)
+## Modifié par Julie Tremblay, collège BdeB, nov 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/Rochester/setLimitsRates3Infinite/ur_lr_3_13.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Limits at infinity, horizontal and oblique asymptotes)
+## ZInstitution(ASU)
+## ZMLT(liminfrootsaddsubt)
+## ZMLTleader(1)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a=non_zero_random(-10, 10);
+
+$f = Formula("sqrt(x^2+$a*x+1) -x")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Évaluer les limites suivantes. Au besoin, entrer ${BBOLD}inf${EBOLD} pour \( \infty \) et ${BBOLD}-inf ${EBOLD}  pour \( -\infty \).
+$PAR
+a) \( \displaystyle \lim_{x \rightarrow \infty} \left( $f\right) = \) \{ ans_rule(10) \}
+
+$PAR
+b) \(   \displaystyle  \lim_{x \rightarrow -\infty} \left( $f \right) = \) \{ ans_rule(10) \}
+END_TEXT
+Context()->normalStrings;
+
+$ans1=Compute("$a/2");
+$ans2=Compute("inf");
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+
+$fconj = Formula("sqrt(x^2+$a*x+1) + x")->reduce;
+$poly = Formula("x^2+$a*x+1")->reduce;
+$poly2 = Formula("$a*x+1")->reduce;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+a) 
+\[
+\begin{array}{ll} \lim_{x\to \infty} \left( $f\right) & \\
+= \lim_{x\to \infty}\frac{ \left($f\right)}{1}\frac{\left( $fconj \right)}{$fconj}&\text{; multiplier par le conjugué}\\
+= \lim_{x\to \infty}\frac{ \cancel{x^2}+$poly2 - \cancel{x^2} }{$fconj} &;\; (a-b)(a+b)=a^2-b^2\\
+= \lim_{x\to \infty}\frac{ $poly2 }{\sqrt{ x^2\left(1 + \frac{$a}{x}+\frac{1}{x^2}\right) } + x} &\text{; mise en évidence de }x^2\text{ dans la racine}\\
+= \lim_{x\to \infty}\frac{ $poly2 }{x\sqrt{1+\frac{$a}{x}+\frac{1}{x^2} } + x } &;\; \sqrt{x^2}=|x|=x\text{ car } x > 0\text{ étant donné que }x\to\infty\\
+= \lim_{x\to \infty}\frac{ x\left($a + \frac{1}{x}\right) }{ x\left( \sqrt{1+\frac{$a}{x}+\frac{1}{x^2} } + 1 \right)} &\text{; mise en évidence de }x \\
+= \lim_{x\to \infty}\frac{ $a + \frac{1}{x} }{\sqrt{ 1 + \frac{$a}{x}+\frac{1}{x^2} } + 1 }&\text{; simplification de }x\\
+= \frac{ $a + 0}{\sqrt{ 1+0+0 } + 1} &;\; \lim_{x\to\infty} \frac{c}{x^n}=0\\ 
+= \frac{$a}{2} &\end{array}
+\]
+$PAR
+b)
+\[
+\begin{array}{ll} \lim_{x\to -\infty} \left( $f\right) & \\
+= \lim_{x\to -\infty} \left( \sqrt{ x^2\left(1 + \tfrac{$a}{x}+\tfrac{1}{x^2}\right) } - x \right) &\text{; mise en évidence de }x^2\text{ dans la racine}\\
+= \lim_{x\to -\infty} \left( -x\sqrt{1+\tfrac{$a}{x}+\tfrac{1}{x^2} } -  x \right) &;\; \sqrt{x^2}=|x|=-x\text{ car } x < 0\text{ étant donné que }x\to-\infty\\
+= \lim_{x\to -\infty} -x \left( \sqrt{1+\tfrac{$a}{x}+\tfrac{1}{x^2} } + 1 \right) &\text{; mise en évidence de }-x \\
+= \infty &;\;-(-\infty) (\sqrt{1+0+0} +1 ) = \infty\cdot(2) \end{array}
+\]
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+
+ENDDOCUMENT();

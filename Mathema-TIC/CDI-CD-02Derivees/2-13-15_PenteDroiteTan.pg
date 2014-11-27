@@ -1,0 +1,75 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Pente et droite tangente)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UVA-Stew5e/setUVA-Stew5e-C03S04-DerivsTrig/3-4-25.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Product rule (with trigonometric functions))
+## ZDate(6/3/2002)
+## ZInstitution(ASU)
+## ZAuthor(Jeff Holt)
+## ZLevel(4)
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a1 = random(2,6,1);
+
+@trig = ( "cos(x)", "sin(x)" );
+@y1latex = ("-$a1 \pi","0");
+@y1 = (-$a1*pi, 0);
+
+### choix de la fonction
+$i = random(0,1,1);
+
+$f = Formula("$a1*x*$trig[$i]")->reduce;
+
+
+$m1 = $f->D('x')->eval(x=>"pi");
+$b = $y1[$i]-$m1*pi;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Trouver l'équation de la droite tangente à la courbe
+ \[ y =   $f  \]
+au point \( ( \pi ,$y1latex[$i] ) \).
+$PAR
+L'équation de la droite tangente à la courbe peut s'écrire sous la forme \( y = mx+b \), où
+$PAR
+\( m = \) \{ans_rule(20) \}
+$PAR
+et \( b = \) \{ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($m1->cmp);
+ANS(Real("$b")->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

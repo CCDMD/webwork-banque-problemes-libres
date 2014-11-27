@@ -1,0 +1,102 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Extremums absolus)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UVA-Stew5e/setUVA-Stew5e-C04S01-MaxMinValues/4-1-64.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Global extrema)
+## ZDate(5/29/2005)
+## ZInstitution(UVA)
+## ZAuthor(Jeff Holt)
+## ZMLT(GlobalExtremes_ExpNegExp)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+
+
+
+
+
+Context()->strings->add(aucun=>{});
+
+$a = random(6,10,1);
+$b = random(2,5,1);
+
+$p1 = random(0,1,0.5);
+$p2 = random(2,3,0.5);
+
+$f = Formula("e^(-$a*x) - e^(-$b*x)")->reduce;
+
+$x0 = (ln($a/$b))/($a-$b);
+
+$yp1 = $f->eval(x=>"$p1");
+$yp2 = $f->eval(x=>"$p2");
+$yx0 = $f->eval(x=>"$x0");
+
+
+if ($x0 < $p2 && $x0 > $p1) {
+    $ansmin = $yx0;
+    if ($yp1 > $yp2) {
+        $ansmax = $yp1;
+    }
+    else {
+        $ansmax = $yp2;
+    }
+}
+else {
+    if ($yp1 > $yp2) {
+        $ansmax = $yp1;
+        $ansmin = $yp2;
+    }
+    else {
+        $ansmax = $yp2;
+        $ansmin = $yp1;
+    }
+}
+
+
+$showPartialCorrectAnswers = 1;
+
+Context()->texStrings;
+BEGIN_TEXT
+Trouver la valeur \(y\) du maximum absolu et du minimum absolu de la fonction
+\[  f(x) = $f   \]
+dans l'intervalle \([$p1,$p2]\).
+$BR
+Entrer ${BBOLD}aucun$EBOLD lorsqu'il n'y a pas de maximum ou de minimum absolu.
+$PAR
+Maximum absolu = \{ans_rule(20)\}
+$BR
+$BR
+Minimum absolu = \{ans_rule(20)\}
+
+$BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($ansmax->cmp);
+ANS($ansmin->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

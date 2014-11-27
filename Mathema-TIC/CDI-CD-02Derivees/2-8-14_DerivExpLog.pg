@@ -1,0 +1,83 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions exponentielles et logarithmiques)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/Michigan/Chap3Sec6/Q27.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Derivatives of logarithmic functions)
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS()
+## Level(2)    
+## Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+ 
+Context("Numeric");
+Context()->variables->add( z=>'Real' );
+Context()->flags->set( limits=>[0.1,5] );
+
+Context()->flags->set(useBaseTenLog=>1);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,15,1);
+$b = random(2,9,1);
+
+$f = Formula("$a/ln($b*z)");
+
+$Df = Compute("-$a/(z*ln($b*z)^2)")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Déterminer la dérivée de la fonction suivante.
+ \[ f(z) = $f\]
+
+$PAR
+\( f'(z) = \) \{ ans_rule(65) \}
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Df->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+On peut écrire \( $f = $a\left(\ln($b z)\right)^{-1} \), de sorte qu'en appliquant la règle de dérivation en chaîne :
+
+\[\begin{array}{ll}
+ f'(z) &= -$a\left(\ln($b z)\right)^{-2}\cdot\left(\ln($b z)\right)'\\
+ &= -$a\left(\ln($b z)\right)^{-2} \cdot\left( \frac{$b}{$b z} \right) \\
+ &= \frac{-$a}{(\ln($b z))^2} \cdot\left( \frac{\cancel{$b}}{\cancel{$b} z} \right)\\
+ &= $Df \end{array}
+ \]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

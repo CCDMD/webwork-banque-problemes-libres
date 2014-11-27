@@ -1,0 +1,160 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Concavité d’une fonction, points d'inflexion)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/4_Applications_of_the_Derivative/4.4_The_Shape_of_a_Graph/4.4.47.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Summary of curve sketching)
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Ned W. Hummel)
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+
+DOCUMENT();
+
+
+loadMacros(
+  "PGstandard.pl",
+ # "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+
+################# Setting up the problem goes here.
+### Book
+
+
+$a = random(1,4);
+$b = list_random(-2,2);
+$c = sqrt($a);
+$c = 2;
+
+$realsmall = 0.001;
+
+$f = Formula("$c*x + $b*sin(x)")->reduce;
+
+$test = floor($c)-$c;
+if( $test == 0 ) {
+$flatex = $f->TeX;
+} else {
+$flatex = "\sqrt{$a}x + $b\sin(x)";
+}
+
+$df = $f->D('x')->reduce;
+$ddf = $df->D('x')->reduce;
+
+$v = -$c/$b;
+
+$cp1 = Real("acos($v)");
+$cp2 = Real("2*pi-$cp1");
+$cp3 = Real("pi");
+
+if($cp1 == $cp2) {
+$critical_points = List($cp1);
+} else {
+$critical_points = List($cp1,$cp2);
+}
+
+$inflection_points = List($cp3);
+
+$sgn_int1_ddf = Real(sgn($ddf->eval(x=>$cp3-$realsmall)));
+
+if( $sgn_int1_ddf > 0 ) {
+$int_ch = Interval("(0,$cp3)");
+$int_cb = Interval("($cp3,2*pi)");
+} else {
+$int_cb = Interval("(0,$cp3)");
+$int_ch = Interval("($cp3,2*pi)");
+}
+
+# evaluate f'' on the critical points to test for max/min
+$cp1_ddf = $ddf->eval(x=>$cp1);
+$cp2_ddf = $ddf->eval(x=>$cp2);
+
+
+if($cp1_ddf < 0){
+  $cp1_max = "maximum relatif";
+}
+elsif($cp1_ddf > 0){
+  $cp1_max = "minimum relatif";
+}
+else{
+$cp1_max = "échec du test";
+}
+
+
+if($cp1 == $cp2) {
+$cp2_max = "une seule valeur critique";
+} 
+elsif($cp2_ddf < 0){
+  $cp2_max = "maximum relatif";
+}
+elsif($cp2_ddf > 0){
+  $cp2_max = "minimum relatif";
+}
+else {
+$cp2_max = "échec du test";
+}
+
+
+
+### créer les menus et réponses
+
+$menu_cp1_max = PopUp(["?", "maximum relatif", "minimum relatif", "échec du test"],$cp1_max);
+$menu_cp2_max = PopUp(["?", "maximum relatif", "minimum relatif", "échec du test","une seule valeur critique"],$cp2_max);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Déterminer les intervalles ouverts où \( f \) est concave vers le haut ou vers le bas, les points d'inflexion et les valeurs critiques, puis indiquer 
+si chaque valeur critique correspond à un maximum relatif, un minimum relatif ou ni l'un ni l'autre.
+Soit \[f(x) = $flatex, 0 $LTE x $LTE 2 \pi\]
+$PAR 
+\(f\) est concave vers le haut sur  \{ ans_rule(30) \} (en notation d'intervalles)
+$BR \(f\) est concave vers le bas sur  \{ ans_rule(30) \}
+$PAR 
+Les points d'inflexion se situent en \(x = \) \{ans_rule(30)\}
+$PAR
+Les valeurs critiques se situent en \(x = \) \{ans_rule(30)\}
+$BR
+${BBOLD}Note :${EBOLD} Pour les deux questions précédentes, la réponse peut être une liste de valeurs de \( x\)  séparées par des virgules.
+
+$PAR
+Le test de la dérivée seconde révèle l'information suivante sur la première valeur critique : \{ $menu_cp1_max->menu() \}.
+$BR
+Le test de la dérivée seconde révèle l'information suivante sur la deuxième valeur critique : \{ $menu_cp2_max->menu() \}.
+
+END_TEXT
+
+######################## Answer starts here.
+
+Context()->normalStrings;
+
+ANS($int_ch->cmp);
+ANS($int_cb->cmp);
+
+ANS($inflection_points->cmp);
+ANS($critical_points->cmp);
+
+ANS($menu_cp1_max->cmp);
+ANS($menu_cp2_max->cmp);
+
+ENDDOCUMENT();

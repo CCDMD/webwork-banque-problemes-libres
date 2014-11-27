@@ -1,0 +1,79 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Valeurs critiques d’une fonction)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UVA-Stew5e/setUVA-Stew5e-C04S01-MaxMinValues/4-1-43.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Increasing/decreasing functions and local extrema)
+## ZDate(5/29/2005)
+## ZInstitution(UVA)
+## ZAuthor(Jeff Holt)
+## ZMLT(find_crit_nums_Rad)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"PGcourse.pl",
+"answerHints.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(aucune=>{});
+
+do {
+$a = random(1,8);
+$b = random(2,13);
+} until ($a < $b && gcd($a,$b)==1);
+
+$c = ($a**2)/($a+2*$b);
+
+$showHint = 5;
+
+BEGIN_TEXT
+Déterminer les valeurs critiques de la fonction 
+\[ f(x) = x^{$a/$b} (x-$a)^2 \]
+et les énumérer dans la case ci-dessous (en les séparant par des virgules). 
+S'il n'y a pas de valeur critique, entrer ${BBOLD}aucune${EBOLD}.
+$PAR
+Liste des valeurs critiques :\{ans_rule(30) \}
+$HR
+Un indice sera donné après $showHint essais.
+END_TEXT
+
+$ans = Compute("$c,$a,0");
+ANS($ans->cmp);
+
+$e1 = $b-$a;
+$e2 = $a + 2*$b;
+$e3 = $a*$a;
+
+Context()->texStrings;
+BEGIN_HINT
+Voici la dérivée première de \(f(x)= x^{$a/$b} (x-$a)^2  \) sous sa forme simplifiée et factorisée.
+$BR
+\[f'(x) = \frac{$a}{$b}x^{-$e1/$b}(x-$a)^2 + 2x^{$a/$b}(x-$a) = \frac{(x-$a)($e2 x - $e3)}{$b x^{$e1/$b}}\]
+
+END_HINT
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

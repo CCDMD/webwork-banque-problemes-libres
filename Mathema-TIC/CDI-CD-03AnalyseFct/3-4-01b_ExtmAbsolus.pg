@@ -1,0 +1,93 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Extremums absolus)
+## Author(Julie Tremblay)
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+
+DOCUMENT();
+
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+#"unionTables.pl",
+"PGcourse.pl",  
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(N=>{});
+Context()->noreduce('(-x)*y');
+
+$a=non_zero_random(1,7);
+$b=non_zero_random(-6,6);
+
+$aa = $a*$a;
+
+$sg=random(-2,2,4);
+
+$f = Formula("$sg*sqrt($aa-(x-$b)^2)")->reduce;
+
+if($sg == 2) { 
+$xmax1abs = Real("$b");
+$ymax1abs = Real("$sg*$a");
+$xmax2abs = Compute("N");
+$ymax2abs = Compute("N");
+$xmin1abs = Real("$b-$a");
+$ymin1abs = Real("0");
+$xmin2abs = Real("$b+$a");
+$ymin2abs = Real("0");
+} else {
+$xmin1abs = Real("$b");
+$ymin1abs = Real("$sg*$a");
+$xmin2abs = Compute("N");
+$ymin2abs = Compute("N");
+$xmax1abs = Real("$b-$a");
+$ymax1abs = Real("0");
+$xmax2abs = Real("$b+$a");
+$ymax2abs = Real("0");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$PAR
+Trouver les maximums et minimums absolus de \( f(x)= $f\). S'il y en a plusieurs, ordonner les points par ordre croissant de la coordonnée en \(x\).  Entrer N dans chaque case réponse inutilisée.
+$PAR
+Maximums absolus 
+$BR
+\(x =\) \{ans_rule(10)\}  \(y =\) \{ans_rule(10)\}
+$BR
+\(x =\) \{ans_rule(10)\}  \(y =\) \{ans_rule(10)\}
+$PAR
+Minimums absolus 
+$BR
+\(x =\) \{ans_rule(10)\}  \(y =\) \{ans_rule(10)\}
+$BR
+\(x =\) \{ans_rule(10)\}  \(y =\) \{ans_rule(10)\} 
+END_TEXT
+Context()->normalStrings;
+
+ANS($xmax1abs->cmp);
+ANS($ymax1abs->cmp);
+ANS($xmax2abs->cmp);
+ANS($ymax2abs->cmp);
+ANS($xmin1abs->cmp);
+ANS($ymin1abs->cmp);
+ANS($xmin2abs->cmp);
+ANS($ymin2abs->cmp);
+
+
+ENDDOCUMENT();

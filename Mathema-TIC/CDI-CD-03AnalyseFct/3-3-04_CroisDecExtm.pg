@@ -1,0 +1,110 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Croissance, décroissance d’une fonction et extremums relatifs)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/ASU-topics/setFirstDerivative/4-2-65.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Increasing/decreasing functions and local extrema)
+## ZInstitution(ASU)
+## ZMLT(INF_average_local_Rat)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"AnswerFormatHelp.pl",
+"PGcourse.pl",
+"answerHints.pl",
+);
+
+$a = random(2,9)*random(-1,1,2);
+$b = random(1,9);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$vc1 = 2*$b;
+
+$showHint = 5;
+
+BEGIN_TEXT
+Soit
+\[ f(x) = \frac{$a x^2}{x - $b}  \]
+$BR
+A) À l'aide de la notation d'intervalles, indiquer le ou les intervalles de croissance de \( f(x) \).
+$BR
+Croissance : \{ans_rule(25)\} \{ AnswerFormatHelp("intervals") \}
+$PAR
+B) À l'aide de la notation d'intervalles, indiquer le ou les intervalles de décroissance de \( f(x) \).
+$BR
+Décroissance : \{ans_rule(25)\}
+$PAR
+C) Trouver la valeur \(x\) de chaque maximum relatif de
+\(f\). S'il n'y a pas de maximum relatif, entrer ${BBOLD}aucun${EBOLD}.
+$BR
+Valeur \(x\) de chaque maximum relatif : \{ans_rule(7)\}
+$PAR
+D) Trouver la valeur \(x\) de chaque minimum relatif de
+\(f\). S'il n'y a pas de minimum relatif, entrer ${BBOLD}aucun${EBOLD}.
+$BR
+Valeur \(x\) de chaque minimum relatif : \{ans_rule(7)\}
+$HR
+Un indice sera donné après $showHint essais.
+END_TEXT
+
+Context("Interval");
+Context()->strings->add(aucun=>{});
+
+if( $a > 0 ){
+$C = Compute("(-inf,0)U($vc1,inf)");
+$D = Compute("(0,$b)U($b,$vc1)");
+$max = Real("0");
+$min = Real("$vc1");
+} else {
+$D = Compute("(-inf,0)U($vc1,inf)");
+$C = Compute("(0,$b)U($b,$vc1)");
+$min = Real("0");
+$max = Real("$vc1");
+}
+
+
+
+ANS($C->cmp);
+ANS($D->cmp);
+ANS($max->cmp);
+ANS($min->cmp);
+
+$b2 = 2*$b;
+
+Context()->texStrings;
+BEGIN_HINT
+Voici la dérivée première de \(f(x)= \frac{$a x^2}{x - $b}   \) sous sa forme simplifiée et factorisée.
+$BR
+\[f'(x) = \frac{$a x(x-$b2)}{(x - $b)^2}  \]
+
+END_HINT
+Context()->normalStrings;
+
+COMMENT('Les bornes (extrémités) sont exclues dans les réponses des intervalles de croissance et décroissance. Pour inclure les bornes, créer une nouvelle 
+version du problème.');
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

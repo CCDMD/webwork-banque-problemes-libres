@@ -1,0 +1,96 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions trigonométriques)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UCSB/Stewart5_3_5/Stewart5_3_5_25.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Derivatives involving multiple rules (all rules))
+## ZInstitution(UCSB)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();
+
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$a=random(2,10,1);
+$b=random(2,10,1);
+
+Context()->variables->are(z=>'Real');
+@trig = ("sin(z)","cos(z)");
+$i = random(0,1);
+
+$g = Formula("(z-$a)/(z+$a)")->reduce;
+$f = Formula("$trig[$i]")->substitute(z=>"$g");
+
+
+#### Créer la dérivée de f 
+if($i==0) {
+$s = 1;
+} else { $s = -1; }   ### (cos(x))' = -sin(x)
+
+### choisir la dérivée de $trig[$i] et substituer la fonction g
+$j = ($i+1)%2;
+$Dtrig = Formula("$s*$trig[$j]")->substitute(z=>"$g")->reduce; 
+
+$c1 = 2*$a;
+
+$Df = Formula("$c1*$Dtrig/(z+$a)^2")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BR
+Dériver  
+\[ f(z) = $f .\]
+
+$PAR
+
+\(f'(z)=\) \{ans_rule(60)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Df->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+\[
+\begin{array}{ll} f'(z) &= \left( $f   \right)' \\
+&= $Dtrig \left( $g \right)' \\
+&= $Dtrig \left( \frac{(z+$a) - (z-$a)}{ (z+$a)^2} \right) \\
+&= $Dtrig \left( \frac{\cancel{z} + $a - \cancel{z} + $a}{ (z+$a)^2} \right)\\
+&= $Dtrig \left( \frac{$c1}{ (z+$a)^2} \right) \\
+&= $Df
+\end{array}
+
+\]
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

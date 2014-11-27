@@ -1,0 +1,127 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Limite d'une fonction exponentielle ou logarithmique)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:
+## ZAuthor('Gavin LaRose');
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Estimating limits numerically)
+## ZInstitution(University of Michigan)
+## ZMLT(limit_numerical_fill_table_and_guess)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS('limite','fonction exponentielle','dérivée')
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"parserMultiAnswer.pl",
+"PGgraphmacros.pl",
+# "PGcourse.pl",
+);
+
+Context("Numeric");
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,5,1);
+$func = Compute("($a^x - 1)/x");
+
+@vals = ();
+foreach my $x ( -0.1, -0.01, -0.001, -0.0001, 0.0001, 0.001, 0.01, 0.1 ) {
+    push( @vals, $func->eval( x=>$x ) );
+}
+
+$limit = Compute("ln($a)")->with( tolType=>'absolute', tolerance=>0.01 );
+
+## the window with height 0.02 that gives f(x) entering and leaving on
+##    the sides must be [-delta, delta], where we pick delta so
+##    that f(delta) = a - 0.01 (if our window is [a - 0.01, a + 0.01])
+##    or f(delta) = a - 0.02 (if our window is [a - 0.02, a]).
+
+
+# new version: f(x) ~ ln(a) + (ln(a))^2 x/2 + ln(a)^3 x^2/6, so we can
+#    guess that our delta is
+# $delta0 = .02/(log($a))**2;  # linear approximation
+$loga = log($a);
+$delta0n = (-15*$loga + sqrt(3)*sqrt(-2*$loga + 75*$loga*$loga)) /
+    (10*$loga*$loga);
+$delta0p = (-15*$loga + sqrt(3)*sqrt(2*$loga + 75*$loga*$loga)) /
+    (10*$loga*$loga);
+$delta0 = .5*($delta0p - $delta0n);
+
+$y0 = Compute("ln($a) - .01");
+$y1 = Compute("ln($a) + .01");
+
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit la fonction \(f(x) = \displaystyle $func\).
+$PAR
+${BBOLD}a)$EBOLD
+Remplir le tableau des différentes valeurs de \(f(x)\) (arrondir vos réponses au millième près) :
+$BR
+\{ begintable(9) \}
+\{ row( "\(x =\)", "-0.1", "-0.01", "-0.001", "-0.0001", "0.0001", "0.001",
+	"0.01", "0.1" ) \}
+\{ row( "\(f(x) = \)", ans_rule(5), ans_rule(5), ans_rule(5), ans_rule(5),
+	ans_rule(5), ans_rule(5), ans_rule(5), ans_rule(5) ) \}
+\{ endtable() \}
+
+$PAR
+
+${BBOLD}b)$EBOLD
+D'après le tableau des valeurs de \(f(x)\), quelle serait la limite de la fonction lorsque \(x\) tend vers zéro?
+$PAR
+\(\displaystyle\lim\limits_{x\to0}\,$func = \) \{ ans_rule(10) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $vals[0]->cmp() );    ANS( $vals[1]->cmp() );
+ANS( $vals[2]->cmp() );	   ANS( $vals[3]->cmp() );
+ANS( $vals[4]->cmp() );	   ANS( $vals[5]->cmp() );
+ANS( $vals[6]->cmp() );	   ANS( $vals[7]->cmp() );
+
+ANS( $limit->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+${BBOLD}a)$EBOLD
+Les valeurs de \(f(x)\) sont
+$PAR
+\{ begintable(9) \}
+\{ row( "\(x =\)", "-0.1", "-0.01", "-0.001", "-0.0001", "0.0001", "0.001",
+	"0.01", "0.1" ) \}
+\{ row( "\(f(x) = \)", $vals[0], $vals[1], $vals[2], $vals[3],
+	$vals[4], $vals[5], $vals[6], $vals[7] ) \}
+\{ endtable() \}
+$PAR
+
+${BBOLD}b)$EBOLD
+D'après les valeurs du tableau, la limite serait égale à \($limit\), ce qui est une valeur très proche de \(\ln($a)\).
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Uses MathObjects');
+
+ENDDOCUMENT();

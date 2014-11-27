@@ -1,0 +1,118 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Pente et droite tangente)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UCSB/Stewart5_3_4/Stewart5_3_4_29.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Derivatives of trigonometric functions)
+## ZInstitution(UCSB)
+## ZLevel(4)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$a=random(1,10,1)*random(-1,1,2);
+$b=random(1,10,1)*random(-1,1,2);
+$c=random(1,10,1)*random(-1,1,2);
+
+#### Les solutions peuvent être tous les angles multiples de 30°
+#### Choix de la fonction trigo dans la dérivée
+@Dfct = (Formula("2*sin(x)")->reduce,Formula("2*cos(x)")->reduce);
+@fct = ( Formula("-2*cos(x)")->reduce,Formula("2*sin(x)")->reduce);
+$a = random(0,1);
+
+### la constante
+@c = (1,-1, sqrt(3), -sqrt(3) );
+
+
+### choix de la constante
+$i = random(0,3);
+
+
+### coordonnées
+$v = Formula("$c[$i]/2")->reduce;
+
+
+if( $a == 0) {   ## fct = sin
+
+$ans1 = Real("asin($v)");
+$ans2 = Real("pi - asin($v)");
+
+if($ans1 < 0) {  ### angle doit être entre 0 et 2pi
+$ans1 = Real("2*pi + $ans1");
+}
+
+} else {   ### fct = cos  
+
+$ans1 = Real("acos($v)");
+$ans2 = Real("2*pi - acos($v)");
+
+}
+
+$ans = Compute("$ans1,$ans2");
+
+if( $c[$i] == sqrt(3) ) {
+$c[$i] = "\sqrt{3}";
+$p =  "\sqrt{3}x";
+} elsif( $c[$i] == -sqrt(3) ) {
+$c[$i] = "-\sqrt{3}";
+$p = "-\sqrt{3}x";
+} elsif( $c[$i] == -1 ) {
+$p = "-x";
+} else {  ### c=1
+$p = "x";
+}
+
+$Df = $Dfct[$a]->TeX."- $c[$i]";
+$f = $fct[$a]->TeX."- $p";
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BR
+
+Pour quelles valeurs de \(x\) dans l'intervalle \([0, 2\pi[\) la courbe \(f(x)= $f \)  a-t-elle une tangente horizontale? 
+Entrer les valeurs de \(x\) ci-dessous, en les séparant par des virgules.
+$PAR
+${BBOLD}Note${EBOLD} : Une réponse doit être la valeur exacte écrite sous la forme d'une fraction ou d'une expression arithmétique. Elle ne doit pas être écrite avec des décimales ou 
+à l'aide des fonctions trigonométriques inverses.
+
+$PAR
+
+\(x=\)\{ans_rule(40)\}
+
+END_TEXT
+Context()->normalStrings;
+
+Context()->functions->disable("Trig");
+
+ANS($ans->cmp);
+
+
+ENDDOCUMENT();

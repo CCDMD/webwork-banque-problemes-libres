@@ -1,0 +1,79 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Pente et droite tangente)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/OSU/high_school_apcalc/dchmwk3/prob1.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Definition of the derivative)
+## ZInstitution(OSU)
+## ZLevel(4)
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "PGauxiliaryFunctions.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a1 = random(2,4,1);
+$b1 = random(2,7,1);
+$c1 = random(2,7,1);
+$x1 = random(-5,5,1);
+
+$f = Formula("$a1 x^2 + $b1 x + $c1")->reduce;
+$y1 = $f->eval(x=>"$x1");
+$df = $f->D('x');
+$m1 = $df->eval(x=>"$x1");
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \( f(x) = $f \). Calculer \( f'( $x1 ) \) en utilisant la définition de la dérivée.
+$PAR
+\( f'( $x1 ) \) est la limite lorsque \(x\to\) \{ans_rule()\} $BR
+de l'expression \{ans_rule(40)\}.
+$PAR
+La valeur de cette limite est \{ans_rule(20)\}.
+$PAR
+Utiliser ce résultat pour déterminer la pente de la droite tangente à la parabole
+ \( y = $f \)
+au point \( ( $x1 , $y1 ) \).
+L'équation de la droite tangente peut s'écrire sous la forme
+$BR
+\( y = \) \{ans_rule(40)\}
+END_TEXT
+Context()->normalStrings;
+
+$ans1 = Real($x1);
+$ans2 = Compute("($a1*x**2 + $b1*x + $c1 - $y1)/(x - $x1)")->reduce;
+$ans3 = $m1;
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+
+$ord = $y1 -$m1*$x1;
+$ans4 = Formula("$m1*x + $ord")->reduce;
+ANS($ans4->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

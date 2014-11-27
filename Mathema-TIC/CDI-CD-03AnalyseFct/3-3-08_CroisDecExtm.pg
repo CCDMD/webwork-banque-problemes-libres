@@ -1,0 +1,129 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Croissance, décroissance d’une fonction et extremums relatifs)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UMN/calculusStewartCCC/s_2_8_3.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Increasing/decreasing functions and local extrema)
+## ZDate(09/27/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(graph_of_fprime)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+  "PGcourse.pl", 
+);
+#####################################################################
+
+TEXT(beginproblem());
+
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+$refreshCachedImages = 1;
+
+#####################################################################
+
+Context("Numeric");
+
+# Let students type "EmptySet" instead of "NONE"
+Context()->constants->add(EmptySet => Set());
+Context()->flags->set(noneWord=>"EmptySet");
+
+$c = random(3,4,1);
+
+if ($c==4){
+$d = Compute("0.054");
+}
+else{
+$d = Compute("0.12");
+}
+
+$a = random(-4,-3,1);
+$b = random(-2,-1,1);
+
+Context("Interval");
+
+# Let students type "EmptySet" instead of "NONE"
+Context()->constants->add(EmptySet => Set());
+Context()->flags->set(noneWord=>"EmptySet");
+
+$an1 = Interval("(-infinity,$a)");
+$an2 = Interval("($b,0)");
+$an3 = Interval("($c, infinity)");
+
+$an4 = Interval("($a, $b)");
+$an5 = Interval("(0,$c)");
+
+$ans1 = Union("$an1 U $an2 U $an3");
+$ans2 = Union("$an4 U $an5");
+
+###############################################################
+
+$w = 400;  # graph size
+$tw = 500; # graph size in TeX
+
+$graph1 = init_graph(-6,-6,6,6,'axes'=>[0,0],'ticks'=>[12,12],'grid'=>[12,12],'size'=>[500,500]);
+
+$p1 = FEQ("($d)*x(x-$a)(x-$b)(x-$c) for x in <-6,-3> using color:blue weight:2");
+$p2 = FEQ("($d)*x(x-$a)(x-$b)(x-$c) for x in <-3,3> using color:blue weight:2");
+$p3 = FEQ("($d)*x(x-$a)(x-$b)(x-$c) for x in <3,6> using color:blue weight:2");
+
+$graph1->lb( new Label(1.5,4.5,"f'(x)",'blue','center','middle'));
+
+plot_functions($graph1,$p1,$p2,$p3);
+
+
+###############################################################
+Context()->texStrings;
+
+BEGIN_TEXT
+Voici le graphique de la $BITALIC dérivée $EITALIC \(f'\) d'une certaine fonction \(f\).  En supposant que le graphique se prolonge de la même manière lorsque  \(x\) tend vers l'infini positif ou vers l'infini négatif, répondre aux questions suivantes.
+$PAR
+$BCENTER
+\{image(insertGraph($graph1),width=>$w,height=>$w,tex_size=>$tw)\}
+$ECENTER
+$HR
+$BBOLD 1. $EBOLD Sur quels intervalles la fonction \(f\) est-elle croissante? $BR
+Réponse (notation d'intervalles) : \{ans_rule(30)\} $PAR
+$BBOLD 2. $EBOLD Sur quels intervalles la fonction \(f\) est-elle décroissante? $BR
+Réponse (notation d'intervalles) : \{ans_rule(30)\} $PAR
+$HR
+$BBOLD Note : $EBOLD $BITALIC Cliquer sur le graphique pour agrandir l'image.$EITALIC
+$HR
+END_TEXT
+
+Context()->normalStrings;
+
+#####################################################################
+
+ANS( $ans1->cmp );
+ANS( $ans2->cmp );
+
+COMMENT('Les bornes (extrémités) sont exclues dans les réponses des intervalles de croissance et décroissance. Pour inclure les bornes, créer une nouvelle 
+version du problème.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

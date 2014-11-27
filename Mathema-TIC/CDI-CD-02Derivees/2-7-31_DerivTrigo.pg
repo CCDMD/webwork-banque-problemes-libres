@@ -1,0 +1,65 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions trigonométriques)
+## Modifié par Julie Tremblay, collège BdeB, nov 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/UCSB/Stewart5_3_5/Stewart5_3_5_35.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Chain rule (with trigonometric functions))
+## ZInstitution(UCSB)
+## ZMLT(diff_chr_trig_fn_trig_and_power)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS()
+## Level(2)    
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+ # "PGcourse.pl", 
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+@trig1 = ("sec(x)","csc(x)");
+@trig2 = ("tan(x)","cot(x)");
+
+### choisir le couple de fonctions trigos
+$i = random(0,1);
+
+$f = Formula("($trig1[$i])^2 + ($trig2[$i])^2")->reduce;
+
+if($i==0) { $sign = 1;}
+else {$sign = -1;}
+
+$Df = Formula("$sign*4*$trig2[$i]*$trig1[$i]^2")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BR
+Dériver \[ y =  $f\]
+
+$BR
+
+\(y'=\) \{ans_rule(60)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Df->cmp);
+
+ENDDOCUMENT();

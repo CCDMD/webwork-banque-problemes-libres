@@ -1,0 +1,152 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Croissance, décroissance d’une fonction et extremums relatifs)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UMN/calculusStewartCCC/s_2_8_4.pg
+## DBsubject(Calculus - single variable)
+## DBchapter(Applications of differentiation)
+## DBsection(Increasing/decreasing functions and local extrema)
+## Date(10/07/2010)
+## Institution(University of Minnesota)
+## Author(Justin Sukiennik)
+## MLT(graph_of_fprime)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+  "PGcourse.pl", 
+);
+#####################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 0;
+$refreshCachedImages = 1;
+
+#####################################################################
+
+Context("Numeric");
+
+# Let students type "EmptySet" instead of "NONE"
+Context()->constants->add(EmptySet => Set());
+Context()->flags->set(noneWord=>"EmptySet");
+
+$a = random(-1,1,2);
+
+Context("Interval");
+# Let students type "EmptySet" instead of "NONE"
+Context()->constants->add(EmptySet => Set());
+Context()->flags->set(noneWord=>"EmptySet");
+
+if ($a==1){
+$an2a = Interval("(-6,-5)");
+$an2b = Interval("(-3,-1)");
+$an2c = Interval("(1,3)");
+$an2d = Interval("(5,6)");
+
+$ans2 = Union("$an2a U $an2b U $an2c U $an2d");
+
+$an1a = Interval("(-5,-3)");
+$an1b = Interval("(-1,1)");
+$an1c = Interval("(3,5)");
+
+$ans1 = Union("$an1a U $an1b U $an1c");
+
+$ans4 = List(-5,-1,3);
+$ans3 = List(-3,1,5);
+}
+
+if ($a==-1){
+$an1a = Interval("(-6,-5)");
+$an1b = Interval("(-3,-1)");
+$an1c = Interval("(1,3)");
+$an1d = Interval("(5,6)");
+
+$ans1 = Union("$an1a U $an1b U $an1c U $an1d");
+
+$an2a = Interval("(-5,-3)");
+$an2b = Interval("(-1,1)");
+$an2c = Interval("(3,5)");
+
+$ans2 = Union("$an2a U $an2b U $an2c");
+
+$ans3 = List(-5,-1,3);
+$ans4 = List(-3,1,5);
+}
+
+###############################################################
+
+$w = 400;  # graph size
+$tw = 500; # graph size in TeX
+
+$graph1 = init_graph(-7,-7,7,7,'axes'=>[0,0],'ticks'=>[14,14],'grid'=>[14,14],'size'=>[500,500]);
+
+$p1 = FEQ("$a*12/(x+8)*sin(pi*x/2+pi/2) for x in <-6,-4> using color:blue weight:2");
+$p2 = FEQ("$a*12/(x+8)*sin(pi*x/2+pi/2) for x in <-4,0> using color:blue weight:2");
+$p3 = FEQ("$a*12/(x+8)*sin(pi*x/2+pi/2) for x in <0,3> using color:blue weight:2");
+$p4 = FEQ("$a*12/(x+8)*sin(pi*x/2+pi/2) for x in <3,6> using color:blue weight:2");
+
+$yg = 6*$a*sin(-5*pi/2);
+$yd = 6*$a/7*sin(7*pi/2);
+
+$graph1->lb( new Label(1.5,4.5,"f'(x)",'blue','center','middle'));
+$graph1->stamps( open_circle(-6,$yg,'blue') );
+$graph1->stamps( open_circle(6,$yd,'blue') );
+
+plot_functions($graph1,$p1,$p2,$p3,$p4);
+
+###############################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Voici le graphique de la $BBOLD dérivée $EBOLD \(f'\) d'une fonction  \(f\) définie $BBOLD dans l'intervalle \((-6,6)\) $EBOLD.  Répondre aux questions suivantes.
+$PAR
+$BCENTER
+\{image(insertGraph($graph1),width=>$w,height=>$w,tex_size=>$tw)\}
+$ECENTER
+$HR
+$BBOLD 1. $EBOLD Sur quels intervalles la fonction \(f\) est-elle croissante? $BR
+Réponse (notation d'intervalles) : \{ans_rule(30)\} $PAR
+$BBOLD 2. $EBOLD Sur quels intervalles la fonction \(f\) est-elle décroissante? $BR
+Réponse (notation d'intervalles) : \{ans_rule(30)\} $PAR
+$BBOLD 3. $EBOLD Pour quelles valeurs de \(x\) la fonction \(f\) a-t-elle un maximum relatif? $BR
+Réponse (séparer les valeurs par des virgules) : \(x = \) \{ans_rule(30)\} $PAR
+$BBOLD 4. $EBOLD Pour quelles valeurs de \(x\) la fonction \(f\) a-t-elle un minimum relatif?  $BR
+Réponse (séparer les valeurs par des virgules) : \(x = \) \{ans_rule(30)\} $PAR
+$HR
+$BBOLD Note : $EBOLD $BITALIC Cliquer sur le graphique pour agrandir l'image.$EITALIC
+$HR
+END_TEXT
+
+Context()->normalStrings;
+
+#####################################################################
+
+ANS( $ans1->cmp(showHints=>0,showTypeWarnings=>0,tolType=>'absolute',tolerance=>.3) );
+ANS( $ans2->cmp(showHints=>0,showTypeWarnings=>0,tolType=>'absolute',tolerance=>.3) );
+Context("Numeric");
+ANS( $ans3->cmp(showHints=>0,showTypeWarnings=>0,tolType=>'absolute',tolerance=>.2) );
+ANS( $ans4->cmp(showHints=>0,showTypeWarnings=>0,tolType=>'absolute',tolerance=>.2) );
+
+COMMENT('Les bornes (extrémités) sont exclues dans les réponses des intervalles de croissance et décroissance. Pour inclure les bornes, créer une nouvelle 
+version du problème.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

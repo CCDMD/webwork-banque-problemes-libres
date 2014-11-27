@@ -1,0 +1,97 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Concavité d’une fonction, points d'inflexion)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Union/setDervConcavity/4-3-49.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Concavity and points of inflection)
+## ZDate(8/23/07)
+## ZInstitution(ASU)
+## ZAuthor(K. Lesh)
+## ZMLT(Concavity_Polynomial_general)
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "alignedChoice.pl",      # for aligned answer blanks
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+Context()->strings->add(aucun=>{});
+
+$b = random(-1,1,2)*random(2,9,1);
+$c = random(2,9,1);
+$d = non_zero_random(-8,8,1);
+
+$f=Formula(" x^3 - $b x^2 + $c x + $d   ")->reduce;
+
+$PI = $b/3;
+
+
+$ccup=Interval("($PI,inf)" );
+$ccdn=Interval("(-inf,$PI)" );
+$xinflects=List("$PI");
+
+###################################
+#  Make an aligned list to present Q and A.
+###################################
+
+$al = new_aligned_list(ans_rule_len=>35, numbered=>1, tex_spacing=>"3pt", equals=>0);
+$al->qa(
+  "\(f\) est concave vers le haut sur ",    $ccup->cmp,
+  "\(f\) est concave vers le bas sur ",   $ccdn->cmp,
+  "Les points d'inflexion se situent en \(x\) = ",   $xinflects->cmp,
+);
+
+###################################
+# Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \[ f(x) = $f \]
+$BR
+Indiquer les intervalles ouverts où \( f \) est concave vers le haut ou vers le bas.  Puis, déterminer la coordonnée \( x\) de chaque point d'inflexion de \( f\).
+$PAR
+\{$al->print_q\}
+$BR
+$BBOLD Notes :$EBOLD
+Les réponses aux deux premières questions peuvent être un simple intervalle, une union d'intervalles, ou encore le mot ${BBOLD}aucun$EBOLD.
+$PAR
+À la dernière question, la réponse peut être une liste de valeurs de \( x\)  séparées par des virgules ou le mot ${BBOLD}aucun$EBOLD.
+
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+
+$showPartialCorrectAnswers = 1;
+ANS($al->correct_ans);
+
+###################################
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

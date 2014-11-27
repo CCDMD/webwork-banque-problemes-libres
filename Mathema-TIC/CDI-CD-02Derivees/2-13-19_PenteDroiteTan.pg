@@ -1,0 +1,67 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Pente et droite tangente)
+## Modifié par Julie Tremblay, collège BdeB, nov 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UCSB/Stewart5_3_5/Stewart5_3_5_51.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Chain rule (with trigonometric functions))
+## ZInstitution(UCSB)
+## ZLevel(4)
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+@trig = ("sin(x)","cos(x)");
+$i = random(0,2);
+
+$sign = random(-1,1,2);
+
+$f = Formula("2*$trig[$i] + $sign*sin(x)^2")->reduce;
+
+if( $i==0 ) { ### sin(x)
+$ans = Compute("pi/2,3*pi/2");
+} else {  ### cos(x)
+$ans = Compute("0,pi");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Déterminer tous les points où la courbe de \(f(x)= $f, \; 0 \leq x < 2 \pi \), a une tangente horizontale. Entrer les valeurs de \(x\) ci-dessous, en les séparant par des virgules.
+$PAR
+
+\(x =\) \{ans_rule(20)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($ans->cmp);
+
+ENDDOCUMENT();

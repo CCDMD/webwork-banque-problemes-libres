@@ -1,0 +1,103 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Croissance, décroissance d’une fonction et extremums relatifs)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Union/setDervIncreaseDecrease/4-2-59.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Increasing/decreasing functions and local extrema)
+## ZDate(8/23/07)
+## ZInstitution(Union College)
+## ZAuthor(K. Lesh)
+## ZMLT(one_two_three_Rat)
+## ZMLTleader(1)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "alignedChoice.pl",      # for aligned answer blanks
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+$a = non_zero_random(-9,9);
+do{$b = non_zero_random(-9,9);} until ($a != -$b);
+
+$f=Formula(" {x-$a} / {x+$b}  ")->reduce;
+
+Context("Interval");
+Context()->strings->add(aucun=>{});
+
+
+if( $b+$a > 0) {
+$inc=Compute("(-inf,-$b)U(-$b, inf)")->reduce;
+$dec=Compute("{}");
+} else {
+$dec=Compute("(-inf,-$b)U(-$b, inf)")->reduce;
+$inc=Compute("{}");
+}
+
+$xrelamaxs=List("aucun");
+$xrelamins=List("aucun");
+
+###################################
+#  Make an aligned list to present Q and A.
+###################################
+
+$al = new_aligned_list(ans_rule_len=>35, numbered=>1, tex_spacing=>"3pt", equals=>0);
+$al->qa(
+  "La fonction \(f\) est croissante ",    $inc->cmp,
+  "La fonction \(f\) est décroissante sur ",   $dec->cmp,
+  "Le maximum relatif de  \(f\) se situe en \(x\) = ",   $xrelamaxs->cmp,
+  "Le maximum relatif de  \(f\) se situe en \(x\) = ",    $xrelamins->cmp,
+);
+
+###################################
+# Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \( \displaystyle f(x) = $f \).   Déterminer les intervalles de croissance et de décroissance de \( f \).  Déterminer ensuite les valeurs \( x\) des maximums et des minimums relatifs.
+$PAR
+\{$al->print_q\}
+$BR
+$BBOLD Notes :$EBOLD
+Les réponses aux deux premières questions peuvent être un simple intervalle, par exemple (0,1), une union d'intervalles, par exemple (-inf, 2)U(3,4) ou encore aucune intervalle, entrer {}.
+$PAR
+Pour les deux autres questions, la réponse peut être une liste de valeurs \( x\) ou le mot
+${BBOLD}aucun$EBOLD.
+
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+
+$showPartialCorrectAnswers = 1;
+ANS($al->correct_ans);
+
+###################################
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

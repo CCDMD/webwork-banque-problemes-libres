@@ -1,0 +1,105 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Croissance, décroissance d’une fonction et extremums relatifs)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/OSU/high_school_apcalc/dchmwk8/prob8.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Increasing/decreasing functions and local extrema)
+## ZInstitution(OSU)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+@yvalues = (1/2,-1/2,sqrt(3)/2,-sqrt(3)/2,sqrt(2)/2,-sqrt(2)/2);
+@ysvalues = ("\frac{1}{2}","\frac{1}{2}","\frac{\sqrt{3}}{2}","\frac{\sqrt{3}}{2}","\frac{\sqrt{2}}{2}","\frac{\sqrt{2}}{2}");
+
+
+Context('Numeric');
+
+$n = random(0,5,1);
+$s = $ysvalues[$n];
+if (($n % 2) == 0) {$t = "+";} else {$t = "-";}
+
+$ans1 = Real("asin($yvalues[$n])");
+$ans2 = pi - $ans1;
+if ($ans1 < 0) { 
+$ans1 = $ans2;
+$ans2 = 3*pi - $ans1;
+}
+
+
+
+### valeur des dérivées secondes
+$ans3 = -cos($ans1);
+$ans4 = -cos($ans2);
+
+
+if ($ans3<0) {$ans5 = "Maximum";} else {$ans5 = "Minimum";}
+if ($ans4<0) {$ans6 = "Maximum";} else {$ans6 = "Minimum";}
+
+$popupans5 = PopUp(["?", "Maximum", "Minimum"],$ans5);
+$popupans6 = PopUp(["?", "Maximum", "Minimum"],$ans6);
+
+
+
+
+
+BEGIN_TEXT
+Soit la fonction \(\displaystyle f(x) = \cos(x) $t $s x\).  
+Cette fonction a deux valeurs critiques \(c_1<c_2\) dans l'intervalle \([0,2\pi]\). $BR
+Déterminer :
+$BR
+$BR
+\( c_1 = \) \{ans_rule(10) \}
+$BR
+\( c_2 = \) \{ans_rule(10) \}
+$BR
+\(f''(c_1)=\) \{ans_rule()\}
+$BR
+\(f''(c_2)=\) \{ans_rule()\}
+$PAR
+Ainsi, \(f(x)\) a un \{$popupans5->menu() \} relatif à \(c_1\)
+et un \{ $popupans6->menu() \} relatif à \(c_2\).
+$PAR
+${BBOLD}Note :$EBOLD Les réponses aux quatres premières questions doivent être entrées ${BBOLD}sans utiliser les fonctions trigonométriques${EBOLD}. 
+Il faut donc se servir du cercle trigonométrique pour trouver les valeurs demandées.
+END_TEXT
+
+
+Context()->functions->disable("Trig");
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+ANS($ans4->cmp);
+
+ANS($popupans5->cmp);
+ANS($popupans6->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

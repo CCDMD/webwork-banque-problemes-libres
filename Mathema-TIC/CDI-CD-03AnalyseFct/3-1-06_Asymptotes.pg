@@ -1,0 +1,74 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Trouver toutes les asymptotes)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Utah/Calculus_I/set3_Limits/asymp.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and continuity)
+## ZDBsection(Applications - finding all asymptotes)
+## ZInstitution(Univeristy of Utah)
+## ZAuthor(Utah ww group)
+## ZMLT(limits_asymptotes_quad_over_linear)
+## ZMLTleader(1)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"PGcourse.pl",
+"answerHints.pl",
+);
+
+TEXT(beginproblem());
+
+$a = random(2,6);
+$b = non_zero_random(-6,6);
+$c = non_zero_random(-9,9);
+
+$p = Formula("$a*x^2+$b*x+$c")->reduce;
+
+do { $d = non_zero_random(-8,8);} until ( $p->eval(x=>"$d") != 0 );
+
+$showHint = 2;
+
+Context()->texStrings;
+BEGIN_TEXT
+La fonction \[f(x) = \frac{$p}{x-$d}\]
+a une asymptote verticale en
+\(x=\) \{ans_rule(10)\}
+et une asymptote oblique d'équation
+\[y=mx + b\]
+où
+\(m=\) \{ans_rule(10)\} et \(b=\) \{ans_rule(10)\}. $BR 
+END_TEXT
+BEGIN_HINT
+Vous pouvez utiliser la division polynomiale ou la division par crochet pour déterminer l'équation de l'asymptote oblique.
+END_HINT
+Context()->normalStrings;
+
+$ans1 = Compute("$d");
+$ans2 = Compute("$a");
+$ans3 = Real("$a*$d + $b");
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

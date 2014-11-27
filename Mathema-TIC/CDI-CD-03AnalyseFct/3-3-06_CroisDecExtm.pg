@@ -1,0 +1,85 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Croissance, décroissance d’une fonction et extremums relatifs)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/OSU/high_school_apcalc/dchmwk8/prob3.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Increasing/decreasing functions and local extrema)
+## ZInstitution(OSU)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"PGcourse.pl",
+"parserPopUp.pl",
+#"answerHints.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 0;
+
+$a1 = non_zero_random(-5,5);
+$b1 = random(2,9)*random(-1,1,2);
+
+if( $b1 > 0) {
+$ans2 = "négative";
+$ans3 = "positive";
+$ans4 = "minimum";
+} else {
+$ans2 = "positive";
+$ans3 = "négative";
+$ans4 = "maximum";
+}
+
+
+$popupans2 = PopUp(["?", "positive", "négative"],$ans2);
+$popupans3 = PopUp(["?", "positive", "négative"],$ans3);
+
+$popupans4 = PopUp(["?", "maximum", "minimum", "ni l'un ni l'autre"],$ans4);
+
+
+
+BEGIN_TEXT
+Soit la fonction 
+\[ f(x) = $b1 (x - $a1)^{2/3}  \]
+$PAR
+Cette fonction a une valeur critique en \(c = \) \{ans_rule(10) \}
+$PAR
+Sur chaque intervalle suivant, indiquer si \( f'(x) \)
+est positive ou négative.
+$BR
+\( \left]-\infty, c\right[ \) : \{ $popupans2->menu() \}
+$BR
+\( \left]c,\infty\right[ \) : \{ $popupans3->menu()  \}
+$PAR
+Par conséquent, \(f(x)\) a un \{ $popupans4->menu()  \} relatif en \(x = c\).
+END_TEXT
+
+install_problem_grader(~~&std_problem_grader);
+
+
+ANS(Real("$a1")->cmp);
+ANS( $popupans2->cmp() );
+ANS( $popupans3->cmp() );
+ANS( $popupans4->cmp() );
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

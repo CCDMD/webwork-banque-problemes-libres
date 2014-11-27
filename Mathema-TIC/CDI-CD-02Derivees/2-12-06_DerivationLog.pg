@@ -1,0 +1,64 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation logarithmique)
+## Author(Julie Tremblay)
+
+
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "PGauxiliaryFunctions.pl",
+);
+
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,7);
+
+Context()->flags->set(useBaseTenLog=>1);
+Context()->flags->set( limits=>[0.1,5] );
+
+
+### choisir la fonction à l'exposant  :  x^$g
+@exp = ("e^($a*x)","sin($a*x)","cos($a*x)");
+$g = Formula("$exp[ random(0,2) ]");
+
+$f = Formula("x^($g)")->reduce;
+ 
+$Dg = $g->D('x');
+
+$Df = Formula("$f*( $Dg*ln(x) + $g/x)")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Utiliser la dérivation logarithmique pour dériver la fonction suivante.
+\[y= $f \]
+
+$PAR
+
+\(y' =\) \{ans_rule(30)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Df->cmp);
+
+ENDDOCUMENT();

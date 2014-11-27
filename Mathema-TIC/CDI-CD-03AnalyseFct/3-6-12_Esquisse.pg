@@ -1,0 +1,229 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Esquisse d’une fonction)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UVA-Stew5e/setUVA-Stew5e-C04S03-GraphShape/4-3-39.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Summary of curve sketching)
+## ZDate(5/29/2005)
+## ZInstitution(UVA)
+## ZAuthor(Jeff Holt)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"PGgraphmacros.pl",
+"PGcourse.pl",
+"answerHints.pl",
+);
+
+TEXT(beginproblem());
+
+
+
+$refreshCachedImages=1;
+
+Context("Interval");
+Context()->strings->add(aucune=>{},aucun=>{}, aucun => {alias => "aucune"});
+
+$a = non_zero_random(-7,7);
+
+$f = Formula("x^(1/3)*(x-$a)^(2/3)")->reduce;
+
+$dom = Compute("R");
+
+# horizontal asymptotes, vertical asymptotes
+$AH = List("aucune");
+$AV = List("aucune");
+
+
+$c1 = 0;
+$c2 = $a/3;
+$c3 = $a;
+$vc = List("$c1,$c2,$c3");
+if($a>0) {
+$crois = Compute("(-inf,$c1)U($c1,$c2)U($c3,inf)");
+$dec = Compute("($c2,$c3)");
+$max = List("$c2");
+$min = List("$c3");
+} else {
+$crois = Compute("(-inf,$c3)U($c2,$c1)U($c1,inf)");
+$dec = Compute("($c3,$c2)");
+$max = List("$c3");
+$min = List("$c2");
+}
+
+
+if($a > 0) {
+$CH = Compute("(-inf,$c1)");
+$CB = Compute("($c1,$c3)U($c3,inf)");
+} else {
+$CH = Compute("(-inf,$c3)U($c3,$c1)");
+$CB = Compute("($c1,inf)");
+}
+$PI = List("$c1");
+
+$esq = Real("1");
+
+
+$showPartialCorrectAnswers = 1;
+$showHint = 4;
+
+BEGIN_TEXT
+Répondre aux questions suivantes au sujet de la fonction
+$BR
+\[ f(x) = x^{1/3} (x-$a)^{2/3}  \]
+$BR
+${BITALIC}Consignes : ${EITALIC} S'il faut déterminer des valeurs \(x\) ou \(y\), répondre par un nombre, une liste de nombres séparés par des virgules ou le mot ${BBOLD}aucune${EBOLD}, s'il n'y a pas de solution.  Respecter la notation d'intervalles pour entrer un intervalle ou l'union de plusieurs intervalles, et entrer { } si l'intervalle est vide.
+$BR
+$PAR
+a) Déterminer le domaine de \(f\). 
+$PAR
+dom\(f =\) \{ans_rule(20)\}
+$PAR
+
+b) Déterminer les asymptotes horizontales et verticales de \(f\).
+$PAR
+Asymptotes horizontales : \(y=\) \{ans_rule(20)\}
+$BR 
+Asymptotes verticales :  \(x =\)  \{ans_rule(20)\}
+$PAR
+
+c) Déterminer les valeurs critiques de \(f\), ses intervalles ouverts de croissance et de décroissance et ses extrémums relatifs.
+$PAR
+Valeurs critiques : \( x = \) \{ans_rule(40)\} 
+$BR
+Croissante sur l'intervalle : \{ans_rule(40)\} 
+$BR
+Décroissante sur l'intervalle : \{ans_rule(40)\}
+$BR
+Maximum relatif en \(x = \) \{ans_rule(40)\}
+$BR
+Minimum relatif en \(x = \) \{ans_rule(40)\}
+$PAR
+
+d) Indiquer les intervalles ouverts où \(f\) est concave vers le haut ou vers le bas et identifier les points d'inflexion.
+$PAR
+Concave vers le haut dans l'intervalle : \{ans_rule(40)\} 
+$BR
+Concave vers le bas dans l'intervalle : \{ans_rule(40)\}
+$BR
+Points d'inflexion : \(x = \) \{ans_rule(40)\}
+$PAR
+
+e) Esquisser le graphique de \(f\).  Une fois l'esquisse terminée, entrer "1" dans la case réponse.
+$PAR
+Esquisse terminée : \{ans_rule(12)\}
+$HR
+Un indice sera donné après $showHint essais.
+
+END_TEXT
+
+ANS($dom->cmp);
+ANS($AH->cmp);
+ANS($AV->cmp);
+ANS($vc->cmp);
+ANS($crois->cmp);
+ANS($dec->cmp);
+ANS($max->cmp);
+ANS($min->cmp);
+ANS($CH->cmp);
+ANS($CB->cmp);
+ANS($PI->cmp);
+
+ANS($esq->cmp);
+
+$aa2 = 2*$a*$a;
+
+
+BEGIN_HINT
+Voici la dérivée première et la dérivée seconde de \(f(x)=x^{1/3} (x-$a)^{2/3} \).
+
+\[f'(x) = \frac{3x-$a}{3x^{2/3}(x-$a)^{1/3}}\]
+$PAR
+\[f''(x) =  \dfrac{-$aa2}{9 x^{5/3}(x-$a)^{4/3}}\]
+
+END_HINT
+
+
+
+### Traçage de la courbe
+
+$xe = 10;
+
+$gr = init_graph(-$xe,-$xe,$xe,$xe,axes=>[0,0],size=>[600,600]);
+
+$gr->lb('reset');
+
+
+if ($a>0) {
+$f2 = Formula("(x)^(1/3)*($a-x)^(2/3)");
+$f3 = Formula("-(-x)^(1/3)*($a-x)^(2/3)");
+add_functions($gr,"$f for x in <$c3,$xe> using color:blue and weight:2",
+"$f2 for x in <$c1,$c3> using color:blue and weight:2",
+"$f3 for x in <-$xe,$c1> using color:blue and weight:2",
+);
+} else  {
+$f2 = Formula("-(-x)^(1/3)*(x-$a)^(2/3)");
+$f3 = Formula("-(-x)^(1/3)*($a-x)^(2/3)");
+add_functions($gr,"$f for x in <$c1,$xe> using color:blue and weight:2",
+"$f2 for x in <$c3,$c1> using color:blue and weight:2",
+"$f3 for x in <-$xe,$c3> using color:blue and weight:2",
+);
+}
+
+
+
+$yc2 = sprintf("%0.1f", ($c2)*(4)**(1/3) );
+
+if( $a%3 != 0) {
+$xc2 = "$a/3";
+} else {
+$xc2 = $c2;
+}
+
+if($a > 0) {$dy = -0.5;}
+else {$dy = 0.5;}
+
+$gr->lb(new Label($c3,$dy,"($c3,0)",'black','center','middle'));
+$gr->lb(new Label($c2,$yc2-$dy,"($xc2,$yc2)",'black','center','middle'));
+
+
+# ajouter les points
+$gr->stamps( closed_circle($c1,0,'blue') );
+$gr->stamps( closed_circle($c3,0,'blue') );
+$gr->stamps( closed_circle($c2,$yc2,'blue') );
+
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Voici le graphique de \(f(x) = x^{1/3} (x-$a)^{2/3} \).
+$PAR
+$BCENTER
+\{ image( insertGraph($gr), width=>300,height=>300,tex_size=>800 ) \}
+$ECENTER
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

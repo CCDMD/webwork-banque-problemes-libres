@@ -1,0 +1,66 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions exponentielles et logarithmiques)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/ma122DB/set5/s3_5_41.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Derivatives involving multiple rules (all rules))
+## ZDate(6/3/2002)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS()
+## Level(2)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$m = random(2,5,1);
+
+
+@trig1 = ("sin(x)","cos(x)");
+$c1 = random(0,1);
+@trig2 = ("sin(x)","cos(x)");
+$c2 = random(0,1);
+
+#### Créer la fonction
+$g1 = Formula("e^(x^($m)*$trig2[$c2])")->reduce;
+
+$g2 = Formula("$trig1[$c1]")->substitute(x=>"$g1");
+
+$f = Formula("sqrt($g2)")->reduce;
+
+### La dérivée de f
+$Df = $f->D('x');
+
+  
+Context()->texStrings;
+BEGIN_TEXT
+Soit \[ f(x) = $f \]
+$BR$BR
+\( f'( x ) = \) \{ans_rule(80) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS($Df->with(limits => [0,.6])->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

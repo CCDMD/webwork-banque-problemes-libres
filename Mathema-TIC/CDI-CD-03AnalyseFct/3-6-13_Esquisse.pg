@@ -1,0 +1,323 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## Description
+## Problème séquentielle d'un tracé de courbe d'une fonction exponentielle
+##########
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Esquisse d’une fonction)
+## Author(Julie Tremblay)
+## collège BdeB, nov 2014
+
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"PGgraphmacros.pl",
+"compoundProblemFr.pl",
+#"PGcourse.pl",
+);
+
+$refreshCachedImages=1;
+
+Context("Interval");
+Context()->strings->add(aucune=>{},aucun=>{}, aucun => {alias => "aucune"});
+
+$cp = new compoundProblem( parts=>9, 
+                           totalAnswers => 17,
+						   nextStyle=>'Button',
+						   nextLabel => "Passer à la prochaine partie",
+						   );
+
+
+# make $a and $b distinct
+$a = random(1,9);
+
+
+$f = Formula("e^x/($a-x)")->reduce;
+
+$dom = Compute("R-{$a}");
+
+# horizontal asymptotes, vertical asymptotes
+$AH = List("0");
+$AV = List("$a");
+
+# les limites
+$limInfNeg = Real("0");
+$limInfPos = Compute("-inf");
+
+$AVlimleft = Compute("inf");
+$AVlimright = Compute("-inf");
+
+
+# first derivative, critical numbers, increasing, decreasing, maxima, minima
+
+
+$c1 = $a+1;
+$fp = Formula("e^x*($c1-x)/($a-x)^2")->reduce;
+$vc = List("$c1");
+
+$crois = Compute("(-inf,$a)U($a,$c1)");
+$dec = Compute("($c1,inf)");
+$max = List("$c1");
+$min = List("aucune");
+
+
+
+# second derivative, concave up, concave down, inflection points
+
+$b1 = -2*$c1;
+$b0 = $a*$a + 2*$a + 2;
+$fpp = Formula("e^x*(x^2+$b1*x+$b0)/($a-x)^3")->reduce;
+
+$CH = Compute("(-inf,$a)");
+$CB = Compute("($a,inf)");
+$PI = List("aucune");
+
+$showPartialCorrectAnswers = 1;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Faire l'étude de courbe de la fonction 
+\[ f(x) = $f.  \]
+$PAR
+Ce problème comporte cinq questions de a) à e) et est divisé en plusieurs parties. Vous devez répondre correctement aux questions pour passer aux parties suivantes. 
+Cliquer sur le bouton ${BBOLD}Passer à la prochaine partie${EBOLD} lorsque ce sera le cas.$BR
+$PAR
+
+${BITALIC}Consignes : ${EITALIC} Si la réponse doit être une fonction, entrer une fonction. S'il faut déterminer des valeurs \(x\) ou \(y\), répondre par un nombre, une liste de nombres séparés par des virgules ou le mot ${BBOLD}aucune${EBOLD}, 
+s'il n'y a pas de solution.  Respecter la notation d'intervalles pour entrer un intervalle ou l'union de plusieurs intervalles, et entrer { } si l'intervalle est vide.
+$BR
+$BR
+
+a) Déterminer le domaine de \(f\). 
+$PAR
+dom\(f =\) \{ans_rule(20)\}
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+ANS($dom->cmp);
+
+if( $cp->part > 1) {
+Context()->texStrings;
+BEGIN_TEXT
+
+b) Trouver les limites à l'infini suivantes afin de déterminer les asymptotes horizontales possibles de \(f\).
+$PAR
+$BCENTER
+\( \displaystyle \lim_{x \rightarrow -\infty} $f = \) \{ans_rule(20)\}
+$PAR
+\( \displaystyle \lim_{x \rightarrow \infty} $f = \) \{ans_rule(20)\}
+$ECENTER
+$PAR
+Asymptotes horizontales :  \(y = \) \{ans_rule(40)\}
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($limInfNeg->cmp);
+ANS($limInfPos->cmp);
+ANS($AH->cmp);
+
+
+} ### end part > 1
+
+
+if( $cp->part > 2) {
+Context()->texStrings;
+BEGIN_TEXT
+c) Déterminer la ou les asymptotes verticales possibles de \(f\). 
+$PAR
+Asymptotes verticales :  \(x = \) \{ans_rule(40)\}
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+ANS($AV->cmp);
+
+
+} ### end part >2
+
+if( $cp->part > 3) {
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer la limite à gauche et la limite à droite de l'asymptote verticale \(x=$AV\). 
+$PAR
+$BCENTER
+\( \displaystyle \lim_{x \rightarrow $a^{-}} $f = \) \{ans_rule(20)\}
+$PAR
+\( \displaystyle \lim_{x \rightarrow $a^{+}} $f = \) \{ans_rule(20)\}
+$ECENTER
+$PAR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($AVlimleft->cmp);
+ANS($AVlimright->cmp);
+
+} ### end part >3
+
+if( $cp->part > 4) {
+
+Context()->texStrings;
+BEGIN_TEXT
+c) Déterminer la dérivée première de \( f \). 
+$PAR
+\( f'(x) = \) \{ans_rule(40)\}
+$PAR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($fp->cmp);
+
+} ### end part >4
+
+
+if( $cp->part > 5) {
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Identifier les valeurs critiques de \( f'(x) = $fp\), ses intervalles ouverts de croissance et de décroissance et ses extrémums relatifs.
+$PAR
+
+Valeurs critiques : \( x = \) \{ans_rule(40)\} 
+$BR
+Croissante sur l'intervalle  \{ans_rule(40)\} 
+$BR
+Décroissante sur l'intervalle  \{ans_rule(40)\}
+$BR
+Maximum relatif en \(x = \) \{ans_rule(40)\}
+$BR
+Minimum relatif en \(x = \) \{ans_rule(40)\}
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+ANS($vc->cmp);
+ANS($crois->cmp);
+ANS($dec->cmp);
+ANS($max->cmp);
+ANS($min->cmp);
+
+} ### end part > 5
+
+if( $cp->part > 6) {
+
+Context()->texStrings;
+BEGIN_TEXT
+d) Déterminer la dérivée seconde de \( f \). 
+$PAR
+\( f''(x) = \) \{ans_rule(40)\}
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+ANS($fpp->cmp);
+
+} ### end part 6
+
+if( $cp->part > 7) {
+
+Context()->texStrings;
+BEGIN_TEXT
+Sachant que \(f''(x)=$fpp\), indiquer les intervalles ouverts où \(f\) est concave vers le haut ou vers le bas et identifier les points d'inflexion.
+$PAR
+Concave vers le haut dans l'intervalle : \{ans_rule(40)\} 
+$BR
+Concave vers le bas dans l'intervalle : \{ans_rule(40)\}
+$BR
+Points d'inflexion : \(x = \) \{ans_rule(40)\}
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($CH->cmp);
+ANS($CB->cmp);
+ANS($PI->cmp);
+
+} ### end part 7
+
+if( $cp->part > 8) {
+
+Context()->texStrings;
+BEGIN_TEXT
+e) Esquisser le graphique de \( f \) sans utiliser la calculatrice à affichage graphique.  
+Identifier les points d'intersection avec l'axe des \(y\) et l'axe des \(x\), si possible.  
+Tracer les asymptotes horizontales et verticales à l'aide de lignes pointillées.  
+Tracer les points de \( f \) qui représentent des maximums relatifs, des minimums relatifs ou des points d'inflexion.  
+Utiliser l'information obtenue en c) et d) pour compléter le tracé de la courbe de \( f \).  
+Servez-vous de la symétrie déterminée en e), s'il y a lieu.  
+L'esquisse d'une courbe est une compétence essentielle qui s'acquiert avec la pratique.
+
+END_TEXT
+Context()->normalStrings;
+
+} ### end part > 8
+
+
+
+### Traçage de la courbe pour la solution
+
+$xe = 10;
+
+$yc1 = $f->eval(x=>"$c1");
+
+$ye = floor(2*abs($yc1));
+$dy = $ye/20;
+
+$gr = init_graph(-$xe,-$ye,$xe,$ye,axes=>[0,0],size=>[500,500]);
+
+$gr->lb('reset');
+
+$x1 = $a-0.001;
+$x2 = $a+0.001;
+
+add_functions($gr,"$f for x in <-$xe,$x1> using color:blue and weight:2",
+"$f for x in <$x2,$xe> using color:blue and weight:2",
+);
+
+
+
+
+
+$gr->lb(new Label($a,-$dy,"$a",'black','center','middle'));
+$gr->lb(new Label($c1,$yc1+$dy,"($c1,$yc1)",'black','center','middle'));
+
+
+# ajouter les points
+$gr->stamps( closed_circle($c1,$yc1,'blue') );
+
+# ajouter les asymptotes
+$gr->moveTo($a,-$ye);
+$gr->lineTo($a,$ye,'black',1,'dashed');
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Voici le graphique de \(f(x) = $f\).
+$PAR
+$BCENTER
+\{ image( insertGraph($gr), width=>300,height=>300,tex_size=>800 ) \}
+$ECENTER
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

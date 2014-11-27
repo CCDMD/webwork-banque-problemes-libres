@@ -1,0 +1,62 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Continuité - Concepts)
+## Modifié par Julie Tremblay
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source : Library/UCSB/Stewart5_2_5/Stewart5_2_5_12.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Continuity - concept of)
+## ZInstitution(UCSB)
+## ZMLT(cc-d)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS('limite','continuité')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$a=non_zero_random(-10,10,1);
+$b=random(1,4);
+$c= 2*$b;
+
+### Les discontinuités sont en x=1/2 et -1/2
+$f = Formula("(x+$a)/($c*x^2-$b)")->reduce;
+
+do{$x1 = non_zero_random(-8,8);} until($x1!=-$a); ### trop facile car = 0
+
+$ans = $f->eval(x=>"$x1");
+ 
+Context()->texStrings;
+BEGIN_TEXT
+
+Montrer que la fonction \(f(x)=\displaystyle $f \) est continue en \(x=$x1\) en calculant $PAR
+
+a) \(f($x1)=\) \{ans_rule(20)\} 
+$PAR
+b) \(\displaystyle \lim_{x \to $x1} f(x) =\) \{ans_rule(20)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($ans->cmp);
+ANS($ans->cmp);
+
+ENDDOCUMENT();

@@ -1,0 +1,133 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DESCRIPTION
+## Trouver les asymptotes verticales et horizontales
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Trouver toutes les asymptotes)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/Rochester/instructiveProblems/ConditionalQuestion.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Infinite limits and vertical asymptotes)
+## ZDate(5/10/2008)
+## ZInstitution(University of Rochester)
+## ZAuthor(Paul Pearson)
+## ZMLT(findva)
+## ZMLTleader(1)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS('limite','asymptotes')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "compoundProblemFr.pl",
+  "MathObjects.pl",
+ # "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$sign = random(-1,1,2);
+$a = $sign*random(2,7,1);
+$b = random(2,7,1);
+$bs = $b**2;
+#$twiceabsq = 2*$a*$bs;
+
+Context()->strings->add(aucune=>{}, nep=>{} );
+
+
+# la fonction 
+$ftex = "\frac{$a x^2}{x^2 - $bs }";
+#$fp = "- $twiceabsq * x / ((x**2 - $bs)**2)";
+
+$cp = new compoundProblem( parts=>2, 
+                           totalAnswers => 5,
+                           nextStyle=>'Button',
+						   nextLabel=>"Cliquer pour passer à la prochaine partie");
+
+
+BEGIN_TEXT
+Ce problème comprend deux parties.  La seconde partie sera affichée une fois vous aurez répondu correctement à la première. $BR
+$BR
+a) Quelles sont les asymptotes verticales de \( \displaystyle f(x) = $ftex \)? 
+Répondre par un nombre, une liste de nombres séparés par des virgules, ou ${BBOLD}aucune${EBOLD}.
+$BR
+$BR 
+Asymptote(s) verticale(s) en \( x = \) \{ ans_rule(25) \}
+$PAR
+
+END_TEXT
+
+$ans1 = List("-$b,$b");
+ANS($ans1->cmp);
+
+
+if ( $cp->part > 1 ) {
+
+BEGIN_TEXT
+$HR
+$BR
+b) Déterminer les limites à gauche et à droite de l'asymptote verticale \( x = -$b \).   
+Entrer $BBOLD inf $EBOLD pour \(\infty\), $BBOLD -inf $EBOLD pour \(-\infty\) et $BBOLD nep $EBOLD si la limite n'existe pas.
+$BR
+$BR
+$BCENTER
+\( \displaystyle \lim_{x \rightarrow -$b^{-}} $ftex = \) \{ ans_rule(10) \} 
+$SPACE $SPACE $SPACE $SPACE $SPACE
+\( \displaystyle \lim_{x \rightarrow -$b^{+}} $ftex = \) \{ ans_rule(10) \}
+$ECENTER
+$PAR
+
+Déterminer les limites à gauche et à droite de l'asymptote verticale \( x = $b \).
+$BR
+$BR
+$BCENTER
+\( \displaystyle \lim_{x \rightarrow $b^{-}} $ftex = \) \{ ans_rule(10) \} 
+$SPACE $SPACE $SPACE $SPACE $SPACE
+\( \displaystyle \lim_{x \rightarrow $b^{+}} $ftex = \) \{ ans_rule(10) \} 
+$ECENTER
+$BR
+
+END_TEXT
+
+if ($sign == 1) {
+
+$ans2 = Compute("inf");
+$ans3 = Compute("-inf"); 
+$ans4 = Compute("-inf"); 
+$ans5 = Compute("inf"); 
+
+} else {
+
+$ans2 = Compute("-inf");
+$ans3 = Compute("inf"); 
+$ans4 = Compute("inf"); 
+$ans5 = Compute("-inf"); 
+}
+
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+ANS($ans4->cmp);
+ANS($ans5->cmp);
+
+}  ### end if ( $cp->part > 1 )
+
+ENDDOCUMENT();
+

@@ -1,0 +1,164 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Esquisse d’une fonction)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Rochester/setDerivatives22Graphing/S04.03.DerivativesShapeGraph.PTP02.pg
+## DBsubject(Calculus - single variable)
+## DBchapter(Applications of differentiation)
+## DBsection(Summary of curve sketching)
+## Date(5/10/2008)
+## Institution(University of Rochester)
+## Author(Paul Pearson)
+## MLT(SCS_all_rat)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"PGcourse.pl",
+#"answerHints.pl",
+);
+
+Context("Interval");
+Context()->strings->add(aucune=>{},aucun=>{}, aucun => {alias => "aucune"});
+
+$a = random(2,7,1);
+$b = random(2,7,1);
+$bs = $b**2;
+$k = 2 * $a * $bs;
+
+$f = Formula("($a*x^2)/(x^2 + $bs)")->reduce;
+
+#$fp = "($k * x) / ((x**2 + $bs)**2)";
+#$fpp = "($k*($bs - 3*x**2)) / ((x**2 + $bs)**3)";
+
+$dom = Compute("R");
+
+# horizontal asymptotes, vertical asymptotes
+$AH = List("$a");
+$AV = List("aucune");
+
+# first derivative, critical numbers, increasing, decreasing, maxima, minima
+$fp = $f->D('x');
+$vc = List("0");
+$crois = Compute("(0,inf)");
+$dec = Compute("(-inf,0)");
+$max = List("aucune");
+$min = List("0");
+
+# second derivative, concave up, concave down, inflection points
+$fpp = $fp->D('x');
+$CH = Compute("(-$b/sqrt(3),$b/sqrt(3))");
+$CB = Compute("(-inf,-$b/sqrt(3))U($b/sqrt(3),inf)");
+$PI = List("-$b/sqrt(3),$b/sqrt(3)");
+
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+Context()->texStrings;
+BEGIN_TEXT
+Répondre aux questions suivantes au sujet de la fonction 
+$BR
+\[ f(x) = $f.  \]
+$BR
+${BITALIC}Consignes : ${EITALIC}  Si la réponse doit être une fonction, entrer une fonction.  
+S'il faut déterminer des valeurs \(x\) ou \(y\), répondre par un nombre, une liste de nombres séparés par des virgules ou le mot ${BBOLD}aucune${EBOLD}, 
+s'il n'y a pas de solution.  Respecter la notation d'intervalles pour entrer un intervalle ou l'union de plusieurs intervalles, et entrer { } si l'intervalle est vide.
+$BR
+$BR
+
+a) Déterminer le domaine de \(f\). 
+$PAR
+dom\(f =\) \{ans_rule(20)\}
+$PAR
+
+
+b) Déterminer les asymptotes horizontales et verticales de \(f\).
+$PAR
+Asymptotes horizontales :  \(y = \) \{ans_rule(40)\}
+$BR
+Asymptotes verticales :  \(x = \) \{ans_rule(40)\}
+$PAR
+
+c) Déterminer la dérivée première de \( f \).  Identifier ses valeurs critiques, ses intervalles ouverts de croissance et de décroissance et ses extrémums relatifs.
+$PAR
+\( f'(x) = \) \{ans_rule(40)\}
+$BR
+Valeurs critiques : \( x = \) \{ans_rule(40)\} 
+$BR
+Croissante sur l'intervalle  \{ans_rule(40)\} 
+$BR
+Décroissante sur l'intervalle  \{ans_rule(40)\}
+$BR
+Maximum relatif en \(x = \) \{ans_rule(40)\}
+$BR
+Minimum relatif en \(x = \) \{ans_rule(40)\}
+$PAR
+
+
+d) Déterminer la dérivée seconde de \( f \).  Indiquer les intervalles ouverts où \(f\) est concave vers le haut ou vers le bas et identifier les points d'inflexion.
+$PAR
+\( f''(x) = \) \{ans_rule(40)\}
+$BR
+Concave vers le haut dans l'intervalle : \{ans_rule(40)\} 
+$BR
+Concave vers le bas dans l'intervalle : \{ans_rule(40)\}
+$BR
+Points d'inflexion : \(x = \) \{ans_rule(40)\}
+$PAR
+
+e) La fonction \( f \) est \{pop_up_list(['?','paire','impaire','aucun']) \}, parce que \{pop_up_list(['?','f(-x) = f(x)','f(-x) = - f(x)',"ne s'applique pas"]) \} pour tout \( x \) du domaine de \( f \) et, par conséquent, sa courbe est symétrique par rapport à \{pop_up_list(['?',"l'axe des x","l'axe des y","l'origine",'la droite y=x',"ne s'applique pas"]) \}
+$BR
+$BR
+
+f) Esquisser le graphique de \( f \) sans utiliser la calculatrice à affichage graphique.  
+Identifier les points d'intersection avec l'axe des \(y\) et l'axe des \(x\), si possible.  
+Tracer les asymptotes horizontales et verticales à l'aide de lignes pointillées.  
+Tracer les points de \( f \) qui représentent des maximums relatifs, des minimums relatifs ou des points d'inflexion.  
+Utiliser l'information obtenue en c) et d) pour compléter le tracé de la courbe de \( f \).  
+Servez-vous de la symétrie déterminée en e), s'il y a lieu.  
+L'esquisse d'une courbe est une compétence essentielle qui s'acquiert avec la pratique.
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($dom->cmp);
+ANS($AH->cmp);
+ANS($AV->cmp);
+
+ANS($fp->cmp);
+ANS($vc->cmp);
+ANS($crois->cmp);
+ANS($dec->cmp);
+ANS($max->cmp);
+ANS($min->cmp);
+
+ANS($fpp->cmp);
+ANS($CH->cmp);
+ANS($CB->cmp);
+ANS($PI->cmp);
+
+# even/odd/neither
+ANS(str_cmp("paire"));
+ANS(str_cmp("f(-x) = f(x)"));
+ANS(str_cmp("l'axe des y"));
+
+ENDDOCUMENT();

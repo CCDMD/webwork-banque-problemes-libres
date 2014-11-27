@@ -1,0 +1,95 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions trigonométriques)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UVA-Stew5e/setUVA-Stew5e-C03S05-ChainRule/3-5-32h.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Chain rule (with trigonometric functions))
+## ZDate(6/3/2002)
+## ZInstitution(ASU)
+## ZAuthor(Jeff Holt)
+## ZMLT(diff_chr_trig_fn_triple_nested)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+ 
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a_gen  = random(2,9,1);
+$a_sign = random(-1,1,2);
+$a      = $a_gen * $a_sign;
+$nega = -$a;
+
+$n = random(2,8);
+ 
+$tr1 = list_random( Formula("sin(x)"), Formula("cos(x)"));
+$tr2 = list_random( Formula("sin(x)"), Formula("cos(x)"));
+
+$ftr1 = $tr1->substitute(x=>"x^$n");
+$ftr2 = $tr2->substitute(x=>"$ftr1");
+
+$f = Formula("$a*$ftr2")->reduce;
+$df = $f->D('x')->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Dériver la fonction  
+\[ f(x) = $f \]
+$BR
+\( f'( x ) = \) \{ans_rule(40) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS($df->cmp);
+
+Context()->noreduce('(-x)*y','x*(-y)');
+
+$Dtr1 = $tr1->D('x')->reduce;
+$Dtr2 = $tr2->D('x')->reduce;
+
+
+$Dftr2 = $Dtr2->substitute(x=>"$ftr1");
+$Dftr1 = $Dtr1->substitute(x=>"x^$n");
+ 
+
+$nm1 = $n-1;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+\[ \begin{array}{ll} f'(x) &= \left( $f \right)' \\
+&= $a \cdot $Dftr2 \left( $ftr1 \right)' \\
+&= $a \cdot $Dftr2 \cdot $Dftr1 \left( x^{$n} \right)' \\
+&= $a \cdot $Dftr2 \cdot $Dftr1 \cdot $n x^{$nm1} \\
+&= $df
+\end{array} \]
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

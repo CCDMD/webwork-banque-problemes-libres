@@ -1,0 +1,85 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions exponentielles et logarithmiques)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/Michigan/Chap3Sec4/Q41.pg
+## ZAuthor('Gavin LaRose');
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Chain rule (without trigonometric functions))
+## ZInstitution(University of Michigan)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+
+
+
+DOCUMENT();
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "PGcourse.pl",      # Customization file for the course
+);
+ 
+Context("Numeric");
+#Context()->flags->set( limits=>[0,0.5],tolerance=>0.00001 );
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(3,9,1);
+$r = $a - 1;
+$b = random(2,8);
+$bm1 = $b - 1;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Déterminer la dérivée de
+ \[ f(x)=$a e^{$r x}+e^{-x^{$b}} \]
+
+
+$PAR
+\( f'(x) = \) \{ ans_rule(65) \}
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS(Compute( "$r*$a*e^($r*x) - $b*x^($bm1)*e^(-x^$b)")->cmp() );
+
+$ra = $r*$a;
+
+if($bm1 ==1) { $xc = "x";}
+else { $xc = "x^{$bm1}";}
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+\[ \begin{array}{ll}
+f'(x) &= $a e^{$r x} ($r x)' + e^{-x^{$b}}(-x^{$b})'\\
+&= $ra e^{$r x} - $b $xc e^{-x^{$b} }
+\end{array}
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

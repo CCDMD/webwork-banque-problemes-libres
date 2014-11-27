@@ -1,0 +1,81 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions trigonométriques)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UCSB/Stewart5_3_5/Stewart5_3_5_32.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Chain rule (with trigonometric functions))
+## ZInstitution(UCSB)
+## ZMLT(diff_chr_trig_fn_triple_nested_misc)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$a=random(2,10,1);
+
+
+@trig =("tan(x)","sec(x)");
+$i = random(0,1);
+
+$g = Formula("$trig[$i]")->substitute(x=>"$a*x")->reduce;
+$f = Formula(" $g^2")->reduce;
+
+$Dgx = Formula("$trig[$i]")->D('x');
+$Dg = $Dgx->substitute(x=>"$a*x");
+
+$Df = Formula("2*$a*tan($a x)*sec($a x)^2")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BR
+Dériver  \[y = $f \]
+
+$PAR
+
+\(y'=\) \{ans_rule(60)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Df->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+\[
+\begin{array}{ll} y' &= \left( $f   \right)' \\
+&= 2 $g \left( $g \right)' \\
+&= 2 $g \cdot $Dg ($a x )' \\
+&= $Df
+\end{array}
+\]
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

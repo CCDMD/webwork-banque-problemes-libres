@@ -1,0 +1,211 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Esquisse d’une fonction)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Rochester/setDerivatives22Graphing/S04.05.CurveSketching.PTP02.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Summary of curve sketching)
+## ZDate(1/23/2009)
+## ZInstitution(University of Rochester)
+## ZAuthor(Paul Pearson)
+## ZMLT(SCS_all_rat)
+## ZLevel(4)
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"PGgraphmacros.pl",
+"PGcourse.pl",
+#"answerHints.pl",
+);
+
+TEXT(beginproblem());
+
+$refreshCachedImages=1;
+
+Context("Interval");
+Context()->strings->add(aucune=>{},aucun=>{}, aucun => {alias => "aucune"});
+
+
+# make $a and $b distinct
+$b = random(2,6,1);
+do {$a= random(2,5,1);} until ($a !=$b);
+$bs = $b**2;
+
+
+$f = Formula("$a*x/(x^2 - $bs)")->reduce;
+
+$dom = Compute("R-{-$b,$b}");
+
+# horizontal asymptotes, vertical asymptotes
+$AH = List("0");
+$AV = List("-$b,$b");
+
+
+# first derivative, critical numbers, increasing, decreasing, maxima, minima
+$fp = $f->D('x');
+$vc = List("aucune");
+$crois = Compute("{}");
+$dec = Compute("(-inf,-$b)U(-$b,$b)U($b,inf)");
+$max = List("aucune");
+$min = List("aucune");
+
+
+# second derivative, concave up, concave down, inflection points
+$fpp = $fp->D('x');
+
+$CH = Compute("(-$b,0)U($b,inf)");
+$CB = Compute("(-inf,-$b)U(0,$b)");
+
+$PI = List("0");
+
+
+$showPartialCorrectAnswers = 1;
+
+Context()->texStrings;
+BEGIN_TEXT
+Répondre aux questions suivantes au sujet de la fonction 
+$BR
+\[ f(x) = $f.  \]
+$BR
+${BITALIC}Consignes : ${EITALIC}  Si la réponse doit être une fonction, entrer une fonction.  
+S'il faut déterminer des valeurs \(x\) ou \(y\), répondre par un nombre, une liste de nombres séparés par des virgules ou le mot ${BBOLD}aucune${EBOLD}, 
+s'il n'y a pas de solution.  Respecter la notation d'intervalles pour entrer un intervalle ou l'union de plusieurs intervalles, et entrer { } si l'intervalle est vide.
+$BR
+$BR
+
+a) Déterminer le domaine de \(f\). 
+$PAR
+dom\(f =\) \{ans_rule(20)\}
+$PAR
+
+
+b) Déterminer les asymptotes horizontales et verticales de \(f\).
+$PAR
+Asymptotes horizontales :  \(y = \) \{ans_rule(40)\}
+$BR
+Asymptotes verticales :  \(x = \) \{ans_rule(40)\}
+$PAR
+
+c) Déterminer la dérivée première de \( f \).  Identifier ses valeurs critiques, ses intervalles ouverts de croissance et de décroissance et ses extrémums relatifs.
+$PAR
+\( f'(x) = \) \{ans_rule(40)\}
+$BR
+Valeurs critiques : \( x = \) \{ans_rule(40)\} 
+$BR
+Croissante sur l'intervalle  \{ans_rule(40)\} 
+$BR
+Décroissante sur l'intervalle  \{ans_rule(40)\}
+$BR
+Maximum relatif en \(x = \) \{ans_rule(40)\}
+$BR
+Minimum relatif en \(x = \) \{ans_rule(40)\}
+$PAR
+
+
+d) Déterminer la dérivée seconde de \( f \).  Indiquer les intervalles ouverts où \(f\) est concave vers le haut ou vers le bas et identifier les points d'inflexion.
+$PAR
+\( f''(x) = \) \{ans_rule(40)\}
+$BR
+Concave vers le haut dans l'intervalle : \{ans_rule(40)\} 
+$BR
+Concave vers le bas dans l'intervalle : \{ans_rule(40)\}
+$BR
+Points d'inflexion : \(x = \) \{ans_rule(40)\}
+$PAR
+
+e) La fonction \( f \) est \{pop_up_list(['?','paire','impaire','aucun']) \}, parce que \{pop_up_list(['?','f(-x) = f(x)','f(-x) = - f(x)',"ne s'applique pas"]) \} pour tout \( x \) du domaine de \( f \) et, par conséquent, sa courbe est symétrique par rapport à \{pop_up_list(['?',"l'axe des x","l'axe des y","l'origine",'la droite y=x',"ne s'applique pas"]) \}
+$BR
+$BR
+
+f) Esquisser le graphique de \( f \) sans utiliser la calculatrice à affichage graphique.  
+Identifier les points d'intersection avec l'axe des \(y\) et l'axe des \(x\), si possible.  
+Tracer les asymptotes horizontales et verticales à l'aide de lignes pointillées.  
+Tracer les points de \( f \) qui représentent des maximums relatifs, des minimums relatifs ou des points d'inflexion.  
+Utiliser l'information obtenue en c) et d) pour compléter le tracé de la courbe de \( f \).  
+Servez-vous de la symétrie déterminée en e), s'il y a lieu.  
+L'esquisse d'une courbe est une compétence essentielle qui s'acquiert avec la pratique.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($dom->cmp);
+ANS($AH->cmp);
+ANS($AV->cmp);
+
+ANS($fp->cmp);
+ANS($vc->cmp);
+ANS($crois->cmp);
+ANS($dec->cmp);
+ANS($max->cmp);
+ANS($min->cmp);
+
+ANS($fpp->cmp);
+ANS($CH->cmp);
+ANS($CB->cmp);
+ANS($PI->cmp);
+
+
+# even/odd/neither
+ANS(str_cmp("impaire"));
+ANS(str_cmp("f(-x) = - f(x)"));
+ANS(str_cmp("l'origine"));
+
+### Traçage de la courbe
+
+$xe = 12;
+
+$gr = init_graph(-$xe,-$xe,$xe,$xe,axes=>[0,0],size=>[500,500]);
+
+$gr->lb('reset');
+
+$x1 = -$b-0.001;
+$x2 = -$b+0.001;
+$x3 = $b-0.001;
+$x4 = $b+0.001;
+add_functions($gr,"$f for x in <-$xe,$x1> using color:blue and weight:2",
+"$f for x in <$x2,$x3> using color:blue and weight:2",
+"$f for x in <$x4,$xe> using color:blue and weight:2"
+);
+
+
+$gr->lb(new Label(-$b,-0.5,"-$b",'black','center','middle'));
+$gr->lb(new Label($b,-0.5,"$b",'black','center','middle'));
+
+# ajouter les asymptotes
+$gr->moveTo(-$b,-$xe);
+$gr->lineTo(-$b,$xe,'black',1,'dashed');
+$gr->moveTo($b,-$xe);
+$gr->lineTo($b,$xe,'black',1,'dashed');
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Voici le graphique de \( f(x) = $f \).
+$PAR
+$BCENTER
+\{ image( insertGraph($gr), width=>300,height=>300,tex_size=>800 ) \}
+$ECENTER
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

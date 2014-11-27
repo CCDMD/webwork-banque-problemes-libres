@@ -1,0 +1,106 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Croissance, décroissance d’une fonction et extremums relatifs)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/ASU-topics/setFirstDerivative/4-2-63.pg
+## DBsubject(Calculus - single variable)
+## DBchapter(Applications of differentiation)
+## DBsection(Increasing/decreasing functions and local extrema)
+## Institution(ASU)
+## MLT(INF_average_local_Rat)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"AnswerFormatHelp.pl",
+"PGcourse.pl",
+#"answerHints.pl",
+);
+
+$a = random(1,9);
+$b = random(2,9,2);
+$c = random(1,9);
+
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+BEGIN_TEXT
+Soit
+\[ f(x) = $a  - \frac{$b}{x} + \frac{$c}{x^2} \]
+$BR
+
+A) Déterminer toutes les valeurs critiques et les énumérer dans la case ci-dessous (en les séparant par des virgules). 
+S'il n'y a pas de valeur critique, entrer ${BBOLD}aucune${EBOLD}.
+$PAR
+Liste des valeurs critiques : \{ans_rule(16)\}
+$PAR
+END_TEXT
+
+Context()->strings->add(aucun=>{},aucune=>{}, aucune => {alias => "aucun"});
+
+$vc = Compute("2*$c/$b");
+$ans1 = List("$vc");
+
+ANS($ans1->cmp);
+
+BEGIN_TEXT
+$BR
+B) À l'aide de la notation d'intervalles, indiquer le ou les intervalles de croissance de \( f(x) \).
+$BR
+Croissance : \{ans_rule(25)\} \{ AnswerFormatHelp("intervals") \}
+$PAR
+C) À l'aide de la notation d'intervalles, indiquer le ou les intervalles de décroissance de \( f(x) \).
+$PAR
+Décroissance : \{ans_rule(25)\}
+$PAR
+D) Trouver la valeur \(x\) de chaque maximum relatif de
+\(f\). S'il n'y a pas de maximum relatif, entrer ${BBOLD}aucun${EBOLD}.
+$BR
+Valeur \(x\) de chaque maximum relatif : \{ans_rule(7)\}
+$PAR
+$BR
+E) Trouver la valeur \(x\) de chaque minimum relatif de
+\(f\). S'il n'y a pas de minimum relatif, entrer ${BBOLD}aucun${EBOLD}.
+$BR
+Valeur \(x\) de chaque minimum relatif : \{ans_rule(7)\}
+END_TEXT
+
+Context("Interval");
+Context()->strings->add(aucun=>{},aucune=>{}, aucune => {alias => "aucun"});
+
+$ans2 = Compute("(-inf,0)U($vc,inf)");
+$ans3 = Compute("(0,$vc)");
+
+
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+
+
+$ans4 = Compute("aucun");
+$ans5 = $vc;
+
+ANS($ans4->cmp);
+ANS($ans5->cmp);
+
+COMMENT('Les bornes (extrémités) sont exclues dans les réponses des intervalles de croissance et décroissance. Pour inclure les bornes, créer une nouvelle 
+version du problème.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

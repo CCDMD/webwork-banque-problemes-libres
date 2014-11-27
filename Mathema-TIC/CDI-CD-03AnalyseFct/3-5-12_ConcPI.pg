@@ -1,0 +1,184 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Concavité d’une fonction, points d'inflexion)
+## Author(Julie Tremblay)
+## KEYWORDS()
+## Level()    
+## Language(fr)
+
+
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"PGgraphmacros.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"unionTables.pl",
+"PGcourse.pl",  
+);
+
+Context("Numeric");
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+$refreshCachedImages = 1;
+
+
+$a = non_zero_random(-8,8);
+do{$b = non_zero_random(-8,8);} until($a < $b && ($a+$b)%2==0);
+$PI = ($a+$b)/2;
+
+
+### borner la fonction entre -10 et 10
+if( 3*$b-$a != 0 ){
+$m1 = 60/($a*$a*abs(3*$b-$a));
+} else { $m1 = 60/($b*$b*abs(3*$a-$b));}
+if (3*$a-$b != 0) {
+$m2 = 60/($b*$b*abs(3*$a-$b));
+} else { $m2 = 60/($a*$a*abs(3*$b-$a));}
+if($m1 < $m2) {$m = $m1;} else {$m = $m2;}
+
+$c = 2/3*$m*random(-1,1,2);
+
+
+$f = Formula("$c*(x^3/3-($a+$b)/2*x^2 + $a*$b*x)");
+$df = $f->D('x');
+$ddf = $df->D('x');
+
+
+
+$gr = init_graph( -10, -10, 10, 10, axes=>[0,0], grid=>[20,20], size=>[400,400] );
+$gr->lb('reset');
+add_functions( $gr, "$f for x in <-10,10> using color:blue and weight:2" );
+
+## ajouter un point d'inflexion au graphique
+	$yPI = $f->eval(x=>$PI);
+    $gr->stamps( closed_circle( $PI, $yPI, 'black' ) );
+	foreach $i (1..9) {
+	$gr->lb( new Label($i,-0.5,"$i",
+    'black','center','middle'));
+	$gr->lb( new Label(-$i,-0.5,"-$i",
+    'black','center','middle'));
+	}
+
+### Réponses : les valeurs de f' et f    
+$dfvals[0] = "0";
+$dfvals[2] = "0";
+if( $df->eval(x=>"$a - 1") > 0) { 
+$fext_pi[0] = "max rel";
+$fext_pi[2] = "min rel";
+$dfsign[0] = "+";
+$dfsign[1] = "-";
+$dfvals[1] = "-";
+$dfsign[2] = "-";
+$dfsign[3] = "+";
+
+} else {
+$fext_pi[0] = "min rel";
+$fext_pi[2] = "max rel";
+$dfsign[0] = "-";
+$dfsign[1] = "+";
+$dfvals[1] = "+";
+$dfsign[2] = "+";
+$dfsign[3] = "-";
+}
+
+
+### les valeurs de f''
+$ddfvals[1] = "0";
+$fext_pi[1] = "PI";
+if( $ddf->eval(x=>"$a") > 0) { 
+$ddfsign[0] = "+";
+$ddfvals[0] = "+";
+$ddfsign[1] = "+";
+$ddfsign[2] = "-";
+$ddfvals[2] = "-";
+$ddfsign[3] = "-";
+} else {
+$ddfsign[0] = "-";
+$ddfvals[0] = "-";
+$ddfsign[1] = "-";
+$ddfsign[2] = "+";
+$ddfvals[2] = "+";
+$ddfsign[3] = "+";
+}
+
+for $i (0..3) {
+    $menudfsign[$i] = PopUp( ["????","+", "-"], $dfsign[$i] );
+	$menuddfsign[$i] = PopUp( ["????","+", "-"], $ddfsign[$i] );
+}
+
+for $j (0..2) {
+    $menudfvals[$j] = PopUp( ["?", "+", "-","0","nep"], $dfvals[$j] );
+	$menuddfvals[$j] = PopUp( ["?","+", "-","0","nep"], $ddfvals[$j] );
+	$menufextpi[$j] = PopUp( ["?", "max rel","min rel","PI","rien"], $fext_pi[$j] );
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+À partir du graphique de la fonction \(f\) ci-dessous, remplir le tableau de signes en indiquant :
+$BR 1- les valeurs de \(x=a\), \(x=b\) et \(x=c\) succeptibles d'être des maximums relatifs (max rel), des minimums relatifs (min rel) ou des points d'inflexion (PI).
+$BR 2- les signes de \(f'(x)\).
+$BR 3- les signes de \(f''(x)\).
+$PAR
+$BBOLD Note :$EBOLD «nep» signifie «n'existe pas».
+$PAR
+$BCENTER
+\{ image(insertGraph($gr), tex_size=>500, height=>300, width=>300,
+	 extra_html_tags=>'alt="graphique de f"') \}
+	 $BR $BBOLD Cliquer sur le graphique pour agrandir l'image.$EBOLD
+
+$PAR
+\{
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>4).
+AlignedRow(["\(x = \)","\(\left]-\infty,a\right[\)","\(a=\)".ans_rule(2),"\(\left]a,b\right[\)","\(b=\)".ans_rule(2),"\(\left]b,c\right[\)","\(c=\)".ans_rule(2),"\(\left]c,\infty\right[\)"], align=>CENTER, separation=>0).
+AlignedRow(["\(f'(x)=\)",$menudfsign[0]->menu(),$menudfvals[0]->menu(),$menudfsign[1]->menu(),$menudfvals[1]->menu(),
+$menudfsign[2]->menu(),$menudfvals[2]->menu(),$menudfsign[3]->menu()], separation=>0).
+AlignedRow(["\(f''(x)=\)",$menuddfsign[0]->menu(),$menuddfvals[0]->menu(),$menuddfsign[1]->menu(),$menuddfvals[1]->menu(),
+$menuddfsign[2]->menu(),$menuddfvals[2]->menu(),$menuddfsign[3]->menu()], separation=>0).
+AlignedRow(["\(f(x)=\)",$SPACE,$menufextpi[0]->menu(),$SPACE,$menufextpi[1]->menu(),
+$SPACE,$menufextpi[2]->menu(),$SPACE], separation=>0).
+EndTable();
+\}
+
+$ECENTER
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Real($a)->cmp);
+ANS(Real($PI)->cmp);
+ANS(Real($b)->cmp);
+
+ANS($menudfsign[0]->cmp);
+ANS($menudfvals[0]->cmp);
+ANS($menudfsign[1]->cmp);
+ANS($menudfvals[1]->cmp);
+ANS($menudfsign[2]->cmp);
+ANS($menudfvals[2]->cmp);
+ANS($menudfsign[3]->cmp);
+
+ANS($menuddfsign[0]->cmp);
+ANS($menuddfvals[0]->cmp);
+ANS($menuddfsign[1]->cmp);
+ANS($menuddfvals[1]->cmp);
+ANS($menuddfsign[2]->cmp);
+ANS($menuddfvals[2]->cmp);
+ANS($menuddfsign[3]->cmp);
+
+foreach $pop ( @menufextpi ) {
+    ANS($pop->cmp() );
+}
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

@@ -1,0 +1,64 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation logarithmique)
+## Author(Julie Tremblay)
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+#####################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+#####################################################################
+
+Context("Numeric");
+
+$a = random(2,4,1);
+Context()->variables->set(x=>{limits=>[0.1,1.5]});
+Context()->flags->set(useBaseTenLog=>1);
+
+### choisir la fonction à la base :  g^(ax)
+@base = ("sqrt(x)","sin(x)","cos(x)","tan(x)","ln(x)");
+$g = Formula("$base[ random(0,4) ]");
+
+$f = Formula("($g)^($a*x)")->reduce;
+ 
+$Dg = $g->D('x');
+
+$Df = Formula("$a*$f*( ln($g) + (x*$Dg)/$g)")->reduce;
+
+
+#####################################################################
+Context()->texStrings;
+BEGIN_TEXT
+Utiliser la dérivation logarithmique pour dériver la fonction suivante.
+\[y = $f\]
+$PAR
+\( y' = \) \{ans_rule(30)\}
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+ANS($Df->cmp());
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,241 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Concavité d’une fonction, points d'inflexion)
+## Author(Julie Tremblay)
+## KEYWORDS()
+## Level()    
+## Language(fr)
+
+
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"PGgraphmacros.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"unionTables.pl",
+"PGcourse.pl",  
+);
+
+Context("Numeric");
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+$refreshCachedImages = 1;
+
+
+$a = list_random(-0.1,0.1);
+$b = random(3,7);
+
+
+$f1 = Formula("$a*x^2*(x-$b)^(2/3)");
+$f2 = Formula("$a*x^2*($b-x)^(2/3)");
+$df1 = $f1->D('x');
+$df2 = $f2->D('x');
+
+
+
+### les valeurs critiques de f et f'
+
+@vc = (0, 3*$b*(5-sqrt(5))/20, 3*$b/4, $b, 3*$b*(5+sqrt(5))/20);
+
+$p1 = $b+0.0001;
+$p2 = $b-0.0001;
+
+$gr = init_graph( -10, -10, 10, 10, axes=>[0,0], grid=>[20,20], size=>[600,600] );
+$gr->lb('reset');
+add_functions( $gr, "$df1 for x in <$p1,10> using color:blue and weight:2" );
+add_functions( $gr, "$df2 for x in <-10,$p2> using color:blue and weight:2" );
+
+$gr->lb( new Label(2,6,"f'(x)",'blue','center','middle'));
+
+### tracer l'asymptote x = b
+#$gr->moveTo($b,-10);
+#$gr->lineTo($b,10,'black',1,'dashed');
+
+## ajouter les points au graphique
+
+@label = ('a','b','c','d','e');
+
+
+foreach $i (0..2) {
+$y[$i] = $df2->eval(x=>"$vc[$i]");
+$gr->stamps( closed_circle( $vc[$i], $y[$i], 'black' ) );
+}
+$y4 = $df1->eval(x=>"$vc[4]");
+$gr->stamps( closed_circle( $vc[4], $y4, 'black' ) );
+
+### inscrire les label des valeurs critiques    
+foreach $i (0..4) {
+	$gr->lb( new Label($vc[$i],-0.5,$label[$i],'black','center','middle'));
+}
+
+### Réponses : les valeurs de f', f'' et f   
+$dfvc[0] = "0";
+$dfvc[2] = "0";
+$dfvc[3] = "nep";
+
+$ddfvc[1] = "0";
+$ddfvc[3] = "nep";
+$ddfvc[4] = "0";
+
+$fvc[1] = "PI";
+$fvc[4] = "PI";
+
+if( $a > 0 ) { 
+$dfvc[1] = "+";
+$dfvc[4] = "+";
+$ddfvc[0] = "+";
+$ddfvc[2] = "-";
+
+$dfsign[0] = "-";
+$dfsign[1] = "+";
+$dfsign[2] = "+";
+$dfsign[3] = "-";
+$dfsign[4] = "+";
+$dfsign[5] = "+";
+
+$ddfsign[0] = "+";
+$ddfsign[1] = "+";
+$ddfsign[2] = "-";
+$ddfsign[3] = "-";
+$ddfsign[4] = "-";
+$ddfsign[5] = "+";
+
+$fconc[0] = "CH";
+$fconc[1] = "CH";
+$fconc[2] = "CB";
+$fconc[3] = "CB";
+$fconc[4] = "CB";
+$fconc[5] = "CH";
+
+$fvc[0] = "min";
+$fvc[2] = "max";
+$fvc[3] = "min";
+
+} else {
+$dfvc[1] = "-";
+$dfvc[4] = "-";
+$ddfvc[0] = "-";
+$ddfvc[2] = "+";
+
+$dfsign[0] = "+";
+$dfsign[1] = "-";
+$dfsign[2] = "-";
+$dfsign[3] = "+";
+$dfsign[4] = "-";
+$dfsign[5] = "-";
+
+$ddfsign[0] = "-";
+$ddfsign[1] = "-";
+$ddfsign[2] = "+";
+$ddfsign[3] = "+";
+$ddfsign[4] = "+";
+$ddfsign[5] = "-";
+
+$fconc[0] = "CB";
+$fconc[1] = "CB";
+$fconc[2] = "CH";
+$fconc[3] = "CH";
+$fconc[4] = "CH";
+$fconc[5] = "CB";
+
+$fvc[0] = "max";
+$fvc[2] = "min";
+$fvc[3] = "max";
+}
+
+
+for $i (0..5) {
+    $menudfsign[$i] = PopUp( ["?","+", "-"], $dfsign[$i] );
+	$menuddfsign[$i] = PopUp( ["?","+", "-"], $ddfsign[$i] );
+	$menufconc[$i] = PopUp( ["?", "CH","CB"], $fconc[$i] );
+}
+
+for $j (0..4) {
+    $menudfvc[$j] = PopUp( ["?", "+", "-","0","nep"], $dfvc[$j] );
+	$menuddfvc[$j] = PopUp( ["?","+", "-","0","nep"], $ddfvc[$j] );
+	$menufvc[$j] = PopUp( ["?", "max","min","PI","rien"], $fvc[$j] );
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit une fonction \(f\) définie sur l'ensemble des réels. À partir du graphique de la ${BBOLD}dérivée$EBOLD \(f'\) ci-dessous remplir le tableau de signes en indiquant :
+$BR 1- les signes de \(f'(x)\).
+$BR 2- les signes de \(f''(x)\).
+$BR 3- pour les valeurs \(x= a,b,c,d,e\), celles succeptibles d'être des maximums relatifs (max), des minimums relatifs (min) ou des points d'inflexion (PI) de \(f\).
+$BR 4- les intervalles de concavité vers le haut (CH) et de concavité vers le bas (CB) de \(f\).
+$PAR
+$BBOLD Note :$EBOLD «nep» signifie «n'existe pas».
+$PAR
+$BCENTER
+\{ image(insertGraph($gr), tex_size=>500, height=>300, width=>300,
+	 extra_html_tags=>'alt="graphique de f"') \}
+	 $BR $BBOLD Cliquer sur le graphique pour agrandir l'image.$EBOLD
+
+$PAR
+\{
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>4).
+AlignedRow(["\(x = \)","\(\left]-\infty,a\right[\)","\(a\)","\(\left]a,b\right[\)","\(b\)","\(\left]b,c\right[\)","\(c\)","\(\left]c,d\right[\)","\(d\)","\(\left]d,e\right[\)","\(e\)","\(\left]e,\infty\right[\)"], align=>CENTER, separation=>0).
+AlignedRow(["\(f'(x)=\)",$menudfsign[0]->menu(),$menudfvc[0]->menu(),$menudfsign[1]->menu(),$menudfvc[1]->menu(),
+$menudfsign[2]->menu(),$menudfvc[2]->menu(),$menudfsign[3]->menu(),$menudfvc[3]->menu(),$menudfsign[4]->menu(),$menudfvc[4]->menu(),$menudfsign[5]->menu()], separation=>0).
+AlignedRow(["\(f''(x)=\)",$menuddfsign[0]->menu(),$menuddfvc[0]->menu(),$menuddfsign[1]->menu(),$menuddfvc[1]->menu(),
+$menuddfsign[2]->menu(),$menuddfvc[2]->menu(),$menuddfsign[3]->menu(),$menuddfvc[3]->menu(),$menuddfsign[4]->menu(),$menuddfvc[4]->menu(),$menuddfsign[5]->menu()], separation=>0).
+AlignedRow(["\(f(x)=\)",$menufconc[0]->menu(),$menufvc[0]->menu(),$menufconc[1]->menu(),$menufvc[1]->menu(),
+$menufconc[2]->menu(),$menufvc[2]->menu(),$menufconc[3]->menu(),$menufvc[3]->menu(),$menufconc[4]->menu(),$menufvc[4]->menu(),$menufconc[5]->menu()], separation=>0).
+EndTable();
+\}
+
+$ECENTER
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($menudfsign[0]->cmp);
+ANS($menudfvc[0]->cmp);
+ANS($menudfsign[1]->cmp);
+ANS($menudfvc[1]->cmp);
+ANS($menudfsign[2]->cmp);
+ANS($menudfvc[2]->cmp);
+ANS($menudfsign[3]->cmp);
+ANS($menudfvc[3]->cmp);
+ANS($menudfsign[4]->cmp);
+ANS($menudfvc[4]->cmp);
+ANS($menudfsign[5]->cmp);
+
+ANS($menuddfsign[0]->cmp);
+ANS($menuddfvc[0]->cmp);
+ANS($menuddfsign[1]->cmp);
+ANS($menuddfvc[1]->cmp);
+ANS($menuddfsign[2]->cmp);
+ANS($menuddfvc[2]->cmp);
+ANS($menuddfsign[3]->cmp);
+ANS($menuddfvc[3]->cmp);
+ANS($menuddfsign[4]->cmp);
+ANS($menuddfvc[4]->cmp);
+ANS($menuddfsign[5]->cmp);
+
+ANS($menufconc[0]->cmp);
+ANS($menufvc[0]->cmp);
+ANS($menufconc[1]->cmp);
+ANS($menufvc[1]->cmp);
+ANS($menufconc[2]->cmp);
+ANS($menufvc[2]->cmp);
+ANS($menufconc[3]->cmp);
+ANS($menufvc[3]->cmp);
+ANS($menufconc[4]->cmp);
+ANS($menufvc[4]->cmp);
+ANS($menufconc[5]->cmp);
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

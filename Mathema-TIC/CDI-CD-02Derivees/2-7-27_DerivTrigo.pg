@@ -1,0 +1,75 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions trigonométriques)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UCSB/Stewart5_3_5/Stewart5_3_5_30.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Derivatives involving multiple rules (all rules))
+## ZInstitution(UCSB)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$a=random(2,10,1)*random(-1,1,2);
+$b=random(2,5);
+
+$c1 = $a*$b;
+$Df = Formula("$c1*sin($b*x)*(1+sec($b*x)^2)")->reduce;
+
+
+BEGIN_TEXT
+
+$BR
+Dériver  \[ y = \frac{$a \sin^2($b x)}{\cos($b x)} \]
+
+$PAR
+
+\(y'=\) \{ans_rule(60)\}
+
+END_TEXT
+
+ANS($Df->cmp);
+
+$b2 = 2*$b;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+\[
+\begin{array}{lll} y' &= \left(  \frac{$a \sin^2($b x)}{\cos($b x)} \right)' &\\
+&= \frac{ $a\left( 2\sin($b x)( \sin($b x) )' \cos($b x) - \sin^2($b x)(\cos($b x))' \right)}{\cos^2($b x)}&\\
+&= \frac{ $a\left( 2\sin($b x)\cdot $b\cos($b x)\cdot\cos($b x) - \sin^2($b x)\cdot -$b\sin($b x) \right)}{\cos^2($b x)} &\\
+&= \frac{ $a\left( $b2 \sin($b x)\cos^2($b x) + $b \sin^3($b x) \right)}{\cos^2($b x)}& \\
+&= \frac{ $c1\sin($b x)\left( 2\cos^2($b x) + \sin^2($b x) \right)}{\cos^2($b x)} &\text{; mise en évidence de }$b\sin($b x) \\
+&= \frac{ $c1\sin($b x)\left( \cos^2($b x) + 1 \right)}{\cos^2($b x)} &\text{; identité } \sin^2(a)+\cos^2(a)=1\\
+&= $c1\sin($b x)\left( \frac{\cos^2($b x)}{\cos^2($b x)} + \frac{1}{\cos^2($b x)} \right) &\\
+&= $Df &; \sec($b x)=\frac{1}{\cos($b x)}
+\end{array}
+
+\]
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

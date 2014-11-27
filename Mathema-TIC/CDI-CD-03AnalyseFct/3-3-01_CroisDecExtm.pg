@@ -1,0 +1,96 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Croissance, décroissance d’une fonction et extremums relatifs)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/ASU-topics/setFirstDerivative/4-2-35.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Increasing/decreasing functions and local extrema)
+## ZInstitution(ASU)
+## ZMLT(INF_average_local)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"AnswerFormatHelp.pl",
+"PGcourse.pl",
+#"answerHints.pl",
+);
+
+do {
+$r1 = non_zero_random(-9,9);
+$r2 = non_zero_random(-8,8);
+} until( $r1 < $r2 && ($r1+$r2)%2 == 0 && ($r1+$r2)!=0 );
+
+$b = 3*($r1+$r2)/2;
+$c = 3*$r1*$r2;
+$d = non_zero_random(-14,14,1);
+
+$f = Formula("x^3 - $b*x^2 + $c*x + $d")->reduce;
+
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \[ f(x) = $f  \]
+$BR
+
+A) À l'aide de la notation d'intervalles, indiquer le ou les intervalles de croissance de \( f(x) \).
+$BR
+Croissance : \{ans_rule(50)\} \{ AnswerFormatHelp("intervals") \}
+$PAR
+
+B) À l'aide de la notation d'intervalles, indiquer le ou les intervalles de décroissance de \( f(x) \).
+$BR
+Décroissance : \{ans_rule(50)\}
+$PAR
+
+C) Trouver la valeur \(x\) de chaque maximum relatif de
+\(f\). S'il n'y a pas de maximum relatif, entrer ${BBOLD}aucun${EBOLD}.
+$BR
+Valeur \(x\) de chaque maximum relatif : \{ans_rule(30)\}
+$PAR
+
+D) Trouver la valeur \(x\) de chaque minimum relatif de
+\(f\). S'il n'y a pas de minimum relatif, entrer ${BBOLD}aucun${EBOLD}.
+$BR
+Valeur \(x\) de chaque minimum relatif : \{ans_rule(30)\}
+END_TEXT
+Context()->normalStrings;
+
+Context("Interval");
+Context()->strings->add(aucun=>{},aucune=>{} );
+
+
+ANS(Compute("(-inf,$r1)U($r2,inf)")->cmp);
+ANS(Compute("($r1,$r2)")->cmp);
+ANS(List("$r1")->cmp);
+ANS(List("$r2")->cmp);
+
+COMMENT('Les bornes (extrémités) sont exclues dans les réponses des intervalles de croissance et décroissance. Pour inclure les bornes, créer une nouvelle 
+version du problème.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

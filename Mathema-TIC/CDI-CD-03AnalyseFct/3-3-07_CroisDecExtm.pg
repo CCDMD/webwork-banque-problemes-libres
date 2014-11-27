@@ -1,0 +1,107 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Croissance, décroissance d’une fonction et extremums relatifs)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/OSU/high_school_apcalc/dchmwk8/prob4.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Increasing/decreasing functions and local extrema)
+## ZInstitution(OSU)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"PGcourse.pl",
+"parserPopUp.pl",
+#"answerHints.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 0;
+
+$a = random(-1,1,2)*random(2,20,1);
+
+### valeurs critiques et réponses
+if ( $a > 0 ) {
+$c1 = Real("-2/$a");
+$c2 = Real("0");
+
+$ans2 = "positive";
+$ans3 = "négative";
+$ans4 = "positive";
+
+$ans5 = "maximum";
+$ans6 = "minimum";
+} else {
+$c1 = Real("0");
+$c2 = Real("-2/$a");
+
+$ans2 = "négative";
+$ans3 = "positive";
+$ans4 = "négative";
+
+$ans5 = "minimum";
+$ans6 = "maximum";
+}
+
+### menus
+$popupans2 = PopUp(["?", "positive", "négative"],$ans2);
+$popupans3 = PopUp(["?", "positive", "négative"],$ans3);
+$popupans4 = PopUp(["?", "positive", "négative"],$ans4);
+
+$popupans5 = PopUp(["?", "maximum", "minimum", "ni l'un ni l'autre"],$ans5);
+$popupans6 = PopUp(["?", "maximum", "minimum", "ni l'un ni l'autre"],$ans6);
+
+
+BEGIN_TEXT
+Soit la fonction  
+\[ f(x) = x^{2}e^{$a x}\]
+$PAR
+Cette fonction a deux valeurs critiques \( c_1 < c_2\) :
+$PAR 
+\( c_1 = \) \{ans_rule(20) \}
+$BR et  \( c_2 = \) \{ans_rule(20) \}
+$PAR
+Sur chaque intervalle suivant, indiquer si \( f'(x) \)
+est positive ou négative.
+$PAR
+ \( \left]-\infty, c_1\right[ \) : \{ $popupans2->menu()\}
+ $BR \( \left]c_1,c_2\right[ \) : \{ $popupans3->menu() \}
+ $BR \( \left]c_2,\infty\right[ \) :  \{ $popupans4->menu() \}
+$PAR
+Par conséquent, \(f(x)\) a un \{ $popupans5->menu() \} relatif en \(x = c_1\) $BR
+et un \{ $popupans6->menu() \} relatif en \(x = c_2\).
+END_TEXT
+
+
+install_problem_grader(~~&std_problem_grader);
+
+ANS($c1->cmp);
+ANS($c2->cmp);
+
+ANS( $popupans2->cmp() );
+ANS( $popupans3->cmp() );
+ANS( $popupans4->cmp() );
+ANS( $popupans5->cmp() );
+ANS( $popupans6->cmp() );
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

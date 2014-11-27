@@ -1,0 +1,75 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Trouver toutes les asymptotes)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UVA-Stew5e/setUVA-Stew5e-C02S06-InfLimits/2-6-40.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and continuity)
+## ZDBsection(Applications - finding all asymptotes)
+## ZDate(5/26/2005)
+## ZInstitution(UCSB)
+## ZAuthor(Jeff Holt)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS()
+## Level(2)    
+## Language(fr)
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(aucune=>{});
+
+$a = random(-9, 9, 1);
+
+do {
+$b = random(2,8,1);
+$c = non_zero_random(-5,5,1);
+$d = non_zero_random(-6,6,1);
+} until ($c*$c-4*$b*$d < 0);
+
+$poly1 = Formula("x+$a")->reduce;
+$poly2 = Formula("$b*x^2 + $c*x + $d")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit
+\[ f(x) = \frac{$poly1 }{ \sqrt{$poly2} }. \]
+Trouver les asymptotes horizontales et verticales de la fonction \( f(x) \).
+S'il n'y a pas d'asymptote horizontale ou verticale, entrer ${BBOLD}aucune${EBOLD}.
+S'il y a plus d'une asymptote horizontale ou verticale, les énumérer en les séparant par des virgules.
+$BR
+$BR
+Asymptotes horizontales : \(y =\) \{ ans_rule(20) \}
+$PAR
+Asymptotes verticales : \(x= \) \{ ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+$ans1 = Compute("1/sqrt($b), -1/sqrt($b)");
+$ans2 = Compute("aucune");
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+
+ENDDOCUMENT();

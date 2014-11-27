@@ -1,0 +1,68 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation logarithmique)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Rochester/setDerivatives7Log/mec10.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Logarithmic differentiation)
+## ZInstitution(Univeristy of Utah)
+## ZAuthor(Utah ww group)
+## ZMLT(logDiffQuotientofPolys)
+## ZLevel(4)
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "PGauxiliaryFunctions.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$b = random(2,9,1);
+$c = random(2,9,1);
+$d = random(2,9,1);
+$e = random(2,9,1);
+$f = random(2,9,1);
+
+Context()->strings->add(nep=>{});
+
+$funct = Formula(" ( x^($d)*(x-$b)^($e)) / (x^2+$c)^($f) ")->reduce;
+
+$Dfunct = Formula("$funct*($d/x+$e/(x-$b)-2*$f*x/(x^2+$c))")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \[ f(x) = $funct \]
+$PAR
+Dériver la fonction au moyen de la dérivation logarithmique.
+$PAR
+\( f'( x ) = \) \{ans_rule(50) \}
+$PAR
+\( f'( $b ) = \) \{ans_rule(40) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS($Dfunct->cmp);
+ANS(Real(0)->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

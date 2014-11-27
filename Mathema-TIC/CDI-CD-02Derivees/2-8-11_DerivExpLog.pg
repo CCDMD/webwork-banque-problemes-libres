@@ -1,0 +1,70 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions exponentielles et logarithmiques)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/Utah/AP_Calculus_I/set8_Exponentials_and_Logarithms/1220s2p3.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Derivatives of logarithmic functions)
+## ZInstitution(Univeristy of Utah)
+## ZAuthor(Utah ww group)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+$a = random(2,5);
+$am = $a-1;
+$xam = "x^{$am}";
+$xam = "x" if $am==1;
+
+Context()->flags->set(useBaseTenLog=>1);
+
+$Df = Compute("$a*$xam *ln(x) + $xam")->with(limits=>[2,3]);
+
+BEGIN_TEXT
+Comprendre les dérivées de base.
+Trouver \( y' \) 
+si \[ y = x^{$a}\ln(x) \] 
+$BR
+\(y' = \) \{ans_rule(45)\}
+
+END_TEXT
+
+ANS($Df->cmp);
+
+BEGIN_SOLUTION
+En appliquant la règle de dérivation du produit, on obtient  
+\[ \begin{aligned}
+  y' &= \left(x^{$a} \ln(x)\right)' \\
+     &= (x^{$a})' \ln(x) + x^{$a} (\ln(x))'  \\
+     &= $a $xam \ln(x) + x^{$a} \tfrac{1}{x} \\
+     &= $a $xam\ln(x)+$xam \\
+	 &= $xam\left( $a\ln(x) + 1\right) 
+\end{aligned}
+\]
+END_SOLUTION
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,202 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Esquisse d’une fonction)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/ASU-topics/setSecondDerivative/4-4-45.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Summary of curve sketching)
+## ZInstitution(ASU)
+## ZMLT(SCS_all_poly)
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"PGgraphmacros.pl",
+"PGcourse.pl",
+"answerHints.pl",
+);
+
+$a = random(2,9,1);
+$b = non_zero_random(-3,3,1);
+
+Context("Interval");
+Context()->strings->add(aucune=>{},aucun=>{}, aucun => {alias => "aucune"});
+
+$f = Formula("x^3-$a*x^2+$b")->reduce;
+
+$c1 = 0;
+$c2 = 2*$a/3;
+
+$t1 = $a/3;
+
+$dom = Compute("R");
+$AH = List("aucune");
+$AV = List("aucune");
+
+$vc = List("$c1,$c2");
+$crois = Interval("(-inf,$c1)U($c2,inf)");
+$dec = Compute("($c1,$c2)");
+$max = List("$c1");
+$min = List("$c2");
+$CH = Interval("($t1,inf)");
+$CB = Interval("(-inf,$t1)");
+$PI = List("$t1");
+
+
+$esq = Real("1");
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$showHint = 4;
+
+Context()->texStrings;
+BEGIN_TEXT
+Répondre aux questions suivantes au sujet de la fonction
+$BR
+\[ f(x) = $f.  \]
+$BR
+${BITALIC}Consignes : ${EITALIC} S'il faut déterminer des valeurs \(x\) ou \(y\), répondre par un nombre, une liste de nombres séparés par des virgules ou le mot ${BBOLD}aucune${EBOLD}, s'il n'y a pas de solution.  Respecter la notation d'intervalles pour entrer un intervalle ou l'union de plusieurs intervalles, et entrer { } si l'intervalle est vide.
+$BR
+$PAR
+a) Déterminer le domaine de \(f\). 
+$PAR
+dom\(f =\) \{ans_rule(20)\}
+$PAR
+
+b) Déterminer les asymptotes horizontales et verticales de \(f\).
+$PAR
+Asymptotes horizontales : \(y=\) \{ans_rule(20)\}
+$BR 
+Asymptotes verticales :  \(x =\)  \{ans_rule(20)\}
+$PAR
+
+c) Déterminer les valeurs critiques de \(f\), ses intervalles ouverts de croissance et de décroissance et ses extrémums relatifs.
+$PAR
+Valeurs critiques : \( x = \) \{ans_rule(40)\} 
+$BR
+Croissante sur l'intervalle : \{ans_rule(40)\} 
+$BR
+Décroissante sur l'intervalle : \{ans_rule(40)\}
+$BR
+Maximum relatif en \(x = \) \{ans_rule(40)\}
+$BR
+Minimum relatif en \(x = \) \{ans_rule(40)\}
+$PAR
+
+d) Indiquer les intervalles ouverts où \(f\) est concave vers le haut ou vers le bas et identifier les points d'inflexion.
+$PAR
+Concave vers le haut dans l'intervalle : \{ans_rule(40)\} 
+$BR
+Concave vers le bas dans l'intervalle : \{ans_rule(40)\}
+$BR
+Points d'inflexion : \(x = \) \{ans_rule(40)\}
+$PAR
+
+e) Esquisser le graphique de \(f\).  Une fois l'esquisse terminée, entrer "1" dans la case réponse.
+$PAR
+Esquisse terminée : \{ans_rule(12)\}
+$HR
+Un indice sera donné après $showHint essais.
+END_TEXT
+Context()->normalStrings;
+
+ANS($dom->cmp);
+ANS($AH->cmp);
+ANS($AV->cmp);
+ANS($vc->cmp);
+ANS($crois->cmp);
+ANS($dec->cmp);
+ANS($max->cmp);
+ANS($min->cmp);
+ANS($CH->cmp);
+ANS($CB->cmp);
+ANS($PI->cmp);
+
+ANS($esq->cmp);
+
+$a2 = -2*$a;
+
+Context()->texStrings;
+BEGIN_HINT
+Voici la dérivée première et la dérivée seconde de \(f(x)=$f\) sous leur forme factorisée.
+$BR
+\[f'(x) = 3x^2+$a2 x = x(3x + $a2)\]
+$PAR
+\[f''(x) = 6x + $a2\]
+
+END_HINT
+Context()->normalStrings;
+
+
+### Traçage de la courbe
+
+$refreshCachedImages=1;
+
+
+$yc1 = $f->eval(x=>"$c1");
+$yc2 = sprintf("%0.1f", $f->eval(x=>"$c2") );
+$yt1 = sprintf("%0.1f", $f->eval(x=>"$t1") );
+
+$a2 = 2*$a;
+
+if( $a%3 != 0) {
+$xc2 = "$a2/3";
+$xt1 = "$a/3";
+} else {
+$xc2 = $c2;
+$xt1 = $t1;
+}
+
+$ymax = ceil(max(abs($yc1),abs($yc2)));
+$dy = ceil($ymax/10);
+$dy2 = $dy/2;
+
+
+
+$gr = init_graph(-3,-$ymax-$dy,10,$ymax+$dy,axes=>[0,0],size=>[500,500]);
+
+$gr->lb('reset');
+
+add_functions($gr,"$f for x in <-4,10> using color:blue and weight:2");
+
+
+$gr->lb(new Label($c1,$yc1+$dy2,"($c1,$b)",'black','center','middle'));
+$gr->lb(new Label($c2,$yc2-$dy2,"($xc2,$yc2)",'black','center','middle'));
+$gr->lb(new Label($t1,$yt1+$dy2,"($xt1,$yt1)",'black','center','middle'));
+
+# ajouter les points
+$gr->stamps( closed_circle($c1,$yc1,'blue') );
+$gr->stamps( closed_circle($c2,$yc2,'blue') );
+$gr->stamps( closed_circle($t1,$yt1,'blue') );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Voici le graphique de \(f(x)=$f\).
+$PAR
+$BCENTER
+\{ image( insertGraph($gr), width=>300,height=>300,tex_size=>800 ) \}
+$ECENTER
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

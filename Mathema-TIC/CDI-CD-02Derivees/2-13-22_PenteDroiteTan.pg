@@ -1,0 +1,90 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Pente et droite tangente)
+## Modifié par Julie Tremblay, collège BdeB, nov 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/3_Differentiation/3.9_Derivatives_of_General_Exponential_and_Logarithmic_Functions/3.9.29.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Chain rule (without trigonometric functions))
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Keith Thompson)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+TEXT(&beginproblem);
+
+$a=random(2,4,1);
+$b=random(2,6,1);
+$c=random(1,5,2);
+$f=Formula("x^2-$b*x+$c")->reduce;
+
+# We don't want the derivative of $f to be 0 at $xpt -sam
+# It'd also be kinda nice if $f($xpt) != 0 -nick
+
+
+
+do{ $xpt = random(2,9);} until( $xpt != $b/2 && $xpt**2-$b*$xpt+$c !=0);
+
+
+$fx= $f->substitute(x=> $xpt );
+
+$ypt=$a**$fx;
+$slope=$a**$fx * ln($a) * (2*$xpt-$b);
+$ans=Formula("$slope*x+($ypt-$slope*$xpt)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Trouver l'équation de la droite tangente à la courbe \(y=$a^{$f}\) en \(x=$xpt\).
+$PAR
+\(y\) = \{ans_rule(50)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($ans->cmp);
+
+$d1 = 2*$xpt - $b;
+if($d1==1) {$d2 = "\ln($a)";}
+else { $d2 = "$d1\ln($a)";} 
+
+$d3 = $d1*$xpt;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+Soit \(f(x)=$a^{$f}\). Alors \(f($xpt)= $a^{$fx} \).
+$PAR
+On détermine la dérivée \(f'(x)=\ln($a)\cdot (2x-$b)\cdot $a^{$f}\), 
+donc la pente de la droite tangente en \(x=$xpt\) est donnée par 
+\[f'($xpt)= $d2 $a^{$fx}.\]
+$BR
+En écrivant l'équation de la droite sous la forme pente-point, on obtient 
+\[ y-$a^{$fx}= $d2 $a^{$fx}(x-$xpt). \]
+On écrit ensuite l'équation de la droite sous la forme explicite : 
+\[ y= $d2 $a^{$fx} x + $a^{$fx}(1-$d3\ln($a)) \]
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

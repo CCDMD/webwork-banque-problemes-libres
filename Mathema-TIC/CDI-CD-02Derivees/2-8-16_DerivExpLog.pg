@@ -1,0 +1,83 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation des fonctions exponentielles et logarithmiques)
+## Modifié par Julie Tremblay, collège BdeB, nov 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/Michigan/Chap3Sec6/Q29.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Derivatives of logarithmic functions)
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS()
+## Level(2)    
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+ 
+Context("Numeric");
+Context()->flags->set( limits=>[0.1,5] );
+
+Context()->flags->set(useBaseTenLog=>1);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+@const = ('e^3', '\pi^2', '\sqrt{2}', '\ln(3)', '\sin(\pi/6)');
+$d = $const[ random(0,4) ];
+$a = random(2,9,1);
+
+$c = random(2,9,1);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Dériver la fonction \( y \).
+
+\[ y = $a x\ln(x) - $c x + $d \]
+
+$BR
+\( \dfrac{dy}{dx} = \) \{ ans_rule(65) \}
+
+END_TEXT
+Context()->normalStrings;
+
+$amc = $a-$c;
+$Df = Compute("$a*ln(x) + $amc")->reduce;
+ANS($Df->cmp() );
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+\[
+\begin{aligned}
+y' &= ($a x)'\ln(x) + $a x\Big(\ln(x)\Big)' - ($c x)' +  \left($d\right)'\\
+&= $a\ln(x) + $a x\cdot\frac{1}{x} -$c &&;\; \left($d\right)'=0 \\
+&= $a\ln(x) + $a - $c &&\text{; simplification}\\
+&= $Df 
+\end{aligned}
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

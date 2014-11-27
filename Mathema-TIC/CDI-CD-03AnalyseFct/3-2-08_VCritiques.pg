@@ -1,0 +1,86 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Analyse de fonction)
+## DBsection(Valeurs critiques d’une fonction)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/4_Applications_of_the_Derivative/4.2_Extreme_Values/4.2.17.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Increasing/decreasing functions and local extrema)
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Keith Thompson)
+## ZMLT(find_crit_nums_log)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"PGcourse.pl",
+#"answerHints.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers=1;
+
+Context()->strings->add(aucune=>{});
+
+$a=random(3,8);
+$fx=Formula("x*ln($a*x)")->reduce;
+$df=Formula("ln($a*x)+1")->reduce;
+$ans1=exp(-1)/$a;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Trouver toutes les valeurs critiques de 
+\[f(x)=$fx\]
+et les énumérer dans la case ci-dessous (en les séparant par des virgules). 
+S'il n'y a pas de valeur critique, entrer ${BBOLD}aucune${EBOLD}.
+$PAR
+Liste des valeurs critiques :\{ans_rule(30) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS(Real($ans1)->cmp);
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+Les valeurs critiques de \(f(x)=$fx\) sont les valeurs de \(x\) appartenant au domaine de \(f\) lorsque \(f'(x)=0\) ou \(f'(x)\) n'existe pas.
+$PAR
+Le domaine de \(f\) est : \(\left]0,\inf\right[\).
+$PAR La dérivée est 
+ \[\begin{array}{ll}f'(x)&= (x)'\ln($a x) + x\left(\ln($a x)\right)'\\
+ &= \ln($a x) + \frac{ x($a x)' }{$a x}\\
+ &= \ln($a x) + \frac{$a x}{$a x} \\
+ &= $df \end{array}
+ \]
+$BR 
+En posant \(f'(x)=0\), on obtient une solution en transformant l'équation en équation exponentielle de base \(e\), 
+\[
+\begin{array}{rl} $df &= 0 \\
+\ln($a x)  &= -1 \\
+$a x &= e^{-1} \\
+x &= \frac{e^{-1}}{$a} \end{array}
+\]
+$PAR
+Comme il n'y a aucune valeur appartenant au domaine où \(f'(x)\) n'existe pas, alors la valeur critique de la fonction est \(\frac{e^{-1}}{$a} \).
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

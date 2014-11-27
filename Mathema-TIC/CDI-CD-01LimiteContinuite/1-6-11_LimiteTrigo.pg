@@ -1,0 +1,82 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Limite d'une fonction trigonométrique)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/ma122DB/set1/c0s5p6.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Limits at infinity, horizontal and oblique asymptotes)
+## ZDate(6/3/2002)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS('limite','trigonométrique','cosinus')
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+     "PGchoicemacros.pl",
+   "PGanswermacros.pl",
+  "PGcourse.pl", 
+);
+
+$showHint=0;
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers=1;
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+
+@questStr = ();
+@ansStr = ();
+qa(~~@questStr,~~@ansStr,
+" \frac{1-\cos(x)}{x} "   , "0",
+"\frac{ 1-\cos(x) }{ (x/2)^{2} }",  "2",
+" \cos\left(\frac{2}{\pi-x} \right) \cos\left(\frac{ \pi-x }{ 2 }\right)", "0",
+"\cos\left(\frac{2}{x}\right)" , "nep" ,
+" \frac{ 1-\cos(x) }{ x^{4} }", "inf",
+"\frac{ \sin(2x) }{ x }", "2",
+" \frac{ \tan(8x) }{ 2x}", "4",
+);
+
+$tog=random(0,6,1);
+$quest=$questStr[$tog];
+
+BEGIN_TEXT
+$BR
+Évaluer la limite suivante. Si la réponse est l'infini positif, entrer ${BBOLD}inf${EBOLD}; 
+si la réponse est l'infini négatif, entrer ${BBOLD}-inf${EBOLD}; si la limite n'existe pas, entrer ${BBOLD}nep${EBOLD}. $PAR
+\[ \displaystyle \lim_{x\to 0} $quest \]
+$BR  
+Ni nécessaire, pensez à utiliser des identités trigonométriques pour transformer les expressions algébriques, afin d'évaluer les limites sans utiliser la calculatrice à affichage graphique. $BR$BR
+
+Réponse :  \{ans_rule(30)\}
+
+END_TEXT
+
+ANS(Compute("$ansStr[$tog]")->cmp);
+
+BEGIN_HINT
+Vous avez peut-être oublié certaines identités trigonométriques, alors voici les trois plus courantes :
+$BR
+\(\cos^2(x) +\sin^2(x)=1\), 
+$BR
+\(\cos(a + b) = \cos(a)\cos(b)-\sin(a)\sin(b)\) 
+et $BR
+\(\sin(a+b)=\sin(a)\cos(b)+\cos(a)\sin(b)\)
+END_HINT
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

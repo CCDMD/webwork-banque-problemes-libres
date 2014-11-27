@@ -1,0 +1,117 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Dérivées)
+## DBsection(Dérivation en chaîne (sans fonctions trigonométriques))
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UCSB/Stewart5_3_5/Stewart5_3_5_17.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Differentiation)
+## ZDBsection(Derivatives involving multiple rules (all rules))
+## ZInstitution(UCSB)
+## ZMLT(prodpolypower)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"contextLimitedPolynomial.pl",
+"MathObjects.pl",
+"compoundProblemFr.pl",
+#"PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$a=random(2,10,1);
+$b=random(2,10,1);
+$c=random(2,9,1);
+
+
+#exposants
+$n = random(3,8);
+do{$m = random(3,8);} until ($m!=$n);
+
+Context("Numeric");
+
+
+$exp1 = Formula("1+$a*x")->reduce;
+$exp2 = Formula("$b+$c*x-x^2")->reduce;
+
+
+$g = Formula("($exp1)^($n)*($exp2)^($m)");
+$Dg = $g->D->reduce;
+
+
+$cp = new compoundProblem( parts=>2, 
+                         totalAnswers=>2,   
+       					 nextStyle=>'Button',
+						 nextLabel=>"Passer à la prochaine partie",
+						# nextVisible=>'Always'
+						);
+
+						
+Context()->texStrings;
+BEGIN_TEXT
+Ce problème contient deux parties. Pour passer à la deuxième partie, vous devez répondre correctement à la première et cliquez 
+sur le bouton apparaissant dans le bas du problème.
+$PAR
+${BBOLD}Première partie :$EBOLD
+$BR
+Dériver \(g(x) = $g\).
+
+$PAR
+
+\(g'(x)=\) \{ans_rule(60)\}
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+ANS($Dg->cmp);
+
+$n1 = $n-1;
+$m1 = $m-1;
+
+if ( $cp->part > 1 ) {
+Context()->texStrings;
+BEGIN_TEXT
+${BBOLD}Deuxième partie :$EBOLD
+$BR
+Factoriser la fonction \(g'(x)\) sous la forme \(($exp1)^{$n1}($exp2)^{$m1}Q(x)\) où \(Q(x)\) 
+est un polynôme quadratique.
+$PAR
+
+\(g'(x) = ($exp1)^{$n1}($exp2)^{$m1}\Bigl(\) \{ans_rule(25)\} \(\Bigl)\)
+
+END_TEXT
+Context()->normalStrings;
+
+Context("LimitedPolynomial-Strict");
+
+$c2 = -$a*($n+2*$m);
+$c1 = $a*$n*$c - 2*$m + $m*$a*$c;
+$c0 = $n*$a*$b + $m*$c;
+
+$q = Formula("$c2*x^2+$c1*x+$c0")->reduce;
+ANS($q->cmp);
+
+
+}
+
+
+
+ENDDOCUMENT();
