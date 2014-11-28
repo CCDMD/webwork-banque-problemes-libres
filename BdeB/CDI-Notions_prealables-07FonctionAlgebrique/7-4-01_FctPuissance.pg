@@ -1,0 +1,118 @@
+## DESCRIPTION
+## 
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions algébriques)
+## DBsection(Domaine, image et évaluation de fonctions)
+## Traduction(Julie Tremblay)
+## Institution(BdeB)
+######## Source ############
+## Fichier source:  Chap9Sec6_Q08.pg
+## ZDBsubject(Algebra)
+## ZDBchapter(Polynomial and rational functions)
+## ZDBsection(Comparing Power, Exponential, And Log Functions)
+## ZInstitution(Loyola University Chicago)
+## ZAuthor(Adam Spiegler)
+##############################
+## Level(2)
+## Language(fr)
+## KEYWORDS('graphique','fonction puissance')
+
+
+
+DOCUMENT();
+
+loadMacros( "PGchoicemacros.pl",
+			"PGstandard.pl",
+		    "MathObjects.pl",
+           "PGgraphmacros.pl",
+           "extraAnswerEvaluators.pl",
+           "PGauxiliaryFunctions.pl",
+           "PGgraphmacros.pl",
+           "MathObjects.pl",
+           "PGcourse.pl",
+		   "unionTables.pl",
+);
+
+TEXT(beginproblem());
+
+Context("Numeric");
+
+$showPartialCorrectAnswers = 1;
+$refreshCachedImages = 1;
+
+@pick = NchooseK(7,3);
+for ($j = 0; $j <= 2; $j++) { $pick[$j] = $pick[$j]+2} ;
+@power = num_sort(@pick);
+$eqn[0] = "\( y = x \)";
+$f[0] = "x for x in <0,1> using color:black and weight:2";
+@color = ('black','green','blue','red');
+
+for ($i = 0; $i <= 2; $i++) {
+ $eqn[$i+1] = "\( y = x^{$power[$i]} \)";
+ $f[$i+1]="x**($power[$i]) for x in <0,1> using color:$color[$i+1] and weight:2" };
+
+#########  Graph #################
+$graph = init_graph(-.1,-.1,1.1,1.1,'axes'=>[0,0],'ticks'=>[1,1]);
+$graph->lb('reset');
+$graph->lb(new Label(1.05,-0.01,"x",'black','right','top'));
+$graph->lb(new Label(-0.01,1.05,"y",'black','right','top'));
+$graph->lb(new Label(.6,.6,"A",'black','right','bottom'));
+$graph->lb(new Label(.67,.67**$power[0],"B",'green','right','bottom'));
+$graph->lb(new Label(.67,.67**$power[1],"C",'blue','right','bottom'));
+$graph->lb(new Label(.67,.67**$power[2],"D",'red','right','bottom'));
+$graph->lb(new Label(1.01,1.01,"(1,1)",'black','left','bottom'));
+$point = closed_circle( 1,1, black );
+$graph -> stamps($point);
+plot_functions( $graph, @f);
+$fig = image(insertGraph($graph), width => 300, height => 300, tex_size => 500);
+
+@ans = ("A","B","C","D");
+@mix = NchooseK(4,4);
+@eqn = @eqn[@mix];
+@ans = @ans[@mix];
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Associer chacun des graphiques (A-D) à son équation dans le tableau ci-dessous. 
+La courbe du graphique A est noire, celle de B est verte, celle de C est bleue et celle de D est rouge.
+$BCENTER
+$fig
+$ECENTER
+$PAR
+\{ begintable(2) \}
+\{ row($eqn[0], ans_rule(5) ) \}
+\{ row($eqn[1], ans_rule(5) ) \}
+\{ row($eqn[2], ans_rule(5) ) \}
+\{ row($eqn[3], ans_rule(5) ) \}
+\{ endtable() \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6998", "2.2.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+for ($i = 0; $i <= 3; $i++){ ANS(str_cmp($ans[$i])) };
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+Pour les valeurs \( 0<x<1 \), plus la puissance de \( x \) est grande, plus la valeur \(x^n\) sera petite.$BR
+$BR
+\{
+BeginTable(border=>2, tex_border=>"1pt", spacing=>0, padding=>10).
+AlignedRow(["$eqn[0]","\($ans[0]\)"], align=>CENTER, separation=>0).
+AlignedRow(["$eqn[1]","\($ans[1]\)"], align=>CENTER, separation=>0).
+AlignedRow(["$eqn[2]","\($ans[2]\)"], align=>CENTER, separation=>0).
+AlignedRow(["$eqn[3]","\($ans[3]\)"], align=>CENTER, separation=>0).
+EndTable()
+\}
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

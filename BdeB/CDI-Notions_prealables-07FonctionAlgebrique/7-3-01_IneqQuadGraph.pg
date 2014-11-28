@@ -1,0 +1,142 @@
+##DESCRIPTION
+## Trouver les intervalles positives et négative d'une fonction quadratique
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions algébriques)
+## DBsection(Résoudre une inéquation quadratique à partir du graphique)
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## KEYWORDS('fonction','quadratique','inéquation')
+## Level(2)
+## Language(fr)
+
+####################################
+#  Initialization
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"PGcourse.pl",
+"contextInequalitiesFr.pl",
+"PGgraphmacros.pl",
+);
+
+TEXT(beginproblem()); 
+
+####################################
+#  Setup
+
+Context("Inequalities")->variables->are(x=>"Real");
+
+$a = non_zero_random(-8,3,1);
+$b = non_zero_random($a+1,$a+5,1);
+$c = non_zero_random(-3,3,1);
+
+
+$f = Compute("$c(x-$a)(x-$b)")->reduce;
+
+if($c > 0) {
+$answera = Compute("x < $a ou $b < x");
+$answerb = Compute("$a < x < $b");
+} else {
+$answerb = Compute("x < $a ou $b < x");
+$answera = Compute("$a < x < $b");
+}
+
+
+######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+En esquissant le graphique de la fonction quadratique \( f(x) = $f \), 
+répondre aux questions suivantes.
+$BR
+$BR
+a) Pour quelles valeurs de \( x \) la fonction est-elle positive? Entrer votre réponse 
+sous la forme d'une inégalité.
+$BR
+\{ ans_rule(30) \} 
+\{ AnswerFormatHelp("inequalities") \}
+$BR
+$BR
+b) Pour quelles valeurs de \( x \) la fonction est-elle négative? Entrer votre réponse 
+sous la forme d'une inégalité.
+$BR
+\{ ans_rule(30) \} 
+$HR 
+$BITALIC 
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6984", "2.2.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+######################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS($answera->cmp() );
+ANS($answerb->cmp() );
+
+$gr = init_graph(-10,-10,10,10,
+axes=>[0,0],
+#grid=>[20,20],
+size=>[600,600],
+ticks=>[20,10],
+);
+
+
+add_functions($gr, 
+"$f for x in <-10,10> using color:blue and weight:2");
+
+$point1 = closed_circle( $a, 0, blue );
+$point2 = closed_circle( $b, 0, blue );
+
+$gr->lb('reset');
+$gr->lb(new Label(9,-1,'x','black','center','middle'));
+$gr->lb(new Label(0.5,9.5,'y','black','center','middle'));               
+
+foreach my $i (1..9) {
+  $gr -> lb(new Label ( $i,-0.5, $i,'black','center','middle'));
+  $gr -> lb(new Label (-$i,-0.5,-$i,'black','center','middle'));
+}
+
+foreach my $j (1..4) {
+  $gr -> lb(new Label ( -0.5,2*$j, 2*$j,'black','center','middle'));
+  $gr -> lb(new Label ( -0.5,-2*$j, -2*$j,'black','center','middle'));
+}
+
+$gr->stamps($point1,$point2);
+
+if($c > 0) {$ouv = 'vers le haut'; $sym = '>';}
+else {$ouv = 'vers le bas'; $sym = '<'}
+
+
+Context()->texStrings;	
+BEGIN_SOLUTION
+$PAR
+
+Soit \(f(x)=$f\), on sait que cette parabole à une ouverture $ouv car \($c $sym 0\) et les zéros sont 
+\(($a,0)\) et \(($b,0)\). On peut ainsi tracer son graphique et déterminer les valeurs de \(x\) pour lesquelles 
+la fonction est positive et négative.
+
+$PAR
+On obtient
+\[ f(x)=$f>0 \Rightarrow $answera \text{ et } f(x)=$f<0 \Rightarrow $answerb\]
+$PAR
+$BCENTER
+\{ image( insertGraph($gr), width=>300,height=>300,tex_size=>700 ) \}
+$BR (Cliquer sur l'image pour l'agrandir)
+$ECENTER
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

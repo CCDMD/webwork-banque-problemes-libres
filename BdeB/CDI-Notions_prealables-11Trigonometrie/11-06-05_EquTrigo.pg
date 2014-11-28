@@ -1,0 +1,114 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Résoudre des équations trigonométriques)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+
+## Level(3)
+## Language(fr)
+## KEYWORDS()
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"answerHints.pl",
+"PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+### fct = cos ou sin
+### Résoudre   a fct(2x)+b=c   où  c=a+b ou c=-a+b pour que l'équation soit
+### équivalente à fct(2x)=1 ou fct(2x)=-1 sur le domaine [0,2pi]
+
+@fct = (Formula("sin(2*x)"),Formula("cos(2*x)"));
+### choix de la fonction
+$n = random(0,1);
+
+$a = random(2,8);
+$b = random(-5,5);
+
+$c = list_random($a+$b,-$a+$b);
+
+### la valeur
+$v = ($c-$b)/$a;  ### v=-1 ou 1
+
+
+### Les solutions : fct(2x)= v 
+
+if( $n == 0) {   ## fct = sin
+
+$ans1 = Real("asin($v)/2 ");
+$ans2 = Real("asin($v)/2 + pi");
+
+if($ans1 < 0) {  ### angle doit être entre 0 et 2pi
+$ans1 = Real("2*pi + $ans1");
+} 
+
+} else {   ## fct = cos 
+$ans1 = Real("acos($v)/2 ");
+$ans2 = Real("acos($v)/2 + pi");
+}
+
+
+
+$ans = Compute("$ans1,$ans2");
+
+$exp = Formula("$a*$fct[$n]+$b")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+À l'aide du cercle trigonométrique, trouver toutes les valeurs de \(x\) dans l'intervalle \(\left[0,2\pi\right[\)
+qui vérifient l'équation 
+\[ $exp = $c \]$BR
+Séparer les valeurs par une virgule.$BR
+${BBOLD}Note${EBOLD} : Une réponse doit être la valeur exacte écrite sous la forme d'une fraction ou d'une expression arithmétique. Elle ne doit pas être écrite avec des décimales ou 
+à l'aide des fonctions trigonométriques inverses.
+$PAR
+\( x = \) \{ans_rule(40)\}
+END_TEXT
+Context()->normalStrings;
+
+Context()->functions->disable("Trig");
+
+ANS($ans->cmp->withPostFilter(AnswerHints( 
+  [Compute("$ans1")] => ["Vous y êtes presque! Si le domaine est x &#1028 [0,2&#960[, alors 2x &#1028 [0,4&#960[.",replaceMessage=>1],
+
+)));
+
+
+$showHint = 3;
+
+$d =$c-$b;
+
+Context()->texStrings;
+BEGIN_HINT
+${BBOLD}Indice 1 :${EBOLD}
+$PAR
+Il faut transformer l'équation \($exp = $c\) par l'équation équivalente 
+\[ \begin{array}{rl}$exp &= $c\\
+$a $fct[$n] &= $c -$b\\
+$fct[$n] &= \frac{$d}{$a} = $v \end{array}\]
+$PAR
+Pour résoudre l'équation ci-dessus, il faut poser \(\theta = 2x\) et trouver tous les angles tels que \($fct[$n]=$v\).
+$BR
+END_HINT
+Context()->normalStrings;
+
+$showHint = 6;
+Context()->texStrings;
+BEGIN_HINT
+${BBOLD}Indice 2 :${EBOLD}
+$PAR
+Pour résoudre l'équation \($fct[$n] = $v\), il faut poser \(\theta = 2x\).
+$BR Le domaine l'équation est \(x\in\left[0,2\pi\right[\), alors \(\theta=2x\in\left[0,4\pi\right[\).
+END_HINT
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,65 @@
+## DBsubject(Probabilités)
+## DBchapter(Probabilité conditionnelle et indépendance)
+## DBsection(Probabilités conditionnelles)
+## Author(Jean-Sébastien Turcotte - Université de Montréal)  # ou ##Modifié par 
+## KEYWORDS('Probabilités conditionnelles')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+);
+##### Le code du problème va ici
+ TEXT(beginproblem());
+
+#####Initialisation des paramètres######################
+Context("Numeric");
+@res=(1,2,3,4,5,6);                 #Les résultats possibles
+$somm=random(2,12,1);       #Une somme aléatoire
+@ans;                                      #Array de toutes les réponses possibles
+foreach my $i(@res){
+if($somm<=$res[$i-1]){
+$ans[$i-1]=0;
+} else{
+             if(2*$res[$i-1]==$somm){
+                                                 $ans[$i-1]=1/(6-abs(7-$somm));
+                                                } else{
+                                                            if($somm-$res[$i-1]<=6){
+                                                                                          $ans[$i-1]= 2/(6-abs(7-$somm));
+                                                                                          } else{
+                                                                                                    $ans[$i-1]=0;
+                                                                                                     }
+                                              }
+        }
+}
+do{
+@slice=NchooseK(6,3);           #choisir 3 nombre aléatoire pour l;es résultat
+@ques=@res[@slice];             #Les 3 nombres sont dans @ques
+@rep=@ans[@slice];             #Les réponses correspondantes
+$checksipas0=0;
+$checksipas0+=$_ for @rep;    #On s'assure qu'au moins une rep   est  pos         
+} until ($checksipas0>0);
+BEGIN_TEXT
+On jette deux dés balancés. Sachant que la somme des dés est \($somm\), quelle est la probabilité qu'au moins un dé soit:
+$BR
+ un \($ques[0]\)? \{ans_rule(20);\}
+$BR
+ un \($ques[1]\)? \{ans_rule(20);\}
+$BR
+ un \($ques[2]\)? \{ans_rule(20);\}
+END_TEXT
+ANS(Compute("$rep[0]")->cmp);
+ANS(Compute("$rep[1]")->cmp);
+ANS(Compute("$rep[2]")->cmp);
+
+ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

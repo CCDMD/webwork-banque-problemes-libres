@@ -1,0 +1,82 @@
+## DESCRIPTION
+## Quadratic Equations
+## ENDDESCRIPTION
+
+## KEYWORDS('Quadratic' 'Algebra' 'Equations' 'francais')
+## Tagged by tda2d
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Quadratic Equations')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGauxiliaryFunctions.pl",
+  "Parser.pl",
+  "MathObjects.pl",
+);
+
+# Résoudre équation quadratique avec 1 solution
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(aucune => {});
+Context()->noreduce('(-x)-y','(-x)+y');
+
+$a = random(2,5,1);
+do{$b = non_zero_random(-9,9,1);} until($b != $a);
+
+
+do{$c = random(10,50,1);} until($c != $a*$a);
+
+$d = $c - $a*$a;
+$ab2 = 2*$a*$b;
+$bb = $b*$b;
+
+$poly1 = Formula("$c x^2 + $ab2 x")->reduce;
+$poly2 = Formula("$d x^2 - $bb")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Trouver, si possible, les solutions de l'équation suivante. S'il n'y a aucune solution, écrire "aucune" dans la case réponse.$BR $BR
+\[$poly1 = $poly2\].
+$BR $BR Solution(s) =  \{ans_rule(25) \} $BR
+$BBOLD Note:  S'il y a plus d'une solution, écrire vos réponses séparées par une virgule. Ex.: 4, sqrt(10)$EBOLD
+$BR
+END_TEXT
+Context()->normalStrings;
+
+$ans1 = Formula("-$b/$a")->reduce;
+
+ANS($ans1->cmp);
+
+$aa = $a*$a;
+
+if($ans1 - floor($ans1) != 0){  #si ce n'est pas un entier
+($num,$den) = reduce(-$b,$a);
+$ans1 = "\frac{$num}{$den}";
+}
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pour résoudre cette équation, il faut la transformer sous la forme \(ax^2+bx+c=0\) pour ensuite factoriser le polynôme quadratique.
+$BR $BR
+\[\begin{array}{rll} $poly1 &= $poly2 &\\ $c x^2 + $ab2 x - $d x^2 + $bb &=0 &\\ $aa x^2 + $ab2 x + $bb  &= 0 &\text{; factoriser}\\ ($a x + $b)($a x + $b) &= 0&\text{; polynôme de la forme }\\ ($a x + $b)^2 &= 0 &\;(ax+b)^2=a^2 x^2+2ab+b^2 \end{array}\]
+$BR
+Donc, il existe une seule solution à cette équation :$BR
+Lorsque \( ($a x + $b)^2 = 0 \Rightarrow $a x + $b = 0 \Rightarrow \boxed{x = $ans1}\)
+$HR
+$BBOLD
+Vous pouvez aussi allez voir un exemple similaire sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5270", "1.4.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EBOLD
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

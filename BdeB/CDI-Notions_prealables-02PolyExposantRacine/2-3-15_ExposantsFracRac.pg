@@ -1,0 +1,130 @@
+## DESCRIPTION
+## exponents
+## ENDDESCRIPTION
+
+## KEYWORDS('exponents','français')
+## Traduction('Julie Tremblay')
+
+## DBsubject('Algebra') 
+## BookTitle('Algebra: Form and Function')
+## DBchapter('Basic Algebra') 
+## BookChapter('Rules for Exponents and the Reasons for Them')
+## DBsection('Exponents and Radicals') 
+## BookSection('Fractional Exponents and Radical Expressions')
+## Date('01/01/10')
+## Author('Paul Pearson')
+## Institution('Fort Lewis College')
+## TitleText1('Algebra: Form and Function')
+## EditionText1('1')
+## AuthorText1('McCallum, Connally, and Hughes-Hallett')
+## Section1('6.2')
+## Problem1('24')
+
+##############################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"AnswerFormatHelpFr.pl",
+"contextLimitedPolynomial.pl"
+);
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+Context("LimitedPolynomial-Strict")->variables->are(t=>"Real");
+Context()->{error}{msg}{"Simplified polynomials can have at most one term of each degree"}="Simplifiez votre polynôme dans sa plus simple expression.";
+
+$a = random(7,9,1);
+$b = random(2,5,1);
+$c = random(2,3,1);
+
+$e1 = random(2,6,1);
+$e2 = random(2,6,1);
+
+while($e1==$e2){$e2=random(2,6,1);}
+
+$e1e1 = $e1**2;
+$e2e2 = $e2**2;
+
+$e1e13 = $e1e1 * 3;
+$e2e23 = $e2e2 * 3;
+
+$f = random(2,8,1);
+$ff = $f**2;
+$ff2 = $ff * 2;
+
+
+#while (($a*$e1 - $c*$e2)==0) { $c = random(2,5,1); }
+
+$bf = $b * $f;
+
+$d = $a*$e1 - $c*$e2;
+
+$ans1 = Compute("$bf t");
+$ans2 = Compute("$d t");
+
+
+##############################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Sachant que \(t > 0\), simplifier l'expression suivante en combinant les radicaux, si possible.  
+$BR
+$BR
+\( $a \sqrt{$e1e13 t^3} + $b t \sqrt{$ff2 t} - $c t \sqrt{$e2e23 t} \) = 
+\( \Big( \) \{ ans_rule(10) \} 
+\( \Big) \sqrt{2t} + 
+   \Big( \) \{ ans_rule(10) \}
+\( \Big) \sqrt{3t} \)
+\{ AnswerFormatHelp("formulas") \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6646", "1.1.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+#############################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS($ans1->cmp() );
+ANS($ans2->cmp() );
+
+$ae1 = $a*$e1;
+$ce2 = $c*$e2;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+L'expression \( $a \sqrt{$e1e13 t^3} + $b t \sqrt{$ff2 t} - $c t \sqrt{$e2e23 t} \) se simplifie de la façon suivante:
+$BR $BR
+
+\[\begin{array}{rll}  $a \sqrt{$e1e13 t^3} + $b t \sqrt{$ff2 t} - $c t \sqrt{$e2e23 t} 
+&=  $a \sqrt{$e1e1 t^2 \cdot 3 t} + $b t \sqrt{$ff \cdot 2 t} - $c t \sqrt{$e2e2 \cdot 3 t} 
+&\\[0.8em]
+& = $a \cdot $e1 t \sqrt{3 t} + $b t \cdot $f \sqrt{2 t} - $c t  \cdot $e2\sqrt{3 t} 
+&;\begin{cases} 
+\sqrt{a^2 bt}=\sqrt{a^2} \sqrt{bt} = a \sqrt{bt} \\
+\sqrt{t^2} = |t| = t \text{ car } t>0 
+\end{cases}\\[1em]
+&= $ae1 t \sqrt{3 t} + $bf t \sqrt{2 t} - $ce2 t  \sqrt{3 t}  &\\[0.8em]
+&= $ans1 \sqrt{2 t} + ($ae1 t - $ce2 t) \sqrt{3 t}  & \\[0.8em]
+& = $ans1 \sqrt{2 t} + $ans2 \sqrt{3 t}   & \end{array}
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

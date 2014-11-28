@@ -1,0 +1,133 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+
+## DBsubject(Algèbre)
+## DBchapter(Factorisation)
+## DBsection(Factorisation de trinômes)
+## KEYWORDS('Factorisation','français')
+## Traduction('Julie Tremblay')
+
+## Level(2)
+## Language(fr)
+
+## ZDBsubject('Algebra') 
+## ZDBchapter('Basic Algebra') 
+## ZDBsection('Expanding and Factoring') 
+## ZAuthor('Paul Pearson')
+## ZInstitution('Fort Lewis College')
+
+
+
+########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowersFr.pl",
+#"problemRandomize.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+
+#n(x+a)(x+b) = nx^2 +n(a+b)x + nab
+
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+
+
+#ProblemRandomize(style=>"Button",label=>"Générer un autre polynôme");
+
+$a = random(1,7,1);
+$b = non_zero_random(-7,7,1);
+$n = non_zero_random(-5,5,1);
+
+$s = $a + $b;
+$p = $a * $b;
+
+$a1 = $n*$s;
+$a2 = $n*$p;
+
+$expression = Compute("$n*x^2 + $a1*x + $a2")->reduce();
+
+$fac1 = Compute("x + $a")->reduce();
+$fac2 = Compute("x + $b")->reduce();
+
+$answer = Compute("$n*($fac1)($fac2)")->reduce();
+
+
+################################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Factoriser l'expression \($expression\), si possible, et simplifier la réponse.$BR
+Si le polynôme ne se factorise pas, réécrire le polynôme dans la case réponse.
+$BR
+$BR
+\{ ans_rule(30) \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème sont présentées à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2320", "1.2.4", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS($answer->cmp(
+checker => sub {
+        my ($correct,$student,$ans) = @_; 
+      
+    if ($student eq $expression) {
+      $ans->{ans_message} = "Ce polynôme se factorise.";
+       return 0;
+} elsif ($student == $answer) {
+return 1;
+} else {
+return 0;
+}
+
+  return $ans; 
+})
+);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Pour factoriser le polynôme \($expression\), il faut d'abord mettre en évidence simple le multiple commun aux trois termes:  \($n\). On obtient: $BR $BR
+\[    $expression = $n(x^2 + $s x + $p) \]
+$BR
+On cherche ensuite deux nombres   \(u\) et \(v\) tels que $BR $BR
+\[
+\begin{array}{rlrl} u + v &= $s    &\Rightarrow  $a + $b &= $s    \\
+      u \times v &= $p  &\Rightarrow $a \times $b &= $p \end{array}
+\]
+$BR
+Alors en posant \(u = $a\) et \(v = $b\), la factorisation du polynôme est : $BR $BR
+
+\[ $expression = $n (x + u)(x + v) = $answer  \]
+
+
+$BR
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

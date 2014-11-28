@@ -1,0 +1,139 @@
+## DESCRIPTION
+## Domaine d'une fonction rationnelle, avec une racine carrée
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions algébriques)
+## DBsection(Trouver le domaine d'une fonction algébrique)
+## Traduction(Julie Tremblay)
+## Institution(BdeB)
+########### Source ######################
+## fichier source : di7.pg
+
+#########################################
+## KEYWORDS('fonction','racine','domaine','fonction rationnelle')
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"PGcourse.pl",
+"AnswerFormatHelp.pl",
+"answerHints.pl",
+"problemPanic.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Interval");
+
+$a =  random(2, 9, 1);
+do{$b =  random(1, 9, 1);} until($a>$b);
+
+$c = non_zero_random(-5,5);
+do{$d = non_zero_random(-6,6);} until($c!=$d);
+
+$sg = random(-1,1,2);
+
+$num = Compute("$c*x+$d")->reduce;
+$amb = $a - $b;
+$ab = $a*$b;
+$rac = Compute("$amb x + $ab")->reduce;
+
+$f = Formula("$num/(x + $sg*sqrt( $rac))")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Trouver le domaine de la fonction
+\[f(x)= $f \]
+Écrire votre réponse en notation d'intervalle.
+$BR
+$BR
+\(\text{dom }f = \) \{ans_rule(40)\}. \{ AnswerFormatHelp("interval") \}
+$PAR
+${BBOLD}Note : Vous aurez droit à un indice après trois essais.${EBOLD}
+$HR
+$BITALIC
+Des exemples similaires se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=26974", "2.2.6", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+$borne = Compute("-$ab/$amb");
+
+if($sg == 1) {
+ANS(Compute("[$borne, -$b)U(-$b,inf)")->cmp);
+} else {
+ANS(Compute("[$borne, $a)U($a,inf)")->cmp);
+}
+
+
+$showHint = 3;
+$den = Compute("x + $sg*sqrt( $rac)")->reduce;
+
+
+Context()->texStrings;
+BEGIN_HINT
+${BBOLD}Indice${EBOLD}: Les valeurs de \(x\) qui appartiennent au domaine de \( f(x) = $f\) doivent respecter les deux restrictions suivantes :$BR $BR
+\[\begin{array}{lll}
+1.& $rac  \geq 0 &\text{; car l'expression dans la racine doit être non-négative}\\
+2.&  $den \neq 0 &\text{; car la division par zéro est impossible}
+\end{array}\]
+$BR 
+END_HINT
+Context()->normalStrings;
+
+
+$c1 = Compute("$amb x")->reduce;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Les valeurs de \(x\) qui appartiennent au domaine de \( f(x) = $f\) doivent respecter les deux restrictions suivantes :$BR $BR
+\[\begin{array}{lll}
+1.& $rac \geq 0 &\Rightarrow $c1 \geq -$ab \Rightarrow x \geq \frac{-$ab}{$amb} \text{ ou } x\in\left[\frac{-$ab}{$amb},+\infty\right[\\
+2.& $den \neq 0 &
+\end{array}\]
+$PAR
+Pour trouver la ou les restriction(s) de la partie 2, on va résoudre l'équation suivante :
+$PAR
+\{
+if($sg == 1) {
+"\[
+\begin{array}{lll} $den = 0 &\Rightarrow \sqrt{$rac} = -x &\text{; donc }x \leq 0\text{ pour que la racine soit positive}\\
+&\Rightarrow $c1 + $ab = (-x)^2 &\text{; on élève au carré de chaque côté}\\
+&\Rightarrow 0 = x^2 - $c1 - $ab &\\
+&\Rightarrow 0 = (x-$a)(x+$b) &\text{; factorisation}\\
+&\Rightarrow \text{ si }x = $a \text{ ou } x=-$b &\end{array}
+\]".
+$PAR.
+"Il faut rejeter la valeur de \(x=$a\) car dans la démarche ci-dessus, on a établit que \(x \leq 0\). Ainsi, on aura que le dénominateur 
+\($den = 0\) si \(x = -$b\).".
+$PAR.
+"En conclusion, le domaine de \(f\) est \( \left[ \frac{-$ab}{$amb}, -$b \right[ \cup \left] -$b, + \infty \right[ \)."
+} else {
+"\[
+\begin{array}{lll} $den = 0 &\Rightarrow x = \sqrt{$rac} &\text{; donc }x \geq 0\text{ pour que la racine soit positive}\\
+&\Rightarrow x^2 = $c1 + $ab &\text{; on élève au carré de chaque côté}\\
+&\Rightarrow x^2 - $c1 - $ab = 0 &\\
+&\Rightarrow(x-$a)(x+$b) = 0 &\text{; factorisation}\\
+&\Rightarrow \text{ si }x = $a \text{ ou } x=-$b &\end{array}
+\]".
+$PAR.
+"Il faut rejeter la valeur de \(x=-$b\) car dans la démarche ci-dessus, on a établit que \(x \geq 0\). Ainsi, on aura que le dénominateur 
+\($den = 0\) si \(x = $a\).".
+$PAR.
+"En conclusion, le domaine de \(f\) est \( \left[ \frac{-$ab}{$amb}, $a \right[ \cup \left] $a, + \infty \right[ \)."
+}
+\} 
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

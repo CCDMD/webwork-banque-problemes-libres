@@ -1,0 +1,97 @@
+##DESCRIPTION
+##Trouver l'équation d'une composition de fonctions
+##Fait par Julie Tremblay, août 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Fonctions composées)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+######## Source ############
+## Fichier source:  MCH1-8-2-28-Function-composition.pg
+## ZDBsubject('Algebra') 
+## ZDBchapter('Functions') 
+## ZDBsection('Composing Functions') 
+## ZAuthor('Paul Pearson')
+## ZInstitution('Fort Lewis College')
+#######  Source #############
+## Level(3)
+## Language(fr)
+## KEYWORDS('Fonction composée','composition')
+
+
+####################################
+#  Initialization
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+#"AnswerFormatHelp.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem()); 
+
+####################################
+#  Setup
+
+Context("Numeric");
+
+$a = random(2,9,1);
+$n = random(3,9,1);
+while ($a == $n) { $a = random(2,9,1); }
+
+$fg = Compute("(sqrt(x))^$n + $a");
+$gf = Compute("sqrt(x^$n + $a)");
+
+
+######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \( f(x) = x^{$n}+$a \) et
+\( g(x) = \sqrt{x} \).  Trouver
+$BR
+$BR
+a) \( (f\circ g)(x)= f(g(x))= \) \{ ans_rule(20) \}
+$BR
+$BR
+b) \( (g\circ f)(x)=g(f(x))= \) \{ ans_rule(20) \}
+$BR
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=7010", "2.4.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+######################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS($fg->cmp() );
+ANS($gf->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+a) 
+\[\begin{aligned}
+ f(g(x)) &= (g(x))^{$n} + $a \\
+ &= $fg \text{ ou } x^{$n/2} + $a
+\end{aligned}\]
+$BR
+b) 
+\[\begin{aligned}
+ g(f(x)) &= \sqrt{f(x)} \\
+ &= $gf
+\end{aligned}\]
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

@@ -1,0 +1,92 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Cercle trigonométrique)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+######## Source ############
+
+#######  Source #############
+## Level(2)
+## Language(fr)
+## KEYWORDS()
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+Context('Numeric');
+
+# The student cannot use trig functions in the answer.
+# See end of setup section
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+
+###################
+#
+#  Setup
+
+
+### angle en degrés et multiple de 60
+### on ne veut pas les angles qui croisent les axes
+do{$n1 = non_zero_random(-180,359,60);} until($n1%90 != 0);
+
+$a1 = Formula("$n1*pi/180");  #angle
+
+
+$sin = Real("sin($a1)");
+$cos = Real("cos($a1)");
+$tan = Real("tan($a1)");
+$sec = Real("sec($a1)");
+$cot = Real("cot($a1)");
+$csc = Real("csc($a1)");
+
+
+# Set context for student answers
+
+Context()->functions->disable("Trig");
+Parser::Number::NoDecimals(Context());      # this just eliminated decimals
+
+###################
+#
+#  Text
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer les expressions suivantes en utilisant le cercle trigonométrique. 
+$BR 
+$BBOLD Note: $EBOLD
+Une réponse doit être la valeur exacte écrite sous la forme d'un entier ou d'une fraction. 
+Elle ne doit pas être écrite avec des décimales, mais vous pouvez utiliser la fonction ${BBOLD}sqrt${EBOLD}. Si une valeur n'existe pas écrire ${BBOLD}nep${EBOLD}.
+$PAR
+Si \( \theta =  $n1^{\circ} \), alors
+$PAR
+\( \sin ( \theta ) =\)  \{ans_rule(10) \}$BR
+\( \cos ( \theta ) =\)  \{ans_rule(10) \}$BR
+\( \tan ( \theta ) =\)  \{ans_rule(10) \}$BR
+\( \sec ( \theta ) =\)  \{ans_rule(10) \}$BR
+\( \cot ( \theta ) =\)  \{ans_rule(10) \}$BR
+\( \csc ( \theta ) =\)  \{ans_rule(10) \}$BR
+END_TEXT
+Context()->normalStrings;
+
+
+
+ANS($sin->cmp);
+ANS($cos->cmp);
+ANS($tan->cmp);
+ANS($sec->cmp);
+ANS($cot->cmp);
+ANS($csc->cmp);
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

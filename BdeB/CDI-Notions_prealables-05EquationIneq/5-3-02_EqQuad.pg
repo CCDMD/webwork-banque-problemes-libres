@@ -1,0 +1,83 @@
+##DESCRIPTION
+##  Algebra: factoring
+##ENDDESCRIPTION
+
+##KEYWORDS('algebra', 'factoring', 'quadratic', 'francais')
+##Traduction('Julie Tremblay')
+
+##DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Quadratic Equations')
+
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+  "PGstandard.pl",
+  "PGauxiliaryFunctions.pl",
+  "Parser.pl",
+  "MathObjects.pl",
+);
+
+########################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+########################################################################   Résoudre l'équation  : n( n + (u+v)) = -u*v   par la factorisation somme ######   produit   où u neq ±v
+
+
+Context("Numeric");
+Context()->variables->are(n=>'Real'); 
+
+Context()->strings->add(aucune => {});
+Context()->noreduce('(-x)-y','(-x)+y');
+
+$u = non_zero_random(-8,8,1);
+do{$v = non_zero_random(-9,9,1);} until($v != $u && $v != -$u);
+
+$som = $u+$v;
+$prod = $u*$v;
+
+$poly1 = Formula("n(n + $som)")->reduce;
+$poly2 = Formula("-$prod")->reduce;
+
+$roots = List(-$u,-$v);
+
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Trouver, si possible, les solutions de l'équation suivante. S'il n'y a aucune solution, écrire "aucune" dans la case réponse.$BR $BR
+\[ 
+$poly1 = $poly2.
+ \]
+$BR $BR
+Solution(s): \(n =\) \{ ans_rule(30) \}$BR
+$BBOLD Note: S'il y a plus d'une solution, écrire vos réponses séparées par une virgule. Ex.: 4, sqrt(10) $EBOLD
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+ANS( $roots->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pour résoudre cette équation, il faut la transformer sous la forme \(ax^2+bx+c=0\) pour ensuite factoriser le polynôme quadratique.
+$BR $BR
+\[\begin{array}{rll}$poly1&= $poly2&\hbox{; distributivité}\\n^2 + $som n&= $poly2 &\\ n^2 + $som n + $prod  &= 0 &\hbox{; factoriser}\\ (n + $u)(n + $v) &= 0&;\; $u+$v=$som\text{ et }$u\times $v=$prod \end{array}\]
+$BR
+Donc, il existe deux solutions à cette équation :$BR
+Lorsque \( (n+$u)=0\Rightarrow \boxed{n=-$u}\) $BR
+et lorsque \( (n+$v)=0\Rightarrow \boxed{n=-$v}\).
+
+$PAR
+Vous pouvez aussi allez voir un exemple similaire sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5270", "1.4.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

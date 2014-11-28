@@ -1,0 +1,84 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Polynômes, exposants et racines)
+## DBsection(Opérations sur les polynômes)
+## KEYWORDS('polynômes','français')
+## Traduction(Julie Tremblay)
+## Institution(BdeB)
+## Language(fr)
+
+
+########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+Context("LimitedPolynomial-Strict");
+Context()->flags->set(singlePowers=>1);
+Context()->variables->are(a=>"Real",b=>"Real",c=>"Real");
+
+$s = random(-1,1,2); # sign
+
+if ($s == 1) {
+  $expression = "(a+b+c)(a+b-c)";
+  $answer = Formula("a**2 + b**2 - c**2 + 2*a*b")->reduce;
+} else {
+  $expression = "(a+b+c)(a-b+c)"; 
+  $answer = Formula("a**2 - b**2 + c**2 + 2*a*c")->reduce;
+}
+
+Context()->parens->remove("(","[","{","|");
+Context()->{error}{convert} = sub {
+    my $message = shift;
+    $message =~ s/Unexpected character '~~('/Les parenthèses ne sont pas permises dans ce context/;
+    $message =~ s/Unexpected character '~~)'/Les parenthèses ne sont pas permises dans ce context/;
+    $message =~ s/Unexpected character '~~['/Les parenthèses ne sont pas permises dans ce context/;
+    $message =~ s/Unexpected character '~~]'/Les parenthèses ne sont pas permises dans ce context/;
+    $message =~ s/Unexpected character '~~{'/Les parenthèses ne sont pas permises dans ce context/;
+    $message =~ s/Unexpected character '~~}'/Les parenthèses ne sont pas permises dans ce context/;
+    $message =~ s/Unexpected character '~~|'/La valeur absolue n'est pas permise dans ce context/;
+    return $message;
+};
+
+
+
+################################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Effectuer l'opération \($expression\) en regroupant les termes semblables et écrire votre réponse sous la forme d'un polynôme.
+$BR
+$BR
+\{ ans_rule(30) \}
+\{ AnswerFormatHelp("formula") \}
+
+END_TEXT
+Context()->normalStrings;
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS($answer->cmp());
+COMMENT('MathObject version');
+ENDDOCUMENT();

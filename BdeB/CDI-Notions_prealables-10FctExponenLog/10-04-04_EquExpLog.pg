@@ -1,0 +1,97 @@
+##DESCRIPTION
+## Résoudre une équation logarithmique
+## Fait par Julie Tremblay, novembre 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions exponentielles et logarithmiques)
+## DBsection(Équations contenant des fonctions exponentielles et logarithmiques)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+######## Source ############
+## Fichier source:  Library/LoyolaChicago/Precalc/Chap4Sec1/Q36.pg
+## ZDBsubject(Algebra)
+## ZDBchapter(Exponential and logarithmic expressions and functions)
+## ZDBsection(Exponential and logarithmic equations)
+## ZInstitution(Loyola University Chicago and Fort Lewis College)
+## ZAuthor(Adam Spiegler and Paul Pearson)
+## ZLevel(2)
+#######  Source #############
+## Level(2)
+## Language(fr)
+## KEYWORDS()
+
+
+DOCUMENT();       
+
+loadMacros(
+"PGstandard.pl",
+#"PGchoicemacros.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+       
+TEXT(beginproblem()); # standard preamble to each problem.
+
+Context("Numeric");
+
+$showPartialCorrectAnswers = 1;
+
+$k = random(2,6,1);
+$c = random(10,30,2);
+$m = random(2,5,1);
+$b = random(2,8,2);
+$ans = Compute("( e^($c/$k) - $b )/$m");
+
+BEGIN_TEXT
+Résoudre l'équation suivante. La réponse doit être une expression donnant la valeur exacte, ${BBOLD}sans décimales$EBOLD.
+\[$k \ln{($m x + $b)} = $c \]
+$BR
+\( x = \) \{ ans_rule(35) \}
+
+END_TEXT
+
+Parser::Number::NoDecimals();
+
+ANS($ans->cmp);
+
+($n,$d) = reduce($c,$k);
+
+$p = $n/$d;
+
+if( floor($p) - $p != 0 ) {
+$p = "$n/$d";
+}
+
+BEGIN_SOLUTION
+$BR
+Tout d'abord, il faut isoler le logarithme naturel :
+
+\[ \begin{array}{rl} $k \ln{($m x + $b)} &= $c \\ 
+ \ln{($m x + $b)} &= \frac{$c}{$k} \end{array} 
+\] 
+$BR
+Ensuite, on réécrit l'équation sous sa forme exponentielle pour résoudre en fonction de \(x\) : 
+$BR
+\[\begin{array}{rl} $m x + $b &= e^{$p} \\
+ $m x &= e^{$p} - $b \\
+  x &= \frac{ e^{$p} - $b }{$m} \end{array}\]
+$PAR
+On peut vérifier la solution dans l'équation de départ :
+\[ \begin{array}{ll} $k \ln{ \bigg( $m \left( \frac{ e^{$p} - $b }{$m} \right) + $b \bigg) } 
+&= $k \ln{ \left( (e^{$p} - $b) + $b \right)} \\
+&= $k \ln{(e^{$p})} \\
+&= $k \left( $p \right)\\
+&= $c \end{array}
+\] 
+$BR
+Ce qu'il fallait démontrer comme résultat.
+$BR
+END_SOLUTION
+
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();
+

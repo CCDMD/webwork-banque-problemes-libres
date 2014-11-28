@@ -1,0 +1,154 @@
+##DESCRIPTION
+##  Simplification de fonctions rationnelles avec restrictions
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fractions rationnelles)
+## DBsection(Simplification de fractions rationnelles)
+## KEYWORDS('Simplification','fonction rationnelle','français')
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne)
+
+## Level(3)
+## Language(fr)
+
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGcourse.pl",
+  "MathObjects.pl",
+ "parserMultiAnswer.pl",
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+#  Form:  [2a(bx+c)^n(x+d)^(m+1) - a(bx+c)^(n+1)(x+d)^m]/(x+d)^(4m)
+
+$a = random(2,7,1);
+$b = random(2,5,1);
+
+do{$c = non_zero_random(-3,3,1);} until (gcd($b,$c)==1);
+
+$d = non_zero_random(-5,5,1);
+
+### Exposants
+
+$n = random(1,5,1);
+do{$m = random(1,5,1);} until (gcd($m,$n)==1);
+
+
+$f = Formula("(2*$a*($b*x+$c)^($n)*(x+$d)^($m+1) - $a*($b*x+$c)^($n+1)*(x+$d)^($m))/((x+$d)^(4*$m))")->reduce->TeX;
+
+
+$p1 = 2-$b;
+$p0 = 2*$d-$c;
+
+$ans1 = Formula("$a*($b*x+$c)^($n)*($p1*x+$p0)")->reduce;
+$ans2 = Formula("(x+$d)^(3*$m)")->reduce;
+
+			 $mp = MultiAnswer($ans1,$ans2)->with(
+         singleResult => 0,
+		 allowBlankAnswers => 1,
+         checker => sub {
+            my ($correct,$student,$self) = @_;  # get the parameters
+            
+            my ( $p1, $p2 ) = @{$correct};      # get the correct num, denom
+            my ( $p1stu, $p2stu ) = @{$student};# get the student's num, denom
+
+            my $isPreview = $main::inputs_ref->{previewAnswers};
+
+            
+            $numeratorValid   = ( $p1==$p1stu || Compute("-1")*$p1==$p1stu );
+            $denominatorValid = ( $p2==$p2stu || Compute("-1")*$p2==$p2stu );
+            $quotientValid    = ( $p1/$p2 == Compute($p1stu)/Compute($p2stu) );
+
+            if (! $isPreview) { # Don't show messages if previewing....
+			  Value::Error("As-tu simplifié ta réponse?") 
+                if ($quotientValid && !$numeratorValid && !$denominatorValid);
+			  Value::Error("Ton numérateur et dénominateur sont incorrects.") 
+                unless ($numeratorValid || $denominatorValid);
+   			  Value::Error("Ton numérateur est incorrect") 
+                unless $numeratorValid;
+              Value::Error("Ton dénominateur est incorrect") 
+                unless $denominatorValid;
+              Value::Error("Une de tes réponses est de signe contraire") 
+                unless $quotientValid;
+            
+			}
+			
+			if ($quotientValid) {
+				return[$numeratorValid,$denominatorValid];
+			} else {
+				return[0,0];
+			}
+		}
+           
+        );
+
+######################################
+#  Main text
+
+BEGIN_TEXT
+Simplifier la fraction rationnelle et donner les restrictions sur son domaine.
+$PAR
+\[$f\]
+$PAR
+Exprimer votre réponse sous une fraction rationnelle simplifiée \(\dfrac{A}{B}\)
+$PAR 
+Réponse : \(A =\) \{$mp->ans_rule(20)\} et \(B =\) \{$mp->ans_rule(20)\}
+$PAR Restriction(s): \(x =\) \{ ans_rule(10) \} $BR
+${BITALIC}${BBOLD}Note${EBOLD} : S'il y plus d'une valeur de \(x\), les séparer par une virgule. (Exemple: x = 1,-4)$EITALIC
+$HR
+$BITALIC
+Un exemple similaire est présenté à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6228", "1.3.1", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+
+######################################
+#  Answer
+
+ANS( $mp->cmp );
+
+$rest1 = Compute("-$d");
+
+ANS(List($rest1)->cmp(
+list_type  => 'liste',
+));
+
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+
+$m4 = 4*$m;
+$m3 = 3*$m;
+
+$c1 = 2-$b;
+$c2 = 2*$d-$c;
+$poly = Formula("$c1 x+$c2")->reduce->TeX;
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR On effectue une mise en évidence des facteurs communs au numérateur : \($a\), \(($b x+$c)^{$n}\) et \((x+$d)^{$m}\).
+$BR $BR
+\[\displaystyle $f = \dfrac{$a($b x+$c)^{$n}(x+$d)^{$m}\Bigl( 2(x+$d)-($b x+$c)\Bigr)}{(x+$d)^{$m4}}\]
+$PAR
+En simplifiant le facteur commun au dénominateur, \((x+$d)\), on obtient:
+$BR $BR
+\[ \dfrac{$a($b x+$c)^{$n}\cancel{(x+$d)}^{$m}\Bigl( 2(x+$d)-($b x+$c)\Bigr)}{\cancel{(x+$d)}^{$m4}} = \dfrac{$ans1}{(x+$d)^{$m3}} \text{ si } x\neq $rest1\]
+$BR
+Ainsi la seule restriction est \(x = $rest1\), car il y a division par zéro pour cette valeur dans la fraction rationnelle de départ.
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();
+

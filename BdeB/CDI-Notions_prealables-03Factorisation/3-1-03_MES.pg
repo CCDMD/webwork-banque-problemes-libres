@@ -1,0 +1,115 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Factorisation)
+## DBsection(Factorisation: Mise en évidence)
+## KEYWORDS('Factorisation','français','mise en évidence')
+## Traduction('Julie Tremblay')
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+
+########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowersFr.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+
+#  (ax+b)^2 + c(-b-ax) = (ax+b)(ax+b -c)   où  a > 0
+
+
+Context("PolynomialFactors");
+Context()->{error}{msg}{"Simplified polynomials can have at most one term of each degree"}= "Simplifier votre réponse en combinant les termes semblables";
+
+
+#ProblemRandomize(style=>"Button",label=>"Générer une autre expression");
+
+$a = random(1,9,1);
+$b = random(1,9,1);
+$c = non_zero_random(-12,12,1);
+
+if (gcf($a,$b) != 1) {$a++;}
+if ($c ==1) {$c++;}
+
+
+$fac = Formula("$a*x - $b")->reduce;
+$facopp = Formula("$b - $a*x")->reduce;
+
+
+$d = $b + $c;
+
+$fac2 = Formula("$a x - $d")->reduce;
+
+$answer = Compute("($fac2)($fac)");
+
+
+
+
+################################################
+#  Main text
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Factoriser l'expression \(($fac)^2 + $c ($facopp)\). Simplifier la réponse.
+$BR
+$BR
+\{ ans_rule(30) \}
+$HR
+$BITALIC
+Les différentes méthodes de factorisation sont présentées à la section \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2312", "1.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+
+ANS($answer->cmp());
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+$PAR
+L'expression \(($fac)^2 + $c ($facopp) \) se factorise par une mise en évidence simple. $BR On remarque que le deuxième terme dans notre expression est de signe contraire à \( ($fac) \). 
+$PAR
+Par conséquent, la factorisation s'effectue de la façon suivante: $BR $BR
+\[ \begin{array}{rl} ($fac)^2 + $c ($facopp) &= \pmb{($fac)}^2 + $c(-1)\pmb{($fac)} \\
+                         &= ($fac - $c)\pmb{($fac)} \\[0.5em]
+                         &= ($fac2)($fac) \end{array} \]
+$HR
+$BITALIC
+Un exemple similaire est présenté à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2316", "1.2.1", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

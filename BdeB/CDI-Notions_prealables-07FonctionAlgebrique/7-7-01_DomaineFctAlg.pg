@@ -1,0 +1,121 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions algébriques)
+## DBsection(Domaine, image et évaluation de fonctions)
+## KEYWORDS('fonction', 'français','domaine')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+## Language(fr)
+
+## Level(2)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextFraction.pl",
+"answerHints.pl",
+"problemPanic.pl",
+"AnswerFormatHelp.pl",
+);
+
+TEXT(beginproblem());
+
+
+Context()->variables->add(a=>"Real");
+
+
+$a = random(4,7,1);
+do{$b = non_zero_random(-8,8,1);} until($b != $a);
+
+do{$c = non_zero_random(1,$a-1,1)*random(-1,1,2);} until($c != $b);
+do{$d = non_zero_random($a+1,$a+5,1)*random(-1,1,2);} until($c != $b);
+
+$aa = $a*$a;
+
+$f=Formula("sqrt(x^2-$aa)/(x-$b)")->reduce;
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la fonction \( \displaystyle f(x) = $f\).$BR
+Déterminer le domaine de la fonction, en notation d'intervalle, et évaluer, si possible, la fonction aux valeurs de \(x\) données.$BR
+(${BITALIC}Si une valeur n'existe pas, écrire ${BBOLD}nep${EBOLD}.$EITALIC)
+$PAR
+$BR
+\(\text{dom}\;f =\) \{ ans_rule(15)\}  \{ AnswerFormatHelp("interval") \}
+$BR $BR
+\( f($a) =\)  \{ ans_rule(15)\} $BR
+\( f($c) =\)  \{ ans_rule(15)\} $BR
+\( f($d) =\)  \{ ans_rule(15)\} $BR
+\( f(a+2) =\)  \{ ans_rule(15)\}
+$PAR
+${BBOLD}Note : Vous aurez droit à un indice après trois essais.${EBOLD}
+$HR
+$BITALIC
+Vous pouvez allez voir des exemples similaires à la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=6974", "2.1.2", "TARGET='_blank'" ) \} sur la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+Context("Interval");
+Context()->flags->set(formatStudentAnswer=>'parsed');
+
+if( abs($b) > $a) {
+$int = Compute("(-inf,-$a] U [$a,inf) - {$b}");
+} else {
+$int = Compute("(-inf,-$a] U [$a,inf)");
+}
+ANS( $int->cmp() );
+
+
+Context("Numeric");
+Context()->variables->add(a=>"Real");
+Context()->variables->set(a=>{limits=>[-$a,$a]});
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+
+$ans1 = $f->eval(x=>"$a");
+$ans2 = Compute("nep");
+$ans3 = $f->eval(x=>"$d");
+$ans4 = $f->substitute(x=>"a+2");
+
+
+ANS( $ans1->cmp());
+ANS( $ans2->cmp);
+ANS( $ans3->cmp() );
+ANS( Compute("$ans4")->cmp() );
+
+
+$rest = $b*$b - $aa;
+
+
+$showHint = 3;
+
+Context()->texStrings;
+BEGIN_HINT
+${BBOLD}Indice${EBOLD}: Les valeurs de \(x\) qui appartiennent au domaine de \( f(x) = $f\) doivent respecter les deux restrictions suivantes :$BR $BR
+\[ x^2-$aa \geq 0  \text{ et }  x -$b \neq 0\   \Rightarrow  x \neq $b\]
+$BR 
+\{ if (abs($b) < $a) {
+"Par contre, lorsque  \(x = $b\), cela ne respecte pas la première restriction, c'est-à-dire que  \( ($b)^2 - $aa = $rest  \not\ge 0 \).".$BR.$BR.
+"Ainsi, les seules valeurs de \(x\) qui feront parties du domaine de \(f\) sont celles qui sont solutions de l'inéquation \( x^2 - $aa \geq 0\)."
+}
+\}
+$HR
+Allez voir ce lien \{ htmlLink( "https://departements.bdeb.qc.ca/mathematiques/portail/pages/capsules/Resolution_inequation_tableau_exemple1.html", "1.5.2", "TARGET='_blank'" ) \} sur la Plateforme d'aide en mathématiques pour un exemple de résolution d'une inéquation contenant une fonction quadratique.
+END_HINT
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();

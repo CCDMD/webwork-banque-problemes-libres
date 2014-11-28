@@ -1,0 +1,94 @@
+#DESCRIPTION
+##  Algebra problem: combining powers
+##ENDDESCRIPTION
+
+ 
+## tcao , PAID on 11-24-2003
+
+
+## DBsubject('Algebra')
+## DBchapter('Basic Algebra')
+## DBsection('Exponents and Radicals')
+## Date('6/3/2002')
+## TitleText1('Precalculus')
+## AuthorText1('Stewart, Redlin, Watson')
+## EditionText1('3')
+## Section1('1.2')
+## Problem1('33')
+## TitleText2('College Algebra')
+## AuthorText2('Stewart, Redlin, Watson')
+## EditionText2('3')
+## Section2('1.3')
+## Problem2('33')
+## KEYWORDS('algebra', 'powers','français')
+## Traduction('Julie Tremblay')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"contextFraction.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+Context("Fraction-NoDecimals")->operators->undefine("+","-");
+
+
+$a = random(1,5,1);
+$b = random(2,7,1);
+
+while($a==$b || gcf($a,$b)!=1){$b = random(2,7,1);}
+
+$c = random(1,8,1);
+$d = random(2,6,1);
+
+while($c==$d || gcf($c,$d)!=1){$d = random(2,7,1);}
+
+$num = $a*$d + $b*$c;
+$den = $b*$d;
+
+$ans=Compute("$num/$den")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT 
+
+L'expression
+\[x^{$a/$b} x^{$c/$d}\] 
+$BR
+se simplifie sous la forme \(x^n\) $BR 
+où \(n\), l'exposant de la variable \(x\), est : \{ans_rule(10) \}
+$BR
+$BBOLD NOTE: Votre réponse doit être un entier ou une faction simplifiée,$BR
+elle ne peut pas contenir les opérations d'addition (+) ou de soustraction (-) $EBOLD
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($ans->cmp(studentsMustReduceFractions=>1,
+                strictFractions=>1,strictMinus=>1,
+                strictMultiplication=>1));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'expression \(x^{$a/$b} x^{$c/$d}\) se simplifie en utilisant la propriété des exposants suivante:
+$BR $BR
+\[ a^na^m = a^{n+m} \]
+$BR
+Ainsi, on simplifie cette expression de la façon suivante:
+$BR
+$BR
+\[ \begin{array}{rl} x^{\frac{$a}{$b}} x^{\frac{$c}{$d}} &=  x^{\frac{$a}{$b} +\frac{$c}{$d}} \\
+&=  x^{$ans}  \end{array}\]
+$BR
+Par conséquent, \(n = $ans\).
+$BR
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

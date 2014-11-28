@@ -1,0 +1,78 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Identités et lois trigonométriques)
+## Institution(BdeB)
+## Modifié par Julie Tremblay, octobre 2014
+######## Source ############
+## Fichier : Library/ASU-topics/setTrigIdentities/p1.pg
+## ZDBsubject(Trigonometry)
+## ZDBchapter(Analytic trigonometry)
+## ZDBsection(Double-angle & half-angle formulas)
+## ZInstitution(Rochester)
+## ZMLT(SimpleDoubleHalf)
+## ZMLTleader(1)
+## ZLevel(3)
+#######  Source #############
+## Level(3)
+## Language(fr)
+## KEYWORDS()
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+
+$a1=random(2,9);
+$b1=random($a1+1,$a1+9);
+
+($a,$b) = reduce($a1,$b1);
+
+$sin = $a/$b;
+
+#evaluate answers
+$adj = sqrt($b**2-$a**2);
+
+$cos= Real("$adj/$b");
+$cosxdemi= Real("sqrt((1+$cos)/2)");
+$sinxdemi= Real("sqrt((1-$cos)/2)");
+
+
+
+BEGIN_TEXT
+Si \( \sin(\theta)=\frac{$a}{$b} \) où \( 0 < \theta < \frac{\pi}{2} \), évaluer les 
+expressions suivantes en utilisant des identités (ou formules) trigonométriques.
+$BR
+$BBOLD Note: $EBOLD
+Une réponse doit être la valeur exacte écrite sous la forme d'une fraction ou d'une expression arithmétique.  
+Elle ne doit pas être écrite avec des décimales, mais vous pouvez utiliser la fonction ${BBOLD}sqrt${EBOLD}. 
+Si une valeur n'existe pas écrire ${BBOLD}nep${EBOLD}.
+$PAR
+
+\( \cos\left(\frac{\theta}{2}\right)= \) \{ans_rule(20) \} 
+$BR
+\( \sin\left(\frac{\theta}{2}\right)= \) \{ans_rule(20) \} 
+END_TEXT
+
+Context()->functions->disable("Trig");
+Parser::Number::NoDecimals();
+
+
+ANS($cosxdemi->cmp);
+ANS($sinxdemi->cmp);
+
+COMMENT('MathObject version');
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+
+

@@ -1,0 +1,163 @@
+## DBsubject(Algèbre)
+## DBchapter(Fractions rationnelles)
+## DBsection(Fractions complexes)
+## KEYWORDS('fonction rationnelle','fraction complexe','français')
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne)
+
+## Level(2)
+## Language(fr)
+
+############ source #############
+## ZDBsubject('Algebra') 
+## ZDBchapter('Basic Algebra') 
+## ZDBsection('Algebraic Fractions') 
+## ZAuthor('Paul Pearson')
+## ZInstitution('Fort Lewis College')
+############## source ##############
+
+
+##################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserMultiAnswer.pl",
+  "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+
+###################################
+# Setup    1 +   a/  (1 + b/ (1 + c/x) )   où  b neq -1 et  a neq -b
+
+Context("Numeric");
+Context()->noreduce('(-x)-y');
+
+
+$a = random(1,5,1);
+do{$b = non_zero_random(-4,4,1);} while ($b == -1);
+
+
+$c = non_zero_random(-3,3,1);
+
+
+$f = Formula("1+$a/(1+ $b/(1+$c/x))")->reduce;
+$fc  = Formula("(x+$c)/x")->reduce;
+           
+
+
+$d1 = $b + 1;
+$d2 = $a*$c;
+$d3 = $a+$b+1;
+$d4 = $ac + $c;
+
+$ans1 = Formula("$d3*x + $d4")->reduce;
+$ans2 = Formula("$d1*x+$c")->reduce;
+
+
+$mp = MultiAnswer($ans1,$ans2)->with(
+         singleResult => 0,
+		 allowBlankAnswers => 1,
+         checker => sub {
+            my ($correct,$student,$self) = @_;  # get the parameters
+            
+            my ( $p1, $p2 ) = @{$correct};      # get the correct num, denom
+            my ( $p1stu, $p2stu ) = @{$student};# get the student's num, denom
+
+            my $isPreview = $main::inputs_ref->{previewAnswers};
+
+            
+            $numeratorValid   = ( $p1==$p1stu || Compute("-1")*$p1==$p1stu );
+            $denominatorValid = ( $p2==$p2stu || Compute("-1")*$p2==$p2stu );
+            $quotientValid    = ( $p1/$p2 == Compute($p1stu)/Compute($p2stu) );
+
+            if (! $isPreview) { # Don't show messages if previewing....
+			  Value::Error("As-tu simplifié ta réponse?") 
+                if ($quotientValid && !$numeratorValid && !$denominatorValid);
+			  Value::Error("Ton numérateur et dénominateur sont incorrects.") 
+                unless ($numeratorValid || $denominatorValid);
+   			  Value::Error("Ton numérateur est incorrect") 
+                unless $numeratorValid;
+              Value::Error("Ton dénominateur est incorrect") 
+                unless $denominatorValid;
+              Value::Error("Une de tes réponses est de signe contraire") 
+                unless $quotientValid;
+            
+			}
+			
+			if ($quotientValid) {
+				return[$numeratorValid,$denominatorValid];
+			} else {
+				return[0,0];
+			}
+		}
+           
+        );
+
+	
+
+###################################
+# Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Simplifier la fraction complexe suivante et donner les restrictions sur son domaine.
+$PAR
+\[ \displaystyle $f \]
+$BR
+Exprimer votre réponse sous une fraction rationnelle simplifiée \(\dfrac{A}{B}\).
+$PAR
+Réponse : \(A =\) \{$mp->ans_rule(20)\} et \(B =\) \{$mp->ans_rule(20)\} 
+$PAR
+Restriction(s): \(x=\) \{ ans_rule(30) \}$BR
+${BITALIC}${BBOLD}Note${EBOLD} : S'il y plus d'une valeur de \(x\), les séparer par une virgule. (Exemple: x = 1,-4)$EITALIC
+$HR
+$BITALIC
+Un exemple similaire est présenté à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6232", "1.3.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $mp->cmp );
+
+$rest1 =  reduce(-$c,$d1);
+$rest = Compute("0,-$c,$rest1")->reduce;
+
+$answer = Formula("$ans1/$ans2")->reduce('(-x)-y'=> 1);
+
+ANS($rest->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Tous les dénominateurs dans cette expression doivent être \(\neq 0\) dont le dénominateur de \(\left(\frac{c}{x}\right)\) doit être différent de zéro. $BBOLD Donc, une des restrictions est \(x = 0\). $EBOLD
+$BR
+$PAR
+Simplifions cette expression, avant de trouver les autres restrictions :
+$PAR
+\[\begin{array}{ll} \displaystyle $f &= 1+\dfrac{$a}{1+\dfrac{$b}{\left($fc\right)}}\\
+&= 1+\dfrac{$a}{1+\left(\dfrac{$b x}{x+$c}\right)}\\
+&= 1+\dfrac{$a}{\dfrac{(x+$c) + $b x}{x+$c}}\quad\text{si }x\neq -$c\\
+&= 1+\dfrac{$a}{\left(\dfrac{$ans2}{x+$c}\right)}\\
+&= 1+\dfrac{$a(x+$c)}{$ans2}\\
+&= \dfrac{($ans2) + $a(x+$c)}{$ans2} \quad\text{si }x\neq $rest1\\
+&= \dfrac{$ans2 + $a x+$d2}{$ans2}\\
+&= $answer \end{array}\]
+$PAR
+À partir de la démarche précédente, on trouve toutes les restrictions sur le domaine de l'expression de départ: \(x = $rest \), car ce sont les valeurs de \(x\) où les dénominateurs sont nuls.
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

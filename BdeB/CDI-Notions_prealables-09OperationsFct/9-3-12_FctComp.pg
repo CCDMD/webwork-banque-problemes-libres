@@ -1,0 +1,139 @@
+##DESCRIPTION
+##Trouver le domaine d'une fonction composée
+##Fait par Julie Tremblay, août 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Fonctions composées)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+
+## Level(3)
+## Language(fr)
+## KEYWORDS('Fonction composée','composition','domaine')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"answerHints.pl",
+"AnswerFormatHelp.pl",
+"contextFraction.pl",
+"unionTables.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+Context(Interval);
+
+$a = random(2,5,1);
+$b = random(6,10,1);
+do{$c = random(2,4,1);} until($c!=$a);
+
+
+$g=Compute("$b/x");
+$f=Compute("sqrt(x-$a)/(x-$c)");
+
+#restriction pour que le déno (b/x) - c neq 0
+$rest = Compute("$b/$c");   
+
+#borne de droite dans l'intervalle du domaine de f(g(x))
+$borne = Compute("$b/$a");    
+
+$frondg = $f->substitute(x=>$g);
+
+if (  $rest < $borne) {
+$ans = Compute("(0,$borne] - {$rest}");
+}  elsif ( $rest == $borne) {
+$ans = Compute("(0,$borne)");
+} else {
+$ans = Compute("(0,$borne]");
+};
+
+
+$showHint = 5;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Soit les fonctions \(f(x) = \displaystyle $f\) et \(g(x) = \displaystyle $g\). Déterminer le domaine de la fonction \( f \circ g\).
+$BR $BR
+\( \text{dom } f \circ g = \) \{ ans_rule(15)\}  \{ AnswerFormatHelp("interval") \}
+
+$PAR Vous aurez droit à un indice après $showHint essais.
+$BR
+$HR
+$BITALIC
+Des exemples similaires sur la composition de fonctions sont présentées sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=7010", "2.4.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( $ans->cmp() );
+
+
+
+Context()->texStrings;
+BEGIN_HINT
+$PAR
+La fonction composée \(f \circ g\) est donnée par l'expression suivante: $BR
+\[  (f \circ g)(x) = f(g(x)) = $frondg \]
+$BR
+Il y a donc trois restrictions pour que les valeurs de \(x\) appartiennent au domaine. $BR $BR
+- Le dénominateur de \($g\) doit être \(\neq 0\).$BR
+- Le dénominateur de \(f(g(x))\) doit être  \(\neq 0\) , c'est-à-dire \( \left({$g - $c}\right) \neq 0 \). $BR
+- L'intérieur de la racine carrée doit être non-négative, c'est-à-dire \( \left({$g -$a}\right) \geq 0\).
+END_HINT
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+install_problem_grader(~~&std_problem_grader);
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La fonction composée \(f \circ g\) est donnée par l'expression suivante: $BR
+\[  (f \circ g)(x) = f(g(x)) = $frondg \]
+$BR
+Voici comment tenir compte des trois restrictions pour que les valeurs de \(x\) appartiennent au domaine. $BR $BR
+- Le dénominateur de \($g\) doit être \(\neq 0\). Donc \(x \neq 0\) $BR
+$PAR
+- Le dénominateur de \(f(g(x))\) doit être  \(\neq 0\) , c'est-à-dire $BR $BR
+\[ \left({$g - $c}\right) \neq 0 \Leftrightarrow $g \neq $c \Leftrightarrow x \neq $rest \]
+$BR
+$PAR
+- L'intérieur de la racine carrée doit être non-négative, c'est-à-dire$BR $BR 
+\[ \left({$g -$a}\right) \geq 0 \Leftrightarrow \frac{$b-$a x}{x} \geq 0 \].
+$SPACE $SPACE Sachant qu'il y a changement de signes lorsque \(x=0\) et \(($b-$a x)=0 \Rightarrow x=$borne\), on peut résoudre cette inéquation à l'aide du tableau de signes suivant : $BR $BR
+\{ BeginTable(border=>1, tex_border=>"1pt", padding=>10).
+AlignedRow([ " "," ","\(0\)"," ","\($borne\)"," "],align=>MIDDLE, separation=>0).
+AlignedRow(["\( \frac{$b-$a x}{x}\)","\(\;-\;\)","\( \not\exists\)","\(\;+\;\)","0","$SPACE\(-\)$SPACE"],align=>MIDDLE, separation=>0).
+EndTable(); \}
+$BR Donc \( \frac{$b-$a x}{x} \geq 0 \Leftrightarrow x \in \left]{0, $borne}\right] \).
+$BR
+$PAR
+Pour trouver le domaine de \(f \circ g\), il faut vérifier si la deuxième restriction \( x \neq $rest\) appartient à l'intervalle \( \left]{0, $borne}\right] \). $BR $BR
+\{
+if (  $rest < $borne) {
+
+"Étant donné que \($rest < $borne\), alors   \(\text{dom } f \circ g = \left]{0, $borne}\right] \setminus \lbrace{ $rest }\rbrace \)";
+}  elsif ( $rest == $borne) {
+
+"Étant donné que \($rest = $borne\), alors   \(\text{dom } f \circ g = \left]{0, $borne}\right[ \). On doit exclure la borne de droite \($borne\).";
+} else {
+
+"Étant donné que \($rest > $borne\), alors \($rest \not\in \left]{0, $borne}\right]\). Par conséquent, \(\text{dom } f \circ g = \left]{0, $borne}\right] \).";
+
+};
+\}
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();

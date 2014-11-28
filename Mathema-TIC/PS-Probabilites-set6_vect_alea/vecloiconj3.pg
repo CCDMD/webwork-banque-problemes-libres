@@ -1,0 +1,69 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Probabilités)
+## DBchapter(Vecteurs aléatoires)
+## DBsection(Lois conjointes)
+## Author(Jean-Sébastien Turcotte)
+
+## KEYWORDS('Probabilités','Loi conjointe')
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl",,                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+#"PGstatisticsmacros.pl",   #Donne accès à des commandes de stats
+#"PGnumericalmacros.pl",    #Nécessaire pour certaines macros dans statistics
+);
+TEXT(beginproblem());
+#####Initialisation des paramètres######################
+$noires=random(3,6,1);
+do{$blanches=random(3,6,1);} until($blanches!=$noires);
+$tot=$noires+$blanches;
+$un=random(0,1);
+$deux=random(0,1);
+$trois=random(0,1);
+if($un+$deux==0){
+$ans1=$noires*($noires-1)/($tot*($tot-1));
+} elsif($un+$deux==1){
+$ans1=$noires*$blanches/($tot*($tot-1));
+} elsif($un+$deux==2){
+$ans1=$blanche*($blanches-1)/($tot*($tot-1));
+}
+$ans1=Compute("$ans1");
+if($un+$deux+$trois==0){
+$ans2=$noires*($noires-1)*($noires-2)/($tot*($tot-1)*($tot-2));
+} elsif($un+$deux+$trois==1){
+$ans2=$noires*($noires-1)*$blanches/($tot*($tot-1)*($tot-2));
+} elsif($un+$deux+$trois==2){
+$ans2=$blanche*($blanches-1)*$noires/($tot*($tot-1)*($tot-2));
+} elsif($un+$deux+$trois==3){
+$ans2=$blanche*($blanches-1)*($blanches-2)/($tot*($tot-1)*($tot-2));
+}
+$ans2=Compute("$ans2");
+BEGIN_TEXT
+Une urne contient \($tot\) billes dont \($blanches\) sont blanches et \($noires\) sont noires. On effectue des tirages sans remise. Soit \(X_i\) la variable aléatoire valant \(1\) si la \(i\)-ème bille tirée est blanche. Calculer les probabilités suivantes:
+\{BeginList("OL")\}
+
+$ITEM \(\mathbb{P}(X_1=$un,X_2=$deux)=\) \{ $ans1-> ans_rule(10) \}
+$ITEMSEP
+
+$ITEM \(\mathbb{P}(X_1=$un,X_2=$deux,X_3=$trois)=\) \{ $ans2->ans_rule(10) \}
+$ITEMSEP
+
+
+\{EndList("OL")\}
+END_TEXT
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

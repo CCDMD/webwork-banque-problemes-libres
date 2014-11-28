@@ -1,0 +1,133 @@
+##DESCRIPTION
+##  Rational Expressions and Functions: Multipy and Divide
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fractions rationnelles)
+## DBsection(Opérations sur les fractions rationnelles)
+## KEYWORDS('fonction rationnelle','français','addition','simplification')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+# "PGcourse.pl",
+  "MathObjects.pl",
+  "CofIdaho_macrosFr.pl",
+);
+
+
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+#  Forme: A/x + -Ab/(x-a)^2  - 2x/(x-a)(x+b)
+
+Context("Numeric");
+
+$a= random(1,5,1);
+$b= random(1,5,1);
+
+if($a==$b){$b++;}
+
+$A = non_zero_random(-3,3,1);
+
+
+
+#les coefficients du numérateur
+$c0 = Compute("$A*$a*$a*$b")->reduce; 
+$c1 = Compute("-2*$a*$b*$A + $A*$a*$a-$A*$b*$b")->reduce;
+$c3 = Compute("-$A");
+
+$p1 = Compute("$b-$a");
+$p2 = Compute("$a*$b");
+$p3 = Compute("-2*$A");
+
+$poly1= Compute("x^2+$p1*x-$p2")->reduce;
+$poly2 = Compute("-$A*$b")->reduce;
+
+$f = Compute("$A/x+ $poly2/(x-$a)^2 + $p3 x/$poly1");
+
+######################################
+#  Main text
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Effectuer l'opération suivante.
+\[$f\]
+$BR
+Exprimer votre réponse sous une fraction rationnelle simplifiée et donner la ou les restriction(s) sur le domaine de l'expression. S'il y plus d'une valeur de \(x\), les séparer par une virgule. (Exemple: \(x = 1,-4\)) 
+$PAR $BR
+Réponse :  \{ans_rule(30)\} $BR
+Restriction(s) : \(x = \) \{ans_rule(30)\}
+$BR
+$HR
+$BITALIC
+Un exemple similaire est présenté à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6230", "1.3.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+######################################
+#  Answer
+
+$num = Compute("$c3*x^3 + $c1*x + $c0")->reduce;
+$den = Compute("x*(x-$a)^2*(x+$b)")->reduce;
+$answer = ("$num/$den");
+$rest3 = Compute("-$b"); 
+
+ANS(RationalExpEvaluator($answer,"x")); 
+ANS(List(0,$a,$rest3)->cmp(
+list_type  => 'liste',
+));
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+$ans = Formula("$answer")->reduce->TeX;
+
+
+$poly3 = Compute("x^2-2*$a*x+$a^2")->reduce;
+$poly4 = Compute("x^3+$b*x^2 - 2*$a*x^2 - 2*$a*$b*x+($a)^2 x + ($a)^2*$b")->reduce;
+$q2 = Compute("$A*$b - $A*2*$a")->reduce;
+$q1 = Compute("-2*$A*$a*$b + $A*($a)^2")->reduce;
+$r1 = Compute("$poly2*$b");
+$r2 = Compute("-$p3*$a");
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+En factorisant le troisième dénominateur, on obtient \($poly1 = (x-$a)(x+$b)\).
+$BR
+Le plus petit dénominateur commun à ces trois fractions rationnelles est: 
+$BR $BR
+\[  $den\]
+$BR
+Ainsi les restrictions sur le domaine sont : \(x= 0, $a\) et \($rest3\). $BR
+Voici la démarche pour effectuer cette opération :
+$PAR
+\[\begin{array}{l}  \displaystyle $f \\[0.8em]
+ = \dfrac{$A}{x} + \dfrac{$poly2}{(x-$a)^2} + \dfrac{$p3 x}{(x-$a)(x+$b)}\\[0.8em]
+= \dfrac{$A(x-$a)^2(x+$b)}{$den}+\dfrac{$poly2 x(x+$b)}{$den}+\dfrac{$p3 x\cdot x(x-$a)}{$den}\\[1.2em]
+= \dfrac{$A($poly3)(x+$b)+$poly2 x(x+$b) + $p3 x^2(x-$a)}{$den}\\[1.2em]
+= \dfrac{$A($poly4) + $poly2 x^2 +$r1 x +$p3 x^3 + $r2 x^2}{$den} \\[1.2em]
+=  \dfrac{$A x^3 + \cancel{$q2 x^2} + $q1 x + $c0 + \cancel{$poly2 x^2} +$r1 x + $p3 x^3 +\cancel{$r2 x^2}}{$den} \\[1.2em]
+= \dfrac{$num}{$den}\end{array}
+\]
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

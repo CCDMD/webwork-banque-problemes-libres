@@ -1,0 +1,105 @@
+#DESCRIPTION
+##  Algebra problem: combining powers
+##ENDDESCRIPTION
+
+##KEYWORDS('algebra', 'powers','français')
+##Traduction('Julie Tremblay')
+## hcao tagged and PAID on 12-12-2003
+
+## DBsubject('Algebra')
+## DBchapter('Basic Algebra')
+## DBsection('Exponents and Radicals')
+## Date('6/3/2002')
+## Author('')
+## Institution('')
+## TitleText1('College Algebra')
+## EditionText1('3')
+## AuthorText1('Stewart, Redlin, Watson')
+## Section1('1.3')
+## Problem1('47')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextFraction.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+Context("Fraction-NoDecimals")->operators->undefine("+","-","*");
+
+
+$a = random(2,4,1);
+$a1 = $a**2;
+$a2 = $a**3;
+$b = random(2,6,1);
+$c = random(2,6,1);
+$d = random(2,6,1);
+$e = random(2,6,1);
+
+$num1 = 9*$c + 4*$e;
+$num2 = 4*$d+9*$b;
+
+$ans1 = Real($a);
+$ans2 = Compute("$num1/6")->reduce;
+$ans3 = Compute("$num2/6")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+L'expression
+\[\frac{($a1 s^{-$b}t^{$c})^{3/2}}{($a2 s^{$d}t^{-$e})^{2/3}} \text{ où } s\neq 0 \text{ et } t \neq 0\] 
+$BR
+se simplifie sous la forme \(\dfrac{c \;t^n}{s^m}\) où
+$BR $BR
+\(c\), le coefficient, est : \{ans_rule(10) \}
+$BR 
+\(n\), l'exposant de la variable \( t\), est : \{ans_rule(10) \}
+$BR 
+\(m\), l'exposant de la variable \(s\), est : \{ans_rule(10) \}
+$BR
+$BBOLD NOTE: Les réponses sont des nombres entiers ou des factions (a/b),$BR
+elles ne peuvent pas contenir les opérations d'addition (+), de soustraction (-) ou de multiplication (*).
+$EBOLD
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=6646", "1.1.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+
+
+
+$ns1 = Fraction(-$b*3,2);
+$nt1 =  Fraction($c*3,2);
+$ns2 =  Fraction($d*2,3);
+$nt2 =  Fraction(-$e*2,3);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'expression \(\dfrac{($a1 s^{-$b}t^{$c})^{3/2}}{($a2 s^{$d}t^{-$e})^{2/3}}\) se simplifie de la façon suivante:
+$BR
+$BR
+\[ \begin{array}{rlr}  \dfrac{\left($a1 s^{-$b}t^{$c}\right)^{3/2}}{\left($a2 s^{$d} t^{-$e}\right)^{2/3}} &=  \dfrac{($a^2)^{\frac{3}{2}} \; s^{-$b \cdot\frac{3}{2}} \; t^{$c \cdot\frac{3}{2}}}{($a^3)^{\frac{2}{3}} \; s^{$d\cdot \frac{2}{3}}\; t^{-$e\cdot\frac{2}{3}}} &;\text{car } (a^n)^m = a^{nm}\\[1.2em]
+&= \dfrac{$a^3 \; s^{$ns1} \; t^{$nt1}}{$a^2 \; s^{$ns2}\; t^{$nt2}}   \\[1.2em] 
+&=  \dfrac{$a \; t^{$ans2}}{s^{$ans3}} &;\text{car } \dfrac{a^n}{a^m} = a^{n-m}   \end{array}\]
+$BR
+$BR
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

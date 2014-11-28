@@ -1,0 +1,113 @@
+##DESCRIPTION
+##  Algebra: inequalities and intervals
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Inéquations linéaires)
+## KEYWORDS('Résoudre','Inéquation')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "alignedChoice.pl",      # for aligned answer blanks
+  "PGcourse.pl",           # Customization file for the course
+ "AnswerFormatHelp.pl",
+   "problemRandomize.pl",
+
+);
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+$refreshCachedImages = 1;
+
+#  Allow for the user to try another version of the problem once they get it correct.
+ProblemRandomize(when=>"Correct",onlyAfterDue=>1);
+
+Context("Interval");
+
+$a1 = non_zero_random(-10,10,1);
+$b1 = non_zero_random($a1,$a1+20,1);
+$a2 = non_zero_random(-20,20,1);
+$a3 = non_zero_random(-20,20,1);
+$a4 = non_zero_random(-10,10,1);
+$b4 = non_zero_random($a1,$a1+20,1);
+$a5 = non_zero_random(-10,10,1);
+$b5 = non_zero_random($a1,$a1+20,1);
+
+
+###################################
+# Setting up an aligned list of the problems
+
+@r = NchooseK(5,5);
+
+
+$exp[0] = "\( $a1 < x \leq $b1 \) est équivalent à \(x\in\)";
+$int[0] = Compute("($a1,$b1]");
+
+$exp[1] =  "\( x < $a2   \) est équivalent à \(x\in\)";
+$int[1] = Compute("(-inf,$a2)");
+
+$exp[2] =  "\( x \geq $a3   \) est équivalent à \(x\in\)";
+$int[2] = Compute("[$a3,inf)");
+
+$exp[3] =  "\( x > $b4\) ou \( x \leq $a4\) est équivalent à \(x\in\)";
+$int[3] = Compute("(-inf,$a4] U ($b4,inf)");
+
+$exp[4] =  "\( x \leq $b5\) et \( x \geq $a5\) est équivalent à \(x\in\)";
+$int[4] = Compute("[$a5,$b5]");
+
+
+###################################
+# Main text
+
+Context()-texStrings;
+BEGIN_TEXT
+Écrire chacune des inégalités suivantes en utilisant la notation d'intervalle.$BR
+$BBOLD Note: Si la réponse inclut plus d'un intervalle, les écrire séparés par le symbole d'union "U". Pour \(-\infty\) ou \(\infty\), écrire "-inf" ou "inf". Voir : $EBOLD \{ AnswerFormatHelp("intervals") \}
+$PAR
+$BR
+(a) $exp[$r[0]] \{ans_rule(20)\} 
+$PAR
+(b) $exp[$r[1]] \{ans_rule(20)\} 
+$PAR
+(c) $exp[$r[2]] \{ans_rule(20)\} 
+$PAR
+(d) $exp[$r[3]] \{ans_rule(20)\} 
+$PAR
+(e) $exp[$r[4]] \{ans_rule(20)\} 
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6894", "1.5.1", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context("Numeric");
+Context()->normalStrings;
+
+###################################
+# Answer checking
+
+$showPartialCorrectAnswers = 1;
+ANS( $int[$r[0]]->cmp);
+ANS( $int[$r[1]]->cmp);
+ANS( $int[$r[2]]->cmp);
+ANS( $int[$r[3]]->cmp);
+ANS( $int[$r[4]]->cmp);
+
+###################################
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

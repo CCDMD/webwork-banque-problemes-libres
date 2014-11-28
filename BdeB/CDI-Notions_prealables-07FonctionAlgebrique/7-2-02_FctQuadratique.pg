@@ -1,0 +1,154 @@
+##DESCRIPTION
+## Fonction quadratique - trouver l'équation par son graphique
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions algébriques)
+## DBsection(Fonction quadratique - Caractéristiques)
+## Traduction(Julie Tremblay)
+## Institution(BdeB)
+####### Source ##########################
+## ZDBsubject('Algebra') 
+## ZDBchapter('Functions') 
+## ZDBsection('Evaluation and Solving') 
+## ZDate('01/01/10')
+## ZAuthor('Paul Pearson')
+## ZInstitution('Fort Lewis College')
+### fichier source : MCH1-4-3-14-Functions-and-equations.pg
+######## Source ####################################
+## KEYWORDS('Fonction quadratique','graphique')
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"PGanswermacros.pl",
+"PGgraphmacros.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionTables.pl",
+);
+
+TEXT(beginproblem());
+
+$refreshCachedImages=1;
+
+##############################################
+#  Setup
+
+Context("Numeric");
+Context()->strings->add(aucun=>{}, none => {alias => "aucun"} );
+
+$a = random(2,3,1); # left x-intercept
+$b = random(2,4,2); # right x-intercept
+$c = random(-4,-1,1); # y-intercept
+
+$k = -($c)/($a * $b);
+
+$A = $k;
+$B = $k*($a - $b);
+$C = -($k * $a * $b);
+
+$gr = init_graph(-5,-5,5,5,axes=>[0,0],grid=>[10,10]);
+$gr -> lb('reset');
+
+add_functions($gr, "$A*x**2+$B*x+$C for x in <-5,5> using color:blue and weight:2");
+$gr -> lb(new Label ( 4.5,0,'x','black','left','bottom'));
+$gr -> lb(new Label ( 0.25,4.5,'y','black','left','bottom'));
+$gr -> lb(new Label ( 0.25,$c,'y = f(x)','black','left','bottom'));
+
+foreach my $i (1..4) {
+  $gr -> lb(new Label ( $i,-4.5, $i,'black','center','middle'));
+  $gr -> lb(new Label (-$i,-4.5,-$i,'black','center','middle'));
+  $gr -> lb(new Label (-4.5, $i, $i,'black','center','middle'));
+  $gr -> lb(new Label (-4.5,-$i,-$i,'black','center','middle'));
+}
+
+
+
+#############################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+\{
+ColumnTable(
+"À partir du graphique de \(f\) donné, trouver les valeurs manquantes. 
+Il peut y avoir plus d'une valeur dans une réponse, dans ce cas, les séparer par une virgule.
+S'il n'y pas de réponse possible, écrire ${BBOLD}aucun.${EBOLD}".
+$BR.
+$BR.
+"a) \( f(0) = \) ". 
+ans_rule(7).$SPACE.
+$BR.
+$BR.
+"b) \( f \big( \) ".ans_rule(7)." \( \big) = 0 \). ".
+$BR.
+$BR.
+$PAR.
+"Donner l'équation de cette parabole sous la forme \(y=a x^2+b x+c\)".
+$BR.
+$BR.
+"\(y = \)".ans_rule(20)
+,
+image(insertGraph($gr), width=>400, height=>400, tex_size=>700).
+$BR.$BCENTER.
+"(Cliquer sur l'image pour l'agrandir)".
+$ECENTER,
+indent => 0, separation => 30, valign => "TOP"
+)
+\}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6984", "2.2.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+###############################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS(List($c)->cmp() );
+
+ANS(List(-$a,$b)->cmp() );
+
+ANS(Compute("$A x^2+$B x + $C")->cmp() );
+
+
+$ab = $a*$b;
+($n,$d) = reduce(-$c,$ab);
+($n2,$d2) = reduce(-$a*$c+$b*$c,$ab);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Selon le graphique, on voit que \(f(-$a)=0\) et \(f($b)=0\). Ce sont les points d'intersection avec l'axe des \(x\), 
+c'est-à-dire les zéros de la fonction.
+$BR
+L'ordonnée à l'origine est le point d'intersection avec l'axe des \(y \), ainsi \(f(0)=$c\).
+$PAR
+À partir des résultats précédents, on peut déterminer l'équation de la parabole de la forme \(y=a x^2+bx + c\).
+En effet, sachant les zéros \(x_1=-$a\) et \(x_2=$b\) de la fonction, on obtient
+\[y = a(x-x_1)(x-x_2) = a(x+$a)(x-$b)\]
+$BR
+Il suffit de trouver la valeur du paramètre \(a\) en remplaçant \((x,y)\) dans l'équation par le point \((0,$c)\), soit l'ordonnée l'origine. On obtient
+\[\begin{array}{ll} y = a(x+$a)(x-$b) &\Rightarrow $c = a(0+$a)(0-$b) \\
+&\Rightarrow $c = -$ab a\\
+&\Rightarrow a = \frac{$c}{-$ab} = \frac{$n}{$d} \end{array}\]
+$BR
+L'équation de la parabole est donc \(y = \frac{$n}{$d}(x+$a)(x-$b) = \frac{$n}{$d}x^2+ \frac{$n2}{$d2}x + $C\).
+
+
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

@@ -1,0 +1,76 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Identités et lois trigonométriques)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+######## Source ############
+
+#######  Source #############
+## Level(3)
+## Language(fr)
+## KEYWORDS()
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"answerHints.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+
+### choisir les angles
+$n1 = list_random(1,5,7,11)*random(-1,1,2);
+$ang1 = Formula("$n1*pi/12")->reduce;
+
+$n2 = random(-7,7,2);
+$ang2 = Formula("$n2*pi/8")->reduce;
+
+
+$sin = Real("sin($ang1)");
+$cos = Real("cos($ang2)");
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer les expressions suivantes à l'aide des formules trigonométriques d'addition ou de soustraction d'angles.
+$BR
+$BBOLD Note: $EBOLD
+Une réponse doit être la valeur exacte écrite sous la forme d'une fraction ou d'une expression arithmétique.
+Elle ne doit pas être écrite avec des décimales, mais vous pouvez utiliser la fonction ${BBOLD}sqrt${EBOLD}. 
+Si une valeur n'existe pas écrire ${BBOLD}nep${EBOLD}.
+$PAR
+\( \sin\left($ang1\right) =\) \{ans_rule(20) \} 
+$BR
+\( \cos\left($ang2\right) \)= \{ans_rule(20) \} 
+END_TEXT
+Context()->normalStrings;
+
+Context()->functions->disable("Trig");
+Parser::Number::NoDecimals();
+
+ANS($sin->cmp()->withPostFilter(AnswerHints( 
+  -$sin => "Oups! Il y a une erreur de signe!",
+  $sin**2 => "Vous y êtes presque! Il faut extraire la racine carrée.",
+)));
+
+ANS($cos->cmp->withPostFilter(AnswerHints( 
+  -$cos => "Oups! Il y a une erreur de signe!",
+  $cos**2 => "Vous y êtes presque! Il faut extraire la racine carrée.",
+)));
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

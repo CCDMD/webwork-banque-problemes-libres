@@ -1,0 +1,107 @@
+##DESCRIPTION
+##  Algebra: exponents and radicals 
+##ENDDESCRIPTION
+
+##KEYWORDS('algebra', 'radicals','français')
+## Traduction('Julie Tremblay')
+
+##DBsubject('Algebra')
+## DBchapter('Basic Algebra')
+## DBsection('Exponents and Radicals')
+## Date('10/27/2009')
+## Author('Justin Sukiennik')
+## Institution('University of Minnesota')
+## TitleText1('Algebra for College Students')
+## EditionText1('8')
+## AuthorText1('Kaufmann, Schwitters')
+## Section1('5.3')
+## Problem1('72')
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "PGcourse.pl",      # Customization file for the course
+    "contextLimitedNumeric.pl"
+
+);
+
+
+########################################################################
+
+#install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem());
+
+########################################################################
+
+Context("Numeric");
+Context()->variables->add(y=>'Real');
+
+$a = random(2,6,1);
+$b = random(2,5,1);
+$c = random(7,10,1);
+
+$a2 = $a**2;
+$b2 = $b**2;
+$c2 = $c**2;
+
+$A = Compute("2*$a-$b+3*$c")->reduce;
+
+
+
+$ans2 = Compute("x y");
+
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \(x\) et \(y\), des réels positifs.  Simplifier l'expression $BR $BR
+
+\[
+2 \sqrt{$a2 xy}-\sqrt{$b2 xy}+ 3 \sqrt{$c2 xy}
+\]
+$BR
+sous une forme radicale \(A \sqrt{C} \), où \(A\) est un nombre entier.
+$PAR $BR
+\(A =\) \{ans_rule(10)\} $BR
+ \(C =\) \{ans_rule(10)\}
+$HR
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+Context("LimitedNumeric");
+Context()->{error}{msg}{"Can't use '*' in this context"} = "Votre réponse doit être un nombre entier";
+Context()->{error}{msg}{"Unexpected character '('"} = "Votre réponse doit être un nombre entier";
+Context()->{error}{msg}{"Function 'sqrt' is not allowed in this context"} = "Votre réponse doit être un nombre entier";
+	
+
+$ans1 = Compute("$A");
+ANS( $ans1->cmp(showTypeWarning=>0));
+
+
+Context("Numeric");
+ANS( $ans2->cmp );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'expression \(2 \sqrt{$a2 xy}-\sqrt{$b2 xy}+ 3 \sqrt{$c2 xy}\) se simplifie de la façon suivante:
+$BR
+$BR
+\[ \begin{array}{rl}  2 \sqrt{$a2 xy}-\sqrt{$b2 xy}+ 3 \sqrt{$c2 xy} &=  2 \sqrt{$a2}\sqrt{xy}-\sqrt{$b2}\sqrt{xy}+ 3 \sqrt{$c2}\sqrt{xy} \\[0.8em]
+&=    (2\cdot $a-$b + 3\cdot$c)\sqrt{xy}\\[0.8em]
+&=  $ans1 \sqrt{xy} \end{array} \]
+$BR
+$BR
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        

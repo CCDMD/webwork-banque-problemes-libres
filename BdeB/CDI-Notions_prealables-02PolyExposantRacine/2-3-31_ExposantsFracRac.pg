@@ -1,0 +1,167 @@
+## DESCRIPTION
+## Algebra: Basic Algebra, Exponents and Radicals
+## ENDDESCRIPTION
+
+## Tagged by cmd6a 4/4/06
+
+## DBsubject('Algebra')
+## DBchapter('Basic Algebra')
+## DBsection('Exponents and Radicals')
+## Date('6/3/2002')
+## TitleText1('College Algebra')
+## AuthorText1('Stewart, Redlin, Watson')
+## EditionText1('3')
+## Section1('1.3')
+## Problem1('30')
+## KEYWORDS('algebra', 'powers','français')
+## Traduction('Julie Tremblay')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "contextLimitedPolynomial.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+
+Context("Numeric");
+Context()->variables->add(y=>'Real',z=>'Real');
+
+
+
+$a = random(2,6,1);
+$b = random(2,5,1);
+$c = random(2,5,1);
+$d = random(2,5,1);
+$e = random(2,5,1);
+
+while($a==$e){$e = random(2,5,1); }  #exposants positifs de x différents
+
+$f = random(2,5,1);
+$g = random(2,5,1);
+$h = random(2,5,1);
+
+while($b==$f || $f==$h){$f = random(2,5,1); }  #exposants positifs de y différents
+while($c==$g){$g = random(2,5,1); }  #exposants positifs de z différents
+
+$ii = random(-4,-2,1);
+
+
+$xn = $ii*($a-$d-$e);
+$yn = $ii*($b-$f-$h);
+$zn = $ii*($c-$g);
+
+
+if($xn <= 0 && $yn >= 0 && $zn >= 0){
+
+$num = Formula("y^{$yn} z^{$zn}")->reduce;
+$den = Formula("x^{-$xn}")->reduce;
+} elsif($xn < 0 && $yn < 0 && $zn > 0){
+
+$num = Formula("z^{$zn}")->reduce;
+$den = Formula("x^{-$xn} y^{-$yn}")->reduce;
+
+} elsif($xn <= 0 && $yn >= 0 && $zn <= 0){
+
+$num = Formula("y^{$yn}")->reduce;
+$den = Formula("x^{-$xn} z^{-$zn}")->reduce;
+
+} elsif($xn <= 0 && $yn <= 0 && $zn <= 0){
+
+$num = Compute("1");
+$den = Formula("x^{-$xn} y^{-$yn} z^{-$zn}")->reduce;
+
+} elsif($xn >= 0 && $yn <= 0 && $zn >= 0){
+
+$num = Formula("x^{$xn} z^{$zn}")->reduce;
+$den = Formula("y^{-$yn}")->reduce;
+
+} elsif($xn >= 0 && $yn >= 0 && $zn <= 0){
+
+$num = Formula("x^{$xn} y^{$yn}")->reduce;
+$den = Formula("z^{-$zn}")->reduce;
+
+} elsif($xn >= 0 && $yn <= 0 && $zn <= 0){
+
+$num = Formula("x^{$xn}")->reduce;
+$den = Formula("y^{-$yn} z^{-$zn}")->reduce;
+
+} else {   #les exposants sont tous positifs
+
+$num = Formula("x^{$xn} y^{$yn} z^{$zn}")->reduce; 
+$den = Compute("1");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Exprimer l'expression $BR
+ \[ \left (\frac{x^$a y^$b z^$c x^{-$d}}{x^$e y^$f z^$g y^$h}\right )^{$ii}\]
+$BR
+sous la forme \( \dfrac{A}{B} \). Simplifier votre réponse sous la forme d'une fraction rationnelle, c'est-à-dire possédant que des exposants strictement positifs.
+$PAR $BR
+Réponses: \(A =\) \{ans_rule(10)\}$BR
+et \(B =\) \{ans_rule(10)\} \{ AnswerFormatHelp("formula") \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=6646", "1.1.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+
+END_TEXT
+Context()->normalStrings;
+
+Context("LimitedPolynomial")->flags->set(singlePowers=>1);
+Context()->variables->add(y=>'Real',z=>'Real');
+
+Context()->{error}{msg}{"Exponents must be positive integers in a polynomial"} 
+  = "Dans un polynôme, les exposants sont strictement positifs.";
+Context()->{error}{msg}{"A variable can appear only once in each term of a polynomial"} 
+  = "Une variable peut apparaître qu'une seule fois dans chacun des termes d'un polynôme";
+
+$ans1 = Compute("$num");
+$ans2 = Compute("$den");
+
+ANS( $ans1->cmp );
+ANS( $ans2->cmp );
+
+
+$xn1 = $a-$d;
+$xn2 = $a-$d-$e;
+$yn1 = $f + $h;
+$yn2 = $b-$f-$h;
+$zn1 = $c-$g;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'expression \(\left(\dfrac{x^$a y^$b z^$c x^{-$d}}{x^$e y^$f z^$g y^$h}\right )^{$ii} \) se simplifie de la façon suivante:
+$BR
+$BR
+\[ \begin{array}{rll}  \left (\dfrac{x^$a y^$b z^$c x^{-$d}}{x^$e y^$f z^$g y^$h}\right )^{$ii}  &= \left (\dfrac{x^{$a-$d} y^{$b} z^{$c}}{x^{$e} y^{$f+$h} z^$g} \right )^{$ii}  & ;\text{car } a^na^m = a^{n+m}\\[0.8em]
+&= \left (\dfrac{x^{$xn1} y^{$b} z^{$c}}{x^{$e} y^{$yn1} z^$g} \right )^{$ii} &\\[0.8em]
+&= \left (x^{$xn1-$e} y^{$b - $yn1} z^{$c - $g} \right )^{$ii} &;\text{car } \frac{a^n}{a^m} = a^{n-m} \\[0.8em]
+&= \left (x^{$xn2} y^{$yn2} z^{$zn1} \right )^{$ii} &\\[0.8em]
+&= x^{$ii\times $xn2} y^{$ii\times $yn2} z^{$ii\times $zn1} &;\text{car } (a^n)^m = a^{nm}\\[0.8em]
+&= x^{$xn} y^{$yn} z^{$zn} &  \end{array}
+\]
+
+\{if($xn <= 0 || $yn <= 0 || $zn <= 0){
+$BR.
+"\[  = \dfrac{$ans1}{$ans2} } \qquad;\text{car } a^{-1} = \frac{1}{a}\]".$BR
+} 
+\}
+
+$BR
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

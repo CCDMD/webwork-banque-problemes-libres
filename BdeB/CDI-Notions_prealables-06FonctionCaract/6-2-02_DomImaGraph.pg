@@ -1,0 +1,168 @@
+## DESCRIPTION
+## Problem from Functions Modeling Change, Connally, et al., 3rd ed.
+## WeBWorK problem written by Adam Spiegler <aspiegler@luc.edu>
+## ENDDESCRIPTION
+
+## DBsubject(Algebra)
+## DBchapter(Functions)
+## DBsection(Input and Output)
+## Institution(Loyola University Chicago)
+## Author(Adam Spiegler)
+
+## Level(2)
+## Language(fr)
+
+## Traduit par Julie Tremblay, Collège Bois-de-Boulogne, juin 2014
+## fichier original : Library/LoyolaChicago/Precalc/Chap2Sec1/Q30.pg
+
+
+## KEYWORDS('functions','evaluating','solving','input','output')
+
+DOCUMENT();
+
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGgraphmacros.pl",
+#           "extraAnswerEvaluators.pl",
+#           "PGauxiliaryFunctions.pl",
+#           "PGgraphmacros.pl",
+"MathObjects.pl",
+"unionTables.pl",
+#"AnswerFormatHelp.pl",
+           "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+Context("Numeric");
+
+$refreshCachedImages=1;
+
+$f = "(x-2)^2*(x+2) for x in <-3,4> using color:blue and weight:2";
+
+$graph = init_graph(-3,-9,4,18,'axes'=>[0,0],'grid'=>[7,9]);
+$graph->lb('reset');
+
+foreach my $i (-2, -1, 1, 2, 3, 4) {
+ $graph->lb(new Label($i+.1,-8,$i,'black','center','middle'));
+}
+
+foreach my $i (-6, -3, 3, 6, 9, 12, 15) {
+ $graph->lb(new Label(-2.75,$i+.5,$i,'black','center','middle'));
+}
+
+$graph->lb(new Label(3.5,-.5,"x",'black','right','top'));
+$graph->lb(new Label(-0.25,17,"y",'black','right','top'));
+$graph->lb(new Label(3,15,"h(x)",'black','right','top'));
+plot_functions( $graph, $f );
+
+
+@x = (-2,-1,0,1,2,3);
+@h = (0, 9, 8, 3, 0, 5);
+
+@x_mix = (3,2,0);
+@x_match = (1,-1,-2);
+
+@y_mix = (5, 0, 8);
+@y_match = (3, 9, 0);
+
+@pick = NchooseK(3,2);
+
+$a = $y_mix[$pick[0]] - $y_match[$pick[0]];
+$b = $y_mix[$pick[1]] - $y_match[$pick[1]];
+
+@grab = NchooseK(6,2);
+$m = random(2,4,1);
+$k = random(2,6,1);
+
+$c = $m*$h[$grab[0]];
+$d = $h[$grab[1]] + $k;
+
+Context()->texStrings;
+BEGIN_TEXT
+\{
+ColumnTable(
+"À partir du graphique de la fonction \( y = h(x) \), remplir le tableau de valeurs suivant. ".
+$PAR.
+$BCENTER.
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>4).
+AlignedRow(["\(x = \)",@x], align=>CENTER, separation=>0).
+AlignedRow(["\(h(x)\)",ans_rule(6) , ans_rule(6) , ans_rule(6) , ans_rule(6) , ans_rule(6) , ans_rule(6)], separation=>0).
+EndTable().
+$ECENTER.
+$BR.
+"(a) Calculer \( h( $x_mix[$pick[0]] ) - h( $x_match[$pick[0]] ) = \) ".
+ans_rule(10).
+$BR.
+$BR.
+"(b) Calculer \( h( $x_mix[$pick[1]] ) - h( $x_match[$pick[1]] ) = \) ".
+ans_rule(10).
+$BR.
+$BR.
+"(c) Calculer \( $m \cdot h( $x[$grab[0]] ) = \) ".
+ans_rule(10).
+$BR.
+$BR.
+"(d) Calculer \( h( $x[$grab[1]] ) + $k  = \) ".
+ans_rule(10)
+,
+$BCENTER.
+image(insertGraph($graph), width => 250, height => 250, tex_size => 700).
+$BR.
+"(Cliquer pour agrandir l'image)".
+$ECENTER
+,
+indent=>"0", separation=>"30", valign=>"TOP"
+);
+\}
+END_TEXT
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 0;
+
+foreach my $i (0..5) {
+  ANS(Real($h[$i])->cmp() );
+}
+
+ANS(Real($a)->cmp() );
+ANS(Real($b)->cmp() );
+ANS(Real($c)->cmp() );
+ANS(Real($d)->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+À partir du graphique, nous pouvons remplir le tableau de valeurs de la façon suivante.
+$BR
+$BCENTER
+\{ 
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>15).
+AlignedRow(["\(x = \)",@x], align=>CENTER, separation=>0).
+AlignedRow(["\(h(x)\)",@h], align=>CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+$PAR
+(a) En regardant dans le table, on voit que \( h( $x_mix[$pick[0]] ) = $y_mix[$pick[0]] \)
+et \( h( $x_match[$pick[0]] ) = $y_match[$pick[0]] \), alors
+\[ h( $x_mix[$pick[0]] ) - h( $x_match[$pick[0]] ) =
+$y_mix[$pick[0]] - $y_match[$pick[0]] = $a. \]
+$PAR
+(b) On a que \( h( $x_mix[$pick[1]] ) = $y_mix[$pick[1]] \)
+et \( h( $x_match[$pick[1]] ) = $y_match[$pick[1]] \), alors
+\[ h( $x_mix[$pick[1]] ) - h( $x_match[$pick[1]] ) =
+$y_mix[$pick[1]] - $y_match[$pick[1]] = $b. \]
+$PAR
+(c) On a que \( h( $x[$grab[0]] ) = $h[$grab[0]] \), alors
+\( $m \cdot h( $x[$grab[0]] ) = $m \cdot $h[$grab[0]] = $c \).
+$PAR
+(d) On a que \( h( $x[$grab[1]] ) = $h[$grab[1]] \),
+alors \( h( $x[$grab[1]] ) + $k = $h[$grab[1]] +$k = $d. \)
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

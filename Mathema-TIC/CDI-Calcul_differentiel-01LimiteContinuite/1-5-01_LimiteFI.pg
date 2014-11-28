@@ -1,0 +1,80 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DESCRIPTION
+## Limite de la forme indéterminée inf - inf  et  ensuite 0/0
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Limite d'une forme indéterminée)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/UVA-Stew5e/setUVA-Stew5e-C02S03-CalcLimits/2-3-24.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Evaluating limits - rational expressions)
+## ZDate(5/26/2005)
+## ZInstitution(UVA)
+## ZAuthor(Jeff Holt)
+## ZMLT(limits_rational_difference_squares)
+## ZMLTleader(1)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS('limite','forme indéterminée')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+			"PGstandard.pl",
+			"PGcourse.pl",
+			"MathObjects.pl",
+			"PGauxiliaryFunctions.pl",
+			"answerHints.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+$a = random(1,7,1);
+$c = 2*$a;
+$ans = Compute("1/$c");
+
+
+$f1 = Formula("1/(x-$a)")->reduce;
+$f2 = Formula("$c/(x^2 - $a*$a)")->reduce;
+
+
+$showHint = 4;
+Context()->texStrings;
+BEGIN_TEXT;
+Évaluer la limite.
+\[ \lim_{ x \rightarrow $a } \left($f1 - $f2\right) \]
+Entrer $BBOLD inf $EBOLD pour \(\infty\), $BBOLD -inf $EBOLD pour \(-\infty\) 
+et $BBOLD nep $EBOLD si la limite n'existe pas.
+
+$PAR Limite : \{ans_rule(25) \}
+$PAR
+${BBOLD}Un indice sera donné si ce problème n'est pas réussi après $showHint tentatives$EBOLD
+END_TEXT
+Context()->normalStrings;
+
+ANS($ans->cmp);
+
+Context()->texStrings;
+BEGIN_HINT
+Il s'agit d'une limite avec une forme indéterminée \(\infty - \infty\).$BR
+Il faut mettre l'expression \(\left($f1 - $f2\right)\) sur un dénominateur commun et simplifier la fraction afin de lever l'indétermination.
+END_HINT
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

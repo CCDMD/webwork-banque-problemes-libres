@@ -1,0 +1,96 @@
+###DESCRIPTION
+## Polynomials
+## 
+##ENDDESCRIPTION
+## DBsubject(Algèbre)
+## DBchapter(Polynômes, exposants et racines)
+## DBsection(Définition des polynômes)
+## KEYWORDS('polynômes', 'français')
+## Traduction(Julie Tremblay)
+## Institution(BdeB)
+## Language(fr)
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextLimitedPolynomial.pl"
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+
+Context()->noreduce('(-x)-y','(-x)+y');
+
+$a = non_zero_random(-8,8,2);  
+$b = non_zero_random(-10,10,1);
+
+$na = random(1,7,1);
+
+do {
+$nb = random(1,7,1);
+} until($na != $nb);
+
+$term1 = Formula("$a x^($na)")->reduce;
+$term2 = Formula("$b x^($nb)")->reduce;
+$poly = Formula("$term1+$term2")->reduce;
+
+
+######################################
+
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit le polynôme \( $poly \).
+$PAR
+a) Déterminer le coefficient et le degré de chacun des termes.
+$BR
+$BCENTER
+\{begintable(3)\}
+\{row('Terme','Coefficient','Degré')\}
+\{row( '\($term1\)', ans_rule(10), ans_rule(10))\}
+\{row( '\($term2\)', ans_rule(10), ans_rule(10))\}
+\{endtable()\}
+$ECENTER
+$BR
+$PAR
+b) Le degré du polynôme est \{ ans_rule(10) \}
+$HR
+$BITALIC
+Vous pouvez allez voir la définition d'un polynôme à la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=1556", "1.1.1", "TARGET='_blank'" ) \} sur la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+######################################
+
+#  Answer
+
+
+$ans_a11 = Real($a);
+$ans_a12 = Real($na);
+$ans_a21 = Real($b);
+$ans_a22 = Real($nb);
+ANS($ans_a11->cmp); 
+ANS($ans_a12->cmp);
+ANS($ans_a21->cmp);
+ANS($ans_a22->cmp);
+
+if($na > $nb){$ans_b1=Real($na);}
+else {$ans_b1=Real($nb);}
+
+ANS($ans_b1->cmp); 
+
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

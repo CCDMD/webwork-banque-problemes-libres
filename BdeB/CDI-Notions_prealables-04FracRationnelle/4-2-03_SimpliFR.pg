@@ -1,0 +1,89 @@
+##DESCRIPTION
+##  Rational Expressions and Functions: Multipy and Divide
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fractions rationnelles)
+## DBsection(Simplification de fractions rationnelles)
+## KEYWORDS('Simplification','fonction rationnelle','français')
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne)
+
+## Level(2)
+## Language(fr)
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+ # "PGcourse.pl",
+  "MathObjects.pl",
+  "CofIdaho_macrosFr.pl",
+);
+TEXT(beginproblem());
+
+######################################
+#  Setup
+#  Form: (ax+b)(cx+d)/(ax+b)(x+e) 
+#  a and c neq 1, a relatively prime to b, c relatively prime to d 
+
+$a = random(2,5,1);
+do {$b = non_zero_random(-5,5,1);} until (gcd($a,$b)==1);
+do {$c = random(2,5,1);} while ($a==$c);
+do {$d = non_zero_random(-5,5,1);} until (gcd($c,$d)==1);
+$e = non_zero_random(-3,3,1);
+
+$f = Formula("(($a*$c)x^2 + ($a*$d+$b*$c)x + $b*$d)/($a x^2 + ($a*$e+$b)x + $b*$e)")->reduce->TeX;
+
+######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Simplifier la fraction rationnelle et donner les restrictions sur son domaine.$BR
+S'il y plus d'une valeur de \(x\), les séparer par une virgule. (Exemple: x = 1,-4)
+$BR $BR
+\[$f\]
+$BR Réponse:  \{ ans_rule(30) \}
+$BR Restriction(s): \(x =\) \{ ans_rule(10) \}
+$BR
+$HR
+$BITALIC
+Un exemple similaire est présenté à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6228", "1.3.1", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+######################################
+#  Answer
+
+$answer = "($c*x+$d)/(x+$e)";
+$rest1 = Compute("-$b/$a");
+$rest2 = Compute("-$e");
+
+ANS(RationalExpEvaluator($answer,"x"));
+ANS(List($rest1,$rest2)->cmp(
+list_type  => 'liste',
+));
+
+$showPartialCorrectAnswers = 1;
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR Il faut factoriser le numérateur et le dénominateur, et simplifier le facteur commun. Ainsi,
+$BR $BR
+\[\begin{array}{ll} \displaystyle $f &= \dfrac{\cancel{($a x+$b)}($c x+$d)}{\cancel{($a x +$b)}(x+$e)} \\[0.8em]
+&=\dfrac{$c x+$d}{x+$e}  \text{ si }   x \neq \frac{-$b}{$a} \end{array}\]
+$PAR
+Ainsi les restrictions sont \(x =  \dfrac{-$b}{$a}\) et  \(x=$rest2\), car il y a division par zéro pour ces deux valeurs dans la fraction rationnelle de départ.
+END_SOLUTION
+Context()->normalStrings;
+
+
+######################################
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

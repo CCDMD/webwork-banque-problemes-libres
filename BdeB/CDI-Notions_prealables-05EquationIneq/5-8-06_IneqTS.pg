@@ -1,0 +1,95 @@
+##DESCRIPTION
+##  Algebra: Quadratic inequalities 
+##ENDDESCRIPTION
+
+##KEYWORDS('algebra', 'inequality', 'quadratic', 'francais')
+## Traduction('Julie Tremblay')
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Nonlinear Inequalities')
+
+
+########################################################################
+
+DOCUMENT();      
+
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"unionTables.pl",
+"problemRandomize.pl",
+);
+
+########################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+########################################################################    inégalité x(x-a)(x+a) <= 0
+
+Context("Numeric");
+
+$a = random(1,10,1);
+
+$aa = $a*$a;
+
+$poly = Formula("x^3 - $aa x")->reduce;
+
+
+Context("Interval");
+
+$ans = Compute("(-inf, -$a) U (0, $a)");
+ 
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre l'inéquation suivante et donner la réponse en notation d'intervalle. $BR
+$BBOLD Note:  Si la réponse inclut plus d'un intervalle, les écrire séparés par le symbole d'union "U". Pour \(-\infty\) ou \(\infty\), écrire "-inf" ou "inf".$EBOLD 
+$BR Voir : \{ AnswerFormatHelp("intervals") \} $BR
+$BR
+\[
+ $poly < 0
+\]
+$PAR
+Réponse : \{ ans_rule(30) \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6896", "1.5.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+ANS( $ans->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pour résoudre l'inéquation \(  $poly < 0 \), il faut tout d'abord factoriser le polynôme \(( $poly) \) afin de trouver les valeurs de \(x\) lorsque la fonction est nulle.$BR $BR
+\[\begin{array}{rll}  $poly &=x(x^2-$aa) &\text{; mise en évidence de }x\\  &= x(x+$a)(x-$a)&\text{; différence de carrés}\end{array}\]
+$BR $BR
+On trouve les valeurs de \(x\) où il a un changement de signe, c'est-à-dire lorsque la fonction est nulle, soit lorsque \(x=0\), \((x+$a)=0\Rightarrow x = -$a\) et \( (x-$a)=0\Rightarrow x=$a\).
+$BR $BR
+On peut maintenant remplir le tableau de signes associée à la fonction \( x(x+$a)(x-$a)\) avec le signe du produit des trois facteurs : \((x)\), \((x+$a)\) et \((x-$a)\),  en respectant la règle des signes.
+$BR $BR 
+\{ 
+BeginTable(border => 4, padding=>10, tex_border =>"4pt").
+AlignedRow(["\(x\in\)", "\(] -\infty,-$a [\)","\(-$a\)", "\(] -$a,0 [\)","\(0\)", "\(] 0,$a [\)", "\($a\)", "\(] $a, \infty [\)"], separation=>0).
+AlignedRow(["\( x(x+$a)(x-$a)\)","\(-\)","\(0\)","\(+\)","\(0\)","\(-\)", "\(0\)","\(+\)"], separation=>0).
+EndTable()
+\}
+$BR $BR
+Par conséquent, \(x(x+$a)(x-$a) < 0\), donc \( $poly < 0\), lorsque \(x\in \left] -\infty,-$a\right[ \cup \left] 0, $a \right[\).
+$BR
+Il faut exclure les bornes, car l'inégalité est strictement plus petite que 0.
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

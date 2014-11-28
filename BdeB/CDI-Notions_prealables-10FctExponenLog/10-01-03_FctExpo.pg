@@ -1,0 +1,127 @@
+##DESCRIPTION
+## Les fonctions exponentielles
+##Fait par Julie Tremblay, novembre 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions exponentielles et logarithmiques)
+## DBsection(Fonction exponentielle)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+######## Source ############
+## ZDBsubject('Mise à niveau secondaire 5')
+## ZDBchapter('Fonction exponentielle')
+## ZDBsection('Identification')
+## ZAuthor('Diane Bergeron et Louise Pellerin')
+## ZInstitution('CEGEP de Chicoutimi et La Citécute; collégiale')
+## ZKEYWORDS('français', 'secondaire 5', 'fonction', 'algèbre', 'exponentielle')
+#######  Source #############
+## Level(2)
+## Language(fr)
+## KEYWORDS()
+
+
+
+############################################################################
+
+
+DOCUMENT();  
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+  "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+# création de la variable qui présentera tous les choix de réponses (bonnes et mauvaises) sous forme de choix multiple
+$mc = new_checkbox_multiple_choice();
+
+
+# créer les variables pour les réponses
+
+$cte1 = random(2,9);
+$cte2 = random(2,9);
+$cte3 = random(2,9);
+$cte4 = random(2,9);
+
+
+$f1= " \( \displaystyle $cte1^{(x + $cte2)} + $cte3  \)";
+$f2= "\( x^$cte4 + $cte3  \) $BR ";
+$f3=" \( \displaystyle \dfrac{$cte3}{$cte2^{(x + $cte2)}} \)";
+$f4=" \( $cte2^{(-$cte1 x+ $cte2)} \)";
+$f5=" \( x^$cte4 - $cte3 x \)" ;
+
+# afficher les réponses possibles
+$mc -> qa (" ", $f1, $f3, $f4);
+$mc -> extra($f2, $f5);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR Cocher toutes les fonctions ci-dessous qui sont des fonctions exponentielles.
+$PAR
+\{ $mc -> print_a() \}
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+$showHint = 3;
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Dans les fonctions exponentielles, on retrouve une variable à l'exposant. Aussi, la valeur de la base a > 0 et a &#8800; 1.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+ANS( checkbox_cmp( $mc->correct_ans() ) );
+
+
+BEGIN_SOLUTION
+Dans les fonctions exponentielles, on retrouve une variable à l'exposant.  
+$PAR
+Donc les seules fonctions ici qui ont une variable à l'exposant sont:
+$BR
+$BCENTER 
+$f1, $SPACE $SPACE $f3 $SPACE  et $SPACE $f4 
+$ECENTER
+
+
+END_SOLUTION
+
+ENDDOCUMENT();
+

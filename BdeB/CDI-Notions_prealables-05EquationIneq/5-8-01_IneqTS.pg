@@ -1,0 +1,141 @@
+#DESCRIPTION
+##  Algebra problem: rational inequality
+##ENDDESCRIPTION
+##
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Résoudre une inéquation à l'aide d'un tableau de signes)
+## KEYWORDS('Résoudre','Inéquation','Tableau de signe','Rationnelle','français')
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne)
+
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"answerHints.pl",
+"unionTables.pl",
+ "problemRandomize.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$refreshCachedImages = 1;
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+#  Allow for the user to try another version of the problem once they get it correct.
+ProblemRandomize(when=>"Correct",onlyAfterDue=>1);
+
+$a = random(1,7,1);
+$b = random($a+1,$a+8,1);
+$c = random($b+1,$b+8,1);
+
+#exposants
+$n = random(2,14,2);
+$m = random(3,15,1);   #pair ou impair
+
+$f = Formula("( (x-$b)**$m (x-$a)**$n )/(x-$c)")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la fonction \(f(x) = \displaystyle $f \).$BR $BR
+(a) Remplir le tableau de signes de la fonction à l'aide des instructions suivantes :
+$BR $BR
+$SPACE 1) Dans la $BBOLD première ligne$EBOLD, écrire dans les cases réponses, en ordre croissant, les valeurs de \(x\) où les facteurs de la fonction rationnelle sont nuls ou n'existe pas.$BR
+$SPACE 2) Dans la $BBOLD deuxième ligne$EBOLD, écrire dans les cases réponses le symbole approprié pour déterminer le signe de la fonction.$BR
+$SPACE $SPACE - Écrire \(+\) ou \(-\) si la fonction est positive ou négative.$BR $SPACE $SPACE - Écrire \( 0 \) si \(f(x) = 0\) et ${BBOLD}nep$EBOLD si \(f(x)\) n'existe pas.
+$BR $BR
+\{ 
+BeginTable(border => 2, padding => 4, tex_border =>"2pt").
+AlignedRow(["\(x\in\)", "$SPACE", ans_rule(5), "$SPACE",ans_rule(5), "$SPACE", ans_rule(5), "$SPACE"], separation=>0).
+AlignedRow(["\($f\)", ans_rule(10) ,ans_rule(5), ans_rule(10), ans_rule(5), ans_rule(10), ans_rule(5), ans_rule(10)], separation=>0).
+EndTable()
+\}
+$BR $BR
+(b) Résoudre l'inéquation \(\displaystyle $f \leq 0\) à l'aide de votre tableau de signes précédent. Donner votre réponse en notation d'intervalle. 
+$BR $BR
+\(x \in \) \{ans_rule(20)\} \{AnswerFormatHelp("intervals") \}
+$BR
+Note: Pour utiliser \(\infty\), écrire ${BBOLD}inf${EBOLD}.
+$BR
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6896", "1.5.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+ANS(Compute("$a")->cmp);
+ANS(Compute("$b")->cmp);
+ANS(Compute("$c")->cmp);
+
+
+if($m % 2==0) { ANS(str_cmp("-"));}    # (-inf,a)
+else {ANS(str_cmp("+"));}
+
+ANS(Compute("0")->cmp);
+
+if($m % 2==0) { ANS(str_cmp("-"));}     # (a,b)
+else {ANS(str_cmp("+"));}
+
+ANS(Compute("0")->cmp);
+ANS(str_cmp("-"));      ### (b,c)
+ANS(Compute("nep")->cmp);
+ANS(str_cmp("+"));   #### (c,inf)
+
+
+if($m % 2==0) { $int=Compute("(-inf,$c)"); }
+else { $int = Compute("[$b, $c)");}
+
+ANS($int->cmp);
+
+
+
+if($m % 2==0) {
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Selon le tableau des signes ci-dessous, la fonction \(f(x)=$f\) est négative ou égale à 0 lorsque \(x\) est dans l'intervalle  \($int\).$BR
+La borne de droite \($c\) est exclue car il y a division par 0 lorsque \(x=$c\), donc \(f($c)\) n'existe pas.
+$BR $BR
+\{ 
+BeginTable(border => 4, padding=>10, tex_border =>"4pt").
+AlignedRow(["\(x\in\)", "\(] -\infty,$a [\)","$a", "\(] $a,$b [\)","$b", "\(] $b,$c [\)","$c", "\(] $c,\infty [\)"], separation=>0).
+AlignedRow(["\($f\)","\(\frac{(+)(+)}{-}=-\)","\(0\)","\(\frac{(+)(+)}{-}=-\)","\(0\)","\(\frac{(+)(+)}{-}=-\)", "\(\nexists\)","\(\frac{(+)(+)}{+}=+\)"], separation=>0).
+EndTable()
+\}
+END_SOLUTION
+Context()->normalStrings;
+}
+else {
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Selon le tableau des signes ci-dessous, la fonction \(f(x)=$f\) est négative ou égale à 0 lorsque \(x\) est dans l'intervalle  \($int\).$BR
+La borne de gauche \($b\) est inclue car l'inégalité \(\leq\) inclue le 0 et \(f($b)=0\). La borne de droite \($c\) est exclue car il y a division par 0 lorsque \(x=$c\), donc \(f($c)\) n'existe pas.
+$BR $BR
+\{ 
+BeginTable(border=>4, padding=>10, tex_border =>"4pt").
+AlignedRow(["\(x\in\)", "\(] -\infty,$a [\)","$a", "\(] $a,$b [\)","$b", "\(] $b,$c [\)","$c", "\(] $c,\infty [\)"], separation=>0).
+AlignedRow(["\($f\)","\(\frac{(-)(+)}{-}=+\)","\(0\)","\(\frac{(-)(+)}{-}=+\)","\(0\)","\(\frac{(+)(+)}{-}=-\)", "\(\nexists\)","\(\frac{(+)(+)}{+}=+\)"], separation=>0).
+EndTable()
+\}
+END_SOLUTION
+Context()->normalStrings;
+}
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

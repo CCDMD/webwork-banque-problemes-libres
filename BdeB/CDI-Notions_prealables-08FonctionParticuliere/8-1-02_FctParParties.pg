@@ -1,0 +1,111 @@
+##DESCRIPTION
+## Introduction to Functions
+## 
+
+#### Source ###############################
+## ZInstitution('The College of Idaho')
+## ZAuthor('RA Cruz')
+## ZTitleText1('Essentials of Intermediate Algebra')
+## ZAuthorText1('Blitzer')
+## ZEditionText1('1')
+## ZSection1('2.1')
+## ZProblem1('')
+## ZKEYWORDS('functions')
+## ZDate: 2007/09
+## fichier :   21IntAlg_09_function.pg
+### Source ##################################
+
+##ENDDESCRIPTION
+## DBsubject(Algèbre)
+## DBchapter(Quelques fonctions particulières)
+## DBsection(Fonction définies par parties)
+
+## Traduit et modifié par Julie Tremblay, Collège de Bois-de-Boulogne, juin 2014
+## KEYWORDS('Fonction par parties','Fonction par morceaux','Évaluer')
+## Level(1)
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGchoicemacros.pl",
+  "MathObjects.pl",
+  "contextLimitedNumeric.pl",
+  "contextPiecewiseFunction.pl"
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+
+Context("PiecewiseFunction");
+
+$m1 = random(2,5,1);
+$b1 = random(1,6,1);
+$m2 = random(2,5,1);
+$b2 = random(1,6,1);
+$x = random(-4,4,1);
+
+$h = Formula("$m1 x + $b1 if x < $x else $m2 x - $b2 if x >= $x");
+
+@xnum = (random($x-5,$x-1,1),random($x+1,$x1+5,1),$x);
+@slice = NchooseK(3,3);
+@input = @xnum[@slice];
+
+######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la fonction définie par parties suivante.
+
+ \[ h(x) = \{$h->TeX\} \]
+
+Trouver les valeurs demandées.
+$PAR
+a) \( h($input[0]) \) = \{ans_rule(15)\}
+$PAR
+b) \( h($input[1]) \) = \{ans_rule(15)\}
+$PAR
+c) \( h($input[2]) \) = \{ans_rule(15)\}
+$BR
+$BR
+Quel est le domaine de la fonction \(h\)? : \(\text{dom}\;h =\)  \{ans_rule(15)\}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=7374", "2.3.1", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+######################################
+#  Answers
+
+Context("LimitedNumeric");
+Context()->strings->add("aucune"=>{},
+                        "non définie"=>{},
+                        "n'existe pas"=> {});
+
+$ans_a = $h->eval(x=>$input[0])->inContext(Context());
+ANS($ans_a->cmp);
+
+$ans_b = $h->eval(x=>$input[1])->inContext(Context());
+ANS($ans_b->cmp);
+
+$ans_c = $h->eval(x=>$input[2])->inContext(Context());
+ANS($ans_c->cmp);
+
+Context("Interval");
+
+ANS(Compute("R")->cmp);
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

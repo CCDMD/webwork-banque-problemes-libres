@@ -1,0 +1,107 @@
+###DESCRIPTION
+## Domaine d'une fonction par parties
+##ENDDESCRIPTION
+
+
+## DBsubject(Algèbre)
+## DBchapter(Quelques fonctions particulières)
+## DBsection(Fonction définie par parties)
+## KEYWORDS('fonction par parties','domaine')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextPiecewiseFunction.pl",
+#"answerHints.pl",
+#"problemPanic.pl",
+"AnswerFormatHelp.pl",
+#"unionTables.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+
+Context("PiecewiseFunction");
+Context()->noreduce('(-x)-y'); 
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+
+
+$a = random(2,8);
+$b = non_zero_random(-7,7);
+
+$f1 = Formula("$a x + $b")->reduce;
+
+
+
+$c = random(1,5);
+$d = random($c+2,$c+10);
+
+$f2 = Formula("1/(x-$c)")->reduce;
+
+$e = random($c-8,$c-2);
+$f = non_zero_random(-$e+2,-$e+10);
+
+$f3 = Formula("sqrt(1/(x+$f))")->reduce;
+
+
+#$lien = htmlLink( "https://departements.bdeb.qc.ca/mathematiques/portail/pages/geogebra/Fonction_definies_par_morceaux_WW.html", "Graphique Geogebra", "TARGET='_blank'" );
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Soit la fonction
+\[ f(x) = \left\lbrace {\begin{array}{ccc}$f1 & \text{si} & x\geq $d\\ $f2 & \text{si} & $c\leq x < $d\\[1em] $f3 & \text{si} & x \leq $e \end{array}}\right.\] .$BR
+
+Déterminer le domaine de la fonction et écrire votre réponse en notation d'intervalle.
+$PAR
+\( \text{dom }f =\) \{ ans_rule(15)\}  \{ AnswerFormatHelp("interval") \} $BR
+$BR
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=7374", "2.3.1", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+
+END_TEXT
+Context()->normalStrings;
+
+
+Context()->flags->set(formatStudentAnswer=>'parsed');
+$showPartialCorrectAnswers = 1;
+
+Context("Interval");
+
+ANS(Compute("(-$f,$e]U($c,inf)")->cmp);
+ 
+Context()->texStrings;
+BEGIN_SOLUTION
+Soit la fonction
+\[ f(x) = \left\lbrace {\begin{array}{ccc}$f1 & \text{si} & x\geq $d\\ $f2 & \text{si} & $c\leq x < $d\\[1em] $f3 & \text{si} & x \leq $e \end{array}}\right.\] .$BR
+$PAR
+On remarque que la première règle, \($f1\), n'a aucune restriction sur son intervalle \(x\geq $d\). Elle est donc définie pour \(x\in \left[ $d,\infty \right[\).
+$PAR
+Par contre, la deuxième règle, \($f2\), possède une restriction en \(x=$c\) (division par zéro) qui fait partie de son intervalle \($c\leq x < $d\). Elle est donc définie pour les valeurs \(x\in \left] $c,$d\right[\).
+$PAR
+Finalement, la troisième règle, \($f3\), possède deux restrictions, soit
+$PAR $BR
+$SPACE ${BBOLD}1.$EBOLD $SPACE\(x\neq -$f\) pour ne pas avoir de division par zéro $BR
+$SPACE ${BBOLD}2.$EBOLD $SPACE et \( \frac{1}{x+$f} > 0\) pour que l'expression à l'intérieur de la racine carrée soit positive.$BR
+$BR Ainsi, les valeurs de \(x\) doivent satisfaire \(x+$f > 0 \Rightarrow  x > -$f\). Par conséquent, la troisième règle est définie sur l'intervalle \(x\leq $e\) pour les valeurs de \(x \in \left]-$f, $e\right]\).
+$PAR
+On trouve le domaine en faisant l'union des trois intervalles ci-dessus, soit \(\left]-$f, $e\right] \cup \left] $c,$d\right[ \cup \left[ $d,\infty \right[\). Le domaine est \(\left] -$f,$e\right] \cup \left] $c,\infty \right[\).
+$ECENTER 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();

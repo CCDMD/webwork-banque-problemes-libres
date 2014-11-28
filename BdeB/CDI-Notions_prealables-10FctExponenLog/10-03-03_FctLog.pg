@@ -1,0 +1,186 @@
+##DESCRIPTION
+## Associer le graphique à une fonction logarithmique
+##Fait par Julie Tremblay, novembre 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions exponentielles et logarithmiques)
+## DBsection(Fonction logarithmique)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+######## Source ############
+## Fichier source: Library/LoyolaChicago/Precalc/Chap4Sec3/Q12.pg
+## ZDBsubject(Algebra)
+## ZDBchapter(Exponential and logarithmic expressions and functions)
+## ZDBsection(Graphs)
+## ZInstitution(Loyola University Chicago and Fort Lewis College)
+## ZAuthor(Adam Spiegler and Paul Pearson)
+## ZLevel(3)
+#######  Source #############
+## Level(3)
+## Language(fr)
+## KEYWORDS()
+
+
+######################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "PGgraphmacros.pl",
+  "parserImplicitPlane.pl",
+  "unionTables.pl",
+  "AnswerFormatHelp.pl",
+ "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+$refreshCachedImages = 1;
+
+
+######################################
+#  Setup
+
+
+$k = random(2,4,1);
+$kme = $k - 0.00001;
+
+
+
+$f[0] = "1-ln($k-x) for x in <-5,$kme> using color:blue and weight:2";
+$f[1] = "1-ln($k+x) for x in <-$kme,5> using color:blue and weight:2";
+$f[2] = "1+ln($k-x) for x in <-5,$kme> using color:blue and weight:2";
+$f[3] = "1+ln($k+x) for x in <-$kme,5> using color:blue and weight:2";
+
+for ($i = 0; $i <= 3; $i++){
+  $graph[$i] = init_graph(-5,-3,5,5,'axes'=>[0,0],grid=>[10,8],size=>[300,300]);
+  $graph[$i]->lb('reset');
+  $graph[$i]->lb(new Label(4.5,0.25,'x','black','center','middle'));
+  $graph[$i]->lb(new Label(0.25,4.5,'y','black','center','middle'));
+  $graph[$i]->lb(new Label(-0.25,1,"1",'black','center','middle'));
+  $graph[$i]->lb(new Label(1,-0.25,"1",'black','center','middle'));
+
+  plot_functions( $graph[$i], $f[$i]);
+  $graph[$i]=image(insertGraph($graph[$i]),width=>200,height=>200,tex_size=>450);
+}
+
+
+@perm = NchooseK(4,4);
+@inv = invert(@perm);
+@mix_graph = @graph[@perm];
+
+@letter = ("A", "B", "C", "D");
+$correct = $letter[$inv[0]];
+
+Context()->variables->are(x=>"Real",y=>"Real");
+Context()->flags->set(useBaseTenLog=>1);
+Context()->strings->add(aucune=>{},aucun=>{},aucun => {alias => "aucune"});
+
+
+$x_int = Real("$k-exp(1)");
+$y_int = Real("1-ln($k)");
+
+$dom = Interval("(-inf,$k)");
+
+$XINT = Point("($x_int,0)");
+$YINT = Point("(0,$y_int)");
+
+
+$VA = ImplicitPlane("x=$k");
+$HA = Compute("aucune");
+
+
+#################################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit la fonction logarithmique \( y = 1 - \ln{($k-x)} \).
+$PAR
+(a) Le domaine de la fonction est : \{ ans_rule(20) \} \{ AnswerFormatHelp("intervals") \}
+$PAR
+(b) Déterminer, si possible, les asymptotes horizontales et verticales de la fonction. Entrer comme réponse une équation de la forme 
+\( x = k \) ou \( y = k \), ou entrer le mot ${BBOLD}aucune${EBOLD}  si la fonction ne possède pas d'asymptote.
+$PAR
+L'équation de l'asymptote verticale est : \{ ans_rule(10) \}
+$BR
+L'équation de l'asymptote horizontale est : \{ ans_rule(10) \}
+$PAR
+(c) Déterminer les points d'intersection avec les axes de coordonnées. 
+Entrer comme réponse un point \( (a,b) \) incluant les parenthèses
+ou entrer le mot ${BBOLD}aucun${EBOLD} s'il n'y a pas de zéro ou d'ordonnée à l'origine. 
+Entrer les valeurs ${BBOLD}exactes${EBOLD}, c'est-à-dire sans nombre décimal.
+$PAR
+Le zéro de la fonction se situe au point : \{ ans_rule(10) \}
+$BR
+L'ordonnée à l'origine se situe au point : \{ ans_rule(10) \}
+
+$PAR
+(d) Sans utiliser de calculatrice, tracer le graphique de la fonction sur une feuille en incluant les éléments trouvés précédemment.
+$PAR
+Quel graphique ci-dessous (A-D) correspond à votre tracé de graphique?
+\{ pop_up_list(["?","A","B","C","D"]) \}
+$PAR
+$BCENTER
+\{
+BeginTable().
+  AlignedRow([$mix_graph[0],$mix_graph[1]]).
+  TableSpace(5,0).
+  AlignedRow(["A","B"]).
+  TableSpace(25,6).
+  AlignedRow([$mix_graph[2],$mix_graph[3]]).
+  TableSpace(5,0).
+  AlignedRow(["C","D"]).
+EndTable();
+\}
+$BR
+(Cliquer sur une image pour l'agrandir)
+$ECENTER
+
+END_TEXT
+Context()->normalStrings;
+
+
+#########################################
+#  Answers
+
+$showPartialCorrectAnswers = 1;
+Parser::Number::NoDecimals();
+
+ANS($dom->cmp() );
+ANS($VA->cmp() );
+ANS($HA->cmp( showTypeWarnings=>0 ) );
+ANS($XINT->cmp() );
+ANS($YINT->cmp() );
+ANS(str_cmp($correct) );
+
+###########################################
+#  Solution
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BCENTER
+$graph[0]
+$ECENTER
+$BR
+À partir du graphique de la fonction \(y = 1 - \ln{($k-x)}\), on peut voir qu'il a une asymptote verticale en \(x = $k\) et le domaine est \( $dom \).
+$BR
+L'ordonnée à l'origine est lorsque \(x = 0\). En substituant \(x = 0\) dans l'équation, on obtient \( y = 1 - \ln{($k-0)} = 1 - \ln{($k)} \).  
+Par conséquent, le point d'intersection avec l'axe de \(y\) est \( (0, 1- \ln{($k)}) \).
+$BR
+Le zéro de la fonction est lorsque \(y =0\). On doit donc résoudre l'équation \( 0 = 1- \ln{($k-x)} \). On isole tout d'abord la fonction logarithmique en base e, \( \ln{($k-x)} = 1 \). 
+Cette équation signifie que \(1\) est l'exposant que l'on donne à la base \(e\) pour obtenir \(($k-x)\), c'est-à-dire \( e^1 =  $k - x \). En isolant \(x\), on obtient le point
+ d'intersection avec l'axe des \(x\) : \(($k-e, 0)\).
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('MathObject version.  Uses log = logten.');
+ENDDOCUMENT();

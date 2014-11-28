@@ -1,0 +1,109 @@
+## DESCRIPTION
+## Algebra, Inequalities
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra', 'nonlinear inequality', 'francais')
+## Traduction('Julie Tremblay')
+
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Nonlinear Inequalities')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"unionTables.pl",
+"problemRandomize.pl",
+);
+
+#######   (x^2 + bx + c)/x(x-a) >= 0 où x^2 + bx + c non factorisable
+#####   et a, b, c > 0   et c : multiple de a  car transforme en somme de 
+###### fractions partielles   A/x + B/(x-a) >= -1
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$refreshCachedImages = 1;
+
+#  Allow for the user to try another version of the problem once they get it correct.
+ProblemRandomize(when=>"Correct",onlyAfterDue=>1);
+
+Context("Numeric");
+
+$a =  random(4,10,1);
+$b =  random(1,5,1);
+
+do{$c = $a*random(2,6,1);} until($c > $b*$b/4);
+
+$A = -$c/$a;
+$B= -$A + $a + $b;
+
+$poly = Formula("x^2 + $b x + $c")->reduce;   ## toujours positif
+
+$gauche = Formula("$A/x + $B/(x-$a)")->reduce;
+
+Context("Interval");
+
+$ans = Compute("(-inf, 0) U ($a,inf)");
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre l'inéquation suivante et donner la réponse en notation d'intervalle. $BR
+$BBOLD Note:  Si la réponse inclut plus d'un intervalle, les écrire séparés par le symbole d'union "U". Pour \(-\infty\) ou \(\infty\), écrire "-inf" ou "inf".$EBOLD 
+$BR Voir : \{ AnswerFormatHelp("intervals") \} $BR
+$BR
+\[
+ $gauche \ge -1
+\]
+$PAR
+Réponse : \{ ans_rule(30) \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6896", "1.5.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+ANS( $ans->cmp() );
+
+$Aa = $A*$a;
+$poly2 = Formula("$A(x-$a)+$B x + x(x-$a)")->reduce;
+$poly3 = Formula("$A x -$Aa + $B x + x^2 - $a x")->reduce;
+
+$bb = $b*$b;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pour résoudre l'inéquation \(  $gauche \ge -1 \), il faut tout d'abord transformer cette inégalité sous la forme \( f(x) \ge 0\), où \(f(x)\) est une fonction rationnelle.$BR $BR
+\[\begin{array}{cl} \displaystyle $gauche \ge -1&\text{; addition de }1\\[0.5em] \displaystyle $gauche + 1\ge 0&\text{; même dénominateur}\\[0.5em] \dfrac{$poly2}{x(x-$a)} \ge 0&\text{; distributivité}\\[0.5em] \dfrac{$poly3}{x(x-$a)} \ge 0&\\[0.5em] \dfrac{$poly}{x(x-$a)} \ge 0&\end{array}\]
+$BR $BR
+Il faut ensuite factoriser le polynôme \(( $poly) \) afin de trouver les valeurs de \(x\) lorsque la fonction est nulle. Par contre, avec la formule quadratique, on remarque que le gradient \(b^2-4ac = $bb - 4($c) < 0\). Par conséquent, ce polynôme ne se factorise pas.
+$BR $BR
+Ainsi, $BBOLD comme le numérateur est toujours positif,$EBOLD les seules valeurs de \(x\) où il a un changement de signe est lorsque le dénominateur est nul, soit lorsque \(x=0\) et \(x = $a\).
+$BR $BR
+On peut maintenant remplir le tableau de signes associée à la fonction \(\frac{$poly}{x(x-$a)}\) avec le signe du produit des facteurs : \((x)\) et \((x-$a)\),  en respectant la règle des signes.
+$BR $BR 
+\{ 
+BeginTable(border => 4, padding=>10, tex_border =>"4pt").
+AlignedRow(["\(x\in\)", "\(] -\infty,0 [\)","\(0\)", "\(] 0,$a [\)", "\($a\)", "\(] $a, \infty [\)"], separation=>0).
+AlignedRow(["\( \frac{$poly}{x(x-$a)}\)","\(+\)","\(\nexists\)","\(-\)", "\(\nexists\)","\(+\)"], separation=>0).
+EndTable()
+\}
+$BR $BR
+Par conséquent, \(\frac{$poly}{x(x-$a)} \ge 0\), donc \( $gauche \ge -1\), lorsque \(x\in \left] -\infty,0\right[ \cup \left] $a, \infty \right[\).
+$BR
+Il faut exclure les bornes, car la fonction n'existe pas pour ces valeurs.
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

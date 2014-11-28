@@ -1,0 +1,107 @@
+## DESCRIPTION
+##   Solve Equation with Absolute Value
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Équations contenant des valeurs absolues)
+## KEYWORDS('Résoudre','Équation','Valeur absolue')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(3)
+## Language(fr)
+
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+########################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+########################################################################
+
+Context()->noreduce('(-x)-y');
+Context()->strings->add(aucune => {});
+
+$a = random(2,10,1);
+$b = non_zero_random(-9,9,1);
+$c = random(1,20,1);
+
+
+$poly = Formula("$a x + $b")->reduce;
+$gauche = Formula("abs($poly)-$c")->reduce;
+
+$num1 = $c - $b;
+$num2 = -($c + $b);
+
+($n1,$d1) = reduce($num1,$a);
+($n2,$d2) = reduce($num2,$a);
+
+$ans = Compute("$n1/$d1,$n2/$d2")->reduce;
+
+
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre, si possible, l'équation suivante. S'il n'y a aucune solution, écrire "aucune" dans la case réponse.
+$BR $BR
+\[
+$gauche = 0.
+\]
+$BR $BR
+Solution(s) : \(x =\) \{ ans_rule(30) \} $BR
+$BBOLD Note: S'il y a plus d'une solution, écrire les réponses séparées par une virgule. Ex.: 4, sqrt(10)
+$EBOLD
+$BR
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5276", "1.4.5", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+ANS( $ans->cmp() );
+
+
+$ans1 = Compute("$n1/$d1");
+$ans2 = Compute("$n2/$d2");
+
+if($ans1 - floor($ans1) != 0) {
+$ans1 = "\frac{$n1}{$d1}";
+}
+
+if($ans2 - floor($ans2) != 0) {
+$ans2 = "\frac{$n2}{$d2}";
+}
+
+Context()->texStrings;
+BEGIN_SOLUTION
+On résout cette équation en isolant d'abord la valeur absolue :
+$BR $BR
+\[ | $poly | = $c\]
+$BR $BR
+Comme il s'agit d'une équation de la forme \(|f(x)| = c\) où \(c \geq 0\), alors il existe nécessairement deux solutions à cette équation. Celle où \( f(x)=c\) et celle où \(f(x) = -c\). Voici la démarche,
+$BR $BR
+\[\begin{array}{rlcrl}  $poly &= $c &\text{ ou }& $poly &= -$c \\ $a x &= $num1 &\quad& $a x &= $num2 \\ x &= \frac{$num1}{$a} & & x &= \frac{$num2}{$a}   \end{array}\]
+$BR $BR
+Il existe donc deux solutions :\( \boxed{x = $ans1}\) et \( \boxed{x = $ans2}.\) $BR
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

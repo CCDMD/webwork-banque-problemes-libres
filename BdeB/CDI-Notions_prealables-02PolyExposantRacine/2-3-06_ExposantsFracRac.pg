@@ -1,0 +1,101 @@
+##DESCRIPTION
+##   Evaluation of a simple algebraic expression
+##ENDDESCRIPTION
+
+##KEYWORDS('algebra','exponent','français')
+ 
+## tcao , PAID on 11-24-2003
+
+## Traduction('Julie Tremblay')
+## DBsubject('Algebra')
+## DBchapter('Basic Algebra')
+## DBsection('Exponents and Radicals')
+## Date('6/3/2002')
+## Author('')
+## Institution('')
+## TitleText1('Precalculus')
+## EditionText1('3')
+## AuthorText1('Stewart, Redlin, Watson')
+## Section1('1.2')
+## Problem1('9a')
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGunion.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl"
+);
+
+TEXT(beginproblem());
+$showCorrectPartialAnswers = 1;
+
+$a = random(3,9,1);
+$b = random(2,8,1);
+
+while($a==$b){$b=random(2,8,1);}
+
+$a1 = $a**2;
+$b1 = $b**2;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer l'expression suivante en donnant les numérateurs et dénominateurs n'ayant aucun facteur commun.
+\{
+ColumnTable(
+  "\( \displaystyle \left(\dfrac{$a1}{$b1}\right)^{-1/2} = \)",
+  ans_rule(5).$BR.$HR.ans_rule(5),
+  indent => 0, separation => 0, valign => "MIDDLE"
+  );
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+
+$i = gcf($a,$b);
+
+$den = $a / $i;
+$num = $b / $i;
+
+$den2 = $den**2;
+$num2 = $num**2;
+
+$ans1 = $num;
+$ans2 = $den;
+
+ANS(num_cmp($ans1, mode=>"strict"));
+ANS(num_cmp($ans2, mode=>"strict"));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'expression \(\left(\dfrac{$a1}{$b1}\right)^{-1/2}\) se simplifie en utilisant les propriétés des exposants et des radicaux suivantes:
+$BR $BR
+\[   \begin{array}{lrl} 1.&  a^{1/2} &= \sqrt{a} \\
+  2.&   \left(\dfrac{a}{b}\right)^{-n} &= \left(\dfrac{b}{a}\right)^n \end{array}
+\]
+$BR
+Ainsi, on simplifie cette expression de la façon suivante:
+$BR
+$BR
+\[ \begin{array}{rl} \left(\dfrac{$a1}{$b1}\right)^{-1/2} &=  \left(\dfrac{$b1}{$a1}\right)^{1/2} \\[0.8em]
+&= \sqrt{\dfrac{$b^2}{$a^2}}\\[1em] 
+&=  \dfrac{$b}{$a} \end{array}\]
+$BR
+\{ if($i != 1){
+"Cette fraction se simplifie encore étant donné que le numérateur et le dénominateur possèdent des facteurs communs.".$BR.
+"Ainsi la réponse simplifiée est:".$BR.$BR.
+"\[  \dfrac{$b}{$a} = \boxed{\dfrac{$num}{$den}}\]".$BR.
+"On peut noter que nous aurions pu également simplifier la fraction dès le départ de la façon suivante.".$BR.$BR.
+"\[   \left(\dfrac{$a1}{$b1}\right)^{-1/2} =  \left(\dfrac{$den2}{$num2}\right)^{-1/2}\]".$BR
+}
+\}
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,99 @@
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Équations contenant des fractions rationnelles)
+## KEYWORDS('Équation rationnelle','Résoudre','Équation')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+loadMacros(
+  "PGstandard.pl",
+  "PGauxiliaryFunctions.pl",
+  "Parser.pl",
+  "MathObjects.pl",
+"AnswerFormatHelp.pl",
+"PGcourse.pl",
+);
+
+Context("Numeric");
+
+
+
+$a=non_zero_random(-8,8,1);
+do{$b=non_zero_random(-8,8,1);} until($b != $a && $a != $b+1); #pour ans != a
+
+$const = 2*$a - $b;
+
+do{$c=non_zero_random(-9,9,1);} until($c != $const && $c != $b && $c != $a); #pour avoir 1 solution
+
+$num = $b*$c - $a*$a;
+$den = $const - $c;
+
+$ans = Compute("$num/$den");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer le domaine de l'équation suivante. $BR $BR
+\[\dfrac{x+$a}{x+$b}=\dfrac{x+$c}{x+$a}\].
+$BR $BR
+Domaine : \{ans_rule(20) \} \{ AnswerFormatHelp("intervals") \} $BR
+$BR
+Résoudre, si possible, cette équation. S'il n'y a aucune solution, écrire "aucune" dans la case réponse.
+$BR $BR 
+Solution(s) : \{ans_rule(30) \} $BR
+$BBOLD Note: S'il y a plus d'une solution, écrire les réponses séparées par une virgule. Ex.: 4, sqrt(10) $EBOLD
+$BR
+$HR
+$BITALIC
+Des exemples similaires sont présentés sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5272", "1.4.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+Context("Interval");
+
+$rest1 = -$b;
+$rest2 = -$a;
+
+$dom = Compute("R-{$rest1,$rest2}"); 
+
+ANS($dom->cmp);
+
+Context("Numeric");
+Context()->strings->add(aucune => {});
+
+ANS(List($ans)->cmp);
+
+
+if($ans - floor($ans) != 0){    #pour afficher la solution en fraction
+
+($n,$d) = reduce($num,$den);
+$ans = "\frac{$n}{$d}";
+}
+
+$a2 = 2*$a;
+$aa = $a*$a;
+$bpc = $b+$c;
+$bc = $b*$c;
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Le domaine de cette équation est \(\mathbb{R}\setminus\lbrace $rest1, $rest2 \rbrace\), car pour ces deux valeurs, les dénominateurs \((x+$a)\) et \((x+$b)\) sont nuls. $BR $BR
+
+On résout cette équation de la façon suivante :
+$BR $BR
+\[\begin{array}{rll} \dfrac{x+$a}{x+$b}&=\dfrac{x+$c}{x+$a}&\\[0.8em] (x+$a)(x+$a)&=(x+$c)(x+$b) &;\;\frac{a}{b}=\frac{c}{d} \Rightarrow ad = bc\text{ si }b\neq 0\text{ et }d\neq 0\\ \cancel{x^2} + $a2 x + $aa &= \cancel{x^2} + $bpc x + $bc  &\text{; soustrait de chaque côté par }x^2\\ $a2 x + $aa &= $bpc x + $bc &\\ $a2 x - $bpc x &= $bc - $aa &\text{; on isole }x\\ $den x &= $num& \\ x&= $ans &\end{array}\]
+$BR
+Étant donné que cette valeur appartient au domaine de l'équation, alors :\( \boxed{x = $ans}\) est la seule solution de l'équation. $BR
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

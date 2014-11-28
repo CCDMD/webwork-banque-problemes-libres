@@ -1,0 +1,65 @@
+## DBsubject(Probabilités)
+## DBchapter(Variables aléatoires: cas général et continu)
+## DBsection(Espérance et moments)
+##Author(Jean-Sébastien Turcotte - Université de Montréal)
+## KEYWORDS('Variables aléatoires continues','Espérance','Variance')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl",                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+#"PGstatisticsmacros.pl",   #Donne accès à des commandes de stats
+"PGnumericalmacros.pl"    #Nécessaire pour certaines macros dans statistics
+);
+
+
+TEXT(beginproblem());
+Context("Numeric");
+$a=random(0,5,1);
+$b=random(10,15,1);           #Param d'une distribution triangulaire
+$c=random($a,$b,1);
+$esp=Compute("($a+$b+$c)/3");
+$var=Compute("($a**2+$b**2+$c**2-$a*$b-$a*$c-$b*$c)/18");
+$denom1=($b-$a)*($c-$a);
+$denom2=($b-$a)*($b-$c);
+BEGIN_TEXT
+$PAR 
+Soit \(X\) une variable aléatoire dont la fonction de densité est donnée par :
+
+$PAR
+\[ f(x) = \left\{ "\{"; \} \begin{array}{ll}
+\frac{2(x-$a)}{$denom1} & \mbox{si } $a\leq x\leq $c \cr
+\frac{2($b-x)}{$denom2} & \mbox{si } $c\leq x\leq $b \cr
+0           & \mbox{sinon}
+\end{array} \right. \]
+$BR
+\{BeginList("OL")\}
+$ITEM
+Calculer l'espérance de la variable aléatoire \(X\).
+$BR
+\(\mathbb{E}[X]=\)\{$esp->ans_rule\}
+$ITEMSEP
+$ITEM
+Calculer la variance de la variable aléatoire \(X\).
+$BR
+\(Var[X]=\)\{$var->ans_rule\}
+\{EndList("OL")\}
+
+END_TEXT
+ANS($esp->cmp);
+ANS($var->cmp);
+
+
+
+ENDDOCUMENT();      

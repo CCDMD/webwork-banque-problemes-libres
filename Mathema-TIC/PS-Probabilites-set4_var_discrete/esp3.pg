@@ -1,0 +1,48 @@
+## DBsubject(Probabilités)
+## DBchapter(Variables aléatoires discrètes)
+## DBsection(Espérance et moments)
+ ##Author(Jean-Sébastien Turcotte - Université de Montréal)
+## KEYWORDS('Variables aléatoires discrètes','Espérance')
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl"                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+);
+
+
+TEXT(beginproblem());
+Context("Numeric");
+$nombre=random(5,8);
+$gain=random(1.1,1.4,0.1);
+$perte=random(0.6,0.9,0.1);
+Context(IntegerFunctions);
+$pgain=(2*C($nombre,2))/C(2*$nombre,2);
+$pperte=1-$pgain;
+$ans=Real("$pgain*$gain-$pperte*$perte");
+$ansvar=Real("$pgain*($gain**2)-$pperte*($perte**2)-$ans^2");
+BEGIN_TEXT
+Une enveloppe contient \($nombre\) cartes noires et \($nombre\) cartes rouges. Un participant pige deux cartes. Si elles sont de la même couleur, il gagne \($gain 0\) $ et si elles sont différentes, il doit payer \($perte 0\) $.
+\{BeginList("OL")\}
+$ITEM
+Quelle est l'espérance du gain du participant?  \{$ans->ans_rule(10)\}
+$ITEMSEP
+$ITEM
+Quelle est la variance du gain? \{$ansvar->ans_rule(10)\}
+\{EndList("OL")\}
+END_TEXT
+ANS($ans->cmp);
+ANS($ansvar->cmp);
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

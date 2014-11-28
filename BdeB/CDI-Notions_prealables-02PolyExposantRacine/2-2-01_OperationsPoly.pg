@@ -1,0 +1,75 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Polynômes, exposants et racines)
+## DBsection(Opérations sur les polynômes)
+## KEYWORDS('polynômes','français')
+## Traduction(Julie Tremblay)
+## Institution(BdeB)
+## Language(fr)
+
+
+########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGcourse.pl",
+"PGgraders.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+$tf = new_select_list();
+
+$tf->rf_print_q(~~&pop_up_list_print_q);
+$tf->ra_pop_up_list( [ No_answer=>"?", 
+"Equivalent"=>"Équivalentes", "Not Equivalent"=>"Non Équivalentes"] );
+
+$tf -> qa ( 
+"\( (a-b)^2 \) et \( a^2 - b^2 \) $BR",
+"Not Equivalent",
+"\( (a-b)^2 \) et \( (a-b)(b-a) \) $BR",
+"Not Equivalent",
+"\( (a-b)^2 \) et \( (a-b)(a-b) \) $BR",
+"Equivalent",
+"\( (a-b)^2 \) et \( (b-a)^2 \) $BR",
+"Equivalent",
+"\( (a-b)^2 \) et \( a^2 - 2ab + b^2 \) $BR",
+"Equivalent",
+);
+
+$tf->choose(5);
+
+
+################################################
+#  Main text
+
+BEGIN_TEXT
+Déterminer si les expressions suivantes sont équivalentes ou non.
+$BR
+\{ $tf-> print_q \}
+END_TEXT
+
+
+
+################################################
+#  Answer evaluation
+
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+ANS(str_cmp($tf->ra_correct_ans));
+
+ENDDOCUMENT();

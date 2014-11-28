@@ -1,0 +1,153 @@
+#DESCRIPTION
+##  Algebra problem: absolute inequality
+##ENDDESCRIPTION
+##
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Résoudre une inéquation contenant des valeurs absolues)
+## KEYWORDS('Résoudre','Inéquation','Valeur absolue')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+   
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"unionTables.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+
+
+###################################
+# Setup    |x^2 + (a+b)x + ab | > c  où c est plus grand que le  y du sommet
+
+##  réponse  =  (-inf, x1) U (x2,inf) où x1 et x2 sont les zéros de x^2+(a+b)x + ab-c
+
+
+Context("Numeric");
+ Context()->flags->set(
+     reduceConstants => 0,
+     reduceConstantFunctions => 0,
+  );
+
+#### les zéros sont rationnels
+
+do {
+$a = non_zero_random(-8,8,1);
+$b = list_random($a-1,$a+1,$a-2,$a+2,$a-3,$a+3);
+} until($b!=0);
+
+$check = abs($a-$b);
+
+if( $check == 1) { $c = list_random(2,6,12); }
+elsif ( $check == 2) { $c = list_random(3,9,15); }
+else { $c = list_random(4,10,18); }
+
+$s = -($a+$b);
+$p = $a*$b;
+
+$poly1 = Formula("x^2 - $s x + $p")->reduce;
+$f = Formula("|$poly1|");
+
+
+### zéros   x1< x2
+
+$c2 = $p-$c;
+
+$poly2 = Formula("x^2 - $s x + $c2")->reduce;
+
+$grad = $s*$s - 4*$c2;
+
+$x1 = Compute("($s - sqrt($grad))/2")->reduce;
+$x2 = Compute("($s +  sqrt($grad))/2")->reduce;
+
+Context("Interval");
+
+$ans = Compute("(-inf,$x1)U($x2,inf)");
+
+###################################
+# Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre l'inégalité suivante en utilisant la notation d'intervalle.
+$BR
+$BR
+\[ $f > $c  \]
+Réponse : \{ans_rule(35)\} \{ AnswerFormatHelp("intervals") \}
+$PAR
+$BBOLD Note: Si la réponse inclut plus d'un intervalle, les écrire séparés par le symbole d'union "U". Pour \(-\infty\) ou \(\infty\), écrire "-inf" ou "inf". S'il n'y a aucune solution, écrire deux accolades "{ }" pour désigner l'ensemble vide. $EBOLD
+$BR
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6898", "1.5.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+ANS($ans->cmp);
+
+$ss = $s*$s;
+$c3 = $p+$c;
+
+$poly3 = Formula("x^2 - $s x + $c3")->reduce;
+
+$grad2 = $ss - 4*$c3;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pour résoudre une inégalité de la forme \($f > $c\), il faut que
+$BR $BR
+\[
+ $poly1 > $c \quad\textbf{ ou }\quad $poly1 < -$c \]
+$BR
+Ainsi, il faut résoudre les deux inéquations séparément et faire $BBOLD l'union$EBOLD des deux solutions.
+$HR
+(1) On a que
+\[ $poly1 > $c \Leftrightarrow $poly2 > 0  \]
+$BR $BR
+Par la formule quadratique, on veut trouver les zéros de la fonction, c'est-à-dire les valeurs de  \(x\) où il y a un changement de signe dans la fonction \(f(x)=$poly2\). $BR $BR
+\[ x = \dfrac{$s \pm \sqrt{$ss - 4($c2)}}{2} = \dfrac{$s \pm \sqrt{$grad}}{2} = $x1 \text{ ou } $x2\]
+$BR $BR
+Comme l'orientation de la parabole \(($poly2)=(x-$x1)(x-$x2)\) est vers le haut, on aura 
+\[ $poly2 > 0 \Leftrightarrow x < $x1 \text{ ou } x>$x2\]
+$BR $BR
+Ainsi, l'intervalle de solution de la première inégalité est : \(x\in ] -\infty, $x1 [ \cup ] $x2 , \infty [ \).
+$HR
+(2) On a que
+\[ $poly1 < -$c \Leftrightarrow $poly3 < 0  \]
+$BR $BR
+Par la formule quadratique, on veut trouver les zéros de la fonction, c'est-à-dire les valeurs de  \(x\) où il y a un changement de signe dans la fonction \(f(x)=$poly3\). $BR $BR
+\[ x = \dfrac{$s \pm \sqrt{$ss - 4($c3)}}{2} = \dfrac{$s \pm \sqrt{$grad2}}{2}\]
+$BR $BR
+Comme le gradient est négatif, \(($grad2<0)\), la parabole \(($poly3)\) ne possède aucun zéro. De plus, elle est située au-dessus de l'axe de \(x\), donc toujours positive, car son orientation est vers le haut.
+$BR $BR
+Ainsi, l'inégalité \($poly1 < -$c\) ne possède aucune solution.
+$HR
+Par conséquent, l'intervalle de solution de \($f > $c\) est : \(x\in ] -\infty, $x1 [ \cup ] $x2 , \infty [\).
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+
+###################################
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

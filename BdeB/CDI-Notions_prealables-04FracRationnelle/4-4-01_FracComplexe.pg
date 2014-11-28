@@ -1,0 +1,106 @@
+## DESCRIPTION
+## Algebraic fractions
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fractions rationnelles)
+## DBsection(Fractions complexes)
+## KEYWORDS('fonction rationnelle','fraction complexe','français')
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne)
+
+## Level(2)
+## Language(fr)
+
+##################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "CofIdaho_macrosFr.pl",
+);
+
+TEXT(beginproblem());
+
+
+###################################
+# Setup
+
+Context("Numeric");
+#Context()->variables->are(k=>"Real");
+
+
+$a = random(2,9,1);
+do{$b = non_zero_random(-8,8,1);} while ($a==-1*$b);
+
+
+($f1,$f2) = (Formula("$a/(x+1) -1")->reduce->TeX,
+            Formula("$b/(x+1) + 1")->reduce->TeX);
+
+
+$am1 = $a - 1;
+$bp1 = $b + 1;
+
+###################################
+# Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Simplifier l'expression suivante et donner les restrictions sur son domaine.$BR
+Écrire les restrictions de \(x\) entre accolades, sous la forme d'un ensemble, par exemple : \(x\in \lbrace 1,-4,2\rbrace\).
+$PAR
+\[ \dfrac{\displaystyle $f1}{\displaystyle $f2} \]
+$PAR
+$BR Réponse:  \{ ans_rule(30) \} 
+$PAR
+Restrictions: \(x\in\) \{ ans_rule(30) \} 
+$BR
+$HR
+$BITALIC
+Un exemple similaire est présenté à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6232", "1.3.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+
+
+$answer = Compute("(-x+$am1)/(x+$bp1)")->reduce;
+ANS(RationalExpEvaluator($answer,"x")); 
+
+Context("Interval");
+
+$rest = Set("{-1,-$bp1}")->reduce;
+
+ANS($rest->cmp(
+list_type  => 'ensemble',
+));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Il y a 2 dénominateurs dans cette expression et chacun doit être \(\neq 0\):$BR
+$BR
+$BCENTER \((x+1)\neq 0\) et \(\left($f2\right)\neq 0\)
+$ECENTER
+$PAR
+Simplifions cette expression:
+$PAR
+\[\begin{array}{ll} \dfrac{\displaystyle $f1}{\displaystyle $f2} &= \dfrac{\left(\dfrac{$a -(x+1)}{x+1}\right)}{\left(\dfrac{(x+1)+$b}{x+1}\right)}\\
+&= \dfrac{\left(\dfrac{-x+$am1}{x+1}\right)}{\left(\dfrac{x+$bp1}{x+1}\right)}\\
+&= \dfrac{(-x+$am1)}{\cancel{(x+1)}} \cdot \dfrac{\cancel{(x+1)}}{(x+$bp1)}\\
+&= \displaystyle $answer \end{array}\]
+$PAR
+Ainsi, les restrictions sur le domaine sont \(x \in $rest \), car ce sont les valeurs de \(x\) où les dénominateurs sont égales à 0.
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

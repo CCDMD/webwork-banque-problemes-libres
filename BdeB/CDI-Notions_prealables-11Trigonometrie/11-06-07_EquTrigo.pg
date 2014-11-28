@@ -1,0 +1,79 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Résoudre des équations trigonométriques)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+
+## Level(3)
+## Language(fr)
+## KEYWORDS()
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"answerHints.pl",
+"PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+### fct = tan, cot, sec
+### Résoudre   |fct(x)| = sqrt(b)
+
+@fct = (Formula("tan(x)"),Formula("cot(x)"),Formula("sec(x)"));
+
+### choix de la fonction
+$n = random(0,2);
+
+$exp = Formula("abs($fct[$n])")->reduce;
+
+
+### exprimer l'expression et les solutions
+if ($n == 0) { ### fct = tan
+$a = 3;
+$b = 3;   ### rép: pi/3
+
+} elsif ($n == 1) { ### fct = cot
+$a = 3;
+$b = 6;   ### rép: pi/6
+
+} else { ### fct = sec
+$a = 2;
+$b = 4;   ### rép: pi/4
+}
+
+
+$ans1 = Real("pi/$b");
+$ans2 = Real("pi - $ans1");
+$ans3 = Real("pi + $ans1");
+$ans4 = Real("2*pi-$ans1");
+
+
+$ans = Compute("$ans1,$ans2,$ans3,$ans4");
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+À l'aide du cercle trigonométrique, trouver toutes les valeurs de \(x\) dans l'intervalle \(\left[0,2\pi\right[\)
+qui vérifient l'équation 
+\[ $exp = $a \]$BR
+Séparer les valeurs par une virgule.$BR
+${BBOLD}Note${EBOLD} : Une réponse doit être la valeur exacte écrite sous la forme d'une fraction ou d'une expression arithmétique. Elle ne doit pas être écrite avec des décimales ou 
+à l'aide des fonctions trigonométriques inverses.
+$PAR
+\( x = \) \{ans_rule(40)\}
+END_TEXT
+Context()->normalStrings;
+
+Context()->functions->disable("Trig");
+
+ANS($ans->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

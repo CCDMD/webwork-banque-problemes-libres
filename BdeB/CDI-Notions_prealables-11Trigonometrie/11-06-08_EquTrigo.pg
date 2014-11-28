@@ -1,0 +1,106 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Résoudre des équations trigonométriques)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+
+## Level(3)
+## Language(fr)
+## KEYWORDS()
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"answerHints.pl",
+"PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#### fct = sin ou cos
+#### équation :  2 sin^2(x)-sin(x) - 1 = 0  pour que (2sin(x)+1)(sin(x)-1)=0
+#### équation :  2 cos^2(x)+cos(x) - 1 = 0  pour que (2cos(x)-1)(cos(x)+1)=0
+
+@fct = (Formula("sin(x)"),Formula("cos(x)"));
+
+### choix de la fonction
+$n = random(0,1);
+
+if( $n == 0) {   ## fct = sin
+
+$sig = -1;
+
+### solutions
+
+$ans1 = Real("pi/2");    ### sin(x) = 1
+$ans2 = Real("7*pi/6");  ### sin(x) = -1/2
+$ans3 = Real("11*pi/6");
+
+} else {   ### fct = cos  
+
+$sig = 1;
+
+$ans1 = Real("pi");      ### cos(x) = -1
+$ans2 = Real("pi/3");		### cos(x) = 1/2
+$ans3 = Real("5*pi/3");
+}
+
+$ans = Compute("$ans1,$ans2,$ans3");
+
+$exp = Formula("2*$fct[$n]^2 + $sig*$fct[$n] - 1")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+À l'aide du cercle trigonométrique, trouver toutes les valeurs de \(x\) dans l'intervalle \(\left[0,2\pi\right[\)
+qui vérifient l'équation 
+\[ $exp = 0\]$BR
+Séparer les valeurs par une virgule.$BR
+${BBOLD}Note${EBOLD} : Une réponse doit être la valeur exacte écrite sous la forme d'une fraction ou d'une expression arithmétique. Elle ne doit pas être écrite avec des décimales ou 
+à l'aide des fonctions trigonométriques inverses.
+$PAR
+\( x = \) \{ans_rule(20)\}
+
+END_TEXT
+Context()->normalStrings;
+
+Context()->functions->disable("Trig");
+
+ANS($ans->cmp);
+
+$showHint = 4;
+
+Context()->variables->add(u => 'Real');
+$exp2 = Formula("2*u^2 + $sig*u - 1")->reduce;
+
+Context()->texStrings;
+BEGIN_HINT
+${BBOLD}Indice 1 :${EBOLD}
+$PAR
+En posant \(u = $fct[$n]\), l'équation \($exp = 0\) devient l'équation quadratique \($exp2 = 0\) que l'on peut factoriser afin
+ de résoudre.
+END_HINT
+Context()->normalStrings;
+
+$showHint = 6;
+
+Context()->texStrings;
+BEGIN_HINT
+${BBOLD}Indice 2 :${EBOLD}
+$PAR
+En posant \(u = $fct[$n]\), l'équation \($exp = 0\) devient l'équation quadratique \($exp2 = 0\) que l'on peut factoriser afin
+ de résoudre. On obtient :
+\[\begin{array}{rl} $exp2 &= 0\\
+(2u - $sig)(u + $sig) &= 0 \end{array}
+\]
+Ainsi, l'équation \($exp = 0\) est équivalente à \( (2$fct[$n] -$sig)($fct[$n] + $sig) = 0\).
+END_HINT
+Context()->normalStrings;
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

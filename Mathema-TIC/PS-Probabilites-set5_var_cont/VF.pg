@@ -1,0 +1,86 @@
+## DBsubject(Probabilités)
+## DBchapter(Variables aléatoires: cas général et continu)
+## DBsection(Variables continues)
+## Author(Jean-Sébastien Turcotte - Université de Montréal) 
+## KEYWORDS('')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+#"unionLists.pl"
+);
+TEXT(beginproblem());
+#####Initialisation des paramètres######################
+#Création d'une nouvelle liste de vrais ou faux
+$VF =new_select_list();
+$VF->rf_print_q(~~&pop_up_list_print_q);  #Spécifie qu'on utilisera un menu déroulant
+#### Les choix possibles
+$VF->ra_pop_up_list([No_answer=>"?", "V"=>"Vrai", "F"=>"Faux"]);
+
+# Liste des questions et leur réponse
+$VF->qa(
+"Soit \(X\) une variable aléatoire normale. On considère les événements \($LBRACE X<0 $RBRACE\) et \($LBRACE X\geq 0 $RBRACE\). Ces événements sont indépendants puisqu'ils sont disjoints.","F",
+"Soit \(X\) une variable aléatoire telle que \(\mathbb{P}(X=1)=1\). Alors la fonction de répartition de \(X\) est une constante.","F",
+"Soit \(X\) une variable aléatoire normale \(\mathcal{N}(5,25)\). Alors 
+\[
+\mathbb{P}(X\in[0,10])=2F_Z(1)-1
+\]
+où \(F_Z(x)=\int_{-\infty}^x \frac{e^{-z^2/2}}{\sqrt{2\pi}}dz\).", "V",
+"Soit \(X\) une variable aléatoire continue avec densité \(f_X(x)\). Nous avons nécessairement \(\lim_{x\to \infty}f_X(x)=0\).","V",
+"Soit \(Z_1\) et \(Z_2\) des variables aléatoires indépendantes de loi normale standard. On définit les variables aléatoires \(X=2Z_1+Z_2\) et \(Y=Z_1-2Z_2\). Nous avons \(Cov(X,Y)=0\) mais \(X\) et \(Y\) ne sont pas indépendantes.","F",
+"Soit \(Z\) une variable aléatoire de loi normale \(\mathcal{N}(0, 1)\). La variable
+aléatoire \(X = e^Z\) a densité
+\[
+f_X(x)=\frac{e^{-\frac{(\log(x))^2}{2}}}{x\sqrt{2\pi}} \, \mbox{ pour } x>0.
+\]","V",
+"On considère une variable aléatoire \(X\) avec la fonction de répartition
+\[
+F_X(x)=\begin{cases}
+0 & \mbox{si } x<0, \\
+\frac{x}{2} &\mbox{si } 0\leq x<1/2 \\
+\frac{x}{x+1} &\mbox{si } x\geq 1/2.
+\end{cases}
+\]
+On a \(\mathbb{P}(X\in [1/2,1])=1/4\).","V",
+"Soit \(X\) une variable aléatoire continue avec fonction de répartition \(F\). Alors la variable aléatoire \(F(X)\) est de loi uniforme sur \([0,1]\).","V",
+"Soit \(Z_1\) et \(Z_2\) des variables aléatoires indépendantes de loi normal standard. On considère \(X=Z_1\cos(\frac{\pi}{4})+Z_2\sin(\frac{\pi}{4})\) et \(Z_2\cos(\frac{\pi}{4})-Z_1\sin(\frac{\pi}{4})\). Alors \(Cov(X,Y)=0\) et les variables \(X\) et \(Y\) sont indépendantes.","V",
+"Soit \(X\) une variable aléatoire de loi normale \(\mathcal{N}(0,1)\). Alors la densité de la variable aléatoire \(Y=|X|\) est pour \(y>0\)
+\[
+f_Y(y)=\sqrt{\frac{2}{\pi}}e^{-\frac{y^2}{2}}.
+\]","V",
+"Soit \(X\) une variable aléatoire de loi gaussienne \(\mathcal{N}(2, 4)\). Alors
+\(\mathbb{P}(X \in (1, 3)) = 2F_Z(0.5) − 1\) où \(F_Z(x)=\int_{-\infty}^x \frac{e^{-z^2/2}}{\sqrt{2\pi}}dz\).","V",
+"On considère une variable aléatoire \(X\) avec la fonction de répartition
+\[
+F_X(x)=\begin{cases}
+0 & \mbox{si } x<0, \\
+\frac{x}{2} &\mbox{si } 0\leq x<1 \\
+1 &\mbox{si } x\geq 1.
+\end{cases}
+\]
+On a \(\mathbb{P}(X=1)=1/2\).","V"
+);
+## on détermine on veut combien de questions
+$VF->choose(6);
+
+BEGIN_TEXT
+Répondre Vrai ou Faux aux questions suivantes à l'aide du menu déroulant.
+$BR
+\{ $VF -> print_q \}
+END_TEXT
+$showPartialCorrectAnswers = 0;
+
+ANS(str_cmp($VF->ra_correct_ans));
+
+ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

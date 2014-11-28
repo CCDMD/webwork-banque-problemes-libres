@@ -1,0 +1,132 @@
+##DESCRIPTION
+## Fonction valeur absolue : définir par parties
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Quelques fonctions particulières)
+## DBsection(Fonction valeur absolue)
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## KEYWORDS('fonction','valeur absolue','par parties')
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGgraphmacros.pl",
+"unionTables.pl",
+"PGcourse.pl",
+"contextLimitedPolynomial.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+TEXT(beginproblem());
+
+
+Context("LimitedPolynomial-Strict");
+Context()->noreduce('(-x)-y');   
+
+$a = random(2,6);
+do{$b = non_zero_random(-6,6);} until ($a!=$b);
+
+$f1 = Formula("$a x + $b")->reduce;
+$f2 = Formula("-$a x - $b")->reduce;
+
+
+$som = Compute("-$b/$a");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Compléter la définition par parties de la fonction valeur absolue \( f(x) = \vert {$f1} \vert \) par des fonctions simplifiées.$BR $BR
+
+\{ ColumnTable(
+"\( \vert {$f1} \vert = \)".
+"\(  \Bigg\lbrace \)"
+,
+BeginTable(center=>0).
+Row([ans_rule(15), "si","\(x \geq\)",ans_rule(10)],separation=>2 ).
+TableSpace(10,0).
+Row([ans_rule(15), "si","\(x <\)",ans_rule(10)],separation=>2 ).
+EndTable()
+,
+indent => 0, separation => 0, valign => "MIDDLE"
+)
+\}
+
+
+$HR
+$BITALIC
+Un exemple similaire est présenté sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6994#ww", "2.3.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+
+END_TEXT
+Context()->normalStrings;
+
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $f1->cmp() );
+ANS( $som->cmp() );
+ANS( $f2->cmp() );
+ANS( $som->cmp() );
+
+$courbe1= "$f1 for x in <$som,10> using color:blue and weight:2";
+$courbe2 = "$f2 for x in <-10,$som> using color:red and weight:2";
+
+$gr = init_graph(-10,-5,10,10,axes=>[0,0],grid=>[20,15],size=>[400,400]);
+$gr -> lb('reset');
+
+$pt1 = closed_circle( $som, 0, black );
+
+
+add_functions($gr, $courbe1, $courbe2);
+$gr -> lb(new Label ( 9,0.5,'x','black','left','bottom'));
+$gr -> lb(new Label ( 0.5,9,'y','black','left','bottom'));
+$gr -> lb(new Label ( $som,-1,"($som,0)",'black','center','bottom'));
+$gr -> stamps($pt1);
+
+if(floor($som)-$som !=0) {
+($s1,$s2) = reduce(-$b,$a);  #sommet en latex
+$som = "\frac{$s1}{$s2}";
+}
+
+Context()->texStrings;
+BEGIN_SOLUTION
+\{
+ColumnTable(
+"La fonction est définie par".$BR.
+"\[\vert {$f1} \vert = \left\lbrace { \begin{array}{lll} $f1 & \text{si} & x \geq $som \\ $f2 & \text{si} & x < $som \end{array}}\right.\]".$BR.
+"En effet  \(\vert $f1 \vert = $f1\) lorsque \($f1 \geq 0 \). Si on résout cette inéquation on obtient :".
+"\[ $f1 \geq 0 \Rightarrow $a x \geq -$b \Rightarrow x \geq $som\]".
+"Ainsi, on a :".$BR.$BR.
+"\(\vert {$f1} \vert = $f1\) lorsque \( x \geq $som\), car l'expression dans la valeur absolue est positive pour ces valeurs".$BR.
+"et \( \vert {$f1} \vert = -($f1)= $f2\) lorsque \( x < $som\), car l'expression dans la valeur absolue est négative pour ces valeurs. Il faut donc la multiplier par \(-1\) pour qu'elle redevienne positive.".$BR.$BR.
+"Voici, ci-contre, le graphique de la fonction \(f(x)=\vert {$f1} \vert\).".$PAR.
+$BCENTER.
+"\(f(x)=$f1\) (la courbe bleue) lorsque \(x \geq $som\)".$BR.
+"\(f(x)=$f2\) (la courbe rouge) lorsque \( x < $som\)".
+$ECENTER
+,
+$BCENTER.
+image( insertGraph($gr), tex_size=>250, width=>250, height=>250).$BR.
+"Cliquer sur l'image pour l'agrandir".
+$ECENTER
+,
+indent => 0, separation => 10, valign => "TOP"
+)
+\}
+$BR
+END_SOLUTION
+
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

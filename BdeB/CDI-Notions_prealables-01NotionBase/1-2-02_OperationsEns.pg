@@ -1,0 +1,92 @@
+##DESCRIPTION
+##Les opérations sur les intervalles
+##Fait par Julie Tremblay, août 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Notions de base)
+## DBsection(Les opérations sur les ensembles)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+######## Source ############
+## Fichier source:  Library/Union/setAlgebraIntervals/ur_ab_10_3.pg'
+## ZDBsubject(Set theory and logic)
+## ZDBchapter(Operations on sets)
+## ZDBsection(Boolean operations on sets)
+## ZDate(8/24/07)
+## ZInstitution(Union College)
+## ZLevel(2)
+#######  Source #############
+## Level(2)
+## Language(fr)
+## KEYWORDS('intervalles','ensembles','union','intersection')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGchoicemacros.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "choiceUtils.pl",        # for matching problems
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+$a0 = random(-10,-2,1);
+$a1 = $a0+random(1,6,1);
+$a2 = $a1+random(1,6,1);
+$ml = new_match_list();
+$ml->rf_print_q(~~&alt_print_q);
+$ml->{separation} = 3;
+
+###################################
+# Defining matching list and choose four to ask
+
+$ml->qa(
+" \(A\cap B \)"," \(] $a1,$a2 ]\)",
+" \(A\cap C \)"," \(] $a1,$a2 [\)",
+" \(B\cap C \)"," \([ $a0,$a2 [\)",
+" \(A\cup B \)"," \(] -\infty,\infty [\) ",
+" \(A\cup C \)"," \([ $a0,\infty [\)",
+" \(B\cup C \)"," \(] -\infty,$a2 ]\)"
+);
+
+$ml->extra(
+" \(] $a0,$a2 [\)",
+"\([ $a1,$a2 ]\)",
+"\(] $a0,\infty [\)",
+" \(] -\infty,$a2 [\)"
+);
+
+$ml->choose(4);
+$ml->choose_extra(2);
+
+###################################
+# Main text
+
+BEGIN_TEXT
+Soit \(A=\lbrace x\in\mathbb{R}\vert x>$a1 \rbrace\), \(B=\lbrace x\in\mathbb{R}\vert x\leq $a2 \rbrace\) et \(C=\lbrace x\in\mathbb{R}\vert $a0\leq x < $a2 \rbrace\).
+$BR
+Pour chaque intersection ou union d'ensembles, choisir la lettre correspondante au bon intervalle résultant.
+$PAR
+\{ColumnMatchTable($ml,indent => 3)\}
+END_TEXT
+
+###################################
+# Answers
+
+ANS(str_cmp($ml->ra_correct_ans));
+
+$showPartialCorrectAnswers = 0;
+
+###################################
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

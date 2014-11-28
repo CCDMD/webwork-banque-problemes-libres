@@ -1,0 +1,99 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Résoudre des équations trigonométriques)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+
+## Level(3)
+## Language(fr)
+## KEYWORDS()
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"answerHints.pl",
+"PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+### Résoudre   sin(2x) + c f(x) = 0   où f= sin ou cos et c = 1 ou -1
+
+
+@fct = (Formula("sin(x)"),Formula("cos(x)"));
+
+### choix de la fonction
+$a = random(0,1);
+
+### la constante
+$c = random(-1,1,2);
+
+$v = -$c/2;
+
+
+### Les solutions : sin(x)=0 et cos(x)= ±1/2
+### ou  cos(x) = 0 et sin(x) = ±1/2
+
+if( $a == 0) {   ## fct = sin
+
+$ans1 = Compute("0,pi");
+$ans2 = Real("acos($v)");
+$ans3 = Real("2*pi - acos($v)");
+
+} else {   ### fct = cos  
+
+$ans1 = Compute("pi/2,3*pi/2");
+$ans2 = Compute("asin($v)");
+$ans3 = Compute("pi - asin($v)");
+
+if($ans2 < 0) {  ### angle doit être entre 0 et 2pi
+$ans2 = Real("2*pi + $ans2");
+}
+}
+
+$ans = Compute("$ans1,$ans2,$ans3");
+
+
+$exp =Formula("sin(2x) + $c*$fct[$a]")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+À l'aide du cercle trigonométrique, trouver toutes les valeurs de \(x\) dans l'intervalle \(\left[0,2\pi\right[\)
+qui vérifient l'équation 
+\[ $exp = 0 \]$BR
+Séparer les valeurs par une virgule.$BR
+${BBOLD}Note${EBOLD} : Une réponse doit être la valeur exacte écrite sous la forme d'une fraction ou d'une expression arithmétique. Elle ne doit pas être écrite avec des décimales ou 
+à l'aide des fonctions trigonométriques inverses.
+$PAR
+\( x = \) \{ans_rule(40)\}
+
+END_TEXT
+Context()->normalStrings;
+
+$hint = Formula("2*sin(x)*cos(x)+$c*$fct[$a]")->reduce;
+
+Context()->functions->disable("Trig");
+
+
+
+ANS($ans->cmp->withPostFilter(AnswerHints( 
+  Compute("$ans2,$ans3") => ["Il vous manque les solutions de $fct[$a]=0. Factoriser l'équation $hint=0.",replaceMessage=>1],
+)));
+
+
+$showHint = 5;
+
+Context()->texStrings;
+BEGIN_HINT
+$PAR
+Utiliser l'identité trigonométrique \(\sin(2x)=2\sin(x)\cos(x)\). Il faut ensuite factoriser \($hint =0\).
+END_HINT
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,86 @@
+## DESCRIPTION
+## Algebraic fractions
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Équations linéaires)
+## KEYWORDS('Équation linéaire','Résoudre','Équation')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGauxiliaryFunctions.pl",
+  "Parser.pl",
+  "MathObjects.pl",
+  "CofIdaho_macrosFr.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(aucune => {});
+
+$a = random(-6,-2,1);
+$b =non_zero_random(-9,9,1);
+$c =non_zero_random(-9,9,1);
+$d =non_zero_random(-9,9,1);
+$e =non_zero_random(-9,9,1);
+$f =non_zero_random(-9,9,1);
+$g =non_zero_random(-9,9,1);
+while($a-$b*$c -$f ==0) {$f=non_zero_random(-9,9,1);}
+
+
+######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre, si possible, l'équation linéaire suivante. S'il n'y a aucune solution, écrire "aucune" dans la case réponse.$BR $BR
+\[$a y -$b($c y + $d) = $e - $f ($g -y)\]
+$BR $BR
+\(y =\) \{ans_rule(10)\}
+$BR
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5270", "1.4.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+$num = Compute("$e+$b*$d-$f*$g")->reduce;
+$den = Compute("$a-$b*$c -$f")->reduce;
+
+$ans = Compute("$num/$den");
+ANS($ans->cmp);
+
+
+############# Solution
+
+$bc = $b*$c;
+$bd = $b*$d;
+$fg = $f*$g;
+$ambc = $a - $bc;
+$emfg = $e - $fg;
+
+($n,$d) = reduce($num,$den);
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pour résoudre cette équation, il faut isoler la variable \(y\) dans l'équation en effectuant les mêmes opérations sur chaque membre de l'égalité.
+$BR
+\[\begin{array}{rll}$a y -$b($c y + $d) &= $e - $f ($g -y)&\hbox{; distributivité}\\$a y - $bc y - $bd &= $e - $fg + $f y&\\$ambc y  - $bd &= $emfg + $f y&\hbox{; les termes en y du même côté}\\ $ambc y - $f y &= $emfg + $bd &\\$den y &= $num & ;\;\div ($den)\\ y &= \boxed{\dfrac{$n}{$d}}&\end{array}\]
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

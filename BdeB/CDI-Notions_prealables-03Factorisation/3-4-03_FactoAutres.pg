@@ -1,0 +1,121 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Factorisation)
+## DBsection(Factorisation : autres formes)
+## KEYWORDS('Factorisation','français','différence de carrés')
+## Traduction('Julie Tremblay')
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+## ZDBsubject('Algebra') 
+## ZDBchapter('Basic Algebra') 
+## ZDBsection('Expanding and Factoring') 
+## ZAuthor('Paul Pearson')
+## ZInstitution('Fort Lewis College')
+
+
+
+########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowersFr.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+Context("Numeric");
+
+
+#(ax-b)(ax+b)=a^2x^2-b^2
+
+
+
+$a = random(2,7,1);
+$b = random(1,12,1);
+
+if($a==$b){$b=$b+1;};
+
+
+$expression = Compute("$a^2*x^2 - $b^2");
+
+$answer = Compute("($a*x - $b)($a*x+$b)");
+
+
+################################################
+#  Main text
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Factoriser, si possible, le polynôme \($expression\). S'il ne se factorise pas, réécrire le polynôme dans la case réponse.
+$BR
+$BR
+\{ ans_rule(30) \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème sont présentées à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2330", "1.2.5", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 0;
+
+ANS($answer->cmp(
+checker => sub {
+        my ($correct,$student,$ans) = @_; 
+      
+    if ($student eq $expression) {
+      $ans->{ans_message} = "Ce polynôme se factorise.";
+       return 0;
+} elsif ($student == $answer) {
+return 1;
+} else {
+return 0;
+}
+
+  return $ans; 
+})
+);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Le polynôme \($expression\) est une différence de deux carrés et se factorise selon la règle suivante: $BR $BR
+\[  u^2 - a^2 = (u-a)(u+a)\]
+$BR
+
+Dans notre expression, \(u = $a x\) et \(a = $b\), alors la factorisation du polynôme est : 
+$BR $BR
+
+ \[$expression = $answer\]
+
+$HR
+$BITALIC
+Un exemple similaire est présenté à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2330", "1.2.5", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+ END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

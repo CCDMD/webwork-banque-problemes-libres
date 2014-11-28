@@ -1,0 +1,135 @@
+##DESCRIPTION
+## Graphique d'une fonction quadratique
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions algébriques)
+## DBsection(Fonction quadratique - Caractéristiques)
+## Traduction(Julie Tremblay)
+## Institution(BdeB)
+########### Source ######################
+## fichier source : MCH1-9-1-17-Quadratic-functions.pg
+## ZDBsubject('Algebra') 
+## DBchapter('Quadratic Functions') 
+## ZDBsection('Quadratic Functions') 
+## ZAuthor('Paul Pearson')
+## ZInstitution('Fort Lewis College')
+#########################################
+## KEYWORDS('fonction','quadratique','graphique')
+## Level(2)
+## Language(fr)
+
+
+####################################
+#  Initialization
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"PGgraphmacros.pl",
+"PGunion.pl",
+"imageChoice.pl",
+"PGgraders.pl",
+);
+
+TEXT(beginproblem());
+$refreshCachedImages=1;
+
+####################################
+#  Setup
+
+$dim = 8;
+$xmin = -$dim;
+$xmax =  $dim;
+$ymin = -$dim;
+$ymax =  $dim;
+$labelsep = 0.5;
+
+$F[0] = "-(x+2)^2+3";
+$F[1] = "2(x-2)^2+3";
+$F[2] = " (x-3)^2+2";
+$F[3] = " (x+3)^2-2";
+$F[4] = "-(x+3)^2+2";
+$F[5] = "-(x-3)^2+2";
+
+$f[0] = " -(x+2)**2+3 for x in <$xmin,$xmax> using color:blue and weight:2";
+$f[1] = "2*(x-2)**2+3 for x in <$xmin,$xmax> using color:blue and weight:2";
+$f[2] = "  (x-3)**2+2 for x in <$xmin,$xmax> using color:blue and weight:2";
+$f[3] = "  (x+3)**2-2 for x in <$xmin,$xmax> using color:blue and weight:2";
+$f[4] = " -(x+3)**2+2 for x in <$xmin,$xmax> using color:blue and weight:2";
+$f[5] = " -(x-3)**2+2 for x in <$xmin,$xmax> using color:blue and weight:2";
+
+foreach my $i (0..5) {
+  $gr[$i] = init_graph($xmin,$ymin,$xmax,$ymax,axes=>[0,0],grid=>[$xmax-$xmin,$ymax-$ymin],size=>[275,275]);
+  $gr[$i]->lb('erase');
+  $gr[$i]->lb( new Label($xmax-$labelsep,$labelsep,'x','black','center','middle'));
+  $gr[$i]->lb( new Label($labelsep,$ymax-$labelsep,'y','black','center','middle'));
+  foreach my $j (2,4, 6) {
+    $gr[$i]->lb( new Label( $j,$ymin+$labelsep, $j,'black','center','middle'));
+    $gr[$i]->lb( new Label(-$j,$ymin+$labelsep,-$j,'black','center','middle'));
+    $gr[$i]->lb( new Label($xmin+$labelsep, $j, $j,'black','center','middle'));
+    $gr[$i]->lb( new Label($xmin+$labelsep,-$j,-$j,'black','center','middle'));
+  }
+  add_functions($gr[$i],$f[$i]);
+}
+
+@QA = ();
+foreach my $i (0..5) { push( @QA, "\($F[$i]\)",  $gr[$i] ); }
+
+$ml = new_image_match_list(
+  link => 1,                #  do not link to separate image
+  size => [200,200],        #  image width, height in pixels
+  tex_size => 310,          #  tex size in precent times 10
+  columns => 3,             #  number of columns
+  separation => 20,         #  space between images
+);
+
+$ml->rf_print_q(~~&pop_up_list_print_q); # use pop-up-lists
+$ml -> ra_pop_up_list(
+[ No_answer=>"?", A=>"A", B=>"B", C=>"C", D=>"D", E=>"E", "F"=>"F" ] );
+
+$ml->qa(@QA);               #  set the questions and answers
+$ml->choose(4);             #  select 5 of them
+$ml->choose_extra(2);       #  and show the other 1
+
+
+######################################
+#  Main text
+
+BEGIN_TEXT
+\{
+ColumnTable(
+"Associer chacun des graphiques à son équation.".
+$ml->print_q() # no period!
+, # comma!
+$BCENTER.
+$ml->print_a().
+$BR.
+"(Cliquer sur l'image pour l'agrandir)".
+$ECENTER # no period!
+, # comma!
+indent => 0, separation => 20, valign => "TOP"
+)
+\}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur les pages \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6984", "2.2.2", "TARGET='_blank'" ) \} et \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6998", "2.2.3", "TARGET='_blank'" ) \}  de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+
+
+######################################
+#  Answer evaluation
+
+install_problem_grader(~~&custom_problem_grader_fluid);
+$ENV{'grader_numright'} = [2,4];
+$ENV{'grader_scores'} = [0.5,1];
+$ENV{'grader_message'} = "Vous pouvez obtenir " .
+"50% des points pour 2 à 3 bonnes réponses.";
+
+$showPartialCorrectAnswers = 0;
+
+ANS(str_cmp($ml->ra_correct_ans));
+
+ENDDOCUMENT();

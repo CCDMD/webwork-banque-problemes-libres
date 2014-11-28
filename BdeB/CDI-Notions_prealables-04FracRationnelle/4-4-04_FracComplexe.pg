@@ -1,0 +1,124 @@
+## DESCRIPTION
+## Algebraic fractions
+## ENDDESCRIPTION
+
+## KEYWORDS('Algebraic fractions','francais')
+## Traduction('Julie Tremblay')
+
+## DBsubject('Algebra') 
+## DBchapter('Basic Algebra') 
+## DBsection('Algebraic Fractions') 
+
+
+
+##################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGunion.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"parserMultiAnswer.pl",
+);
+
+TEXT(beginproblem());
+
+
+###################################
+# Setup
+
+Context("Numeric");
+Context()->variables->are(a=>"Real");
+Context()->{error}{msg}{"Operands of '*' can't be words"} = " ";
+
+do { $x = random(2,8,1); } until ($x != 4);
+$y = random(3,7,1);
+$z = random(2,8,2);
+
+
+$xy = $x * $y;
+$yz = $y * $z;
+
+$frac = "\frac{\displaystyle $xy + \frac{$xy}{a} + \frac{$y}{a^2} }{\displaystyle $xy + \frac{$yz}{a} }";
+
+$num = Formula("$x * a**2 + $x * a + 1")->reduce;
+$den = Formula("$x * a**2 + $z * a")->reduce;
+
+$multians = MultiAnswer($num, $den)->with(
+  singleResult => 0,
+  allowBlankAnswers => 1,
+  checker => sub {
+      my ( $correct, $student, $self ) = @_;
+      my ( $f1stu, $f2stu ) = @{$student};
+      my ( $f1, $f2 ) = @{$correct};
+ 
+      if ( ( $f1==$f1stu &&  $f2==$f2stu) ) {
+          return [1,1];
+      } elsif ( $f1==$f1stu ) {
+          return [1,0];
+#      } elsif ( ($numbogus==$f1stu ) ||
+#                ($denbogus==$f2stu ) ) {
+#          $self->setMessage(1,"Trouver le dénominateur commun");
+#          $self->setMessage(2,"Trouver le dénominateur commun");
+#          return [0,0];
+      } elsif ( $f2==$f2stu ) {
+          return [0,1];
+      } elsif ( $f1*$f2stu==$f1stu*$f2 ) {
+          $self->setMessage(1,"Simplifier encore votre réponse");
+          $self->setMessage(2,"Simplifier encore votre réponse");
+          return [0,0];
+      } else {
+          return [0,0];
+      }
+  }
+);
+
+
+# 
+#  Display the fraction and answer blanks nicely
+#
+if ($displayMode eq 'TeX') {
+  $displayfrac =
+  "\[ $frac = ".$multians->ans_rule(10).$multians->ans_rule(10)." \]";
+} else {
+  $displayfrac =
+  ColumnTable(
+  "\( \displaystyle $frac = \)",
+  $multians->ans_rule(20).$BR.$HR.$multians->ans_rule(20),
+  indent => 0, separation => 10, valign => "MIDDLE"
+  );
+}
+
+
+
+###################################
+# Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Simplifier la fonction rationnelle suivante si \(a \ne 0\).
+$BR
+$BR
+$BCENTER
+$displayfrac
+$ECENTER
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6232", "1.3.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+
+ANS($multians->cmp() );
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

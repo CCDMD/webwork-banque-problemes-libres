@@ -1,0 +1,133 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Identités et lois trigonométriques)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+## Level(2)
+## Language(fr)
+## KEYWORDS()
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+Context('Numeric');
+
+TEXT(beginproblem());
+
+
+
+###################
+#
+#  Setup
+
+
+
+
+$sin= Real ( random(.1,.9,.1) );
+do{$cos= Real ( random(.1,.9,.1) );} until($cos != $sin);
+
+
+### réponse 1 : sin ou cos seulement
+$f1sin = Formula("sin(-x)");
+$f1cos = Formula("cos(-x)");
+
+$f1 = list_random($f1sin,$f1cos);
+
+if($f1 == $f1sin){ $ans1 = -$sin;}
+else {$ans1 = $cos;}
+
+
+### réponse 2 et 3 : une question est sin ou cos et l'autre est tan
+$f2sin = Formula("sin(pi+x)");
+$f2cos = Formula("cos(pi+x)");
+$f2tan = Formula("tan(pi+x)");
+
+$f3sin = Formula("sin(pi-x)");
+$f3cos = Formula("cos(pi-x)");
+$f3tan = Formula("tan(pi-x)");
+
+$f2 = list_random($f2sin,$f2cos,$f2tan);
+
+if($f2 == $f2sin){
+$ans2 = -$sin;
+$f3 = $f3tan;
+}elsif($f2 == $f2cos) {
+$ans2 = -$cos;
+$f3 = $f3tan;
+}else {
+$ans2 = $sin/$cos;
+$f3 = list_random($f3sin,$f3cos);
+}
+
+if($f3 == $f3sin){ $ans3 = $sin;}
+elsif($f3 == $f3cos) {$ans3 = -$cos;}
+else {$ans3 = -$sin/$cos;}
+
+### réponse 4 et 5  : une question est sin ou cos et l'autre est tan
+$f4sin = Formula("sin(pi/2-x)");
+$f4cos = Formula("cos(pi/2-x)");
+$f4tan = Formula("tan(pi/2-x)");
+
+$f5sin = Formula("sin(pi/2+x)");
+$f5cos = Formula("cos(pi/2+x)");
+$f5tan = Formula("tan(pi/2+x)");
+
+$f4 = list_random($f4sin,$f4cos,$f4tan);
+
+if($f4 == $f4sin){ 
+$ans4 = $cos;
+$f5 = $f5tan;
+}elsif($f4 == $f4cos) {
+$ans4 = $sin;
+$f5 = $f5tan;
+}else {
+$ans4 = $cos/$sin;
+$f5 = list_random($f5sin,$f5cos);
+}
+
+if($f5 == $f5sin){ $ans5 = $cos;}
+elsif($f5 == $f5cos) {$ans5 = -$sin;}
+else {$ans5 = -$cos/$sin;}
+
+
+
+
+###################
+#
+#  Text
+
+Context()->texStrings;
+BEGIN_TEXT
+Si \(\sin\theta = $sin\) et \(\cos\theta = $cos\), trouver les valeurs demandées à l'aide des formules trigonométriques connues.
+$PAR
+1. \( $f1 =\) \{ans_rule(10)\} $BR
+2. \( $f2 =\) \{ans_rule(10)\} $BR
+3. \( $f3 =\) \{ans_rule(10)\} $BR
+4. \( $f4 =\) \{ans_rule(10)\} $BR
+5. \( $f5 =\) \{ans_rule(10)\} $BR
+END_TEXT
+Context()->normalStrings;
+
+
+###################
+#
+#  Answers
+
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+ANS($ans4->cmp);
+ANS($ans5->cmp);
+
+
+ 
+COMMENT('MathObject version');
+ENDDOCUMENT();

@@ -1,0 +1,145 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Factorisation)
+## DBsection(Théorème de la factorisation)
+## KEYWORDS('Factorisation','français')
+## Traduction('Julie Tremblay')
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+## ZDBsubject('Algebra') 
+## ZDBchapter('Basic Algebra') 
+## ZDBsection('Expanding and Factoring') 
+## ZAuthor('Paul Pearson')
+## ZInstitution('Fort Lewis College')
+
+
+
+########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowersFr.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+#Degré 3 et trinôme x^2 + bx + c: 
+#3.	(x+a)(x+b)(x+c) = x^3 + (a+b+c)x^2 + (ac+bc+ab)x + abc où a \ne b \ne c
+
+
+
+$a = non_zero_random(-9,9,1);
+$b = non_zero_random(-9,9,1);
+
+while($a == $b){$b = non_zero_random(-9,9,1);}
+
+$c = non_zero_random(-9,9,1);
+
+while($c == $a || abs($c)==abs($b)){$c = non_zero_random(-9,9,1);}
+
+
+$c2 = $a+$b+$c ;
+$c1 = $a*$b + $a*$c + $b*$c;
+$c0 = $a*$b*$c;
+
+
+$expression = Compute("x^3 + $c2 x^2 + $c1 x + $c0")->reduce();
+
+Context("PolynomialFactors-Strict");
+
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "soient 0 ou 1. L'expression se factorise encore.",
+);
+
+$fac1 = Compute("x + $a")->reduce;
+$fac2 = Compute("x + $b")->reduce;
+$fac3 = Compute("x + $c")->reduce;
+
+$answer = Compute("($fac1)($fac2)($fac3)");
+
+
+
+################################################
+#  Main text
+
+$zero = Compute("-$a")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Factoriser le polynôme \($expression\) sachant que \(x = $zero\) est un zéro du polynôme.
+$BR
+$BR
+\{ ans_rule(30) \}
+$HR
+$BITALIC
+Un exemple similaire est présenté à la page  \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=22146", "1.2.9", "TARGET='_blank'" ) \} sur la Plateforme d'aide en mathématiques qui traite du théorème de la factorisation.
+$EITALIC
+
+END_TEXT
+Context()->normalStrings;
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS($answer->cmp);
+
+Context("Numeric");
+
+$d2 = $b + $c;
+$d1 = $a*$b + $a*$c;
+$bc = $b * $c;
+$q = Formula("x^2 + $d2 x + $bc")->reduce;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Sachant que \(x = $zero\) est un zéro du polynôme \($expression\), on peut appliquer le théorème de la factorisation et écrire notre polynôme sous la forme
+$BR $BR
+\[  $expression = ($fac1) q(x)  \text{ où } q(x) \text{ est un polynôme de degré 2} \]
+
+$BR
+Pour trouver le facteur quadratique dans la factorisation, nous allons effectuer une division polynomiale. $BR
+
+Il faut diviser \(($expression)\) par le facteur \( ($fac1)\) de la façon suivante:
+$BR $BR 
+
+\[ \begin{array}{rl}{\quad $expression}&{\left| {\underline {$fac1} } \right. }\\[0.5em]{\underline {- \left(x^3 + $a x^2 \right)} }&{ $q }\\[0.5em]{\quad \quad \quad $d2 x^2 + $c1 x + $c0}&{}\\[0.5em]{\underline {\quad -\left( $d2 x^2 + $d1 x \right)}}&{}\\[0.5em]{ \qquad \qquad $bc x + $c0}&{} \\[0.5em]{\underline {\quad -\left( $bc x + $c0 \right)}}&  \\[0.5em]{\qquad \qquad \qquad \qquad 0}&{} \end{array} \]
+
+$BR
+Nous savons maintenant que  $BR $BR
+\[ $expression = ($fac1)($q) \]
+$BR
+Finalement, étant donné que le facteur quadratique n'est pas irréductible, cette dernière expression se factorise encore sous la forme
+$BR $BR
+\[  \begin{array}{llr} $expression &= ($fac1)($q)  &\\[0.5em]
+                      &= $answer   &; \text{ car } $b + $c = $d2 \text{ et } $b \times $c = $bc  \end{array}
+\]
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

@@ -1,0 +1,92 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DESCRIPTION
+## Limite d'une fonction par morceaux, limite à gauche et à droite et continuité
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Continuité - Concepts)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/ASU-topics/setContinuity/4-1-57.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Continuity - concept of)
+## ZInstitution(ASU)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS('limite','fonction par parties','par morceaux','continuité')
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+"PGcourse.pl"
+);
+
+$a = random(2,7,1);
+$b = random(1,7,1);
+$c = random(-10,10);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+Context()->strings->add(oui=>{}, non=>{}, O => {alias => "oui"}, N => {alias => "non"} );
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit
+\[ f(x) = \begin{cases}
+            -{$a}x & \text{si }x < $b, \\
+            $c  &\text{si } x = $b,\\
+            {$a}x &\text{si } x > $b.
+             \end{cases}
+ \]
+$PAR
+Évaluer les limites de \(f\) à gauche et à droite et déterminer la continuité de \(f\) au point mentionné. $BR
+$BBOLD NOTE : $EBOLD
+Entrer ${BBOLD}nep$EBOLD si la limite n'existe pas.$BR
+Vous devriez également esquisser le graphique de \(y=f(x)\), sans oublier les points pleins ou vides aux endroits appropriés.
+
+$PAR
+\(\displaystyle{\lim_{x \rightarrow $b^{-}} f(x)}\) = \{ans_rule(30)\}
+$BR
+\(\displaystyle{\lim_{x \rightarrow $b^{+}} f(x)}\) = \{ans_rule(30)\}
+$BR
+\(\displaystyle{\lim_{x \rightarrow $b} f(x)}\) = \{ans_rule(30)\}
+$BR
+\(\displaystyle{ f($b)}\) = \{ans_rule(30)\}
+
+$BR
+La fonction \(f\) est-elle continue en \(x=$b\)? (OUI/NON) \{ans_rule(25)\}
+
+END_TEXT
+Context()->normalStrings;
+
+$ans1=Real(-$a*$b);
+$ans2=Real($b*$a);
+$ans3=Compute("nep");
+$ans4=Real($c);
+$ans5=Compute("non");
+
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+ANS($ans4->cmp);
+ANS($ans5->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

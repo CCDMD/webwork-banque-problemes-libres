@@ -1,0 +1,113 @@
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Opérations arithmétiques sur les fonctions)
+## Author(Julie Tremblay)
+## Institution(BdeB)
+## KEYWORDS('fonction','domaine','racine')
+## Level(3)
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+           "extraAnswerEvaluators.pl",
+           "PGauxiliaryFunctions.pl",
+           "PGgraphmacros.pl",
+	   "AnswerFormatHelp.pl",
+"PGcourse.pl",
+"unionTables.pl",
+           );
+
+TEXT(beginproblem());
+
+Context("Interval");
+
+$showPartialCorrectAnswers = 1;
+
+$a = random(1,9);
+
+do{$b = random(1,8);} until($a != $b);    #-b < a toujours
+$c = random(2,5);
+do{$d = non_zero_random(-8,8);} until(gcd($c,$d)==1);
+
+$poly1 = Formula("x-$a");
+
+$c2 = $c;
+$c1 = $d+$b*$c;
+$c0 = $b*$d;
+
+$poly2 = Formula("$c2 x^2 + $c1 x + $c0")->reduce;
+
+$b1 = -$b;
+$b2 = -$d/$c;
+
+if($b1 < $b2) {$bmin = $b1; $bmax = $b2;}
+else {$bmin = $b2; $bmax = $b1;}
+
+if($b2 < $a) { #bmin < bmax < a 
+$ans = Compute("($bmin,$bmax)U[$a,inf)");
+} else {  #b1 < a < b2
+$ans = Compute("($bmin,$a]U($bmax,inf)");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Trouver le domaine de la fonction \(f(x) = \sqrt{\dfrac{$poly1}{$poly2}}\).
+$PAR
+\(\text{dom}\;f = \) \{ ans_rule(25) \} $SPACE
+\{ AnswerFormatHelp("intervals") \}
+$HR
+$BITALIC
+Des exemples similaires se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=26974", "2.2.6", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+ANS( $ans->cmp() );
+
+### écrire de la borne b2 en latex
+if($b1 < $b2) {$d2 = -$d; $bmax = "$d2/$c";}
+else {$d2 = -$d; $bmin = "$d2/$c";}
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Le domaine de la fonction doit respecter les deux restrictions suivantes :
+\[\begin{array}{ll}
+1.\;\dfrac{$poly1}{$poly2}\geq0&\text{; expression dans la racine non-négative}\\
+2.\;$poly2 \neq 0 &\text{; pas de division par } 0
+\end{array}
+\]
+À l'aide d'un tableau de signes, on trouvera les valeurs qui respectent ces deux restrictions. 
+Tout d'abord, il faut factoriser le polynôme \($poly2\) afin de trouver les valeurs où il y a un 
+changement de signe au dénominateur. On obtient
+\[$poly2 = (x + $b)($c x + $d)\]
+$BR $BR
+On peut maintenant créer notre tableau de signes avec les valeurs où il y a un changement de signe dans l'expression à l'intérieur de la racine carrée, soit \(x=$a\), \(x=$b1\) et \(x=\frac{-$d}{$c}\).
+En remplissant le tableau de signes afin de résoudre l'inéquation \( \dfrac{$poly1}{(x + $b)($c x + $d)}\geq 0\), on obtient :
+\{ 
+if($b2 < $a) {
+BeginTable(border => 4, padding=>10, tex_border =>"4pt").
+AlignedRow(["\(x\in\)", "\(] -\infty,$bmin [\)","\($bmin\)", "\(] $bmin,$bmax [\)","\($bmax\)", "\(] $bmax,$a [\)", "\($a\)", "\(] $a, \infty [\)"], separation=>0).
+AlignedRow(["\( \frac{$poly1}{(x + $b)($c x + $d)}\)","\(-\)","\(\nexists\)","\(+\)","\(\nexists\)","\(-\)", "\(0\)","\(+\)"], separation=>0).
+EndTable().
+$BR.$BR.
+"Par conséquent, le domaine de la fonction est \(x\in \left] $bmin, $bmax \right[ \cup \left[ $a, \infty \right[\)."
+} else {
+BeginTable(border => 4, padding=>10, tex_border =>"4pt").
+AlignedRow(["\(x\in\)", "\(] -\infty,$bmin [\)","\($bmin\)", "\(] $bmin,$a [\)","\($a\)", "\(] $a,$bmax [\)", "\($bmax\)", "\(] $bmax, \infty [\)"], separation=>0).
+AlignedRow(["\( \frac{$poly1}{(x + $b)($c x + $d)}\)","\(-\)","\(\nexists\)","\(+\)","\(0\)","\(-\)", "\(\nexists\)","\(+\)"], separation=>0).
+EndTable().
+$BR.$BR.
+"Par conséquent, le domaine de la fonction est \(x\in \left] $bmin, $a\right] \cup \left] $bmax, \infty \right[\)."
+}
+\}
+ On exclut les bornes \($bmin\) et \($bmax\) pour respecter la deuxième restriction, soit \((x + $b)($c x + $d)\neq 0\).$BR
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

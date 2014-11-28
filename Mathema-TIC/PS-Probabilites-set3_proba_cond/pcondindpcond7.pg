@@ -1,0 +1,74 @@
+## DBsubject(Probabilités)
+## DBchapter(Probabilité conditionnelle et indépendance)
+## DBsection(Probabilités conditionnelles)
+## Author(Jean-Sébastien Turcotte - Université de Montréal)  # ou ##Modifié par 
+## KEYWORDS('Probabilités conditionnelles')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+#"unionLists.pl"
+);
+TEXT(beginproblem());
+#####Initialisation des paramètres######################
+@ques=("\(\mathbb{P}(A~|~B)\)", "\(\mathbb{P}(A~|~B^c)\)","\(\mathbb{P}(B~|~A)\)","\(\mathbb{P}(B~|~A^c)\)");
+@rep=("\(\frac{\mathbb{P}(A)}{\mathbb{P}(B)}\)","\(0\)","\(1\)","\(\frac{\mathbb{P}(B \cap A^c)}{\mathbb{P}(A^c)}\)");
+$choix1=random(0,3,1);
+do{$choix2=random(0,3,1);} until($choix2!=$choix1);
+$mc1=new_multiple_choice();
+$mc1->qa($ques[$choix1],$rep[$choix1]);
+$mc1->extra(
+"\(\mathbb{P}(A)\mathbb{P}(B)\)",
+"\(\frac{\mathbb{P}(A)}{\mathbb{P}(B)}\)",
+"\(0\)",
+"\(1\)",
+"\(\mathbb{P}(A)\)",
+"\(\mathbb{P}(B)\)",
+"\(\frac{\mathbb{P}(B \cap A^c)}{\mathbb{P}(A^c)}\)",
+"\(\mathbb{P}(A)+\mathbb{P}(B)\)",
+);
+$mc1->makeLast("aucune de ces réponses");
+############
+$mc2=new_multiple_choice();
+$mc2->qa($ques[$choix2],$rep[$choix2]);
+$mc2->extra(
+"\(\mathbb{P}(A)\mathbb{P}(B)\)",
+"\(\frac{\mathbb{P}(A)}{\mathbb{P}(B)}\)",
+"\(0\)",
+"\(1\)",
+"\(\mathbb{P}(A)\)",
+"\(\mathbb{P}(B)\)",
+"\(\frac{\mathbb{P}(B \cap A^c)}{\mathbb{P}(A^c)}\)",
+"\(\mathbb{P}(A)+\mathbb{P}(B)\)",
+);
+$mc2->makeLast("aucune de ces réponses");
+BEGIN_TEXT
+Soit \(A\subset B\) deux événements. Choisir une expression équivalente parmi celles suggérées. Sélectionner "aucune de ces réponses" si rien ne correspond.
+$BR
+a)
+\{$mc1->print_q() \}
+$BR
+\{$mc1->print_a()\}
+$BR
+b)
+\{$mc2->print_q() \}
+$BR
+\{$mc2->print_a()\}
+END_TEXT
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( radio_cmp($mc2->correct_ans() ) );
+
+ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

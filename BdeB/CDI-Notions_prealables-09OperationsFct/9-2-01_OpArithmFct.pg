@@ -1,0 +1,105 @@
+##DESCRIPTION
+##  Opérations sur les fonctions
+## 
+##ENDDESCRIPTION
+
+##### Source ############################
+## ZDBsubject(Algebra)
+## ZDBchapter(Functions and linear functions)
+## ZDBsection('The Algebra of Functions')
+## ZTitleText1('Essentials of Intermediate Algebra')
+## ZEditionText1('1')
+## ZAuthorText1('Blitzer')
+## ZSection1('2.2')
+## ZProblem1('')
+## ZAuthor('RA Cruz')
+## ZInstitution('The College of Idaho')
+## ZDate: 2007/10
+##### Source ############################
+
+### Traduit et modifié par Julie Tremblay, Collège de Bois-de-Boulogne, juin 2014
+
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Opérations arithmétiques sur les fonctions)
+## KEYWORDS('Fonction', 'français','Opération','Évaluer')
+## Institution(Collège de Bois-de-Boulogne)
+## Level(1)
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "unionTables.pl",
+  "contextPiecewiseFunction.pl",
+  "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+
+$input = random(-4,4,1);
+@x = ($input,$input+1,$input+2,$input+3,$input+4);
+@f = (random(-15,15,1),random(-15,15,1),random(-15,15,1),random(-15,15,1),random(-15,15,1));
+#------Keep g non-zero for a denominator
+@g = (non_zero_random(-15,15,1),non_zero_random(-15,15,1),non_zero_random(-15,15,1),non_zero_random(-15,15,1),non_zero_random(-15,15,1));
+
+$c1 = random(0,4,1);
+do {$c2 = random(0,4,1);} while ($c1==$c2);
+do {$c3 = random(0,4,1); } while ($c3==$c1 || $c3==$c2);
+
+######################################
+#  Main text
+
+BEGIN_TEXT            
+$BCENTER
+\{BeginTable(border=>2, tex_border=>"1pt", spacing=>0, padding=>10).
+AlignedRow(["\(x\)$SPACE","\($x[0]\)","\($x[1]\)","\($x[2]\)","\($x[3]\)","\($x[4]\)"], align=>CENTER, separation=>0).
+AlignedRow(["\(f(x)\)$SPACE","\($f[0]\)","\($f[1]\)","\($f[2]\)","\($f[3]\)","\($f[4]\)"], align=>CENTER, separation=>0).
+AlignedRow(["\(g(x)\)$SPACE","\($g[0]\)","\($g[1]\)","\($g[2]\)","\($g[3]\)","\($g[4]\)"], align=>CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+$BR
+À partir de la table des valeurs des fonctions \( f \) et \( g \), trouver les valeurs demandées.
+$BR
+(${BITALIC}Écrire ${BBOLD}nep$EBOLD si la valeur n'existe pas.${EITALIC})
+$PAR
+a) \( (f - g)($x[$c1]) =\) \{ans_rule(20)\}
+$PAR
+b) \( (f + g)($x[$c1]) - (g-f)($x[$c2]) =\) \{ans_rule(20)\}
+$PAR
+c) \(\left(\dfrac{f}{g}\right)($x[$c3]) =\) \{ans_rule(20)\}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=7040", "2.4.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+
+######################################
+#  Answers 
+
+Context("Numeric");
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+$ans_a = Real($f[$c1] - $g[$c1]);
+ANS($ans_a->cmp);
+
+$ans_b = Real($f[$c1] + $g[$c1] - $g[$c2] + $f[$c2]);
+ANS($ans_b->cmp);
+
+$ans_c = Real($f[$c3] / $g[$c3]);
+ANS($ans_c->cmp);
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

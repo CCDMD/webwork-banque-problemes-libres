@@ -1,0 +1,107 @@
+## DESCRIPTION
+##   Solve an Equation
+## ENDDESCRIPTION
+
+## Tagged by nhamblet
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Other Equations')
+## KEYWORDS('Solve', 'Equation', 'Root','algebra', 'solve for variable' 'fraction', 'francais')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->noreduce('(-x)-y');
+Context()->strings->add(oui => {});
+Context()->strings->add(non => {});
+
+
+$A = random(2,20,1);
+$B = random(2,20,1);
+$C = random(-8,-1,1);
+
+
+$gauche = Formula("sqrt(x - $A) - sqrt(x + $B)")->reduce;
+
+$ans = ((-$A-$B-$C**2)/(2*$C))**2 - $B;
+
+#Pour vérifier les solutions dans l'équation initiale
+$verif = Compute("$gauche", x=>$ans);
+
+
+
+if ( $verif == $C) {$check = String("oui");}
+else {$check = String("non");}
+
+Context()->texStrings;
+BEGIN_TEXT;
+Trouver la solution possible de l'équation suivante. Vérifier si la réponse est bien une solution réelle de l'équation.$BR
+$BBOLD Donner une précision de 4 chiffres décimals dans la réponse (ex.: 1.1236). Attention, un nombre décimal s'écrit avec un "point".$EBOLD
+$BR $BR
+\[$gauche = $C\]
+$BR
+$BR
+La seule solution possible est \{ans_rule(15)\}.  Est-ce qu'il s'agit d'une solution réelle? (oui ou non) \{ans_rule(10)\}$BR
+$BR
+$HR
+$BITALIC
+Des exemples similaires se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5274", "1.4.4", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT;
+Context()->normalStrings;
+
+ANS(Compute("$ans")->cmp);
+ANS($check->cmp);
+
+$ans = Round($ans,4);
+
+
+$cc = $C*$C;
+$c2 = 2*$C;
+$c2neg = -$c2;
+$n = $cc + $B + $A;
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pour résoudre cette équation, il faut tout d'abord isoler la racine et ensuite élever chacun des membres de l'égalité au carré. On obtient, $BR
+$BR
+\[ \begin{array}{rl} $gauche &= $C \\ \left(\sqrt{x - $A}\right)^2 &= \left($C + \sqrt{x + $B}\right)^2 \\ x -$A &= $cc + $c2\sqrt{x + $B} + (x+$B) \end{array}\]
+$BR $BR
+Étant donné que la dernière égalité contient toujours une racine carrée, il faut répéter le processus précédent. $BR $BR
+\[ \[ \begin{array}{rl} \cancel{x} -$A &= $cc + $c2\sqrt{x + $B} + \cancel{x}+$B \\ $c2neg\sqrt{x+$B} &= $cc + $B + $A \\  \left(\sqrt{x+$B}\right)^2 = \left(\frac{$n}{$c2neg}\right)^2 \\ x + $B &= \left(\frac{$n}{$c2neg}\right)^2\end{array}\]
+$BR
+En isolant la variable \(x\) dans cette dernière égalité, on trouve la solution possible de l'équation, soit : $BR
+\[  x = \left(\frac{$n}{$c2neg}\right)^2 - $B = $ans \]
+$HR
+Vérifions si cette solution est une solution réelle de l'équation en la remplaçant dans l'équation initiale. On obtient $BR
+$BR
+\{ if( $verif == $C ) {
+"\(  \sqrt{$ans - $A} - \sqrt{$ans + $B} = $C \Rightarrow $verif = $C \)".
+$BR.$BR."Cette solution vérifie l'équation, alors \(\boxed{$ans}\)".
+$BBOLD." est une solution réelle de l'équation.".$EBOLD
+} else {
+"\(  \sqrt{$ans - $A} - \sqrt{$ans + $B} = $C \Rightarrow $verif \neq $C \)".
+$BR.$BR."Cette solution ne vérifie pas l'équation, alors".
+$BBOLD." il ne s'agit pas d'une solution réelle de l'équation.".$EBOLD
+}
+\}
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

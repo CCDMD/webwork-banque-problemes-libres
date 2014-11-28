@@ -1,0 +1,163 @@
+## DESCRIPTION
+##   Solve an Equation with Square Root
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Équations contenant des racines carrées)
+## KEYWORDS('Racine carrée','Résoudre','Équation')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"answerHints.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$A = random(1,9,1);
+$B = non_zero_random(-9,9,1);
+do{$C = random(1,9,1);} until($A != $C);
+$D = non_zero_random(-9,9,1);
+
+$polyg = Formula("$A x + $B")->reduce;
+$polyd = Formula("$C x + $D")->reduce;
+$gauche = Formula("sqrt($polyg)")->reduce;
+$droite = Formula("sqrt($polyd)")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer le domaine de l'équation suivante.$BR $BR
+\[$gauche= $droite\]
+$BR $BR
+Domaine : \( x\in\) \{ans_rule(30)\} \{AnswerFormatHelp("intervals") \} $BR
+$BR
+Résoudre, si possible, cette équation. S'il n'y a aucune solution, écrire "aucune" dans la case réponse.
+$BR
+$BR
+Solution : \{ans_rule(15)\}.
+$BR
+$HR
+$BITALIC
+Des exemples similaires se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5274", "1.4.4", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+Context("Interval");
+
+
+$borne1 = Compute("-$B/$A");
+$borne2 = Compute("-$D/$C");
+
+if( $borne2 > $borne1 ) { 
+$borne = $borne2;
+} else {
+$borne = $borne1;
+}
+
+$dom = Compute("[$borne, infinity)");
+
+
+ANS($dom->cmp);
+
+Context("Numeric");
+Context()->strings->add(aucune => {});
+
+$num = $D - $B;
+$den = $A - $C;
+
+$sol = Compute("$num /$den")->reduce;
+
+
+if ($A*$sol +$B < 0 || $C*$sol + $D < 0) {
+ANS(String("aucune")->cmp()->withPostFilter(AnswerHints(($sol) => ["Vérifiez si votre solution fait partie du domaine de l'équation.", replaceMessage => 1]))
+); 
+}  else { 
+
+$verifg = $polyg->eval(x=>$sol);
+$verifd = $polyd->eval(x=>$sol);
+ANS($sol->cmp); 
+}
+
+
+($b,$a) = reduce($B,$A);
+($d,$c) = reduce($D,$C);
+
+#si la borne n'est pas un entier
+if( $borne - floor($borne) != 0) { 
+
+if( $borne2 > $borne1 ) { 
+$borne = "\frac{-$d}{$c}";
+} else {
+$borne = "\frac{-$b}{$a}";
+}}
+
+if( $borne1 - floor($borne1) != 0) { 
+$borne1 = "\frac{-$b}{$a}";
+}
+if( $borne2 - floor($borne2) != 0) { 
+$borne2 = "\frac{-$d}{$c}";
+}
+
+($n,$de) = reduce($num,$den);
+$sol2 = $sol;
+
+if( $sol - floor($sol) != 0 ){  #la solution n'est pas un entier
+$sol2 = "\frac{$n}{$de}";
+}
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+L'argument que l'on donne à une racine carrée doit toujours être \(\geq 0\). Alors, pour que \(x\) appartienne au domaine de l'équation, il faut que $BR $BR
+\[  $gauche \geq 0 \Rightarrow x \geq $borne1 \text{ et } $droite \geq 0 \Rightarrow x \geq $borne2 \]
+$BR
+En faisant l'intersection des deux intervalles, celui le plus restrictif est pour \(x \geq $borne\).$BR
+Donc, le domaine de l'équation est : \(x\in \left[ $borne, \infty \right) \).
+$BR $BR
+Pour résoudre cette équation, il faut élever chacun des membres de l'égalité au carré. On obtient, $BR
+$BR
+\[\begin{array}{rll} \left($gauche\right)^2 &= \left($droite\right)^2 &\\ $polyg &= $polyd &\text{; on isole }x\\ $A x - $C x &= $D - $B&\\ $den x &= $num &\\ x &= $sol2 &\end{array}\]
+$HR
+Il faut vérifier si cette valeur fait partie du domaine.$BR
+$BR
+\{ if($A*$sol +$B < 0 || $C*$sol + $D < 0) {
+"Comme "."\($sol2 < $borne\)".
+", alors cette valeur ne fait pas partie du domaine.".$BR.
+"Par conséquent, il ".$BBOLD."n'existe aucune solution".$EBOLD." à cette équation."
+} else {
+"Comme "."\($sol2 \geq $borne\)".
+", alors cette valeur fait partie du domaine.".
+$HR.
+"Il faut finalement vérifier si cette solution est une solution réelle de l'équation, en la remplaçant dans l'équation initiale.".$BR.
+"\( \sqrt{$A($sol2) + $B} = \sqrt{$C($sol2) + $D} \Rightarrow \sqrt{$verifg} = \sqrt{$verifd}\)".
+$BR."Cette solution vérifie l'équation initiale, par conséquent, la solution de cette équation est "."\(\boxed{x = $sol2}\)"
+}
+\}
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

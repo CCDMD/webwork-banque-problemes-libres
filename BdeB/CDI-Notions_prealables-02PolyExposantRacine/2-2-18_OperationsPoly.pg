@@ -1,0 +1,86 @@
+###DESCRIPTION
+## Multiplying Polynomials
+## 
+##ENDDESCRIPTION
+## DBsubject(Algebra)
+## DBchapter(Polynomials, polynomial functions, and factoring)
+## DBsection('Multiplication of Polynomials')
+## KEYWORDS('polynomials','français')
+## Traductin('Julie Tremblay')
+## TitleText1('Essentials of Intermediate Algebra')
+## EditionText1('1')
+## AuthorText1('Blitzer')
+## Section1('5.2')
+## Problem1('')
+## Author('RA Cruz')
+## Institution('The College of Idaho')
+## Date: 2007/10
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextLimitedPolynomialFr.pl",
+  "CofIdaho_macrosFr.pl",
+"AnswerFormatHelp.pl",
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+
+Context("LimitedPolynomial-Strict");
+Context()->variables->are(y=>'Real');
+
+($a1,$a0) = (random(3,5,2), random(2,6,2));    
+($b1,$b0) = (-1*$a1, $a0);
+$n = random(3,5,2);
+
+$poly1 = nicestring([$a0,$a1],["","y^$n"]);
+$poly2 = nicestring([$b0,$b1],["","y^$n"]);
+
+######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Multiplier les binômes suivants. 
+$PAR $BR
+\( ( $poly1 ) ( $poly2 ) = \) \{ ans_rule(40) \} 
+\{ AnswerFormatHelp("formulas") \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=1508", "1.1.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+######################################
+#  Answer
+
+($c1,$c0) = ($a1*$b1,$a0*$b0);
+$m = 2*$n;
+$ans = Formula("$c0 + $c1*y^($m)")->reduce;
+ANS($ans->cmp);
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+$a0a1 = $a0*$a1;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+\[  \begin{array}{rl} ( $poly1 ) ( $poly2 ) &=  $c1  - $a0a1 y^$n + $a0a1 y^n - $c1 y^$n y^$n \\
+&= $ans \end{array}
+\] 
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

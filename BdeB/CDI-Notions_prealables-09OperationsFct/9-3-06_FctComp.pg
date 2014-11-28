@@ -1,0 +1,101 @@
+##DESCRIPTION
+#Composer une fonction
+#Fait par Julie Tremblay, août 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Fonctions composées)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+######## Source ############
+## Fichier source:  MCH1-8-2-02-Function-composition.pg
+## ZDBsubject('Algebra') 
+## ZDBchapter('Functions') 
+## ZDBsection('Composing Functions') 
+## ZAuthor('Paul Pearson')
+## ZInstitution('Fort Lewis College')
+#######  Source #############
+## Level(3)
+## Language(fr)
+## KEYWORDS('Fonction composée','composition')
+
+
+####################################
+#  Initialization
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"parserAssignment.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem()); 
+
+####################################
+#  Setup
+
+Context("Numeric");
+Context()->variables->add(y=>"Real",u=>"Real");
+parser::Assignment->Allow;
+
+$a = random(2,6,1);
+$c = random(2,6,1);
+$d = random(1,5,1);
+
+$c2 = $a * $c * $c;
+$c1 = -2 * $a * $c * $d;
+$c0 = $a * $d**2; 
+
+$f = Formula("y = $c2 x^2 + $c1 x + $c0")->reduce;
+
+
+######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Par substitution, composer les fonctions \( y = $a u^{2} \) 
+et \( u = $c x - $d \) en une fonction \(y=f(x)\). Écrire la 
+réponse sous la forme d'une équation simplifiée.
+$BR
+$BR
+\{ ans_rule(30) \} \{ AnswerFormatHelp("equations") \}
+$BR
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=7010", "2.4.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+######################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS($f->cmp());
+
+$s2 = $c*$c;
+$s1 = -2*$c*$d;
+$s0 = $d*$d;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Comme \(y = $a u^{2}\) est une fonction de \(u\) et que \( u = $c x - $d \) est une fonction de \(x\), on trouve
+par substitution \(y\) une fonction de \(x\).
+$PAR
+\[\begin{array}{rl} &y = f(u)= f($c x - $d)\\
+\Rightarrow& y= $a($c x - $d)^2 \\
+\Rightarrow& y= $a($s2 x^2 + $s1 x + $s0)\\
+\Rightarrow& $f \end{array}\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

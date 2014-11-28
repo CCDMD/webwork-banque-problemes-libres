@@ -1,0 +1,107 @@
+#DESCRIPTION
+##  Algebra problem: raising integers to powers
+##ENDDESCRIPTION
+
+##KEYWORDS('algebra', 'powers','français')
+##Traduction('Julie Tremblay')
+## hcao tagged and PAID on 12-12-2003
+
+## DBsubject('Algebra')
+## DBchapter('Basic Algebra')
+## DBsection('Exponents and Radicals')
+## Date('6/3/2002')
+## Author('')
+## Institution('')
+## TitleText1('College Algebra')
+## EditionText1('3')
+## AuthorText1('Stewart, Redlin, Watson')
+## Section1('1.3')
+## Problem1('29')
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "contextLimitedPolynomial.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("LimitedPolynomial")->flags->set(singlePowers=>1);
+Context()->variables->add(y=>'Real',z=>'Real');
+
+Context()->{error}{msg}{"Exponents must be positive integers in a polynomial"} 
+  = "Dans un polynôme, les exposants sont strictement positifs.";
+Context()->{error}{msg}{"A variable can appear only once in each term of a polynomial"} 
+  = "Une variable peut apparaître qu'une seule fois dans chacun des termes d'un polynôme";
+
+
+$a = random(2,4,1);
+$b = random(5,9,1);
+$c = random(3,7,1);
+$d = random(3,7,1);
+$e = $c+1;
+
+$m = $d*$c/$e;    #on veut que   a < m < b
+
+while($d*$c/$e>=$b || $d*$c/$e<=$a){$d=random(3,7,1);}
+
+
+$ny = $b*$e-$d*$c;
+$nz = $c*$e - $c;
+$nx = $d*$c - $a*$e;
+
+$ans1 = Compute("y^{$ny}z^$nz")->reduce;
+$ans2 = Compute("x^$nx")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Exprimer l'expression $BR
+\[\frac{(x^$a y^$b z^$c)^{$e}}{\left((x y)^{$d} z\right)^$c} \text{ où } x \neq 0, y\neq 0 \text{ et } z\neq 0\] 
+$BR
+sous la forme \( \dfrac{A}{B} \). Simplifier votre réponse sous la forme d'une fraction rationnelle, c'est-à-dire possédant que des exposants strictement positifs.
+$PAR $BR
+Réponses: \(A =\) \{ans_rule(10)\}$BR
+et \(B =\) \{ans_rule(10)\}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=6646", "1.1.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+
+$ae = $a*$e;
+$be = $b*$e;
+$ce = $c*$e;
+$dc = $d*$c;
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'expression \(\dfrac{(x^$a y^$b z^$c)^{$e}}{\left((x y)^{$d} z\right)^$c} \) se simplifie de la façon suivante:
+$BR
+$BR
+\[ \begin{array}{rll}  \dfrac{(x^$a y^$b z^$c)^{$e}}{\Big((x y)^{$d} z\Big)^$c} 
+&= \dfrac{x^{$ae} y^{$be} z^{$ce}}{\Big(x^$d y^$d z\Big)^$c}  
+& ;\text{car } (ab)^n = a^nb^n \text{ et } (a^n)^m = a^{nm}\\[0.8em]
+&= \dfrac{x^{$ae} y^{$be} z^{$ce}}{x^{$dc} y^{$dc} z^$c}  &\\[0.8em]
+&= \dfrac{y^{$be-$dc} z^{$ce-$c}}{x^{$dc-$ae}}
+&;\text{car } \frac{a^n}{a^m} = a^{n-m} \text{ et }  \frac{a^n}{a^m} = \frac{1}{a^{m-n}}\\[0.8em]
+&= \dfrac{$ans1}{$ans2} &  \end{array}
+\]
+
+$BR
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

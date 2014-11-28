@@ -1,0 +1,118 @@
+## DESCRIPTION
+##  Algebra: Fractional equations 
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Équations contenant des fractions rationnelles)
+## KEYWORDS('Fonction rationnelle','Résoudre','Équation','Rationnelle')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+  "PGstandard.pl",
+  "PGauxiliaryFunctions.pl",
+  "Parser.pl",
+  "MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"answerHints.pl",
+);
+
+########################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+########################################################################
+
+Context("Numeric");
+Context()->strings->add(aucune => {});
+
+$a = random(2,6,1);
+do{ $b = random(1,6,1);} until($a != $b);
+$c = random(1,5,1);
+
+
+$d1 = $a + $b + $c;
+$d = $a*$d1;
+
+$e = $a-$b;
+$f = $a*$b;
+
+$lhs = Formula("x/(x+$a)+1/(x-$b)")->reduce;
+$rhs = Formula("($c x + $d)/(x^2 + $e x-$f)")->reduce;
+
+$sol = Compute("$d1 - 1");
+
+$ans = List("$sol");
+
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer le domaine de l'équation suivante. $BR $BR
+\[
+$lhs = $rhs.
+\]
+$BR $BR
+Domaine : \{ans_rule(20) \} \{ AnswerFormatHelp("intervals") \} $BR
+$BR
+Résoudre, si possible, cette équation. S'il n'y a aucune solution, écrire "aucune" dans la case réponse.
+$BR $BR 
+Solution(s) : \(x = \)\{ans_rule(30) \} $BR
+$BBOLD Note: S'il y a plus d'une solution, écrire les réponses séparées par une virgule. Ex.: 4, sqrt(10) $EBOLD
+$BR
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5272", "1.4.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+Context("Interval");
+
+$rest1 = $b;
+$rest2 = -$a;
+
+$dom = Compute("R-{$rest1,$rest2}"); 
+
+ANS($dom->cmp);
+
+Context("Numeric");
+
+
+ANS( $ans->cmp()->withPostFilter(AnswerHints(List("$sol,-$a") => ["Vérifiez si vos deux solutions font partie du domaine de l'équation.",replaceMessage =>1])));
+
+
+$coe1 = -$b - $c + 1;
+$coe2 = $a - $d;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Factorisons le dénominateur de la fraction rationnelle de droite :$BR $BR
+\[x^2 + $e x-$f = (x+$a)(x-$b)\text{ car } $a-$b=$e \text{ et } $a\times -$b = -$f\]
+$BR
+Le domaine de cette équation est donc \(\mathbb{R}\setminus\lbrace -$a,$b\rbrace\), car pour ces deux valeurs, les dénominateurs sont nuls.$BR $BR
+
+On résout cette équation de la façon suivante :
+$BR $BR
+\[\begin{array}{rll} \displaystyle $lhs &= \displaystyle $rhs &\\[0.8em] \dfrac{x(x-$b)+(x+$a)}{(x+$a)(x-$b)}&=\dfrac{$c x + $d}{(x+$a)(x-$b)} &\text{; chaque membre sur le même dénominateur}\\[0.8em] x(x-$b)+(x+$a) &= $c x + $d &;\; \frac{a}{b}=\frac{c}{b} \Rightarrow a=c \text{ si }b\neq 0\\[0.8em] x^2-$b x + x + $a - $c x - $d &= 0&\\ x^2 +$coe1 x + $coe2 &= 0&\\ (x + $a)(x - $sol) &=0 &\text{; car }$a - $sol=$coe1 \text{ et }$a\times -$sol=$coe2 \end{array}\]
+$BR
+Ainsi, on a que :$BR
+\[(x + $a)(x - $sol) =0\Leftrightarrow x=-$a\text{ ou }x=$sol\]
+$BR $BR
+Étant donné que \(-$a\) n'appartient pas au domaine de l'équation, il faut rejeter cette solution.$BR $BR
+Par conséquent, la seule solution de cette équation est :\( \boxed{x = $sol}\).$BR
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

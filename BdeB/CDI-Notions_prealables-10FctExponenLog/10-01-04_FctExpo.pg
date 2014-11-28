@@ -1,0 +1,257 @@
+##DESCRIPTION
+## Les fonctions exponentielles
+##Fait par Julie Tremblay, novembre 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions exponentielles et logarithmiques)
+## DBsection(Fonction exponentielle)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+######## Source ############
+## ZDBsubject('Mise à niveau secondaire 5')
+## ZDBchapter('Fonction exponentielle')
+## ZDBsection('Analyse')
+## ZAuthor('Diane Bergeron et Louise Pellerin')
+## ZInstitution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## ZKEYWORDS('fran&ccedil;ais', 'secondaire 5', 'fonction', 'algèbre', 'exponentielle','analyse')
+#######  Source #############
+## Level(2)
+## Language(fr)
+## KEYWORDS()
+
+
+
+##############################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+    "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+# déterminer les composantes de l'équation exponentielle
+$choixa=random(1,3);
+
+if ($choixa == 1) 
+{
+  $a=random(2,6);
+  $aa = $a;
+}
+elsif ($choixa==2) 
+{
+  $a=2;
+  $aa = $a;
+}
+else 
+{
+  $b = random(2,6);
+  $a="\frac{1}{$b}" ;
+  $aa = 1/$b; 
+}
+
+$d= random(2,5);
+
+
+# déterminer le signe devant le coefficient
+$choixsigned=non_zero_random(-1,1);
+if ($choixsigned == 1) {$signed = ""; $signeinvd="-"; }
+else  {$signed="-"; $signeinvd = "";}
+
+# déterminer le zéro, l'ordonnée et le domaine de l'équation
+
+
+Context("Interval");
+Context()->strings->add(aucun=>{});
+
+$zero = Compute("aucun");
+$ordonnee=$choixsigned*$d;
+$domaine=Compute("R");
+
+
+# déterminer l'image de l'équation, ainsi que ses limites négatives et positives
+if ($choixsigned==1) 
+{
+  $image=Compute("(0,inf)");
+  $reppos=Compute("R"); 
+  $repneg=Compute("aucun"); 
+}
+else  
+{
+  $image=Compute("(-inf,0)");
+  $reppos=Compute("{}"); 
+  $repneg=Compute("R"); 
+}
+
+
+#créer le graphique de cette fonction, afin de pouvoir l'afficher dans la solution
+
+$ech = 6;
+
+
+$f = "$ordonnee*($aa)^x";
+$flatex = "$ordonnee\left($a\right)^x";
+
+$graphique=init_graph(-$ech,-$ech,$ech,$ech, axes=>[0,0], size=>[250,250] );
+add_functions($graphique, "$f for x in <-$ech,$ech> using color:blue and weight:2 ");
+
+$gx=2;
+$gy=2;
+
+
+for ($i = 0; $i <= int( ($gxpos /$gx) +1); $i++)
+  {
+     $graphique->lb(new Label($gx*$i+$gx,-0.4,$gx*$i+$gx,'black','center','middle'));
+   }
+for ($i = 0; $i <= int( ($gxpos /$gx) +1); $i++)
+  {
+     $graphique->lb(new Label(-$gx*$i-$gx,-0.4,-$gx*$i-$gx,'black','center','middle'));
+   }
+for ($i = 0; $i <= int( 1+(-$gyneg/$gy)); $i++)
+  {
+     $graphique->lb(new Label(-0.5,-$gy*$i-$gy,-$gy*$i-$gy,'black','center','middle'));
+  }
+for ($i = 0; $i <= int( 1+($gypos/$gy)); $i++)
+  {
+     $graphique->lb(new Label(-0.5,$gy*$i+$gy,$gy*$i+$gy,'black','center','middle'));
+   }
+   
+    $graphique->v_ticks(0,"black",-5,-4,-3,-2,-1,1,2,3,4,5);
+	$graphique->h_ticks(0,"black",-4,-2,2,4);
+
+
+$graphique->stamps( closed_circle(0,$ordonnee,'blue') );
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR Pour la fonction suivante:  \(f(x) = $flatex\).
+$PAR
+
+a) Quelle est l'ordonnée à l'origine de cette fonction ? \{ans_rule(10)\} 
+$BR(s'il n'y en a pas, écrire ${BBOLD}aucun$EBOLD)
+
+$PAR
+
+b) Donner tous les zéros de cette fonction. \{ans_rule(10)\} 
+$BR $BR
+
+$SPACE Si l'équation a une seule solution, inscrire cette solution. $BR
+$SPACE Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.$BR
+$SPACE Si l'équation n'admet aucune solution, inscrire ${BBOLD}aucun.$EBOLD $BR
+$SPACE Si l'équation admet une infinité de solutions, inscrire ${BBOLD}inf $EBOLD.
+
+$PAR
+c) Le domaine de cette fonction est \{ans_rule(15)\}   
+$PAR
+d) L'image de cette fonction est \{ans_rule(15)\}     
+$PAR
+e) La fonction est négative sur l'intervalle: \{ans_rule(20)\}     
+$BR
+$SPACE La fonction est positive sur l'intervalle: \{ans_rule(20)\}     
+$PAR
+Note pour les réponses c, d et e : Donner votre réponse en notion d'intervalles. Lorsqu'il n'y a aucune solution, entrer ${BBOLD}{}$EBOLD.
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Le zéro d'une fonction représente la valeur de x lorsque f(x) est égal à zéro. Il faut donc prendre les intersections avec l'axe des x. ";
+break;
+case '2':text="L'ordonnée à l'origine d'une fonction est la valeur de f(x) lorsque x est égal à zéro, il faut donc résoudre f(0).";
+break;
+case '3':text="Le domaine représente l'ensemble des nombres qui peuvent être insérés dans x pour obtenir un nombre réel pour y.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+$showPartialCorrectAnswers = 0;
+
+ANS(strict_num_cmp($ordonnee, .0));
+
+ANS($zero->cmp);
+
+ANS($domaine->cmp);
+
+ANS($image->cmp);
+
+ANS($repneg->cmp);
+
+ANS($reppos->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+$BR Pour la fonction suivante : \(f(x) = $flatex\).
+$PAR
+a) L'ordonnée à l'origine est la valeur de \(f(x)\) lorsque \(x\) est égal à zéro.  Il faut donc évaluer \(f(0)\) et nous obtiendrons l'intersection avec l'axe des \(y\).
+$PAR
+\[f(0) = $signed $d\left($a\right)^0 =  $signed $d(1) = $signed $d\]
+
+D'où l'ordonnée à l'origine qui est \($ordonnee\).
+$PAR
+
+Pour répondre plus facilement aux prochaines questions, traçons le graphique de la fonction \(f(x)=$flatex\) :
+$BR $BCENTER
+\{ image(insertGraph($graphique), width=>250, height=>250, tex_size=>500) \}
+$ECENTER 
+$PAR
+
+b) Le zéro d'une fonction est la valeur de \(x\) lorsque \(f(x)\) est égal à zéro. C'est donc les intersections avec l'axe des \(x\). 
+Ici, il n'y a pas d'intersection avec l'axe des \(x\), donc la réponse est \($zero\).
+$PAR
+
+
+c) Le domaine de la fonction représente l'ensemble des nombres que peut prendre la variable \(x\) pour que l'image \(f(x)\) soit un nombre réel. 
+À partir du graphique, nous trouvons que le domaine est l'ensemble des nombres réels. Donc, la réponse est \(\mathbb{R}\).
+$PAR
+d) L'image (codomaine) de cette fonction représente toutes les valeurs possibles de \(y\) pour cette fonction. La réponse est donc:  \($image\). 
+$PAR
+
+e) La fonction est  ${BBOLD}négative$EBOLD pour toutes les valeurs de \(x\) qui donnent un $BBOLD\(y\) situé sous l'axe des \(x\)$EBOLD. 
+La fonction est ${BBOLD}positive$EBOLD pour toutes les valeurs de $BBOLD\(x\) qui donnent un \(y\) situé au-dessus de l'axe des \(x\)$EBOLD. 
+$PAR
+Par conséquent:
+<ul>
+  <li>la fonction est négative sur l'intervalle: \($repneg\)</li>
+  <li>la fonction est positive sur l'intervalle: \($reppos\)</li>
+</ul>
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

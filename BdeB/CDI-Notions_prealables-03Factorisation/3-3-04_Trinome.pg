@@ -1,0 +1,120 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Factorisation)
+## DBsection(Factorisation de trinômes)
+## KEYWORDS('Factorisation','français','carré parfait')
+## Traduction('Julie Tremblay')
+## Institution(BdeB)
+## Language(fr)
+
+
+########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowersFr.pl",
+#"problemRandomize.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+Context("PolynomialFactors-Strict");
+Context()->variables->add(y=>"Real");
+Context()->flags->set(singleFactors=>1);
+Context()->{error}{msg}{"Each factor can appear only once (combine like factors)"} 
+  = "Combiner les facteurs communs en un seul facteur";
+
+
+#(ax+by)^2 = a^2x^2 + 2abxy +b^2y^2
+
+#ProblemRandomize(style=>"Button",label=>"Générer un autre polynôme");
+
+$a = random(2,7,1);
+$b = non_zero_random(-7,7,1);
+
+$aa = $a * $a;
+$bb = $b * $b;
+$ab2 = 2*$a*$b;
+
+$expression = Compute("$aa*x^2 + $ab2*x*y + $bb*y^2")->reduce();
+
+$answer = Formula("($a*x + $b*y)^2")->reduce();
+
+
+################################################
+#  Main text
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Factoriser l'expression \($expression\).  Simplifier la réponse.
+$BR
+$BR
+\{ ans_rule(30) \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème sont présentées à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2318", "1.2.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 0;
+
+ANS($answer->cmp(
+checker => sub {
+        my ($correct,$student,$ans) = @_; 
+      
+    if ($student eq $expression) {
+      $ans->{ans_message} = "Ce polynôme se factorise.";
+       return 0;
+} elsif ($student == $answer) {
+return 1;
+} else {
+return 0;
+}
+
+  return $ans; 
+})
+);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+On peut remarquer que le polynôme \($expression\) est de la forme: $BR $BR
+
+ \[a^2 +2ab+b^2  \text{ o\`u }  a = $a x \text{ et }  b = $b y\]  
+$BR
+Ainsi, ce polynôme est un trinôme carré parfait et se factorise de la façon suivante:
+$BR $BR
+\[
+\begin{array}{lrl}  & a^2 + 2ab + b^2 &= (a + b)^2    \\[0.5em]
+      \Rightarrow &  $expression &= ($a x)^2 + 2($a x)($b y) + ($b y)^2 \\[0.5em]
+       & &= $answer \end{array}
+\]
+$HR
+$BITALIC
+Un exemple similaire est présenté à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2318", "1.2.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

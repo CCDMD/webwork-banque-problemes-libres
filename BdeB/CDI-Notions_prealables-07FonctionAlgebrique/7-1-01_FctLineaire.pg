@@ -1,0 +1,87 @@
+##DESCRIPTION
+## Introduction to Functions
+## 
+##ENDDESCRIPTION
+## DBsubject(Algèbre)
+## DBchapter(Fonctions algébriques)
+## DBsection(Fonction linéaire - Caractéristiques)
+## Modifié et traduit par Julie Tremblay Collège Bois-de-Boulogne, juin 2014
+## KEYWORDS('Fonction','Linéaire','Évaluer','français')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextLimitedPolynomialFr.pl"
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+
+Context()->variables->add(t=>'Real');
+
+$num1 = random(2,5,1);
+$num2 = random(-5,-1,1);
+$f = Formula("$num1 x + $num2")->reduce;
+
+$a = random(0,5,1);
+$b = random(1,5,1);
+if ($a!=0) {$b = 0;}  #Either $a or $b will be zero
+$c = random(-5,-1,1);
+$d = random(2,4,1);
+$e = random(1,5,1);
+
+######################################
+#  Main text
+ 
+BEGIN_TEXT
+Soit \(f(x)= \{$f->TeX\} \). Trouver les valeurs demandées et simplifier. Si la valeur n'existe pas, écrire ${BBOLD}nep.$EBOLD
+$PAR
+a)  \( f($a) \) = \{ans_rule(15) \}
+$PAR
+b)  \( f($b) \) = \{ans_rule(15) \}
+$PAR
+c)  \( f($c) \) = \{ans_rule(15) \}
+$PAR
+d)  \( f($d t) \) = \{ans_rule(15) \}
+$PAR
+e)  \( f(t + $e) \) = \{ans_rule(15) \}
+END_TEXT
+
+######################################
+#  Answers
+
+Context()->strings->add(aucune=>{},none=>{alias=>"aucune"},
+                        nep=> {},dne=>{alias=>"nep"});
+
+$ans_a = $f->eval(x=>$a);
+ANS($ans_a->cmp);
+
+$ans_b = $f->eval(x=>$b);
+ANS($ans_b->cmp);
+
+$ans_c = $f->eval(x=>$c);
+ANS($ans_c->cmp);
+
+
+Context("LimitedPolynomial-Strict")->variables->add(t=>'Real');
+
+$co = $num1*$d;
+$ans_d = Formula("$co*t + $num2")->reduce;
+ANS($ans_d->cmp);
+
+$ans_e = $f->substitute(x=>"t+$e")->reduce;
+ANS($ans_e->cmp);
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

@@ -1,0 +1,114 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Résoudre des équations trigonométriques)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+
+## Level(3)
+## Language(fr)
+## KEYWORDS()
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"answerHints.pl",
+"PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+### fct = cos, sin, tan, cot, sec, csc
+### Résoudre   a fct^2(x) = b
+
+@fct = (Formula("sin(x)"),Formula("cos(x)"),Formula("tan(x)"),
+Formula("cot(x)"),Formula("sec(x)"),Formula("csc(x)"));
+
+### choix de la fonction
+$n = random(0,5);
+
+
+### exprimer l'équation:
+
+if( $n == 0 || $n == 1 ) {   ## fct = sin ou cos
+$c1 = 2;
+$c2 = 1;
+
+} elsif ( $n == 2 || $n ==3) { ## fct = tan ou cot
+$c1 = 3;
+$c2 = 1;
+
+} else {   ## fct = sec ou csc
+$c1 = 3;
+$c2 = 4;
+}
+
+$exp = Formula("$c1*$fct[$n]^2")->reduce;
+
+### la valeur
+$v = sqrt($c2/$c1);
+
+### les solutions
+if ($n == 0) { ### fct = sin
+$ans1 = Real("asin($v)");
+} elsif ($n == 1) { ### fct = cos
+$ans1 = Real("acos($v)");
+} elsif ($n == 2) { ### fct = tan
+$ans1 = Real("atan($v)");
+} elsif ($n == 3) { ### fct = cot
+$ans1 = Real("acot($v)");
+} elsif ($n == 4) { ### fct = sec
+$ans1 = Real("asec($v)");
+} else { ### fct = csc
+$ans1 = Real("acsc($v)");
+}
+
+$ans2 = Real("pi - $ans1");
+$ans3 = Real("pi + $ans1");
+$ans4 = Real("2*pi-$ans1");
+
+
+$ans = Compute("$ans1,$ans2,$ans3,$ans4");
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+À l'aide du cercle trigonométrique, trouver toutes les valeurs de \(x\) dans l'intervalle \(\left[0,2\pi\right[\)
+qui vérifient l'équation 
+\[ $exp = $c2 \]$BR
+Séparer les valeurs par une virgule.$BR
+${BBOLD}Note${EBOLD} : Une réponse doit être la valeur exacte écrite sous la forme d'une fraction ou d'une expression arithmétique. Elle ne doit pas être écrite avec des décimales ou 
+à l'aide des fonctions trigonométriques inverses.
+$PAR
+\( x = \) \{ans_rule(40)\}
+END_TEXT
+Context()->normalStrings;
+
+Context()->functions->disable("Trig");
+
+ANS($ans->cmp);
+
+
+$showHint = 6;
+
+$d = sqrt($c2);
+
+Context()->texStrings;
+BEGIN_HINT
+${BBOLD}Indice 1 :${EBOLD}
+$PAR
+Il faut transformer l'équation \($exp = $c2\) par l'équation équivalente 
+\[ \begin{array}{rl}$exp &= $c2\\
+ ($fct[$n])^2 &= \frac{$c2}{$c1}\\
+$fct[$n] &= \pm\sqrt{\frac{$c2}{$c1}}\\
+$fct[$n] &= \frac{\pm $d}{\sqrt{$c1}} \end{array}\]
+END_HINT
+Context()->normalStrings;
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

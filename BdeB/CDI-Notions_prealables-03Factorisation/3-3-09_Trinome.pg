@@ -1,0 +1,144 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Factorisation)
+## DBsection(Factorisation de trinômes)
+## KEYWORDS('Factorisation','français','trinôme')
+## Traduction('Julie Tremblay')
+## Institution(BdeB)
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowersFr.pl",
+#"problemRandomize.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+Context("PolynomialFactors-Strict");
+
+
+#(ax+b)(cx+d) = (ac)x^2 + (ad+bc)x + bd    a et c >0 , b et d \neq 0 
+
+#ProblemRandomize(style=>"Button",label=>"Générer un autre polynôme");
+
+
+
+$a = random(1,5,1);
+$b = non_zero_random(-4,4,1);
+
+if( gcf($a,$b) != 1) {$a=$a+1};
+
+$c = random(1,5,1);
+$d = non_zero_random(-4,4,1);
+
+if( gcf($c,$d) != 1) {$d=$d+1};
+
+if($a == $c && abs($b) == abs($d)){
+
+$c = $c+1;
+while( gcf($c,$d) != 1){ $c++};
+}
+
+$a1 = $a*$c;
+$a2 = $a*$d+$b*$c;
+
+
+$a3 = $b*$d;
+
+
+$expression = Compute("$a1*x^2+$a2*x+$a3")->reduce();
+$fact1 = Compute("$a x + $b")->reduce();
+$fact2 = Compute("$c*x+$d")->reduce();
+
+$answer = Compute("($fact1)($fact2)");
+
+
+################################################
+#  Main text
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Factoriser l'expression \($expression\). $BR
+Si le polynôme ne se factorise pas, réécrire le polynôme dans la case réponse.
+$BR
+$BR
+\{ ans_rule(30) \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème sont présentées à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2320", "1.2.4", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 0;
+
+ANS($answer->cmp(
+checker => sub {
+        my ($correct,$student,$ans) = @_; 
+      
+    if ($student eq $expression) {
+      $ans->{ans_message} = "Ce polynôme se factorise.";
+       return 0;
+} elsif ($student == $answer) {
+return 1;
+} else {
+return 0;
+}
+
+  return $ans; 
+})
+);
+
+$u = $a*$d;
+$v = $b*$c;
+$p = $a1*$a3;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Pour factoriser le polynôme \($expression\) de la forme \(ax^2+bx+c\), on cherche deux nombres   \(u\) et \(v\) tels que $BR $BR
+\[
+\begin{array}{rlrl} u + v &= b   &\Rightarrow  u + v &= $a2    \\
+      u \times v &= a c  &\Rightarrow u \times v &= $p \end{array}
+\]
+$BR $BR
+En posant \(u = $u\) et \(v = $v\), on a bien: $BR $BR
+\[    $u + $v = $a2 \text{ et } $u \times $v = $p\]
+$BR
+La factorisation du polynôme se fait de la façon suivante : $BR $BR
+\[
+\begin{array}{rl}  $expression &= $a1 x^2 + ($u + $v)x + $a3 \\
+                                    &=  \underbrace{$a1 x^2 + $u x} + \underbrace{$v x + $a3} \\
+                                    &=  $a x($c x + $d) + $b ($c x+$d ) \\
+                                    &=   $answer
+\end{array}
+\]
+$HR
+$BITALIC
+Un exemple similaire est présenté à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2320", "1.2.4", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

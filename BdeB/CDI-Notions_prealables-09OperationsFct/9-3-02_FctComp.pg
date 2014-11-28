@@ -1,0 +1,116 @@
+##DESCRIPTION
+#Trouver l'équation d'une composition de fonctions
+#Fait par Julie Tremblay, juin 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Fonctions composées)
+## Institution(Collège de Bois-de-Boulogne)
+## Author(Julie Tremblay)
+
+## Level(2)
+## Language(fr)
+
+## KEYWORDS('Fonction composée','français','composition')
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"AnswerFormatHelp.pl",
+"PGauxiliaryFunctions.pl",
+"contextRationalFunction.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a=random(1,9,1);
+$b=random(1,9,1);
+$c=random(1,9,1);
+
+
+$f = Formula("x+$a")->reduce;
+$g = Formula("$b/(x+$c)")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+
+Soit \(f(x) = $f\) et \(g(x) = \displaystyle $g \).  Alors
+$BR
+$BR
+$BR 
+a)\((f\circ f) (x) = \)    \{ans_rule(30)\}
+END_TEXT
+Context()->normalStrings;
+
+$ans1 = Formula("x+2*$a")->reduce;
+ANS($ans1->cmp);
+
+
+BEGIN_TEXT
+$BR
+b) \((f\circ g) (x) = \)    \{ans_rule(30)\}
+END_TEXT
+
+$ans2 = $f->substitute(x=>$g)->reduce;
+
+ANS($ans2->cmp);
+
+BEGIN_TEXT
+$BR
+c) \((g\circ f) (x) = \)    \{ans_rule(30)\}
+END_TEXT
+
+$ans3 = $g->substitute(x=>$f)->reduce;
+
+
+
+ANS($ans3->cmp);
+
+BEGIN_TEXT
+$BR
+d) \((g\circ g) (x) = \)    \{ans_rule(30)\} ${BBOLD}(Simplifier votre réponse)$EBOLD
+$BR
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=7010", "2.4.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+
+$bc = $b*$c;
+$e = $b + $c*$c;
+
+$ans4 = Formula("($b x + $bc)/($c x + $e)")->reduce;
+
+Context("RationalFunction");
+
+ANS($ans4->cmp);
+
+$rep4 = $g->substitute(x=>$g);
+$apc = $a+$c;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Soit \(f(x) = $f\) et \(g(x) = \displaystyle $g \).  Alors
+$BR $BR
+a) \((f\circ f) (x) = f(f(x)) = f\left($f\right) = $ans1\)
+$PAR
+b) \((f\circ g) (x) = f(g(x)) = f\left($g\right) = $ans2\)
+$PAR
+c) \((g\circ f) (x) = g(f(x)) = g\left($f\right) = $ans3 = \dfrac{$b}{x+$apc}\)
+$PAR
+d) \((g\circ g) (x) = g(g(x)) = g\left($g\right) = \displaystyle $rep4 = \displaystyle $ans4\)
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

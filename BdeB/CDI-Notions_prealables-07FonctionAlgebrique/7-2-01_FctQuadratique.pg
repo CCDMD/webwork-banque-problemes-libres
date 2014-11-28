@@ -1,0 +1,93 @@
+##DESCRIPTION
+## Introduction to Functions
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions algébriques)
+## DBsection(Fonction quadratique - Caractéristiques)
+## Author(Julie Tremblay)
+## Institution(Collège Bois-de-Boulogne)
+
+## KEYWORDS('Fonction','Quadratique','Évaluer')
+## Level(2)
+## Language(fr)
+
+
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+ "PGcourse.pl",
+#  "contextLimitedNumeric.pl",
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+
+
+$num1 = random(2,5,1);
+$num2 = random(2,5,1);
+$g = Formula("$num1 x^2 + $num2")->reduce;
+
+$a = random(-7,7,1);
+$b = random(-7,7,1);
+if ($a!=0) {$b = 0;}  #Either $a or $b will be zero
+$c = random(-7,-1,1);
+$e = random(2,7,1);
+
+######################################
+#  Main text
+
+BEGIN_TEXT
+Soit \(g(x)= \{$g->TeX\} \). Trouver les valeurs demandées. Si la valeur n'existe pas, écrire ${BBOLD}nep.$EBOLD
+$PAR
+a)  \( g($a) \) = \{ans_rule(15) \}
+$PAR
+b)  \( g($b) \) = \{ans_rule(15) \}
+$PAR
+c)   \( g(b) \) = \{ans_rule(15) \}
+$PAR
+d)  \( g($c b) \) = \{ans_rule(15) \}
+$PAR
+e) \( g\left(\frac{$e}{b}\right) \) = \{ans_rule(15) \}
+
+END_TEXT
+
+######################################
+#  Answers
+
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+
+$ans_a = $g->eval(x=>$a)->inContext(Context());;
+ANS($ans_a->cmp);
+
+$ans_b = $g->eval(x=>$b)->inContext(Context());;
+ANS($ans_b->cmp);
+
+Context()->variables->add(b=>'Real');
+
+$ans_c= $g->substitute(x=>"b")->reduce;
+ANS($ans_c->cmp);
+
+$ans_d = $g->substitute(x=>"$c*b")->reduce;
+ANS($ans_d->cmp);
+
+$ans_e = $g->substitute(x=>"$e/b")->reduce;
+ANS($ans_e->cmp);
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

@@ -1,0 +1,55 @@
+## DBsubject(Probabilités)
+## DBchapter(Variables aléatoires discrètes)
+## DBsection(Variables discrètes)
+ ##Author(Jean-Sébastien Turcotte - Université de Montréal)
+## KEYWORDS('Variables aléatoires discrètes')
+## Level(1)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl"                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+);
+
+
+TEXT(beginproblem());
+Context("Numeric");
+$lancers=random(4,8);
+$poss=List( 0, 1, 2, 3 );
+foreach my $i(4..$lancers){
+$temp=List("$i");
+$poss=$poss.$temp;
+}
+$minposs=List(3);
+foreach my $i(4..$lancers){
+$temp=List("$i");
+$minposs=$minposs.$temp;
+}
+
+BEGIN_TEXT
+On considère l'expérience aléatoire qui consiste à lancer une pièce de monnaie \($lancers\) fois.
+$BR
+\{BeginList("OL")\}
+$ITEM Soit \(N\) le nombre de piles obtenus. Quelles sont les valeurs possibles pour la variable aléatoire \(N\)? Écrire votre réponse en séparant chaque valeur par une virgule, par exemple \(1,2\). \{$poss->ans_rule(20)\}
+$ITEMSEP
+$ITEM
+Pour la même expérience, on considère maintenant la variable aléatoire \(M=\min(3,M)\). Quelles sont les valeurs possibles pour la variable aléatoire \(M\)?  Écrire votre réponse en séparant chaque valeur par une virgule, par exemple \(1,2\). \{$minposs->ans_rule(20)\}
+\{EndList("OL")\}
+
+END_TEXT
+
+ANS( $poss->cmp() );
+ANS($minposs->cmp());
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

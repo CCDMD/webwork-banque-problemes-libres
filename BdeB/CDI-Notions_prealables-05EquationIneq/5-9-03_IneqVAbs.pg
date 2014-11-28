@@ -1,0 +1,113 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Résoudre une inéquation contenant des valeurs absolues)
+## KEYWORDS('Résoudre','Inéquation','Valeur absolue')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+   
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"unionTables.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+
+###################################
+# Setup
+Context("Numeric");
+
+
+$a = random(1,8,1);
+$b = random(2,10,1);
+$c = random(3,15,1);
+
+$num1 = $b + $c;
+$num2 = $b - $c;   ### minimum
+
+
+($n1,$d1) = reduce($num1,$a);
+($n2,$d2) = reduce($num2, $a);
+
+$poly = Formula("$b - $a x")->reduce;
+$f = Formula("|$poly|")->reduce;
+
+Context("Interval");
+Context()->strings->add(vide=>{},EmptySet=>{alias=>"vide"});
+
+
+$ans =Compute("($n2/$d2,$n1/$d1)");
+
+###################################
+# Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre l'inégalité suivante en utilisant la notation d'intervalle.
+$BR 
+$BR
+\[ $f < $c  \]
+Réponse : \{ans_rule(35)\} \{ AnswerFormatHelp("intervals") \} $BR
+$PAR
+$BBOLD Note: Si la réponse inclut plus d'un intervalle, les écrire séparés par le symbole d'union "U". Pour \(-\infty\) ou \(\infty\), écrire "-inf" ou "inf". S'il n'y a aucune solution, écrire deux accolades "{ }" pour désigner l'ensemble vide. $EBOLD
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6898", "1.5.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+ANS($ans->cmp);
+
+#### Pour afficher les bornes simplifiées en latex
+
+$x1 = $n1/$d1;  
+$x2 = $n2/$d2;
+
+if($x1 - floor($x1) != 0 ) { $x1="\frac{$n1}{$d1}"; }
+if($x2 - floor($x2) != 0 ) { $x2="\frac{$n2}{$d2}"; }
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pour résoudre une inégalité de la forme \(|f(x)| < c\), il faut résoudre l'inégalité équivalente : \(-c < f(x) < c\). Donc, $BR $BR
+\[
+$f < $c \Leftrightarrow -$c < $poly < $c \Leftrightarrow -$c< $poly \quad\textbf{ et }\quad $poly < $c
+\]
+$BR
+Ainsi pour résoudre ce type d'inégalité, il faut résoudre les inéquations séparément et faire $BBOLD l'intersection$EBOLD des deux solutions.
+$HR
+\[  \begin{array}{lcl}(1)&-$c < $poly &\text{; addition de } $c \\ & 0 < $poly + $c&\text{; addition de } $a x\\& $a x < $num1 &\text{; division par } $a \\ & x < $x1 & \end{array} \]
+$BR
+Ainsi, l'intervalle de solution de la première inégalité est : \(\left] -\infty, $x1 \right[ \).
+$HR
+\[  \begin{array}{lcl}(2)& $poly < $c & \text{; addition de }-$b \\ & -$a x < $c - $b& \\& -$a x < -$num2 &\text{; division par } -$a \\& x > $x2 &\text{; il faut inverser le symbole car } -$a < 0\end{array} \] $BR
+Ainsi, l'intervalle de solution de la deuxième inégalité est : \(\left] $x2, \infty\right[ \).
+$BR $BR
+Pour trouver l'intervalle de solution de \($f < $c\), il faut faire l'intersection de ces deux intervalles, car \(x\) doit appartenir aux deux intervalles.$BR $BR
+Par conséquent, l'intervalle de solution est : \(\left] $x2, \infty \right[ \cap  \left] -\infty, $x1\right[ = \left] $x2, $x1 \right[ \), car \($x2 < $x1\).
+END_SOLUTION
+Context()->normalStrings;
+
+###################################
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

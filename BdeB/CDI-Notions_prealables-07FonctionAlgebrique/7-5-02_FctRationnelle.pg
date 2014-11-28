@@ -1,0 +1,141 @@
+##DESCRIPTION
+## Graphique d'une fonction rationnelle ayant subit une transformation
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions algébriques)
+## DBsection(Fonction quadratique - Caractéristiques)
+## Traduction(Julie Tremblay)
+## Institution(BdeB)
+########### Source ######################
+## fichier source : ks_9_5_28.pg
+## ZDBsubject('Algebra')
+## ZDBchapter(Polynomial and rational functions)
+## ZDBsection('Rational Functions')
+## ZDate('01/10/2010')
+## ZAuthor('Justin Sukiennik')
+## ZInstitution('University of Minnesota')
+#########################################
+## KEYWORDS('fonction rationnelle','graphique')
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+#####################################################################
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "PGgraphmacros.pl",
+  "choiceUtils.pl",
+  "PGcourse.pl",  
+);
+#####################################################################
+
+TEXT(beginproblem());
+
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+#####################################################################
+$w = 300;  # graph size
+$tw = 400; # graph size in TeX
+
+$a = non_zero_random(-4,4,1);
+do{$b = non_zero_random(-5,5,1);} until($b!=$a);
+
+Context("Numeric");
+
+$f1 = Formula("1/(x-$a)")->reduce;
+$f2 = Formula("1/x+$a")->reduce;
+$f3 = Formula("1/x+$b")->reduce;
+$f4 = Formula("1/(x-$a)+$b")->reduce;
+
+$a1 = Real("$a-0.01");
+$a2 = Real("$a+0.01");
+
+$graph1 = init_graph(-8,-8,8,8,'axes'=>[0,0],'ticks'=>[16,16],'grid'=>[16,16],'size'=>[400,400]);
+
+$graph2 = init_graph(-8,-8,8,8,'axes'=>[0,0],'ticks'=>[16,16],'grid'=>[16,16],'size'=>[400,400]);
+
+$graph3 = init_graph(-8,-8,8,8,'axes'=>[0,0],'ticks'=>[16,16],'grid'=>[16,16],'size'=>[400,400]);
+
+$graph4 = init_graph(-8,-8,8,8,'axes'=>[0,0],'ticks'=>[16,16],'grid'=>[16,16],'size'=>[400,400]);
+
+$p1 = FEQ("$f3 for x in <0.01,8> using color:blue weight:2");
+$p1a = FEQ("$f3 for x in <-8,-0.01> using color:blue weight:2");
+$p2 = FEQ("$f2 for x in <0.01,8> using color:blue weight:2");
+$p2a = FEQ("$f2 for x in <-8,-0.01> using color:blue weight:2");
+$p3 = FEQ("$f1 for x in <$a2,8> using color:blue weight:2");
+$p3a = FEQ("$f1 for x in <-8,$a1> using color:blue weight:2");
+$p4 = FEQ("$f4 for x in <$a2,8> using color:blue weight:2");
+$p4a = FEQ("$f4 for x in <-8,$a1> using color:blue weight:2");
+
+plot_functions($graph1,$p1,$p1a);
+plot_functions($graph2,$p2,$p2a);
+plot_functions($graph3,$p3,$p3a);
+plot_functions($graph4,$p4,$p4a);
+
+##################################################
+
+sub bold {return $BBOLD.join("",@_).$EBOLD}
+
+@ops = (separation=>30, indent=>0);
+#####################################################################
+$imageTable =
+  BeginTable().
+    Row([image(insertGraph($graph1),width=>$w,height=>$w,tex_size=>$tw),image(insertGraph($graph2),width=>$w,height=>$w,tex_size=>$tw)],@ops).
+    TableSpace(5).
+    AlignedRow([bold('A'),bold('B')],@ops).
+    TableSpace(40).
+    Row([image(insertGraph($graph3),width=>$w,height=>$w,tex_size=>$tw),image(insertGraph($graph4),width=>$w,height=>$w,tex_size=>$tw)],@ops).
+    TableSpace(5).
+    AlignedRow([bold('C'),bold('D')],@ops).
+  EndTable();
+
+###############################################################
+
+Context()->texStrings;
+
+$sl = new_select_list();
+$sl->{rf_print_q} = ~~&alt_print_q;
+$sl->{separation} = 10;
+
+$sl->qa(
+  "\(f(x) = $f1\)",    "C",
+  "\(f(x) = $f2\)",      "B",
+  "\(f(x) = $f3\)",    "A",
+  "\(f(x) = $f4\)",    "D"
+);
+
+$sl->choose(4);
+
+########################################################################
+
+BEGIN_TEXT
+Chacun des graphiques ci-dessous est une transformation de la fonction rationnelle de base \(f(x) = \displaystyle \frac{1}{x}.\)  Associer chacune des fonctions à son équation.
+$PAR 
+$BCENTER
+$imageTable $PAR
+$BBOLD Note: $EBOLD $BITALIC Cliquer sur l'image pour l'agrandir.$EITALIC
+$ECENTER
+$PAR
+\{$sl->print_q\}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6986", "2.2.4", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+ANS(str_cmp($sl->ra_correct_ans));
+
+########################################################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

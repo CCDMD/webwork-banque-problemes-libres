@@ -1,0 +1,83 @@
+## DBsubject(Probabilités)
+## DBchapterDénombrement)
+## DBsection(Principes de dénombrement)
+###############Source###############
+## Fichier source: Utah/College_Algebra/set13_Review/1050sp17.pg
+## ZInstitution(Univeristy of Utah)
+## ZAuthor(Utah ww group)
+## ZTitleText1('Precalculus')
+## ZAuthorText1('Ron Larson and Robert  Hostetler')
+## ZEditionText1('7')
+## ZSection1('.')
+## ZProblem1('')
+###############Source###############
+## KEYWORDS('Théorème du binôme','Combinaison')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+"contextIntegerFunctions.pl",
+);
+
+TEXT(beginproblem());
+
+Context()->noreduce('(-x)-y','(-x)+y');
+
+$a=random(2,5)*random(-1,1,2);
+$b=non_zero_random(-5,5);
+$c=random(2,7);
+$F=Formula("($a*x+$b)**($c)")->reduce;
+
+@coef=NchooseK($c,$c);
+
+$poly = "a_{$c} x^{$c}";
+
+foreach my $i( 0..$c){
+$n = C($c,$i);
+$coef[$i]=Compute("$n*($a)**($c-$i)*($b)**($i)")->reduce;
+$k=$c-$i;
+if($k!=$c && $k!=1 && $k!=0) {
+$poly= $poly."+ a_{$k} x^{$k}";
+}
+}
+
+$poly = $poly."+ a_{1}x + a_{0}";
+
+
+
+Context()->texStrings;
+BEGIN_TEXT; 
+Soit
+\[p(x) = $F=$poly.\]
+Alors
+$BR
+END_TEXT;
+
+Context()->functions->disable("C");
+
+foreach my $i( 0..$c){
+
+$k=$c-$i;
+
+BEGIN_TEXT; 
+$BR
+\(a_{$k} = \) \{ ans_rule(10) \},
+END_TEXT
+
+ANS(Real($coef[$i])->cmp);
+}
+
+Context()->normalStrings;
+
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

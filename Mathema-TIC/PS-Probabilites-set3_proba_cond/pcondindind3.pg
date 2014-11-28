@@ -1,0 +1,58 @@
+## DBsubject(Probabilités)
+## DBchapter(Probabilité conditionnelle et indépendance)
+## DBsection(Probabilités conditionnelles)
+## Author(Jean-Sébastien Turcotte - Université de Montréal)  # ou ##Modifié par 
+## KEYWORDS('Indépendance')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl"
+);
+TEXT(beginproblem());
+#####Initialisation des paramètres######################
+Context("Numeric");
+$prob=random(0.55,0.85,0.05);
+$qprob=1-$prob;
+$n=random(3,6,1);
+$nmoins1=$n-1;
+$ans1=Compute("$prob**($n)");
+$ans2=Compute("$qprob*$prob**$nmoins1");
+$ans3=Compute("1-$prob**$n");
+$showHint=4;
+BEGIN_TEXT
+Une pièce truquée est lancée \($n\) fois. La pièce retombe sur face avec probabilité \($prob\) et elle retombe sur pile avec probabilité \($qprob\). Calculer la probabilité
+
+\{BeginList("OL")\}
+$ITEM que les \($n\) tirs soient tous face;  \{ $ans1->ans_rule(10) \}
+$ITEMSEP
+
+$ITEM que le premier tir soit pile suivi de \($nmoins1\) faces. \{$ans2-> ans_rule(10) \}
+$ITEMSEP
+
+$ITEM Quelle est la probabilité que la séquence en \(2.\) survienne avant la séquence en \(1.\)? (Remarque: vous obtiendrez un indice après \(4\) tentatives ratées.)\{ $ans3->ans_rule(10) \}
+$ITEMSEP
+\{EndList("OL")\}
+
+
+END_TEXT
+BEGIN_HINT
+Pour \(3.\), il n'y a qu'une seule manière d'avoir la séquence en \(1.\) avant la séquence en \(2.\). Calculez \(1\) moins la probabilité que la séquence en \(1.\) survienne avant la séquence en \(2.\).
+END_HINT
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+
+ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

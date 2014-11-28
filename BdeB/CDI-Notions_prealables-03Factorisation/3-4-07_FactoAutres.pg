@@ -1,0 +1,137 @@
+## DESCRIPTION
+## Algebra: Basic Algebra
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Factorisation)
+## DBsection(Factorisation : autres formes)
+## KEYWORDS('Factorisation','français','somme de cubes')
+## Traduction('Julie Tremblay')
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+## ZDBsubject('Algebra')
+## ZDBchapter('Basic Algebra')
+## ZDBsection('Algebraic Expressions')
+## ZAuthor('Mark Schmitt')
+## ZInstitution('Rochester')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserMultiAnswer.pl",
+"AnswerFormatHelp.pl",
+);
+
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem());
+
+Context("Numeric")->variables->add(y=>"Real");
+
+
+$a = random(2,4,1);
+$b = random(2,5,1);
+while (gcd($a,$b) > 1) {$b = random(2,5,1);}
+
+
+
+$expression = Formula("$a^3 x^3 + $b^3 y^3")->reduce;
+
+
+$fac1 = Formula("$a x + $b y")->reduce;
+$fac2 = Formula("$a^2 x^2 - $a*$b x*y + $b^2 y^2")->reduce;
+
+$multians = MultiAnswer($fac1, $fac2)->with(
+  singleResult => 0,
+  allowBlankAnswers => 1,
+  checker => sub {
+      my ( $correct, $student, $self ) = @_;
+      my ( $f1stu, $f2stu ) = @{$student};
+      my ( $f1, $f2 ) = @{$correct};
+      if ( ($f1 == $f1stu && $f2 == $f2stu) ||
+           ($f1 == $f2stu && $f2 == $f1stu) ) {
+          return [1,1];
+      } else {
+          if ($f1 == $f1stu || $f2 == $f1stu) {
+              return [1,0];
+          } elsif ($f1 == $f2stu || $f2 == $f2stu) {
+              return [0,1];
+          } else {
+              return [0,0];
+          }
+      }
+  }
+);
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Le polynôme \($expression\) se factorise en
+un produit de deux polynômes. Trouver ces deux polynômes.
+$BR
+$BR
+\( \big( \)
+\{ $multians->ans_rule(10) \}
+\( \big) \big( \)
+\{ $multians->ans_rule(10) \}
+\( \big) \)
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème sont présentées à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2334", "1.2.7", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+
+END_TEXT
+Context()->normalStrings;
+
+
+$showPartialCorrectAnswers = 1;
+
+ANS($multians->cmp());
+
+
+$ab = Compute("$a*$b")->reduce;
+$a2b = Compute("$a^2*$b")->reduce;
+$a2 = Compute("$a^2")->reduce;
+$b2 = Compute("$b^2")->reduce;
+$ab2 = Compute("$a*$b^2")->reduce;
+$a3 = Compute("$a^3")->reduce;
+$b3 = Compute("$b^3")->reduce;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Le polynôme \($expression\) est une somme de deux cubes et se factorise selon la règle :$BR $BR
+\[   a^3 + b^3 = (a+b)(a^2 - ab + b^2) \]
+$BR
+Dans notre expression, on a que \(a= $a x\) et \(b = $b y\). Ainsi, la factorisation s'effectue de la façon suivante:
+$BR
+$BR
+\[  $expression =  ($a x)^3 + ($b y)^3 = ($fac1)($fac2) \]
+$BR
+Pour trouver le facteur quadratique dans la factorisation, nous pourrions avoir recours également à la division polynomiale. Il faudrait diviser \(($expression)\) par le facteur \( ($fac1)\) de la façon suivante:
+$BR $BR 
+
+\[  \arraycolsep=10pt\begin{array}{rl}{\quad $expression}&{\left| {\underline {$fac1} } \right. }\\[0.5em]{\underline {- \left( $a3 x^3+$a2b x^2y \right)} }&{ \; $fac2}\\[0.5em]{\quad \quad \quad -$a2b x^2y + $b3 y^3}&{}\\[0.5em]{\underline {\quad -\left( -$a2b x^2y - $ab2 xy^2 \right)}}&{}\\[0.5em]{ \qquad \qquad $ab2 xy^2 + $b3 y^3}&{} \\[0.5em]{\underline {\quad -\left( $ab2 xy^2 + $b3 y^3 \right)}}&  \\[0.5em]{\qquad \qquad \qquad \qquad 0}&{} \end{array} \]
+
+$HR
+$BITALIC
+La factorisation d'une somme de deux cubes est présentée à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2334", "1.2.7", "TARGET='_blank'" ) \} sur la Plateforme d'aide en mathématiques.
+$BR
+Un exemple similaire est également présenté avec la méthode de la division polynomiale à la page 
+\{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=1508#division", "1.1.2", "TARGET='_blank'" ) \}.
+$EITALIC
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;
+

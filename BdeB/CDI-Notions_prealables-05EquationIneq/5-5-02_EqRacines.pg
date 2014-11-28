@@ -1,0 +1,156 @@
+## DESCRIPTION
+##   Solve an Equation with Square Root
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Équations contenant des racines carrées)
+## KEYWORDS('Racine carrée','Résoudre','Équation')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"answerHints.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->noreduce('(-x)-y');
+
+do{$A = non_zero_random(-9,9,1);} until($A != 1);
+do{$B = non_zero_random(-9,9,1);} until($B != 1);
+$C = non_zero_random(-9,9,1);
+$D = non_zero_random(-9,9,1);
+
+$poly = Formula("$B x + $C")->reduce;
+$gauche = Formula("$A*sqrt($poly)")->reduce;
+
+
+$sol = (($D/$A)**2 - $C )/$B;
+$sol = Compute("$sol");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer les restrictions sur la racine carrée dans l'équation suivante, c'est-à-dire le domaine de l'équation.$BR $BR
+\[$gauche = $D\]
+$BR $BR
+Restrictions : \( x\in\) \{ans_rule(30)\} \{AnswerFormatHelp("intervals") \} $BR
+$BR
+Résoudre, si possible, cette équation. S'il n'y a aucune solution, écrire "aucune" dans la case réponse.
+$BR
+$BR
+Solution : \{ans_rule(15)\}.
+$BR
+$HR
+$BITALIC
+Des exemples similaires se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5274", "1.4.4", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+Context("Interval");
+
+$borne = Compute("-$C/$B")->reduce;
+if($B > 0) {
+$dom = Compute("[$borne, infinity)");
+} else {
+$dom = Compute("(-infinity, $borne]");
+}
+
+ANS($dom->cmp);
+
+Context("Numeric");
+Context()->strings->add(aucune => {});
+
+
+if ($A*$D < 0) {
+ANS(String("aucune")->cmp()->withPostFilter(AnswerHints(($sol) => ["Vérifiez si votre solution fait partie du domaine de l'équation.", replaceMessage => 1]))
+);
+} else { ANS($sol->cmp); 
+}
+
+#si la borne n'est pas un entier
+if( $borne - floor($borne) != 0) { 
+($c,$b) = reduce($C,$B);
+$borne = "\frac{-$c}{$b}";
+}
+
+($d,$a) = reduce($D,$A);
+$frac = Compute("$D/$A");
+$frac2 = Compute("$frac*$frac");
+$frac3 = Compute("$frac2 -$C");
+
+#si n'est pas un entier
+if( $frac - floor($frac) != 0) { 
+$frac = "\frac{$d}{$a}";
+$dd = $d*$d;
+$aa = $a*$a;
+$frac2 = "\frac{$dd}{$aa}";
+$aac = $aa*$C;
+$ddaac = $dd - $aac;
+$frac3 = "\frac{$ddaac}{$aa}";
+}
+
+
+#remplace la solution dans la partie gauche
+$verif = $gauche->eval(x=>$sol);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+L'argument que l'on donne à une racine carrée doit toujours être \(\geq 0\). Alors, pour que \(x\) appartienne au domaine de \(\sqrt{$poly}\), il faut que $BR $BR
+\{ if( $B > 0 ) {
+"\[  $poly \geq 0 \Rightarrow $B x \geq -$C \Rightarrow x \geq $borne \]".
+$BR.$BR.
+"Donc, les restrictions sur \(x\) sont : ".
+"\(x\in \left[ $borne, \infty \right) \)."
+}
+else {
+"\[  $poly \geq 0 \Rightarrow $B x \geq -$C \Rightarrow x \leq $borne \]".
+$BR.
+" Il faut changer le sens du symbole d'inégalité en divisant par \($B\) car il est \( < 0\).". 
+$BR.$BR.
+"Donc,  les restrictions sur \(x\) sont : ".
+"\(x\in \left(-\infty,$borne \right]\)."
+}
+\}
+$HR
+Pour résoudre cette équation, il faut tout d'abord isoler la racine. On obtient, $BR
+$BR
+\[ $gauche = $D \Rightarrow \sqrt{$poly} = $frac\]
+$BR
+\{ if( $A*$D < 0 ) {
+"Comme \($frac\) est négatif et qu'une racine carrée ne peut donner".
+" un nombre négatif, alors on peut conclure que cette équation ne possède".
+$BBOLD." aucune solution réelle."
+} else {
+"On élève ensuite chaque membre de l'égalité au carré pour ensuite isoler \(x\).".
+$BR.$BR.
+"\[\begin{array}{rl} \left(\sqrt{$poly}\right)^2 &= \left($frac\right)^2\\[0.8em] $poly &= $frac2\\[0.8em] $B x &= $frac2 - $C = $frac3 \\[0.8em] x &= \frac{$frac3}{$B}= $sol \end{array}\]".
+$BR.$BR.
+"Comme cette valeur fait partie du domaine, et qu'elle vérifie l'équation initiale, soit :  ".$BR.
+"\[$gauche = $D \Rightarrow $A\sqrt{$B($sol)+$C} = $D \Rightarrow $verif = $D \]".
+$BR."alors, la solution de cette équation est "."\(\boxed{x = $sol}\)"
+}
+\}
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

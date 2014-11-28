@@ -1,0 +1,80 @@
+##DESCRIPTION
+##   Algebra: linear equations
+##ENDDESCRIPTION
+
+##Tagged by up2p
+
+## DBsubject('Algebra')
+## DBchapter('Basic Algebra')
+## DBsection('Equations')
+## KEYWORDS('algebra', 'linear equations', 'solving equations', 'linear', 'francais')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGauxiliaryFunctions.pl",
+  "Parser.pl",
+  "MathObjects.pl",
+);
+
+# Problem: Équation linéaire n'ayant aucune solution,
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(aucune => {});
+Context()->noreduce('(-x)-y','(-x)+y');
+
+do{$a = non_zero_random(-12,12,2);} until($a != 1);
+$b =non_zero_random(-9,9,1);
+$c =non_zero_random(-9,9,1);
+$d = -$a/2;
+do{$e =non_zero_random(-20,20,1);} until($e != $a*$b/2 - $c);
+
+($gau, $dro) = (Formula("$a ($b - x)")->reduce, Formula("2*($c + $d x) + $e")->reduce);
+
+
+######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre, si possible, l'équation linéaire suivante. S'il n'y a aucune solution, écrire "aucune" dans la case réponse.$BR $BR
+\[$gau = $dro \]
+$BR $BR
+\(x =\) \{ans_rule(10)\}
+END_TEXT
+Context()->normalStrings;
+
+
+$ans = String("aucune");
+ANS($ans->cmp);
+
+
+############# Solution
+
+
+
+$gau2 = Formula("$a*$b - $a x")->reduce;
+$dro2 = Formula("2*$c + 2*$d x + $e")->reduce;
+
+$gau3 = Formula("-$a x - 2*$d x")->reduce;
+$dro3 = Formula("2*$c + $e")->reduce;
+$ab = $a*$b;
+$dro4 = $dro3 - $ab;
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pour résoudre cette équation, il faut isoler la variable \(x\) dans l'équation en effectuant les mêmes opérations sur chaque membre de l'égalité.
+$BR
+\[\begin{array}{rll}$gau &= $dro &\text{; distributivité}\\$gau2 &= $dro2 &\hbox{; les termes en x du même côté}\\$gau3 &=  $dro3 - $ab &\\ 0 &= $dro4&\text{; équation incompatible}\end{array}\]
+$BR
+Cette dernière équation incompatible signifie qu'il n'y a $BBOLD aucune solution$EBOLD à l'équation linéaire de départ. Donc il n'existe aucune valeur réelle de \(x\) qui vérifie cette équation.
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

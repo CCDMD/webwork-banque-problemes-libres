@@ -1,0 +1,107 @@
+
+
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions algébriques)
+## DBsection(Fonction racine carrée  - Caractéristiques)
+## KEYWORDS('fonction','racine','domaine','image')
+## Traduction(Julie Tremblay)
+## Institution(BdeB)
+## Language(fr)
+
+DOCUMENT();
+
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+);
+
+TEXT(beginproblem());
+
+
+
+ #fonction de la forme x + sqrt( (b-a)x + ab )
+# Le zéro de la fonction est  :  x= -a, on rejette  x = b car il n'est pas solution.
+# Le domaine est :  x >=   (ab)/(b-a)
+
+$a = random(2,8,1);
+$b = random($a+1,$a+6,1);
+
+$c = $b-$a;
+$ab = $a*$b;
+$f = Formula("x + sqrt($c x + $ab)")->reduce;  
+
+($n,$d)=reduce(-$ab,$c);  ### borne du domaine = n/d
+$borne = $n/$d;
+
+
+
+$zero = Compute("-$a");
+
+Context("Interval");
+
+$dom = Compute("[$borne,inf)");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la fonction \( \displaystyle f(x) = $f\). $BR $BR
+a) Déterminer son domaine.$BR $BR
+
+\( \text{dom }f = \)\{ans_rule(20) \}   \{ AnswerFormatHelp("intervals") \}
+$BR $BR
+
+b) Trouver le(les) zéro(s) de la fonction, c'est-à-dire les valeurs de \(x\) où \(f(x) = 0\).$BR $BR
+
+\( x = \) \{ans_rule(10)\}  
+$BITALIC  (S'il y plus d'une valeur de \(x\), séparez-les par des virgules. Ex: -4,3) $EITALIC
+$BR
+END_TEXT
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $dom->cmp);
+ANS( List($zero)->cmp());
+
+
+
+if($borne - floor($borne) != 0) { ## écrire la borne en fraction latex
+$borne = "\frac{$n}{$d}";
+}
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+a) Les valeurs de \(x\) qui appartiennent au domaine de \(f(x) = $f\) doivent vérifier la condition suivante:$BR $BR
+\[  $c x + $ab \geq 0 \Rightarrow  x \geq \frac{-$ab}{$c} \]
+$BR $BR
+Par conséquent, le domaine est: \(\text{dom}\:f= [$borne,\infty [ \)
+$HR
+b) Pour trouver le zéro de \(f\), il faut résoudre l'équation \(f(x) = 0\). Voici la démarche de résolution: $BR $BR
+\[\begin{array}{ll} $f = 0 & \Leftrightarrow \sqrt{ $c x + $ab } = -x &\text{; La fonction racine carrée ne peut pas donner de valeurs négatives}\\
+&&\text{ il faut alors que } $borne \leq x \leq 0\\
+&\Leftrightarrow \left({ \sqrt{ $c x + $ab } }\right)^2 = (-x)^2 &\text{; on élève au carré de chaque côté de l'égalité}\\
+&\Leftrightarrow   0 = x^2 -$c x - $ab &\text{; Tous les termes sont mis du même côté}\\&&\text{ de l'égalité pour former un polynôme quadratique} \end{array}\]
+$BR $BR
+Pour résoudre ce polynôme quadratique, on peut factoriser ou bien utiliser la formule quadratique. Ainsi, $BR $BR
+\( x^2 -$c x - $ab = 0 \Leftrightarrow  \dfrac{ $c \pm \sqrt{ $c^2 - 4(-$ab)}}{2} \Leftrightarrow  x = -$a \text{ et } x = $b \)  $BR $BR
+
+On doit REJETER la valeur \(x = $b\) car elle ne respecte pas la restriction plus haut, soit \($borne \leq x \leq 0\). En effet, si on la remplace dans la fonction de départ, on remarque que \(f($b) \ne 0\). $BR $BR
+\[ f($b) = $b + \sqrt{$c($b) + $ab} = $b + \sqrt{\{Compute("$b^2")\}} = \{Compute("2*$b")\}\]
+$BR $BR
+Le seul zéro de f est donc:  \(x = $zero\)
+$HR
+Pour plus d'exemples sur ce problème, voici un lien sur la Plateforme d'aide en mathématiques qui pourra vous aider.$BR
+- \{ htmlLink( " http://moodle.bdeb.qc.ca/mod/page/view.php?id=5274", "Équations contenant des racines carrées","TARGET='_blank'" ) \} $BR
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

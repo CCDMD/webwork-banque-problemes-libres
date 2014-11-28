@@ -1,0 +1,52 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Probabilités)
+## DBchapter(Espérance revisitée)
+## DBsection(Inégalités)
+## Author(Jean-Sébastien Turcotte)
+
+## KEYWORDS('Inégalité de Jensen')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl",,                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+#"PGstatisticsmacros.pl",   #Donne accès à des commandes de stats
+#"PGnumericalmacros.pl",    #Nécessaire pour certaines macros dans statistics
+);
+TEXT(beginproblem());
+#####Initialisation des paramètres######################
+Context("Numeric");
+$moy=random(5,60,5);
+@quest=('X^2','X^3','X^4','e^X','e^{-X}');
+@rep=($moy**2,$moy**3,$moy**4,$E**$moy,$E**(-$moy));
+@choix=NchooseK(5,3);
+BEGIN_TEXT
+Soit \(X\) une variable aléatoire non négative de moyenne \($moy\). Donner une borne inférieure aux espérance ci-dessous en utilisant l'inégalité de Jensen.
+\{BeginList("OL")\}
+
+$ITEM \(\mathbb{E}($quest[$choix[0]])\geq \)\{ans_rule(10)\}
+
+$ITEMSEP
+
+$ITEM \(\mathbb{E}($quest[$choix[1]])\geq \)\{ans_rule(10)\}
+$ITEMSEP
+$ITEM \(\mathbb{E}($quest[$choix[2]])\geq \)\{ans_rule(10)\}
+\{EndList("OL")\}
+
+END_TEXT
+ANS(Real("$rep[$choix[0]]")->cmp);
+ANS(Real("$rep[$choix[1]]")->cmp);
+ANS(Real("$rep[$choix[2]]")->cmp);
+ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

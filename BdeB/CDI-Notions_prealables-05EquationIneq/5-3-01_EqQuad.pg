@@ -1,0 +1,80 @@
+## DESCRIPTION
+## Quadratic Equations
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Équations quadratiques)
+## KEYWORDS('Équation quadratique','Résoudre','Équation')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGauxiliaryFunctions.pl",
+  "Parser.pl",
+  "MathObjects.pl",
+);
+
+# Résoudre (x-a)^2 - b = 0 où a > 2 et b > 2
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(aucune => {});
+Context()->noreduce('(-x)-y','(-x)+y');
+
+$a = random(2,12,1);
+$b = random(2,45,1);
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Trouver toutes les solutions réelles de l'équation \((x-$a)^2-$b=0\).
+$BR $BR Solution(s) =  \{ans_rule(25) \} $BR
+$BBOLD Note:  S'il y a plus d'une solution, écrire vos réponses séparées par une virgule. Ex.: 4, sqrt(10)$EBOLD
+$BR
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5270", "1.4.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+$ans1 = Compute("sqrt($b)+$a");
+$ans2 = Compute("-sqrt($b)+$a");
+
+
+ANS(List($ans1,$ans2)->cmp);
+
+$racb = Compute("sqrt($b)");
+
+if($racb - floor($racb)!=0) {
+$racb = Formula("sqrt($b)");
+$ans1 = Formula("sqrt($b) + $a");
+$ans2 = Formula("-sqrt($b) + $a");
+}
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pour résoudre cette équation, il faut isoler la variable \(x\) dans l'équation en utilisant le principe suivant : \( u^2 = a \Leftrightarrow \sqrt{u^2}=|u|=\sqrt{a}\) où \(a\geq 0\).
+$BR
+\[\begin{array}{rll} (x-$a)^2 - $b &= 0 &\\ (x-$a)^2 &=$b &\text{; racine carrée sur chaque membre de l'égalité}\\ \sqrt{(x-$a)^2} &= \sqrt{$b} &;\;\sqrt{u^2}=|u|\\ \vert x-$a\vert &= $racb &\\ x-$a &=\pm $racb & \end{array}\]
+$BR
+Donc, il existe deux solutions à cette équation :$BR $BR
+\[x-$a = +$racb \Rightarrow x=\boxed{$ans1} \quad x-$a=-$racb \Rightarrow x=\boxed{$ans2}\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

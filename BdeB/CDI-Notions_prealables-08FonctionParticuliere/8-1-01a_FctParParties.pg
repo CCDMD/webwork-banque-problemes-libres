@@ -1,0 +1,181 @@
+###DESCRIPTION
+## Fonctions par parties
+##ENDDESCRIPTION
+
+
+## DBsubject(Algèbre)
+## DBchapter(Quelques fonctions particulières)
+## DBsection(Fonction définie par parties)
+## KEYWORDS('Fonction par parties', 'français','domaine','image')
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne)
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextPiecewiseFunction.pl",
+"answerHints.pl",
+"problemPanic.pl",
+"AnswerFormatHelpFr.pl",
+"unionTables.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+
+Context("PiecewiseFunction");
+Context()->noreduce('(-x)-y'); 
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+$a = random(2,8)*random(-1,1,2);
+$b = non_zero_random(-7,7);
+
+$f1 = Formula("$a x + $b")->reduce;
+
+
+$c = non_zero_random(-5,5);
+
+$f2 = Formula(" (x-$c)/(x^2 - $c x) ")->reduce;
+
+$d = non_zero_random($c+2,$c+8);
+
+$f3 = Formula("sqrt(x-$d)")->reduce;
+
+$f=Formula("$f1 if x < $c  else $f2  if $c<= x<$d  else $f3");
+
+
+#### choix des valeurs de x pour le tableau
+
+$x1 = random($c - 6,$c-1);
+$x2 = $c;
+$x3 = non_zero_random($c+0.5,$d-0.5,0.5);
+$x4 = $d;
+
+$e = list_random(4,9,16,25,36,49,64);
+$x5 = $e +$d;
+
+### Réponses
+
+$ans1 = $f->eval(x=>$x1);
+$ans2 = Compute("nep");
+$ans3 = $f->eval(x=>$x3);
+$ans4 = $f->eval(x=>$x4);
+$ans5 = $f->eval(x=>$x5);
+
+$lien = htmlLink( "https://departements.bdeb.qc.ca/mathematiques/portail/pages/geogebra/Fonction_definies_par_morceaux_WW.html", "Graphique Geogebra", "TARGET='_blank'" );
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Soit la fonction
+\[ f(x) = \left\lbrace {\begin{array}{ccc}$f1 & \text{si} & x<$c\\ $f2 & \text{si} & $c \leq x < $d\\[1em] $f3 & \text{si} & x \geq $d \end{array}}\right.\] .$BR
+a) Remplir la table de valeurs suivante.$BR
+(${BITALIC}Si une valeur n'existe pas, écrire  ${BBOLD}nep${EBOLD}.$EITALIC)
+$BR
+$BR
+\{ 
+BeginTable(border=>1, tex_border=>"1pt", padding => 2).
+AlignedRow(["\(x = \)","\($x1\)", "\($x2\)", "\($x3\)", "\($x4\)", "\($x5\)"], align=>CENTER, separation=>0).
+AlignedRow(["\(f(x) = \)", ans_rule(5), ans_rule(5), ans_rule(5), ans_rule(5), ans_rule(5)], separation=>0, align=>CENTER).
+EndTable()
+\}  $BR
+$BR
+b) Déterminer le domaine de la fonction et écrire votre réponse en notation d'intervalle. $BR
+\( \text{dom }f =\) \{ ans_rule(15)\}  \{ AnswerFormatHelp("interval") \} $BR
+$BR
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=7374", "2.3.1", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+
+END_TEXT
+Context()->normalStrings;
+
+
+Context()->flags->set(formatStudentAnswer=>'parsed');
+$showPartialCorrectAnswers = 1;
+
+if($x1 !=0) {$n1 = $f2->eval(x=>$x1);}
+else {$n1 = Compute("nep"); }
+
+ANS( $ans1->cmp()->withPostFilter(AnswerHints(
+                [$n1,String("nep")] => "Si x = $x1, la fonction est définie par quelle règle?",
+)));
+
+$n2 = $f1->eval(x=>$x2);
+
+ANS( $ans2->cmp()->withPostFilter(AnswerHints(
+                Real("0") => "Oups, avez-vous pensé au dénominateur?",
+ $n2 => "Si x = $x2, la fonction est définie par quelle règle?",
+)));
+
+$n3 = $f1->eval(x=>$x3);
+
+ANS( $ans3->cmp()->withPostFilter(AnswerHints(
+ [$n3,String("nep")] => "Si x = $x3, la fonction est définie par quelle règle?",
+)) );
+
+$n4 = $f1->eval(x=>$x4);
+$n5 = $f2->eval(x=>$x4);
+
+ANS( $ans4->cmp()->withPostFilter(AnswerHints(
+ [$n4,$n5] => "Si x = $x4, la fonction est définie par quelle règle?",
+)) );
+
+$n6 = $f1->eval(x=>$x5);
+$n7 = $f2->eval(x=>$x5);
+
+ANS( $ans5->cmp()->withPostFilter(AnswerHints(
+ [$n6,$n7] => "Si x = $x5, la fonction est définie par quelle règle?",
+)) );
+
+Context("Interval");
+
+if( $c<0 && $d>0) {
+$ans6 = Compute("R-{0,$c}");
+} else {
+$ans6 = Compute("R-{$c}");
+}
+
+ANS($ans6->cmp);
+ 
+Context()->texStrings;
+BEGIN_SOLUTION
+Soit la fonction
+\[ f(x) = \left\lbrace {\begin{array}{ccc}$f1 & \text{si} & x<$c\\ $f2 & \text{si} & $c \leq x < $d\\[1em] $f3 & \text{si} & x \geq $d \end{array}}\right.\] .$BR
+$PAR
+a) Si \(x=$x1\), la fonction est définie par la règle \($f1\), car \($x1 < $c\). Donc \(f($x1) = $ans1\).
+$PAR
+Si \(x=$x2\), la fonction est définie par la règle \($f2\). En factorisant le dénominateur, on a que
+\[ $f2 = \dfrac{x-$c}{x(x-$c)}\]
+Donc \(f($x2)\) n'existe pas, ${BBOLD}nep$EBOLD, car il y a une division par zéro.
+$PAR
+Si \(x=$x3\), la fonction est définie par la règle \($f2\), car \($c \leq $x3 < $d\). Donc \(f($x3) = $ans3\).
+$PAR
+Si \(x=$x4\), la fonction est définie par la règle \($f3\). Donc \(f($x4) = \sqrt{0} =$ans4\).
+$PAR
+Si \(x=$x5\), la fonction est définie par la règle \($f3\), car \($x5 \ge $d\). Donc \(f($x5) = \sqrt{$e} = $ans5\).
+$BR
+$BR
+b) Pour le domaine, on remarque que la deuxième règle, \($f2\), possède deux restrictions, soit \(x=0\) et \(x=$c\).
+\{
+if( $c<0 && $d>0) {
+"Comme ces deux restrictions font partie de l'intervalle de définition, \($c \leq x < $d\), alors le domaine de la fonction est : \(\mathbb{R}\setminus\lbrace $c, 0\rbrace\) ou bien en notation d'intervalle : \( \left[ -\infty,$c \right[ \cup \left] $c,0 \right[ \cup \left] 0,\infty \right[ \)."
+} else {
+"Comme seule la restriction \($c\) fait partie de l'intervalle de définition, \($c \leq x < $d\), alors le domaine de la fonction est : \(\mathbb{R}\setminus\lbrace $c\rbrace\) ou bien en notation d'intervalle : \( \left] -\infty,$c \right[ \cup  \left] $c,\infty \right[ \)."
+}
+\}
+$BR On note que la troisième règle, \($f3\), est définie pour toutes les valeurs \(x \ge $d\), car pour ces valeurs, la fonction à l'intérieur de la racine carrée est toujours positive.
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();

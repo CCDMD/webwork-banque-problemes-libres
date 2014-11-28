@@ -1,0 +1,127 @@
+## DESCRIPTION
+## Functions and equations
+## ENDDESCRIPTION
+
+## KEYWORDS('functions','domain','range','français')
+
+## DBsubject('Algebra') 
+## DBchapter('Functions') 
+## DBsection('Evaluation and Solving') 
+
+## Author('Paul Pearson')
+## Institution('Fort Lewis College')
+
+## Level(2)
+## Language(fr)
+
+## Traduit par Julie Tremblay, Collège Bois-de-Boulogne, juin 2014
+## fichier original : Library/FortLewis/Algebra/4-3-Functions-and-equations/MCH1-4-3-14-Functions-and-equations.pg
+
+
+DOCUMENT();
+loadMacros(
+"PGbasicmacros.pl",
+"PGanswermacros.pl",
+"PGgraphmacros.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"PGcourse.pl",
+"unionTables.pl",
+);
+
+TEXT(beginproblem());
+
+$refreshCachedImages=1;
+
+##############################################
+#  Setup   forme  f(x) = k(x-a)(x-b)
+
+Context("Numeric");
+#Context()->flags->set(tolerance=>0, tolType=>"absolute");
+Context()->strings->add(aucune=>{});
+
+$a = non_zero_random(-4,4,1); # left x-intercept
+
+do{
+$b = non_zero_random(-4,4,1); # right x-intercept
+$k = non_zero_random(-4,4,1);
+$C = $k*$a*$b;
+$som = abs(-$k*($a-$b)*($a-$b)/4);
+
+if($som < abs($C)) { $max = abs($C);}
+else { $max = int($som);}
+} 
+until( $max <20); 
+
+
+$A = $k;
+$B = -$k*($a + $b);
+
+
+$gy = 2*$max+4;   #grid en y
+
+
+$gr = init_graph(-5,-$max-2,5,$max+2,axes=>[0,0],grid=>[10,$gy]);
+$gr -> lb('reset');
+
+add_functions($gr, "$A*x**2+$B*x+$C for x in <-5,5> using color:blue and weight:2");
+$gr -> lb(new Label ( 4.5,0,'x','black','left','bottom'));
+$gr -> lb(new Label ( 0.25,$max+1.5,'y','black','left','bottom'));
+$gr -> lb(new Label ( 0.25,$C,'y = f(x)','black','left','bottom'));
+
+foreach my $i (1..4) {
+  $gr -> lb(new Label ( $i,-0.5, $i,'black','center','middle'));
+  $gr -> lb(new Label (-$i,-0.5,-$i,'black','center','middle'));
+}
+
+foreach my $i (1..$max+1) {
+  $gr -> lb(new Label (-0.5, $i, $i,'black','center','middle'));
+  $gr -> lb(new Label (-0.5,-$i,-$i,'black','center','middle'));
+}
+
+
+#############################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+\{
+ColumnTable(
+"À partir du graphique suivant, déterminer l'ordonnée à l'origine et le(s) zéro(s) de la fonction. Il peut y avoir plus d'une réponse possible, dans ce cas, écrire vos réponses séparées par une virgule. S'il n'y a aucune réponse possible, écrire ${BBOLD}aucune.${EBOLD}".
+$BR.
+$BR.
+"(a) \( f(0) = \) ". 
+ans_rule(7).$SPACE.
+AnswerFormatHelp("numbers").
+$BR.
+$BR.
+"(b) \( f \big( \) ".ans_rule(7)." \( \big) = 0 \). ".
+AnswerFormatHelp("numbers"),
+image(insertGraph($gr), width=>400, height=>400, tex_size=>700).
+$BR.$BCENTER.
+"(Cliquer pour agrandir l'image)".
+$ECENTER,
+indent => 0, separation => 30, valign => "TOP"
+)
+\}
+END_TEXT
+Context()->normalStrings;
+
+
+###############################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 0;
+
+ANS(List($C)->cmp() );
+
+if($a==$b) {
+ANS(List($a)->cmp() );
+} else {
+
+ANS(List($a,$b)->cmp() );
+}
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

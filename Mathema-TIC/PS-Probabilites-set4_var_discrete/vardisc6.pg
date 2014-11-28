@@ -1,0 +1,42 @@
+## DBsubject(Probabilités)
+## DBchapter(Variables aléatoires discrètes)
+## DBsection(Variables discrètes)
+ ##Author(Jean-Sébastien Turcotte - Université de Montréal)
+## KEYWORDS('Variables aléatoires discrètes')
+## Level(1)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl"                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+);
+
+
+TEXT(beginproblem());
+Context("Numeric");
+$lancers=random(5,10);
+$poss=List($lancers);
+foreach my $i(1..$lancers){
+$temp=List($lancers-2*$i);
+$poss=$poss.$temp;
+}
+BEGIN_TEXT
+On considère une suite de \($lancers\) caractères pris dans \( \lbrace-1,1\rbrace\). On pose \(T\) la variable aléatoire correspondant à la somme des \($lancers\) caractères.
+$BR
+  Quelles sont les valeurs possibles pour la variable aléatoire \(T\)? Écrire votre réponse en séparant chaque valeur par une virgule, par exemple \(1,2\). \{$poss->ans_rule(20)\}
+END_TEXT
+ANS( $poss->cmp() );
+
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

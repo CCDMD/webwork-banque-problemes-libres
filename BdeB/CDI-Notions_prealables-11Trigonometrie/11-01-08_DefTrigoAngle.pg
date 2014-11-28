@@ -1,0 +1,73 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Définition - Rapports trigonométriques et angles)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+######## Source ############
+
+#######  Source #############
+## Level(2)
+## Language(fr)
+## KEYWORDS()
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+### on connait le rapport trigo  sec  dans le IV quadrant
+
+do {
+$a = random(2,6);
+$h = random($a+1,11);
+
+($adj ,$hyp) = reduce($a, $h); 
+} until($adj !=1);
+
+$opp = Compute("sqrt($hyp^2 - $adj^2)");
+
+$sin = Compute("-$opp/$hyp");
+$cos = Compute("$adj/$hyp");
+$tan = Compute("-$opp/$adj");
+$cot = Compute("-$adj/$opp");
+$csc = Compute("-$hyp/$opp");
+ 
+
+BEGIN_TEXT
+Soit \(\sec\theta = \dfrac{$hyp}{$adj} \) et \( \frac{-\pi}{2} <\theta < 0\). Déterminer les autres rapports trigonométriques.
+$BR 
+$BBOLD Note: $EBOLD
+Une réponse doit être la valeur exacte écrite sous la forme d'un entier ou d'une fraction. 
+Elle ne doit pas être écrite avec des décimales, mais vous pouvez utiliser la fonction ${BBOLD}sqrt${EBOLD}.
+$PAR
+\(\sin\theta =\) \{ans_rule(15) \};
+$BR
+\(\cos\theta =\) \{ans_rule(15) \};
+$BR
+\(\tan\theta =\) \{ans_rule(15) \};
+$BR
+\(\cot\theta =\) \{ans_rule(15) \};
+$BR
+\(\csc\theta=\) \{ans_rule(15) \};
+$BR
+END_TEXT
+
+Parser::Number::NoDecimals(Context());      # this  eliminates decimals
+
+ANS($sin->cmp);
+ANS($cos->cmp);
+ANS($tan->cmp);
+ANS($cot->cmp);
+ANS($csc->cmp);
+
+COMMENT('MathObject version');
+ENDDOCUMENT();        # This should be the last executable line in the problem.

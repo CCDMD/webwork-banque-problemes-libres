@@ -1,0 +1,169 @@
+##DESCRIPTION
+## Les fonctions exponentielles
+##Fait par Julie Tremblay, novembre 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions exponentielles et logarithmiques)
+## DBsection(Fonction exponentielle)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+######## Source ############
+## Fichier source:  Library/UMN/logicAndSetTheory/prob04.pg
+## ZDBsubject(Algebra)
+## ZDBchapter(Exponential and logarithmic expressions and functions)
+## ZDBsection(Graphs)
+## ZInstitution(Loyola University Chicago and Fort Lewis College)
+## ZAuthor(Adam Spiegler and Paul Pearson)
+## ZLevel(2)
+#######  Source #############
+## Level(2)
+## Language(fr)
+## KEYWORDS()
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+#  "AnswerFormatHelp.pl",
+  "PGgraphmacros.pl",
+  "unionTables.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+Context("Numeric");
+
+$refreshCachedImages=1;
+$showPartialCorrectAnswers = 1;
+
+@b = (3,4,"1/2","1/3","1/4");
+$i = random(0,4,1);
+
+if ($i <= 1){ $pick_re = 0; $ans = 0;
+       for ($k = 0; $k <= 3; $k++){ $y[$k+3] = $b[$i]**$k };
+       for ($k = -3 ; $k <= -1; $k++) { $denom = ($i+3)**(-$k);
+                                        $y[$k+3] = "1/$denom"} }
+else { $pick_re = 1; $ans = 1;
+       for ($k = -3; $k <= 0; $k++){ $y[$k+3] = $i**(-$k) };
+       for ($k = 1 ; $k <= 3; $k++) { $denom = $i**$k;
+                                      $y[$k+3] = "1/$denom"} };
+
+@x = (-3,-2,-1,0,1,2,3);
+
+#for($z = 0; $z <= 6; $z++) {$blank[$z] = ans_rule(10) };
+
+$f[0] = "2^x for x in <-3,3> using color:blue and weight:2";
+$f[1] = "0.5^x for x in <-3,3> using color:blue and weight:2";
+$f[2] = $f[0];
+$f[3] = $f[1];
+$f[4] = "-(2^x) for x in <-3,3> using color:blue and weight:2";
+$f[5] = "-(0.5^x) for x in <-3,3> using color:blue and weight:2";
+$tick_pos = "1 for x in <-.1,.1> using color:black and weight:1";
+$tick_neg = "-1 for x in <-.1,.1> using color:black and weight:1";
+for ($j = 0; $j <= 3; $j++){
+     $graph[$j] = init_graph(-3,-.75,3,7,'axes'=>[0,0]);
+     $graph[$j]->lb('reset');
+     $graph[$j]->lb(new Label(2.8,-0.6,"x",'black','right','bottom'));
+     $graph[$j]->lb(new Label(-.1,6.8,"y",'black','right','top')) };
+for ($j = 4; $j <= 5; $j++){
+     $graph[$j] = init_graph(-3,-7,3,0.75,'axes'=>[0,0]);
+     $graph[$j]->lb('reset');
+     $graph[$j]->lb(new Label(2.8,0.1,"x",'black','right','bottom'));
+     $graph[$j]->lb(new Label(-.1,0.6,"y",'black','right','top')) };
+$graph[0]->lb(new Label(-.1,1,"1",'black','right','bottom'));
+$graph[1]->lb(new Label(.1,1,"1",'black','left','bottom'));
+$graph[2]->lb(new Label(-.1,1,$b[$i],'black','right','bottom'));
+$graph[3]->lb(new Label(.1,1,$b[$i],'black','left','bottom'));
+$graph[4]->lb(new Label(-.3,-1,"-$b[$i]",'black','right','center'));
+$graph[5]->lb(new Label(.1,-1,"-1",'black','left','center'));
+
+for ($j = 0; $j <= 3; $j++){ plot_functions( $graph[$j], $f[$j], $tick_pos) };
+for ($j = 4; $j <= 5; $j++){ plot_functions( $graph[$j], $f[$j], $tick_neg) };
+for ($j = 0; $j <= 5; $j++){
+   $plot[$j] = image(insertGraph($graph[$j]), width => 200, height => 200,
+                      tex_size => 310);
+}
+
+@letter = ("A","B","C","D","E","F");
+@perm = shuffle(6);
+@plot = @plot[@perm];
+@inv = invert(@perm);
+@letter = @letter[@inv];
+
+
+@reason = ("Pour de grandes valeurs positives de \(x\), \(f(x)\) croît rapidement au-dessus de l'axe des \(x\). 
+Mais pour de grandes valeurs négatives de \(x\), \(f(x)\) se rapproche de plus en plus près de l'axe des \(x\).",
+
+"Pour de grandes valeurs positives de \(x\), \(f(x)\) décroît et s'approche de plus en plus près de l'axe des \(x\). 
+Mais pour de grandes valeurs négatives de \(x\), \(f(x)\) s'éloigne rapidement de l'axe des \(x\).");
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la fonction \( f(x) = \left( $b[$i] \right)^x \).
+$PAR
+(a) Compléter la table de valeurs de \( f(x) \) pour \( x = -3,-2,-1,0,1, 2, 3 \) en donnant les valeurs exactes. 
+$BR ${BBOLD}Note :$EBOLD Vous ne pouvez pas utiliser l'opérateur exposant $LQ\(\wedge\)$RQ. Par exemple, pour \(4^2\), écrire \(16\).
+$BR
+$BCENTER
+\{
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>2).
+  AlignedRow(["\(x =\)","\($x[0]\)","\($x[1]\)","\($x[2]\)","\($x[3]\)","\($x[4]\)","\($x[5]\)","\($x[6]\)"],align=>CENTER, separation=>0).
+  AlignedRow(["\(f(x)=\)",ans_rule(5),ans_rule(5),ans_rule(5),ans_rule(5),ans_rule(5),ans_rule(5),ans_rule(5)],align=>CENTER, separation=>0).
+EndTable();
+\}
+$ECENTER
+$PAR
+(b) Choisir le graphique ci-dessous correspondant au graphique de \( f\).
+\{ pop_up_list(["?","A","B","C","D","E","F"]) \}
+$PAR
+$BCENTER
+\{
+BeginTable().
+  AlignedRow([$plot[0],$plot[1],$plot[2]]).
+  TableSpace(5,0).
+  AlignedRow(["A","B","C"]).
+  TableSpace(25,6).
+  AlignedRow([$plot[3],$plot[4],$plot[5]]).
+  TableSpace(5,0).
+  AlignedRow(["D","E","F"]).
+EndTable();
+\}
+$BR
+(Cliquer sur une image pour l'agrandir)
+$ECENTER
+
+END_TEXT
+Context()->normalStrings;
+
+Context()->operators->undefine("^","**","*");
+
+
+for $i (0..6) { ANS(Compute("$y[$i]")->cmp() ); }
+ANS(str_cmp($letter[$ans]));
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+(a) Voici la table des valeurs complétée.
+$BR
+\{
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>5).
+  AlignedRow(["\(x =\)","\($x[0]\)","\($x[1]\)","\($x[2]\)","\($x[3]\)","\($x[4]\)","\($x[5]\)","\($x[6]\)"],align=>CENTER, separation=>0).
+  AlignedRow(["\(f(x)=\)","\($y[0]\)","\($y[1]\)","\($y[2]\)","\($y[3]\)","\($y[4]\)","\($y[5]\)","\($y[6]\)"],align=>CENTER, separation=>0).
+EndTable();
+\}
+$PAR
+(b) $reason[$pick_re]  Par conséquent $letter[$ans] représente le graphique de \( f(x) = \left( $b[$i] \right)^x  \).
+$BR
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

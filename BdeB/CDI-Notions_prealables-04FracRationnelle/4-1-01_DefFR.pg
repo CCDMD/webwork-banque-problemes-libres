@@ -1,0 +1,85 @@
+# DESCRIPTION
+
+
+# ENDDESCRIPTION
+
+## DBsubject(Algebra)
+## DBchapter(Polynomial and rational functions)
+## DBsection(Rational functions)
+## Institution()
+## Author()
+## Section1()
+## Problem1()
+## KEYWORDS('rational','fraction','definition')
+## Traduction('Julie Tremblay')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+Context("Numeric");
+
+# Create and use pop up lists
+$tf = new_select_list();
+$tf->rf_print_q(~~&pop_up_list_print_q);
+
+# Specify choices presented to students
+$tf->ra_pop_up_list( [ No_answer => "La fraction est rationnelle?", O => "Oui", N => "Non" ] );
+
+$a = random(2,6,1);
+do{$b = non_zero_random(-7,7,1);} while($b==1);
+do{$c = non_zero_random(-5,5,1);} while($c==1);
+
+
+# Questions and answers
+$tf -> qa (
+"\( \displaystyle \frac{x^2 + $b x + $c}{x+$a} \) $BR",
+"O",
+"\( \displaystyle \frac{$a x^3+$b x}{5x} \) $BR",
+"O",
+"\( \displaystyle \frac{1}{x^2 + $b x^6} \) $BR",
+"O",
+"\( \displaystyle  \frac{x^{-2}+$a x}{x^{-4}} \) $BR",
+"N",
+"\( \dfrac{$b \sqrt{x}}{3\sqrt{x^3} + $c} \) $BR",
+"N",
+"\( \displaystyle \frac{(x^2 + $a)(x + $b)}{x^2 + 1} \) $BR",
+"N",
+"\( \displaystyle \frac{\sqrt{x + $b} + 3x^2}{\sqrt{x} + $c x^2} \) $BR",
+"N",
+"\( \displaystyle \frac{x^{3/4}+4x^{1/$a}}{x^2 + $b} \) $BR",
+"N",
+"\( \displaystyle \frac{$a x^3+8 x^2 + $c}{x^3+$b x^2 + 1} \) $BR",
+"O",
+"\(  \left(\dfrac{x + 3}{x^2 + $b}\right)^3 \) $BR",
+"N",
+);
+
+# Number of randomly chosen questions to
+#    display to students
+$tf->choose(6);
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer si les expressions suivantes sont des fractions rationnelles.
+$BR
+\{ $tf-> print_q \}
+END_TEXT
+Context()->normalStrings;
+
+#install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 1;
+
+ANS(str_cmp($tf->ra_correct_ans));
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

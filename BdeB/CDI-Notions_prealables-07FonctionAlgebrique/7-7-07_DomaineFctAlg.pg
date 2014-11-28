@@ -1,0 +1,115 @@
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Opérations arithmétiques sur les fonctions)
+## Author(Julie Tremblay)
+## Institution(BdeB)
+## KEYWORDS('fonction','domaine','racine')
+## Level(3)
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "extraAnswerEvaluators.pl",
+  "PGauxiliaryFunctions.pl",
+#"PGgraphmacros.pl",
+  "AnswerFormatHelp.pl",
+"PGcourse.pl",
+"unionTables.pl",
+           );
+
+
+		   
+		   
+#####  domaine de la fonction f(x) = sqrt( 1+ a/(x-b) )
+
+TEXT(beginproblem());
+
+
+$showPartialCorrectAnswers = 1;
+
+Context("Interval");
+
+$a = non_zero_random(-8,8);
+do{$b = non_zero_random(-8,8);} until($b!=$a);
+
+
+$c = $b-$a;
+
+$g = Formula("1 + $a/(x-$b)")->reduce;
+$f = Formula("sqrt($g)")->reduce;
+
+$poly1 = Formula("x-$c")->reduce;
+$poly2 = Formula("x-$b")->reduce;
+
+
+if($c < $b) {   #### borne min est b-a
+$ans = Compute("(-inf,$c] U ($b,inf)");
+}
+else {   #### borne min est b (à exclure)
+$ans = Compute("(-inf,$b) U [$c,inf)");
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Trouver le domaine de la fonction \(f(x) = \displaystyle $f\).
+$PAR
+\(\text{dom}\;f = \) \{ ans_rule(25) \} $SPACE
+\{ AnswerFormatHelp("intervals") \}
+$HR
+$BITALIC
+Des exemples similaires se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=26974", "2.2.6", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+ANS( $ans->cmp() );
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Le domaine de la fonction doit respecter les deux restrictions suivantes :
+\[\begin{array}{lll}
+1.&\displaystyle $g \geq 0 &\text{; expression dans la racine non-négative}\\
+\Rightarrow& \dfrac{$poly1}{$poly2} \geq 0 &\\
+2.&$poly2 \neq 0 &\text{; pas de division par } 0
+\end{array}
+\]
+À l'aide d'un tableau de signes, on trouvera les valeurs qui respectent ces deux restrictions en trouvant la solution pour l'inéquation :
+\[ \dfrac{$poly1}{$poly2} \geq 0\]
+$PAR
+Tout d'aboord, les valeurs de \(x\) où il y a un changement de signe dans l'expression sont :
+$BCENTER
+\(x = $c\) car le numérateur \($poly1 = 0\) lorsque \(x=$c\)$BR
+et \(x =$b\) car le dénominateur \($poly2=0\) lorsque \(x=$b\).
+$ECENTER
+$PAR
+On remplit maintenant le tableau de signes afin de résoudre l'inéquation.
+\{ 
+if($c < $b) {
+BeginTable(border => 4, padding=>10, tex_border =>"4pt").
+AlignedRow(["\(x\in\)", "\(] -\infty,$c [\)","\($c\)", "\(] $c,$b [\)","\($b\)","\(] $b, \infty [\)"], separation=>0).
+AlignedRow(["\( \frac{$poly1}{$poly2}\)","\(+\)","\(0\)","\(-\)","\(\nexists\)","\(+\)"], separation=>0).
+EndTable().
+$BR.$BR.
+"Par conséquent, le domaine de la fonction \(f(x)=$f\) est \(x\in \left] -\infty, $c \right ] \cup \left] $b, \infty \right[\)."
+} else {
+BeginTable(border => 4, padding=>10, tex_border =>"4pt").
+AlignedRow(["\(x\in\)", "\(] -\infty,$b [\)","\($b\)", "\(] $b,$c [\)","\($c\)","\(] $c, \infty [\)"], separation=>0).
+AlignedRow(["\( \frac{$poly1}{$poly2}\)","\(+\)","\(\nexists\)","\(-\)","\(0\)","\(+\)"], separation=>0).
+EndTable().
+$BR.$BR.
+"Par conséquent, le domaine de la fonction \(f(x)=$f\) est \(x\in \left] -\infty, $b \right [ \cup \left[ $c, \infty \right[\)."
+}
+\}
+ On exclut la borne \($b\) pour ne pas qu'il y ait une division par zéro.$BR
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

@@ -1,0 +1,52 @@
+## DBsubject(Probabilités)
+## DBchapter(Variables aléatoires discrètes)
+## DBsection(Variables discrètes)
+ ##Author(Jean-Sébastien Turcotte - Université de Montréal)
+## KEYWORDS('Variables aléatoires discrètes','Probabilités')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl"                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+);
+
+
+TEXT(beginproblem());
+Context("Numeric");
+$noires=random(4,6);
+$blanches=random(7,9);
+$argnoires=random(3,4);
+$argblanches=random(1,2);
+$poss=List( -2*$argblanches,$argnoires-$argblanches,2*$argnoires);
+Context("IntegerFunctions");
+$prob=List(C($blanches,2)/C($blanches+$noires,2),$blanches*$noires/C($blanches+$noires,2),C($noires,2)/C($blanches+$noires,2));
+
+
+
+BEGIN_TEXT
+On considère l'expérience aléatoire qui consiste à tirer sans remise deux billes d'une urne qui contient \($noires\) billes noires et \($blanches\) billes blanches. On reçoit \($argnoires\) $DOLLAR pour chaque bille noire tirée et on perd \($argblanches\) $DOLLAR pour chaque bille blanche tirée. Soit \(M\) les gains ou pertes après l'expérience.
+$BR
+\{BeginList("OL")\}
+$ITEM  Quelles sont les valeurs possibles pour la variable aléatoire \(M\)? Écrire votre réponse en séparant chaque valeur, $BBOLD en ordre croissant $EBOLD, par une virgule, par exemple \(1,2\). \{$poss->ans_rule(20)\}
+$ITEMSEP
+$ITEM
+Quelles sont les probabilités pour chacune de ces valeurs?  Écrire votre réponse en suivant $BBOLF l'ordre de la partie (a) $EBOLD, en séparant chaque valeur  par une virgule, par exemple \(2/3,1/3\). \{$prob->ans_rule(20)\}
+\{EndList("OL")\}
+
+END_TEXT
+ANS( $poss->cmp(ordered=>1) );
+ANS($prob->cmp(ordered=>1));
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

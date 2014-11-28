@@ -1,0 +1,79 @@
+## DESCRIPTION
+## Algebra, Inequalities
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra', 'linear inequality', 'francais')
+## Traduction('Julie Tremblay')
+## Tagged by jjh2b
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Linear Inequalities')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"answerHints.pl",
+"unionTables.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(1,8,1);
+$b = random(1,8,1);
+
+
+$c = 2 + $a*$b;
+$poly1 = Formula("-$b x + $c")->reduce;
+
+($n1,$d1) = reduce($c,$b);
+$x2= $n1/$d1;
+
+
+Context("Interval");
+
+if($x2<$a){ $ans = Compute("($n1/$d1,$a)"); } 
+else { $ans = Compute("($a, $n1/$d1)"); }
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre l'inéquation suivante à l'aide d'un tableau de signes. Donner la réponse en notation d'intervalle. $BR
+$BBOLD Note:  Si la réponse inclut plus d'un intervalle, les écrire séparés par le symbole d'union "U". Pour \(-\infty\) ou \(\infty\), écrire "-inf" ou "inf".$EBOLD 
+$BR Voir : \{ AnswerFormatHelp("intervals") \} $BR
+$BR
+\[
+\frac{2}{x-$a} > $b
+\]
+$PAR
+Réponse : \{ ans_rule(30) \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6896", "1.5.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+ANS($ans->cmp);
+
+$ab = $a*$b;
+
+$showHint = 5;
+Context()->texStrings;
+BEGIN_HINT
+Pour résoudre l'inéquation \(\dfrac{2}{x-$a} > $b\), il faut tout d'abord transformer cette inégalité sous la forme \( f(x) > 0\), où \(f(x)\) est une fonction rationnelle.$BR $BR
+\[\begin{array}{cl} \dfrac{2}{x-$a} > $b &\text{; addition par }-$b\\[0.8em] \dfrac{2}{x-$a} - $b > 0&\text{; même dénominateur}\\[0.8em] \dfrac{2 - $b(x-$a)}{x-$a} > 0&\text{; distributivité} \\[0.8em] \dfrac{2 - $b x + $ab}{x-$a} > 0 & \\[0.8em] \dfrac{$poly1}{x-$a} > 0 &\end{array}\]
+$BR $BR
+Il faut ensuite remplir un tableau de signes associée à la fonction \(\frac{$poly1}{x-$a}\) avec le signe du quotient des facteurs \(($poly1)\) et \((x-$a)\), en respectant la règle des signes.
+END_HINT
+Context()->normalStrings;
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

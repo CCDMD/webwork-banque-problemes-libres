@@ -1,0 +1,117 @@
+##DESCRIPTION
+##  Algebra: Dividing Polynomials
+##ENDDESCRIPTION
+
+##KEYWORDS('algebra', 'rational expressions', 'dividing','français')
+## Traduction('Julie Tremblay')
+
+## DBsubject('Algebra')
+## DBchapter(Polynomial and rational functions)
+## DBsection('Dividing Polynomials')
+## Date('10/23/2009')
+## Author('Jonathan Rogness')
+## Institution('University of Minnesota')
+## TitleText1('Algebra for College Students')
+## EditionText1('8')
+## AuthorText1('Kaufmann, Schwitters')
+## Section1('4.5')
+## Problem1('32')
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "contextLimitedPolynomialFr.pl",
+  "CofIdaho_macrosFr.pl",
+  "AnswerFormatHelp.pl",
+);
+
+#####################################################################
+
+TEXT(beginproblem());
+
+#install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 1;
+
+#####################################################################
+
+Context("LimitedPolynomial-Strict");
+
+$a = random(1,4,1);
+$b = non_zero_random(-6,6,1);
+while ($b==1){$b=non_zero_random(-6,6,1);}
+
+$c = random(1,5,1);
+
+$ac = $a*$c;
+
+$c1 = $b - $ac*$c;
+$c0 = $c - $c*$b;
+
+## P(x) = (ax^2 + ac x + b)(x-c) + c = ax^3 + (b-ac^2)x + (c-bc)
+
+$dividend = Formula("$a x^3 + $c1 x + $c0")->reduce;
+$divisor = Compute("x-$c");
+
+
+$quotient = Formula("$a x^2 + $ac x + $b")->reduce;
+$reste = Formula("$c")->reduce;
+
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Effectuer la division polynomiale suivante et indiquer le quotient et le reste dans les cases appropriées.
+\[
+($dividend) \div ($divisor)
+\]
+$BR
+Réponse:  \{ans_rule(20)\} \( + \) \{ans_rule(10)\} \( / (x - $c) \)
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=1508/division", "1.1.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+ANS($quotient->cmp);
+ANS($reste->cmp);
+
+$acc = -$ac*$c;
+$bc = -$b*$c;
+
+$poly1 = nicestring([$a,-$ac],["x^3","x^2"]);
+$poly2 = nicestring([$ac,$c1,$c0],["x^2","x",""]);
+$poly3 = nicestring([$ac,$acc],["x^2","x"]);
+$poly4 = nicestring([$b,$c0],["x",""]);
+$poly5 = nicestring([$b,$bc],["x",""]);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+\[  \begin{array}{rl}
+ $dividend &\vert\underline{$divisor} \\[0.5em]
+- \underline{\quad\left($poly1 \right)}  & $quotient\\[0.5em]
+  $poly2 & \\[0.5em]
+-  \underline{\quad\left($poly3\right)} & \\[0.5em]
+ $poly4  &  \\[0.5em]
+- \underline{\left($poly5\right)} & \\[0.5em]
+  $c &
+ \end{array}
+\] 
+
+Ainsi, 
+\[\frac{$dividend}{$divisor} = $quotient+\frac{$reste}{$divisor}\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

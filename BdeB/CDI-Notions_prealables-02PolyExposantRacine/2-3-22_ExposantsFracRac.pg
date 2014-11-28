@@ -1,0 +1,146 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+## KEYWORDS('Equations','francais')
+## Traduction('Julie Tremblay')
+
+## DBsubject('Algebra') 
+## BookTitle('Algebra: Form and Function')
+## DBchapter('Basic Algebra') 
+## BookChapter('Rules for Expressions and the Reasons for Them')
+## DBsection('Expanding and Factoring') 
+## BookSection('Expanding and Factoring')
+## Date('01/01/10')
+## Author('Paul Pearson')
+## Institution('Fort Lewis College')
+## TitleText1('Algebra: Form and Function')
+## EditionText1('1')
+## AuthorText1('McCallum, Connally, and Hughes-Hallett')
+## Section1('2.3')
+## Problem1('6')
+
+
+########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPowers.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+#c^n1  a^m1 b^p1 × c^n2 a^m2 b^p2 =  c^{n1+n2}a^{m1+m2}b^{p1+p2}  où  c > 0, #var. a et b et  m1+m2 et p1+p2 > 0
+
+Context("Numeric");
+
+LimitedPowers::OnlyPositiveIntegers();
+Context()->{error}{msg}{"Powers must be positive integer constants"} 
+  = "Les exposants doivent être des entiers strictement positifs";
+
+Context()->flags->set(singlePowers=>1);
+Context()->variables->are(a=>"Real",b=>"Real");
+
+$c = random(2,10,1);
+
+#exposants
+$n1 = non_zero_random(-9,9,1);
+$n2 = non_zero_random(-9,9,1);
+
+
+$m1 = non_zero_random(-9,9,1);
+$m2 = non_zero_random(-9,9,1);
+
+while(($m1 + $m2) <= 0 || ($m1 >0 && $m2 > 0) ) {
+$m1 = non_zero_random(-9,9,1);
+$m2 = non_zero_random(-9,9,1);}
+
+$p1 = non_zero_random(-9,9,1);
+$p2 = non_zero_random(-9,9,1);
+
+while(($p1 + $p2) <= 0) {
+$p1 = non_zero_random(-9,9,1);
+$p2 = non_zero_random(-9,9,1);}
+
+$s1 = $n1 + $n2;
+$s2 = $m1 + $m2;
+$s3 = $p1 +$p2;
+
+
+if ($s1 > 0){
+$answer = Compute("$c^{$s1} a^{$s2} b^{$s3}")->reduce;
+} elsif ($s1 ==0) {
+$answer = Compute("a^{$s2} b^{$s3}")->reduce;
+} else {   # s1 < 0
+$negs1= Compute("-$s1");
+$answer = Compute("1/($c^{$negs1}) a^{$s2} b^{$s3}")->reduce;
+}
+
+
+
+################################################
+#  Main text
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Simplifier l'expression \($c^{$n1} a^{$m1} b^{$p1} \cdot $c^{$n2} a^{$m2} b^{$p2}\) avec des exposants positifs.
+$BR
+$BR
+\{ ans_rule(30) \}
+
+END_TEXT
+Context()->normalStrings;
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS($answer->cmp());
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'expression \($c^{$n1} a^{$m1} b^{$p1} \cdot $c^{$n2} a^{$m2} b^{$p2}\) se simplifie en utilisant la propriété des exposants suivantes:
+$BR $BR
+\[   a^na^m = a^{n+m} \]
+$BR
+Ainsi, on simplifie cette expression de la façon suivante:
+$BR
+$BR
+\{ if ($s1 > 0) {
+"\[ \begin{array}{rl} $c^{$n1} a^{$m1} b^{$p1} \cdot $c^{$n2} a^{$m2} b^{$p2} &=  $c^{$n1+$n2} \; a^{$m1+$m2} \; b^{$p1+$p2} \\[0.8em]
+&= $c^{$s1} a^{$s2} b^{$s3} \end{array}\]"
+ }
+\}
+\{ if ($s1 == 0) {
+ "\[ \begin{array}{rl}$c^{$n1} a^{$m1} b^{$p1} \cdot $c^{$n2} a^{$m2} b^{$p2} &=  $c^{$n1+$n2} \; a^{$m1+$m2} \; b^{$p1+$p2} \\[0.8em]
+&= $c^{$s1} a^{$s2} b^{$s3} \\[0.8em]
+&=  a^{$s2} b^{$s3} \end{array}
+\]"
+}
+\}
+\{ if ($s1 < 0) {
+ "\[ \begin{array}{rl}$c^{$n1} a^{$m1} b^{$p1} \cdot $c^{$n2} a^{$m2} b^{$p2} &=  $c^{$n1+$n2} \; a^{$m1+$m2} \; b^{$p1+$p2} \\[0.8em]
+&= $c^{$s1} a^{$s2} b^{$s3} \\[0.8em]
+&= \dfrac{1}{$c^{$negs1}} a^{$s2} b^{$s3} \end{array}
+\]"
+}
+\}
+$BR
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

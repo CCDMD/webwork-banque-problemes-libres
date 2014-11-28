@@ -1,0 +1,105 @@
+##DESCRIPTION
+##Déterminer si une fonction est injective
+##Fait par Julie Tremblay, août 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Réciproque d'une fonction)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+######## Source ############
+## Fichier source:  ibrary/LoyolaChicago/Precalc/Chap8Sec2/Q40a.pg
+## ZDBsubject(Algebra)
+## ZDBchapter(Inverse functions)
+## ZDBsection(1-1 functions)
+## ZInstitution(Loyola University Chicago)
+## ZAuthor(Adam Spiegler)
+## ZMLT(tableFunction)
+#######  Source #############
+## Level(3)
+## Language(fr)
+## KEYWORDS('fonction réciproque','inverse','injective')
+
+
+DOCUMENT();
+
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGgraphmacros.pl",
+           "PGauxiliaryFunctions.pl",
+           "extraAnswerEvaluators.pl",
+           "MathObjects.pl",
+           "PGcourse.pl",
+		   "unionTables.pl"
+);
+
+TEXT(beginproblem());
+
+Context("Numeric");
+
+
+$showPartialCorrectAnswers = 0;
+
+for ($i = 0; $i <=6; $i++) { $x[$i] = $i-3 };
+@f = NchooseK(7,7);
+for ($i = 0; $i <=6; $i++) {$f[$i] = 2*$f[$i]+2};
+$invert = random(0,1,1);  # 0 means no inverse
+$swap = random(0,6,1);
+if ($invert == 0){ $ans = "Non, elle n'a pas de réciproque.";
+                   $wrong = "Oui, elle a une réciproque.";
+     if ($swap >= 3) {$f[$swap] = $f[$swap-3]; $l = -3+$swap; $h = $swap-6}
+                     else {$f[$swap] = $f[$swap+3]; $l = $swap - 3; $h = $swap}
+     $explain = "La fonction \(f \) n'a pas de réciproque car elle n'est pas injective.
+             	 Les deux valeurs \( x = $l \) et
+                 \( x = $h \) sont associées à la même image \( y = $f[$swap] \)."
+     }
+   else { $ans = "Oui, elle a une réciproque.";
+          $wrong = "Non, elle n'a pas de réciproque.";
+     if ($swap >= 3) {$f[$swap] = -$f[$swap-3]}
+                     else {$f[$swap] = -$f[$swap+3]}
+     $explain = "Oui, la fonction \( f\) a une réciproque car elle est injective. La fonction 
+				ne prendre jamais la même valeur \(y\) deux fois, c'est-à-dire qu'à chaque entrée \(x\) 
+				correspond une sortie \(f(x)\) distincte."};
+
+$mc = new_multiple_choice();
+$mc->qa("Déterminer si la fonction \(f\) a une réciproque.", $ans );
+$mc->extra($wrong);
+$mc->makeLast("Non, elle n'a pas de réciproque.");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit la fonction \( f\) représentée par le tableau de valeurs ci-dessous :
+$BR $BR
+$BCENTER
+\{
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>8).
+AlignedRow(["\(x\)",@x ], align=>CENTER, separation=>0).
+AlignedRow(["\(f(x)\)", @f ], align=>CENTER,, separation=>0).
+EndTable()
+\}
+$ECENTER
+$BR
+\{ $mc->print_q() \}
+$BR
+\{ $mc->print_a() \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=7008", "2.4.4", "TARGET='_blank'" ) \} de  la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+ANS(radio_cmp($mc->correct_ans));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+$explain
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

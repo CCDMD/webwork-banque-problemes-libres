@@ -1,0 +1,99 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DESCRIPTION
+## Calcul de limites infinis - forme c/0
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Limite infinie et à l'infini)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Union/setLimitInfinity/ns2_2_xxx.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Infinite limits and vertical asymptotes)
+## ZDate(6/3/2002)
+## ZInstitution(ASU)
+## ZAuthor(N. Srivastava)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS('limite','infini','asymptote verticale')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+####### De Sylvie : Attention, il faut traduire le INFINTY_MESSAGE. Je n'y ai pas accès.
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "alignedChoice.pl",      # for aligned answer blanks
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+Context("Numeric");
+
+###################################
+#  Use an alignment to present the questions and answer rules
+###################################
+
+$alignment = new_aligned_list(
+   equals => 1, ans_rule_len => 20, numbered => 1,
+   row_spacing => 5, tex_spacing => "5pt"
+);
+
+$a = random(1,9);
+do{$b = random(1,9);} until($a!=$b);
+do{$c = random(1,9);} until($c!=$b && $c!=$a);
+
+$n = random(2,10,2);   #pair
+$m = random(3,9,2);    #impair
+
+
+
+
+$alignment->qa(
+ "\(\displaystyle \lim_{x\to $a^{-}}  \frac{2}{x-$a}\)",        (-(Infinity))->cmp,
+ "\(\displaystyle \lim_{x\to $a^{+}}  \frac{2}{x-$a}\)",        Infinity->cmp,
+ "\(\displaystyle \lim_{x\to $b}      \frac{2}{(x-$b)^{$n}}\)",  Infinity->cmp,
+ "\(\displaystyle \lim_{x\to $b^{-}}  \frac{2}{(x-$b)^{$m}}\)",  (-(Infinity))->cmp,
+ "\(\displaystyle \lim_{x\to -$c^{-}} \frac{1}{x^{2}(x+$c)}\)", (-(Infinity))->cmp,
+ "\(\displaystyle \lim_{x\to -$c^{+}} \frac{1}{x^{2}(x+$c)}\)", (Infinity)->cmp,
+ "\(\displaystyle \lim_{x\to 0}      \frac{1}{x^{2}(x+$c)}\)", Infinity->cmp,
+);
+
+$alignment->choose(4);
+
+###################################
+# Main text
+
+BEGIN_TEXT
+Évaluer les limites suivantes :
+\{$alignment->print_q\}
+$PAR
+Au besoin, entrer ${BBOLD}inf$EBOLD pour \( \infty \) et ${BBOLD}-inf${EBOLD}  pour \( -\infty \).
+END_TEXT
+
+###################################
+# Answer checking
+
+$showPartialCorrectAnswers = 0;
+ANS($alignment->correct_ans);
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

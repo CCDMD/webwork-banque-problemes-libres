@@ -1,0 +1,44 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Probabilités)
+## DBchapter(Espérance revisitée)
+## DBsection(Espérance conditionnelle)
+## Author(Jean-Sébastien Turcotte)
+
+## KEYWORDS('Espérance conditionnelle','Loi de Poisson')
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl",,                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+#"PGstatisticsmacros.pl",   #Donne accès à des commandes de stats
+#"PGnumericalmacros.pl",    #Nécessaire pour certaines macros dans statistics
+);
+TEXT(beginproblem());
+#####Initialisation des paramètres######################
+Context("Numeric");
+$lambda1=random(1,5);
+do{$lambda2=random(1,5);} until($lambda1!=$lambda2);
+$prob1=random(0.1,0.4,0.05);
+$prob2=1-$prob1;
+$ans1=Compute("$lambda1*$prob1+$lambda2*$prob2");
+BEGIN_TEXT
+Chaque matin, un individu choisit aléatoirement un journal pour lire dans le métro. S'il choisit le journal "Métro", le nombre de fautes d'orthographe qu'il va rencontrer est distribué comme une variable aléatoire Poisson avec paramètre
+\($lambda1\) et s'il choisit le journal "24h", le nombre de fautes d'orthographe est distribué comme une variable aléatoire Poisson avec paramètre \($lambda2\). Si le journal "24h" est choisi avec probabilité \($prob2\) et le journal "Métro" est choisi avec probabilité \($prob1\) ,
+quel est le nombre de fautes que va lire l'individu en moyenne?
+$PAR
+\{$ans1->ans_rule\}
+END_TEXT
+ANS($ans1->cmp);
+ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

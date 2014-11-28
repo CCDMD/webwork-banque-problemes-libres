@@ -1,0 +1,140 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Définition - Rapports trigonométriques et angles)
+## Author(Julie Tremblay)
+## Institution(BdeB)
+## KEYWORDS('français', 'géométrie','trigonométrie','loi', 'triangle')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGunion.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+### Pour rafraîchir le cache lorsqu’il a des graphiques dynamiques, sinon une image dans le cache peut s’afficher à la place
+$refreshCachedImages = 1;
+
+# créer les valeurs des côtés a et b
+$a= random(3,15);
+$b= random(($a+1),25);
+
+
+# créer la valeur de l'hypoténuse c et l'arrondir à une décimale près
+
+$c=sqrt( ($a*$a)+($b*$b) );
+
+$cint=(int($c*10))/10;
+
+# déterminer la valeur des deux réponses recherchées
+$sin= Compute("$a/$cint");
+$cos= Compute("$b/$cint");
+$tan= Compute("$a/$b");
+$sec= Compute("$cint/$b");
+$cot= Compute("$b/$a");
+$csc= Compute("$cint/$a");
+
+# déterminer l'image à afficher dans la question
+$gr = init_graph(-1,-1,5,3,pixels=>[180,120]);
+
+### le triangle
+$gr->moveTo(0,0);
+$gr->lineTo(4,0,'black',2); # bottom edge
+$gr->lineTo(0,2,'black',2); # hypotenuse
+$gr->lineTo(0,0,'black',2); # left edge
+
+### angle droit
+$l = 0.5;
+
+$gr->moveTo(0,0);
+$gr->lineTo($l,0,'black',1);
+$gr->lineTo($l,$l,'black',1);
+$gr->lineTo(0,$l,'black',1);
+$gr->lineTo(0,0,'black',1);   
+
+$gr->lb('reset');
+
+$gr->lb( new Label(-0.5,0,'B','black','center','middle'));
+$gr->lb( new Label(-0.5,2.2,'A','black','center','middle'));
+$gr->lb( new Label(4.5,0,'C','black','center','middle'));
+$gr->lb( new Label(-0.5,1.1,'a','black','center','middle'));
+$gr->lb( new Label(2,-0.5,'b','black','center','middle'));
+$gr->lb( new Label(2.2,1.6,'c','black','center','middle'));
+
+  
+
+BEGIN_TEXT
+Dans le triangle ci-dessous, \(a = $a\), \(b = $b\) et \(c = $cint\). 
+$PAR
+\{ image( insertGraph($gr), width=>180 ) \}
+$PAR
+Déterminer les valeurs des six rapports trigonométriques selon l'angle au sommet C.
+$PAR
+1) \(\sin C =\) \{ans_rule(10)\} $BR
+2) \(\cos C =\) \{ans_rule(10)\} $BR
+3) \(\tan C =\) \{ans_rule(10)\} $BR
+4) \(\sec C =\) \{ans_rule(10)\} $BR
+5) \(\cot C =\) \{ans_rule(10)\} $BR
+6) \(\csc C =\) \{ans_rule(10)\} $BR
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+### réponses
+ANS($sin->cmp);
+ANS($cos->cmp);
+ANS($tan->cmp);
+ANS($sec->cmp);
+ANS($cot->cmp);
+ANS($csc->cmp);
+
+
+BEGIN_SOLUTION
+Dans le triangle ci-dessous, \(a = $a\), \(b= $b\) et \(c = $cint\) . 
+$BR
+\{ image( insertGraph($gr), width=>150 ) \}
+$PAR
+1) Le sinus est égale à la mesure du côté opposé à l'angle C (ici: \(a\)) sur la mesure de l'hypoténuse du triangle (ici= \(c\)).$BR
+Donc basé sur le triangle rectangle ci-dessus, on peut déterminer que  :
+$PAR
+
+$SPACE \( \text{sinus de C} = \dfrac{a}{c}  =  \dfrac{$a}{$cint}   \)
+$PAR
+2) Le cosinus est égale à la mesure du côté adjacent à l'angle C (ici: \(b\)) sur la mesure de l'hypoténuse du triangle (ici= \(c\)).$BR
+Donc basé sur le triangle rectangle ci-dessus, on peut déterminer que  :
+$PAR
+
+$SPACE \( \text{cosinus de C} = \dfrac{b}{c}  =  \dfrac{$b}{$cint}   \)
+$PAR
+3) La tangente est égale à la mesure du côté opposé à l'angle C (\(a\)) sur la mesure du côté adjacent à l'angle C (\(b\)).$BR
+Donc basé sur le triangle rectangle ci-dessus, on peut déterminer que  :
+$PAR
+
+$SPACE \( \text{tangente de C} = \dfrac{a}{b}  =  \dfrac{$a}{$b}   \)
+$PAR
+4) La sécante est égale à la mesure de l'hypoténuse du triangle (\(c\)) sur la mesure du côté adjacent à l'angle C (\(b\)).$BR
+Ainsi :
+$PAR
+
+$SPACE \( \text{sécante de C} = \dfrac{c}{b}  =  \dfrac{$cint}{$b}   \)
+$PAR
+5) La cotangente est égale à la mesure du côté adjacent à l'angle C (\(b\)) sur la mesure du côté opposé à l'angle C (\(a\)).$BR
+Ainsi :
+$PAR
+
+$SPACE \( \text{cotangente de C} = \dfrac{b}{a}  =  \dfrac{$b}{$a}   \)
+$PAR
+6) La cosécante est égale à la mesure de l'hypoténuse du triangle (\(c\)) sur la mesure du côté opposé à l'angle C (\(a\)).$BR
+Ainsi :
+$PAR
+
+$SPACE \( \text{cosécante de C} = \dfrac{c}{a}  =  \dfrac{$cint}{$a}   \)
+END_SOLUTION
+
+ENDDOCUMENT();

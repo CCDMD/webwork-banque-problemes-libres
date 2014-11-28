@@ -1,0 +1,135 @@
+##DESCRIPTION
+## Associer le graphique à une fonction exponentielle ou logarithmique
+##Fait par Julie Tremblay, novembre 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions exponentielles et logarithmiques)
+## DBsection(Fonction logarithmique)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+######## Source ############
+## Fichier source:  Library/UMN/algebraKaufmannSchwitters/ks_10_5_prob04.pg
+## ZDBsubject(Algebra)
+## ZDBchapter(Exponential and logarithmic expressions and functions)
+## ZDBsection(Graphs)
+## ZDate(01/26/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(Expo_log_match_graphs)
+## ZMLTleader(1)
+## ZLevel(3)
+#######  Source #############
+## Level(3)
+## Language(fr)
+## KEYWORDS()
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+#####################################################################
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "PGgraphmacros.pl",
+  "unionTables.pl",
+ # "PGcourse.pl",
+);
+#####################################################################
+
+TEXT(beginproblem());
+
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+#####################################################################
+
+$w = 300;  # graph size
+$tw = 400; # graph size in TeX
+
+$graph1 = init_graph(-8,-8,8,8,'axes'=>[0,0],'ticks'=>[16,16],'grid'=>[16,16],'size'=>[400,400]);
+
+$graph2 = init_graph(-8,-8,8,8,'axes'=>[0,0],'ticks'=>[16,16],'grid'=>[16,16],'size'=>[400,400]);
+
+$graph3 = init_graph(-8,-8,8,8,'axes'=>[0,0],'ticks'=>[16,16],'grid'=>[16,16],'size'=>[400,400]);
+
+$graph4 = init_graph(-8,-8,8,8,'axes'=>[0,0],'ticks'=>[16,16],'grid'=>[16,16],'size'=>[400,400]);
+
+$p1 = FEQ("2^x for x in <-8,8> using color:blue weight:2");
+$p2 = FEQ("ln(x)/ln(1/2) for x in <0.001,8> using color:blue weight:2");
+$p3 = FEQ("(1/2)^x for x in <-8,8> using color:blue weight:2");
+$p4 = FEQ("ln(x)/ln(2) for x in <0.001,8> using color:blue weight:2");
+
+plot_functions($graph1,$p1);
+plot_functions($graph2,$p2);
+plot_functions($graph3,$p3);
+plot_functions($graph4,$p4);
+
+##################################################
+
+sub bold {return $BBOLD.join("",@_).$EBOLD}
+
+@ops = (separation=>30, indent=>0);
+#####################################################################
+$imageTable =
+  BeginTable().
+    Row([image(insertGraph($graph1),width=>$w,height=>$w,tex_size=>$tw),image(insertGraph($graph2),width=>$w,height=>$w,tex_size=>$tw)],@ops).
+    TableSpace(5).
+    AlignedRow([bold('A'),bold('B')],@ops).
+    TableSpace(40).
+    Row([image(insertGraph($graph3),width=>$w,height=>$w,tex_size=>$tw),image(insertGraph($graph4),width=>$w,height=>$w,tex_size=>$tw)],@ops).
+    TableSpace(5).
+    AlignedRow([bold('C'),bold('D')],@ops).
+  EndTable();
+###############################################################
+
+Context()->texStrings;
+
+
+$sl = new_select_list();
+
+$sl->rf_print_q(~~&std_print_q);
+$sl->{separation} = 10;
+
+@rep = (
+  "\(y = 2^x\)",      "A",
+  "\(y = \log_{\frac{1}{2}} x\)",    "B",
+  "\(y = \left(\frac{1}{2}\right)^x\)",    "C",
+  "\(y = \log_{2} x \)",    "D"
+);
+
+@n = NchooseK(4,4);
+
+$sl->qa( $rep[2*$n[0]],$rep[2*$n[0]+1],
+$rep[2*$n[1]],$rep[2*$n[1]+1],
+$rep[2*$n[2]],$rep[2*$n[2]+1],
+$rep[2*$n[3]],$rep[2*$n[3]+1]
+);
+
+$sl->choose(4);
+
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Associer chaque équation ci-dessous à son graphique.
+$PAR 
+$BCENTER
+$imageTable
+$BR $BBOLD(Cliquer sur une image pour l'agrandir)$EBOLD
+$ECENTER
+$BR
+\{$sl->print_q\}
+END_TEXT
+Context()->normalStrings;
+
+
+#####################################################################
+
+ANS(str_cmp($sl->ra_correct_ans));
+
+########################################################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

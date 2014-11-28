@@ -1,0 +1,132 @@
+##DESCRIPTION
+## Associer le graphique à une fonction exponentielle
+##Fait par Julie Tremblay, novembre 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions exponentielles et logarithmiques)
+## DBsection(Fonction exponentielle)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+######## Source ############
+## Fichier source:  Library/UMN/algebraKaufmannSchwitters/ks_10_5_prob04.pg
+## ZDBsubject(Algebra)
+## ZDBchapter(Exponential and logarithmic expressions and functions)
+## ZDBsection(Graphs)
+## ZDate(01/26/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(Expo_log_match_graphs)
+## ZMLTleader(1)
+## ZLevel(3)
+#######  Source #############
+## Level(3)
+## Language(fr)
+## KEYWORDS()
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+#####################################################################
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+#  "parserPopUp.pl",
+#  "AnswerFormatHelp.pl",
+  "PGgraphmacros.pl",
+  "unionTables.pl",
+  "PGcourse.pl",
+);
+#####################################################################
+
+TEXT(beginproblem());
+
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+$refreshCachedImages=1;
+
+#####################################################################
+
+$w = 300;  # graph size
+$tw = 400; # graph size in TeX
+
+$p[0] = FEQ("2^x for x in <-8,8> using color:blue weight:2");
+$p[1] = FEQ("-2(2^x) for x in <-8,8> using color:blue weight:2");
+$p[2] = FEQ("(1/2)^x for x in <-8,8> using color:blue weight:2");
+$p[3] = FEQ("2(1/2)^x for x in <-8,8> using color:blue weight:2");
+
+foreach $i (0..3) {
+$graph[$i] = init_graph(-8,-8,8,8,'axes'=>[0,0],'ticks'=>[16,16],'grid'=>[16,16],'size'=>[400,400]);
+$graph[$i]->lb('reset');
+$graph[$i]->lb(new Label(7.5,0.3,'x','black','center','middle'));
+$graph[$i]->lb(new Label(0.3,7.5,'y','black','center','middle'));
+$graph[$i]->lb(new Label(-0.3,1,"1",'black','center','middle'));
+$graph[$i]->lb(new Label(1,-0.3,"1",'black','center','middle'));
+
+plot_functions($graph[$i],$p[$i]);
+}
+
+##################################################
+
+sub bold {return $BBOLD.join("",@_).$EBOLD}
+
+@ops = (separation=>30, indent=>0);
+#####################################################################
+$imageTable =
+  BeginTable().
+    Row([image(insertGraph($graph[0]),width=>$w,height=>$w,tex_size=>$tw),image(insertGraph($graph[1]),width=>$w,height=>$w,tex_size=>$tw)],@ops).
+    TableSpace(5).
+    AlignedRow([bold('A'),bold('B')],@ops).
+    TableSpace(40).
+    Row([image(insertGraph($graph[2]),width=>$w,height=>$w,tex_size=>$tw),image(insertGraph($graph[3]),width=>$w,height=>$w,tex_size=>$tw)],@ops).
+    TableSpace(5).
+    AlignedRow([bold('C'),bold('D')],@ops).
+  EndTable();
+###############################################################
+
+Context()->texStrings;
+
+$sl = new_select_list();
+
+$sl->rf_print_q(~~&std_print_q);
+$sl->{separation} = 10;
+
+@rep = ("\(y = 2^x\)","A",
+		"\(y = -2\left(2\right)^x\)","B",
+	    "\(y = \left(\frac{1}{2}\right)^x\)","C",
+        "\(y = 2\left(\frac{1}{2}\right)^x \)","D"
+	  );
+	  
+@n = NchooseK(4,4);
+
+$sl->qa( $rep[2*$n[0]],$rep[2*$n[0]+1],
+$rep[2*$n[1]],$rep[2*$n[1]+1],
+$rep[2*$n[2]],$rep[2*$n[2]+1],
+$rep[2*$n[3]],$rep[2*$n[3]+1]
+);
+
+$sl->choose(4);
+
+########################################################################
+
+BEGIN_TEXT
+Associer chaque équation ci-dessous à son graphique.
+$PAR 
+$BCENTER
+$imageTable
+$BR $BBOLD(Cliquer sur une image pour l'agrandir)$EBOLD
+$ECENTER
+$BR
+\{$sl->print_q\}
+
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+ANS(str_cmp($sl->ra_correct_ans));
+
+########################################################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

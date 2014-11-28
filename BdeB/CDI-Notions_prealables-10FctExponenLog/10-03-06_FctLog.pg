@@ -1,0 +1,86 @@
+##DESCRIPTION
+## Trouver le domaine d'une fonction logarithmique
+## Fait par Julie Tremblay, novembre 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions exponentielles et logarithmiques)
+## DBsection(Fonction logarithmique)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+
+## Level(3)
+## Language(fr)
+## KEYWORDS()
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+Context("Interval");
+Context()->flags->set(useBaseTenLog=>1);
+
+$showPartialCorrectAnswers = 1;
+
+$b = non_zero_random(-5,5);
+
+do{$c = non_zero_random(-8,8); } until($b<$c);
+
+### on choisit a pour que  b < c < a
+
+$a = random($c+1,$c+5);  
+
+$b1 = $b+$c;
+$c1 = $b*$c;
+
+$ratio = Formula("(x-$a)/(x^2-$b1*x+$c1)")->reduce();
+
+$domain = Compute("($b, $c) U ($a, inf)");
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Déterminer le domaine de la fonction \[ f(x) = \log\left($ratio\right). \]
+$PAR
+Domaine : \{ ans_rule(25) \} 
+\{ AnswerFormatHelp("intervals") \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $domain->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+Comme la fonction logarithmique est définie pour ${BBOLD}des valeurs positives seulement$EBOLD, les restrictions sur le domaine 
+sont les valeurs de \(x\) pour lesquelles la fonction rationnelle \(\displaystyle $ratio = \dfrac{x-$a}{(x-$b)(x-$c)}\) est strictement positive.
+$PAR
+À l'aide d'un tableau de signes, on trouvre cet intervalle.
+$BR
+\[\begin{array}{c|c|c|c|c|c|c|} 
+x & \left]-\infty,$b\right[& $b & \left]$b,$c\right[ & $c & \left]$c,$a\right[ & $a & \left]$a,\infty\right[ \\
+\hline (x-$a) & - &  & - &  & - & 0 & + \\
+\hline (x-$b)(x-$c) & + & 0 & - & 0 & + & & + \\
+\hline $ratio & - & \nexists & \boxed{+} & \nexists & - & 0 & \boxed{+} \\
+\hline \end{array}
+\]
+$BR
+Ainsi, on aura \($ratio > 0\) lorsque \(  $b < x < $c \) ou \(x>$a\). 
+Par conséquent, le domaine de la fonction \(f(x) = \log\left($ratio\right)\) est \( $domain \).
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

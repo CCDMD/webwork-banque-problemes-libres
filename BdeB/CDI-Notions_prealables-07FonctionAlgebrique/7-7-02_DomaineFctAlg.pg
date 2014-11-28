@@ -1,0 +1,106 @@
+## DESCRIPTION
+## Problem from Functions Modeling Change, Connally, et al., 3rd ed.
+## WeBWorK problem written by Adam Spiegler <aspiegler@luc.edu>
+## ENDDESCRIPTION
+
+####### Source ##########################
+## ZDBsubject(Algebra)
+## ZDBchapter(Functions)
+## ZDBsection(Domain and Range)
+## ZInstitution(Loyola University Chicago)
+## ZAuthor(Adam Spiegler)
+## ZTitleText1('Functions Modeling Change')
+## ZAuthorText1('Connally')
+## ZEditionText1('3')
+## ZSection1('2.2')
+## ZProblem1('9')
+## ZTitleText2('Functions Modeling Change')
+## ZAuthorText2('Connally')
+## ZEditionText2('4')
+## ZSection2('2.2')
+## ZProblem2('9')
+### fichier : Chap2Sec2_Q16.pg
+######## Source ####################################
+
+### Traduit et modifié par Julie Tremblay, Collège de Bois-de-Boulogne, juin 2014
+
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Opérations arithmétiques sur les fonctions)
+## KEYWORDS('Fonction', 'français','Domaine','Image')
+## Level(3)
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+           "extraAnswerEvaluators.pl",
+           "PGauxiliaryFunctions.pl",
+           "PGgraphmacros.pl",
+	   "AnswerFormatHelp.pl",
+           );
+
+TEXT(beginproblem());
+
+Context("Interval");
+
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,9,1);
+$funct = Formula("1/sqrt(x - $a)")->reduce;
+
+$domain = Compute("($a, infinity)");
+$range = Compute("(0, infinity)");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit la fonction \(f(x) = \displaystyle $funct\).
+$PAR
+Déterminer, avec une démarche algébrique, le domaine et l'image de \(f\).
+$PAR
+a) \(\text{dom}\;f = \) \{ ans_rule(25) \} $SPACE
+\{ AnswerFormatHelp("intervals") \}
+$PAR
+b) \(\text{ima}\;f = \) \{ ans_rule(25) \}
+$BR
+$HR
+$BITALIC
+Des exemples similaires se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=26974", "2.2.6", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+ANS( $domain->cmp() );
+ANS( $range->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+$PAR
+a) Pour que \(x\) appartienne au domaine de \(f\), il faut que \( x - $a > 0 \).  Alors, le domaine est \( x > $a \) ou, en notation d'intervalle, \( \left] $a , + \infty \right[ \).
+$PAR
+b) Pour trouver l'image de \(f\), il faut trouver toutes les valeurs possibles que \(y=f(x)\) peuvent prendre. Nous allons isoler \(x\) dans cette équation afin d'exprimer \(x\) en fonction de \(y\). Étant donné que
+\[ y = \frac{1}{\sqrt{ x - $a}} \]
+Élevons au carré chacun des membres de l'égalité.
+\[ y^2 = \frac{1}{x-$a} \]
+Multiplions par \( x - $a \), sachant que \(x\ne$a\).
+
+\[ \begin{array}{rl} y^2 ( x - $a ) &= 1\\ 
+y^2 x - $a y^2 &= 1 \\
+ y^2 x &= 1 + $a y^2 \\
+x &= \frac{ 1 + $a y^2}{y^2} \end{array}\]
+$BR
+$PAR
+Trouver le domaine de cette expression revient à trouver toutes les valeurs que \(y\) peuvent prendre afin que \(x\) existe dans les réels. On trouve ainsi certaines restrictions de l'image de \(f\) en déterminant les restrictions au domaine de l'expression:
+\[ x = \frac{ 1 + $a y^2}{y^2}\]
+$PAR
+La seule restriction est que \(y\) doit être \(\neq 0\), car il y a division par 0 pour cette valeur. De plus, comme \(y=$funct\), on sait aussi que \(y\) doit être positif car la fonction racine carrée \(\sqrt{x-$a}\) donne toujours des valeurs positives. Par conséquent, l'image de la fonction \(f\) est \( y > 0\) ou, en notation d'intervalle, \(\left] 0, +\infty \right[ \).
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

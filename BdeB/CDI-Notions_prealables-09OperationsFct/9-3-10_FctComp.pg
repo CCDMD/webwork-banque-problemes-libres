@@ -1,0 +1,89 @@
+##DESCRIPTION
+##Trouver le domaine d'une fonction composée
+##Fait par Julie Tremblay, août 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Fonctions composées)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+
+## Level(3)
+## Language(fr)
+## KEYWORDS('Fonction composée','composition')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"PGcourse.pl",
+);
+
+
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->noreduce('(-x)-y'); 
+
+$a = random(2,9,1)*random(-1,1,2);
+do{$b = non_zero_random(-9,9);} until ($a!=$b);
+
+$c = random(1,9);
+
+$f = Formula("$a x + $b")->reduce;
+$g = Formula("$c-x^2")->reduce;
+
+$fsurg = Formula("$f/$g")->reduce;
+
+$fg = $f->substitute(x=>"$g")->reduce;
+$gf = $g->substitute(x=>"$f");
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit les fonctions  
+\[f(x) = $f\]
+et \[g(x) = $g.\]
+$PAR
+${BBOLD}1.${EBOLD} Déterminer les domaines des fonctions suivantes.
+$PAR
+
+a) \(\text{dom }f =\) \{ ans_rule(20) \} \{ AnswerFormatHelp("intervals") \}
+$BR
+b) \(\text{dom }g =\) \{ ans_rule(20) \}
+$BR
+$PAR
+${BBOLD}2.${EBOLD} Trouver les fonctions \(f/g\), \(f\circ g\) et \(g\circ f\), et déterminer leurs domaines.
+$PAR
+a) \(\left(\frac{f}{g}\right)(x) =\) \{ ans_rule(20) \}
+$BR \(\text{dom }\frac{f}{g} =\) \{ ans_rule(20) \}
+$PAR
+b) \((f\circ g)(x) =\) \{ ans_rule(20) \}
+$BR \(\text{dom }f\circ g =\) \{ ans_rule(20) \}
+$PAR
+c) \((g\circ f)(x) =\) \{ ans_rule(20) \}
+$BR \(\text{dom }g\circ f =\) \{ ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+Context("Interval");
+
+ANS(Compute("R")->cmp);
+ANS(Compute("R")->cmp);
+
+ANS($fsurg->cmp);
+$ansa = Compute("R - {-sqrt($c),sqrt($c)}")->reduce;
+ANS($ansa->cmp);
+
+ANS($fg->cmp);
+ANS(Compute("R")->cmp);
+
+ANS($gf->cmp);
+ANS(Compute("R")->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

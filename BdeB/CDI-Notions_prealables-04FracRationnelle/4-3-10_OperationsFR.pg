@@ -1,0 +1,96 @@
+##DESCRIPTION
+##  Division et multiplication, avec simplification d'une expression rationnelle
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fractions rationnelles)
+## DBsection(Opérations sur les fractions rationnelles)
+## KEYWORDS('simplification','fonction rationnelle','expression rationnelle','français','division')
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne)
+
+## Level(2)
+## Language(fr)
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "CofIdaho_macrosFr.pl",
+#  "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+#  Form: (x-a)(x+a)/(x+a)(x+b) / x/(x+b), -a neq b
+
+$a = list_random(-5,-4,-3,-2,2,3,4,5);
+$b = non_zero_random(-5,5,1);
+if ($b==-1*$a) {$b = list_random(-7,-6,-1,1,6,7,8,9);}
+
+($f1,$f2) = (Formula("(x^2 - $a*$a)/(x^2 + ($a+$b)x + $a*$b)")->reduce->TeX,
+
+             Formula("(x)/(x + $b)")->reduce->TeX);
+
+
+
+######################################
+
+#  Main text
+
+
+$rest = join("  ,",uniq(0,-$a,-$b));
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Effectuer la division suivante et simplifier votre réponse.
+
+\[$f1 \div $f2 \text{ où } x\neq $rest\]
+
+$PAR
+
+Réponse:  \{ ans_rule(30) \} 
+$HR
+$BITALIC
+Des exemples similaires sont présentés à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6230", "1.3.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+######################################
+#  Answer
+
+$answer = "(x-$a)/x";
+ANS(RationalExpEvaluator($answer,"x")); 
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR 
+On factorise tout d'abord le numérateur et le dénominateur de la première fraction rationnelle, et on simplifie  : 
+$PAR
+\[\begin{array}{lll}\displaystyle $f1 &= \dfrac{(x+$a)(x-$a)}{(x+$a)(x+$b)} &\\
+&= \dfrac{\cancel{(x+$a)}(x-$a)}{\cancel{(x+$a)}(x+$b)} &\text{; si }x\neq -$a\\
+&= \dfrac{x-$a}{x+$b}&\end{array}\]
+$PAR
+Diviser par une fraction revient à multiplier par son inverse. Ainsi, la division se fait par la démarche suivante:
+$PAR
+\[\begin{array}{lll} $f1 \div $f2 &= \dfrac{x-$a}{x+$b} \cdot \dfrac{x+$b}{x}&\\
+&= \dfrac{(x-$a)(x+$b)}{x(x+$b)} &\\
+&= \dfrac{(x-$a)\cancel{(x+$b)}}{x\cancel{(x+$b)}} &\text{; si }x\neq -$b\\
+&=  \dfrac{x-$a}{x} & \end{array}\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

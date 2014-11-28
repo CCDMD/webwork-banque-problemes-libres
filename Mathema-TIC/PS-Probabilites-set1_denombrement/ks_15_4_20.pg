@@ -1,0 +1,71 @@
+## DBsubject(Probabilités)
+## DBchapter(Axiomes des probabilités)
+## DBsection(Calculs de probabilités)
+## Author()  # ou ##Modifié par Jean-Sébastien Turcotte
+## Traduit par : Sylvie Charbonneau
+###############Source###############
+#DESCRIPTION
+##  Algebra: Probability
+##ENDDESCRIPTION
+## DBsubject(Probability)
+## DBchapter(Counting and probability)
+## DBsection(Probability)
+## Date(05/03/2012)
+## Institution(University of Minnesota)
+## Author(Justin Sukiennik)
+## TitleText1('Algebra for College Students')
+## AuthorText1('Kaufmann, Schwitters')
+## EditionText1('8')
+## Section1('15.4')
+## Problem1('20')
+###############Source###############
+
+## KEYWORDS('Probabilités')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+);
+
+#####################################################################
+
+TEXT(beginproblem());
+
+
+#####################################################################
+
+$nbr=random(5,10);
+$faces=random(2,$nbr);
+@probs=();
+foreach my $i (0..$nbr){
+$probs[$i]=C($nbr,$i)*1/2**($nbr);
+};
+$ans=1;
+foreach my $i (0..$faces-1){
+$ans=$ans-$probs[$i];
+};
+$ans=Compute("$ans");
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+On lance \($nbr\) pièces de monnaie.  Trouver la probabilité d'obtenir au moins \($faces\) faces.
+$PAR
+Réponse : \{ans_rule(20)\}
+END_TEXT
+
+#####################################################################
+
+ANS(($ans)->cmp());
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

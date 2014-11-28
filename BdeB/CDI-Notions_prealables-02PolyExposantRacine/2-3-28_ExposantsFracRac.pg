@@ -1,0 +1,109 @@
+#DESCRIPTION
+##  Algebra problem: combining powers
+##ENDDESCRIPTION
+
+ 
+## tcao , PAID on 11-24-2003
+
+## DBsubject('Algebra')
+## DBchapter('Basic Algebra')
+## DBsection('Exponents and Radicals')
+## Date('6/3/2002')
+## TitleText1('Precalculus')
+## AuthorText1('Stewart, Redlin, Watson')
+## EditionText1('3')
+## Section1('1.2')
+## Problem1('43')
+## TitleText2('College Algebra')
+## AuthorText2('Stewart, Redlin, Watson')
+## EditionText2('3')
+## Section2('1.3')
+## Problem2('43')
+## KEYWORDS('algebra', 'powers','français')
+## Traduction('Julie Tremblay')
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGbasicmacros.pl",
+"contextFraction.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Fraction-NoDecimals")->operators->undefine("+","-","*");
+
+$a = random(2,6,1);
+$b = random(2,6,1);
+$c = random(2,9,1);
+
+while(gcf($b,$c)!=1){$c = random(2,9,1);}
+
+$d = random(2,5,1);
+
+$num1 = $a*$b;
+$num2 = ($d-1)*$b;
+
+$ans1 = Compute("$num1/$c")->reduce;
+$ans2 = Compute("$num2/$c")->reduce;
+
+$ny1 = $d-1;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+L'expression
+\[\left(\frac{x^{$a} y}{y^{$d}}\right)^{$b/$c}  \text{ où } y \neq 0\] 
+$BR
+se simplifie sous la forme \( \dfrac{x^n}{ y^m}\) où $BR
+$BR 
+\(n\), l'exposant de la variable \(x\), est : \{ans_rule(5) \}
+$BR 
+\(m\), l'exposant de la variable \(y\), est : \{ans_rule(5) \}
+$BR
+$BBOLD NOTE: Les réponses sont des nombres entiers ou des factions (a/b),$BR
+elles ne peuvent pas contenir les opérations d'addition (+), de soustraction (-) ou de multiplication (*).
+$EBOLD
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=6646", "1.1.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+
+END_TEXT
+Context()->normalStrings;
+
+
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'expression \(\left(\dfrac{x^{$a} y}{y^{$d}}\right)^{$b/$c}\) se simplifie en utilisant les propriétés des exposants suivantes:
+$BR $BR
+\[   \begin{array}{lrl} 1.& \dfrac{a^n}{a^m} &= \dfrac{1}{a^{m-n}} \text{ où } m > n \\[0.8em] 
+2.& \left( a^n \right)^m & = a^{nm} \\
+  3.&  \left(\dfrac{a}{b}\right)^n &= \dfrac{a^n}{b^n}  \end{array}
+\]
+$BR
+Ainsi, on simplifie cette expression de la façon suivante:
+$BR
+$BR
+\[ \begin{array}{rlr}  \left(\dfrac{x^{$a} y}{y^{$d}}\right)^{$b/$c} &=  \left(\dfrac{x^{$a}}{y^{$d-1}}\right)^{$b/$c}\\[0.8em]
+&= \dfrac{x^{$a \cdot \frac{$b}{$c}}}{y^{$ny1 \cdot \frac{$b}{$c} }}  \\[0.8em] 
+&=  \dfrac{x^{$ans1}}{y^{$ans2 }}  \end{array}\]
+$BR
+$BR
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,146 @@
+##DESCRIPTION
+##  Division et multiplication, avec simplification d'une expression rationnelle
+##   avec restrictions
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fractions rationnelles)
+## DBsection(Opérations sur les fractions rationnelles)
+## KEYWORDS('simplification','fonction rationnelle','expression rationnelle','français','division')
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne)
+
+## Level(2)
+## Language(fr)
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "parserMultiAnswer.pl",
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+#  Form: (ax+b) / (ax+b)(x+c)/x(x+d), a pair, b impair, d neq c
+
+Context()->noreduce('(-x)-y','(-x)+y');
+
+$a = list_random(-6,-4,-2,2,4,6);
+$b = random(-5,5,2);
+
+
+do {$c = non_zero_random(-5,5,1);} while($c==-$b/$a);
+do {$d = non_zero_random(-5,5,1);} while ($c==$d);
+
+
+
+($f1,$f2) = (Formula("$a x+$b")->reduce->TeX,
+             Formula("($a x^2 + ($a*$c+$b)x + $b*$c)/(x^2 + $d x)")->reduce->TeX);
+
+$ans1 = Formula("x*(x+$d)")->reduce;
+$ans2 = Formula("x+$c")->reduce;
+
+
+$mp = MultiAnswer($ans1,$ans2)->with(
+         singleResult => 0,
+		 allowBlankAnswers => 1,
+         checker => sub {
+            my ($correct,$student,$self) = @_;  # get the parameters
+            
+            my ( $p1, $p2 ) = @{$correct};      # get the correct num, denom
+            my ( $p1stu, $p2stu ) = @{$student};# get the student's num, denom
+
+            my $isPreview = $main::inputs_ref->{previewAnswers};
+
+            
+            $numeratorValid   = ( $p1==$p1stu || Compute("-1")*$p1==$p1stu );
+            $denominatorValid = ( $p2==$p2stu || Compute("-1")*$p2==$p2stu );
+            $quotientValid    = ( $p1/$p2 == Compute($p1stu)/Compute($p2stu) );
+
+            if (! $isPreview) { # Don't show messages if previewing....
+			  Value::Error("As-tu simplifié ta réponse?") 
+                if ($quotientValid && !$numeratorValid && !$denominatorValid);
+			  Value::Error("Ton numérateur et dénominateur sont incorrects.") 
+                unless ($numeratorValid || $denominatorValid);
+   			  Value::Error("Ton numérateur est incorrect") 
+                unless $numeratorValid;
+              Value::Error("Ton dénominateur est incorrect") 
+                unless $denominatorValid;
+              Value::Error("Une de tes réponses est de signe contraire") 
+                unless $quotientValid;
+            
+			}
+			
+			if ($quotientValid) {
+				return[$numeratorValid,$denominatorValid];
+			} else {
+				return[0,0];
+			}
+		}
+           
+        );
+
+			 
+######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Donner les restrictions sur le domaine de l'expression suivante. S'il y plus d'une valeur de \(x\), les séparer par une virgule. (Exemple: \(x = 1,-4\)) 
+$PAR 
+\[\dfrac{$f1}{\displaystyle \left($f2\right)}\]
+$PAR
+Restriction(s) : \(x=\) \{ ans_rule(30) \} 
+$PAR
+Effectuer maintenant cette division et simplifier votre réponse sous une fraction rationnelle simplifiée \(\dfrac{A}{B}\).
+$PAR 
+Réponse : \(A =\) \{$mp->ans_rule(20)\} et \(B =\) \{$mp->ans_rule(20)\} 
+$HR
+$BITALIC
+Des exemples similaires sont présentés à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6230", "1.3.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+######################################
+#  Answer
+
+$rest = List(-($b)/($a),-$c,0,-$d);
+$rest = List(-$c,0,-$d) if ($c==$b/$a || $d==$b/$a);
+
+ANS($rest->cmp);
+
+ANS( $mp->cmp );
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR 
+En factorisant les numérateurs et les dénominateurs, on obtient:
+$PAR
+\[\dfrac{$f1}{\displaystyle \left($f2\right)} =\dfrac{$a x+$b}{\dfrac{($a x+$b)(x+$c)}{x(x+$d)}}\]
+$PAR
+Il y a 2 dénominateurs dans cette expression et chacun doit être \(\neq 0\), c'est-à-dire que :$BR
+$BCENTER \(\dfrac{($a x+$b)(x+$c)}{x(x+$d)}\neq 0\;\) et \(\;x(x+$d)\neq 0\)
+$ECENTER
+$PAR
+Ainsi, les restrictions sur le domaine sont \(x \in $rest \), car ce sont les valeurs de \(x\) où les dénominateurs sont nuls.
+$PAR
+Diviser par une faction revient à multiplier par son inverse. Ainsi, la division se fait par la démarche suivante:
+$PAR
+\[\begin{array}{ll}\dfrac{$a x+$b}{\dfrac{($a x+$b)(x+$c)}{x(x+$d)}} &= \dfrac{($a x+$b)}{1}\cdot \dfrac{x(x+$d)}{($a x+$b)(x+$c)} \\&= \dfrac{\cancel{($a x+$b)}x(x+$d)}{\cancel{($a x+$b)}(x+$c)}\\
+&= \dfrac{$ans1}{$ans2} \end{array}\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

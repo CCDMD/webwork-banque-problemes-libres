@@ -1,0 +1,127 @@
+##DESCRIPTION
+##  Algebra: exponents and radicals 
+##ENDDESCRIPTION
+
+##KEYWORDS('algebra', 'rational expression', 'exponents','français')
+## Traduction('Julie Tremblay')
+##DBsubject('Algebra')
+## DBchapter('Basic Algebra')
+## DBsection('Exponents and Radicals')
+## Date('10/26/2009')
+## Author('Justin Sukiennik')
+## Institution('University of Minnesota')
+## TitleText1('Algebra for College Students')
+## EditionText1('8')
+## AuthorText1('Kaufmann, Schwitters')
+## Section1('5.1')
+## Problem1('76')
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "parserMultiAnswer.pl",
+   "contextLimitedPolynomial.pl",
+   "PGcourse.pl",      # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+########################################################################
+
+$showPartialCorrectAnswers = 1;
+
+########################################################################
+
+Context("Numeric");
+
+$a = random(2,7,1);
+$b = random(2,7,1);
+
+
+
+$poly1 = Compute("x^(-$a)")->reduce;
+$poly2 = Compute("x^(-$a-$b)")->reduce;
+
+$ans1 = Compute("x^{$b}+1");
+
+$e = $a+$b;
+$ans2 = Compute("x^($e)")->reduce;
+
+########################################################################
+
+#Context("LimitedPolynomial")->flags->set(singlePowers=>1);
+$mp = MultiAnswer($ans1,$ans2)->with(
+         singleResult => 0,
+		 allowBlankAnswers => 1,
+         checker => sub {
+            my ($correct,$student,$self) = @_;  # get the parameters
+            
+            my ( $p1, $p2 ) = @{$correct};      # get the correct num, denom
+            my ( $p1stu, $p2stu ) = @{$student};# get the student's num, denom
+
+            my $isPreview = $main::inputs_ref->{previewAnswers};
+
+            
+            $numeratorValid   = ( $p1==$p1stu || Compute("-1")*$p1==$p1stu );
+            $denominatorValid = ( $p2==$p2stu || Compute("-1")*$p2==$p2stu );
+            $quotientValid    = ( $p1/$p2 == Compute($p1stu)/Compute($p2stu) );
+
+            if (! $isPreview) { # Don't show messages if previewing....
+              Value::Error("Votre numérateur est incorrect") 
+                unless $numeratorValid;
+              Value::Error("Votre dénominateur est incorrect") 
+                unless $denominatorValid;
+              Value::Error("Une de vos réponses est de signe contraire") 
+                unless $quotientValid;
+            }
+
+            return $quotientValid;
+            },
+        );
+
+
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Exprimer l'expression
+\[
+$poly1 + $poly2
+\]
+sous la forme \( \dfrac{A}{B}\).  Simplifier votre réponse sous la forme d'une fraction rationnelle, c'est-à-dire possédant que des exposants positifs.
+$PAR $BR
+Réponses : \(A =\) \{$mp->ans_rule(10)\} et \(B =\) \{$mp->ans_rule(10)\}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=6646", "1.1.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+
+
+ANS( $mp->cmp );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'expression \($poly1 + $poly2\) se simplifie de la façon suivante:
+$BR $BR
+\[   \begin{array}{rlr} $poly1 + $poly2 &= \dfrac{1}{x^{$a}}+\dfrac{1}{x^{$e}} &\\
+&= \frac{1\cdot x^{$b}}{x^{$a}\cdot x^{$b}}+\dfrac{1}{x^{$e}} &  \\
+ &= \frac{x^{$b}}{x^{$e}}+\dfrac{1}{x^{$e}} & ;\text{car } x^{$e} = x^{$a}x^{$b} \\
+ &= \dfrac{$ans1}{$ans2} & \end{array}
+\]
+
+$BR
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

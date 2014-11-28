@@ -1,0 +1,109 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Cercle trigonométrique)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+######## Source ############
+## ZDBsubject(Trigonometry)
+## ZDBchapter(Geometric and algebraic foundations for trigonometry)
+## ZDBsection(Radians, converting radians & degrees)
+## ZInstitution(Rochester)
+## ZLevel(2)
+## ZKEYWORDS('trigonometry','unit circle')
+#######  Source #############
+## Level(2)
+## Language(fr)
+## KEYWORDS()
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGgraphmacros.pl",
+"PGchoicemacros.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+### Pour rafraîchir le cache lorsqu’il a des graphiques dynamiques, sinon une image dans le cache peut s’afficher à la place
+$refreshCachedImages = 1;
+
+### Traçons les cercles trigos
+
+$c1 = "sqrt(1-x^2) for x in <-1,1> using color:black and weight:2";
+$c2 = "-sqrt(1-x^2) for x in <-1,1> using color:black and weight:2";
+
+### Choisir un angle de 30 ou 60 degrés sauf ceux qui croisent les axes
+do{$n[0] = random(30,359,30);}
+until( $n[0]%90 != 0);
+
+
+### Choisir un angle de 45 degrés sauf ceux qui croisent les axes
+do{$n[1] = random(45,359,45);}
+until( $n[1] %90 != 0);
+
+### Choisir un angle de 90
+$n[2] = random(90,359,90);
+
+foreach $i (0..2) {
+$gr[$i] = init_graph(-1.5,-1.5,1.5,1.5,axes=>[0,0], size=>[300,300]);
+$gr[$i]->lb('reset');
+    $gr[$i]->lb( new Label(1.25,0.1,'x','black','center','middle'));
+    $gr[$i]->lb( new Label(-0.1,1.25,'y','black','center','middle'));
+	
+## Créer les points trigonométriques
+$a[$i] = Formula("$n[$i]*pi/180");  #angle en radians
+
+$x[$i] = Real("cos($a[$i])");
+$y[$i] = Real("sin($a[$i])");
+$gr[$i]->stamps( closed_circle( $x[$i], $y[$i], 'red'));	
+
+## Créer les rayons
+$gr[$i]->moveTo(0,0);
+$gr[$i]->lineTo($x[$i], $y[$i], 'black');
+$gr[$i]->lineTo($x[$i], 0, 'black');
+
+## Créer l'arc de l'angle radian
+$cxpixel = $gr[$i]->ii(0); # x-coordinate of center
+$cypixel = $gr[$i]->jj(0); # x-coordinate of center
+$dxpixel = $gr[$i]->ii(0.2) - $gr[$i]->ii(-0.2); # diameter of ellipse, x-direction
+$dypixel = $gr[$i]->jj(0.2) - $gr[$i]->jj(-0.2); # diameter of ellipse, y-direction
+$red  = $gr[$i]->im->colorAllocate(255,0,0);
+$gr[$i]->im->arc($cxpixel,$cypixel,$dxpixel,$dypixel,0,$n[$i],$red);
+	
+add_functions($gr[$i], $c1, $c2);
+};
+
+
+
+
+BEGIN_TEXT
+Cliquer sur les figures ci-dessous pour les agrandir. Chaque point sur le cercle trigonométrique 
+correspond à un angle en radian entre \(0\) et \(2\pi\) représenté par l'arc en rouge. Donner la mesure en radian de cet angle.
+
+$PAR
+a)  \{ image(insertGraph($gr[0]), width=> 200, tex_size=> 200) \}
+$SPACE
+Angle en radian = \{ans_rule(15)\}
+$PAR
+b)   \{ image(insertGraph($gr[1]), width=> 200, tex_size=> 200) \}
+$SPACE
+Angle en radian = \{ans_rule(15)\}
+$PAR
+c)   \{ image(insertGraph($gr[2]), width=> 200, tex_size=> 200) \}
+$SPACE
+Angle en radian = \{ans_rule(15)\}      
+END_TEXT
+
+ANS(Real($a[0])->cmp);
+ANS(Real($a[1])->cmp);
+ANS(Real($a[2])->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

@@ -1,0 +1,117 @@
+##DESCRIPTION
+## Solve a linear equation
+## 
+##ENDDESCRIPTION
+## DBsubject(Algebra)
+## DBchapter(Linear functions, expressions, and equations)
+## DBsection(Solving linear equations)
+## KEYWORDS('linear equations','solving equations','francais')
+## Date:
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGauxiliaryFunctions.pl",
+  "Parser.pl",
+  "MathObjects.pl",
+  "contextLimitedNumeric.pl",
+"AnswerFormatHelpFr.pl",
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+#  Note: Values are chosen to have a solution.
+
+$b = random(5,8,1);
+$a = $b - random(1,3,1);
+$c = non_zero_random(-3,3,1);
+do{$d = non_zero_random(-3,3,1);} while ($c==$d);
+$e = $b - random(2,3,1);
+$f = random(2,3,1);
+if ($a*$f*$e - $b*$e-$b*$f==0) {$a = $a-1;}
+
+######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre l'équation suivante en spécifiant le domaine de l'équation en premier lieu.$BR
+$PAR
+\[ \dfrac{$a x}{$b} - \frac{x ? {$c}}{$f} = \frac{x ? {$d}}{$e}\]
+$BR
+$BR
+Domaine : \{ans_rule(10) \}  \{ AnswerFormatHelp("intervals") \}
+$BR
+Solution: \( x = \) \{ans_rule(10) \}
+$BR
+END_TEXT
+Context()->normalStrings;
+
+######################################
+#  Answers
+#
+#  NOTES:  The correct answer is formatted to be a fraction in 
+#          reduced form.
+
+Context("Interval");
+
+ANS(Compute("R")->cmp);
+
+Context("LimitedNumeric-Fraction"); 
+
+($ans_n,$ans_d)= reduce($b*$d*$f+$b*$c*$e, $a*$f*$e - $b*$e-$b*$f);
+$ans = Compute("$ans_n/$ans_d");
+if ($ans_d==1) {$ans = Compute("$ans_n");}
+ANS($ans->cmp);
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+##### Solution
+
+$af = $a*$f;
+$bc = $b*$c;
+$bf = $b*$f;
+$k = $af - $b;
+$ek = $e*$k;
+$ebc = $e*$bc;
+$bfd = $bf*$d;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Le domaine de cette équation est l'ensemble des \(\mathbb{R}\) car l'équation est linéaire. $BR
+Voici la démarche pour résoudre cette équation:
+$BR $BR
+
+\{ if ($ans_d !=1) {
+"\[\begin{array}{ll} &  \dfrac{$a x}{$b} - \dfrac{x ? {$c}}{$f} = \dfrac{x ? {$d}}{$e} \\[0.8em]
+\Rightarrow & \dfrac{$af x - $b(x ? {$c})}{$bf} = \dfrac{x ? {$d}}{$e} \\[0.8em]
+\Rightarrow & \dfrac{$k x - $bc}{$bf} = \dfrac{x ? {$d}}{$e} \\[0.8em]
+\Rightarrow & $e($k x - $bc) = $bf(x ? {$d}) \\
+\Rightarrow & $ek x - $ebc = $bf x ? {$bfd} \\
+\Rightarrow & $ek x - $bf x  = $bfd ? {$ebc}\\
+\Rightarrow & $ans_d x  = $ans_n \\
+\Rightarrow & \boxed{x  = \dfrac{$ans_n}{$ans_d}}
+\end{array}\]"
+} else {
+"\[\begin{array}{ll} &  \dfrac{$a x}{$b} - \dfrac{x ? {$c}}{$f} = \dfrac{x ? {$d}}{$e} \\[0.8em]
+\Rightarrow & \dfrac{$af x - $b(x ? {$c})}{$bf} = \dfrac{x ? {$d}}{$e} \\[0.8em]
+\Rightarrow & \dfrac{$k x - $bc}{$bf} = \dfrac{x ? {$d}}{$e} \\[0.8em]
+\Rightarrow & $e($k x - $bc) = $bf(x ? {$d}) \\
+\Rightarrow & $ek x - $ebc = $bf x ? {$bfd} \\
+\Rightarrow & $ek x - $bf x  = $bfd ? {$ebc}\\
+\Rightarrow & \boxed{x  = $ans_n} \end{array}\]"
+}
+\}
+$PAR
+Vous pouvez aussi allez voir un exemple similaire sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5270", "1.4.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

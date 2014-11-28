@@ -1,0 +1,156 @@
+##DESCRIPTION
+##Trouver le domaine d'une fonction composée
+##Fait par Julie Tremblay, août 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Fonctions composées)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+
+## Level(3)
+## Language(fr)
+## KEYWORDS('Fonction composée','composition')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"PGcourse.pl",
+"unionTables.pl",
+);
+
+
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->noreduce('(-x)-y');
+
+
+
+$a = random(1,5,1);
+
+$b = random(1,8);
+$c = random(2,5)*random(-1,1,2)*$b;
+
+$d = Formula("$b x - $c")->reduce;
+$e1 = $a*$c+1;
+$n = Formula("-$a*$b x + $e1")->reduce;
+
+$f = Formula("sqrt(x-$a)")->reduce;
+$g = Formula("1/$d")->reduce;
+
+
+$b1 = Compute("$c/$b");
+$b2 = Compute("($a*$c+1)/($a*$b)");
+
+
+$sgn = $n->eval(x=>"$b1 -1");
+$sgd = $d->eval(x=>"$b1 -1");
+if($sgn*$sgd < 0 ) {
+$ans4 = Compute("($b1,$b2]");
+$ans3 = Formula("sqrt($g-$a)")->reduce;
+$ans3->{limits}=[$b1+0.001,$b2];
+} else {
+$ans4 = Compute("(-inf,$b1)U[$b2,inf)");
+$ans3 = Formula("sqrt($g-$a)")->reduce;
+$ans3->{limits}=[$b2,$b2+5];
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit les fonctions  
+\[f(x) = $f\]
+et \[g(x) = $g.\]
+$PAR
+${BBOLD}1.${EBOLD} Déterminer les domaines des fonctions suivantes.
+$PAR
+
+a) \(\text{dom }f =\) \{ ans_rule(20) \} \{ AnswerFormatHelp("intervals") \}
+$BR
+b) \(\text{dom }g =\) \{ ans_rule(20) \}
+$BR
+$PAR
+${BBOLD}2.${EBOLD} Trouver la fonction \(f\circ g\) et déterminer son domaine.
+$PAR
+\((f\circ g)(x) =\) \{ ans_rule(20) \}
+$BR \(\text{dom }f\circ g =\) \{ ans_rule(20) \}
+$HR
+$BITALIC
+Des exemples similaires sur la composition de fonctions sont présentées sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=7010", "2.4.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+Context("Interval");
+
+ANS(Compute("[$a,inf)")->cmp);
+ANS(Compute("R-{$b1}")->cmp);
+
+
+ANS($ans3->cmp);
+ANS($ans4->cmp);
+
+
+$bx = Formula("$b x")->reduce;
+
+$e2 = $a*$b;
+if ($sgn*$sgd < 0) {
+$sg1 = "\(-\)";
+$sg2 = "\(+\)";
+$rep = "\left]{$b1, $b2}\right]";
+ } else {
+ $sg1 = "\(+\)";
+$sg2 = "\(-\)";
+$rep = "\left]{-\infty,$b1}\right[ \cup \left[{$b2,\infty}\right[";
+ }
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+${BBOLD}1. a)${EBOLD} Pour qu'une valeur de \(x\) appartienne au domaine de \(f(x)=$f\), il faut que l'expression à l'intérieur de la 
+racine soit non-négative. Ainsi,
+\[ (x-$a)\geq 0 \text{ si } x\geq $a\]
+Donc, \(\text{dom }f = \left[$a, \infty\right[ \).
+$PAR
+${BBOLD}1. b)${EBOLD} Pour qu'une valeur de \(x\) appartienne au domaine de \(g(x)=\displaystyle $g\), il faut que le dénominateur  
+soit non nul. Ainsi,
+\[ $d \neq 0 \text{ si } x \neq $b1\]
+Donc, \(\text{dom }g = \mathbb{R}\setminus\lbrace $b1 \rbrace \).
+$PAR
+${BBOLD}2.${EBOLD} On trouve la fonction \((f\circ g)(x)\) en substituant le fonction \(g(x)=\displaystyle $g\) dans la fonction 
+\(f(x)=$f\). Ainsi, 
+\[ f\left(g(x)\right) = f\left($g\right) = $ans3\]
+$PAR
+Le domaine de \(f(g(x))=$ans3\) doit satisfaire ces deux conditions :
+$PAR
+$SPACE - Le dénominateur \($d\) doit être non nul. Donc \(x \neq $b1\).$PAR
+$SPACE - L'intérieur de la racine carrée \(\left($g - $a\right)\)doit être non-négative. C'est-à-dire
+$PAR
+\[ \left({$g -$a}\right) \geq 0 \Leftrightarrow \frac{$n}{$d}\geq 0 \]
+On peut remplir un tableau de signes pour résoudre cette inéquation en sachant que le numérateur \($n\) change de signes lorsque 
+\(x=$b2\) et que le dénominateur \($d\) change de signes lorsque \(x=$b1\).
+$PAR
+\{ BeginTable(border=>1, tex_border=>"1pt", padding=>10).
+AlignedRow([ " "," ","\($b1\)"," ","\($b2\)"," "],align=>MIDDLE, separation=>0).
+AlignedRow(["\( \frac{$n}{$d}\)","${SPACE}$sg1${SPACE}","\(\nexists\)","${SPACE}$sg2${SPACE}","\(0\)","${SPACE}$sg1${SPACE}"],align=>MIDDLE, separation=>0).
+EndTable(); \}
+$PAR
+Ainsi, le domaine de la fonction contient les valeurs de \(x\) telles que \(\frac{$n}{$d}\) est positif ou nul. 
+C'est-à-dire : \(\text{dom } f \circ g = $rep\).
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

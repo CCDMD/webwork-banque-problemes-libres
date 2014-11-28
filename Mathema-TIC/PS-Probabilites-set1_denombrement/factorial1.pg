@@ -1,0 +1,95 @@
+##DESCRIPTION
+##   sequences with factorials
+##ENDDESCRIPTION
+
+## DBsubject(Probabilités)
+## DBchapter(Dénombrement)
+## DBsection(Principes de dénombrement)
+## Modifié par Julie Tremblay - Collège Bois-de-Boulogne
+## Traduit par : Sylvie Charbonneau
+
+###############Source###############
+## Par exemple:
+## Fichier source: ASU-topics/setSequenceandSeries/factorial1.pg
+## ZDate(6/3/2002)
+## ZInstitution(ASU)
+## ZTitleText1('College Algebra')
+## ZAuthorText1('Stewart, Redlin, Watson')
+## ZEditionText1('3')
+## ZSection1('10.2')
+## ZProblem1('1')
+###############Source###############
+
+## KEYWORDS('Factorielle','Suite')
+## Level(1)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+ #"contextIntegerFunctions.pl",    #Mettre cette macro pour la fonction C(n,k) 
+);
+
+TEXT(beginproblem());
+
+#
+# Now we do the randomization of variables, and other computations
+# as needed for this problem.  Sometimes we compute the answers here.
+#
+
+#Find the number to add to n in the denominator
+$a = non_zero_random(1,5);
+
+#Find the number to be the coefficient on n factorial
+$b = random(2,8);
+
+#calculate the terms
+$ans1 = $b/(1+$a);
+$ans2 = ($b*2)/(2+$a);
+$ans3 = ($b*fact(3))/(3+$a);
+$ans4 = ($b*fact(4))/(4+$a);
+$ans5 = ($b*fact(5))/(5+$a);
+
+#
+# Now the problem text itself, with ans_rule's to indicate where the
+# answers go.  You can stop entering text, do more computations, and then
+# start up again if you want.
+#
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Trouver les cinq (5) premiers termes de \[a_{n} = \frac {$b n!}{n + $a}\]
+en commençant par \(n=1\).$BR
+Écrire la réponse en séparant les termes par des virgules (exemple :  1,2). Pour écrire un nombre décimal, utiliser un point, avec un minimum de quatre chiffres significatifs (exemple : 0.3333).$SPACE \{ AnswerFormatHelp("number") \}
+	$PAR
+	 \{ans_rule(40)\}
+END_TEXT
+Context()->normalStrings;
+
+#
+# Tell WeBWork how to test if answers are right.  These should come in the
+# same order as the answer blanks above.  You tell WeBWork both the type of
+# "answer evaluator" to use, and the correct answer.
+#
+
+Context()->operators->undefine("!","*","+");
+
+$ans = Compute("$ans1, $ans2, $ans3, $ans4, $ans5");
+
+
+ANS($ans->cmp(ordered => 1));
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

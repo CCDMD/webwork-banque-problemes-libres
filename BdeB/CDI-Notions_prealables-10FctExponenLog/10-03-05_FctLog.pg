@@ -1,0 +1,78 @@
+##DESCRIPTION
+## Trouver le domaine d'une fonction logarithmique
+## Fait par Julie Tremblay, novembre 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions exponentielles et logarithmiques)
+## DBsection(Fonction logarithmique)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+######## Source ############
+## Fichier source: Library/LoyolaChicago/Precalc/Chap4Review/Q35.pg
+## ZDBsubject(Algebra)
+## ZDBchapter(Exponential and logarithmic expressions and functions)
+## ZDBsection(Logarithmic functions)
+## ZInstitution(Loyola University Chicago)
+## ZAuthor(Adam Spiegler)
+## ZMLT(Domain)
+## ZLevel(3)
+#######  Source #############
+## Level(3)
+## Language(fr)
+## KEYWORDS()
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+Context("Interval");
+Context()->flags->set(useBaseTenLog=>1);
+
+$showPartialCorrectAnswers = 1;
+
+$r1 = random(1,8);
+do{$r2 = random(1,8);} until($r1!=$r2);
+
+$c = -$r1*$r2;
+$b = $r2-$r1;
+
+$domain = Compute("(- inf, -$r2) U ($r1, inf)");
+
+$quad = Compute("x^2 +$b x + $c")->reduce();
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Déterminer le domaine de la fonction \[ f(x) = \ln{($quad)}. \]
+$PAR
+Domaine : \{ ans_rule(25) \} 
+\{ AnswerFormatHelp("intervals") \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $domain->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction quadratique \( y = $quad = (x-$r1)(x+$r2) \) possède deux zéros en \( x= $r1\) et \(x=-$r2 \).
+Cette parabole est strictement positive lorsque \( x < -$r2 \) ou \( x > $r1 \) et elle est négative ou nulle lorsque \( -$r2 \le x \le $r1 \). Comme la fonction logarithmique  
+est définie pour ${BBOLD}les valeurs positives seulement$EBOLD, alors la fonction  \( f(x)=\ln($quad) \) est définie lorsque \( x < -$r2\) ou \( x > $r1 \). 
+$PAR
+Par conséquent, le domaine de la fonction est \( $domain \).
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

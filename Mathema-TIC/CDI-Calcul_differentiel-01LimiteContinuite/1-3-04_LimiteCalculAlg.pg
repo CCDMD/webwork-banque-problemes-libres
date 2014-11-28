@@ -1,0 +1,125 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DESCRIPTION
+## Calculs de limites, avec les propriétés
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Évaluation d'une limite - Calcul algébrique)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/ASU-topics/setLimitConcepts/ns_2_3_1.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Rules of limits - basic)
+## ZDate(6/3/2002)
+## ZInstitution(ASU)
+## ZAuthor(Utah ww group)
+## ZMLT(lotsalimrules)
+## ZMLTleader(1)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS('limite','propriétés des limites')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl", 
+"PGbasicmacros.pl", 
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGcourse.pl"    #Générer une autre version du problème
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers=1;
+
+$a=non_zero_random(-10, 10);
+$b=non_zero_random(-10, 10);
+
+@f=("f(x)", "g(x)", "h(x)");
+@slice1=shuffle(3);
+@f=@f[@slice1];
+
+#TEXT("The function order is ", @f);
+
+@values=($a, $b, 0);
+
+@slice2=shuffle(3);
+@values=@values[@slice2];
+
+#TEXT("The values are ", @values);
+
+if ($values[1]==0) {
+    ($fraction01)=num_cmp('nep', strings=>['nep']);
+    ($fraction1)=num_cmp('nep', strings=>['nep']);
+} else {
+    ($fraction01)= num_cmp($values[0]/$values[1], strings=>['nep']);
+    ($fraction1)= num_cmp(1/$values[1], strings=>['nep']);
+}
+
+if ($values[2]==0) {
+    ($fraction02)=num_cmp('nep', strings=>['nep']);
+} else {
+    ($fraction02)= num_cmp($values[0]/$values[2], strings=>['nep']);
+}
+if ($values[0]==0) {
+    ($fraction20)=num_cmp('nep', strings=>['nep']);
+} else {
+    ($fraction20)= num_cmp($values[2]/$values[0], strings=>['nep']);
+}
+
+if ($values[1]>=0) {
+    ($square1)=num_cmp(sqrt($values[1]), strings=>['nep']);
+} else {
+    ($square1)=num_cmp('nep', strings=>['nep']);
+}
+
+if (($values[1]-$values[2])==0) {
+    ($fraction1_2)=num_cmp('nep', strings=>['nep']);
+} else {
+    ($fraction1_2)= num_cmp(1/($values[1]-$values[2]), strings=>['nep']);
+}
+
+my @expressions =(); ##MAKE SURE WE START WITH AN EMPTY ARRAY
+my @answers =();     ##MAKE SURE WE START WITH AN EMPTY ARRAY
+
+qa(~~@expressions, ~~@answers,
+"\( \displaystyle \lim_{ x \rightarrow a} \left($f[0]+$f[1]\right)\)", num_cmp($values[0]+$values[1], strings=>['nep']),
+"\( \displaystyle \lim_{ x \rightarrow a} \left($f[0]-$f[1]\right) \)", num_cmp($values[0]-$values[1], strings=>['nep']),
+"\( \displaystyle \lim_{ x \rightarrow a} \left($f[0] \cdot $f[2]\right) \)", num_cmp($values[0]*$values[2], strings=>['nep']),
+"\( \displaystyle \lim_{ x \rightarrow a} \frac{$f[0]}{$f[1]} \)", $fraction01,
+"\( \displaystyle \lim_{ x \rightarrow a} \frac{$f[0]}{$f[2]} \)", $fraction02,
+"\( \displaystyle \lim_{ x \rightarrow a} \frac{$f[2]}{$f[0]} \)", $fraction20,
+"\( \displaystyle \lim_{ x \rightarrow a} \sqrt{$f[1]} \)", $square1,
+"\( \displaystyle \lim_{ x \rightarrow a} \frac{1}{$f[1]} \)", $fraction1,
+"\( \displaystyle \lim_{ x \rightarrow a} \frac{1}{$f[1]-$f[2]} \)", $fraction1_2
+);
+
+TEXT(EV3(<<'EOT'));
+Soit \( \displaystyle \lim_{x\rightarrow a} $f[0] = $values[0]\) ,
+    \( \displaystyle  \lim_{x\rightarrow a}$f[1]= $values[1]\) et
+    \( \displaystyle  \lim_{x\rightarrow a}$f[2] = $values[2]\). 
+$BR
+$BR
+Calculer les limites suivantes, si elles existent. Sinon, entrer
+$BBOLD nep $EBOLD ("n'existe pas") comme réponse.
+$BR
+EOT
+
+TEXT(EV2(match_questions_list(@expressions)));
+
+ANS(@answers);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

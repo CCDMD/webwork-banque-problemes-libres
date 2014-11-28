@@ -1,0 +1,121 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+
+## DBsubject(Algèbre)
+## DBchapter(Factorisation)
+## DBsection(Factorisation de trinômes)
+## KEYWORDS('Factorisation','français','carré parfait')
+## Traduction('Nicolas Beauchemin')
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+
+########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowersFr.pl",
+#"problemRandomize.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>1);
+Context()->{error}{msg}{"Each factor can appear only once (combine like factors)"} 
+  = "Combiner les facteurs communs en un seul facteur";
+
+
+#(x+a)^2 = x^2 +2ax +a^2
+
+#ProblemRandomize(style=>"Button",label=>"Générer un autre polynôme");
+
+$a = random(1,10,1);
+
+
+$a2 = 2*$a;
+$aa = $a * $a;
+
+$expression = Compute("x^2 + $a2 x + $aa");
+
+$answer = Compute("(x + $a)^2");
+
+
+################################################
+#  Main text
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Factoriser l'expression \($expression\).  Simplifier la réponse.
+$BR
+$BR
+\{ ans_rule(30) \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème sont présentées à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2318", "1.2.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS($answer->cmp(
+checker => sub {
+        my ($correct,$student,$ans) = @_; 
+      
+    if ($student eq $expression) {
+      $ans->{ans_message} = "Ce polynôme se factorise.";
+       return 0;
+} elsif ($student == $answer) {
+return 1;
+} else {
+return 0;
+}
+
+  return $ans; 
+})
+);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Pour factoriser le polynôme \($expression\), on cherche deux nombres   \(u\) et \(v\) tels que $BR $BR
+\[
+\begin{array}{rlrl} u + v &= $a2   &\Rightarrow  $a + $a &= $a2    \\
+      u \times v &= $aa  &\Rightarrow $a \times $a &= $aa \end{array}
+\]
+$BR
+Il s'agit d'un trinôme carré parfait. En posant \(u = $a\) et \(v = $a\), la factorisation du polynôme est : $BR $BR
+
+$BCENTER
+ \($expression = (x + u)^2 = $answer\)
+$ECENTER
+$HR
+$BITALIC
+Un exemple similaire est présenté à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2318", "1.2.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

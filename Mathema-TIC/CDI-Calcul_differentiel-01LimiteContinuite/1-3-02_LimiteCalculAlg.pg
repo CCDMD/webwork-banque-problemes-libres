@@ -1,0 +1,68 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DESCRIPTION
+## Limite d'une racine carrée
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Évaluation d'une limite - Calcul algébrique)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/UVA-Stew5e/../2-3-37.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Rules of limits - basic)
+## ZInstitution(ASU)
+## ZMLT(limrootexists)
+## ZMLTleader(1)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS('limite','racine')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+"PGcourse.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+$a = random(-8,8);
+do{$b = random(3,7,1);} until($b!=$a);
+$g = $b*$b;
+
+$f = Formula("sqrt($g - $b*x)")->reduce;
+
+
+BEGIN_TEXT
+Évaluer la limite.
+\[ \lim_{ x \rightarrow $a } \sqrt{$g - $b x}\]
+Si la limite n'existe pas, entrer ${BBOLD}nep$EBOLD.
+$PAR Limite : \{ans_rule(25) \}
+$BR
+END_TEXT
+
+$int = $g - $b*$a;
+
+if($int>=0) { $ans = Compute("sqrt($int)"); }
+else { $ans = Compute("nep"); }
+
+ANS($ans->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

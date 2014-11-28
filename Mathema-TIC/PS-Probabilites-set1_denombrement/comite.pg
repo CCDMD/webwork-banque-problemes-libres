@@ -1,0 +1,66 @@
+## DBsubject(Probabilités)
+## DBchapter(Dénombrement)
+## DBsection(Permutations et combinaisons)
+## Author(Jean-Sébastien Turcotte)
+## KEYWORDS('Combinaison','Dénombrement')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+ "contextIntegerFunctions.pl",    #Mettre cette macro pour la fonction C(n,k) 
+);
+
+
+TEXT(beginproblem());
+######Initialisation des paramètres#######
+$nbrnations=random(2,4);
+
+@selec=();
+@total=();
+for($i=0;$i<=$nbrnations;$i++){
+$selec[$i]=random(2,5);
+$total[$i]=random($selec[$i],$selec[$i]+random(3,6));     #Ceci détermine combien de personnes de chaque nationalité seront choisies ainsi que le nombre total par nationalité disponible.
+}
+
+$nbrcomit=0;
+foreach (@selec){               #calcule la taille du comité
+$nbrcomit+=$_;
+}
+
+@Natlis=("Canadiens","Américains","Français","Espagnols"); #Ajouter des nationalités au besoin, selon la borne max de nbrnations
+
+$textemembre="$selec[0] $Natlis[0]";
+foreach my $i(1..$nbrnations-1){
+$textemembre.=", $selec[$i] $Natlis[$i]"         #Ce foreach détermine le bout de texte à ajouter selon le nombre de nationalités présentes.
+}
+$textemembre.= " et $selec[$nbrnations] $Natlis[$nbrnations]";
+
+$textetotal="$total[0] $Natlis[0]";
+foreach my $i(1..$nbrnations-1){
+$textetotal .=", $total[$i] $Natlis[$i]"         #Ce foreach détermine le bout de texte à ajouter selon le nombre de nationalités présentes.
+}
+$textetotal.= " et $total[$nbrnations] $Natlis[$nbrnations]";
+#######Calcul des réponses##########
+$ans1=1;
+foreach my $i(0..$nbrnations){
+$ans1*=C($total[$i],$selec[$i]);
+}
+
+####### Question#################
+BEGIN_TEXT
+On veut former un comité de $nbrcomit personnes formé de $textemembre. On a le choix parmi $textetotal.
+$BR
+ De combien de manières peut-on procéder? \{ans_rule(20)\} 
+END_TEXT
+ANS(Compute("$ans1")->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

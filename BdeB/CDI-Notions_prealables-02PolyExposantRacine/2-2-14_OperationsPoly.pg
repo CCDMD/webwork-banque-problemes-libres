@@ -1,0 +1,87 @@
+##DESCRIPTION
+##  Algebra: Dividing Polynomials
+##ENDDESCRIPTION
+
+##KEYWORDS('algebra', 'rational expressions', 'monomials', 'dividing','français')
+## Traduction('Julie Tremblay')
+
+## DBsubject('Algebra')
+## DBchapter(Polynomial and rational functions)
+## DBsection('Dividing Polynomials')
+## Date('10/23/2009')
+## Author('Jonathan Rogness')
+## Institution('University of Minnesota')
+## TitleText1('Algebra for College Students')
+## EditionText1('8')
+## AuthorText1('Kaufmann, Schwitters')
+## Section1('4.5')
+## Problem1('8')
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "contextLimitedPolynomialFr.pl",
+#  "CofIdaho_macrosFr.pl",
+  "AnswerFormatHelp.pl",
+);
+
+########################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+########################################################################
+
+Context("Numeric");
+Context()->variables->add(y=>'Real'); 
+
+$a = random(3,9,1);
+
+$b = Compute("2*$a+2");
+$c = Compute("2*$a+6");
+$d = Compute("2*$a");
+
+Context("LimitedPolynomial");
+Context()->variables->add(y=>'Real'); 
+
+$ans = Compute("-$d+$b*x*y+$c*x^2*y^3")->reduce;
+
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Effectuer la division suivante d'un polynôme par un monôme.
+\[
+\frac{$d xy - $b x^2y^2 - $c x^3 y^4}{-xy}
+\]
+Réponse: \{ ans_rule(40)\}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=1508/division", "1.1.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+\[  \begin{array}{ll} \frac{$d xy - $b x^2y^2 - $c x^3 y^4}{-xy} 
+&= \frac{$d xy}{-xy} + \frac{-$b x^2y^2}{-xy} + \frac{- $c x^3 y^4}{-xy}\\
+&= $ans \\
+&= $c x^2 y^3 +$b xy -$d\end{array}
+\] 
+
+END_SOLUTION
+Context()->normalStrings;
+
+########################################################################
+
+ANS( $ans->cmp );
+
+ENDDOCUMENT();

@@ -1,0 +1,93 @@
+##DESCRIPTION
+## Décomposer une fonction
+## Fait par Julie Tremblay, août 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Fonctions composées)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+######## Source ############
+## Fichier source:  MCH1-8-2-09-Function-composition.pg
+## ZDBsubject('Algebra') 
+## ZDBchapter('Functions') 
+## ZDBsection('Composing Functions') 
+## ZAuthor('Paul Pearson')
+## ZInstitution('Fort Lewis College')
+#######  Source #############
+## Level(3)
+## Language(fr)
+## KEYWORDS('Fonction composée','composition','décomposition')
+
+
+
+####################################
+#  Initialization
+
+DOCUMENT();
+loadMacros(
+"PG.pl",
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"answerComposition.pl",
+"PGcourse.pl",
+"PGinfo.pl",
+);
+
+TEXT(beginproblem()); 
+
+####################################
+#  Setup
+
+Context("Numeric");
+Context()->variables->are(x=>"Real",y=>"Real",u=>"Real");
+
+$a = random(2,9,1);
+
+$f = Formula("sqrt(u)");
+$g = Formula("x^2+$a");
+
+######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Exprimer la fonction \( y = \sqrt{ x^2 + $a } \) 
+dans la forme \(f\circ g\) en trouvant les fonctions
+\( y = f(u) \) et \( u = g(x) \).
+$BR
+$BR
+\( f(u) =\) \{ ans_rule(20) \}
+
+$BR
+\( g(x) =\) \{ ans_rule(20) \}
+$BR
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=7010", "2.4.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+######################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+COMPOSITION_ANS($f,$g, vars => ['u','x'], showVariableHints => 1);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Comme \(y=\sqrt{ x^2 + $a }\), la formule dit de commencer par élever au carrée et d'additionner \($a\). Ensuite, de prendre la racine carré du résultat.
+On pose donc
+\[ u=g(x)=x^2+$a \quad y = f(u) = \sqrt{u} \]
+De là, on a
+\[ (f\circ g)(x) = f(g(x)) = f(x^2+$a) = \sqrt{ x^2 + $a }\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

@@ -1,0 +1,215 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+## KEYWORDS('Equations','francais')
+## Traduction('Julie Tremblay')
+
+## DBsubject('Algebra') 
+## BookTitle('Algebra: Form and Function')
+## DBchapter('Basic Algebra') 
+## BookChapter('Rules for Expressions and the Reasons for Them')
+## DBsection('Expanding and Factoring') 
+## BookSection('Expanding and Factoring')
+## Date('01/01/10')
+## Author('Paul Pearson')
+## Institution('Fort Lewis College')
+## TitleText1('Algebra: Form and Function')
+## EditionText1('1')
+## AuthorText1('McCallum, Connally, and Hughes-Hallett')
+## Section1('2.3')
+## Problem1('6')
+
+
+########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPowers.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+#(c^nc1 a^na1 b^nb1)^n (c^nc2 a^na2 b^nb2)  ; dans la réponse, les exposants #sont positifs seulement, (enlever la possibilité d'avoir des exposant nuls dans la #réponse).
+
+Context("Numeric");
+
+LimitedPowers::OnlyPositiveIntegers();
+Context()->{error}{msg}{"Powers must be positive integer constants"} 
+ = "Les exposants doivent être des entiers strictement positifs";
+Context()->flags->set(singlePowers=>1);
+Context()->variables->are(a=>"Real",b=>"Real");
+
+$c = random(2,6,1);
+
+$n = random(2,4,1);
+
+#exposants
+$nc1 = non_zero_random(-4,4,1);
+$nc2 = non_zero_random(-6,6,1);
+
+while ($n*$nc1 == -$nc2) {$nc2 = non_zero_random(-6,6,1);}
+
+$na1 = non_zero_random(-4,4,1);
+$na2 = non_zero_random(-6,6,1);
+
+while ($n*$na1 == -$na2) {$na2 = non_zero_random(-6,6,1);}
+
+$nb1 = non_zero_random(-4,4,1);
+$nb2 = non_zero_random(-6,6,1);
+
+while ($n*$nb1 == -$nb2) {$nb2 = non_zero_random(-6,6,1);}
+
+
+$pc = $n*$nc1 + $nc2;
+$pa = $n*$na1 + $na2;
+$pb = $n*$nb1 +$nb2;
+
+
+if ($pc < 0 && $pa>0 && $pb > 0){
+$negpc = Compute("-$pc");
+$answer = Compute("(a^{$pa} b^{$pb})/($c^{$negpc})")->reduce;
+
+} elsif ($pc < 0 && $pa < 0 && $pb > 0) {
+$negpc = Compute("-$pc");
+$negpa = Compute("-$pa");
+$answer = Compute("(b^{$pb})/($c^{$negpc} a^{$negpa})")->reduce;
+
+} elsif ($pc < 0 && $pa > 0 && $pb < 0) {
+$negpc = Compute("-$pc");
+$negpb = Compute("-$pb");
+$answer = Compute("(a^{$pa})/($c^{$negpc} b^{$negpb})")->reduce;
+
+}  elsif ($pc < 0 && $pa < 0 && $pb < 0) {
+$negpc = Compute("-$pc");
+$negpa = Compute("-$pa");
+$negpb = Compute("-$pb");
+$answer = Compute("1/($c^{$negpc} a^{$negpa} b^{$negpb})")->reduce;
+
+} elsif ($pc > 0 && $pa < 0 && $pb > 0) {
+$negpa = Compute("-$pa");
+$answer = Compute("($c^{$pc} b^{$pb})/(a^{$negpa})")->reduce;
+
+} elsif ($pc > 0 && $pa < 0 && $pb < 0) {
+$negpa = Compute("-$pa");
+$negpb = Compute("-$pb");
+$answer = Compute("($c^{$pc})/(a^{$negpa} b^{$negpb})")->reduce;
+
+} elsif ($pc > 0 && $pa > 0 && $pb < 0) {
+$negpb = Compute("-$pb");
+$answer = Compute("($c^{$pc} a^{$pa})/(b^{$negpb})")->reduce;
+
+} else {  #tous positifs
+
+$answer = Compute("$c^{$pc} a^{$pa} b^{$pb}")->reduce;
+}
+
+
+
+################################################
+#  Main text
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Simplifier l'expression ci-dessous avec des exposants positifs.
+$BR
+\[  \left( $c^{$nc1} a^{$na1} b^{$nb1} \right)^$n \left( $c^{$nc2} a^{$na2} b^{$nb2} \right)  \text{ où } a \neq 0 \text{ et } b \neq 0 \]
+$BR
+\{ ans_rule(30) \}
+\{ AnswerFormatHelp("formula") \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=6646", "1.1.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS($answer->cmp());
+
+$sc = $n*$nc1;
+$sa = $n*$na1;
+$sb = $n*$nb1;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'expression \(\left( $c^{$nc1} a^{$na1} b^{$nb1} \right)^$n \left( $c^{$nc2} a^{$na2} b^{$nb2} \right)\) se simplifie en utilisant les propriétés des exposants suivantes:
+$BR $BR
+\[   \begin{array}{lrl} 1.& (ab)^n &= a^nb^n \\
+  2.& \left(a^n\right)^m &= a^{nm} \\
+   3.&  a^na^m &= a^{n+m}  \\
+   4.&  a^{-n} &= \dfrac{1}{a^n} \end{array}
+\]
+$BR
+Ainsi, on simplifie cette expression de la façon suivante:
+$BR
+$BR
+\[ \begin{array}{rl} \left( $c^{$nc1} a^{$na1} b^{$nb1} \right)^$n \left( $c^{$nc2} a^{$na2} b^{$nb2} \right) &=  \left( $c^{$sc} a^{$sa} b^{$sb} \right)  \left( $c^{$nc2} a^{$na2} b^{$nb2} \right)  \\[0.8em]
+&= $c^{$pc} a^{$pa} b^{$pb} \end{array}\]
+$BR
+$BR
+\{ if ($pc < 0 && $pa>0 && $pb > 0){
+"Étant donnée qu'on a un ou des exposants négatifs, on réécrit cette expression sous la forme".$BR.$BR. 
+"\[ $c^{$pc} a^{$pa} b^{$pb} =  \dfrac{a^{$pa} b^{$pb}}{$c^{$negpc}}\]"
+}
+\}
+
+\{ if ($pc < 0 && $pa < 0 && $pb > 0){
+"Étant donnée qu'on a un ou des exposants négatifs, on réécrit cette expression sous la forme".$BR.$BR. 
+"\[ $c^{$pc} a^{$pa} b^{$pb} =  \dfrac{b^{$pb}}{$c^{$negpc} a^{$negpa}}\]"
+}
+\}
+
+\{ if ($pc < 0 && $pa > 0 && $pb < 0){
+"Étant donnée qu'on a un ou des exposants négatifs, on réécrit cette expression sous la forme".$BR.$BR. 
+"\[ $c^{$pc} a^{$pa} b^{$pb} =  \dfrac{a^{$pa}}{$c^{$negpc} b^{$negpb}}\]"
+}
+\}
+
+\{ if ($pc < 0 && $pa < 0 && $pb < 0){
+"Étant donnée qu'on a un ou des exposants négatifs, on réécrit cette expression sous la forme".$BR.$BR. 
+"\[ $c^{$pc} a^{$pa} b^{$pb} =  \dfrac{1}{$c^{$negpc} a^{$negpa} b^{$negpb}}\]"
+}
+\}
+
+\{ if ($pc > 0 && $pa < 0 && $pb > 0){
+"Étant donnée qu'on a un ou des exposants négatifs, on réécrit cette expression sous la forme".$BR.$BR. 
+"\[ $c^{$pc} a^{$pa} b^{$pb} =  \dfrac{$c^{$pc} b^{$pb}}{a^{$negpa}}\]"
+}
+\}
+
+\{ if ($pc > 0 && $pa < 0 && $pb < 0){
+"Étant donnée qu'on a un ou des exposants négatifs, on réécrit cette expression sous la forme".$BR.$BR. 
+"\[ $c^{$pc} a^{$pa} b^{$pb} =  \dfrac{$c^{$pc}}{a^{$negpa}  b^{$negpb}}\]"
+}
+\}
+
+\{ if ($pc > 0 && $pa > 0 && $pb < 0){
+"Étant donnée qu'on a un ou des exposants négatifs, on réécrit cette expression sous la forme".$BR.$BR. 
+"\[ $c^{$pc} a^{$pa} b^{$pb} =  \dfrac{$c^{$pc} a^{$pa} }{b^{$negpb}}\]"
+}
+\}
+
+$BR
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

@@ -1,0 +1,104 @@
+## DBsubject(Probabilités)
+## DBchapter(Variables aléatoires: cas général et continu)
+## DBsection(Fonction de répartition)
+##Modifié par Jean-Sébastien Turcotte - Université de Montréal
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+##DESCRIPTION
+##KEYWORDS('probability','random sampling', 'probability distributions')
+##
+##ENDDESCRIPTION
+
+## Tagged by sawblade
+
+## DBsubject('Probability')
+## DBchapter('Distributions')
+## DBsection('Binomial Distribution')
+## Date('')
+## Author('')
+## Institution('ASU')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+###############Source###############
+## KEYWORDS('Fonction de répartition','Probabilités','Variables aléatoires discrètes')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+#”unionLists.pl”,                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+#"PGstatisticsmacros.pl",   #Donne accès à des commandes de stats
+"PGnumericalmacros.pl"    #Nécessaire pour certaines macros dans statistics
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a1 = random(18,20,1);
+$a2 = $a1+1;
+$a3 = $a2+1;
+$a4 = $a3+1;
+$a5 = $a4+1;
+
+$f2 = random(1,10,1);
+$f1 = random(5,25,1);
+$f3 = random(4,14,1);
+$f4 = random(2,8,1);
+$f5 = random(1,5,1);
+$n = $f1+$f2+$f3+$f4+$f5;
+$F1=$f1/$n;
+$F2=$F1+$f2/$n;
+$F3=$F2+$f3/$n;
+$F4=$F3+$f4/$n;
+$F5=$F4+$f5/$n;
+
+@event = ("P(x=$a3)",
+	  "P(x>$a2)",
+	  "P(x\ge $a2)",
+	  "P(x\le $a4)",
+	  "P(x\ge $a4 \mbox{ ou } x<$a2)",
+	  "P(x<$a5)",
+	  "P(x=$a1)",
+	  "P($a1\le x <$a3)");
+
+@ans = ("$f3/$n", "($f3+$f4+$f5)/$n", "($f2+$f3+$f4+$f5)/$n", "($f1+$f2+$f3+$f4)/$n", "($f4+$f5+$f1)/$n", "($f1+$f2+$f3+$f4)/$n", "$f1/$n",
+"($f1+$f2)/$n");
+ 
+@slice = NchooseK(8,3);
+@sevent = @event[@slice];
+@sans = @ans[@slice];
+
+BEGIN_TEXT
+$BR
+\{begintable(6)\}
+\{row("\(x\)", "\($a1\)", "\($a2\)", "\($a3\)", "\($a4\)", "\($a5\)")\} 
+\{row("\(F_X(x)\)", "\($F1\)", "\($F2\)", "\($F3\)", "\($F4\)", "\($F5\)")\} 
+\{endtable()\}  $BR $BR
+Soit \( X \) une variable aléatoire discrète qui représente l'âge des élèves d'une classe. À partir de la fonction de répartition \(  F_X(x) \), déterminer les probabilités suivantes : $PAR
+a) \(  $sevent[0] =\) \{ans_rule(10)\} $PAR
+b) \(  $sevent[1] =\) \{ans_rule(10)\} $PAR
+c) \( $sevent[2]=\) \{ans_rule(10)\}
+
+
+END_TEXT
+
+ANS(num_cmp($sans[0]));
+ANS(num_cmp($sans[1]));
+ANS(num_cmp($sans[2]));
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

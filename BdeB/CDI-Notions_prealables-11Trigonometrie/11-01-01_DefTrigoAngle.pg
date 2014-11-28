@@ -1,0 +1,103 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Définition - Rapports trigonométriques et angles)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+## Modifié par Julie Tremblay, octobre 2014
+######## Source ############
+## Fichier source:  Library/Union/setTrigBasicValues/ur_tr_1_1.pg
+## ZDBsubject(Trigonometry)
+## ZDBchapter(Geometric and algebraic foundations for trigonometry)
+## ZDBsection(Radians, converting radians & degrees)
+## ZDate(8/23/07)
+## ZInstitution(Rochester)
+## ZAuthor(Utah ww group)
+## ZMLT(KentMoreLike8)
+## ZMLTleader(1)
+## ZLevel(2)
+#######  Source #############
+## Level(2)
+## Language(fr)
+## KEYWORDS('Trig', 'Degree', 'Radian','calculus','trigonometry','angle measure','radian/degree conversion','angles')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",        # the new parser
+  "alignedChoice.pl",      # for aligned answer blanks
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+$a1 = random(1,5,1);
+$b1 = random(1,5,1);
+while ($b1 == 4){$b1 = random(1,5,1);}
+$c1 = random(1,5,1);
+while ($c1 == 3){$c1 = random(1,5,1);}
+$d1 = random(1,7,2);
+$e1 = random(1,5,1);
+
+###################################
+#
+#  The formulas to use
+#
+
+Context("Numeric");
+
+$f1 = Formula("$a1*pi/6")->reduce;
+$f2 = Formula("$b1*pi/4")->reduce;
+$f3 = Formula("$c1*pi/3")->reduce;
+$f4 = Formula("$d1*pi/2")->reduce;
+$f5 = Formula("$e1*pi")->reduce;
+
+###########################################
+#
+# Compute the answers
+
+$ans1 = 30*$a1;
+$ans2 = 45*$b1;
+$ans3 = 60*$c1;
+$ans4 = 90*$d1;
+$ans5 = 180*$e1;
+
+###########################################
+#
+#  Make the alignment
+#
+
+Context()->texStrings;
+$al = new_aligned_list(ans_rule_len=>10, numbered=>1, tex_spacing=>"3pt");
+$al->qa(
+  ["\($f1\;\) "," degrés"], Real($ans1)->cmp,
+  ["\( $f2\;\) "," degrés"], Real($ans2)->cmp,
+  ["\($f3\;\) "," degrés"], Real($ans3)->cmp,
+  ["\($f4\;\) "," degrés"], Real($ans4)->cmp,
+  ["\($f5\;\) "," degrés"], Real($ans5)->cmp,
+);
+Context()->normalStrings;
+
+###################################
+# Main text
+
+BEGIN_TEXT
+Convertir les angles suivants en degrés.
+$PAR
+\{$al->print_q\}
+END_TEXT
+
+###################################
+# Answer checking
+
+$showPartialCorrectAnswers = 1;
+ANS($al->correct_ans);
+
+###################################
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

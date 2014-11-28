@@ -1,0 +1,94 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions algébriques)
+## DBsection(Domaine, image et évaluation de fonctions)
+## KEYWORDS('fonction rationnelle', 'français','domaine')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl",
+"MathObjects.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"AnswerFormatHelp.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->variables->add(a=>"Real",h=>"Real");
+
+
+$a = random(1,15,1);
+do{$b = random(3,15,1)*random(-1,1,2);} until($b != $a);
+do{$c = random(-20,20,1);} until($c != $a && $c != -$b);
+
+$xb = -$b;
+$d = $a+$b;
+
+$f = Formula("($a-x)/(x+$b)")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la fonction \( f(x)= \displaystyle $f \).$BR
+Déterminer le domaine de la fonction, en notation d'intervalle, et évaluer, si possible, la fonction aux valeurs de \(x\) données.$BR
+(${BITALIC}Si une valeur n'existe pas, écrire  ${BBOLD}nep${EBOLD}.$EITALIC)
+$PAR
+$BR
+\(\text{dom}\;f =\) \{ ans_rule(15)\}  \{ AnswerFormatHelp("interval") \}
+$BR $BR
+\(f($c)= \) \{ans_rule(20) \}
+$BR 
+\(f($xb)= \) \{ans_rule(20) \}
+$BR
+\(f(a)= \) \{ans_rule(20) \}
+$BR
+\(f(a+$a)= \) \{ans_rule(40) \}
+$BR
+\(f(a + h)= \) \{ans_rule(40) \}
+$HR
+$BITALIC
+Des exemples similaires sont présentés à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6974", "2.1.2", "TARGET='_blank'" ) \} sur la Plateforme d'aide en mathématiques.
+$EITALIC
+
+END_TEXT
+Context()->normalStrings;
+
+Context("Interval");
+
+ANS(Compute("R-{$xb}")->cmp);
+
+
+Context("Numeric");
+Context()->variables->add(a=>"Real",h=>"Real");
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+
+$ans1 = $f->eval(x=>$c);
+$ans2 = Compute("nep");
+$ans3 = $f->substitute(x=>"a");
+$ans4 = Formula("-a/(a+$d)")->reduce;
+$ans5 = $f->substitute(x=>"a+h");
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+ANS($ans4->cmp);
+ANS($ans5->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,120 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Factorisation)
+## DBsection(Double mise en évidence)
+## KEYWORDS('Factorisation','français','Mise en évidence double')
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne)
+
+## Level(2)
+## Language(fr)
+
+
+########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowersFr.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+#Mise en évidence double et différence de deux carrés: 
+#(x^2 + a)(x^2 - b^2) = (x^2 + a)(x - b)(x + b) = x^4 - b^2 x^2 + a x^2 - ab^2
+
+
+Context("PolynomialFactors");
+
+
+$a = random(1,9,1);
+$b = random(1,7,1);
+
+$b2 = $b*$b;
+$ab2 = $a*$b2;
+
+$expression = Compute("x^4 - $b2*x^2 + $a*x^2 - $ab2")->reduce();
+
+
+$answer = Compute("(x^2 + $a)(x-$b)(x+$b)")->reduce();
+
+
+
+################################################
+#  Main text
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Factoriser l'expression \($expression\).
+$BR
+$BR
+\{ ans_rule(30) \}
+$HR
+$BITALIC
+Un exemple similaire est présenté à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2314", "1.2.2.", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+
+END_TEXT
+Context()->normalStrings;
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS($answer->cmp(
+checker => sub {
+        my ($correct,$student,$ans) = @_;
+        my $nonfact = Compute("(x^2 + $a)(x^2 - $b2)");    
+
+    if ($student eq $expression) {
+      $ans->{ans_message} = "Ce polynôme se factorise.";
+       return 0; }
+    if ($student eq $nonfact) {
+         $ans->{ans_message} = "Cette expression se factorise encore";
+       return 0; }
+
+  return $ans; 
+})
+);
+
+
+$cd = $c*$d;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Le polynôme \($expression\) se factorise tout d'abord par une mise en évidence double.
+$BR
+$BR
+\[
+\begin{array}{rl}  $expression &=\underbrace{x^4 - $b2 x^2} + \underbrace{$a x^2 - $ab2} \\[0.5em] &=  x^2(x^2 - $b2) + $a (x^2 -$b2)   \\[0.5em]  &= (x^2 + $a)(x^2 - $b2)  \end{array}
+\]
+$BR $BR
+Par contre, on remarque que cette dernière expression est encore factorisable car le facteur \(x^2 - $b2\) est une différence de deux carrés. Ainsi,
+$BR $BR
+\[
+\begin{array}{rl}  $expression  &= (x^2 + $a)(x^2 - $b2) \\[0.5em]
+&= $answer \end{array}
+\]
+$BR $BR
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

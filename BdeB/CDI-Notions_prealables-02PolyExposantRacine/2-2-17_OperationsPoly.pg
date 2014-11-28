@@ -1,0 +1,102 @@
+###DESCRIPTION
+## Multiplying Polynomials
+## 
+##ENDDESCRIPTION
+## DBsubject(Algebra)
+## DBchapter(Polynomials, polynomial functions, and factoring)
+## DBsection('Multiplication of Polynomials')
+## KEYWORDS('polynomials','français')
+## Traduction('Julie Tremblay')
+## TitleText1('Essentials of Intermediate Algebra')
+## EditionText1('1')
+## AuthorText1('Blitzer')
+## Section1('5.2')
+## Problem1('')
+## Author('RA Cruz')
+## Institution('The College of Idaho')
+## Date: 2007/10
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextLimitedPolynomialFr.pl",
+  "CofIdaho_macrosFr.pl",
+  "AnswerFormatHelp.pl",
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+
+Context("LimitedPolynomial-Strict");
+Context()->variables->are(x=>'Real',y=>'Real');
+$a= random(2,4,1);
+$b= non_zero_random(-3,3,1); 
+
+while($a==$b){$b= non_zero_random(-3,3,1); }
+
+$poly = nicestring([$a,$b],["x","y"]);
+
+######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Développer le binôme suivant sous la forme d'un polynôme.
+$PAR $BR
+ \( ( $poly )^3 = \)  \{ ans_rule(40) \} 
+$BR \{ AnswerFormatHelp("formulas") \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=1508", "1.1.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+######################################
+#  Answer
+
+($c3, $c2,$c1,$c0) = ($a**3, 3*$a*$a*$b,3*$a*$b*$b,$b**3);
+$ans = Formula("$c3*x^3 + $c2*x^2*y + $c1*x*y^2+$c0*y^3")->reduce;
+ANS($ans->cmp);
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+$aa = $a*$a;
+$ab2 = 2*$a*$b;
+$bb = $b*$b;
+
+$poly2 = Formula("$aa x^2 + $ab2 x*y + $bb y^2")->reduce;
+
+$aab = $aa*$b;
+$aab2 = $ab2*$a;
+$abb2 = $ab2*$b;
+$bba = $bb*$a;
+
+$p1 = Formula("$c3 x^3 + $aab x^2y")->reduce;
+$p2 = Formula("$aab2 x^2*y + $abb2 x*y^2")->reduce;
+$p3 = Formula("$bba x*y^2 + $c0 y^3")->reduce;
+$p4 = Formula("$c0 y^3")->reduce;
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+\[  \begin{array}{rl} ($poly )^3 &=  ($poly)($poly)($poly) \\
+&= ($poly2)($poly)  \\
+&=  $p1 + $p2 + $p3 \\
+&= $c3 x^3 + ($aab +$aab2) x^2y + ($abb2+ $bba) xy^2 + $p4 \\
+&= $ans \end{array}
+\] 
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

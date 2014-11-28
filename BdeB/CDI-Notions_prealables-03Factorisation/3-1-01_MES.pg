@@ -1,0 +1,132 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+
+## DBsubject(Algèbre)
+## DBchapter(Factorisation)
+## DBsection(Factorisation: Mise en évidence)
+## KEYWORDS('Factorisation','français','mise en évidence')
+## Traduction('Julie Tremblay')
+## Institution(BdeB)
+## Language(fr)
+
+
+########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"parserMultiAnswer.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+
+# 2x a^3 + 2y a b^2  = 2a PGCD ( xd a^2 + yd b^2)  où x et y sont les nombres >0 # et a et b sont les variables.
+
+Context("Numeric");
+Context()->variables->are(a=>"Real",b=>"Real");
+
+
+$x = random(2,35,1);
+$y = random(2,35,1);
+
+$pgcd = gcf($x, $y);
+$xd = $x / $pgcd;
+$yd = $y / $pgcd;
+
+$expression = Compute("2*$x*a^3 + 2*$y*a*b^2")->reduce();
+
+$fac1 = Formula("(2 *$pgcd * a)")->reduce;
+$fac2 = Formula("($xd * a^2 + $yd * b^2)")->reduce;
+
+
+$multians = MultiAnswer($fac1, $fac2)->with(
+  singleResult => 0,
+  allowBlankAnswers => 1,
+  checker => sub {
+      my ( $correct, $student, $self ) = @_;
+      my ( $f1stu, $f2stu ) = @{$student};
+      my ( $f1, $f2 ) = @{$correct};
+      my  $polystu = Compute("$f1stu * $f2stu");
+      if ( ($f1 == $f1stu && $f2 == $f2stu) ||
+           ($f1 == $f2stu && $f2 == $f1stu) ) {
+          return [1,1];
+      } else {
+          if ($f1 == $f1stu || $f2 == $f1stu) {
+              return [1,0];
+          } elsif ($f1 == $f2stu || $f2 == $f2stu) {
+              return [0,1];
+          } else {
+              
+           if ($polystu == $expression) { $self->setMessage(2,"Vous pouvez encore mettre en évidence des facteurs communs sur les coefficients.");
+              }
+          return [0,0];
+              
+          }
+      }
+  }
+);
+
+
+
+
+################################################
+#  Main text
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Factoriser l'expression \($expression\). Simplifier la réponse.
+$BR
+$BR
+\( \big( \)
+\{ $multians->ans_rule(10) \}
+\( \big) \big( \)
+\{ $multians->ans_rule(10) \}
+\( \big) \)
+$HR
+$BITALIC
+Un exemple similaire est présenté à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2316", "1.2.1", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+
+ANS($multians->cmp());
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Le polynôme \($expression\) se factorise par une mise en évidence simple.
+$BR
+$BR
+\[
+\begin{array}{rl}  $expression &= $fac1 ($fac2)  \end{array}
+\]
+$BR $BR
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

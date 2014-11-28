@@ -1,0 +1,154 @@
+##DESCRIPTION
+## Slope-intercept form of a linear function
+## 
+##ENDDESCRIPTION
+
+##DESCRIPTION
+## Slope-intercept form of a linear function
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions algébriques)
+## DBsection(Fonction linéaire - Caractéristiques)
+## Modifié et traduit par Julie Tremblay Collège Bois-de-Boulogne, juin 2014
+
+###############Source###############
+##Par exemple:
+## Fichier source: Library/CollegeOfIdaho/setAlgebra_02_04_PointSlopeFormofLine/24IntAlg_14_LinearFunction.pg
+## ZTitleText1('Essentials of Intermediate Algebra')
+## ZEditionText1('1')
+## ZAuthorText1('Blitzer')
+## ZSection1('2.4')
+## ZProblem1('')
+## ZAuthor('RA Cruz')
+## ZInstitution('The College of Idaho')
+## ZDate: 2007/10
+###############Source###############
+
+## KEYWORDS('fonction linéaire', 'pente','français')
+## Level(1)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+ "contextFraction.pl",
+"PGauxiliaryFunctions.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+
+$dy = non_zero_random(-5,5);
+$dx = non_zero_random(-5,5);
+$b = random(-6,6,1);
+
+$x1= random(-2,2,1);
+($numy1,$deny1) = reduce($dy * $x1 + $b*$dx,$dx);
+$x2 = $x1 + non_zero_random(-2,2,1);
+($numy2,$deny2) = reduce($dy * $x2 + $b*$dx,$dx);
+$y1 = Compute("$numy1/$deny1")->reduce;
+$y2 = Compute("$numy2/$deny2")->reduce;
+
+($m1,$m2) = reduce($dy,$dx);
+ 
+######################################
+#  Main text
+
+### Écrire les y en fraction latex
+if(floor($y1)-$y1 != 0) { $y1 = "\frac{$numy1}{$deny1}"; }
+if(floor($y2)-$y2 != 0) { $y2 = "\frac{$numy2}{$deny2}"; }
+
+Context()->texStrings;
+BEGIN_TEXT
+Trouver la pente et l'équation de la droite passant par les points : \(\left($x1,$y1\right)\) et \(\left($x2,$y2\right)\).
+$PAR
+a)  \( m =\)  \{ ans_rule(10) \}  $SPACE (${BITALIC}en fraction$EITALIC)
+$PAR
+b)  L'équation de la droite est : \(y = \) \{ ans_rule(20) \}
+$HR
+$BITALIC
+Vous pouvez allez voir des exemples similaires à la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=6982", "2.2.1", "TARGET='_blank'" ) \} sur la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+######################################
+#  Answer
+
+Context("Fraction-NoDecimals");
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+
+$m = Compute("$m1/$m2");
+ANS($m->cmp); 
+
+Context("Numeric");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+$ans_b = Formula("$m*x+$b")->reduce;
+
+if ($b==0) {$ans_b = Formula("$m*x")->reduce;}
+ANS($ans_b->cmp); 
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+#### Écrire la pente en latex
+
+$v = $m*$x1;
+$m1x1 = $m1*$x1;
+$m = Compute("$m");
+
+if(floor($m)-$m != 0) { 
+$m = "\frac{$m1}{$m2}" ;
+$v = "\frac{$m1x1}{$m2}";
+$ans_b = "\frac{$m1}{$m2} x + $b";
+}
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Trouvons la pente et l'équation de la fonction linéaire passant par les points \(\left($x1,$y1\right)\) et \(\left($x2,$y2\right)\).
+$BR $BR
+La pente, ou le taux de variation, de la droite se calcule ainsi:
+\[m=\dfrac{y_2-y_1}{x_2-x_1}=\dfrac{$y2 - $y1}{$x2-$x1} =$m\]
+$BR
+L'équation d'une droite est de la forme \(y=mx+b\). Par conséquent, notre équation est de la forme \(y=$m x + b\) et il suffit de remplacer \((x,y)\) dans l'équation par un des points passant par la droite, \(\left($x1,$y1\right)\), pour trouver l'ordonnée à l'origine \(b\).
+$BR $BR
+\[ \begin{array}{ll}y_1 = $m(x_1) + b &\Rightarrow $y1 = $m($x1) + b \\&\Rightarrow b = $y1 - $v = $b\end{array}\]
+$BR $BR
+Ainsi, l'équation de la droite est : \(y = $ans_b\).
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

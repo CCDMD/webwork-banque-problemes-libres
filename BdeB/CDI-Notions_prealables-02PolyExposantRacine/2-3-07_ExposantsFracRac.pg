@@ -1,0 +1,97 @@
+##DESCRIPTION
+##   Evaluation of a simple algebraic expression
+##ENDDESCRIPTION
+
+##KEYWORDS('algebra','exponent')
+ 
+## tcao , PAID on 11-24-2003
+
+## DBsubject('Algebra')
+## DBchapter('Basic Algebra')
+## DBsection('Exponents and Radicals')
+## Date('6/3/2002')
+## Author('')
+## Institution('')
+## TitleText1('Precalculus')
+## EditionText1('3')
+## AuthorText1('Stewart, Redlin, Watson')
+## Section1('1.2')
+## Problem1('9b')
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGunion.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl"
+);
+
+
+TEXT(beginproblem());
+$showCorrectPartialAnswers = 1;
+
+$a = random(2,6,1);
+$b = random(3,7,1);
+
+while($a==$b){$b=random(3,7,1);}
+
+$a1 = $a**3;
+$b1 = $b**3;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer l'expression suivante en donnant les numérateurs et dénominateurs n'ayant aucun facteur commun.
+\{
+ColumnTable(
+  "\( \displaystyle \left(-\frac{$a1}{$b1}\right)^{2/3} = \)",
+  ans_rule(5).$BR.$HR.ans_rule(5),
+  indent => 0, separation => 0, valign => "MIDDLE"
+  );
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+
+$facb = $b**2;
+$faca = $a**2;
+
+$i = gcf($facb,$faca);
+
+        $num = $faca / $i;
+        $den = $facb / $i;
+
+$ans1 = $num;
+$ans2 = $den;
+
+ANS(num_cmp($ans1, mode=>"strict"));
+ANS(num_cmp($ans2, mode=>"strict"));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'expression \( \left(-\dfrac{$a1}{$b1}\right)^{2/3}\) se simplifie en utilisant les  propriétés des exposants et des radicaux suivantes:
+$BR $BR
+\[   \begin{array}{lrl} 1.&  a^{m/n} &= \sqrt[n]{a^m} = \left(\sqrt[n]{a}\right)^m \\
+  2.&   \left(\dfrac{a}{b}\right)^{n} &= \dfrac{a^n}{b^n} \end{array}
+\]
+$BR
+Ainsi, on peut simplifier cette expression de la façon suivante:
+$BR
+$BR
+\[ \begin{array}{rl} \left(-\dfrac{$a1}{$b1}\right)^{2/3} &=  \sqrt[3]{ \left(-\dfrac{$a1}{$b1}\right)^2}\\[0.8em]
+&= \sqrt[3]{ \left(\dfrac{$a1}{$b1}\right)^2}\\[1em] 
+&= \left(\sqrt[3]{ \dfrac{$a^3}{$b^3}}\right)^2 \\[1em]
+&= \left(\dfrac{$a}{$b}\right)^2   \\[1em]
+&= \dfrac{$num}{$den} \end{array}\]
+$BR
+$BR
+END_SOLUTION
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

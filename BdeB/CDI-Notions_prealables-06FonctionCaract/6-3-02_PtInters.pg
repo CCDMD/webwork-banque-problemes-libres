@@ -1,0 +1,172 @@
+## DESCRIPTION
+## Fonctions - Graphiques
+## ENDDESCRIPTION
+
+## KEYWORDS('functions','domain','range','français')
+
+## DBsubject('Algebra') 
+## DBchapter('Functions') 
+## DBsection('Evaluation and Solving') 
+
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+
+
+DOCUMENT();
+loadMacros(
+"PGbasicmacros.pl",
+"PGanswermacros.pl",
+"PGgraphmacros.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"PGcourse.pl",
+"unionTables.pl",
+);
+
+TEXT(beginproblem());
+
+$refreshCachedImages=1;
+
+##############################################
+#  Setup   forme  f(x) = (x-a)(x-b)(x-c)
+
+Context("Numeric");
+Context()->strings->add(aucune=>{});
+Context()->{format}{number} = "%.1f";
+
+
+do{$a = random(-4,3,1)}
+until( $a < -2 || $a > 1);  #zero
+
+
+$f = Formula("(x-$a)*(x^2+x+1)")->reduce;
+
+$b = 1-$a;    
+
+$som1 = Compute("(-$b - sqrt($b*$b-3*$b))/3");
+$ysom1 = $f->eval(x=>$som1);
+
+$som2 = Compute("(-$b + sqrt($b*$b-3*$b))/3");
+$ysom2 = $f->eval(x=>$som2);
+
+if($a < 0 ) {
+$xg = random($a-1,$a-0.5,0.2);  #le x à gauche
+$yg = $f->eval(x=>$xg);
+
+$xd = random(int($som2)+1,int($som2)+1.5,0.2);  #le x à gauche
+$yd = $f->eval(x=>$xd);
+
+} else {
+$xg = random(int($som1)-1.5,int($som1)-1,0.2);  #le x à gauche
+$yg = $f->eval(x=>$xg);
+
+$xd = random($a+0.5,$a+1,0.2);  #le x à gauche
+$yd = $f->eval(x=>$xd);
+}
+
+if($yg < $ysom2) { $ymin = $yg;}
+else {$ymin = $ysom2;}
+
+if($yd > $ysom1) { $ymax = $yd;}
+else {$ymax = $ysom2;}
+
+if(abs($ymin)<abs($ymax)) { $gy=int(abs($ymax)); }
+else { $gy = int(abs($ymin)); }
+
+
+$gr = init_graph(-6,-$gy-2,6,$gy+2,
+axes=>[0,0],
+grid=>[12,2*$gy+4],
+size=>[600,600]);
+$gr -> lb('reset');
+
+add_functions($gr, "$f for x in <$xg,$xd> using color:blue and weight:2");
+$gr -> lb(new Label ( 5.5,0.25,'x','black','left','bottom'));
+$gr -> lb(new Label ( 0.25,$gy,'y','black','left','bottom'));
+
+foreach my $i (1..5) {
+  $gr -> lb(new Label ( $i,-$gy-1.5, $i,'black','center','middle'));
+  $gr -> lb(new Label (-$i,-$gy-1.5,-$i,'black','center','middle'));
+}
+
+$ptsom1 = Compute("($som1,$ysom1)");
+$ptsom2 = Compute("($som2,$ysom2)");
+$ptg = Compute("($xg,$yg)");
+$ptd = Compute("($xd,$yd)");
+
+$gr -> lb(new Label ($som1,$ysom1+1,"$ptsom1",'black','center','middle'));
+$gr -> lb(new Label ($som2,$ysom2-1,"$ptsom2",'black','center','middle'));
+$gr -> lb(new Label ($xg,$yg-1,"$ptg",'black','center','middle'));
+$gr -> lb(new Label ($xd,$yd+1,"$ptd",'black','center','middle'));
+
+foreach my $i (1..$gy) {
+ $gr -> lb(new Label (-5.5, -$i,-$i,'black','center','middle'));
+  $gr -> lb(new Label (-5.5,$i,$i,'black','center','middle'));
+}
+
+$circle_som1 = closed_circle( $som1, $ysom1, 'black' );
+$circle_som2 = closed_circle( $som2, $ysom2, 'black' );
+$circle_xg = open_circle( $xg, $yg, 'black' );
+$circle_xd = closed_circle( $xd, $yd, 'black' );
+
+$gr -> stamps($circle_som1,$circle_som2,$circle_xg,$circle_xd);
+
+
+#############################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+\{
+ColumnTable(
+"Déterminer l'ordonnée à l'origine, le(s) zéro(s), le domaine et l'image de la fonction représentée par le graphique suivant.
+ Il peut y avoir plus d'une réponse possible, dans ce cas, écrire vos réponses séparées par une virgule. S'il n'y a aucune réponse possible, écrire ".
+ $BBOLD."aucune.".$EBOLD.
+$BR.
+$BR.
+"(a) \( f(0) = \) ". 
+ans_rule(7).
+$BR.
+$BR.
+"(b) \( f \big( \) ".ans_rule(7)." \( \big) = 0 \) ".
+$BR.$BR.
+"(c) \( \text{dom}\;f = \) ".ans_rule(10).$SPACE.
+AnswerFormatHelp("intervals").
+$BR.$BR.
+"(d) \( \text{ima}\;f = \) ".ans_rule(10).$SPACE,
+image(insertGraph($gr), width=>300, height=>300, tex_size=>700).
+$BR.$BCENTER.
+"(Cliquer pour agrandir l'image)".
+$ECENTER,
+indent => 0, separation => 30, valign => "TOP"
+)
+\}
+END_TEXT
+Context()->normalStrings;
+
+
+###############################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS(Real(-$a)->cmp()) ;
+
+ANS(List($a)->cmp() );
+
+Context("Interval");
+
+ANS(Compute("($xg,$xd]")->cmp()) ;
+
+if($yg < $ysom2) { ANS(Compute("($ymin,$ymax]")->cmp()) ;}
+else {ANS(Compute("[$ymin,$ymax]")->cmp()) ;}
+
+
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

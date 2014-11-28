@@ -1,0 +1,258 @@
+##DESCRIPTION
+##Les opérations sur les intervalles
+##Fait par Julie Tremblay, août 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Notions de base)
+## DBsection(Les opérations sur les ensembles)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+######## Source ############
+## Fichier source:  Library/UMN/logicAndSetTheory/prob04.pg
+## ZDBsubject(Set theory and logic)
+## ZDBchapter(Operations on sets)
+## ZDBsection(Boolean operations on sets)
+## ZDate(09/29/2011)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+#######  Source #############
+## Level(3)
+## Language(fr)
+## KEYWORDS('intervalles','ensembles','union','intersection')
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "AnswerFormatHelp.pl",
+  "PGgraphmacros.pl",
+  "unionTables.pl",
+);
+
+#####################################################################
+
+$showPartialCorrectAnswers = 1;
+TEXT(beginproblem());
+
+Context("Interval");
+#Context()->constants->add(EmptySet => Set());
+#Context()->flags->set(noneWord=>"EmptySet");
+
+$a = random(-12,-5,1);
+$b = random(2,9,1);
+
+$ans1 = Interval("[$a,$b)");
+$ans2 = Interval("(-1,0)");
+$ans3 = Interval("[$a,1]");
+$ans4 = Interval("(-inf,-1]U[$b,inf)");
+$ans5 = Interval("[$a,-1]");
+$ans6 = Interval("(-inf,$a)U[0,$b)");
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \(A = [ $a,1 ]\), \(B = ] -1,$b [\) et \(C = \lbrace x\in\mathbb{R}\vert x<0 \rbrace\).$BR
+Trouver les ensembles demandés et écrire votre réponse sous forme d'intervalle ou d'union d'intervalles.
+$PAR
+$BBOLD 1.$EBOLD \(A \cup B = \) \{ans_rule(20)\} \{ AnswerFormatHelp("interval") \}$PAR
+$BBOLD 2.$EBOLD \(A \cap B \cap C = \) \{ans_rule(20)\} $PAR
+$BBOLD 3.$EBOLD \(A \cap (B \cup C) = \) \{ans_rule(20)\} $PAR
+$BBOLD 4.$EBOLD \(\mathbb{R}\setminus B = \) \{ans_rule(20)\} $PAR
+$BBOLD 5.$EBOLD \(A\setminus B = \) \{ans_rule(20)\} $PAR
+$BBOLD 6.$EBOLD \((C\setminus A)\cup(B\setminus C) = \) \{ans_rule(20)\} $PAR
+
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+ANS(($ans1)->cmp(showTypeWarnings=>0,showEndpointHints=>0,showEndTypeHints=>0));
+ANS(($ans2)->cmp(showTypeWarnings=>0,showEndpointHints=>0,showEndTypeHints=>0));
+ANS(($ans3)->cmp(showTypeWarnings=>0,showEndpointHints=>0,showEndTypeHints=>0));
+ANS(($ans4)->cmp(showTypeWarnings=>0,showEndpointHints=>0,showEndTypeHints=>0));
+ANS(($ans5)->cmp(showTypeWarnings=>0,showEndpointHints=>0,showEndTypeHints=>0));
+ANS(($ans6)->cmp(showTypeWarnings=>0,showEndpointHints=>0,showEndTypeHints=>0));
+
+
+
+
+$gr = init_graph($a-5,0.5,$b+5,3.5,pixels=>[300,200]);
+$gr->lb('reset');
+
+for $i (0..3) {
+$gr->moveTo($a-5,$i);
+$gr->arrowTo($b+5,$i,'black');
+}
+
+
+$gr->moveTo($a,1);
+$gr->lineTo(1,1,'blue',3);
+$gr->moveTo(-1,2);
+$gr->lineTo($b,2,'red',3);
+$gr->moveTo($a-5,3);
+$gr->lineTo(0,3,'green',3);
+
+
+
+$gr->stamps( closed_circle($a,1,'blue'), closed_circle(1,1,'blue'),
+open_circle(-1,2,'red'),open_circle($b,2,'red'),
+open_circle(0,3,'green') );
+
+
+#### labels du graph
+$gr->lb( new Label($a,0.75,"$a",'black','center','middle'));
+$gr->lb( new Label(1,0.75,'1','black','center','middle'));
+$gr->lb( new Label($b+2,1.25,'A','blue','center','middle'));
+$gr->lb( new Label(-1,1.75,'-1','black','center','middle'));
+$gr->lb( new Label($b,1.75,"$b",'black','center','middle'));
+$gr->lb( new Label($b+2,2.25,'B','red','center','middle'));
+$gr->lb( new Label(0,2.75,'0','black','center','middle'));
+$gr->lb( new Label($b+2,3.25,'C','green','center','middle'));
+
+
+#Graphique des réponses
+
+$grans = init_graph($a-5,0.5,$b+5,6.5,pixels=>[300,400]);
+$grans->lb('reset');
+
+$grans->new_color("hotpink", 255, 105, 180);
+
+
+for $i (1..6) {
+$grans->moveTo($a-5,$i);
+$grans->arrowTo($b+5,$i,'black');
+}
+
+$grans->moveTo($a,0);
+$grans->lineTo($a,6.5,'gray',1,dashed);
+$grans->moveTo(-1,0);
+$grans->lineTo(-1,6.5,'gray',1,dashed);
+$grans->moveTo(0,0);
+$grans->lineTo(0,6.5,'gray',1,dashed);
+$grans->moveTo(1,0);
+$grans->lineTo(1,6.5,'gray',1,dashed);
+$grans->moveTo($b,0);
+$grans->lineTo($b,6.5,'gray',1,dashed);
+
+for $j (1..6) { 
+if($j!=3) { #points A
+$grans->stamps(closed_circle(1,$j)); 
+}
+if($j!=3 && $j!=1) { #points A
+$grans->stamps(closed_circle($a,$j)); 
+}
+
+if($j!=3) {
+$grans->stamps(open_circle($b,$j) );
+}
+if($j!=1 && $j!=5) {
+$grans->stamps(closed_circle(-1,$j));
+}
+}
+
+$grans->stamps(open_circle(-1,1),open_circle(-1,5),closed_circle($b,3));
+$grans->stamps(open_circle($a,1));
+
+### points C
+$grans->stamps(open_circle(0,5),closed_circle(0,4),closed_circle(0,1) );
+
+
+### Intervalles des réponses
+$grans->moveTo($a,6);
+$grans->lineTo($b,6,'hotpink',3);
+
+$grans->moveTo(-1,5);
+$grans->lineTo(0,5,'hotpink',3);
+
+$grans->moveTo($a,4);
+$grans->lineTo(1,4,'hotpink',3);
+
+$grans->moveTo($a-5,3);
+$grans->lineTo(-1,3,'hotpink',3);
+$grans->moveTo($b,3);
+$grans->lineTo($b+5,3,'hotpink',3);
+
+$grans->moveTo($a,2);
+$grans->lineTo(-1,2,'hotpink',3);
+
+$grans->moveTo($a-5,1);
+$grans->lineTo($a,1,'hotpink',3);
+$grans->moveTo(0,1);
+$grans->lineTo($b,1,'hotpink',3);
+
+
+
+
+
+#labels
+$grans->lb( new Label($b+2,6.25,'Q1','black','center','middle'));
+$grans->lb( new Label($b+2,5.25,'Q2','black','center','middle'));
+$grans->lb( new Label($b+2,4.25,'Q3','black','center','middle'));
+$grans->lb( new Label($b+2,3.25,'Q4','black','center','middle'));
+$grans->lb( new Label($b+2,2.25,'Q5','black','center','middle'));
+$grans->lb( new Label($b+2,1.25,'Q6','black','center','middle'));
+
+
+### labels des bornes
+
+$grans->lb( new Label($a,5.75,"$a",'black','center','middle'));
+$grans->lb( new Label($b,5.75,"$b",'black','center','middle'));
+
+$grans->lb( new Label(-1,4.75,"-1",'black','center','middle'));
+$grans->lb( new Label(0,4.75,"0",'black','center','middle'));
+
+$grans->lb( new Label($a,3.75,"$a",'black','center','middle'));
+$grans->lb( new Label(1,3.75,"1",'black','center','middle'));
+
+$grans->lb( new Label(-1,2.75,"-1",'black','center','middle'));
+$grans->lb( new Label($b,2.75,"$b",'black','center','middle'));
+
+$grans->lb( new Label($a,1.75,"$a",'black','center','middle'));
+$grans->lb( new Label(-1,1.75,"-1",'black','center','middle'));
+
+$grans->lb( new Label($a,0.75,"$a",'black','center','middle'));
+$grans->lb( new Label(0,0.75,"0",'black','center','middle'));
+$grans->lb( new Label($b,0.75,"$b",'black','center','middle'));
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Les intervalles A, B et C sont représentés graphiquement par les droites réelles ci-dessous.
+$BR $PAR
+
+$SPACE\{ image( insertGraph($gr), width=>300, 
+    height=>200, tex_size=>800 ) \}
+
+$BR $PAR
+On construit les intervalles recherchés en projetant les extémités des intervalles formant A, B et C sur de nouvelles droites.
+On obtient
+$BR $PAR
+\{ ColumnTable(
+image( insertGraph($grans), width=>300, height=>400, tex_size=>800 )
+,
+$PAR.
+"${BBOLD}Q1.${EBOLD} \(A\cup B =\left[ $a, $b\right[ \)
+$PAR
+${BBOLD}Q2.${EBOLD} \(A\cap B\cap C =\left] -1, 0\right[ \)
+$PAR
+${BBOLD}Q3.${EBOLD} \(A\cap ( B\cup C) =\left[ $a, 1\right] \)
+$PAR
+${BBOLD}Q4.${EBOLD} \(\mathbb{R}\setminus B = \left] -\infty,-1\right]\cup \left[$b, \infty \right[ \)
+$PAR
+${BBOLD}Q5.${EBOLD} \(A\setminus B =\left[ $a, -1\right] \)
+$PAR
+${BBOLD}Q6.${EBOLD}  \((C\setminus A)\cup (B\setminus C) =\left]-\infty, $a\right[ \cup \left[0,$b\right[ \)",
+
+indent => 0, separation => 30, valign => "TOP"
+);
+\}
+END_SOLUTION
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

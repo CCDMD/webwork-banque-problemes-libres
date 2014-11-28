@@ -1,0 +1,111 @@
+##DESCRIPTION
+## Résoudre des équations exponentielles avec les log
+## Modifié par Julie Tremblay, novembre 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions exponentielles et logarithmiques)
+## DBsection(Équations contenant des fonctions exponentielles et logarithmiques)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+######## Source ############
+## Fichier source:  Library/UMN/calculusStewartCCC/s_1_6_51.pg
+## ZDBsubject(Algebra)
+## ZDBchapter(Exponential and logarithmic expressions and functions)
+## ZDBsection(Exponential and logarithmic equations)
+## ZDate(6/3/2002)
+## ZInstitution(Rochester)
+## ZMLT(ELEqn_MTL5)
+## ZMLTleader(1)
+## ZLevel(2)
+## ZTitleText2('Precalculus')
+## ZAuthorText2('Stewart, Redlin, Watson')
+## ZEditionText2('3')
+## ZSection2('4.5')
+## ZProblem2('29')
+#######  Source #############
+## Level(2)
+## Language(fr)
+## KEYWORDS()
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"answerHints.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+do{
+$a=non_zero_random(-8,8,1);
+$b=non_zero_random(-8,8,1);
+} until( $a>0 || $b>0);
+## (x-$a)(x-$b)
+$b1 = -$a-$b;
+$c1 = $a*$b;
+
+$f = Formula("e^(2*x) + $b1*e^x + $c1")->reduce;
+
+if($a > 0) {
+$ans1 = Compute("ln($a)");
+}
+
+if($b > 0) {
+$ans2 = Compute("ln($b)");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre l'équation exponentielle
+\[
+$f =0.
+\]
+S'il existe plus d'une solution, les séparer par une virgule, s'il n'y en a pas, 
+écrire le mot ${BBOLD}aucune$EBOLD.
+$PAR
+\(x = \) \{ans_rule(30) \}
+END_TEXT
+Context()->normalStrings;
+
+Context()->strings->add(aucune=>{});
+Context()->flags->set(useBaseTenLog=>1);
+
+if($a>0 && $b> 0) {
+	if($a == $b) {
+	$ans = List("$ans1");
+	} else {
+	$ans = Compute("$ans1,$ans2");
+	} 
+} elsif($a > 0) { ### b<0
+$ans = List("$ans1");
+} else { ### a<0 et b>0
+$ans = List("$ans2");
+} 
+
+ANS($ans->cmp);
+
+$showHint = 3;
+Context()->variables->add(u => 'Real');
+$fquad = Formula("u^2+$b1*u+$c1")->reduce;
+
+Context()->texStrings;
+BEGIN_HINT
+$BR
+Transformer l'équation sous la forme d'une équation quadratique en posant \(u=e^x\). On obtient :
+\[ $fquad = 0\]
+$BR
+Il suffit ensuite de factoriser l'équation ou d'utiliser la formule quadratique en fonction de la variable \(u=e^x\).
+
+END_HINT
+Context()->normalStrings;
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

@@ -1,0 +1,90 @@
+## DESCRIPTION
+##   Solve Equation with Absolute Value
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Équations contenant des valeurs absolues)
+## KEYWORDS('Résoudre','Équation','Valeur absolue')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(3)
+## Language(fr)
+
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+########################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+########################################################################
+
+Context()->noreduce('(-x)-y');
+Context()->strings->add(aucune => {});
+
+
+$a = random(2,9,1)*random(-1,1,2);
+
+
+$poly = Formula("x^2 - 2*$a x")->reduce;
+$gauche = Formula("abs($poly)")->reduce;
+$aa = $a*$a;
+
+$ans = Compute("$a,$a*(1 + sqrt(2)),$a*(1 - sqrt(2))");
+
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre, si possible, l'équation suivante. S'il n'y a aucune solution, écrire "aucune" dans la case réponse.
+$BR $BR
+\[
+$gauche = $aa.
+\]
+$BR $BR
+Solution(s) : \(x =\) \{ ans_rule(30) \} $BR
+$BBOLD Note: S'il y a plus d'une solution, écrire les réponses séparées par une virgule. Ex.: 4, sqrt(10)
+$EBOLD
+$BR
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5276", "1.4.5", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+ANS( $ans->cmp() );
+
+$a2 = 2*$a;
+$absa2 = abs($a2);
+$absa = abs($a);
+$rac = 8*$aa;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Comme \($gauche = $aa\) est une équation de la forme \(|f(x)| = c\) où \(c \geq 0\), alors pour trouver les solutions, il faut résoudre ces deux équations : \( f(x)=c\) et \(f(x) = -c\). Voici la démarche,
+$BR $BR
+\[\begin{array}{rlcrl}  $poly &= $aa && $poly &= -$aa \\ $poly - $aa &= 0 &\quad& $poly + $aa &= 0 \\ x &= \dfrac{$a2 \pm\sqrt{($a2)^2-4(-$aa)}}{2} && (x-$a)^2 &= 0 \\\Leftrightarrow x&=\dfrac{$a2\pm\sqrt{$rac}}{2}&&\Leftrightarrow x&=$a\end{array}\]
+$BR $BR
+On peut simplifier la première solution : \(\frac{$a2 \pm $absa2\sqrt{2}}{2} = $a \pm $absa\sqrt{2} = $a(1\pm\sqrt{2})\).$BR $BR
+Il existe donc trois solutions à cette équation:\( \boxed{x = $a}\),   \( \boxed{x = $a(1+\sqrt{2})}\)   et   \( \boxed{x = $a(1-\sqrt{2})}\).$BR
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

@@ -1,0 +1,94 @@
+##DESCRIPTION
+##  Algebra problem: polynomial functions
+##ENDDESCRIPTION
+
+##KEYWORDS('algebra', 'synthetic division','français')
+## Traduction('Julie Tremblay')
+## tsch tagged and PAID on 12-12-2003
+
+## DBsubject('Algebra')
+## DBchapter(Polynomial and rational functions)
+## DBsection('Dividing Polynomials')
+## Date('6/3/2002')
+## Author('')
+## Institution('')
+## TitleText1('College Algebra')
+## EditionText1('3')
+## AuthorText1('Stewart, Redlin, Watson')
+## Section1('5.2')
+## Problem1('15,21')
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextLimitedPolynomialFr.pl",
+  "CofIdaho_macrosFr.pl",
+  "AnswerFormatHelp.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("LimitedPolynomial-Strict");
+
+$a = random(1,8,1);
+$b = non_zero_random(-8,8,1);
+$c = random(1,8,1);
+$d = random(2,4,1);
+##P(x)=(x^2+$a x + $b)(x+$d)+$c
+$b1=$a+$d;
+$c1=$a*$d+$b;
+$d1=$b*$d+$c;
+
+Context()->texStrings;
+BEGIN_TEXT
+Trouver le quotient et le reste de la division polynomiale suivante.
+\[\frac{x^3 ? {$b1} x^2 ? {$c1} x ? {$d1}}{x+$d}\]
+$BR  
+Le quotient est \{ ans_rule(20) \}
+$BR  
+Le reste est \{ ans_rule(10) \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=1508", "1.1.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+$ans1 = Formula("x**2+$a*x+$b")->reduce;
+$ans2 = $c;
+ANS($ans1->cmp);
+ANS(num_cmp($ans2));
+
+$ad = $a*$d;
+$bd = $b*$d;
+
+$poly1 = nicestring([$a,$c1,$d1],["x^2","x",""]);
+$poly2 = nicestring([$a,$ad],["x^2","x"]);
+$poly3 = nicestring([$b,$d1],["x",""]);
+$poly4 = nicestring([$b,$bd],["x",""]);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+\[  \begin{array}{rl}
+ x^3 ? {$b1} x^2 ? {$c1} x ? {$d1} &\vert\underline{x ? {$d}} \\[0.5em]
+- \underline{\qquad\left( x^3 ? {$d} x^2\right)}  & $ans1\\[0.5em]
+  $poly1 & \\[0.5em]
+-  \underline{\quad\left($poly2\right)} & \\[0.5em]
+ $poly3  &  \\[0.5em]
+- \underline{\left($poly4\right)} & \\[0.5em]
+  $c & \text{(le reste)}
+ \end{array}
+\] 
+
+Ainsi, 
+\[\frac{x^3 ? {$b1} x^2 ? {$c1} x ? {$d1}}{x+$d} = $ans1 +\frac{$c}{x + $d}\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

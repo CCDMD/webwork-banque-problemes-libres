@@ -1,0 +1,91 @@
+## DBsubject(Probabilités)
+## DBchapter(Variables aléatoires discrètes)
+## DBsection(Variables discrètes)
+##Modifié par Jean-Sébastien Turcotte - Université de Montréal
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+##ZDESCRIPTION
+##ZKEYWORDS('probability','binomial random variable', 'probability dist')
+##
+##Z tsch tagged and PAID on 3-22-2004 
+
+##ZDBsubject('Probability')
+## ZDBchapter('Distributions')
+## ZDBsection('Binomial Distribution')
+## ZDate('6/3/2002')
+## ZAuthor('')
+## ZInstitution('')
+## ZTitleText1('Mathematical Statistics')
+## ZEditionText1('6')
+## ZAuthorText1('Wackerly, Mendenhall, Scheaffer')
+## ZSection1('3.4')
+## ZProblem1('28')
+##ENDDESCRIPTION
+###############Source###############
+## KEYWORDS('Probabilités','Loi binomiale')
+## Level(1)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+#”unionLists.pl”                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+Context("IntegerFunctions");
+
+for ($i=0; $i<4; $i++) {
+	$n[$i] = random(3,6,1);
+}
+
+for ($i=0; $i<4; $i++) {
+	$x[$i] = random(0,$n[$i],1);
+}
+
+for ($i=0; $i<4; $i++) {
+	$p[$i] = random(.1,.9,.1);
+}
+
+for ($i=0; $i<4; $i++){
+	$comb[$i] = fact ($n[$i])/(fact ($x[$i])*fact ($n[$i]-$x[$i]));
+	$other[$i] = $p[$i]**($x[$i])*(1-$p[$i])**($n[$i]-$x[$i]);
+	$prob[$i] = $comb[$i]*$other[$i];
+}
+
+
+BEGIN_TEXT
+Si \(X\) est une variable aléatoire binomiale, déterminer  dans chaque cas ci-dessous. $PAR
+a) \( \) \( n = $n[0],  p = $p[0]\)
+$BR
+\(p(X = $x[0]) =\) \{ans_rule(10)\} $PAR
+
+b) \( \) \( n = $n[1],  p = $p[1]\)
+$BR
+\(p(X = $x[1]) =\) \{ans_rule(10)\} $PAR
+
+c) \( \) \( n = $n[2],  p = $p[2]\)
+$BR
+\(p(X = $x[2]) =\) \{ans_rule(10)\} $PAR
+
+d) \( \) \( n = $n[3],  p = $p[3]\)
+$BR
+\(p(X = $x[3]) =\) \{ans_rule(10)\}
+END_TEXT
+ANS(Compute("$prob[0]")->cmp);
+ANS(Compute("$prob[1]")->cmp);
+ANS(Compute("$prob[2]")->cmp);
+ANS(Compute("$prob[3]")->cmp);
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

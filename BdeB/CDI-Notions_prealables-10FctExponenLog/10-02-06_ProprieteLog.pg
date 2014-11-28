@@ -1,0 +1,97 @@
+##DESCRIPTION
+## Simplifier une expression logarithmique à l'aide des propriétés
+##Fait par Julie Tremblay, novembre 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fonctions exponentielles et logarithmiques)
+## DBsection(Logarithme et ses propriétés)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+######## Source ############
+## Fichier source: Library/LoyolaChicago/Precalc/Chap4Tools/Connally3-4-Tools-38.pg
+## ZDBsubject(Algebra)
+## ZDBchapter(Exponential and logarithmic expressions and functions)
+## ZDBsection(Properties of logarithms)
+## ZDate(01/01/10)
+## ZInstitution(Fort Lewis College)
+## ZAuthor(Paul Pearson)
+## ZMLT(TwoLogsIntoOne)
+## ZLevel(2)
+#######  Source #############
+## Level(2)
+## Language(fr)
+## KEYWORDS()
+
+
+
+####################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+
+####################################
+#  Setup
+
+Context("Numeric");
+#Context()->variables->are(x=>"Real");
+#Context()->variables->set(x=>{limits=>[2,3]});
+
+$a = random(2,8,1);
+do{$b = random(2,8,1);} until( gcd($a,$b)==1 );
+$c = non_zero_random(-9,9,1);
+do{$d = non_zero_random(-9,9,1);} until ($d!=$c);
+
+
+$expression = "\displaystyle $a \left( \log (x+$c) + \frac{$b}{$a} \log (x+$d) \right)";
+$logtype = "\log";
+
+$answer = Compute("(x+$c)^($a) * (x+$d)^($b)");
+
+
+####################################
+#  Main Text
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Exprimer l'expression suivante par un seul logarithme à l'aide des propriétés.
+$BR
+$BR
+\( $expression = $logtype \big( \)
+\{ ans_rule(20) \}
+\( \big) \)
+
+END_TEXT
+Context()->normalStrings;
+
+
+###################################
+#  Answer evaluation
+
+ANS($answer->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+En utilisant la propriété du logarithme d'une puissance, \(\log\left(a^n\right)=n\log(a)\), on obtient 
+
+\[ $expression = \log\left( (x+$c)^{$a}\right) + \log\left( (x+$d)^{$b}\right), \]
+pour ensuite utiliser la propriété du logarithme d'un produit, \(\log(ab)=\log(a)+\log(b)\)  :
+\[ $expression = \log\left( (x+$c)^{$a} (x+$d)^{$b} \right). \]
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

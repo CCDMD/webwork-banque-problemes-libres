@@ -1,0 +1,203 @@
+##DESCRIPTION
+#Trouver l'équation d'une composition de fonctions
+#Fait par Julie Tremblay, juin 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Fonctions composées)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+######## Source ############
+## Fichier source:  Chap2Sec4_Q06.pg
+## ZDBsubject(Algebra)
+## ZDBchapter(Functions)
+## ZDBsection(Composite and Inverse Functions)
+## ZInstitution(Loyola University Chicago and Fort Lewis College)
+## ZAuthor(Adam Spiegler and Paul Pearson)
+#######  Source #############
+## Level(3)
+## Language(fr)
+## KEYWORDS('Fonction composée','français','composition')
+
+
+###################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"contextLimitedPolynomialFr.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+#####################################
+#  Setup
+
+#Context("LimitedPolynomial-Strict");
+Context("Numeric");
+
+$k = random(2,5,1);
+$f = Formula("x^2 + $k")->reduce;
+
+$m = random(2,6,2);
+$b = random(3,7,2);
+$g = Formula("$m x + $b");
+
+$x1 = random(-8,8);
+do{$x2 = random(-8,8);} until($x1!=$x2);
+
+$gx1 = $g->eval(x=>"$x1");
+$gx2 = $g->eval(x=>"$x2");
+$fx1 = $f->eval(x=>"$x1");
+$fx2 = $f->eval(x=>"$x2");
+
+### réponses
+$fgx1 = $f->eval(x=>"$gx1");
+$fgx2 = $f->eval(x=>"$gx2");
+
+$gfx1 = $g->eval(x=>"$fx1");
+$gfx2 = $g->eval(x=>"$fx2");
+
+
+
+$ans_a = Real("$fgx1");
+$ans_b = Real("$fgx2");
+$ans_c = Real("$gfx1");
+$ans_d = Real("$gfx2");
+
+Context("LimitedPolynomial-Strict");
+
+$fg_a = $m**2;
+$fg_b = 2*$m*$b;
+$fg_c = $b**2+$k;
+$fg = Formula("$fg_a x^2 + $fg_b x + $fg_c")->reduce;
+
+$const_gf =  $m*$k + $b;
+$gf = Formula("$m x^2 + $const_gf ")->reduce;
+
+#(x^2 + $k)^2 + $k
+# x^4 + 2*$k x^2 + $k**2 + $k
+$ff_2 = 2*$k;
+$ff_0 = $k**2+$k;
+$ff = Formula("x^4 + $ff_2 x^2 + $ff_0")->reduce;
+
+$a_gg = $m**2;
+$b_gg = $m*$b + $b;
+$gg = Formula("$a_gg x + $b_gg")->reduce;
+
+
+########################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit \(f(x)=$f\) et \(g(x)=$g\). Évaluer les valeurs suivantes :
+$PAR
+a) \( f \left( g($x1) \right) = \) \{ ans_rule(10) \}
+$BR
+b) \( f \left( g($x2) \right) = \) \{ ans_rule(10) \}
+$BR
+c) \( g \left( f($x1) \right) = \) \{ ans_rule(10) \}
+$BR
+d) \( g \left( f($x2) \right) = \) \{ ans_rule(10) \}
+
+$PAR
+Trouver la formule simplifiée de chacune des fonctions composées suivantes :
+$PAR
+e) \( f \left( g(x) \right) = \) \{ ans_rule(30) \}
+$BR
+f) \( g \left( f(x) \right) = \) \{ ans_rule(30) \}
+$BR
+g) \( f \left( f(x) \right) = \) \{ ans_rule(30) \}
+$BR
+h) \( g \left( g(x) \right) = \) \{ ans_rule(30) \}
+
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=7010", "2.4.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+
+END_TEXT
+Context()->normalStrings;
+
+#########################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+
+ANS( $ans_a->cmp() );
+ANS( $ans_b->cmp() );
+ANS( $ans_c->cmp() );
+ANS( $ans_d->cmp() );
+
+ANS( $fg->cmp() );
+ANS( $gf->cmp() );
+ANS( $ff->cmp() );
+ANS( $gg->cmp() );
+
+
+$f_1 = 1+$k;
+$b_sq = $b**2;
+$mk = $m*$k;
+$k_sq = $k**2;
+$mb = $m*$b;
+$m_sq = $m**2;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+\(\begin{array}{lcl}
+\text{a) } g($x1) = $m($x1) + $b = $gx1 &\text{alors}& f(g($x1)) = f($gx1) = ($gx1)^2 + $k = $ans_a \\
+\text{b) } g($x2) = $m($x2) + $b = $gx2 &\text{alors}& f(g($x2)) = f($gx2) = ($gx2)^2 + $k = $ans_b \\
+\text{c) } f($x1) = ($x1)^2 + $k = $fx1 &\text{alors}& g(f($x1)) = g($fx1) = $m($fx1) + $b = $ans_c \\
+\text{d) } f($x2) = ($x2)^2 + $k = $fx2 &\text{alors}& g(f($x2)) = g($fx2) = $m($fx2) + $b = $ans_d
+\end{array}
+\)
+$PAR
+e)
+\[\begin{aligned}
+ f(g(x)) &= \big( g(x) \big)^2 + $k = \left( $g \right)^2 + $k \\
+&= \left( $fg_a x^2 + $fg_b x + $b_sq \right) + $k \\
+&= $fg_a x^2 + $fg_b x + $fg_c
+\end{aligned}\]
+$PAR
+
+f)
+\[\begin{aligned}
+ g(f(x)) &= $m \big( f(x) \big) + $b \\
+&= $m \left( $f\right) + $b \\
+&= $m x^2 + $mk +$b \\
+&= $m x^2 + $const_gf
+\end{aligned}\]
+$PAR
+
+g)
+\[\begin{aligned}
+ f(f(x)) &= \big( f(x) \big)^2 + $k \\
+ &= \left( $f\right)^2 + $k \\
+ &= \left( x^4 + $ff_2 x^2 + $k_sq \right) + $k \\
+ &= x^4 + $ff_2 x^2 + $ff_0 \\
+\end{aligned}\]
+$PAR
+
+h)
+\[\begin{aligned}
+ g(g(x)) &= $m \big( g(x) \big) + $b \\
+ &= $m \left( $g \right) + $b \\
+ &= $m_sq x + $mb + $b \\
+ &= $m_sq x + $b_gg
+\end{aligned}\]
+
+END_SOLUTION
+
+
+ENDDOCUMENT();

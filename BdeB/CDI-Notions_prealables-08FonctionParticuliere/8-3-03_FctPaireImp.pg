@@ -1,0 +1,171 @@
+##DESCRIPTION
+## Déterminer si une fonction est paire, impaire ou ni paire ni impaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Quelques fonctions particulières)
+## DBsection(Fonction paire et fonction impaire)
+## Modifié par Julie Tremblay
+## Institution(BdeB)
+################## Source ##################
+## Fichier :  Library/Michigan/Chap1Sec3/Q54.pg
+## ZAuthor('Gavin LaRose');
+## ZDBsubject(Algebra)
+## ZDBchapter(Transformations of functions and graphs)
+## ZDBsection(Symmetry: even, odd, neither)
+## ZInstitution(University of Michigan)
+############################################
+## KEYWORDS('fonction paire','fonction impaire')
+## Level(2)
+## Language(fr)
+
+
+
+DOCUMENT();
+loadMacros(
+"PG.pl",
+"PGauxiliaryFunctions.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"MathObjects.pl",
+);
+
+Context("Numeric");
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 0;
+
+## we show data for f(x) (odd), g(x) (even) and h(x) = g(f(x))
+##    at the points
+@xvals = ( -3, -2, -1, 0, 1, 2, 3 );
+
+## we'll put in random values for the functions f and g at -3, -2, -1 and 0,
+##    or at 0, 1, 2, 3
+$valsAt = list_random(0, 1);
+if ( $valsAt ) { @xdata = ( -3, -2, -1, 0 ); }
+else           { @xdata = ( 0, 1, 2, 3 ); }
+
+## the values we assign f and g at these points are
+$f0 = 0;
+$f1 = non_zero_random(-2,2,1);
+$f1 = 2;
+$f2 = ( $f1 > 0 ) ? $f1 + random(1,(3-$f1),1) : $f1 - random(1,3+$f1,1);
+$f3 = ( $f2 > 0 ) ? $f2 - random(1,$f2-1,1) : $f2 + random(1,-1*$f2-1,1);
+
+## we're being silly with the ordering of these, by letting the values
+##    be given at either 0 to 3 or -3 to 0, which means that we order the
+##    given y data differently
+if ( $valsAt ) {
+    @ydata = ( $f0, $f1, $f2, $f3 );
+    @fdata = ( -1*$f3, -1*$f2, -1*$f1 );
+    @gdata = ( $f3, $f2, $f1 );
+    @fvals = ( @fdata, @ydata );
+    @gvals = ( @gdata, @ydata );
+	
+	## pour que le tableau soit plus joli
+foreach my $i (0..4) {
+$yv[$i] = "$SPACE $SPACE $SPACE\($ydata[$i]\)";
+}
+
+    ## the rows in the given data table are
+    @rowf = ( ans_rule(5), ans_rule(5), ans_rule(5), @yv );
+    @rowg = ( ans_rule(5), ans_rule(5), ans_rule(5), @yv );
+} else { 
+    @ydata = ( $f3, $f2, $f1, $f0 );
+    @fdata = ( -1*$f1, -1*$f2, -1*$f3 );
+    @gdata = ( $f1, $f2, $f3 );
+    @fvals = ( @ydata, @fdata );
+    @gvals = ( @ydata, @gdata );
+
+    ## the rows in the given data table are
+    @rowf = ( @yv, ans_rule(5), ans_rule(5), ans_rule(5) );
+    @rowg = ( @yv, ans_rule(5), ans_rule(5), ans_rule(5) );
+}
+@rowh = ( ans_rule(5), ans_rule(5), ans_rule(5), ans_rule(5),
+	  ans_rule(5), ans_rule(5), ans_rule(5) );
+
+## to figure out h, a couple of simple functions
+sub f { return $fvals[$_[0]+3]; }
+sub g { return $gvals[$_[0]+3]; }
+
+#### Pour que ça soit joli dans le tableau
+
+foreach my $i (0..7) {
+$xv[$i] = "$SPACE $SPACE $SPACE\($xvals[$i]\)";
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Compléter le tableau de valeurs des fonctions \(f\), \(g\)
+et \(h\) sachant que :
+$PAR
+${BBOLD}(a)$EBOLD \(f\) est une fonction impaire.
+$PAR
+${BBOLD}(b)$EBOLD \(g\) est une fonction paire.
+$PAR
+${BBOLD}(c)$EBOLD \(h=g(f(x))\).
+
+
+${BCENTER}
+\{ begintable(@rowf + 1) \}
+\{ row( "$SPACE\( x = \)$SPACE $SPACE",    @xv ) \}
+\{ row( "$SPACE\( f(x) = \)$SPACE $SPACE", @rowf ) \}
+\{ row( "$SPACE\(g(x) = \)$SPACE $SPACE", @rowg ) \}
+\{ row( "$SPACE\(h(x) = \)$SPACE $SPACE", @rowh ) \}
+\{ endtable() \}
+$ECENTER
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute( $fdata[0] )->cmp() );
+ANS(Compute( $fdata[1] )->cmp() );
+ANS(Compute( $fdata[2] )->cmp() );
+ANS(Compute( $gdata[0] )->cmp() );
+ANS(Compute( $gdata[1] )->cmp() );
+ANS(Compute( $gdata[2] )->cmp() );
+
+@hvals = ();
+foreach my $x ( @xvals ) { push(@hvals, g(f($x))); }
+
+ANS(Compute( $hvals[0] )->cmp() );
+ANS(Compute( $hvals[1] )->cmp() );
+ANS(Compute( $hvals[2] )->cmp() );
+ANS(Compute( $hvals[3] )->cmp() );
+ANS(Compute( $hvals[4] )->cmp() );
+ANS(Compute( $hvals[5] )->cmp() );
+ANS(Compute( $hvals[6] )->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Étant donné que \(f\) est une fonction impaire, nous savons que les valeurs de \(f\) sont symétriques par rapport à l'origine, c'est-à-dire que
+\(f(-x)=-f(x)\), comme par exemple \(f(-3)=-f(3)\). De plus, étant donné que \(g\) est une fonction paire, nous savons aussi que les 
+valeurs de \(g\) sont symétriques par rapport à l'axe des \(y\), c'est-à-dire que \(g(-x)=g(x)\), comme par exemple \(g(-3)=g(3)\).
+$PAR
+Ceci nous permet de trouver les valeurs manquantes pour \(f\) et \(g\) dans le tableau :
+$PAR
+\[ f($xdata[0]) = $fdata[0],\quad
+   f($xdata[1]) = $fdata[1],\quad \mbox{et} \quad
+   f($xdata[2]) = $fdata[2];\quad \mbox{et} \]
+\[ g($xdata[0]) = $gdata[0],\quad
+   g($xdata[1]) = $gdata[1],\quad \mbox{et} \quad
+   g($xdata[2]) = $gdata[2]. \]
+$PAR
+Ensuite, nous trouvons les valeurs manquantes pour \(h\) par substitution : 
+$PAR
+\[ \begin{aligned}h(-3) &= g(f(-3)) = g($fvals[0]) = $hvals[0]\\
+   h($xvals[1]) &= g($fvals[1]) = $hvals[1]\\
+   h($xvals[2]) &= g($fvals[2]) = $hvals[2]\\
+   h($xvals[3]) &= g($fvals[3]) = $hvals[3]\\
+   h($xvals[4]) &= g($fvals[4]) = $hvals[4]\\
+   h($xvals[5]) &= g($fvals[5]) = $hvals[5]\quad\mbox{et}\\
+   h($xvals[6]) &= g($fvals[6]) = $hvals[6]. \end{aligned}\]
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

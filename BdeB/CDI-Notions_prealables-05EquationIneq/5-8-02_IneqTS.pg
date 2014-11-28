@@ -1,0 +1,152 @@
+##DESCRIPTION
+##  Algebra: Quadratic inequalities 
+##ENDDESCRIPTION
+
+##KEYWORDS('algebra', 'inequality', 'quadratic' , 'francais')
+## Traduction('Julie Tremblay')
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Nonlinear Inequalities')
+
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"answerHints.pl",
+"unionTables.pl",
+);
+
+########################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+########################################################################
+
+Context("Numeric");
+Context()->noreduce('(-x)-y');
+
+$a = random(2,9,1)*random(-1,1,2);
+$b = non_zero_random(-9,9,1);
+
+($n1,$d1) = reduce(-$b,$a);
+
+$x1 = $n1/$d1;
+
+do{$c = non_zero_random(-9,9,1); } until($c != $x1);
+
+$x2 = -$c;
+
+$poly1 = Formula("$a x + $b")->reduce;
+$poly2 = Formula("x + $c")->reduce;
+ 
+##### signes des facteurs dans le premier intervalle
+
+$signe1p = sgn($poly1->eval(x=>$x1-1));
+$signe2p = sgn($poly2->eval(x=>$x2-1));
+
+
+Context("Interval");
+Context()->strings->add(vide=>{},EmptySet=>{alias=>"vide"});
+
+##### réponse 
+
+$signe  = $signe1p*$signe2p;  #signe de f du premier intervalle
+
+if($x1 < $x2) { 
+
+if( $signe == -1 ){ $ans = Compute("(-inf, $n1/$d1] U [$x2,inf)"); 
+} else { $ans = Compute("[ $n1/$d1,$x2]"); }
+
+} else {
+
+if( $signe == -1 ){ $ans = Compute("(-inf,$x2] U [ $n1/$d1,inf)"); 
+} else { $ans = Compute("[$x2, $n1/$d1]"); }
+
+}
+
+
+ 
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre l'inéquation suivante à l'aide d'un tableau de signes. Donner la réponse en notation d'intervalle. $BR
+$BBOLD Note: Si la réponse inclut plus d'un intervalle, les écrire séparés par le symbole d'union "U". Pour \(-\infty\) ou \(\infty\), écrire "-inf" ou "inf".$EBOLD 
+$BR Voir : \{ AnswerFormatHelp("intervals") \} $BR
+$BR
+\[
+($poly1)($poly2) \leq 0
+\]
+$PAR
+Réponse : \{ ans_rule(30) \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6896", "1.5.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+ANS( $ans->cmp() );
+
+if($x1 - floor($x1) != 0) { $x1 = "\frac{$n1}{$d1}"; }
+
+if($n1/$d1 < $x2) {
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pour résoudre l'inéquation \(($poly1)($poly2) \leq 0\), il faut remplir un tableau de signes associée à la fonction \( ($poly1)($poly2)\). $BR $BR
+Pour remplir la première ligne du tableau, il faut trouver les valeurs de \(x\) où les facteurs sont nuls. On a que \(($poly1) = 0\) si \(x = $x1\) et \(($poly2) = 0\) si \(x = $x2\). $BR $BR
+\{ if( $signe == -1) {
+BeginTable(border => 4, padding=>10, tex_border =>"4pt").
+AlignedRow(["\(x\in\)", "\(] -\infty,$x1 [\)","\($x1\)", "\(] $x1,$x2 [\)","$x2", "\(] $x2,\infty [\)"], separation=>0).
+AlignedRow(["\(($poly1)($poly2)\)","\(-\)","\(0\)","\(+\)","\(0\)","\(-\)"], separation=>0).
+EndTable().
+$BR.$BR."Par conséquent, \(($poly1)($poly2) \leq 0\) lorsque \(x\in \left] -\infty,$x1\right] \cup \left[ $x2, \infty\right[\)."
+} else {
+BeginTable(border => 4, padding=>10, tex_border =>"4pt").
+AlignedRow(["\(x\in\)", "\(] -\infty,$x1 [\)","\($x1\)", "\(] $x1,$x2 [\)","$x2", "\(] $x2,\infty [\)"], separation=>0).
+AlignedRow(["\(($poly1)($poly2)\)","\(+\)","\(0\)","\(-\)","\(0\)","\(+\)"], separation=>0).
+EndTable().
+$BR.$BR."Par conséquent, \(($poly1)($poly2) \leq 0\) lorsque \(x\in \left[ $x1, $x2 \right] \)."
+}
+\}
+END_SOLUTION
+Context()->normalStrings;
+
+} else {  ### si x2 < x1
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pour résoudre l'inéquation \(($poly1)($poly2) \leq 0\), il faut remplir un tableau de signes associée à la fonction \( ($poly1)($poly2)\). $BR $BR
+Pour remplir la première ligne du tableau, il faut trouver les valeurs de \(x\) où les facteurs sont nuls. On a que \(($poly1) = 0\) si \(x = $x1\) et \(($poly2) = 0\) si \(x = $x2\). $BR $BR
+\{ if( $signe == -1) {
+BeginTable(border => 4, padding=>10, tex_border =>"4pt").
+AlignedRow(["\(x\in\)", "\(] -\infty,$x2 [\)","\($x2\)", "\(] $x2,$x1 [\)","\($x1\)", "\(] $x1,\infty [\)"], separation=>0).
+AlignedRow(["\(($poly1)($poly2)\)","\(-\)","\(0\)","\(+\)","\(0\)","\(-\)"], separation=>0).
+EndTable().
+$BR.$BR."Par conséquent, \(($poly1)($poly2) \leq 0\) lorsque \(x\in \left] -\infty,$x2\right] \cup \left[ $x1, \infty\right[\)."
+} else {
+BeginTable(border => 4, padding=>10, tex_border =>"4pt").
+AlignedRow(["\(x\in\)", "\(] -\infty,$x2 [\)","\($x2\)", "\(] $x2,$x1 [\)","\($x1\)", "\(] $x1,\infty [\)"], separation=>0).
+AlignedRow(["\(($poly1)($poly2)\)","\(+\)","\(0\)","\(-\)","\(0\)","\(+\)"], separation=>0).
+EndTable().
+$BR.$BR."Par conséquent, \(($poly1)($poly2) \leq 0\) lorsque \(x\in \left[ $x2, $x1 \right] \)."
+}
+\}
+END_SOLUTION
+Context()->normalStrings;
+}
+
+ENDDOCUMENT();

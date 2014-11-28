@@ -1,0 +1,111 @@
+##DESCRIPTION
+##Fonction réciproque - trouver la formule et le domaine
+##Fait par Julie Tremblay, août 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Réciproque d'une fonction)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+######## Source ############
+## Fichier source:  Library/UMN/calculusStewartCCC/s_1_6_21.pg
+## ZDBsubject(Algebra)
+## ZDBchapter(Inverse functions)
+## ZDBsection(Finding the inverse function)
+## ZDate(08/29/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(InverseFunctions_FindInverse_14)
+#######  Source #############
+## Level(3)
+## Language(fr)
+## KEYWORDS('fonction réciproque','inverse','racine','domaine')
+
+
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   #"source.pl",        # allows code to be displayed on certain sites.
+   "PGcourse.pl",      # Customization file for the course
+);
+
+##############################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+
+Context("Numeric");
+
+$a = random(1,5,1);
+$b = random(2,6,2);
+$c = random(7,11,4);
+
+$ans1 = Compute("((x-$a)^2 -$b)/$c");
+
+Context("Interval");
+Context()->constants->add(EmptySet => Set());
+Context()->flags->set(noneWord=>"EmptySet");
+
+$ans2 = Interval("[$a,infinity)");
+
+
+##############################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la fonction \(f(x) = $a + \sqrt{$b+$c x}.\)
+$PAR
+$BBOLD 1.$EBOLD Trouver une formule pour la réciproque de cette fonction.
+$BR 
+\(f^{-1}(x) = \) \{ans_rule(30)\} $PAR
+$BBOLD 2.$EBOLD Quel est le domaine de \(f^{-1}\) ? $BR
+Réponse (en notation d'intervalle) : \{ans_rule(30)\} $PAR
+$HR
+$BITALIC
+Certaines notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=7008", "2.4.4", "TARGET='_blank'" ) \} de  la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+
+Context("Numeric");
+ANS( $ans1->cmp() );
+Context("Interval");
+ANS( $ans2->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+En utilisant la propriété d'une fonction réciproque, \( f \left( f^{-1}(x) \right) = x \), il faut ainsi remplacer
+ \( y \) par \( f^{-1}(x) \) pour obtenir \( f(y)=x \). Avec la formule de \( f \) cela donne,
+\[ f(y) = $a + \sqrt{$b+$c y} =x \]
+et en isolant \( y \) on obtient
+\[\begin{aligned}
+\sqrt{$b+$c y} &=x-$a & \\
+$b+$c y &=(x-$a)^2 &\text{; où }x-$a\geq 0\\
+$c y &=(x-$a)^2 -$b\\
+ y &=\frac{(x-$a)^2 -$b}{$c}\\
+\end{aligned}\]
+En remplaçant \( y \) par \( f^{-1}(x) \), on obtient la formule voulue, soit
+\[ f^{-1}(x) = \frac{(x-$a)^2-$b}{$c}. \]
+$PAR
+Le domaine de la fonction réciproque \(f^{-1}\) est donné par les valeurs que \(x=$a + \sqrt{$b+$c y}\) 
+peut prendre.
+$BR
+Ainsi, il faut que \((x-$a)\geq 0\Rightarrow x\geq $a\) car \(x-$a=\sqrt{$b+$c y}\) prend toujours des valeurs positives ou égales à 0. 
+Par conséquent, le domaine de \(f^{-1}\) est \( \left[ $a, \infty \right[ \).
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        

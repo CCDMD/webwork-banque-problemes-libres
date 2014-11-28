@@ -1,0 +1,108 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Factorisation)
+## DBsection(Factorisation de trinômes)
+## KEYWORDS('Factorisation','français')
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne)
+
+## Level(2)
+## Language(fr)
+
+
+########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"PGcourse.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowersFr.pl",
+#"problemRandomize.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+
+#ax^2 + bx + c  non factorisable  b^2-4ac < 0
+
+Context("Numeric");
+
+
+#ProblemRandomize(style=>"Button",label=>"Générer un autre polynôme");
+
+$a = non_zero_random(1,7,1);
+$b = random(-4,4,1);
+$c = non_zero_random(1,9,1);
+
+$b2 = Compute("($b)^2");
+$ac4 = Compute("4*$a*$c");
+
+
+while($b2 >= $ac4 ) {
+$c ++;
+$ac4 = Compute("4*$a*$c");
+}
+
+
+$answer = Formula("$a*x^2 + $b*x + $c")->reduce();
+
+
+################################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Factoriser l'expression \($answer\), si possible, et simplifier la réponse.$BR
+Si le polynôme ne se factorise pas, réécrire le polynôme dans la case réponse.
+$BR
+$BR
+\{ ans_rule(30) \}
+
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème sont présentées à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2320", "1.2.4", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS($answer->cmp());
+
+
+$discri = $b2 - $ac4;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Le polynôme \($answer\) ne se factorise pas. En effet, pour que le polynôme de la forme \(ax^2+bx+c\) se factorise, il doit posséder un ou deux zéros, ainsi dans la formule permettant de trouver les zéros d'un polynôme quadratique:
+$BR $BR
+\[    \frac{-b \pm \sqrt{b^2-4ac}}{2a} \]
+$BR
+la valeur à l'intérieur de la racine carrée, nommé le discriminant \( \Delta\), doit nécessairement être positive ou nulle. $BR
+
+$BR Par conséquent, étant donné que le discriminant de \($answer\) est : $BR $BR
+\[  \Delta = b^2 - 4ac = $b2 - $ac4 = $discri < 0,\]
+$BR
+le polynôme ne possède pas de zéros et donc ne se factorise pas.
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

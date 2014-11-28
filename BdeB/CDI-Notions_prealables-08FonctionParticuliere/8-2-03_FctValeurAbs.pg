@@ -1,0 +1,178 @@
+##DESCRIPTION
+## Fonction valeur absolue : définir par parties
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Quelques fonctions particulières)
+## DBsection(Fonction valeur absolue)
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## KEYWORDS('fonction','valeur absolue','par parties')
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGgraphmacros.pl",
+#"AnswerFormatHelp.pl",
+"unionTables.pl",
+"PGcourse.pl",
+"contextLimitedPolynomial.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+TEXT(beginproblem());
+
+
+Context("LimitedPolynomial-Strict");
+Context()->noreduce('(-x)-y');   
+
+$a = non_zero_random(2,4)*random(-1,1,2);
+do{$b = non_zero_random(-6,6);} until ($a!=$b);
+
+$c = random(2,5)*random(-1,1,2);
+$d = non_zero_random(-8,8);
+
+$f1 = Formula("$a x + $b")->reduce;
+$f2 = Formula("-$a x - $b")->reduce;
+
+$ac = $a*$c;
+$e1 = $c*$b + $d;
+$e2 = -$c*$b + $d;
+
+
+
+$som = Compute("-$b/$a");
+
+
+if($a>0) {
+$poly1 = Formula("$ac x + $e1")->reduce;
+$poly2 = Formula("-$ac x + $e2")->reduce;
+} else {
+$poly2 = Formula("$ac x + $e1")->reduce;
+$poly1 = Formula("-$ac x + $e2")->reduce;
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Compléter la définition par parties de la fonction valeur absolue \( f(x) = $c\vert {$f1} \vert + $d \) par des fonctions simplifiées.$BR $BR
+
+\{ ColumnTable(
+"\( $c\vert {$f1} \vert + $d = \)".
+"\(  \Bigg\lbrace \)"
+,
+BeginTable(center=>0).
+Row([ans_rule(15), "si","\(x \geq\)",ans_rule(10)],separation=>2 ).
+TableSpace(10,0).
+Row([ans_rule(15), "si","\(x <\)",ans_rule(10)],separation=>2 ).
+EndTable()
+,
+indent => 0, separation => 0, valign => "MIDDLE"
+)
+\}
+
+
+$HR
+$BITALIC
+Un exemple similaire est présenté sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6994#ww", "2.3.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+
+END_TEXT
+Context()->normalStrings;
+
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $poly1->cmp() );
+ANS( $som->cmp() );
+ANS( $poly2->cmp() );
+ANS( $som->cmp() );
+
+$courbe1= "$poly1 for x in <$som,20> using color:blue and weight:2";
+$courbe2 = "$poly2 for x in <-20,$som> using color:red and weight:2";
+
+$gr = init_graph(-20,-20,20,20,axes=>[0,0],grid=>[40,40],size=>[800,800]);
+$gr -> lb('reset');
+
+$pt1 = closed_circle( $som, $d, black );
+
+if(floor($som)-$som !=0) {
+($s1,$s2) = reduce(-$b,$a);  #sommet en latex
+$som = "\frac{$s1}{$s2}";
+}
+add_functions($gr, $courbe1, $courbe2);
+$gr -> lb(new Label ( 18,1,'x','black','left','bottom'));
+$gr -> lb(new Label ( 1,18,'y','black','left','bottom'));
+$gr -> stamps($pt1);
+
+
+Context()->texStrings;
+if($a > 0) {
+
+BEGIN_SOLUTION
+\{
+ColumnTable(
+"La fonction est définie par".$BR.
+"\[ $c\vert {$f1} \vert + $d = \left\lbrace { \begin{array}{lll} $poly1 & \text{si} & x \geq $som \\ $poly2 & \text{si} & x < $som \end{array}}\right.\]".$BR.
+"En effet  \(\vert $f1 \vert = $f1\) lorsque \($f1 \geq 0 \). Si on résout cette inéquation on obtient :".
+"\[ $f1 \geq 0 \Rightarrow $a x \geq -$b \Rightarrow x \geq $som \text{ car }$a > 0\]".
+"Ainsi, on a :".$BR.$BR.
+"\($c\vert {$f1} \vert + $d = $c($f1) + $d = $poly1 \) lorsque \( x \geq $som\)".$BR.
+"et \( $c\vert {$f1} \vert + $d = $c\cdot -($f1) + $d = $poly2\) lorsque \( x < $som\).".$BR.$BR.
+"Voici, à droite, le graphique de la fonction \(f(x)=$c\vert {$f1} \vert + $d\).".$PAR.
+$BCENTER.
+"\(f(x)=$poly1\) (la courbe bleue) lorsque \(x \geq $som\)".$BR.
+"\(f(x)=$poly2\) (la courbe rouge) lorsque \( x < $som\)".
+$ECENTER
+,
+$BCENTER.
+image( insertGraph($gr), tex_size=>250, width=>200, height=>200).$BR.
+"Cliquer sur l'image pour l'agrandir".
+$ECENTER
+,
+indent => 0, separation => 10, valign => "TOP"
+)
+\}
+$BR
+END_SOLUTION
+} else {
+BEGIN_SOLUTION
+\{
+ColumnTable(
+"La fonction est définie par".$BR.
+"\[ $c\vert {$f1} \vert + $d = \left\lbrace { \begin{array}{lll} $poly1 & \text{si} & x \geq $som \\ $poly2 & \text{si} & x < $som \end{array}}\right.\]".$BR.
+"En effet  \(\vert $f1 \vert = $f1\) lorsque \($f1 > 0 \). Si on résout cette inéquation on obtient :".
+"\[ $f1 > 0 \Rightarrow $a x > -$b \Rightarrow x < $som \text{ car }$a < 0\]".
+"Ainsi, on a :".$BR.$BR.
+"\($c\vert {$f1} \vert + $d = $c($f1) + $d = $poly2 \) lorsque \( x < $som\)".$BR.
+"et \( $c\vert {$f1} \vert + $d = $c\cdot -($f1) + $d = $poly1\) lorsque \( x \geq $som\).".$BR.$BR.
+"Voici, à droite, le graphique de la fonction \(f(x)=$c\vert {$f1} \vert + $d\).".$PAR.
+$BCENTER.
+"\(f(x)=$poly1\) (la courbe bleue) lorsque \(x \geq $som\)".$BR.
+"\(f(x)=$poly2\) (la courbe rouge) lorsque \( x < $som\)".
+$ECENTER
+,
+$BCENTER.
+image( insertGraph($gr), tex_size=>250, width=>200, height=>200).$BR.
+"Cliquer sur l'image pour l'agrandir".
+$ECENTER
+,
+indent => 0, separation => 10, valign => "TOP"
+)
+\}
+$BR
+END_SOLUTION
+}
+
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

@@ -1,0 +1,188 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+## KEYWORDS('Equations','francais')
+## Traduction('Julie Tremblay')
+
+## DBsubject('Algebra') 
+## BookTitle('Algebra: Form and Function')
+## DBchapter('Basic Algebra') 
+## BookChapter('Rules for Expressions and the Reasons for Them')
+## DBsection('Expanding and Factoring') 
+## BookSection('Expanding and Factoring')
+## Date('01/01/10')
+## Author('Paul Pearson')
+## Institution('Fort Lewis College')
+## TitleText1('Algebra: Form and Function')
+## EditionText1('1')
+## AuthorText1('McCallum, Connally, and Hughes-Hallett')
+## Section1('2.3')
+## Problem1('6')
+
+
+########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPowers.pl",
+"contextLimitedPolynomial.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+#( a x^nx1 y^ny1 / b x^nx2 y^ny2)^n   où n > 0  a et b sont des constantes #positives.
+
+Context("Numeric");
+
+LimitedPowers::OnlyPositiveIntegers();
+Context()->{error}{msg}{"Powers must be positive integer constants"} 
+  = "Les exposants doivent être des entiers strictement positifs > 0";
+
+Context()->variables->add(y=>"Real");
+
+#constantes
+$a = random(2,7,1);
+$b = random(2,5,1);
+
+while($a==$b) {$b = random(2,5,1);}
+
+#exposants
+$n = random(2,3,1);
+
+do{$nx1 = non_zero_random(-7,7,1);
+$nx2 = non_zero_random(-7,7,1);} while($nx1==$nx2);
+
+do{$ny1 = non_zero_random(-7,7,1);
+$ny2 = non_zero_random(-7,7,1);} while($nx1==$ny2);
+
+
+
+$pa = $a**$n;
+$pb = $b**$n;
+
+$d = gcf($pa,$pb);
+
+$num = Compute("($pa)/($d)")->reduce;
+$den = Compute("($pb)/($d)")->reduce;
+
+
+$px1 = $nx1*$n;
+$px2 = $nx2*$n;
+
+$px = $px1 - $px2;
+
+$py1 = $ny1*$n;
+$py2 = $ny2*$n;
+
+$py = $py1 - $py2;
+
+
+if ($px < 0 && $py < 0){
+$negpx = Compute("-$px");
+$negpy = Compute("-$py");
+$answer = Formula("($num)/($den x^{$negpx} y^{$negpy})")->reduce;
+
+} elsif ($px < 0 && $py > 0) {
+$negpx = Compute("-$px");
+$answer = Formula("($num y^{$py})/($den x^{$negpx})")->reduce;
+
+} elsif ($px > 0 && $py < 0) {
+$negpy = Compute("-$py");
+$answer = Formula("($num x^{$px})/($den y^{$negpy})")->reduce;
+
+} else {  #tous positifs
+
+$answer = Formula("($num x^{$px} y^{$py})/($den)")->reduce;
+}
+
+$expression = "\left( \dfrac{$a x^{$nx1} y^{$ny1}}{$b x^{$nx2} y^{$ny2} }\right)^{$n}";
+
+
+################################################
+#  Main text
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Simplifier l'expression ci-dessous avec des exposants positifs.
+$BR
+\[ $expression   \text{ où } x \neq 0 \text{ et } y \neq 0 \]
+$BR
+\{ ans_rule(30) \}
+\{ AnswerFormatHelp("formula") \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=6646", "1.1.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS($answer->cmp());
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'expression \($expression\) se simplifie en utilisant les propriétés des exposants suivantes:
+$BR $BR
+
+\[   \begin{array}{lrlr} 1.& \left( a^n \right)^m & = a^{nm}  & \\ 
+2.& (ab)^n &= a^nb^n  &\\ 
+3.& \dfrac{a^n}{a^m} &= a^{n-m}  & ;\text{ tel que } n > m \\[0.8em]
+4.& \dfrac{a^n}{a^m} &= \dfrac{1}{a^{m-n}} & ;\text{ tel que } m > n \end{array}
+\]
+$BR
+Ainsi, on simplifie cette expression de la façon suivante:
+$BR
+$BR
+\{ if($px < 0 && $py < 0){
+"\[\begin{array}{rl}  $expression &= \dfrac{$a^{$n} x^{$px1} y^{$py1}}{$b^{$n} x^{$px2} y^{$py2}}\\[1em]
+ &=  \dfrac{$pa}{$pb x^{$px2 - $px1} y^{$py2 - $py1}} \\[1em]
+&=  \dfrac{$num}{$den x^{$negpx} y^{$negpy}} \end{array}\]".$BR
+}
+\}
+
+\{ if ($px < 0 && $py > 0){
+"\[\begin{array}{rl}  $expression &= \dfrac{$a^{$n} x^{$px1} y^{$py1}}{$b^{$n} x^{$px2} y^{$py2}}\\[1em]
+ &=  \dfrac{$pa y^{$py1 - $py2} }{$pb x^{$px2 - $px1} } \\[1em]
+&=  \dfrac{$num y^{$py}}{$den x^{$negpx} } \end{array}\]".$BR
+}
+\}
+
+\{ if ($px > 0 && $py < 0){
+"\[\begin{array}{rl}  $expression &= \dfrac{$a^{$n} x^{$px1} y^{$py1}}{$b^{$n} x^{$px2} y^{$py2}}\\[1em]
+ &=  \dfrac{$pa x^{$px1 - $px2} }{$pb y^{$py2 - $py1} } \\[1em]
+&=  \dfrac{$num x^{$px}}{$den y^{$negpy} } \end{array}\]".$BR
+}
+\}
+
+\{ if ($px > 0 && $py > 0){
+"\[\begin{array}{rl}  $expression &= \dfrac{$a^{$n} x^{$px1} y^{$py1}}{$b^{$n} x^{$px2} y^{$py2}}\\[1em]
+ &=  \dfrac{$pa x^{$px1 - $px2} y^{$py1 - $py2} }{$pb}  \\[1em]
+&=  \dfrac{$num x^{$px} y^{$py}}{$den} } \end{array}\]".$BR
+}
+\}
+
+$BR
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

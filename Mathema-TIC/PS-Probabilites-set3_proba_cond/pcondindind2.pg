@@ -1,0 +1,63 @@
+## DBsubject(Probabilités)
+## DBchapter(Probabilité conditionnelle et indépendance)
+## DBsection(Probabilités conditionnelles)
+## Author(Jean-Sébastien Turcotte - Université de Montréal)  # ou ##Modifié par 
+## KEYWORDS('Indépendance','Marche aléatoire')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl"
+);
+TEXT(beginproblem());
+#####Initialisation des paramètres######################
+Context("Numeric");
+$prob=random(0.55,0.85,0.05);
+$qprob=1-$prob;
+$n=random(1,2,1);
+$pair=2*$n;
+$impair=2*$n+1;
+if($n==1){
+$ans1=Compute("2*$prob*$qprob");
+$ans2=Compute("3*($prob**2)*$qprob");
+$ans3=Compute("2/3");
+}
+elsif($n==2){
+$ans1=Compute("6*($prob**2)*($qprob**2)");
+$ans2=Compute("10*($prob**3)*($qprob**2)");
+$ans3=Compute("6/10");
+}
+BEGIN_TEXT
+Supposons que le prix d'une action varie de façon indépendante chaque jour. Il augmente d'un dollar avec probabilité \($prob\) et diminue d'un dollar avec probabilité \($qprob\). Noter que ce modèle est une simplification extrême de la réalité.
+
+\{BeginList("OL")\}
+$ITEM Quelle est la probabilité qu'après \($pair\) jours, l'action soit au prix initial?  \{ $ans1->ans_rule(10) \}
+$ITEMSEP
+
+$ITEM Quelle est la probabilité que le prix de l'action soit d'un dollar supérieur au prix initial après \($impair\) jours? \{$ans2-> ans_rule(10) \}
+$ITEMSEP
+
+$ITEM Sachant qu'après \($impair\) jours, le prix de l'action est d'un dollar supérieur au prix initial, quelle est la probabilité qu'il ait augmenté le premier jour? \{ $ans3->ans_rule(10) \}
+$ITEMSEP
+\{EndList("OL")\}
+
+
+END_TEXT
+
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+
+ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

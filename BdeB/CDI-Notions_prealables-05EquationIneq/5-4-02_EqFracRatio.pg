@@ -1,0 +1,101 @@
+## DESCRIPTION
+##  Algebra: Fractional equations 
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra', 'fractional equations', 'francais')
+## Traduction('Julie Tremblay'
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Other Equations')
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+  "PGstandard.pl",
+  "PGauxiliaryFunctions.pl",
+  "Parser.pl",
+  "MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+);
+
+########################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+########################################################################
+
+Context("Numeric");
+
+
+$a = random(2,5,1);
+$b = random(1,6,1);
+$c = random(1,8,1);
+
+$grad = $c*$c + 4*$a*$b;
+
+$ans1 = Compute("($c + sqrt($grad))/2")->reduce;
+$ans2 = Compute("($c - sqrt($grad))/2")->reduce;
+
+########################################################################
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer le domaine de l'équation suivante. $BR $BR
+\[ \dfrac{x}{$a}=\dfrac{$b}{x-$c}\].
+$BR $BR
+Domaine : \{ans_rule(20) \} \{ AnswerFormatHelp("intervals") \} $BR
+$BR
+Résoudre, si possible, cette équation. S'il n'y a aucune solution, écrire "aucune" dans la case réponse.
+$BR $BR 
+Solution(s) : \{ans_rule(30) \} $BR
+$BBOLD Note: S'il y a plus d'une solution, écrire les réponses séparées par une virgule. Ex.: 4, sqrt(10) $EBOLD
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+
+Context("Interval");
+$dom = Compute("R-{$c}"); 
+
+ANS($dom->cmp);
+
+Context("Numeric");
+Context()->strings->add(aucune => {});
+
+
+ANS(List("$ans1,$ans2")->cmp);
+
+$ab = $a*$b;
+
+if($ans1 - floor($ans1) != 0){    #pour afficher les fractions dans la solution
+$ans1 = "\frac{$c + \sqrt{$grad}}{2}";
+$ans2 = "\frac{$c - \sqrt{$grad}}{2}";
+}
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Le domaine de cette équation est \(\mathbb{R}\setminus\lbrace $c\rbrace\), car pour cette valeur, le dénominateur \(x-$c\) est nul. $BR $BR
+
+On résout cette équation de la façon suivante :
+$BR $BR
+\[\begin{array}{rll} \dfrac{x}{$a}&=\dfrac{$b}{x-$c}&\\[0.8em] x(x-$c)&=$ab &;\;\frac{a}{b}=\frac{c}{d} \Rightarrow ad = bc\text{ si }b\neq 0\text{ et }d\neq 0\\ x^2 -$c x &= $ab  &\\ x^2  - $c x - $ab & = 0& \end{array}\]
+$BR
+Par la formule quadratique, on trouve les solutions de cette équation :$BR
+\[\dfrac{$c\pm\sqrt{($c)^2+4($ab)}}{2} = \dfrac{$c\pm\sqrt{$grad}}{2}\]
+$BR $BR
+Il existe deux solutions :\( \boxed{x = $ans1}\) et \( \boxed{x = $ans2}\) $BR
+
+$PAR
+Vous pouvez aussi allez voir un exemple similaire sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5272", "1.4.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

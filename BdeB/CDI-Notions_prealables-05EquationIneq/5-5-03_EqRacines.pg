@@ -1,0 +1,161 @@
+## DESCRIPTION
+##   Solve an Equation with Square Roots
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Équations contenant des racines carrées)
+## KEYWORDS('Résoudre','Équation','Racine')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->noreduce('(-x)-y');
+Context()->strings->add(oui => {});
+Context()->strings->add(non => {});
+
+$disc = 0;  #discriminant 
+
+while ($disc <=0) {  # on veut, au moins une solution
+        $A = non_zero_random(-9,9,1);
+        $B = non_zero_random(-9,9,1);
+        $C = non_zero_random(-9,9,1);
+        $D = non_zero_random(2,9,1);
+
+        $a = $D**2;
+        $b = -2*$D*$C-$A;
+        $c = $C**2 - $B;
+
+        $disc = $b**2-4*$a*$c;
+}
+$ans1 = (-$b - sqrt($disc))/(2*$a);
+$ans2 = (-$b + sqrt($disc))/(2*$a);
+
+$poly1 = Formula("$A x + $B")->reduce;
+$gauche = Formula("sqrt($poly1) + $C")->reduce;
+$droite = Formula("$D x")->reduce;
+
+
+
+#Pour vérifier les solutions dans l'équation initiale
+$verif1g = $gauche->eval(x=>$ans1);
+$verif1d = $droite->eval(x=>$ans1);
+
+$verif2g = $gauche->eval(x=>$ans2);
+$verif2d = $droite->eval(x=>$ans2);
+
+
+if ( $verif1g == $verif1d) {$check1 = String("oui");}
+else {$check1 = String("non");}
+
+if ( $verif2g == $verif2d) {$check2 = String("oui");}
+else {$check2 = String("non");}
+
+Context()->texStrings;
+BEGIN_TEXT;
+Trouver toutes les solutions possibles de l'équation suivante et écrire les réponses en ordre croissant. Vérifier, pour chacune des réponses, s'il s'agit bien d'une solution de l'équation.$BR
+$BBOLD Donner une précision de 4 chiffres décimals dans la réponse (ex.: 1.1236). Attention, un nombre décimal s'écrit avec un "point".$EBOLD
+$BR $BR
+\[$gauche =  $droite \]
+$BR
+$BR
+La plus petite solution possible est \{ans_rule(15)\}.  Est-ce qu'il s'agit d'une solution réelle? (oui ou non) \{ans_rule(10)\}$BR
+$BR
+La plus grande solution possible est \{ans_rule(15)\}.  Est-ce qu'il s'agit d'une solution réelle? (oui ou non) \{ans_rule(10)\}$BR
+$BR
+$HR
+$BITALIC
+Des exemples similaires se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5274", "1.4.4", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+ANS(Compute("$ans1")->cmp);
+ANS($check1->cmp);
+ANS(Compute("$ans2")->cmp);
+ANS($check2->cmp);
+
+
+$ans1 = Round($ans1,4);
+$ans2 = Round($ans2,4);
+
+$dc2 = -2*$D*$C;
+$cc = $C*$C;
+
+$poly2 = Formula("$a x^2 + $dc2 x + $cc")->reduce;
+
+$poly3 = Formula("$a x^2 + $b x + $c")->reduce;
+
+#Pour vérifier les solutions dans l'équation initiale
+$eval1g = Compute("$gauche", x=>$ans1);
+$eval1d = Compute("$droite", x=>$ans1);
+$eval2g = $gauche->eval(x=>$ans2);
+$eval2d = $droite->eval(x=>$ans2);
+
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pour résoudre cette équation, il faut tout d'abord isoler la racine et ensuite élever chacun des membres de l'égalité au carré. On obtient, $BR
+$BR
+\[ \begin{array}{rl} $gauche &= $droite \\ \left(\sqrt{$poly1}\right)^2 &= \left($droite -$C\right)^2\\ $poly1 &= \left($droite - $C\right)^2 \\  $poly1 &= $poly2 \\ 0&= $poly2 - ($poly1) \\ 0&= $poly3 \end{array}\]
+$BR $BR
+Par la formule quadratique,  \(\frac{-b\pm\sqrt{b^2-4ac}}{2a}\),  on trouve les deux solutions possibles pour cette équation à l'aide de la calculatrice.$BR
+$BR
+\( x_1 = \dfrac{-$b - \sqrt{($b)^2-4($a)($c)}}{2($a)} = $ans1\)
+$BR
+En remplaçant dans l'équation initiale, on vérifie s'il s'agit d'une solution réelle de cette équation. $BR
+$BR
+\{ if( $verif1g == $verif1d ) {
+"\( \sqrt{$A($ans1)+$B} + $C = $D($ans1) \Rightarrow $eval1g = $eval1d \)".
+$BR."Cette solution vérifie l'équation, alors \(\boxed{$ans1}\)".
+$BBOLD." est une solution réelle de l'équation.".$EBOLD
+} else {
+"\( \sqrt{$A($ans1)+$B} + $C = $D($ans1) \Rightarrow $eval1g \neq $eval1d \)".
+$BR."Cette solution ne vérifie pas l'équation, alors".
+$BBOLD." il ne s'agit pas d'une solution réelle de l'équation.".$EBOLD
+}
+\}
+$BR
+$HR
+\( x_2 = \dfrac{-$b + \sqrt{($b)^2-4($a)($c)}}{2($a)} = $ans2\)
+$BR
+En remplaçant dans l'équation initiale, on vérifie s'il s'agit d'une solution réelle de cette équation. $BR
+$BR
+\{ if( $verif2g == $verif2d ) {
+"\( \sqrt{$A($ans2)+$B} + $C = $D($ans2) \Rightarrow $eval2g = $eval2d \)".
+$BR."Cette solution vérifie l'équation, alors \(\boxed{$ans2}\)".
+$BBOLD." est une solution réelle de l'équation.".$EBOLD
+} else {
+"\( \sqrt{$A($ans2)+$B} + $C = $D($ans2) \Rightarrow $eval2g \neq $eval2d \)".
+$BR."Cette solution ne vérifie pas l'équation, alors".
+$BBOLD." il ne s'agit pas d'une solution réelle de l'équation.".$EBOLD
+}
+\}
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

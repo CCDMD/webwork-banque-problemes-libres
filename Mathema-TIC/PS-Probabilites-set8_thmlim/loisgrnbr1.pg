@@ -1,0 +1,72 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Probabilités)
+## DBchapter(Théorèmes limites)
+## DBsection(Lois des grands nombres)
+## Author(Jean-Sébastien Turcotte)
+
+## KEYWORDS('Loi des grands nombres')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl",,                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+"PGstatisticsmacros.pl",   #Donne accès à des commandes de stats
+"PGnumericalmacros.pl",    #Nécessaire pour certaines macros dans statistics
+);
+TEXT(beginproblem());
+#####Initialisation des paramètres######################
+#Création d'une nouvelle liste de vrais ou faux
+$VF =new_select_list();
+$VF->rf_print_q(~~&pop_up_list_print_q);  #Spécifie qu'on utilisera un menu déroulant
+#### Les choix possibles
+$VF->ra_pop_up_list([No_answer=>"?", "V"=>"Vrai", "F"=>"Faux"]);
+
+# Liste des questions et leur réponse
+$VF->qa(
+"Soit \(X_1,X_2,\ldots \) une collection de variables aléatoires i.i.d. de loi uniforme sur \((-1,1)\). On pose \(Y_i=X_i^2\). Alors
+\[
+\mathbb{P}\left(\left|\frac{1}{n}\sum_{i=1}^\infty Y_i-\frac{1}{3}\right|>\frac{1}{10}\right)=0
+\]","V",
+"Soit \(X_1,X_2,\ldots \) une collection de variables aléatoires i.i.d. de loi uniforme sur \((-1,1)\). On pose \(Y_i=X_i^2\). Alors
+\[
+\mathbb{P}\left(\left|\frac{1}{n}\sum_{i=1}^\infty Y_i-\frac{1}{2}\right|>\frac{1}{10}\right)=0
+\]","F",
+"On effectue \(1000\) lancers d'une pièce bien balancée. Les \(100\) premiers lancers sont tous Face. Alors la loi des grands nombres dit qu'il y aura plus de Pile dans les \(900\) derniers lancers pour balancer le tout", "F",
+"Soit \(X_1,X_2,\ldots\) une collection de variables aléatoires i.i.d. de moyenne \(\mu<\infty\). Alors
+\[
+\lim_{n\to \infty} \frac{n}{S_n}=\frac{1}{\mu}
+\]","V",
+"Soit \(X_1,X_2,\ldots\) une collection de variables aléatoires i.i.d. de moyenne \(\mu<\infty\). Alors
+\[
+\lim_{n\to \infty} \left(\prod_{i=1}^\infty X_i \right)^{1/n}=e^\mu
+\]","F",
+"Soit \(X_1,X_2,\ldots\) une collection de variables aléatoires i.i.d. de moyenne \(\mu<\infty\). Alors
+\[
+\lim_{n\to \infty} \left(\prod_{i=1}^\infty X_i \right)^{1/n}=e^{\mathbb{E}[\ln(X_1)]}
+\]","V",
+);
+## on détermine on veut combien de questions
+$VF->choose(2);
+
+BEGIN_TEXT
+Répondre Vrai ou Faux aux questions suivantes à l'aide du menu déroulant.
+$BR
+\{ $VF -> print_q \}
+END_TEXT
+$showPartialCorrectAnswers = 0;
+
+ANS(str_cmp($VF->ra_correct_ans));
+
+ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

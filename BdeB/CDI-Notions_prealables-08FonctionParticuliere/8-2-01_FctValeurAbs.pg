@@ -1,0 +1,175 @@
+##DESCRIPTION
+## Fonction valeur absolue : trouver l'équation par son graphique
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Quelques fonctions particulières)
+## DBsection(Fonction valeur absolue)
+## Author(Julie Tremblay)
+## Institution(BdeB)
+####### Source ##########################
+## ZDBsubject('Algebra') 
+## ZDBchapter('Functions') 
+## ZDBsection('Evaluation and Solving') 
+## ZAuthor('Paul Pearson')
+## ZInstitution('Fort Lewis College')
+### fichier source : MCH1-4-3-14-Functions-and-equations.pg
+######## Source ####################################
+## KEYWORDS('fonction','valeur absolue','graphique')
+## Level(2)
+## Language(fr)
+
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"PGanswermacros.pl",
+"PGgraphmacros.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"PGcourse.pl",
+"unionTables.pl",
+);
+
+TEXT(beginproblem());
+
+$refreshCachedImages=1;
+
+##############################################
+#  Setup
+
+Context("Numeric");
+Context()->strings->add(aucun=>{}, none => {alias => "aucun"} );
+Context()->noreduce('(-x)-y','(-x)+y');   
+
+$s = non_zero_random(-2,2,1);
+$a = non_zero_random(-3,3,1); # horizontal shift
+if (abs($a)==1) {
+  $b = random(-1,1,2) * random(2,4,1); # vertical shift
+} else {
+  $b = non_zero_random(-2,2,1); # vertical shift
+}
+
+$f = Formula("-($s)*abs(x-$a)+$b")->reduce;
+
+$gr = init_graph(-7,-7,7,7,axes=>[0,0],grid=>[14,14],size=>[600,600]);
+$gr -> lb('reset');
+
+add_functions($gr, "$f for x in <-7,7> using color:blue and weight:2");
+$gr -> lb(new Label ( 6.5,0,'x','black','left','bottom'));
+$gr -> lb(new Label ( 0.25,6.5,'y','black','left','bottom'));
+$gr -> lb(new Label ( 1,6,'y = f(x)','black','left','bottom'));
+
+foreach my $i (1..6) {
+  $gr -> lb(new Label ( $i,-6.5, $i,'black','center','middle'));
+  $gr -> lb(new Label (-$i,-6.5,-$i,'black','center','middle'));
+  $gr -> lb(new Label (-6.5, $i, $i,'black','center','middle'));
+  $gr -> lb(new Label (-6.5,-$i,-$i,'black','center','middle'));
+}
+
+
+$yint = $f->eval(x=>"0");
+
+$rest = $b/$s;
+$zero1 = $a + $rest;
+$zero2 = $a - $rest;
+
+
+#############################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+\{
+ColumnTable(
+"À partir du graphique donné de la fonction valeur absolue, trouver les valeurs manquantes. 
+Il peut y avoir plus d'une valeur dans une réponse, dans ce cas, les séparer par une virgule.
+S'il n'y pas de réponse possible, écrire ${BBOLD}aucun.${EBOLD}".
+$BR.
+$BR.
+"a) \( f(0) = \) ". 
+ans_rule(7).$SPACE.
+$BR.
+$BR.
+"b) \( f \big( \) ".ans_rule(7)." \( \big) = 0 \). ".
+$BR.
+$BR.
+"c) \(\Big(\)".ans_rule(7).",".ans_rule(7)." \( \Big)\)"." est le sommet de la fonction.".
+$BR.
+$BR.
+$PAR.
+"Donner l'équation de cette fonction sous la forme \(f(x)=a |x-h|+k\).".
+$BR.
+$BR.
+"\(f(x) = \)".ans_rule(20)
+,
+image(insertGraph($gr), width=>400, height=>400, tex_size=>700).
+$BR.$BCENTER.
+"(Cliquer sur l'image pour l'agrandir)".
+$ECENTER,
+indent => 0, separation => 30, valign => "TOP"
+)
+\}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6994", "2.3.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+###############################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS(List($yint)->cmp() );
+
+
+if($rest > 0) {
+ANS(List($zero1,$zero2)->cmp() );}
+else {
+ANS(Compute("aucun")->cmp() );}
+
+
+ANS(Compute("$a")->cmp() );
+ANS(Compute("$b")->cmp() );
+ANS($f->cmp() );
+
+
+$n1 = $yint - $b;
+$n2 = abs($a);
+$p = -$s;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+\{ if($rest > 0) {
+"Selon le graphique, on voit que \(f($zero1)=0\) et \(f($zero2)=0\). Ce sont les points d'intersection avec l'axe des \(x\), 
+c'est-à-dire les zéros de la fonction."
+} else {
+"Selon le graphique, on voit qu'il n'y a pas de points d'intersection avec l'axe des \(x\), ainsi la fonction ne possède aucun zéro."
+}
+\}
+$BR
+L'ordonnée à l'origine est le point d'intersection avec l'axe des \(y \), ainsi \(f(0)=$yint\) et le sommet de la fonction est le point \(($a,$b)\).
+$PAR
+À partir des résultats précédents, on peut déterminer l'équation de la fonction valeur absolue sous la forme \(f(x)=a|x-h|+k\).
+En effet, sachant le sommet se situe au point \((h,k)=($a,$b)\), on obtient
+\[f(x) = a|x-$a|+$b\]
+$BR
+Il suffit de trouver la valeur du paramètre \(a\) en remplaçant \((x,f(x))\) dans l'équation par le point \((0,f(0))=(0,$yint)\), soit l'ordonnée l'origine. On obtient
+\[\begin{array}{ll} f(x) = a|x-$a|+$b  &\Rightarrow $yint = a|0+$a|+$b \\
+&\Rightarrow $n1 = a|$a|\\
+&\Rightarrow $n2\cdot a = $n1\\
+&\Rightarrow a = $p\\ \end{array}\]
+$BR
+L'équation de la fonction est donc \(y = $f\).
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

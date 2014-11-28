@@ -1,0 +1,61 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Probabilités)
+## DBchapter(Théorèmes limites)
+## DBsection(Approximation Poissonienne)
+## Author(Jean-Sébastien Turcotte)
+
+## KEYWORDS('Approximation', 'Loi de Poisson','Loi binomiale')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl",,                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+"PGstatisticsmacros.pl",   #Donne accès à des commandes de stats
+"PGnumericalmacros.pl",    #Nécessaire pour certaines macros dans statistics
+);
+TEXT(beginproblem());
+#####Initialisation des paramètres######################
+#Context("Numeric");
+$prob=random(0.01,0.05,0.001);
+$sem=random(100,150,10);
+$aumoins=random(1,5);
+$exact=random(1,5);
+$np=$prob*$sem;
+$ans1=0;
+foreach my $i(0..$aumoins-1){
+$ans1+=$E**(-$np)*($np)**($i)/(fact($i));
+}
+$ans1=Compute("1-$ans1");
+$ans2=$E**(-$np)*($np)**($exact)/(fact($exact));
+$ans2=Compute("$ans2");
+BEGIN_TEXT
+
+Une personne achète un billet de loterie par semaine. Les chances de gagner un prix sont évaluées à \($prob\). Si cette personne joue pendant \($sem\) semaines, utiliser l'approximation poissonienne pour déterminer ses chances de gagner un prix
+\{BeginList("OL")\}
+
+$ITEM  au moins \($aumoins\) fois,\{ $ans1->ans_rule(10) \}
+$ITEMSEP
+
+$ITEM exactement \($exact\) fois. \{ $ans2->ans_rule(10) \}
+$ITEMSEP
+
+
+\{EndList("OL")\}
+
+END_TEXT
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+
+ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

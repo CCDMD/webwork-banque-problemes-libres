@@ -1,0 +1,86 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Définition - Rapports trigonométriques et angles)
+## Institution(BdeB)
+## Traduction(Julie Tremblay)
+## Modifié par Julie Tremblay, octobre 2014
+######## Source ############
+## Fichier source:  Library/Union/setTrigBasicValues/ur_tr_1_4.pg
+## ZDBsubject(Trigonometry)
+## ZDBchapter(Geometric and algebraic foundations for trigonometry)
+## ZDBsection(Radians, converting radians & degrees)
+## ZDate(8/23/07)
+## ZInstitution(Rochester)
+## ZAuthor(K. Lesh)
+## ZMLT(KentMoreLike8)
+## ZLevel(2)
+#######  Source #############
+## Level(2)
+## Language(fr)
+## KEYWORDS('Trig', 'Radian', 'Degree','trigonometry','angle measure','radian/degree conversion','angles')
+
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+# choose the numerator for the radians fraction
+$radians_a=random(1, 20);
+
+# choose the denominator for the radians fraction
+# making sure that the numerator and denominator are
+# not equal
+
+do{$radians_b=random(1, 20);} 
+until($radians_b!=$radians_a);
+
+($n,$d) = reduce($radians_b,$radians_a);
+$rad = Formula("$n*pi/$d")->reduce;
+
+$degrees=non_zero_random(-900,900);
+
+###################################
+# Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+(a) Convertir l'angle \( $rad \) radians en degrés.
+$PAR
+\(\displaystyle $rad \text{ rad}= \) \{ ans_rule(15) \} degrés
+$PAR
+(b) Convertir l'angle \( $degrees ^{\circ} \) en radians.
+$PAR
+\( $degrees ^{\circ} =\) \{ ans_rule(15) \} radians.
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+
+# calculate the answers
+$ans1=${radians_a}*180/$radians_b;
+$ans2=pi*$degrees/180;
+
+# check the answers
+ANS(Real($ans1)->cmp);
+ANS(Real($ans2)->cmp);
+
+###################################
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

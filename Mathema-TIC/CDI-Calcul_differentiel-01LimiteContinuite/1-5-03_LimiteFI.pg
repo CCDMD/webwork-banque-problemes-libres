@@ -1,0 +1,91 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DESCRIPTION
+## Calcul d'une limite infinie et à l'infini, forme indéterminée -inf + inf
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Limite d'une forme indéterminée)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/Union/setLimitInfinity/4-4-24.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Limits at infinity, horizontal and oblique asymptotes)
+## ZDate(12/29/08)
+## ZInstitution(ASU)
+## ZAuthor(N. Srivastava)
+## ZMLT(liminfpoly)
+## ZMLTleader(1)
+## ZLevel(1)
+###############Source###############
+## KEYWORDS('limite','infini','polynôme','forme indéterminée')
+## Level(1)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+Context("Numeric");
+
+$b = random(1,9);
+$c = random(-5, -2, 1);
+$p = random(5, 9, 1);
+
+$f = Formula("$c x**$p + $b x**3 - 5")->reduce('(-x)-y'=>0,'(-x)+y'=>0);
+
+###################################
+# Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer 
+\[\lim_{x\to\infty} $f.\]
+$PAR
+Limite : \{ans_rule(20)\}
+$PAR
+et
+\[\lim_{x\to-\infty} $f.\]
+$PAR
+Limite : \{ans_rule(20)\}
+$PAR
+$BITALIC Entrer $BBOLD inf $EBOLD pour \(\infty\) et $BBOLD -inf $EBOLD pour \(-\infty\) .$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+
+$ans1 =Compute("-inf");
+
+if($p%2==0)  { $ans2 = Compute("-inf"); }
+else { $ans2 = Compute("inf"); }
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+
+###################################
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

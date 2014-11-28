@@ -1,0 +1,98 @@
+##DESCRIPTION
+##   Evaluation of a simple algebraic expression
+##ENDDESCRIPTION
+
+##KEYWORDS('algebra','exponent','français')
+## hcao tagged and PAID on 12-12-2003
+
+## DBsubject('Algebra')
+## DBchapter('Basic Algebra')
+## DBsection('Exponents and Radicals')
+## Date('6/3/2002')
+## Author('')
+## Institution('')
+## TitleText1('College Algebra')
+## EditionText1('3')
+## AuthorText1('Stewart, Redlin, Watson')
+## Section1('1.3')
+## Problem1('19')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"contextLimitedNumeric.pl",
+"PGauxiliaryFunctions.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+Context("Numeric");
+
+$a = non_zero_random(-9,9,1);
+$b = random(2,7,1);
+$c = random(-5,5,1);
+
+
+
+$ans1 = 2**$b;
+$ans2 = $a+$b-$c;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+L'expression 
+\[ \dfrac{ x^{$a} (2x)^{$b}}{x^{$c}} \text{ où } x \neq 0\] $BR
+se simplifie dans une forme égale à  \(c x^n\) où $BR $BR
+le coefficient \(c\) est \{ ans_rule(10) \}, 
+et l'exposant \(n\) est \{ ans_rule(10) \}.
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=6646", "1.1.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+ANS(num_cmp($ans1, mode=>"strict"));
+ANS(num_cmp($ans2, mode=>"strict"));
+
+$ab = $a+$b;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'expression \(\dfrac{ x^{$a} (2x)^{$b}}{x^{$c}}\) se simplifie de la façon suivante:
+$BR
+$BR
+\[ \begin{array}{rll} \dfrac{ x^{$a} (2x)^{$b}}{x^{$c}} &=  \dfrac{ x^{$a} 2^{$b} x^{$b}}{x^{$c}} &;\text{car } (ab)^n = a^nb^n \\[0.8em]
+&= \dfrac{2^{$b} x^{$a+$b}}{x^{$c}} &;\text{car } a^na^m = a^{n+m}\\[0.8em] 
+&= $ans1 x^{$ab-$c}&;\text{car }\frac{a^n}{a^m}=a^{n-m} \\[0.8em]
+&=  $ans1 x^{$ans2} &\end{array}\]
+$BR
+$BR
+
+
+
+\{if ($ans2 < 0) {
+$neg = -$ans2;
+"Étant donnée que l'exposant de \(x\) est négatif, on réécrit cette expression de la façon suivante:".$BR.
+"\[   $ans1 x^{$ans2} =  \dfrac{$ans1}{x^{$neg}} \]"
+}
+\}
+$BR
+Par conséquent, \(c = $ans1\) et \(n=$ans2\).
+
+
+$BR
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

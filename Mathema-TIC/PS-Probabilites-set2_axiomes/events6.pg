@@ -1,0 +1,69 @@
+## DBsubject(Probabilités)
+## DBchapter(Axiomes des probabilités)
+## DBsection(Calculs de probabilités)
+##Modifié par Jean-Sébastien Turcotte - Université de Montréal
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+
+## DESCRIPTION
+## Probability
+## ENDDESCRIPTION
+
+## Tagged by cmd6a 7/18/07
+
+## ZDBsubject('Probability')
+## ZDBchapter('Discrete Probability')
+## ZDBsection('Conditional Probability')
+## ZDate('')
+## ZAuthor('')
+## ZInstitution('')
+## ZTitleText1('')
+## ZEditionText1('')
+## ZAuthorText1('')
+## ZSection1('')
+## ZProblem1('')
+###############Source###############
+## KEYWORDS('Probabilités')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$n = random(7,12,1);
+$b = random(3,$n-2);
+$c = $n-3;
+
+BEGIN_TEXT
+On lance $n fois une pièce de monnaie régulière. Quelle est la probabilité :
+$BR
+a) $SPACE d'obtenir exactement $b faces?
+\{ ans_rule(10) \}
+$BR
+b) $SPACE d'obtenir au moins deux faces? \{ ans_rule(10) \}
+$BR
+c) $SPACE d'obtenir au plus $c faces?
+\{ ans_rule(10) \}
+
+END_TEXT
+$ans1 = Compute("C($n,$b)/2**$n");
+$ans2 = Compute("1-1/(2**$n)-$n/2**$n");
+$ans3 = Compute("1-(C($n,$n-2)+$n+1)/(2**$n)");
+ANS( $ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

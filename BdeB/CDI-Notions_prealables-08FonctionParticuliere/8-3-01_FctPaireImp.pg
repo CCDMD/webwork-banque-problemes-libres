@@ -1,0 +1,112 @@
+##DESCRIPTION
+## Déterminer si une fonction est paire, impaire ou ni paire ni impaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Quelques fonctions particulières)
+## DBsection(Fonction paire et fonction impaire)
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## KEYWORDS('fonction paire','fonction impaire')
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserRadioButtons.pl",
+);
+
+TEXT(beginproblem());
+
+Context("Numeric");
+
+$n = random(2,10,1);
+$m = random(2,10,1);
+
+$f = Compute("(x**($n))/(2*x**$m + 1)"); 
+
+$fans = $f -> substitute(x =>"-x");
+
+if ( $n % 2 == 0 && $m % 2 == 0 ) {  #réponse Paire
+
+$radio = RadioButtons(
+  ["Paire","Impaire","Ni paire ni impaire"],
+  "Paire", 
+  last => ["Ni paire ni impaire"], # can be a list
+);
+
+} elsif ($n % 2 == 1 && $m % 2 == 0) { #réponse impaire
+
+$radio = RadioButtons(
+  ["Paire","Impaire","Ni paire ni impaire"],
+  "Impaire", 
+  last => ["Ni paire ni impaire"], # can be a list
+);
+
+} else {   #réponse Ni paire ni impaire
+
+$radio = RadioButtons(
+  ["Paire","Impaire","Ni paire ni impaire"],
+  "Ni paire ni impaire", 
+  last => ["Ni paire ni impaire"], # can be a list
+);
+
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Déterminer si la fonction \(f(x) = \displaystyle $f\) est une fonction paire, impaire ou ni paire ni impaire.
+$BR $BR
+\{ $radio->buttons() \}
+$BR
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=7042", "2.3.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+ANS( $radio->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+\{
+if ( $n % 2 == 0 && $m % 2 == 0 ) {  #réponse Paire
+
+"La fonction est paire car \(f(-x) = f(x)\). En effet, $BR $BR
+\[  f(-x) = $fans = $f \]";
+
+} elsif ($n % 2 == 1 && $m % 2 == 0) { #réponse impaire
+
+"La fonction est impaire car \(f(-x) = - f(x)\). En effet, $BR $BR
+\[  f(-x) = $fans = \frac{-x^{$n}}{2x^{$m}+1} \]";
+
+} else {   #réponse Ni paire ni impaire
+
+
+"La fonction est ni paire ni impaire car \(f(-x) \neq f(x)\) et \( f(-x) \neq -f(x)\). En effet, $BR $BR
+\[  f(-x) = $fans \]";
+
+}
+\}
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

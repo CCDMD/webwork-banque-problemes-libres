@@ -1,0 +1,65 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DESCRIPTION
+## Calcul d'une limite d'une forme 0/0, avec factorisation d'un polynôme degré 3
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Limite d'une forme indéterminée)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+
+## KEYWORDS('limite','forme indéterminée','fonction rationnelle','factorisation')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+#"PGcourse.pl",    #Générer une autre version du problème
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(1,4);
+$a2 = $a*$a;
+$a3 = $a2*$a;
+
+$tag = random(0,5,1);
+@choose = ("x","y","a","b","s","t");
+$x = $choose[$tag];
+
+BEGIN_TEXT
+Évaluer la limite.
+\[ \lim_{ $x \rightarrow $a } \frac { { $x }^3- $a3 }  { { $x }^2- $a2 } \]
+$PAR Réponse : \{ans_rule(25) \}
+END_TEXT
+
+$b = 3*$a;
+$ans = Compute("$b/2");
+
+ANS($ans->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La limite est de la forme \(\frac{0}{0}\), il faut donc factoriser le numérateur et le dénominateur afin de lever l'indétermination.
+\[ \begin{array}{ll} \lim_{ $x \to $a } \frac { { $x }^3- $a3 }  { { $x }^2- $a2 } &= \lim_{ $x \to $a } \frac { ($x - $a)($x^2 + $a $x + $a2) } {($x- $a)($x+$a) }\\
+ &=\lim_{ $x \to $a } \frac { \cancel{($x - $a)}($x^2 + $a $x + $a2) } {\cancel{($x- $a)}($x+$a) }\\
+ &= \lim_{ $x \to $a } \frac {$x^2 + $a $x + $a2}{$x+$a} \\
+ &= \frac{$a2+$a2+$a2}{$a+$a} = \frac{$b}{2}\end{array}\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

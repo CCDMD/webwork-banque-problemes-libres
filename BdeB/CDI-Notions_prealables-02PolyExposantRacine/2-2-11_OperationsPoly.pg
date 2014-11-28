@@ -1,0 +1,109 @@
+##DESCRIPTION
+##  Algebra problem: polynomial functions
+##ENDDESCRIPTION
+
+##KEYWORDS('algebra', 'long division','français')
+## Traduction('Julie Tremblay')
+## tsch tagged and PAID on 12-12-2003
+
+## DBsubject('Algebra')
+## DBchapter(Polynomial and rational functions)
+## DBsection('Dividing Polynomials')
+## Date('6/3/2002')
+## Author('')
+## Institution('')
+## TitleText1('College Algebra')
+## EditionText1('3')
+## AuthorText1('Stewart, Redlin, Watson')
+## Section1('5.2')
+## Problem1('5,7')
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextLimitedPolynomialFr.pl",
+  "CofIdaho_macrosFr.pl",
+  "AnswerFormatHelp.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("LimitedPolynomial-Strict");
+
+$a = non_zero_random(-8,8,1);
+$b = non_zero_random(-8,8,1);
+$c = random(1,8,1);
+
+##P(x)=(x^2-2x + 2)(x-$a)+$c x+$b
+$b1=$a-2;
+$c1=-2*$a+$c+2;
+$d1=2*$a+$b;
+
+$polynome=Formula("x^3+$b1*x^2 + $c1*x + $d1")->reduce;
+
+$p="x^3 ";
+if ($b1 != 0)
+ {
+ $p=$p."? {$b1} x^2 ";
+ };
+if ($c1 != 0)
+ {
+ $p=$p."? {$c1} x ";
+ };
+if ($d1 != 0)
+ {
+ $p=$p."? {$d1}";
+ };
+
+Context()->texStrings;
+BEGIN_TEXT
+Trouver le quotient et le reste, si possible, de la division polynomiale suivante.
+\[\frac{$polynome}{x^2-2x+2}\].
+$BR  
+Le quotient est \{ ans_rule(20) \}
+$BR  
+Le reste est \{ ans_rule(10) \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=1508", "1.1.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC  
+END_TEXT
+Context()->normalStrings;
+
+$ans1 = Formula("x+$a")->reduce;
+$ans2 = Formula("$c*x+$b")->reduce;
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+
+$c2 = -2*$a + $c;
+$a2neg = -2*$a;
+$a2 = 2*$a;
+
+
+$poly1 = nicestring([$a,$c2,$d1],["x^2","x",""]);
+$poly2 = nicestring([$a,$a2neg,$a2],["x^2","x",""]);
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+\[  \begin{array}{rl}
+ $polynome &\underline{\vert x^2-2x+2} \\[0.5em]
+- \underline{\left(x^3-2x^2+2x\right)}  & $ans1\\[0.5em]
+  $poly1 & \\[0.5em]
+-  \underline{\left($poly2\right)} & \\[0.5em]
+ $ans2  & 
+ \end{array}
+\] 
+
+Ainsi, 
+\[\frac{$polynome}{x^2-2x+2} = $ans1 +\frac{$ans2}{x^2-2x+2}\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

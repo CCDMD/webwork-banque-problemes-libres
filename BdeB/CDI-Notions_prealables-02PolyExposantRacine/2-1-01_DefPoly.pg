@@ -1,0 +1,108 @@
+###DESCRIPTION
+## Polynomials
+## 
+##ENDDESCRIPTION
+## DBsubject(Algèbre)
+## DBchapter(Polynômes, exposants et racines)
+## DBsection(Définition des polynômes)
+## KEYWORDS('polynômes', 'français')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+## Level(1)
+## Language(fr)
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextLimitedPolynomial.pl"
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+
+Context()->variables->add(y=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+$a = non_zero_random(-4,4,2);  
+$b = non_zero_random(-6,6,1);
+$c = non_zero_random(-10,10,1);
+
+$nax = random(1,6,1);
+$nay = random(1,6,1);
+$deg1 = $nax + $nay;
+
+do{
+$nbx = random(1,6,1);
+$nby = random(1,6,1);
+$deg2 = $nbx + $nby;
+} until($deg1 != $deg2);
+
+$term1 = Formula("$a x^($nax)*y^($nay)")->reduce;
+$term2 = Formula("$b x^($nbx)*y^($nby)")->reduce;
+$poly = Formula("$term1+$term2+$c")->reduce;
+
+
+######################################
+
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit le polynôme \( $poly \).
+$PAR
+a) Déterminer le coefficient et le degré de chacun des termes.
+$BR
+$BCENTER
+\{begintable(3)\}
+\{row('Terme','Coefficient','Degré')\}
+\{row( '\($term1\)', ans_rule(10), ans_rule(10))\}
+\{row( '\($term2\)', ans_rule(10), ans_rule(10))\}
+\{row( '\($c\)', ans_rule(10), ans_rule(10))\}
+\{endtable()\}
+$ECENTER
+$BR
+$PAR
+b) Le degré du polynôme est \{ ans_rule(10) \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=1556", "1.1.1", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+######################################
+
+#  Answer
+
+
+$ans_a11 = Real($a);
+$ans_a12 = Real($deg1);
+$ans_a21 = Real($b);
+$ans_a22 = Real($deg2);
+$ans_a31 = Real($c);
+$ans_a32 = Real(0);
+ANS($ans_a11->cmp); 
+ANS($ans_a12->cmp);
+ANS($ans_a21->cmp);
+ANS($ans_a22->cmp);
+ANS($ans_a31->cmp);
+ANS($ans_a32->cmp);
+
+if($deg1 > $deg2){$ans_b1=Real($deg1);}
+else {$ans_b1=Real($deg2);}
+
+ANS($ans_b1->cmp); 
+
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

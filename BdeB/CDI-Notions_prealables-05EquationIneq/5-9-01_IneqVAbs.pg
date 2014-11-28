@@ -1,0 +1,151 @@
+##DESCRIPTION
+##  Algebra: inequalities and intervals
+##ENDDESCRIPTION
+
+##KEYWORDS('algebra', 'inequality', 'interval', 'francais')
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Linear Inequalities')
+
+
+########################################################################
+
+DOCUMENT();      
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"unionTables.pl",
+"PGcourse.pl",
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+
+$refreshCachedImages = 1;
+
+
+Context("Numeric");
+Context()->noreduce('(-x)-y');
+
+$a = random(2,8,1)*random(-1,1,2);
+do{$b = non_zero_random(-6,6,1);} until($a != $b);
+$c = random(1,8,1);
+
+$poly = Formula("$a x + $b")->reduce;
+
+$num1 = -$c - $b;
+$num2 = $c - $b;
+
+($n1,$d1) = reduce($num1,$a);
+($n2,$d2) = reduce($num2, $a);
+
+
+Context("Interval");
+Context()->strings->add(vide=>{},EmptySet=>{alias=>"vide"});
+
+if($a > 0) { $ans = Compute("($n1/$d1,$n2/$d2)"); }
+else { $ans = Compute("($n2/$d2,$n1/$d1)"); }
+
+##############################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre l'inégalité suivante en utilisant la notation d'intervalle.$BR
+
+$BR
+\[ 
+-$c < $poly < $c
+\]
+Réponse : \{ ans_rule(30) \} \{ AnswerFormatHelp("intervals") \} $BR
+$PAR
+$BBOLD Note: Si la réponse inclut plus d'un intervalle, les écrire séparés par le symbole d'union "U". Pour \(-\infty\) ou \(\infty\), écrire "-inf" ou "inf". S'il n'y a aucune solution, écrire deux accolades "{ }" pour désigner l'ensemble vide. $EBOLD
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6898", "1.5.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+
+ANS($ans->cmp);
+
+$showHint = 4;
+Context()->texStrings;
+BEGIN_HINT
+$BR
+Une inégalité de la forme \(a < b < c\) est équivalente à \(a < b\) $BBOLD  ET $EBOLD \(b < c\). Donc, $BR $BR
+\[
+-$c < $poly < $c \Leftrightarrow -$c< $poly \quad\textbf{ et }\quad $poly < $c
+\]
+$BR
+Ainsi pour résoudre ce type d'inégalité, il faut résoudre les inéquations séparément et faire $BBOLD l'intersection$EBOLD des deux solutions.
+END_HINT
+Context()->normalStrings;
+
+
+#### Pour afficher les bornes simplifiées en latex
+
+
+$x1 = $n1/$d1;  
+$x2 = $n2/$d2;
+
+if($x1 - floor($x1) != 0 ) { $x1="\frac{$n1}{$d1}"; }
+if($x2 - floor($x2) != 0 ) { $x2="\frac{$n2}{$d2}"; }
+
+Context()->texStrings;
+
+if($a > 0) {
+
+BEGIN_SOLUTION
+Une inégalité de la forme \(a < b < c\) est équivalente à \(a < b\) $BBOLD  ET $EBOLD \(b < c\). Donc, $BR $BR
+\[
+-$c < $poly < $c \Leftrightarrow -$c< $poly \quad\textbf{ et }\quad $poly < $c
+\]
+$BR
+Ainsi pour résoudre ce type d'inégalité, il faut résoudre les inéquations séparément et faire $BBOLD l'intersection$EBOLD des deux solutions.
+$HR
+\[  \begin{array}{lcl}(1)&-$c < $poly &\text{; addition de} -$b \\ &-$c-$b < $a x &\\& $num1 < $a x &\text{; division par } $a \\ & $x1 < x & \end{array} \]
+$BR
+Ainsi, l'intervalle de solution de la première inégalité est : \(\left] $x1, \infty \right[ \).
+$HR
+\[  \begin{array}{lcl}(2)& $poly < $c & \text{; addition de }-$b \\ & $a x < $c - $b& \\& $a x < $num2 &\text{; division par } $a \\& x < $x2 &\end{array} \] $BR
+Ainsi, l'intervalle de solution de la deuxième inégalité est : \(\left] -\infty, $x2\right[ \).
+$BR $BR
+Pour trouver l'intervalle de solution de notre inéquation de départ, il faut faire l'intersection de ces deux intervalles, car \(x\) doit appartenir aux deux intervalles.$BR $BR
+Par conséquent, l'intervalle de solution est : \(\left] $x1, \infty \right[ \cap  \left] -\infty, $x2\right[ = \left] $x1, $x2 \right[ \), car \($x1 < $x2\).
+END_SOLUTION
+
+} else {
+BEGIN_SOLUTION
+Une inégalité de la forme \(a < b < c\) est équivalente à \(a < b\) $BBOLD  ET $EBOLD \(b < c\). Donc, $BR $BR
+\[
+-$c < $poly < $c \Leftrightarrow -$c< $poly \quad\textbf{ et }\quad $poly < $c
+\]
+$BR
+Ainsi pour résoudre ce type d'inégalité, il faut résoudre les inéquations séparément et faire $BBOLD l'intersection$EBOLD des deux solutions.
+$HR
+\[  \begin{array}{lcl}(1)&-$c < $poly &\text{; addition de } $c \\ & 0 < $poly + $c&\text{; addition de }-$a x\\& -$a x < -$num1 &\text{; division par } -$a \\ & x < $x1 & \end{array} \]
+$BR
+Ainsi, l'intervalle de solution de la première inégalité est : \(\left] -\infty, $x1 \right[ \).
+$HR
+\[  \begin{array}{lcl}(2)& $poly < $c & \text{; addition de }-$b \\ & $a x < $c - $b& \\& $a x < $num2 &\text{; division par } $a \\& x > $x2 &\text{; il faut inverser le symbole car } $a < 0\end{array} \] $BR
+Ainsi, l'intervalle de solution de la deuxième inégalité est : \(\left] $x2, \infty\right[ \).
+$BR $BR
+Pour trouver l'intervalle de solution de notre inéquation de départ, il faut faire l'intersection de ces deux intervalles, car \(x\) doit appartenir aux deux intervalles.$BR $BR
+Par conséquent, l'intervalle de solution est : \(\left] $x2, \infty \right[ \cap  \left] -\infty, $x1\right[ = \left] $x2, $x1 \right[ \), car \($x2 < $x1\).
+END_SOLUTION
+
+}
+Context()->normalStrings;
+
+ENDDOCUMENT();        

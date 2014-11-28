@@ -1,0 +1,80 @@
+## DBsubject(Probabilités)
+## DBchapter(Variables aléatoires: cas général et continu)
+## DBsection(Variables continues)
+## Modifié par Jean-Sébastien Turcotte - Université de Montréal
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## ZDESCRIPTION
+##  ZNormal Distribution
+## ZENDDESCRIPTION
+
+## ZKEYWORDS('probability', 'continuous', 'normal', 'distribution')
+## Znaw tagged this problem.
+
+## ZDBsubject('Probability')
+## ZDBchapter('Distributions')
+## ZDBsection('Normal Distribution')
+## ZDate('6/27/2005')
+## ZAuthor('Nolan A. Wages')
+## ZInstitution('UVA')
+## ZTitleText1('Statistics for Management and Economics')
+## ZEditionText1('6')
+## ZAuthorText1('Keller, Warrack')
+## ZSection1()
+## ZProblem1()
+###############Source###############
+## KEYWORDS('Loi normale','Probabilité')
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+#”unionLists.pl”,                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+"PGstatisticsmacros.pl",   #Donne accès à des commandes de stats
+"PGnumericalmacros.pl"    #Nécessaire pour certaines macros dans statistics
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+## install_problem_grader(~~&std_problem_grader);
+
+$a = random(75,125,5);
+$b = random(10,30,1);
+$c = $a + $b*random(1.2,2.0,0.01);
+$d = random(10,20,1);
+$d1 = 0.01*$d;
+$z = udistr($d1);
+
+BEGIN_TEXT
+$PAR
+Soit \(X\) une variable aléatoire normale de moyenne $a et d'écart-type $b. 
+$PAR
+A. Quelle est la probabilité que \(X\) soit supérieure à $c?
+$PAR
+Probabilité =  \{ans_rule(15)\}
+$PAR
+B. Quelle valeur \(x\) est dépassée uniquement par $d$PERCENT des valeurs?
+$PAR
+\(x\) =  \{ans_rule(15)\}
+
+END_TEXT
+
+$ans1 = normal_prob($c, 'infty', mean=>$a, deviation=>$b);
+$ans2 = $z*$b + $a;
+ANS(num_cmp($ans1));
+ANS(num_cmp($ans2));
+
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

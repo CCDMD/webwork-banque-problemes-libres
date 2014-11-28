@@ -1,0 +1,108 @@
+## DESCRIPTION
+##   Solve an Equation
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Équations contenant des fractions rationnelles)
+## KEYWORDS('Équation rationnelle','Résoudre','Équation')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGauxiliaryFunctions.pl",
+  "Parser.pl",
+  "MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+# \(\frac{1}{x+$a}-\frac{1}{x+$b}=\frac{1}{$c}\)
+
+
+
+$c = list_random(2,6,12,20);
+
+
+do{$a = non_zero_random(-9,9,1);
+ $b = $a + 1;
+} until($a*$b != $c);   #### on veut résoudre un poly x^2 + bx + c où c neq 0
+
+
+$apb = $a+$b;
+
+$gradient = 4*$c + 1;
+
+$ans1 = Compute("(-$apb + sqrt($gradient))/2")->reduce;
+$ans2 = Compute("(-$apb - sqrt($gradient))/2")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer le domaine de l'équation suivante. $BR $BR
+\[\displaystyle \frac{1}{x+$a}-\frac{1}{x+$b}=\frac{1}{$c}\].
+$BR $BR
+Domaine : \{ans_rule(20) \} \{ AnswerFormatHelp("intervals") \} $BR
+$BR
+Résoudre, si possible, cette équation. S'il n'y a aucune solution, écrire "aucune" dans la case réponse.
+$BR $BR 
+Solution(s) : \{ans_rule(30) \} $BR
+$BBOLD Note: S'il y a plus d'une solution, écrire les réponses séparées par une virgule. Ex.: 4, sqrt(10) $EBOLD
+$BR
+$HR
+$BITALIC
+Des exemples similaires sont présentés sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5272", "1.4.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+Context("Interval");
+
+$rest1 = -$b;
+$rest2 = -$a;
+
+$dom = Compute("R-{$rest1,$rest2}"); 
+
+ANS($dom->cmp);
+
+Context("Numeric");
+Context()->strings->add(aucune => {});
+
+$ans = List("$ans1,$ans2");
+
+ANS($ans->cmp);
+
+
+$ab = $a*$b;
+$abmc = $ab - $c;
+$rac = Compute("sqrt($gradient)");
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Le domaine de cette équation est \(\mathbb{R}\setminus\lbrace $rest1,$rest2\rbrace\), car pour ces deux valeurs, les dénominateurs \(x+$a\) et \(x+$b\) sont nuls. $BR $BR
+
+Pour résoudre cette équation, il faut mettre le membre de gauche sur le même dénominateur et transformer l'équation sous la forme \(ax^2+bx+c=0\).
+$BR $BR
+\[\begin{array}{rll}  \dfrac{1}{x+$a}-\dfrac{1}{x+$b} &=\dfrac{1}{$c} &\\ \dfrac{(x+$b)-(x+$a)}{(x+$a)(x+$b)} &=\dfrac{1}{$c} &\\ \dfrac{1}{(x+$a)(x+$b)} &= \dfrac{1}{$c}  & \text{; car }\frac{1}{a}=\frac{1}{c}\Rightarrow a=c\;\text{, si }x \neq $rest1, $rest2 \\ x^2 +$apb x + $ab & =$c  &\text{; car } (x+$a)(x+$b)=x^2 +$apb x + $ab \\ x^2 +$apb x + $abmc &=0 & \end{array}\]
+
+
+$BR
+Par la formule quadratique, on trouve les solutions de cette équation :$BR
+\[\dfrac{-$apb\pm\sqrt{($apb)^2-4($abmc)}}{2} = \dfrac{-$apb\pm\sqrt{$gradient}}{2}=\dfrac{-$apb\pm $rac}{2}\]
+$BR $BR
+Il existe  deux solutions :\( \boxed{x = $ans1}\) et \( \boxed{x = $ans2}\) $BR
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

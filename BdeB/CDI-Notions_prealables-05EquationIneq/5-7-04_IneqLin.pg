@@ -1,0 +1,109 @@
+##DESCRIPTION
+##  Algebra: inequalities and intervals
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Inéquations linéaires)
+## KEYWORDS('Résoudre','Inéquation')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "unionLists.pl",
+   "PGcourse.pl",      # Customization file for the course
+ "AnswerFormatHelp.pl",
+);
+
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+
+Context("Numeric");
+Context()->noreduce('(-x)-y');
+
+$a = random(2,9,1)*random(-1,1,2);
+$b = non_zero_random(-20,20,1);
+do{$c = random(2,9,1)*random(-1,1,2);} until($a != $c);
+$d = non_zero_random(-20,20,1);
+
+
+$gauche = Formula("$a x + $b")->reduce;
+$droite = Formula("$c x + $d")->reduce;
+
+$num = $d-$b;
+$den = $a - $c;
+
+($nu,$de) = reduce($num,$den);
+$f = Compute("$nu/$de");
+
+
+Context("Interval");
+
+if( $den > 0 ) { $ans = Compute("[$nu/$de,inf)"); }
+
+else { $ans = Compute("(-inf,$nu/$de]");  }
+
+##############################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre l'inégalité suivante en utilisant la notation d'intervalle.$BR
+$BBOLD Note: Si la réponse inclut plus d'un intervalle, les écrire séparés par le symbole d'union "U". Pour \(-\infty\) ou \(\infty\), écrire "-inf" ou "inf".$EBOLD 
+$BR Voir : \{ AnswerFormatHelp("intervals") \} $BR
+$BR
+\[ 
+$gauche  \geq $droite
+\]
+Réponse : \{ ans_rule(30) \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6894", "1.5.1", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+
+ANS($ans->cmp);
+
+if($f - floor($f) !=0) { $f = "\frac{$nu}{$de}"; }
+
+Context()->texStrings;
+BEGIN_SOLUTION
+On résout cette inégalité en la transformant sous la forme équivalente \(x<c\) ou \(x > c\), en portant attention à inverser le sens du symbole d'inégalité si l'on divise ou multiplie par un nombre négatif.
+$BR $BR
+\[  \begin{array}{rcll}$gauche &\geq& $droite&\text{; addition de} -$c x \text{ et } -$b\\ $a x - $c x &\geq& $d - $b&\\ $den x &\geq& $num &\text{; division par } $den \end{array} \]
+$BR $BR
+\{
+if( $den < 0 ) {
+"Comme \($den < 0\), en divisant chaque côté par \($den\), il faut inverser le sens". " du symbole \(\geq\). Ainsi on obtient,".
+"\( $den x \geq $num \Leftrightarrow x \leq $f\)".$BR.$BR.
+"Par conséquent, l'intervalle contenant ces valeurs de \(x\) est : ".
+"\( \left]-\infty, $f \right] \)"." La borne de droite est incluse car il faut inclure l'égalité à 0."
+} else {
+"Comme \($den > 0\), on divise chaque côté par \($den\) sans inverser le sens".
+" du symbole \(\geq\). Ainsi on obtient,".
+"\( $den x \geq $num \Leftrightarrow x \geq $f\)".$BR.$BR.
+"Par conséquent, l'intervalle contenant ces valeurs de \(x\) est : ".
+"\( \left[ $f, \infty \right[ \)"." La borne de gauche est incluse car il faut inclure l'égalité."
+}
+\}
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        

@@ -1,0 +1,81 @@
+##DESCRIPTION
+##  Algebra: Dividing Polynomials
+##ENDDESCRIPTION
+
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne)
+
+## DBsubject(Algèbre)
+## DBchapter(Polynômes, exposants et racines)
+## DBsection(Opérations sur les polynômes)
+
+## Level(3)
+## Language(fr)
+## KEYWORDS('division polynômiale','français')
+
+
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "contextLimitedPolynomial.pl",
+ # "CofIdaho_macros.pl",
+  "AnswerFormatHelpFr.pl",
+);
+
+
+#####################################################################
+
+TEXT(beginproblem());
+
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+#####################################################################
+
+Context("Numeric");
+
+$a = random(2,6,1);
+$b = random(1,8,1);
+$c = random(1,6,1);
+
+##P(x) = (x^2-ax-b)(cx+1)
+
+$dividend = Compute("$c*x^3 + (1-$a*$c)*x^2 -($b*$c+$a)*x-$b")->reduce;
+$divisor = Compute("$c*x+1")->reduce;
+
+Context("LimitedPolynomial");
+
+$quotient = Compute("x^2-$a*x-$b");
+$reste = Formula("0");
+
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Effectuer la division polynomiale suivante et indiquer le quotient et le reste dans les cases appropriées.
+\[
+($dividend) \div ($divisor)
+\]
+$HR
+Réponse: \{ans_rule(20)\} \( + \) \{ans_rule(10)\} \( / $divisor \)
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "
+http://moodle.bdeb.qc.ca/mod/page/view.php?id=1508/division", "1.1.2", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+ANS($quotient->cmp);
+ANS($reste->cmp);
+
+ENDDOCUMENT();

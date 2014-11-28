@@ -1,0 +1,105 @@
+## DESCRIPTION
+## Algebraic equations
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Factorisation)
+## DBsection(Factorisation de trinômes)
+## KEYWORDS('Factorisation','français','trinôme')
+## Traduction('Julie Tremblay')
+## Institution(BdeB)
+## Language(fr)
+
+
+########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"PGcourse.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowersFr.pl",
+#"problemRandomize.pl",
+);
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "soient 0 ou 1",
+);
+
+
+#(x+a)(x+b) = x^2 +(a+b)x + ab
+
+#ProblemRandomize(style=>"Button",label=>"Générer un autre polynôme");
+
+$a = random(1,10,1);
+$b = random(1,10,1);
+
+if($a==$b){$b=$b+1;};
+
+$s = $a + $b;
+$p = $a * $b;
+
+$expression = "\(x^2 + $s x + $p\)";
+
+$answer = Compute("(x + $a)(x + $b)");
+
+
+################################################
+#  Main text
+
+BEGIN_TEXT
+Factoriser l'expression $expression.  Simplifier la réponse.
+$BR
+$BR
+\{ ans_rule(30) \}
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème sont présentées à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2320", "1.2.4", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS($answer->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Pour factoriser le polynôme $expression, on cherche deux nombres   \(u\) et \(v\) tels que $BR $BR
+\[
+\begin{array}{rlrl} u + v &= $s   &\Rightarrow  $a + $b &= $s    \\
+      u \times v &= $p  &\Rightarrow $a \times $b &= $p \end{array}
+\]
+$BR
+Alors en posant \(u = $a\) et \(v = $b\), la factorisation du polynôme est : $BR $BR
+
+$BCENTER
+$expression \(= (x + u)(x + v) = $answer\)
+$ECENTER
+$HR
+$BITALIC
+Un exemple similaire est présenté à la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=2320", "1.2.4", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

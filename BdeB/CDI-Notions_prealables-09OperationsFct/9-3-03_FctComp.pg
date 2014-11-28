@@ -1,0 +1,138 @@
+##DESCRIPTION
+#Fonctions composées et domaine
+#Fait par Julie Tremblay, juin 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Fonctions composées)
+## Institution(Collège de Bois-de-Boulogne)
+## Author(Julie Tremblay)
+######## Source ############
+## Fichier source:  1050s13p4.pg
+## ZAuthor('Utah ww group')
+## ZInstitution('Univeristy of Utah')
+## ZDBsubject('Algebra')
+## ZDBchapter('Functions')
+## ZDBsection('Domain and Range')
+#######  Source #############
+## Level(2)
+## Language(fr)
+## KEYWORDS('Fonction composée','français','composition')
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"AnswerFormatHelp.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGgraphmacros.pl",
+#"contextRationalFunction.pl",
+);
+
+
+TEXT(beginproblem());
+
+$refreshCachedImages=1;
+
+Context()->variables->add(t=>"Real");
+Context()->strings->add(nep=>{});
+
+$a = non_zero_random(-8,8);
+do{$b = non_zero_random(-8,8);} until($a!=$b);
+do{$c = random(-10,10);} until($c!=$b);
+
+$f = Formula("(x+$a)/(x-$b)")->reduce;
+
+
+
+$ans2 = $f->eval(x=>"$c");
+$ans3 = $f->substitute(x=>"t+1");
+
+$g = $f->substitute(x=>"t^2");
+$ans4 = $f->substitute(x=>"$g");
+
+Context()->texStrings;
+BEGIN_TEXT 
+${BBOLD}Fonctions composées. $EBOLD
+$BR
+Soit \[f(x) = $f\]
+Alors le domaine de \(f\) est \(\mathbb{R}\setminus $LBRACE\) \{ ans_rule(10) \} \($RBRACE\)
+$BR
+De plus, évaluer si possible, la fonction aux valeurs de \(x\) données. La simplification n'est pas exigée.$BR
+($BITALIC Si une valeur n'existe pas, écrire ${BBOLD}nep$EBOLD pour "n'existe pas". $EITALIC)
+$BR
+(a) \(f($c) = \) \{ ans_rule(10) \}
+$BR
+(b) \(f(t+1)= \)\{ ans_rule(10) \}
+$BR
+(c) \(f(f(t^2))\) = \{ ans_rule(30) \}
+$BR
+$PAR
+Cela peut être difficile à faire dans WeBWorK, mais vous devriez être en mesure de tracer
+le graphique de la fonction \(f\), affichant les asymptotes et les points d'intersection avec les axes.
+$HR
+$BITALIC
+Certaines notions théoriques associées à ce problème se trouvent sur les pages \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=7010", "2.4.3", "TARGET='_blank'" ) \}    et   \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6986", "2.2.4", "TARGET='_blank'" ) \} de  la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+ANS(Real($b)->cmp);
+ANS(Real($ans2)->cmp);
+ANS($ans3->cmp(limits=>[[0,5]]));
+ANS($ans4->cmp(limits=>[[0,5]]));
+
+$x1 = $b-0.01;
+$x2 = $b+0.01;
+
+$f1 = "$f for x in <-10,$x1> using color:blue and weight:2";
+$f2 = "$f for x in <$x2,10> using color:blue and weight:2";
+$gr = init_graph(-10,-10,10,10,axes=>[0,0],size=>[500,500]);
+$gr->lb('reset');
+$gr->lb(new Label(9.25,-0.5,'x','black','center','middle'));
+$gr->lb(new Label(0.5,9.25,'y','black','center','middle'));
+$gr->lb(new Label($x1+0.5,3,"x=$b",'black','left','middle'));
+$gr->lb(new Label(8.5,1.5,"y=1",'black','center','middle'));
+
+# les asymptotes
+$gr->moveTo(-10,1);
+$gr->lineTo(10,1,'black',2,'dashed');
+$gr->moveTo($b,-10);
+$gr->lineTo($b,10,'black',2,'dashed');
+
+plot_functions( $gr,$f1,$f2); 
+$fig=image(insertGraph($gr),
+  width=>300,height=>300,tex_size=>700);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Soit \[f(x) = $f.\]
+Alors le domaine de cette fonction est l'ensemble des nombres réels à l'exception de la valeur de
+\(x\) où il y a une division par zéro, c'est-à-dire lorsque \(x=$b\).
+$BR $BR
+De plus,
+$PAR
+a) \(f($c) = $ans2\)
+$PAR
+b) \(f(t+1) = \displaystyle $ans3\)
+$PAR
+c) \(f(f(t^2)) = f\left(\displaystyle $g\right) = \displaystyle $ans4\)
+$PAR
+Voici le graphique de cette fonction.
+$BCENTER
+\{$fig\}
+$BR
+(Cliquer sur la figure pour l'agrandir.)
+$ECENTER
+
+END_SOLUTION
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

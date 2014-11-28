@@ -1,0 +1,89 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DESCRIPTION
+## Évaluer des limites d'une fonction par morceaux et trouver la discontinuité
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Limite et continuité)
+## DBsection(Continuité - Types de discontinuité)
+## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source: Library/ma122DB/set2/s2_5_35.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Limits and Continuity)
+## ZDBsection(Continuity - concept of)
+## ZDate(6/3/2002)
+## ZLevel(2)
+###############Source###############
+## KEYWORDS('limite','discontinuité','continuité')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGbasicmacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGcourse.pl",     #Générer une autre version du problème, load randomize
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+$a = non_zero_random(-4,7);
+do{$b = non_zero_random(-4,7);} until($b!=$a);
+
+$d = $b-$a;
+
+if($d%2 == 0) {   ### continue en c
+$c = $d/2;
+}
+else {    ### discontinue en c
+$c = $d;
+}
+
+BEGIN_TEXT
+Soit
+\[f(x) = \begin{cases}
+               $a+x&{\rm si}\quad x<$c \\ 
+               $b-x&{\rm si}\quad x\ge $c 
+              \end{cases} \]
+Évaluer les expressions suivantes. 
+$BR
+$BR
+
+\(\displaystyle\lim_{x\to $c^-} f(x) = \) \{ans_rule(15) \} 
+$BR$BR
+\(\displaystyle\lim_{x\to $c^+} f(x) = \) \{ans_rule(15) \}
+$BR$BR
+\( f($c) = \) \{ans_rule(15) \}
+$BR$BR
+La fonction \(f(x)\) est-elle continue en \(x=$c\)? 
+\{pop_up_list(['?', 'Oui', 'Non']) \} 
+END_TEXT
+
+$ans1 = "$a+$c";
+$ans2 = "$b-$c";
+$ans3 = "$b-$c";
+
+if($d%2 == 0) {   ### continue en c
+$ans4 = "Oui";
+}
+else {    ### discontinue en c
+$ans4 = "Non";
+}
+
+
+ANS(num_cmp($ans1));
+ANS(num_cmp($ans2));
+ANS(num_cmp($ans3));
+ANS(str_cmp($ans4));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

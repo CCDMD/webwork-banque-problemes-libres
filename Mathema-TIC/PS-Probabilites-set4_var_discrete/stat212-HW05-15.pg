@@ -1,0 +1,109 @@
+## DBsubject(Probabilités)
+## DBchapter(Variables aléatoires discrètes)
+## DBsection(Variables discrètes)
+##Modifié par Jean-Sébastien Turcotte - Université de Montréal
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## ZDESCRIPTION
+## ZRandom variables
+## ZENDDESCRIPTION
+
+## ZKEYWORDS('probability', 'random variables')
+## ZCMMK tagged this problem.
+
+## ZDBsubject('Probability')
+## ZDBchapter('Theory')
+## ZDBsection('Random Variables')
+## ZDate('6/27/2005')
+## ZAuthor('Cristina Murray-Krezan')
+## ZInstitution('UVA')
+## ZTitleText1('Statistics for Management and Economics')
+## ZEditionText1('6')
+## ZAuthorText1('Keller, Warrack')
+## ZSection1()
+## ZProblem1()
+###############Source###############
+## KEYWORDS('Probabilités','Variables aléatoires discrètes','Loi binomiale')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+#”unionLists.pl”                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+## install_problem_grader(~~&std_problem_grader);
+
+$rolls = random(15,40,1); #nombre de lancers
+$a = random(2,6,1);
+$c = random(10,15,1);
+$d = random(13,7,1);
+$red = 18/38;
+$black = 18/38;
+$green = 2/38;
+Context("IntegerFunctions");
+BEGIN_TEXT
+$PAR
+Au jeu de roulette, on lance une bille métallique dans un plateau tournant qui comporte 18 cases rouges, 18 noires et 2 vertes.  Si la bille est  lancée $rolls fois, calculer la probabilité des événements ci-dessous.
+$PAR
+A. La bille retombe dans une case verte $a fois ou plus.
+$PAR
+Probabilité = \{ans_rule(15)\}
+$PAR
+B. La bille ne retombe pas dans une case verte.
+$PAR
+Probabilité = \{ans_rule(15)\}
+$PAR
+C. La bille retombe dans une case noire $c fois ou plus.
+$PAR
+Probabilité = \{ans_rule(15)\}
+$PAR
+D.  La bille retombe dans une case rouge $d fois ou moins.
+$PAR
+Probabilité = \{ans_rule(15)\}
+$PAR
+END_TEXT
+$accum1 = 0;
+$i = $a;
+while ($i <= $rolls) {
+    $accum1 += C($rolls,$i)*($green**$i)*(1-$green)**($rolls-$i);
+    $i++;
+}
+$ans1 =Compute("$accum1");
+ANS($ans1->cmp);
+
+$ans2 = Compute("C($rolls,0)*($green**0)*(1-$green)**($rolls)");
+ANS($ans2->cmp);
+
+$accum3 = 0;
+$i = $c;
+while ($i <= $rolls) {
+    $accum3 += C($rolls,$i)*($black**$i)*(1-$black)**($rolls-$i);
+    $i++;
+}
+$ans3 = Compute("$accum3");
+ANS($ans3->cmp);
+
+$accum4 = 0;
+$i = $d+1;
+while (($i) <= $rolls) {
+    $accum4 += C($rolls,$i)*($red**$i)*(1-$red)**($rolls-$i);
+    ($i)++;
+}
+$ans4 = Compute("1-$accum4");
+ANS($ans4->cmp);
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

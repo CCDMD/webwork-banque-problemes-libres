@@ -1,0 +1,156 @@
+## DESCRIPTION
+##   Solve Equation with Absolute Value
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Équations contenant des valeurs absolues)
+## KEYWORDS('Résoudre','Équation','Valeur absolue')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(3)
+## Language(fr)
+
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"problemRandomize.pl",
+"PGcourse.pl",
+);
+
+########################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+
+Context()->noreduce('(-x)-y');
+Context()->strings->add(oui => {}, non => {});
+
+$b = non_zero_random(-9,9,1);
+$c = random(2,20,1);
+
+do{$a = random(2,9,1)*random(-1,1,2);} until($a!=$c && $a!=-$c);
+
+
+$poly = Formula("$a x + $b")->reduce;
+$gauche = Formula("abs($poly)")->reduce;
+$droite = Formula("$c x")->reduce;
+
+$den1 = $a - $c;
+$den2 = $a + $c;
+
+($n1,$d1) = reduce(-$b,$den1);
+($n2,$d2) = reduce(-$b,$den2);
+
+$sol1 = $n1/$d1;
+$sol2 = $n2/$d2;
+
+
+if( $sol1 < $sol2 ) {
+$ans1 = Compute("$n1/$d1")->reduce;     ### la plus petite solution
+$ans2 = Compute("$n2/$d2")->reduce;
+} else {
+$ans1 = Compute("$n2/$d2")->reduce;    ### la plus petite solution
+$ans2 = Compute("$n1/$d1")->reduce; 
+}
+
+$verifg1 = $gauche->eval(x=>$ans1);
+$verifd1 = $droite->eval(x=>$ans1);
+$verifg2 = $gauche->eval(x=>$ans2);
+$verifd2 = $droite->eval(x=>$ans2);
+
+if($verifg1 == $verifd1) { $check1 = String("oui");}
+else { $check1 = String("non"); }
+
+if($verifg2 == $verifd2) { $check2 = String("oui");}
+else { $check2 = String("non"); }
+
+
+
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Trouver toutes les solutions possibles de l'équation suivante et écrire les réponses en ordre croissant. Vérifier, pour chacune d'elles, s'il s'agit bien d'une solution de l'équation.
+$BR $BR
+\[
+$gauche = $droite.
+\]
+$BR $BR
+La plus petite solution possible est \{ans_rule(15)\}.  Est-ce qu'il s'agit d'une solution de l'équation? (oui ou non) \{ans_rule(10)\}$BR
+$BR
+La plus grande solution possible est \{ans_rule(15)\}.  Est-ce qu'il s'agit d'une solution de l'équation? (oui ou non) \{ans_rule(10)\}$BR
+$BR
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=5276", "1.4.5", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+ANS( $ans1->cmp() );
+ANS( $check1->cmp() );
+ANS( $ans2->cmp() );
+ANS( $check2->cmp() );
+
+if ( $ans1 == $sol1 && $ans1 - floor($ans1) != 0 ) {
+$ans1 = "\frac{$n1}{$d1}";
+} elsif ($ans1 == $sol2 && $ans1 - floor($ans1) != 0) {
+$ans1 = "\frac{$n2}{$d2}";
+}
+
+if ( $ans2 == $sol1 && $ans2 - floor($ans2) != 0 ) {
+$ans2 = "\frac{$n1}{$d1}";
+} elsif ($ans2 == $sol2 && $ans2 - floor($ans2) != 0) {
+$ans2 = "\frac{$n2}{$d2}";
+}
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Comme il s'agit d'une équation de la forme \(|f(x)| = g(x)\), alors il existe deux solutions possible à cette équation. Celle où \( f(x)=g(x)\) et celle où \(f(x) = -g(x)\). Voici la démarche,
+$BR $BR
+\[\begin{array}{rlcrl}  $poly &= $droite &\text{ ou }& $poly &= -$droite\\ $a x  - $c x & = -$b &\quad& $a x + $c x &= -$b\\ $den1 x &= -$b & & $den2 x &= -$b \\ x&=\frac{-$b}{$den1} & & x&=\frac{-$b}{$den2} \end{array}\]
+$HR
+Les deux solutions possibles sont \(x=$ans1\) et \(x=$ans2\). Il faut par contre absolument vérifier si ces valeurs sont des solutions réelles de l'équation initiale. $BR $BR
+\{ if( $verifg1 == $verifd1 ) {
+"En remplaçant \(x=$ans1\) dans l'équation, on obtient".$BR.$BR.
+"\( $gauche = $droite \Rightarrow |$a($ans1) + $b| = $c($ans1) \Rightarrow $verifg1 = $verifd1\)".
+$BR."Cette solution vérifie l'équation, alors \(\boxed{$ans1}\)".
+$BBOLD." est une solution réelle de l'équation.".$EBOLD
+} else {
+"En remplaçant \(x=$ans1\) dans l'équation, on obtient".$BR.$BR.
+"\( $gauche = $droite \Rightarrow |$a($ans1) + $b| = $c($ans1) \Rightarrow $verifg1 \neq $verifd1\)".
+$BR."Cette solution ne vérifie pas l'équation, alors".
+$BBOLD." il ne s'agit pas d'une solution réelle de l'équation.".$EBOLD
+}
+\}
+$HR
+\{ if( $verifg2 == $verifd2 ) {
+"En remplaçant \(x=$ans2\) dans l'équation, on obtient".$BR.$BR.
+"\( $gauche = $droite \Rightarrow |$a($ans2) + $b| = $c($ans2) \Rightarrow $verifg2 = $verifd2\)".
+$BR."Cette solution vérifie l'équation, alors \(\boxed{$ans2}\)".
+$BBOLD." est une solution réelle de l'équation.".$EBOLD
+} else {
+"En remplaçant \(x=$ans2\) dans l'équation, on obtient".$BR.$BR.
+"\( $gauche = $droite \Rightarrow |$a($ans2) + $b| = $c($ans2) \Rightarrow $verifg2 \neq $verifd2\)".
+$BR."Cette solution ne vérifie pas l'équation, alors".
+$BBOLD." il ne s'agit pas d'une solution réelle de l'équation.".$EBOLD
+}
+\}
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

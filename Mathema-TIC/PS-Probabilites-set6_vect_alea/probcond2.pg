@@ -1,0 +1,48 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Probabilités)
+## DBchapter(Vecteurs aléatoires)
+## DBsection(Lois conditionnelles)
+## Author(Jean-Sébastien Turcotte)
+
+## KEYWORDS('Probabilités conditionnelles','Indépendance')
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl",,                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+#"PGstatisticsmacros.pl",   #Donne accès à des commandes de stats
+#"PGnumericalmacros.pl",    #Nécessaire pour certaines macros dans statistics
+);
+TEXT(beginproblem());
+#####Initialisation des paramètres######################
+Context("Numeric");
+$nbr=random(4,10,1);
+$ans1=Compute("1/$nbr");   #indépendance entre le fait de savoir que X_1 est le max des précédents et X_nbr le nouveau max
+$ans2=Compute("1/$nbr+1/2*($nbr-1)/$nbr");   # on conditionne sur X_nbr>X_1 ou X_nbr<X_1
+BEGIN_TEXT
+Soit \(X_i, 1\leq i\leq $nbr\) des variables aléatoires continues i.i.d. Calculer
+\{BeginList("OL")\}
+
+$ITEM \(\mathbb{P}(X_{$nbr}>X_1~|~X_1=\max(X_1,X_2,\ldots , X_{$nbr}))=\) \{ $ans1->ans_rule(10) \}
+$ITEMSEP
+
+$ITEM \(\mathbb{P}(X_{$nbr}>X_2~|~X_1=\max(X_1,X_2,\ldots , X_{$nbr}))=\) \{$ans2-> ans_rule(10) \}
+$ITEMSEP
+
+\{EndList("OL")\}
+END_TEXT
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

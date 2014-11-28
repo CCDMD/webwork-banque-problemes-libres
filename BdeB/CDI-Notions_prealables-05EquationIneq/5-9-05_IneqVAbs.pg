@@ -1,0 +1,198 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Équations et Inéquations)
+## DBsection(Résoudre une inéquation contenant des valeurs absolues)
+## KEYWORDS('Résoudre','Inéquation','Valeur absolue')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+   
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+"AnswerFormatHelpFr.pl",
+"unionTables.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+
+###################################
+# Setup
+Context("Numeric");
+ Context()->flags->set(
+     reduceConstants => 0,
+  );
+
+$a = random(2,8,1);
+$b = non_zero_random(-10,10,1);
+
+do{$c = random(2,8,1);} until($a != $c);
+
+$d = random(-8,8,1);
+
+
+
+$num1 = $d - $b;
+$den1 = $a - $c;   
+($n1,$d1) = reduce($num1,$den1);
+
+
+
+
+
+$num2 = $d + $b;
+$den2 = -$a-$c;    # borne toujours négative
+($n2,$d2) = reduce($num2, $den2);
+
+
+
+$poly1 = Formula("$a x + $b")->reduce;
+$f = Formula("|$poly1|")->reduce;
+$poly2 = Formula("$c x + $d")->reduce;
+
+
+
+Context("Interval");
+
+
+if( $den1 > 0) {
+
+if( $n1/$d1 < $n2/$d2 ) { $ans=Compute("{ }"); }    #n1/d1 minimum
+else { $ans = Compute("[$n2/$d2,$n1/$d1]"); }
+
+} else {   # $a - $c < 0
+
+if( $n1/$d1 < $n2/$d2 ) { $ans=Compute("[$n2/$d2,inf)"); }    #n1/d1 minimum
+else { $ans = Compute("[$n1/$d1,inf)"); }
+}
+
+
+###################################
+# Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre l'inégalité suivante en utilisant la notation d'intervalle.
+$BR
+$BR
+\[ $f \le $poly2  \]
+Réponse : \{ans_rule(35)\}  \{ AnswerFormatHelp("intervals") \} $BR
+$PAR
+$BBOLD Note: Si la réponse inclut plus d'un intervalle, les écrire séparés par le symbole d'union "U". Pour \(-\infty\) ou \(\infty\), écrire "-inf" ou "inf". S'il n'y a aucune solution, écrire deux accolades "{ }" pour désigner l'ensemble vide. $EBOLD
+$HR
+$BITALIC
+Les notions théoriques associées à ce problème se trouvent sur la page \{ htmlLink( "http://moodle.bdeb.qc.ca/mod/page/view.php?id=6898", "1.5.3", "TARGET='_blank'" ) \} de la Plateforme d'aide en mathématiques.
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+ANS($ans->cmp);
+
+#### Pour afficher les bornes simplifiées en latex
+
+$x1 = $n1/$d1;  
+$x2 = $n2/$d2;
+
+if($x1 - floor($x1) != 0 ) { $x1="\frac{$n1}{$d1}"; }
+if($x2 - floor($x2) != 0 ) { $x2="\frac{$n2}{$d2}"; }
+
+
+
+
+if( $den1 > 0) {
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Par définition de la fonction valeur absolue, on a que :
+$BR $BR
+\[
+f(x) = $f = \begin{cases} $poly1 &\text{ si } ($poly1) \ge 0\\ -$a x - $b &\text{ si } ($poly1) < 0\end{cases}
+\]
+$BR
+Pour résoudre une inégalité de la forme \($f \le $poly2\), il faut que
+$BR $BR
+\[
+ $poly1 \le $poly2 \quad\textbf{ et }\quad -$a x - $b \le $poly2
+\]
+$BR
+Ainsi, il faut résoudre les deux inéquations séparément et faire $BBOLD l'intersection$EBOLD des deux solutions.
+$HR
+\[  \begin{array}{lcl}(1)& $poly1 \le $poly2 &\text{; addition de } -$b \\ & $a x \le $c x + $num1 &\text{; addition de } -$c x\\& $den1 x \le $num1 &\text{; division par } $den1 \\ & x \leq $x1 & \end{array} \]
+$BR
+Ainsi, l'intervalle de solution de la première inégalité est : \(\left] -\infty, $x1 \right] \).
+$HR
+\[  \begin{array}{lcl}(2)& -$a x - $b \le $poly2 &\text{; addition de } $b \\ & -$a x \le $c x + $num2 &\text{; addition de } -$c x\\& $den2 x \le $num2 &\text{; division par } $den2 \\ & x \ge $x2 & \text{; il faut inverser le symbole car }$den2 < 0\end{array} \]
+$BR
+Ainsi, l'intervalle de solution de la deuxième inégalité est : \(\left[ $x2, \infty \right[ \).
+$BR $BR
+Pour trouver l'intervalle de solution de \($f < $poly2\), il faut faire l'intersection de ces deux intervalles, car \(x\) doit appartenir aux deux intervalles.
+$BR $BR
+\{ if ($n1/$d1 < $n2/$d2 ) {  ### x1 est minimum
+"Par conséquent, l'intervalle de solution est : \(\left] -\infty, $x1 \right]  \cap \left[ $x2, \infty \right[ = \lbrace\;\rbrace \), car comme \($x1 < $x2\), il n'y a aucune solution."
+} else {
+"Par conséquent, l'intervalle de solution est : \(\left] -\infty, $x1 \right]  \cap \left[ $x2, \infty \right[ = \left[ $x2,$x1 \right]\), car \($x2 < $x1\)."
+}
+\}
+END_SOLUTION
+Context()->normalStrings;
+
+} else {   ### a - c <0
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Par définition de la fonction valeur absolue, on a que :
+$BR $BR
+\[
+f(x) = $f = \begin{cases} $poly1 &\text{ si } ($poly1) \ge 0\\ -$a x - $b &\text{ si } ($poly1) < 0\end{cases}
+\]
+$BR
+Pour résoudre une inégalité de la forme \($f \le $poly2\), il faut que
+$BR $BR
+\[
+ $poly1 \le $poly2 \quad\textbf{ et }\quad -$a x - $b \le $poly2
+\]
+$BR
+Ainsi, il faut résoudre les deux inéquations séparément et faire $BBOLD l'intersection$EBOLD des deux solutions.
+$HR
+\[  \begin{array}{lcl}(1)& $poly1 \le $poly2 &\text{; addition de } -$b \\ & $a x \le $c x + $num1 &\text{; addition de } -$c x\\& $den1 x \le $num1 &\text{; division par } $den1 \\ & x \geq $x1 &\text{; il faut inverser le symbole car }$den1<0 \end{array} \]
+$BR
+Ainsi, l'intervalle de solution de la première inégalité est : \(\left[ $x1, \infty \right[ \).
+$HR
+\[  \begin{array}{lcl}(2)& -$a x - $b \le $poly2 &\text{; addition de } $b \\ & -$a x \le $c x + $num2 &\text{; addition de } -$c x\\& $den2 x \le $num2 &\text{; division par } $den2 \\ & x \ge $x2 & \text{; il faut inverser le symbole car }$den2 < 0\end{array} \]
+$BR
+Ainsi, l'intervalle de solution de la deuxième inégalité est : \(\left[ $x2, \infty \right[ \).
+$BR $BR
+Pour trouver l'intervalle de solution de \($f < $poly2\), il faut faire l'intersection de ces deux intervalles, car \(x\) doit appartenir aux deux intervalles.
+$BR $BR
+\{ if ($n1/$d1 < $n2/$d2 ) {  ### x1 est minimum
+"Par conséquent, l'intervalle de solution est : \(\left[ $x1, \infty \right[ \cap \left[ $x2, \infty \right[ = \left[ $x2, \infty \right[\), car comme \($x1 < $x2\), le deuxième intervalle est plus restrictif."
+} else {
+"Par conséquent, l'intervalle de solution est : \(\left[ $x1, \infty \right[  \cap \left[ $x2, \infty \right[ = \left[ $x1, \infty \right[\), car comme \($x2 < $x1\), le premier intervalle est plus restrictif."
+}
+\}
+END_SOLUTION
+Context()->normalStrings;
+
+} 
+
+
+###################################
+
+COMMENT('MathObject version');
+ENDDOCUMENT();
