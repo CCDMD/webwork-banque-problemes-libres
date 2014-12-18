@@ -1,0 +1,93 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Taux de variation - Administration et économie)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/ASU-topics/setSecondDerivative/4-3-85.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Rates of change - business and economics)
+## ZInstitution(ASU)
+## ZLevel(4)
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"PGcourse.pl",
+);
+
+$a = random(3,5,1);
+$b = random(200,300,5);
+$c = random(3000,4000,100);
+$d = random(15000,20000,1000);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(aucun=>{},aucune=>{}, aucune => {alias => "aucun"});
+
+$f = Compute(" -$a*x^3+$b*x^2-$c*x+$d ")->reduce;
+$Df = $f->D('x');
+
+Context()->texStrings;
+BEGIN_TEXT
+Une entreprise évalue qu'elle vend \(N(x)\) unités d'un produit lorsqu'elle dépense \(x\) milliers de dollars en publicité, comme l'indique la fonction
+\[ N(x) = -$a x^3 + $b x^2 - $c x + $d, \qquad 10 \leq x \leq 40.  \]
+$BR
+a) Indiquer le ou les intervalles sur lesquels le taux de variation des ventes \( N'(x) \) est croissant.
+$PAR
+$PAR
+$BBOLD Note : $EBOLD Entrer ${BBOLD}inf${EBOLD} pour \(\infty\), ${BBOLD}-inf${EBOLD} pour \(-\infty\) et ${BBOLD}U${EBOLD} pour le symbole d'union. $BR
+$PAR
+
+Croissance de \( N'(x) \) : \{ans_rule(25)\}
+$PAR
+b) Indiquer le ou les intervalles ouverts sur lesquels le taux de variation des ventes \( N'(x) \) est croissant.
+$PAR
+Décroissance de \( N'(x) \) : \{ans_rule(25)\}
+$PAR
+c) Donner les valeurs de \(x\) où se situe les points d'inflexion de \(N(x)\).
+$BR
+Note : S'il n'y en a pas, entrer ${BBOLD}aucun${EBOLD}. S'il y en a plusieurs, les séparer par des virgules.
+$PAR
+Les valeurs de \(x\) des points d'inflexion : \{ans_rule(20)\}
+$PAR
+d) Trouver le taux de variation maximal des ventes.
+$BR
+$PAR
+Taux de variation maximal des ventes = \{ans_rule(20)\}
+$PAR
+$BR
+END_TEXT
+Context()->normalStrings;
+
+$PI = $b/(3*$a);
+
+$ans1 = Interval("(10, $PI)");
+$ans2 =  Interval("($PI,40)");
+$ans3 = List("$PI");
+$ans4 = $Df->eval(x=>"$PI");
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+ANS($ans4->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

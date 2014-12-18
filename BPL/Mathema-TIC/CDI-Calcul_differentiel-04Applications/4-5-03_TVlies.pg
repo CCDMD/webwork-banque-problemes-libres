@@ -1,0 +1,101 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Taux de variation liés)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UMN/calculusStewartCCC/s_4_1_4.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Related rates)
+## ZDate(11/29/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZLevel(4)
+## ZTitleText1('Calculus: Concepts and Contexts')
+## ZAuthorText1('Stewart')
+## ZEditionText1('4 Custom UMTYMP Ed.')
+## ZSection1('4.1')
+## ZProblem1('4')
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+#####################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+#####################################################################
+
+Context("Numeric");
+
+$a = random(6,8,1);
+$b = random(2,5,1);
+$c = random(20,40,10);
+$d = random(10,25,5);
+
+$ans = Compute("$a*$d+$b*$c");
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+La longueur d'un rectangle augmente à un taux de \($a\text{ cm/s}\) et sa largeur, à un taux de \($b\text{ cm/s}\).  Au moment où la longueur est 
+égale à \($c\text{ cm}\) et la largeur à \($d\text{ cm},\) à quel taux l'aire du rectangle augmente-t-elle?
+$PAR
+Réponse : \{ans_rule(30)\} \(\text{ cm}^2/\text{s}\)
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+ANS($ans->cmp());
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Posons les variables :
+$PAR
+\(x\) = longueur du rectangle $BR
+\(y\) = largeur  du rectangle $BR
+\(A\) = Aire du rectangle
+$PAR
+Selon les données du problème, on a que la vitesse de la longueur est \(\frac{dx}{dt}=$a\text{ cm/s}\) et la vitesse de la 
+largeur est \($b\text{ cm/s}\).$BR
+On cherche à quelle vitesse l'aire du rectangle augmente lorsque la longueur \(x=$c\text{ cm}\) et la largeur \(y=$d\text{ cm},\) c'est-à-dire on cherche 
+\[ \left.\dfrac{dA}{dt}\right\vert_{{x=$c}\atop{y=$d}}\]
+L'équation pour calculer l'aire du rectangle est 
+\[ A = xy\]
+Il faut dériver implicitement cette équation en fonction du temps. On obtient
+\[ \frac{dA}{dt} = \dfrac{dx}{dt}y + x\dfrac{dy}{dt}\]
+En remplaçant par les données du problèmes dans l'équation ci-dessus, on obtient la réponse désirée :
+\[ \begin{array}{ll} 
+\left.\dfrac{dA}{dt}\right\vert_{{x=$c}\atop{y=$d}} &= \left($a\text{ cm/s}\right)($d\text{ cm}) + ($c\text{ cm})\left($b\text{ cm/s}\right)\\
+&= \left($a\cdot $d + $c\cdot $b\right) \text{ cm}^2/\text{s}\\
+&= $ans \text{ cm}^2/\text{s}\end{array}
+\]
+Ainsi, la vitesse à laquelle augmente l'aire du rectangle lorsque la longueur est 
+égale à \($c\text{ cm}\) et la largeur à \($d\text{ cm}\) est de \($ans\text{ cm}^2/\text{s}\).
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

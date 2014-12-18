@@ -1,0 +1,140 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Taux de variation liés)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Utah/AP_Calculus_I/set8_Exponentials_and_Logarithms/1220s8p8.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Related rates)
+## ZInstitution(Univeristy of Utah)
+## ZAuthor(Utah ww group)
+## ZLevel(5)
+###############Source###############
+## KEYWORDS()
+## Level(5)    
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$v = random(800,900,10);
+$h = random(3,7);
+$d = $h + 1;
+
+BEGIN_TEXT
+$PAR
+Un avion vole à la vitesse constante de \($v\) kilomètres à l'heure à une altitude de \($h\) kilomètres sur une trajectoire en ligne droite qui l'amène à passer au-dessus d'un kangourou au sol. 
+Le kangourou observe l'avion qui se déplace vers lui. À quel taux l'angle d'élévation augmente-t-il lorsque la distance entre l'avion et le kangourou est de \($d\text{ km}\)?  
+Exprimer la réponse en radians par heure.
+$PAR
+
+Réponse : \{ans_rule(20)\} \(\text{rad/h}\)
+
+END_TEXT
+
+$ans = Compute("$h*$v/($d^2)");
+ANS($ans->cmp);
+
+$Ans = int(10000*$ans)/10000;
+
+BEGIN_HINT
+L'angle d'élévation est l'angle \(\theta\) entre la ligne de vision de l'observateur et l'horizontale.  Construire un triangle qui représente cette situation.
+Utiliser ce triangle pour trouver d'abord une équation reliant \(\theta\) et \(y\), puis dériver pour relier \(\theta'\) et \(y'\). Trouver une autre relation 
+reliant \( x \) et \( y \), puis dériver pour relier  \(x'\) et \(y'\). Penser à ce que représente le fait que l'avion $BBOLD s'approche$EBOLD du kangourou.
+END_HINT
+
+$hsquare = $h**2;
+$xsquare = $d**2 - $h**2;
+if($h==4) {$x = 3;}
+else {$x ="\sqrt{$xsquare}";}
+
+
+$hv = $h*$v;
+
+
+BEGIN_SOLUTION
+On construit un triangle qui représente la situation.  Soit \( y \) la distance entre l'avion et le kangourou au temps \( t\).  
+De même, soit \( x \) la distance horizontale.  Puisque l'avion se maintient à \($h\text{ km}\) au-dessus du sol, on a un triangle rectangle de hauteur \($h\), 
+de base \( x \) et d'hypoténuse \( y \).
+$BR
+$BCENTER
+\{ image( "4-5-19_image.png" , width=>250, tex_size=>250,) \}
+$ECENTER
+$PAR
+On voit, à partir du triangle, que l'angle d'élévation \( \theta \) peut être mis en relation par l'équation 
+
+\[ \sin(\theta) = \frac{$h}{y} \] 
+
+La question est de trouver le taux avec lequel l'angle d'élévation augmente lorsque la distance entre l'avion et le kangourou est de \($d\text{ km}\). On cherche donc
+\[  \theta'\vert_{y=$d}\]
+En dérivant implicitement l'équation ci-dessus, on obtient
+\[
+\cos(\theta)\theta' = \frac{-$h}{y^2}y' \Rightarrow   \theta'=\frac{-$h}{y^2\cos(\theta)}y'
+\]
+Pour trouver \(\theta'\), il faut déterminer \(y'\), c'est-à-dire la vitesse à laquelle la distance entre le kangourou et l'avion varie. 
+On écrit à l'aide du théorème de Pythagore.
+
+ \[ y^2 = x^2 + $hsquare.\] 
+
+Alors 
+
+\[ 2y\;y' = 2x\;x' \Rightarrow y' = \frac{x}{y}x'\]
+
+
+Puisque l'avion $BBOLD s'approche$EBOLD du kangourou à mesure qu'il se déplace, \( x' = -$v \text{ km/h} \) 
+et par conséquent
+
+\[ y' = \frac{-$v x}{y}.\]
+
+En remplaçant \(y'\) dans l'équation de \(\theta'\) trouvée plus haut, on obtient
+
+\[
+\theta'=\frac{-$h}{y^2\cos(\theta)}\cdot\frac{-$v x}{y} = \frac{ $hv x}{y^3\cos(\theta)}
+\]
+
+$BR 
+Au moment où l'avion est à \(y=$d\text{ km}\) du kangourou, il faut trouver les valeurs de \(x\) et \(\cos(\theta)\) pour les remplacer dans l'équation. 
+
+On a 
+\[x = \sqrt{$d^2 - $hsquare} \Rightarrow  x = $x\]
+et
+\[ \cos(\theta) = \frac{$x}{$d},\text{ car} \cos(\theta)=\tfrac{adj}{hyp}\]
+
+Ainsi, en remplaçant \(y\) par \(3\) et \(x\) et \(\cos(\theta)\) par les valeurs ci-dessus, on obtient
+
+
+\[
+\begin{array}{ll} 
+\theta' &= \frac{ $hv x}{y^3\cos(\theta)}\\
+&= \frac{ $hv \cdot $x}{$d^3\cdot\tfrac{$x}{$d}} \\
+& = \frac{$hv}{$d^2} \\
+& \approx $Ans \text{ rad/h}
+\end{array}
+\]
+
+
+
+
+END_SOLUTION
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

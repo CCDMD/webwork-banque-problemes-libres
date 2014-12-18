@@ -1,0 +1,138 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Taux de variation - Physique et ingénierie)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Michigan/Chap3Sec1/Q63.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Rates of change - engineering and physics)
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZLevel(4)
+## ZTitleText1('Calculus')
+## ZAuthorText1('Hughes-Hallett')
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"parserNumberWithUnits.pl",
+);
+
+Context("Numeric");
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+
+$t0 = random(2,5,1);
+$v0 = ($t0)*10 + random(5,15,5);
+$h0 = random(1,5,1);
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+La hauteur (en mètres) d'une tomate \( t \) secondes après avoir été lancée en l'air est donnée par
+\[ f(t) = -4.9t^2 + $v0 t + $h0 \;\hbox{m}\]
+$PAR
+a) Quelle est la vitesse moyenne de la tomate durant les \($t0\) premières secondes?  (Préciser les unités.)
+$BR \{ans_rule(25)\} \{AnswerFormatHelp("units")\}
+$PAR
+b) Calculer (exactement) la vitesse instantanée de la tomate au temps \( t = $t0 \).  (Préciser les unités.)
+$BR\{ ans_rule(25)\}
+$PAR
+c) Quelle est l'accélération à \( t = $t0 \)?  (Préciser les unités.)
+$BR \{ans_rule(25)\}
+$PAR
+d) Quelle hauteur maximale la tomate atteint-elle?  (Préciser les unités.)
+$BR \{ans_rule(25)\}
+$PAR
+e) Durant combien de temps la tomate reste-t-elle dans les airs?  (Préciser les unités.)
+$BR \{ans_rule(25)\}
+
+END_TEXT
+Context()->normalStrings;
+
+$y1 = -4.9*$t0*$t0 + $v0*$t0 + $h0;
+$t1 = $v0/9.8;
+
+ANS(NumberWithUnits( "($y1 - $h0)/$t0", "m/s" )->cmp() );
+ANS(NumberWithUnits( "-9.8*$t0 + $v0", "m/s" )->cmp() );
+ANS(NumberWithUnits( "-9.8", "m/s^2" )->cmp() );
+ANS(NumberWithUnits( "-4.9*$t1*$t1 + $v0*$t1 + $h0", "m" )->cmp() );
+ANS(NumberWithUnits( "($v0 + sqrt($v0*$v0 + 4*4.9*$h0))/9.8", "s" )->cmp() );
+
+$ans1 = int( 100*($y1 - $h0)/$t0 + 0.5 )/100;
+$ans2 = -9.8*$t0 + $v0;
+$ans3 = -4.9*$t1*$t1 + $v0*$t1 + $h0;
+$ans4 = ($v0 + sqrt($v0*$v0 + 4*4.9*$h0))/9.8;
+
+$t1a = round(10000*$t1)/10000;
+$ans3a = round(10000*$ans3)/10000;
+$ans4a = round(10000*$ans4)/10000;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+${BBOLD}a)$EBOLD
+La vitesse moyenne entre \(t = 0\) et \(t = $t0\) est donnée par
+\[
+\hbox{Vitesse moyenne} = {{f($t0) - f(0)} \over {$t0 - 0}} =
+\frac{-4.9($t0^2) + $v0($t0) + $h0 - $h0}{$t0-0} =
+$ans1 \;\hbox{m/s}.
+ \]
+
+$PAR
+${BBOLD}b)$EBOLD
+Puisque \( f'(t) = -9.8t+$v0 \), on a
+\[
+\hbox{Vitesse instantanée} = f'($t0) = -9.8($t0)+$v0 = $ans2\; \hbox{m/s}.
+ \]
+
+$PAR
+${BBOLD}c)$EBOLD
+L'accélération est donnée par \( f''(t) = -9.8 \).  L'accélération à 
+\(t = $t0 \) (et à tout autre moment) est l'accélération due à la gravité,
+égale à \( -9.8 \;\hbox{m/s}^2 \). 
+
+$PAR
+${BBOLD}d)$EBOLD
+On peut utiliser le graphique de la hauteur pour déterminer la hauteur maximale atteinte.  On peut également la trouver par l'analyse de la fonction. La hauteur maximale est atteinte au moment où la vitesse est égale à zéro \( v(t) = -9.8t + $v0 = 0 \), soit à 
+\( t = $t1a \) secondes.  À ce moment-là, la hauteur de la tomate est égale à
+\( f($t1a) = $ans3a\;\hbox{m}. \)
+La hauteur maximale est de \($ans3a\) mètres.
+
+$PAR
+${BBOLD}e)$EBOLD
+Encore une fois, on peut déterminer le moment où la tomate touche le sol à partir d'un graphique, ou par l'analyse.  La tomate touche le sol lorsque
+\[ f(t)= -4.9t^2 + $v0 t + $h0 =0. \]
+On détermine \( t \) en appliquant la formule quadratique :
+\[ t = \frac{-$v0 \pm\sqrt{($v0)^2-4(-4.9)($h0)}}{2(-4.9)}, \]
+et on obtient la solution positive \(t = $ans4a\) secondes.
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

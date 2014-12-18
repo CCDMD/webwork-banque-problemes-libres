@@ -1,0 +1,83 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Optimisation)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/OSU/high_school_apcalc/dchmwk8/prob18.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Optimization - general)
+## ZDate(1/17/2000)
+## ZInstitution(OSU)
+## ZAuthor(Zig Fiedorowicz)
+## ZMLT(Optimization_Wire)
+## ZLevel(5)
+## ZTitleText1('Calculus: Early Transcendentals')
+## ZAuthorText1('Stewart')
+## ZEditionText1('6')
+## ZSection1('4.7')
+###############Source###############
+## KEYWORDS()
+## Level(5)    
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl", 
+);
+
+
+TEXT(beginproblem());
+
+$a = random(3,20,1);
+
+
+Context()->variables->are(r=>'Real', c=>'Real');
+
+$ans1 = Formula("c^2 + pi*r^2")->reduce;
+$ans2 = Formula("($a - 2*pi*r)^2/16 + pi*r^2");
+
+$popup = PopUp(
+  ["?","carré","cercle"],
+  "cercle",
+);
+
+
+BEGIN_TEXT
+On coupe un fil de longueur \($a\) en deux morceaux que l'on replie pour former respectivement un cercle de rayon \(r\) et 
+un carré de côté \(c\).
+Alors, l'aire totale du cercle et du carré en fonction de \(c\) et \(r\) est donnée par
+$PAR
+Aire totale = \{ans_rule()\}
+$PAR
+Si on exprime \(c\) en termes de \(r\), on peut réécrire l'aire totale en fonction de \(r\) uniquement :
+$PAR
+\(A(r)=\) \{ans_rule(35)\}
+$PAR
+Ainsi, pour que l'aire soit minimale, il faut que \(r=\)\{ans_rule()\}.
+$PAR
+Pour que l'aire soit maximale, il faut que \(r=\)\{ans_rule()\}, $BR
+c'est-à-dire que l'on formera avec le fil uniquement un \{ $popup->menu() \}.
+
+END_TEXT
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS(Compute("$a/(2*pi+8)")->cmp);
+ANS(Compute("$a/(2*pi)")->cmp);
+ANS($popup->cmp);
+
+
+ENDDOCUMENT();

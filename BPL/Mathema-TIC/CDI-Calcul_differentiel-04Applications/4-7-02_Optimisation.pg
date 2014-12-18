@@ -1,0 +1,122 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Optimisation)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/4_Applications_of_the_Derivative/4.7_Applied_Optimization/4.7.7.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Optimization - general)
+## ZMLT(Optimization_NormanWindow)
+## ZInstitution(W.H.Freeman)
+## ZAuthor(JustAsk!)
+## ZLevel(5)
+###############Source###############
+## KEYWORDS()
+## Level(5)    
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+
+
+## Show partial correct answers
+$showPartialCorrectAnswers = 0;
+
+TEXT(beginproblem());
+
+$p=random(30,100,2);
+
+$p2 = 2*$p;
+
+$a= Compute("$p2/(4+pi)");
+$b= Compute("$p/(4+pi)");
+$derivf="";
+
+BEGIN_TEXT
+On utilise \($p\) mètres de clôture pour entourer un enclos formé d'un rectangle et d'un demi-cercle dont le diamètre 
+est égal à la largeur du rectangle, comme l'illustre le schéma suivant :$BR
+$BCENTER
+\{ image("4-7-02_image.png")\}
+$ECENTER
+$PAR
+Trouver les dimensions de l'enclos ayant une aire maximale. 
+$PAR
+\( x = \) \{ ans_rule() \} mètres $BR
+\( y = \) \{ ans_rule() \} mètres $BR
+END_TEXT
+
+ANS(Real($a)->cmp);
+ANS(Real($b)->cmp);
+
+###################################################################
+
+$p_2= $p / 2;
+
+BEGIN_SOLUTION
+$PAR
+
+Sur le schéma, on voit que \(x\) est la largeur de l'enclos et aussi le diamètre du demi-cercle, et que \(y\) est la hauteur de la partie rectangulaire. 
+On peut définir le périmètre de l'enclos par l'équation 
+\[$p\text{ m} = 2y+ x+ \frac{\pi}{2}x = 2y + \left(1+ \frac{\pi}{2}\right)x \]
+ou une équation équivalente,
+\[ y= \frac{1}{2}\left($p - \left(1+ \frac{\pi}{2}\right)x\right).\]
+Puisque \(x\) et \(y\) doivent être positives, il faut limiter les valeurs de \(x\) 
+à l'intervalle \(\left[0, \frac{$p}{1+ \pi/2}\right]\).
+$PAR
+L'aire de l'enclos est la somme de l'aire du rectangle et du demi-cercle, 
+\[A= xy = \pi\left(\frac{x}{2}\right)^2 = xy + \frac{\pi}{8}x^2.\]
+En remplaçant \(y\) par sa valeur dans l'équation, on obtient
+$PAR
+
+\[ \begin{array}{ll} A(x)&=\frac{1}{2}x\left($p - \left(1+ \frac{\pi}{2}\right)x\right) + \frac{\pi}{8}x^2\\
+&= $p_2 x - \frac{1}{2}\left(1+ \frac{\pi}{2}\right)x^2 + \frac{\pi}{8}x^2 \\
+&= $p_2 x - \frac{1}{2}\left(\frac{2+\pi}{2}\right)x^2 + \frac{\pi}{8}x^2 \\
+&= $p_2 x - \left(\frac{2+\pi}{4}\right)x^2 + \frac{\pi}{8}x^2 
+\end{array}
+\]
+
+En dérivant, on obtient
+\[
+A'(x) = $p_2  - \left(\frac{2+\pi}{2}\right)x + \frac{\pi}{4}x
+\]
+Or, 
+\(A'(x) = 0\) lorsque 
+\[ \begin{array}{rl}
+\left(\frac{2+\pi}{2}\right)x - \frac{\pi}{4}x &= $p_2 \\
+x\left(\frac{2+\pi}{2} - \frac{\pi}{4} \right) &= $p_2 \\
+ x\left(\frac{2(2+\pi) - \pi}{4}\right) &= $p_2 \\
+  x\left(\frac{4+\pi}{4}\right) &= $p_2 \\
+x&=  \frac{$p2}{4+\pi} \end{array}
+\]
+En effectuant le test de la dérivée seconde avec cette valeur critique, on a que 
+
+\[  A''(x) =  - \left(\frac{2+\pi}{2}\right) + \frac{\pi}{4} = -1 - \frac{\pi}{2} + \frac{\pi}{4} = -1 - \frac{\pi}{4}\]
+et 
+\[ A''\left(\tfrac{$p2}{4+\pi}\right) = -1 - \frac{\pi}{4} < 0  \quad (\cap\Rightarrow\text{ max})\]
+
+Par conséquent, l'aire de l'enclos est maximale lorsque ses dimensions sont $PAR
+
+\(x=  \frac{$p2}{4+\pi} \) mètres $BR
+et $BR
+\(y= \frac{1}{2}\left($p - \left(1+ \frac{\pi}{2}\right)\frac{$p2}{4+\pi}\right) = \frac{$p}{4+\pi}\) mètres.
+
+END_SOLUTION
+
+###################################################################
+
+ENDDOCUMENT();

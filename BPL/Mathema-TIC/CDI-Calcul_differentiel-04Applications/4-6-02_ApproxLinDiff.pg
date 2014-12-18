@@ -1,0 +1,158 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Approximation linéaire et différentielle)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/NAU/setCalcI/localLinearization3.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Linear approximation and differentials)
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZMLT(LinearApprox_Graph)
+## ZLevel(4)
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+
+## KEYWORDS('calculus','derivative','linear approximation','tangent line','approximation')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"PGgraphmacros.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+ 
+Context("Numeric");
+Context()->strings->add( sous=>{}, sur=>{} );
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$refreshCachedImages = 1;
+
+# build a graph
+#    do we want axes? 
+$graph = init_graph(-1,-1,2,3, grid=>[6,4], size=>[200,200]);
+$graph->lb('reset');
+
+$f = "e^(2*x^2-2*x) for x in <0,1.39> using color:black and weight:2";
+$g = "2*x-1 for x in <-1,2> using color:blue and weight:2";
+add_functions( $graph, $f, $g);
+
+# now add some custom labels
+$a = random(1,5,1);
+$m = random(2,5,1);
+$a2 = 2*$a;
+$b = random(1,5,1);
+# $l1 = new Label(1,0,$a,'black','bottom','middle');
+# $l2 = new Label(1,0,$a2,'black','bottom','middle');
+
+$c = $a + random(0.1,0.7,0.1);
+$est = $m*$c - $b;
+
+## make sure that the axes are in the right place.
+##    the graph actually shows:    and it's labeled
+##      y = 2 x - 1                  y = m x - b
+##    and we say that              is actually
+##      x = 1, y = 1                 x = a, y = m a - b
+## thus, if m a - b == 0, then we put the axis at y=1; if
+##    if it isn't, we put it appropriately
+$graph->v_axis(0);
+$yval = $m*$a - $b;
+if ( $yval == 0 ) {
+    $graph->h_axis(1);
+    $lyval = 1.05;
+} else {
+    if ( 2*$b/($a*$m) - 1 < 3 ) {
+	$graph->h_axis( 2*$b/($a*$m) - 1 );
+	$lyval = 2*$b/($a*$m) - 1.3;
+	if ( $lyval < -1 ) {
+	    $lyval = 2*$b/($a*$m) - 0.9;
+	}
+    } else {
+	$graph->h_axis( 2.5 );
+	$lyval = 2.6
+    }
+}
+$graph->lb( new Label(0.9,$lyval,$a,'black','center','bottom') );
+$graph->lb( new Label(1.9,$lyval,$a2,'black','center','bottom') );
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Le graphique ci-dessous représente une fonction \( f \) et le graphique de l'approximation linéaire  \( l_a(x) = $m x - $b \) en \( a \).  
+(L'approximation linéaire est tracée en bleu.)
+$PAR
+$BCENTER
+\{ image( insertGraph( $graph ), tex_size=>500, height=>250, width=>250,
+	  extra_html_tags=>'alt="a graph of a concave up function, in ' .
+	  'black, with a line, in blue, tangent to the curve when x=' .
+	  $a . '"') \}
+$ECENTER
+
+$PAR
+Quelle est la valeur de \( a \)?
+$BR
+\( a = \) \{ ans_rule(15) \}
+$PAR
+Quelle est la valeur de \( f(a) \)?
+$BR
+\( f(a) = \) \{ ans_rule(15) \}
+$PAR
+Utiliser l'approximation linéaire pour estimer la valeur de \( f($c) \).
+$BR
+\( f($c) \approx l_a($c) = \) \{ ans_rule(15) \}
+$PAR
+La valeur estimée est-elle surévaluée ou sous-évaluée?
+$BR
+\{ ans_rule(15) \} (Entrer ${BBOLD}sous$EBOLD ou ${BBOLD}sur$EBOLD.)
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( Compute( $a )->cmp() );
+ANS( Compute( $m*$a - $b )->cmp() );
+ANS( Compute( $est )->cmp() );
+ANS( String( "sous" )->cmp() );
+
+$f0 = $m*$a - $b;
+$f1 = $m*$c - $b;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La droite de l'approximation linéaire croise le graphique de la fonction en \( ($a,$f0) \), donc \( a=$a \).  
+$BR
+On a
+\[ 
+f(a) = l_{$a}(a) = l_{$a}($a)=$m($a) - $b = $f0.
+\]
+$BR
+On a également
+\[ 
+f($c) \approx l_{$a}($c) = $m($c) - $b = $f1.
+\]
+
+La valeur estimée est sous-évaluée, car la droite tangente se trouve sous la courbe.
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Uses MathObjects');
+
+ENDDOCUMENT();

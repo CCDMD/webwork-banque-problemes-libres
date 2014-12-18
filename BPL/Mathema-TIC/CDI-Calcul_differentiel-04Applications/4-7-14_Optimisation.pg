@@ -1,0 +1,271 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Optimisation)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Michigan/Chap4Sec4/Q15.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Optimization - business and economics)
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZLevel(5)
+###############Source###############
+## KEYWORDS()
+## Level(5)    
+## Language(fr)
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGcourse.pl",
+);
+
+Context("Numeric");
+Context()->variables->are(q=>'Real', x=>'Real');
+
+# pick some sensible values for the coefficients: this
+#    is for the cost function,
+#    C(q) = a q^3 - b q^2 + c q
+$a = 0.01;
+$b = random(0.6,0.8.0.1);
+$c = random(11,15,1);  # this gets changed later
+
+# our price is chosen at random as well
+$p = list_random(6,10);
+
+# then we tweak our numbers to make sure that the value for q at the
+#    maximum profit isn't integer, and that the value for our change
+#    in price in the second part of the problem is an integer
+#    this is horrendously ad hoc, but does at least give values we like
+#    for the problem.
+if ( $p == 6 ) {
+    if ( $b == 0.6 )    { $c = list_random(12, 14); }
+    elsif ( $b == 0.7 ) { $c = 12; }
+    elsif ( $b == 0.8 ) { $c = 14; }
+} elsif ( $p == 7 ) {
+    if ( $b == 0.6 )    { $c = random(12, 14, 1); }
+    elsif ( $b == 0.7 ) { $c = list_random(12, 13, 14); }
+    elsif ( $b == 0.8 ) { $c = list_random(11, 13, 14); }
+} elsif ( $p == 8 ) {
+    if ( $b == 0.6 )    { $c = list_random(12, 14); }
+    elsif ( $b == 0.7 ) { $c = list_random(11, 12, 14); }
+    elsif ( $b == 0.8 ) { $b = 0.7; $c = list_random(11, 12, 14); }
+} elsif ( $p == 9 ) {
+    if ( $b == 0.6 )    { $c = list_random(11, 12, 14, 15); }
+    elsif ( $b == 0.7 ) { $c = list_random(11, 14, 15); }
+    elsif ( $b == 0.8 ) { $c = random(12, 15, 1); }
+} else { # p = 10
+    if ( $b == 0.6 )    { $c = list_random(12, 14); }
+    elsif ( $b == 0.7 ) { $c = list_random(11, 13, 14); }
+    elsif ( $b == 0.8 ) { $c = 12; }
+}
+
+# the cost function
+$cost = Formula("$a q^3 - $b q^2 + $c q");
+
+# and the profit
+$profit = Formula("$p q - $cost");
+$profitp = $profit->D;
+$profitp2 = $profitp->D;
+
+# the maximum profit occurs when the derivative of the profit
+#    is zero, which is when
+#      p - 3 a q^2 + 2 b q - c = 0,
+#    or
+#      3 a q^2 - 2 b q + (c - p) = 0,
+#    so we must have
+#      q = ( b +/- sqrt( b^2 - 3 a (c - p) ) ) / (3 a)
+# the smaller of these values is the minimum profit,
+#    so we have
+$qmin = Formula( "($b - sqrt($b^2 - 3 $a($c - $p)))/(3 $a)" );
+$qmax = Formula( "($b + sqrt($b^2 - 3 $a($c - $p)))/(3 $a)" );
+
+# the numerical value of these are
+$qminn = $qmin->eval();
+$qmaxn = $qmax->eval();
+
+# note that these are guaranteed not to be integer because of
+#    the adjustment we made above
+$qlower = int($qmaxn);
+$qupper = $qlower + 1;
+
+# the profits at these two are
+$profitLower = $profit->eval(q=>$qlower);
+$profitUpper = $profit->eval(q=>$qupper);
+
+# so the maximum profit is
+if ( $profitLower->value > $profitUpper->value ) {
+    $maxProfit = $profitLower;
+    $maxQ = $qlower;
+    $costAtMax = $cost->eval(q=>$qlower);
+} else {
+    $maxProfit = $profitUpper;
+    $maxQ = $qupper;
+    $costAtMax = $cost->eval(q=>$qupper);
+}
+
+$profitExpl =<<eox;
+and, because we must manufacture an integer number of goods,
+the points nearest \(q=$qmaxn\) with integer \(q\)-values:
+\( \pi($qlower) = $profitLower \) and
+\( \pi($qupper) = $profitUpper \) .
+eox
+
+# now, suppose we manufacture a fixed number of goods ($maxQ) and play
+#    with the price.  if the price increases by x and we lose (loss)(x)
+#    sales, then the profit is now
+#      (p + x)(q - loss x) = - (loss) x^2 + (q - (loss)(p) x + p q
+#    thus the maximum will be when 2(loss)x = q - (loss)(p)
+#  p is fixed from above (between 6 and 10, inclusive);
+#  q is chosen to be maxQ; so we'd like
+#      x = (q - (loss)(p))/ (2(loss)) = q/(2(loss)) - p/2
+#    to be an integer; we check $loss = 1 and $loss = 2 to find
+#    which will work (we're guaranteed that one will by our choice
+#    of values for a,b,c and p, above)
+
+if ( int(($maxQ - $p*2)/4) == ($maxQ - $p*2)/4 ) {
+    $loss = 2;
+} else {
+    $loss = 1;
+}
+
+# the profit is now
+$profit2 = Formula("($p + x)($maxQ - $loss x)");
+
+# and the change in p to maximize profit is 
+$deltap = Formula("($maxQ - $p $loss)/(2 $loss)");
+
+# some useful formulae
+$nitems = Formula("$maxQ - $loss x")->reduce;
+$revenueFunc = Formula("($p+x)($maxQ - $loss x)")->reduce;
+$profitFunc = Formula("($p+x)($maxQ - $loss x) - $costAtMax")->reduce;
+# its derivative
+$profitFuncp = $profitFunc->D->reduce;
+# dérivée seconde 
+$profitFuncpp = $profitFuncp->D->reduce;
+
+# these values should always require increasing the price
+$incrPop = PopUp(["?","diminuer","augmenter","ne pas diminuer ni augmenter"],
+		 "augmenter");
+$price1 = $p + 1;
+$quant1 = $maxQ - $loss;
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->texStrings;
+BEGIN_TEXT
+Le coût total en dollars, \( C(q) \), pour produire \( q \) articles est donné par :
+\[
+C(q) = $cost
+\]
+
+$PAR
+Quel est le coût fixe?
+$BR
+Coût fixe = \{ ans_rule(25) \} dollars
+
+$PAR
+Quel est le profit maximal si chaque article se vend \($p\)
+dollars?  (Supposer que toute la production est vendue.)
+$BR
+Profit maximal = \{ ans_rule(45) \} dollars
+
+$PAR
+On limite la production à \($maxQ\) articles, et on vend chaque article \($p\) dollars.  De plus, pour chaque 1 dollar d'augmentation du prix d'un article, on en vend \($loss\) de moins 
+(ainsi, si le prix de vente est \($price1\) dollars, \($quant1\) des \($maxQ\) articles produits seront vendus.)
+$PAR
+Pour maximiser le profit dans ce cas, il faut
+\{ $incrPop->menu() \}
+le prix de
+\{ ans_rule(25) \}
+dollars.
+$BR
+(Entrer zéro si le prix doit rester inchangé à \($p\) dollars.)
+
+END_TEXT
+Context()->normalStrings;
+
+## because we chose the values carefully, the following should
+##    always give an integer number of dollars, so the rounding
+##    should be moot.
+# make sure we're giving profit in a whole number of cents
+$maxprofit = round(100*$maxProfit)/100;
+# and similarly for the deltap
+$dp = round(100*($deltap->eval))/100;
+
+ANS( Compute("0")->cmp() );
+ANS( Compute("$maxprofit")->cmp() );
+ANS( $incrPop->cmp() );
+ANS( Compute("$dp")->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Le coût fixe est 0, car \( C(0)=0 \).
+
+$PAR
+
+Le profit, \(P(q)\), est égal au revenu des ventes, \($p q\),
+moins les coûts de production des articles, \(C(q)\).  Donc,
+\[ P(q) = $profit .\]
+Le maximum est atteint quand la dérivée est égale à 0, c'est-à-dire quand
+\[ P'(q) = $profitp = 0 .\]
+
+À l'aide de la formule quadratique, on obtient \( q \approx $qminn \) ou 
+\( q \approx $qmaxn \). 
+
+$PAR
+
+De plus \( P''(q) = $profitp2 \), alors 
+\[P''($qminn)>0  \text{ et } P''($qmaxn)<0\]
+
+Cela signifie que \(q = $qminn\) est un minimum relatif et que
+\(q=$qmaxn\) est un maximum relatif. On évalue la fonction à la borne inférieure du domaine, \( P(0)=0 \), 
+et aux points près de \(q=$qmaxn\) ayant des valeurs
+\(q\) entières : 
+\( P($qlower) = $profitLower \) et
+\( P($qupper) = $profitUpper \) .  Alors, le profit maximal est 
+\( P = $maxprofit \) dollars.
+
+$PAR
+
+On étudie ensuite les ventes de \( q = $maxQ \) articles.  
+Le revenu des ventes est égal au prix multiplié par la quantité vendue.  
+Si on augmente le prix de \(x\) dollars pour le porter à 
+\($p + x\) dollars, le résultat est une diminution des ventes de \($maxQ\) à  \(($nitems)\) articles vendus.  Donc le changement de \(x\) dollars dans le prix a pour résultat de faire passer le revenu de
+\(($p)($maxQ)\) à \($revenueFunc\) dollars.
+$PAR
+Si la production est limité à \($maxQ\) articles, alors
+le coût de production est limité à \( C($maxQ) = $costAtMax \), et
+le profit est donné par :
+\[
+P(x) = $profitFunc.
+\]
+Cette expression montre le profit en fonction du changement de prix de \(x\) dollars, plutôt qu'en fonction du nombre d'articles vendus, comme dans la partie précédente.
+On dérive ensuite \(P\) par rapport à \(x\)  et on pose la dérivée égale à zéro pour trouver le profit maximal :
+\[ \frac{dP}{dx} = $profitFuncp = 0. \]
+La solution de l'équation \(P'(x)=0\) est lorsque \( x = $dp \) (ce qui signifie qu'il faut ${BITALIC}augmenter$EITALIC
+le prix de \($dp\) dollars), ce qui donne le maximum de \( P(x) \)
+puisque \( P''($dp) = $profitFuncpp < 0 \).
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Uses MathObjects');
+ENDDOCUMENT();

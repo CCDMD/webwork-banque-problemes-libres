@@ -1,0 +1,127 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Optimisation)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Michigan/Chap4Sec5/Qweb6.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Optimization - general)
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZLevel(5)
+###############Source###############
+## KEYWORDS()
+## Level(5)    
+## Language(fr)
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+$w1 = random(50,80,2);
+$w1cubed = $w1*$w1*$w1;
+$maxlen = 3*$w1;
+
+$twomaxlen = 2*$maxlen;
+if ( $w1/3 == int($w1/3) ) {
+    $w2 = 2*$w1/3;
+    $twow2 = 2*$w2;
+    $vol2 = 8*$w1cubed/9;
+} else {
+    $w2 = '\frac{' . (2*$w1) . '}{3}';
+    $twow2 = '\frac{' . (4*$w1) . '}{3}';
+    $vol2 = '\frac{' . (8*$w1cubed) . '}{9}';
+}
+    
+
+BEGIN_TEXT
+Certaines compagnies aériennes ont des restrictions sur la taille des bagages emportés par les passagers.  
+Une de ces compagnies se base sur une règle stipulant que la somme des longueur, largeur et hauteur de toute pièce de 
+bagage ne doit pas dépasser \($maxlen\text{ cm}\).  Un passager veut emporter une boîte ayant le volume maximal permis.  
+Si la largeur et la longueur de la boîte sont égales, quelles devraient être ses dimensions? $BR
+$BR
+longueur = largeur = \{ ans_rule(35) \} $BR
+hauteur = \{ ans_rule(35) \}
+$PAR
+Dans ce cas, quel serait le volume de la boîte? $BR
+volume = \{ ans_rule(35) \} $BR
+(Pour chaque réponse, préciser les unités - \{ AnswerFormatHelp("units") \})
+
+$PAR
+$BR
+
+Si la largeur est le ${BBOLD}double${EBOLD} de la longueur de la boîte, quelles devraient être ses dimensions? $BR
+$BR
+longueur = \{ ans_rule(35) \} $BR
+largeur = \{ ans_rule(35) \} $BR
+hauteur = \{ ans_rule(35) \}
+$PAR
+Dans ce cas, quel serait le volume de la boîte?$BR
+volume = \{ ans_rule(35) \} $BR
+(Pour chaque réponse, préciser les unités - \{ AnswerFormatHelp("units") \})
+
+END_TEXT
+
+ANS(num_cmp( $w1, 'units'=>'cm' ) );
+ANS(num_cmp( $w1, 'units'=>'cm' ) );
+ANS(num_cmp( $w1cubed, 'units'=>'cm^3' ) );
+
+ANS(num_cmp( "4*$w1/3", 'units'=>'cm' ) );
+ANS(num_cmp( "2*$w1/3", 'units'=>'cm' ) );
+ANS(num_cmp( $w1, 'units'=>'cm' ) );
+ANS(num_cmp( "8*$w1^3/9", 'units'=>'cm^3' ) );
+
+BEGIN_SOLUTION
+On représente la longueur, la largeur et  la hauteur de la boîte respectivement par \(L\), \(w\) et \(h\).
+$PAR
+Le volume de la boîte est donc \(V = Lwh\).
+$PAR
+La somme est \(L + w + h = $maxlen\), et, dans le premier cas, on sait que 
+\(L = w\).  Ainsi \(2w + h = $maxlen\), alors \( h = $maxlen - 2w \) et
+l'équation du volume devient
+\[V = Lwh = w\cdot w\cdot($maxlen - 2w) = $maxlen w^2 - 2w^3\]
+
+Le domaine de \(w\) est  \(0\le w\le $maxlen\).  
+$PAR
+Les valeurs critiques sont obtenues quand
+\[\frac{dV}{dw} = 2\cdot $maxlen\cdot w - 6\cdot w^2 = 0\]
+donc lorsque \(w = 0\) ou \(w = $w1\).
+$PAR
+La somme totale maximale se situe à un de ces points, ou aux extrémités de la courbe. En effectuant un test de la dérivée seconde, on obtient 
+\(\frac{d^2 V}{dw^2} = $twomaxlen - 12 w\), et \(\left.\frac{d^2 V}{dw^2}\right\vert_{w=$w1} = -6\cdot $w1 < 0\), alors la somme totale maximale est obtenue lorsque 
+\(L=w=$w1\), et dans ce cas-ci lorsque \(h=$w1\) également.
+$PAR
+Le volume est alors égal à \(V = $w1^3 = $w1cubed \text{ cm}^3\).
+$PAR
+$PAR
+Pour la deuxième partie du problème, si \(L = 2w\), \(2w + w + h = $maxlen\), alors 
+\[V = (2w)(w)($maxlen - 3w) = $twomaxlen w^2 - 6 w^3\]
+
+En procédant de la même manière que plus haut, on obtient \(w = $w2\), \(L = $twow2\) et \(h = $w1\), de sorte que
+\(V = $vol2 \text{ cm}^3 \).
+
+END_SOLUTION
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

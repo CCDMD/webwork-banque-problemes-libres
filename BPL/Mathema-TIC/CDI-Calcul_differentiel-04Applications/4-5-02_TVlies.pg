@@ -1,0 +1,85 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Taux de variation liés)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UMN/calculusStewartCCC/s_4_1_16.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Related rates)
+## ZDate(11/29/2010)
+## ZInstitution(UCSB)
+## ZAuthor(Justin Sukiennik)
+## ZLevel(5)
+## ZTitleText2('Calculus: Early Transcendentals')
+## ZAuthorText2('Stewart')
+## ZEditionText2('5')
+## ZSection2('3.10')
+## ZProblem2('12')
+###############Source###############
+## KEYWORDS()
+## Level(5)    
+## Language(fr)
+
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "answerHints.pl",
+  "PGcourse.pl", 
+);
+#####################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+#####################################################################
+
+Context("Numeric");
+
+$a = random(12,24,4);
+$b = list_random(0.6,0.8,1.2);
+$c = random(2,8,2);
+
+$d = Compute($a-$c);
+
+$ans = Compute("[2*$a/($d^2)]*$b");
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Un projecteur au sol éclaire le mur d'un édifice situé à une distance de \($a\text{ m}\).  Si une très grande femme de \(2\text{ m}\) 
+se déplace du projecteur vers le mur à une vitesse de \($b\text{ m/s},\) à quelle vitesse la longueur de son ombre  diminue-t-elle lorsque 
+cette femme se trouve à \($c\text{ m}\) de l'édifice? 
+$PAR
+Réponse : \{ans_rule(30)\} \(\text{m/s}\)
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+ANS($ans->cmp(showTypeWarnings=>0)->withPostFilter(AnswerHints(Compute("-$ans") => ["On demande à quelle vitesse la longueur de l'ombre diminue. Par conséquent, la réponse doit être positive."])));
+
+BEGIN_HINT
+Aidez-vous de l'illustration suivante représentant le problème, où la variable \(x\) est la longueur de l'ombre projetée sur le mur et la variable \(y\) 
+est la distante séparant la femme du projecteur. On a donc que \(\frac{dy}{dt} = $b\text{ m/s}\).
+$BR $BCENTER
+\{ image( "4-5-02_image.png" , width=>300, tex_size=>300,) \}
+$ECENTER
+END_HINT
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

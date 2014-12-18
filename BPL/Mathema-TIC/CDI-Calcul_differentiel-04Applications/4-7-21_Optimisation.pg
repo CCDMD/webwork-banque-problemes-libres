@@ -1,0 +1,126 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Optimisation)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/4_Applications_of_the_Derivative/4.7_Applied_Optimization/4.7.14.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Optimization - general)
+## ZInstitution(W.H.Freeman)
+## ZAuthor(JustAsk!)
+## ZMLT(Optimization_NumberProperties)
+## ZLevel(5)
+###############Source###############
+## KEYWORDS()
+## Level(5)    
+## Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+
+## Show partial correct answers
+$showPartialCorrectAnswers = 0;
+
+TEXT(beginproblem());
+
+$s=random(6,14,2);
+$a=Real($s*(1+1/sqrt(3))/2);
+$b=Real($s*(1-1/sqrt(3))/2);
+
+
+BEGIN_TEXT
+Problème de Tartaglia (1500-1557) : parmi tous les nombres positifs \(a\) et \(b\) dont la somme est \($s\), trouver ceux dont le produit et la différence sont maximaux. 
+$BR
+(Indice : Si on a deux nombres dont la différence \(a - b\) et le produit \(ab\) sont maximaux, alors le produit de \(ab\) et de la différence \(a-b\), soit \(ab(a-b)\), sera lui aussi maximal.)
+
+$PAR
+\( a = \) \{ ans_rule() \}. $BR
+\( b = \) \{ ans_rule() \}. $BR
+END_TEXT
+ANS($a->cmp);
+ANS($b->cmp);
+
+###################################################################
+
+
+
+BEGIN_HINT
+Si on a deux nombres dont la différence \(a - b\) et le produit \(ab\) sont maximaux, alors le produit de \(ab\) et de la différence \(a-b\), soit \(ab(a-b)\), sera lui aussi maximal.
+$PAR
+Sachant que \(a+b=$s\), exprimer ce produit, \(f(a) = ab(a-b)\), par une fonction en termes de \(a\) uniquement. 
+\(f(a)\) devient la fonction à maximiser.
+
+END_HINT
+
+$ds = Real($s**2);
+$s3 = 3*$s;
+$s6 = 2*$s3;
+$s_2= Real($s / 2);
+
+$s_6 = $s/6;
+
+if( int($s_6) - $s_6 != 0) { 
+($n, $d) = reduce( $s, 6);
+$s_6 = "\frac{$n}{$d}";
+}
+
+BEGIN_SOLUTION
+
+Le produit de \(a\) et \(b\) avec leur différence est \(ab(a - b)\). Posons une fonction \(f(a)\) égale à ce produit, $BR
+\[f(a) = ab(a - b)\]
+
+Puisque \($s=a+b\), alors \(b = $s - a\).
+$PAR
+
+En remplaçant \(b\) par cette valeur, on obtient $PAR
+\[\begin{array}{rl}
+f(a) &= ab(a - b) \\
+&= a($s-a)(a - ($s - a))\\
+&=  a($s - a)(2a- $s) \\
+&=  ($s a - a^2)(2a - $s) \\
+&=  -2 a^3 + $s3 a^2 - $ds a \end{array}
+\]
+
+où \(a \in [0, \infty]\).
+$PAR
+En dérivant, on trouve les valeurs critiques en résolvant l'équation  
+\[
+f'(a)= -6 a^2 + $s6 a - $ds = 0 
+\]
+
+En appliquant la formule quadratique on obtient \(a = \dfrac{$s3 \pm $s\sqrt{3}}{6} = $s_2 \pm $s_6\sqrt{3}\).
+$PAR
+En appliquant le test de la dérivée seconde à ces deux valeurs critiques, on obtient
+\[ f''(a) = -12 a + $s6\]
+où \(f''\left($s_2 - $s_6\sqrt{3}\right) > 0\) et \(f''\left($s_2 + $s_6\sqrt{3}\right) < 0\).
+$PAR
+
+$PAR
+
+Ainsi, on sait qu'un maximum de \(f(a)\) est atteint en \(a= $s_2 + $s_6\sqrt{3}\). L'autre maximum est atteint à l'extrémité \(a=0\). 
+Or \(f(0) = 0\) et \(f\left($s_2 + $s_6\sqrt{3}\right) > 0\), par conséquent,
+les valeurs \(a\) et \(b\) qui maximisent le produit sont
+$PAR
+\(a= $s_2 + $s_6\sqrt{3} = $a\)   et \(b= $s - a= $b\).
+
+END_SOLUTION
+
+###################################################################
+
+ENDDOCUMENT();

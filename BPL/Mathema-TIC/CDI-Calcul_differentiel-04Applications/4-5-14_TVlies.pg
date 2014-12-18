@@ -1,0 +1,128 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Taux de variation liés)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Utah/AP_Calculus_I/set3_Rates_of_Change_and_the_Chain_Rule/1210s5p21.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Related rates)
+## ZInstitution(Univeristy of Utah)
+## ZAuthor(Utah ww group)
+## ZMLT(RelatedRate-LeakingTank)
+## ZLevel(5)
+###############Source###############
+## KEYWORDS()
+## Level(5)    
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$flowRate=random(6000,15000,100);
+$height=random(6,15);
+$diameter=random(3,7,0.5);
+$level=random(1,5,0.5);
+$levelRate=random(15,30);
+
+$levelcm=100*$level;
+
+BEGIN_TEXT
+Une cuve de forme conique perd de l'eau à un taux de
+\( $flowRate \) centimètres cubes par minute en même temps qu'on la remplit d'eau à un taux constant. La cuve mesure 
+\($height\) mètres de haut et son diamètre au sommet est de
+\($diameter\) mètres.  Si le niveau de l'eau monte à un taux de
+ \( $levelRate\) centimètres par minute quand la hauteur de l'eau est de \($level\) mètres, 
+ trouver le taux avec lequel on remplit la cuve d'eau, en centimètres cubes par minute.  
+$PAR
+Réponse :
+\{ ans_rule(30) \} \(\text{cm}^3/\text{min}\).  
+
+END_TEXT
+
+$ans= Compute("pi*$diameter^2*$levelcm^2*$levelRate/(4*$height*$height)+$flowRate");
+
+ANS($ans->cmp(format=>"%0.4f"));
+
+$diametercm = 100* $diameter;
+$heightcm = 100*$height;
+$rayon=$diametercm/2;
+
+$showHint = 2;
+
+BEGIN_HINT
+Le volume \(V\) d'un cône de rayon \(r\) et de hauteur \(h\) est 
+\[V=\frac{\pi r^2 h }{3}.\]
+$BCENTER
+\{ image( "4-5-14_image.png" , width=>150, tex_size=>150,) \}
+$ECENTER
+$PAR
+On peut traiter le problème de façon générale en conservant les variables.  
+(Les étapes sont plus claires si on conserve les variables durant tous les calculs, en les remplaçant par leur 
+valeur uniquement à la fin.) Ainsi, supposons un rayon de la cuve \(R\) et une hauteur de la cuve \(H\).  
+Supposons de plus une profondeur d'eau de \(h\) et un rayon à la surface de l'eau de \(r\).
+Alors, en comparant les triangles semblables,
+\[\frac{r}{h} = \frac{R}{H},\]
+ou
+\[r= \frac{Rh}{H}.\]
+END_HINT
+
+
+BEGIN_SOLUTION
+Le volume \(V\) d'un cône de rayon \(r\) et de hauteur \(h\) est 
+\[V=\frac{\pi r^2 h }{3}.\]
+$BCENTER
+\{ image( "4-5-14_image.png" , width=>150, tex_size=>150,) \}
+$ECENTER
+$PAR
+On peut traiter le problème de façon générale en conservant les variables.  
+(Les étapes sont plus claires si on conserve les variables durant tous les calculs, en les remplaçant par leur 
+valeur uniquement à la fin.) Ainsi, supposons un rayon de la cuve \(R\) et une hauteur de la cuve \(H\).  
+Supposons de plus une profondeur d'eau de \(h\) et un rayon à la surface de l'eau de \(r\).
+Alors, en comparant les triangles semblables,
+\[\frac{r}{h} = \frac{R}{H},\]
+ou
+\[r= \frac{Rh}{H}.\]
+En substituant ce résultat dans l'expression du volume, on obtient le volume totale de l'eau contenu dans la cuve 
+(\(V = V_{remplit} - V_{vide}\)). 
+\[V= \frac{\pi}{3}\left(\frac{Rh}{H}\right)^2h = \frac{\pi R^2h^3}{3H^2}.\]
+Après la dérivation, on obtient :
+\[V'= \frac{3\pi R^2h^2h'}{3H^2} = \frac{\pi R^2h^2h'}{H^2}\]
+Ce taux de variation du volume correspond à celui du volume total qui reste dans la cuve. Toutefois, si \(V_{vide}'\)
+est le taux avec lequel la cuve se vide, alors le taux avec lequel on remplit la cuve d'eau est donné par 
+\[V_{remplit}' = V_{vide}' + V' = V_{vide}'+\frac{\pi R^2h^2h'}{H^2}.\]
+
+On doit respecter partout les mêmes unités. Puisqu'il faut exprimer la réponse en centimètres cubes par minute, il faut transformer en centimètres les longueurs qui sont données en mètres.
+
+On remplace donc les variables  
+\[V_{vide}'= $flowRate,\quad R=$diametercm/2=$rayon,\quad H=$heightcm,
+\quad h =$levelcm,\quad h' = $levelRate\]
+et on obtient
+\[V_{remplit}' \approx $ans \hbox{ cm}^3/\hbox{min}\]
+
+
+END_SOLUTION
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

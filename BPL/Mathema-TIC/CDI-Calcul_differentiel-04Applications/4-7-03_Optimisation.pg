@@ -1,0 +1,122 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Optimisation)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Rochester/setDerivatives10_5Optim/c3s8p1_mo.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Optimization - general)
+## ZInstitution(Rochester)
+## ZMLT(Optimization_ClosestPoint)
+## ZMLTleader(1)
+## ZLevel(4)
+## ZTitleText2('Calculus: Early Transcendentals')
+## ZAuthorText2('Stewart')
+## ZEditionText2('6')
+## ZSection2('4.7')
+## ZProblem2('16')
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "PGcourse.pl",      # Customization file for the course
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Point");
+Context()->flags->set(tolerance=>.01);
+
+
+
+$a= Real( random(2,6,1)*random(-1,1,2) );
+
+$b= Real( random(2,7,1) );
+$c= Real( non_zero_random(-6,6,1) );
+
+
+$d= Real( random(-5,5,1) );
+$e= Real( random(-5,5,1) );
+
+if ($a*$d + $b*$e + $c == 0) { $c=7; }
+
+$P = Point($d,$e);
+
+# answer calculation
+$t= ($a*$d +$b*$e+$c)/($a**2+$b**2);
+
+$Q_ans = Point($d-$t*$a,  $e-$t*$b);
+##############################################################
+#
+#  Text
+#
+#
+
+Context()->texStrings;
+BEGIN_TEXT
+Trouver le point sur la droite
+\( $a x + $b y + $c =0\) qui est le plus près du point \( $P \).
+$PAR
+Réponse : \( (x,y) =\) \{ans_rule(30)\}
+END_TEXT
+Context()->normalStrings;
+
+
+##############################################################
+#
+#  Answers
+#
+#
+
+Context()->{format}{number}='%0.2g'; #limit answers to 2 significant places
+
+ANS($Q_ans->cmp);
+
+
+$c0 = -$c - $e*$b;
+$bb = $b*$b;
+
+$y = Formula("(-$a*x - $c)/$b")->reduce;
+
+if($c0 < 0 && $a > 0) {
+$dsquare = Formula("(x-$d)^2 + ($a*x - $c0)^2")->reduce;
+} else {
+$dsquare = Formula("(x-$d)^2 + (-$a*x + $c0)^2/$bb")->reduce;
+}
+
+Context()->texStrings;
+BEGIN_HINT
+L'équation à optimiser est la distance entre le point \(($d,$e)\) et un point \((x,y)\) sur la droite \( $a x + $b y + $c =0\). Cette distance \(d\) est définie par l'équation suivante :
+\[
+d^2 = (x - $d)^2 + (y-$e)^2 
+\]
+
+En isolant la variable \(y\) dans l'équation de la droite, on a \(y = $y\), et en remplaçant dans l'équation on obtient 
+\[d^2 = $dsquare\]
+END_HINT
+Context()->normalStrings;
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

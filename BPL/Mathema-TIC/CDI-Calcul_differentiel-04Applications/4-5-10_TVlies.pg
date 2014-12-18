@@ -1,0 +1,82 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Taux de variation liés)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Union/setDervRelatedRates/an3_7_17.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Related rates)
+## ZDate(8/23/07)
+## Institution(Union College)
+## ZMLT(RelatedRate-FallingLadder)
+## ZMLTleader(1)
+## ZLevel(5)
+###############Source###############
+## KEYWORDS()
+## Level(5)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "answerHints.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+$ladder_length = random(2,6,1);
+$ladder_top_placement = random(1,$ladder_length-1,0.5);
+$ladder_top_rate = random(0.5,1.5,.5);
+$ladder_foot_placement = sqrt($ladder_length**2 - $ladder_top_placement**2);
+
+###################################
+# Main text
+
+BEGIN_TEXT
+Une échelle de \($ladder_length\) mètres est appuyée contre un mur.
+
+Si le haut de l'échelle glisse vers le bas à un taux de \($ladder_top_rate\text{ m/s}\),
+à quel taux le bas de l'échelle s'éloigne-t-il du mur lorsque le haut de l'échelle se trouve à \($ladder_top_placement\text{ m}\) au-dessus du sol?
+$PAR
+Le bas de l'échelle se déplace à \{ ans_rule(25)\} \(\text{m/s}\).
+$PAR
+
+END_TEXT
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+
+$ans= $ladder_top_placement*$ladder_top_rate/$ladder_foot_placement;
+
+ANS(Real($ans)->cmp(showTypeWarnings=>0)->withPostFilter(AnswerHints(Compute("-$ans") => ["On demande le taux lorsque le bas de l'échelle s'éloigne. Par conséquent, la réponse doit être positive."])));
+###################################
+
+$showHint = 2;
+
+BEGIN_HINT
+En posant la variable \(x\) égale à la distance du haut de l'échelle au-desssus du sol et la variable \(y\) égale à la distance du bas de l'échelle au mur, 
+on a donc que le taux avec lequel le haut de l'échelle glisse vers le bas est donné par \(x' = -$ladder_top_rate\text{ m/s}\). Le signe négatif est dû 
+au fait que le distance entre le haut de l'échelle et le mur diminue.
+END_HINT
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

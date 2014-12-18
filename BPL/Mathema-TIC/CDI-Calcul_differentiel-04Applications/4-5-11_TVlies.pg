@@ -1,0 +1,105 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Taux de variation liés)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/Library/Utah/AP_Calculus_I/set7_Trigonometric_Functions/1210s5p22.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Related rates)
+## ZInstitution(Univeristy of Utah)
+## ZAuthor(Utah ww group)
+## ZMLT(RelatedRate-FlyingAirplane)
+## ZLevel(4)
+###############Source###############
+## KEYWORDS()
+## Level(4)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "answerHints.pl",
+  "MathObjects.pl",
+  "PGauxiliaryFunctions.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$speed= random(13,20); 
+$height= random(4,8);
+$angle= random(20,50,5);
+$delay= random(1,5);
+
+$radianAngle= Real("($angle+90)*pi/180");
+
+BEGIN_TEXT
+Un avion volant à une vitesse constante de \($speed\text{ km/min}\) passe à une hauteur de \($height\text{ km}\) au-dessus d'une station radar située au sol en montant selon 
+un angle de \($angle\) degrés.  À quelle vitesse, en kilomètre par minute, la distance entre l'avion et le radar augmente-t-elle  \($delay\) minutes plus tard?
+$PAR
+Réponse :
+\{ ans_rule(30) \} \(\text{km/min}\)
+$PAR
+END_TEXT
+
+
+BEGIN_HINT
+Selon la loi des cosinus dans un triangle, \[ c^2=a^2+b^2-2ab \cos(\theta) \]
+où \( \theta \) est l'angle formé par les côtés a et b.
+END_HINT
+
+$travelDistance = $speed*$delay;
+$csquared = $height**2 + $travelDistance**2 - 2*$height*$travelDistance*cos($radianAngle);
+$ans = Compute("( $travelDistance - $height*cos($radianAngle) )*$speed/sqrt($csquared)");
+
+ANS($ans->cmp(format=>"%0.4f"));
+
+
+$alt = $height + $delay*$speed*sin($angle/180*$pi);
+
+BEGIN_SOLUTION 
+On définit \(h\) la hauteur verticale de l'avion au-dessus de la station radar (\(h=$height\)), \(t\) le temps écoulé en minutes après le passage de l'avion au-dessus de la station, \(a\) la distance parcouru par l'avion après \(t\) minutes, 
+\(\theta\) l'angle suivant lequel l'avion monte et \(s\) la distance entre l'avion et la station.  On sait que la vitesse de l'avion est \(a'=$speed\text{ km/min}\). On cherche \(s'\) lorsque \(t=$delay\).
+$PAR
+$BCENTER
+\{ image( "4-5-11_image.png" , width=>200, tex_size=>200,) \}
+$ECENTER
+$BR
+Selon la loi des cosinus,
+\[s^2 = h^2 + a^2 - 2ha\cos(90^\circ + \theta)\]
+On remarque \(h\) et \(\cos(90^\circ+\theta)\) sont des constantes dans l'équation, il faut en tenir compte lorsqu'on la dérive :
+\[2ss' = 2aa'-2h\cos(90^\circ + \theta)\cdot a'\]
+On doit déterminer \(s\). En prenant la racine carrée de la première expression, on obtient 
+\[s= \sqrt{ h^2 + a^2 - 2ha\cos(90^\circ + \theta)}. \]
+En remplaçant cette expression dans
+\[s'=\frac{aa'-ha'\cos(90^\circ + \theta)}{s} = \frac{a'(a-h\cos(90^{\circ}+\theta))}{s}, \]
+on obtient
+\[s'=\frac{a'(a-h\cos(90^{\circ}+\theta))}{\sqrt{ h^2 + a^2 -
+2ha\cos(90^\circ + \theta)}} \]
+$BR
+En substituant les valeurs de
+\[t = $delay\text{ min}, \quad h = $height\text{ km}, \quad
+a'=$speed\text{ km/min}, \quad \theta = $angle^\circ \\
+\text{ et } a= a't= $speed\text{ km/min}\cdot $delay\text{ min} = $travelDistance\text{ km} \]
+ on obtient la réponse :
+\[s' \approx $ans \hbox{ km/min}.\]
+
+END_SOLUTION
+
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

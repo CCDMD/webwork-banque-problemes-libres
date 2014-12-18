@@ -1,0 +1,87 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Optimisation)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UMN/calculusStewartCCC/s_4_6_40.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Optimization - general)
+## ZDate(01/25/2011)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(Optimization_MaxSlope)
+## ZMLTleader(1)
+## ZLevel(5)
+## ZTitleText1('Calculus: Concepts and Contexts')
+## ZAuthorText1('Stewart')
+## ZEditionText1('4 Custom UMTYMP Ed.')
+## ZSection1('4.6')
+## ZProblem1('40')
+###############Source###############
+## KEYWORDS()
+## Level(5)    
+## Language(fr)
+
+
+#####################################################################
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+#####################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 0;
+
+#####################################################################
+
+Context("Numeric");
+
+$a = non_zero_random(-10,10,1);
+$b = random(2,5,1);
+
+$b2 = Compute("$b^2");
+$c = Compute("10*$b2");
+
+$ans = List("-$b,$b");
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Pour quelle(s) valeur(s) de \(x\) la droite tangente à la courbe \(y = $a + $c x^3 - 3 x^5\) a-t-elle la plus grande pente? 
+$PAR
+Réponse(s) (séparer par des virgules) : \( x = \) \{ans_rule(30)\}
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+ANS($ans->cmp());
+
+$Df = Formula("3*$c*x^2-15*x^4")->reduce;
+
+Context()->texStrings;
+BEGIN_HINT
+Votre fonction à optimiser est \(D(x)= y' = $Df\). Pour trouver les valeurs de \(x\) telles que la droite tangente à la courbe a la plus grande pente, 
+il vous faut trouver les valeurs critiques de \(D'(x)= y''\). Les valeurs maximales de la dérivée \(D(x)=$Df\) se trouvent en ces valeurs critiques.
+
+END_HINT
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,78 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Approximation linéaire et différentielle)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/ma122DB/set7/s3_11_23.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Linear approximation and differentials)
+## ZDate(6/3/2002)
+## ZMLT(Differential_value_other)
+## ZLevel(2)
+## ZTitleText1('Calculus: Early Transcendentals')
+## ZAuthorText1('Stewart')
+## ZEditionText1('6')
+## ZSection1('3.10')
+## ZProblem1('23')
+###############Source###############
+## KEYWORDS()
+## Level(2)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+   "answerHints.pl",
+  "PGcourse.pl", 
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->variables->add(dx =>"Real");
+
+$a1 = non_zero_random(-9,9,1);
+$b1 = random(1,5,1);
+
+$dx = random(0.01,0.09,.01);
+
+### la dérivée
+$df = Formula("(3*(x^2+$a1)^2*2*x)")->reduce;
+
+#### la pente
+$m = $df->eval(x=>"$b1");
+
+
+### la différentielle
+
+$dy = Compute("$df*dx");
+$dyb1 = Compute("$m*$dx");
+
+BEGIN_TEXT
+Déterminer la différentielle de 
+\( y=(x^2+$a1)^3 \).
+$BR$BR
+\( dy = \) \{ans_rule(30) \}. $BR
+$BR
+Si \(x=$b1\) et \( dx= $dx \), calculer la différentielle. $BR$BR
+ \( dy =\) \{ans_rule(30) \}
+
+END_TEXT
+
+ANS($dy->cmp()->withPostFilter(AnswerHints( 
+  $df => "La définition de la différentielle est dy = f'(x)dx. Il vous faut multiplier la dérivée par dx",
+)));
+ANS($dyb1->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

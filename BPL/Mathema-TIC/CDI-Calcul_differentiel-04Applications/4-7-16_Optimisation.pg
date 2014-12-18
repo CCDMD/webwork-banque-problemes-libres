@@ -1,0 +1,84 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Optimisation)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UVA-Stew5e/setUVA-Stew5e-C04S08-BusEconApps/4-8-21.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Optimization - business and economics)
+## ZDate(5/29/2005)
+## ZInstitution(UVA)
+## ZAuthor(Jeff Holt)
+## ZLevel(5)
+## ZTitleText1('Calculus: Early Transcendentals')
+## ZAuthorText1('Stewart')
+## ZEditionText1('5')
+## ZSection1('4.8')
+## ZProblem1('21')
+###############Source###############
+## KEYWORDS()
+## Level(5)    
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"answerHints.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a1 = random(19,30,1);
+$b1 = random(3,7,1);
+$c1 = random(8,12,1);
+$c2 = random(1,3,1);
+$c3 = $c1-$c2;
+$a= $a1*1000;
+$b = ($a1+$b1)*1000;
+$b2 =$b*2;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Une équipe de baseball joue dans un stade de \($b2\) places. Lorsque le prix du billet est de \($c1\) $DOLLAR, on accueille en moyenne \($a\) spectateurs. 
+Si le prix baisse à \($c3\) $DOLLAR, le nombre de spectateurs augmente à \($b\).  
+$PAR
+a) Déterminer la fonction \( p(x) \) qui représente la demande, où \( x \) est le nombre de spectateurs. (Supposer que \(p(x) \) est linéaire.)
+$PAR
+\(p(x)= \)   \{ans_rule(30) \}
+$PAR
+b) Quel doit être le prix du billet pour que le revenu soit maximal? $PAR
+Prix = \{ans_rule(30) \}  $DOLLAR 
+END_TEXT
+Context()->normalStrings;
+
+$ans1 = Formula("($a-x)*$c2/($b1*1000) +$c1")->reduce;
+$ans2 = Compute("($a*$c2/($b1*1000)+$c1)/2");
+
+$wrongans1 = Formula("($b1*1000)/$c2 *($c1-x) + $a");
+$wrongans2 = Compute("$a/2 + $c1*$b1*500/$c2");
+
+ANS($ans1->cmp->withPostFilter(AnswerHints( 
+  $wrongans1 => "La fonction p(x) représente la demande, soit le prix p en fonction du nombre de spectateurs x",
+)));
+
+ANS($ans2->cmp->withPostFilter(AnswerHints( 
+  $wrongans2 => "Il est vrai qu'on aura $wrongans2 spectateurs lorsque le revenu est maximal, mais nous cherchons le prix p($wrongans2)",
+)));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,93 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Optimisation)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/NAU/setCalcI/Rent.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Optimization - business and economics)
+## ZDate(1/26/2012)
+## ZInstitution(Northern Arizona University)
+## ZAuthor(C. Tyler Diggans, Nandor Sieben)
+## ZMLT(app_diff_opt_apartment_complex)
+## ZLevel(5)
+###############Source###############
+## KEYWORDS()
+## Level(5)    
+## Language(fr)
+
+
+
+DOCUMENT();        
+
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT('The optimal value is at the end point of the domain.');
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+do{
+$M = random(1.5,4,.5);                        #Multiplier
+$MAX = 250;                                   #Max Occupant Fixed
+$O = random(ceil($MAX/($M/2+1))+5,240,1);     #Current occupants
+$R = 2*$O*$M;                                 #Rent
+$V=-($O*$M)/(2);                              #Vertex of parabola
+                             
+}until ($V< (-$M*($MAX-$O)));
+
+$ans = Real("$R- $M*($MAX-$O)");
+
+BEGIN_TEXT
+« Une fois que vous avez l'argent, ne le rendez jamais » 
+$BR
+Un immeuble de \($MAX\) logements en a \($O\) qui sont occupés. 
+Le loyer actuel d'un logement est de \($R\) écus d'or. Le propriétaire de l'immeuble sait par expérience qu'il perd un 
+occupant chaque fois qu'il augmente le loyer de \($M\) écus. Puisque « l'important c'est le profit », le propriétaire veut 
+optimiser son profit et fait appel à vous, même si « un conseil n'est jamais bon marché ». 
+Que recommandez-vous comme loyer optimal? 
+$PAR
+\{ans_rule(20) \} écus d'or
+END_TEXT
+
+
+ANS($ans->cmp);
+
+$min = $O- $MAX;
+
+
+BEGIN_HINT
+Il faut maximiser le revenu. En posant la variable \(x\) comme étant le nombre d'augmentation de \($M\) écus au loyer, on peut 
+représenter le revenu par l'équation suivante
+
+\[ R(x) = \text{Prix du loyer}\times\text{Nombre d'occupants}=($R + $M x) ($O - x) \]
+END_HINT
+
+
+$showHint = 2;
+
+BEGIN_HINT
+La variable \(x\) est le nombre d'augmentation de \($M\) écus au loyer.
+$PAR
+La plus grande valeur que \(x\) peut prendre est \($O\) augmentations de \($M\) écus, ce qui voudrait dire qu'il ne resterait aucun 
+occupant dans l'immeuble. La plus petite valeur que \(x\) peut prendre est \($min\) car il ne peut pas y avoir plus de \($MAX\) occupants dans l'immeuble. 
+Ainsi, le domaine de la variable \(x\) est \([$min, $O]\).
+
+END_HINT
+
+ENDDOCUMENT();   

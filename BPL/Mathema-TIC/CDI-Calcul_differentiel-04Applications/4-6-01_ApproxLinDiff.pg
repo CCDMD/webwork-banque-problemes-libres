@@ -1,0 +1,74 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Approximation linéaire et différentielle)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/NAU/setCalcI/linearApproxofx3.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Linear approximation and differentials)
+## ZMLT(LinearApprox_EstimateFunction_Power)
+## ZLevel(3)
+###############Source###############
+## KEYWORDS()
+## Level(3)    
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",   							
+"PGcourse.pl"         # Customization file for the course
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+$n1 = random(2, 3, 1);
+$a1 = 10**$n1;
+$e1 = random(3, 5, 1);
+$d1 = non_zero_random(-5,5,1);
+$b1 = $a1+$d1;
+$m1 = $e1*$a1**($e1-1);
+$y1 = $a1**$e1;
+
+
+BEGIN_TEXT
+Utiliser une approximation linéaire, i.e. l'approximation à l'aide d'une droite tangente,  pour estimer
+\(  $b1^$e1  \) : 
+$PAR
+Soit \( f(x) =  x ^$e1 \).
+L'équation de la droite tangente à \( f(x) \) en \( x = a \), avec \(f(a)\) suffisamment proche de \($b1^$e1\),
+peut s'écrire sous la forme \( y = f(a) + f'(a) \cdot (x - a) \), 
+$PAR
+où 
+\( a = \) \{ans_rule(5) \}, \( f(a) = \) \{ans_rule(10) \} 
+ et \( f'(a) = \) \{ans_rule(10) \} .
+$BR $BR
+De cette manière, on trouve que : \(  $b1 ^$e1 \approx \)
+\{ans_rule(20) \} .  
+END_TEXT
+
+$ans1 = Real("$a1");
+ANS($ans1->cmp);
+
+$ans2 = Real("$y1");
+ANS($ans2->cmp);
+
+$ans3 = Real("$m1");
+ANS($ans3->cmp);
+
+$ans4 = Compute("$m1*$b1 + $y1 -$m1*$a1");
+ANS($ans4->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

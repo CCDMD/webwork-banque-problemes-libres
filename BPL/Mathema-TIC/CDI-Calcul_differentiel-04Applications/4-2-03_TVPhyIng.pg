@@ -1,0 +1,133 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+
+
+## DBsubject(Calcul différentiel à une variable)
+## DBchapter(Applications)
+## DBsection(Taux de variation - Physique et ingénierie)
+## Modifié par Julie Tremblay 
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## Fichier source:  Library/UMN/calculusStewartCCC/s_2_7_43.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Rates of change - engineering and physics)
+## ZDate(09/27/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZLevel(2)
+## ZTitleText1('Calculus: Concepts and Contexts')
+## ZAuthorText1('Stewart')
+###############Source###############
+## KEYWORDS()
+## Level(2)    
+## Language(fr)
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+ # "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "PGgraphmacros.pl",
+  "contextABCD.pl",
+  "PGcourse.pl", 
+);
+#####################################################################
+
+TEXT(beginproblem());
+
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+#####################################################################
+
+Context("Numeric");
+
+
+Context()->strings->add(aucune=>{});
+
+$a = random(-1,1,2);
+
+###############################################################
+
+### Pour rafraîchir le cache lorsqu’il a des graphiques dynamiques, sinon une image dans le 
+### cache peut s’afficher à la place
+$refreshCachedImages = 1;
+
+$w = 500;  # graph size
+$tw = 400; # graph size in TeX
+
+$graph1 = init_graph(-1,-2,5,4,'axes'=>[0,0],'ticks'=>[6,6],'grid'=>[6,6],'size'=>[600,600]);
+
+@color = ("blue","red","green");
+@lettre = ("A","B","C");
+
+@c = NchooseK(3,3);
+
+$p1a = FEQ("-12/(x^2+4)+3 for x in <0,3> using color:$color[$c[0]] weight:2.5");
+$p1b = FEQ("-12/(x^2+4)+3 for x in <3,7> using color:$color[$c[0]] weight:2.5");
+$p2a = FEQ("(24 x)/(x^2+4)^2 for x in <0,3> using color:$color[$c[1]] weight:2.5");
+$p2b = FEQ("(24 x)/(x^2+4)^2 for x in <3,7> using color:$color[$c[1]] weight:2.5");
+$p3a = FEQ("24/(x^2+4)^2-(96 x^2)/(x^2+4)^3 for x in <0,3> using color:$color[$c[2]] weight:2.5");
+$p3b = FEQ("24/(x^2+4)^2-(96 x^2)/(x^2+4)^3 for x in <3,7> using color:$color[$c[2]] weight:2.5");
+
+plot_functions($graph1,$p1a,$p1b,$p2a,$p2b,$p3a,$p3b);
+
+$x = 4;
+
+$y1 = Real("-12/($x^2+4)+3 + 0.1");
+$y2 = Real("(24*$x)/($x^2+4)^2 + 0.1");
+$y3 = Real("24/($x^2+4)^2-(96*$x^2)/($x^2+4)^3 + 0.1");
+
+#### ajout des lettres au graphique
+$graph1->lb( new Label($x,$y1,"$lettre[$c[0]]",$color[$c[0]],'center','middle'));
+$graph1->lb( new Label($x,$y2,"$lettre[$c[1]]",$color[$c[1]],'center','middle'));
+$graph1->lb( new Label($x,$y3,"$lettre[$c[2]]",$color[$c[2]],'center','middle'));
+
+
+###############################################################
+Context()->texStrings;
+
+BEGIN_TEXT
+Le graphique ci-dessous présente trois courbes : $BBOLD A $EBOLD (en bleu), $BBOLD B $EBOLD (en rouge) et $BBOLD C $EBOLD (en vert).  
+Une courbe représente la distance parcourue par une voiture, l'autre la vitesse de la voiture et une troisième représente son accélération.  
+Identifier chaque courbe.
+$PAR
+$BCENTER
+\{image(insertGraph($graph1),width=>$w,height=>$w,tex_size=>$tw)\}
+$BR
+$BITALIC Cliquer sur le graphique pour agrandir l'image.$EITALIC
+$ECENTER 
+$PAR
+$HR
+$BBOLD 1. $EBOLD Distance : \{ans_rule(3)\} $BBOLD 2. $EBOLD Vitesse : \{ans_rule(3)\}  $BBOLD 3. $EBOLD Accélération : \{ans_rule(3)\}
+$BR
+$HR
+$BBOLD Note :$EBOLD  $BITALIC Vous avez seulement deux essais pour résoudre ce problème.$EITALIC
+
+END_TEXT
+
+Context()->normalStrings;
+
+#####################################################################
+
+Context("ABCD");
+
+$ans1 = Compute("$lettre[$c[0]]");
+$ans2 = Compute("$lettre[$c[1]]");
+$ans3 = Compute("$lettre[$c[2]]");
+
+ANS($ans1->cmp());
+ANS($ans2->cmp());
+ANS($ans3->cmp());
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
