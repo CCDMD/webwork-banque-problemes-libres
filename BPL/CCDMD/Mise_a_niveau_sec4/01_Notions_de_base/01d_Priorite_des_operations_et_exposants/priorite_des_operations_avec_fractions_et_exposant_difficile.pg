@@ -1,0 +1,225 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de base - Priorit&eacute; des op&eacute;rations
+#     type de question - Priorite des opérations avec fraction et exposant (difficile)
+##ENDDESCRIPTION
+
+## DBsubject('Notions de base')
+## DBchapter('Priorité des opérations')
+## DBsection('Priorit&eacute; des fractions et exposants')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'notions', 'priorit&eacute;', 'priorité des opérations','exposants','fractions')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+
+TEXT(beginproblem());
+
+
+# créer une variable $c1 dont le facteur commun avec $b1 soit seulement 1
+$b1=random(2,5);
+
+do {
+       $c1=random(($b1+1),6);
+       $g1=gcd($b1,$c1);
+     }  
+until ($g1==1);
+
+# créer la variable $b2
+$b2= random(2,4);
+
+# créer une variable $c3 dont le facteur commun avec $b3 soit seulement 1
+$b3=random(2,5);
+
+do {
+       $c3=random(($b3+1),6);
+       $g3=gcd($b3,$c3);
+     }  
+until ($g3==1);
+
+
+#créer les réponses intermédiaires utilisées dans la solution
+$b2c1=$b2*$c1;
+$num1=$b1+$b2c1;
+$num1carre=$num1**2;
+$c1carre=$c1**2;
+$g=gcd($c1carre,$c3);
+$ppcm=$c1carre*$c3/(gcd($c1carre,$c3));
+$den2=$ppcm;
+$ppcmdivc1=$ppcm/$c1carre;
+$ppcmdivc3=$ppcm/$c3;
+$num2p1=$b3*$ppcmdivc3;
+$num2p2=$num1carre*$ppcmdivc1;
+$num2=$num2p1+$num2p2;
+$mult=gcd($num2,$den2);
+$num3=$num2/$mult;
+$den3=$den2/$mult;
+
+if ($mult==1)
+{ $note="";}
+else
+{ $note="La réponse peut être siplifiée à $num3 / $den3";}
+
+if ($den3==1)
+{ $note2="=$num3";}
+else
+{ $note2= "";}
+
+
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+
+Effectuer l'opération demandée en respectant la priorité des opérations.  <br/><br/>
+
+<table>
+ <tr>
+  <td><u>$b3</u><br/>$c3</td>
+  <td> + ( &nbsp;</td>
+  <td><u>$b1</u><br/>$c1</td>
+  <td> + $b2 )<sup>2</sup> =  </td>
+ </tr>
+</table><br/>
+
+Donner la réponse sous forme de fraction simplifiée (ex.: 2/5)<br/><br/>
+
+\{ans_rule(10)\}<br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/fractions/addition>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+# accepter en r&eacute;ponse un nombre et/ou une fraction en forme r&eacute;duite seulement
+Context("LimitedFraction");
+ANS(Compute("$num3/$den3")->cmp);
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+Effectuer l'opération demandée en respectant la priorité des opérations.  <br/>
+<table>
+ <tr>
+  <td><u>$b3</u><br/>$c3</td>
+  <td> + ( &nbsp;</td>
+  <td><u>$b1</u><br/>$c1</td>
+  <td> + $b2 )<sup>2</sup> =  </td>
+ </tr>
+</table><br/>
+
+Donner la réponse sous forme de fraction simplifiée (ex.: 2/5)<br/><br/>
+
+<table>
+  <tr>
+    <td valign=top>
+          
+          <table>
+             <tr>
+                 <td><u>$b3</u><br/>$c3</td>
+                 <td> + ( &nbsp;</td>
+                 <td><u>$b1</u><br/>$c1</td>
+                 <td> + $b2 )<sup>2</sup>   </td>
+             </tr>
+          </table>
+
+    </td>
+    <td>
+
+          <table>
+             <tr>
+                 <td>= &nbsp; </td>
+                 <td><u>$b3</u><br/>$c3</td>
+                 <td>&nbsp; + ( &nbsp;</td>
+                 <td align=center><u>$b1 &nbsp; + &nbsp; $b2 &#8729; $c1</u><br/>$c1</td>
+                 <td>)<sup>2</sup> &nbsp; </td>
+                 <td width=100> En respectant la priorité des opérations, il faut d'abord évaluer l'intérieur de la parenthèse. Le plus petit commun diviseur des deux dénominateurs $c1 et 1 est $c1.</td>
+             </tr>
+              <tr>
+                 <td>= &nbsp; </td>
+                 <td><u>$b3</u><br/>$c3</td>
+                 <td>&nbsp; + ( &nbsp;</td>
+                 <td align=center><u>$num1</u><br/>$c1</td>
+                 <td>)<sup>2</sup> &nbsp; </td>
+                 <td> En évaluant le numérateur de la deuxième fraction.</td>
+              </tr>
+              <tr>
+                 <td>= &nbsp; </td>
+                 <td><u>$b3</u><br/>$c3</td>
+                 <td>&nbsp; +  &nbsp;</td>
+                 <td align=center><u>$num1carre</u><br/>$c1carre</td>
+                 <td> &nbsp;  </td>
+                 <td> En élevant au carré le numérateur et le dénominateur de la deuxième fraction.</td>
+              </tr>
+              <tr>
+                 <td>= &nbsp; </td>
+                 <td align=center colspan=4><u>$b3 &#8729; $ppcmdivc3  &nbsp; + &nbsp; $num1carre &#8729;$ppcmdivc1 </u><br/>$den2</td>
+                 <td> Le plus petit commun diviseur des deux dénominateurs $c3 et $c1carre est $den2.</td>
+              </tr>
+              <tr>
+                 <td>= &nbsp; </td>
+                 <td align=center colspan=4 ><u>$num2p1 &nbsp; + &nbsp; $num2p2</u><br/>$den2</td>
+                 <td>En effectuant les produits au numérateur.</td>
+              </tr>
+              <tr>
+                 <td>= &nbsp; </td>
+                 <td align=center colspan=4><u>$num2</u><br/>$den2</td>
+                 <td>En effectuant l'addition au numérateur.</td>
+              </tr>
+
+          </table>
+
+   </td>
+  </tr>
+</table>
+<br/><br/>
+<b>$note<br/>$note2</b><br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

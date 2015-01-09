@@ -1,0 +1,155 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Fractions - Comparaison de grandeur
+#     type de question -  Quelle est la plus grande valeur (choix multiple)
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Fraction')
+## DBsection('Comparaison de grandeur')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'fraction', 'comparaison','grandeur')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+"parserRadioButtons.pl",
+);
+
+TEXT(beginproblem());
+
+
+# cr&eacute;er trois fractions diff&eacute;rentes et trouver le r&eacute;sultat de leur division, &agrave; trois d&eacute;cimales pr&egrave;s
+$aden=random(2,9);
+$anum=random(1,$aden-1);
+$a=(int($anum/$aden*1000))/1000;
+$bden=random(2,9);
+$bnum=random(1,$bden-1);
+
+while ($anum/$aden == $bnum/$bden)
+  {
+    $bden=random(2,9);
+    $bnum=random(1,$bden-1);
+  }
+$b=(int($bnum/$bden*1000))/1000;
+
+
+$cden=random(2,9);
+$cnum=random(1,$cden-1);
+
+while ($cnum/$cden == $bnum/$bden || $cnum/$cden == $anum/$aden)
+  {
+    $cden=random(2,9);
+    $cnum=random(1,$cden-1);
+  }
+$c=(int($cnum/$cden*1000))/1000;
+
+# d&eacute;terminer laquelle des trois fractions est la plus grande entre a, b et c
+
+if ($a>$b && $a>$c)
+  {
+    $reponsenum=$anum;
+    $reponseden=$aden;
+    $reponse=$a;
+  }
+elsif ($b>$a && $b>$c)
+  {
+    $reponsenum=$bnum;
+    $reponseden=$bden;
+    $reponse=$b;
+  }
+else
+  {
+    $reponsenum=$cnum;
+    $reponseden=$cden;
+    $reponse=$c;
+  }
+
+
+# assigner chacun de ces trois nombres d&eacute;cimaux &agrave; c&ocirc;t&eacute; d'un bouton radio &agrave; choisir en choix de r&eacute;ponse
+$radio = RadioButtons(["$anum/$aden","$bnum/$bden","$cnum/$cden"],"$reponsenum/$reponseden",);
+
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Quelle fraction ci-dessous a la plus grande valeur ? <br/><br/>
+
+\{ $radio->buttons() \}
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text=" Si les d&eacute;nominateurs sont les m&ecirc;mes pour les trois fractions, comparer directement les num&eacute;rateurs entre eux pour en trouver le plus grand; sinon, s'il est facile de mettre les trois fractions sur le m&ecirc;me d&eacute;nominateur, le faire, et comparer les trois nouveaux num&eacute;rateurs entre eux pour en trouver le plus grand. ";
+break;
+case '2':text=" Diviser chacune des fractions et comparer les r&eacute;sultats obtenus pour en trouver le r&eacute;sultat le plus grand. ";
+break;
+case '3':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/fractions/comparaison>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( $radio->cmp() );
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+
+<p>&nbsp;<u>Solution</u></p>
+
+Pour chaque fraction, diviser le num&eacute;rateur par son d&eacute;nominateur, et trouver lequel de ces r&eacute;sultats est le plus grand:<br/>
+$anum &nbsp; &#247; &nbsp; $aden &nbsp;=&nbsp; $a &nbsp; (&agrave; trois d&eacute;cimales pr&egrave;s)<br/>
+$bnum &nbsp; &#247; &nbsp; $bden &nbsp;=&nbsp; $b &nbsp; (&agrave; trois d&eacute;cimales pr&egrave;s)<br/>
+$cnum &nbsp; &#247; &nbsp; $cden &nbsp;=&nbsp; $c &nbsp; (&agrave; trois d&eacute;cimales pr&egrave;s)<br/>
+<br/>
+Le plus grand de ces trois r&eacute;sultats est le r&eacute;sultat &nbsp; <strong>$reponse</strong>, correspondant &agrave; la fraction <strong>$reponsenum/$reponseden</strong> .
+
+
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

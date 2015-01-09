@@ -1,0 +1,267 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Analyse des fonctions 
+#     type de question - Analyse d'une fonction de forme racine cubique de (x^2 + bx + c)
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 5')
+## DBchapter('Analyse des fonctions')
+## DBsection('Fonction avec racine cubique')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'secondaire 5', 'fonction', 'algèbre','racine','cubique')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+  "PGgraphmacros.pl",
+);
+
+TEXT(beginproblem());
+
+# créer les valeurs pour m1 et m2
+
+$x1=random(2,5);
+$choix1=non_zero_random(-1,1);
+$sx1=$x1*$choix1;
+if ($choix1==1) {$signex1="+";}
+  else {$signex1="-";}
+$invsx1=-1*$sx1;
+if ($sx1<0) {$signeinvsx1="-";}
+  else {$signeinvsx1="+";}
+
+$x2=$x1*$x1;
+$choix2=non_zero_random(-1,1);
+$sx2=$x2*$choix2;
+if ($choix2==1) {$signex2="+";}
+  else {$signex2="-";}
+$invsx2=-1*$sx2;
+if ($sx2<0) {$signeinvsx2="-";}
+  else {$signeinvsx2="+";}
+
+# déterminer les valeurs de b et c dans l'équation quadratique, ainsi que leur signe
+$b=abs($sx1 + $sx2);
+$breel=$sx1 + $sx2;
+$invb= -1*$b;
+if ($breel > 0) {$signeb= "+";}
+  else {$signeb="-";}
+
+$c=abs($sx1*$sx2);
+$creel=$sx1*$sx2;
+$invc=-1*$c;
+if ($creel > 0) {$signec= "+";}
+  else {$signec="-";}
+
+#déterminer les zéros de la fonction, en ordre numérique croissant
+if ($invsx1<$invsx2) {$zero1=$invsx1; $zero2=$invsx2;}
+else {$zero1=$invsx2; $zero2=$invsx1;}
+
+# déterminer l'ordonnée à l'origine ainsi que le domaine de la fonction
+$ordonnee= $choix1*$choix2*$x1;
+$domaine="R";
+
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+
+#créer le graphique de cette fonction, afin de pouvoir l'afficher dans la solution
+
+$gxpos=$zero2+5;
+$gxneg=$zero1-5; 
+if ($ordonnee>0){$gypos=$ordonnee*2; $gyneg=-2; }
+  else {$gypos=5; $gyneg=$ordonnee-2; }
+
+$graphique=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique, "(($lettre*$lettre) $signeb $b$lettre $signec $c)^(1/3) for x in <$gxneg,$gxpos> using color:blue and weight:2 ");
+
+if ($a*$a < 10)  { $gx=2;}
+else {$gx = 5;}
+ 
+$gy= 2;
+
+for ($i = 0; $i <= int( ($gxpos /$gx) +1); $i++)
+  {
+     $graphique->lb(new Label($gx*$i+$gx+0.2,-0.15,$gx*$i+$gx,'black','center','top'));
+     $graphique->moveTo($gx*$i+$gx+0.2,-0.15); 
+   }
+for ($i = 0; $i <= int( ($gxpos /$gx) +1); $i++)
+  {
+     $graphique->lb(new Label(-$gx*$i-$gx-0.2,-0.15,-$gx*$i-$gx,'black','center','top'));
+     $graphique->moveTo(-$gx*$i-$gx-0.2,-0.15); 
+   }
+for ($i = 0; $i <=  int( ($gypos /2) +1); $i++)
+  {
+     $graphique->lb(new Label(-0.5,$gy*$i+$gy,$gy*$i+$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, $gy*$i+$gy); 
+   }
+for ($i = 0; $i <=  int( (-$gyneg/2) +1); $i++)
+  {
+     $graphique->lb(new Label(-0.5,-$gy*$i-$gy+0.4,-$gy*$i-$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, -$gy*$i-$gy+0.4); 
+   }
+
+foreach my $i (1..$gxpos) {  $graphique->h_ticks(0,"black",$i); }
+foreach my $i ($gxneg..-1) {  $graphique->h_ticks(0,"black",$i); }
+foreach my $i (1..$gypos) {  $graphique->v_ticks(0,"black",$i); }
+foreach my $i ($gyneg..-1) {  $graphique->v_ticks(0,"black",$i); }
+
+$graphique->stamps( closed_circle(0,$ordonnee,'blue') );
+$graphique->stamps( closed_circle($zero1,0,'blue') );
+$graphique->stamps( closed_circle($zero2,0,'blue') );
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Pour la fonction suivante:  &nbsp; &nbsp; <b> \( f($lettre) = \sqrt[3]{$lettre^2 $signeb $b$lettre $signec $c} \)</b>
+<br/><br/>
+
+a) Quelle est l'ordonnée à l'origine de cette fonction ? &nbsp;&nbsp; \{ans_rule(10)\} 
+
+<br/><br/>
+
+b) Donner tous les zéros de cette fonction. &nbsp;&nbsp; \{ans_rule(10)\} 
+<br/><br>
+
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+<br/><br/>
+
+c) Le domaine de cette fonction est : &nbsp;&nbsp;   \{ans_rule(15)\}     
+
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels entier, entrer: <b>R</b><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: <b>aucun </b><br/>
+
+  </td></tr>
+</table>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="L'ordonnée à l'origine d'une fonction est la valeur de f(x) lorsque x est égal à zéro.";
+break;
+case '2':text="Le zéro d'une fonction représente la valeur de x lorsque f(x) est égal à zéro. Il faut donc remplacer f(x) par zéro et isoler x pour en trouver la valeur résultante. Dans le cas d'une équation quadratique sous une racine cubique, il est facile de retirer la racine cubique (appliquer l'exposant 3 de chaque côté de l'équation à résoudre), afin de factoriser l'équation quadratique en deux séries de parenthèses, et de poser l'égalité de chaque contenu de parenthèse à zéro pour en trouver les zéros. ";
+break;
+case '3':text="Le domaine représente l'ensemble des nombres qui peuvent être insérés dans x pour obtenir un nombre réel pour y. Une racine impaire est définie peu importe le signe de l'expression à l'intérieur de la racine. Par exemple, la racine cubique de -8 = -2, puisque (-2)<sup>3</sup> = -8.  ";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+$showPartialCorrectAnswers = 0;
+
+ANS(strict_num_cmp($ordonnee, .0));
+
+ANS(List($zero1,$zero2)->cmp);
+
+ANS(str_cmp($domaine,'remove_whitespace'));
+
+
+BEGIN_SOLUTION
+<br/> <u>Solution</u> <br/>
+
+<br/>Pour la fonction suivante:  &nbsp; &nbsp; <b> \( f($lettre) = \sqrt[3]{$lettre^2 $signeb $b$lettre $signec $c} \)</b>
+<br/><br/>
+
+a) Quelle est l'ordonnée à l'origine de cette fonction ? &nbsp;&nbsp; ____________
+
+<br/><br/>
+
+b) Donner tous les zéros de cette fonction. &nbsp;&nbsp; ______________
+<br/><br>
+
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+<br/><br/>
+
+c) Le domaine de cette fonction est &nbsp;&nbsp; _____________
+
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels entier, entrer: <b>R</b><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: <b>aucun </b><br/><br/>
+
+
+a) L'ordonnée à l'origine est la valeur de <strong>f($lettre)</strong> lorsque <strong>$lettre</strong> est égal à zéro. Donc: <br/><br/> 
+
+&nbsp; &nbsp; &nbsp;\(  f($lettre) = \sqrt[3]{$lettre^2 $signeb $b$lettre $signec $c}  \) <br/> 
+&nbsp; &nbsp; &nbsp;\(  f(0) = \sqrt[3]{(0)^2 $signeb $b(0) $signec $c}  \) <br/> 
+&nbsp; &nbsp; &nbsp;\(  f(0) = \sqrt[3]{ 0 $signeb 0 $signec $c  } \) <br/> 
+&nbsp; &nbsp; &nbsp;\(  f(0) = \sqrt[3]{ $c } \) <br/> 
+&nbsp; &nbsp; &nbsp;\(  f(0) = $ordonnee  \) <br/> <br/>
+
+Donc l'ordonnée à l'origine est <strong>$ordonnee</strong>
+<br/><br/> 
+
+b) Le zéro d'une fonction est la valeur de <strong>$lettre</strong> lorsque <strong>f($lettre)</strong> est égal à zéro.  Donc:<br/><br/>
+
+&nbsp; &nbsp; &nbsp;\(  0 = \sqrt[3]{$lettre^2 $signeb $b$lettre $signec $c}  \) <br/> 
+&nbsp; &nbsp; &nbsp;\(  0^3 = ( \sqrt[3]{$lettre^2 $signeb $b$lettre $signec $c} )^3 \) <br/> 
+&nbsp; &nbsp; &nbsp;\(  0 = $lettre^2 $signeb $b$lettre $signec $c  \) <br/> 
+&nbsp; &nbsp; &nbsp;\(  0 = ($lettre $signex1 $x1)($lettre $signex2 $x2) \) <br/> 
+&nbsp; &nbsp; &nbsp;\(  0  =  ($lettre $signex1 $x1)  \)   ou  \(  0 =($lettre $signex2 $x2)  \) <br/> 
+&nbsp; &nbsp; &nbsp;\(  x = $invsx1 \)   ou  \( x = $invsx2  \) <br/> <br/>
+
+Donc il y a deux zéros pour cette fonction, soit <strong>$zero1</strong> et <strong>$zero2</strong>
+<br/><br/>
+
+
+
+c) Le domaine de la fonction représente l'ensemble des nombres que peut prendre la variable $lettre afin de donner un f($lettre) qui est un nombre réel.<br/><br/>
+
+Contrairement aux racines carrées, les racines cubiques des nombres négatifs donnent des nombres réels. Par conséquent, nous n'avons pas de restriction. Le domaine est donc <strong>$domaine</strong>.<br/><br/>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

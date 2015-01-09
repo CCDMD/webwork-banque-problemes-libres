@@ -1,0 +1,175 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Entiers - Calcul mental - Addition
+#     type de question - Addition CC + CC + CC
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Entier')
+## DBsection('Addition')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'entier', 'addition', 'calcul mental')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+
+TEXT(beginproblem());
+
+$a=random(10,55);
+$b=random(10,55);
+$c=random(10,55);
+$ab = $a + $b;
+$reponse=$a+$b+$c;
+
+#obtenir le nombre occupant les positions de dizaine (et centaine, si pr&eacute;sente) dans la r&eacute;ponse
+$reponsedizaine = int($reponse/10);
+
+#obtenir le chiffre occupant la position de l'unit&eacute; dans la r&eacute;ponse
+$reponseunite = $reponse - ($reponsedizaine*10);
+
+#obtenir la retenue
+$aunite=$a- (10*(int($a/10))); 
+$bunite=$b- (10*(int($b/10))); 
+$cunite=$c- (10*(int($c/10))); 
+$totalunite=$aunite + $bunite+$cunite;
+$retenue= int($totalunite/10);  
+$ret=(($retenue==0)?" " : $retenue);
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+ <tr><td>
+
+<h1>Question : </h1>
+<br/>$a + $b + $c =
+
+<br/>\{ans_rule(10)\}
+
+  </td></tr>
+</table>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text=" Additionner le premier nombre avec le second, et additionner le troisi&egrave;me nombre avec la somme des deux premiers nombres. ";
+break;
+case '2':text=" Pour plus de rapidit&eacute;, aligner les nombres l'un au-dessous de l'autre, en alignant leurs unit&eacute;s ensemble et leurs dizaines ensemble. Additionner toutes les unit&eacute;s ensemble (si leur total est sup&eacute;rieur &agrave; 9, inscrire l'unit&eacute; r&eacute;sultante en r&eacute;ponse et la retenue au-dessus des dizaines), et ensuite additionner toutes les dizaines ensemble, avec les retenues pr&eacute;sentes. ";
+break;
+case '3':text=" Pour plus de rapidit&eacute;, lors de l'addition des chiffres pr&eacute;sents dans la colonne des unit&eacute;s, additionner deux des trois chiffres pr&eacute;sents dont la somme est facile et rapide &agrave; effectuer (ex.: donnant un total de 10), et y rajouter le troisi&egrave;me chiffre. Faire de m&ecirc;me dans la colonne des dizaines. ";
+break;
+case '4':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/entiers/addition>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<button type="button" name="4" onclick="hint(this)">Astuce 4</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS(strict_num_cmp($reponse, .0));
+
+BEGIN_SOLUTION
+$PAR <U>Solution</U> $PAR
+
+<TABLE CELLPADDING=10>
+<TR>
+<TD COLSPAN=2> 
+M&eacute;thode d'addition lin&eacute;aire:
+</TD>
+</TR>
+<TR>
+<TD>
+1.    $a + $b = <br/>
+2.
+</TD>
+<TD>
+$ab<br/>
+$ab <b>+ $c</b> = $reponse
+</TD>
+</TR>
+<TR>
+<TD COLSPAN=2>
+M&eacute;thode d'addition avec colonnes:
+</TD>
+</TR>
+<TR>
+<TD>
+1. Aligner les<br/>
+nombres.<br/><br/>
+
+<table align=center><tr><td align=right>
+<br/>
+$a<br/>
++ $b<br/>
+<u>$c</u><br/>
+&nbsp;
+</td></tr></table>
+
+</TD>
+<TD>
+2. Additionner les unit&eacute;s<br/>
+(inscrire les retenues<br/>
+pr&eacute;sentes).<br/>
+
+<table align=center><tr><td align=right>
+<small>$ret</small> &nbsp;<br/>
+$a<br/>
++ $b<br/>
+<u>$c</u><br/>
+<b>$reponseunite</b>
+</td></tr></table>
+
+</TD>
+<TD>
+3. Additionner les<br/>
+dizaines (et ses<br/>
+retenues pr&eacute;sentes).<br/>
+
+<table align=center><tr><td align=right>
+<small>$ret</small> &nbsp;<br/>
+$a<br/>
++ $b<br/>
+<u>$c</u><br/>
+<b>$reponsedizaine</b>$reponseunite
+</td></tr></table>
+
+</TD>
+</TR></TABLE>
+
+END_SOLUTION
+
+ENDDOCUMENT();

@@ -1,0 +1,114 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Nombre d&eacute;cimal - Conversion en fraction
+#     type de question - De d&eacute;cimale &agrave; fraction (dixi&egrave;me)    
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Nombre d&eacute;cimal')
+## DBsection('Conversion')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'd&eacute;cimal', 'conversion', 'fraction')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+TEXT(beginproblem());
+
+# cr&eacute;er le nombre &agrave; 1 d&eacute;cimale, de valeur positive ou n&eacute;gative, &agrave; partir d'entiers
+$choix=random(0,1);
+if ($choix==0)
+ {$aa=random(1,9);}
+else
+ {$aa=-1*(random(1,9));}
+$a=$aa/10;
+
+# trouver le plus grand commun diviseur, afin de pouvoir simplifier
+# la fraction correspondant au nombre d&eacute;cimal 
+$gcd=gcd($aa,10);
+$anum=$aa/$gcd;
+$aden=10/$gcd;
+
+#si la fraction est simplifiable, rajouter la version simplifi&eacute;e 
+# en guise de r&eacute;ponse dans le d&eacute;tail de la solution
+if ($gcd == 1)
+  {$note="";}
+else
+  {$note=", simplifi&eacute; &agrave; $anum/$aden";}
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question:</h1>
+<br/>Transformer le nombre d&eacute;cimal $a en fraction simplifi&eacute;e.<br/>
+
+\{ans_rule(10)\}<br/>
+<h5>(utiliser la barre oblique / dans la fraction).</h5>
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text=" Multiplier le nombre d&eacute;cimal par le multiple de 10 requis pour retirer totalement la d&eacute;cimale pr&eacute;sente. Ce nouveau total deviendra le num&eacute;rateur de la fraction, et le multiple de 10 utilis&eacute; en deviendra le d&eacute;nominateur (ex.: 0.45 X 100 = 45,  donc 0.45 en fractions donnera 45/100).  Simplifier ensuite cette fraction r&eacute;sultante (ex.: 45/100 = 9/20). ";
+break;
+case '2':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/decimales/conversion>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+# accepter en r&eacute;ponse une fraction en forme r&eacute;duite seulement
+Context("LimitedFraction");
+ANS(Compute("$anum/$aden")->cmp);
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+Pour en retirer totalement le point d&eacute;cimal pr&eacute;sent, il faut multiplier $a par 10 (d&eacute;nominateur), ce qui donne $aa (num&eacute;rateur).<br/>
+Donc $a en fraction donnera $aa/10 $note.
+
+END_SOLUTION
+
+ENDDOCUMENT();
+
+
+

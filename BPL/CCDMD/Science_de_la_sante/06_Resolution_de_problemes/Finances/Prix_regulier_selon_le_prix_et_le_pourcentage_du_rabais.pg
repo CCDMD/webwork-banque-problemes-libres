@@ -1,0 +1,113 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section R&eacute;solution de probl&egrave;mes - Finances
+#     type de question - Prix r&eacute;gulier selon prix et pourcentage du rabais
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('R&eacute;solution de probl&egrave;mes')
+## DBsection('Finance')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'r&eacute;solution', 'finance','argent','monnaie','prix','pourcentage')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+
+TEXT(beginproblem());
+$reponse = sprintf("%1.2f",random(5,50));
+$rabais = random(5,45,5);
+$prixrabais = sprintf("%1.2f",$reponse * $rabais / 100);
+$prixfinal = sprintf("%1.2f",$reponse - $prixrabais);
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Un rabais de $rabais% &agrave; l'achat d'un article permet d'&eacute;conomiser $prixrabais dollars. <br/>
+Quel &eacute;tait alors le prix r&eacute;gulier de cet article ?<br/>
+  </td></tr>
+  <tr><td>
+
+\{ans_rule(10)\} dollars
+<br/><br/>
+<h5>Utiliser le point (au lieu de la virgule) pour s&eacute;parer <br/>la partie enti&egrave;re de la partie d&eacute;cimale dans la r&eacute;ponse.</h5>
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Le pourcentage de rabais correspond &agrave; la somme &eacute;pargn&eacute;e sur un achat total de 100 dollars. Donc avec la r&egrave;gle de trois, placer ce rabais dans une colonne, l'achat total de 100 dollars dans la seconde colonne, et la somme &eacute;pargn&eacute;e pour l'article en question dans la colonne des rabais, sous le premier montant pr&eacute;sent, et trouver l'inconnu.";
+break;
+case '2':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/resolution-de-problemes/finances>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u>:</p>
+<p>Un rabais de $rabais% est quivalent &agrave; un rabais de $rabais dollars sur un article de 100 dollars. <br/>
+Donc pour un rabais de $prixrabais dollars, le prix r&eacute;gulier est de:</p>
+
+<table border="0" cellspacing="1" cellpadding="1" width="700">
+    <tbody>
+        <tr>
+            <td align="left">$rabais dollars de rabais </td>
+            <td align="left">: 100 dollars total</td>
+            <td>&nbsp;</td>
+            <td align="center"><u>$prixrabais <strike>dollars</strike> x 100 dollars</u></td>
+            <td>= &nbsp;<strong>$reponse </strong> dollars total</td>
+        </tr>
+        <tr>
+            <td align="left">$prixrabais dollars de rabais &nbsp;&nbsp;</td>
+            <td align="left">: &nbsp; ? dollars</td>
+            <td>&nbsp;</td>
+            <td align="center">$rabais <strike>dollars</strike></td>
+            <td>&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+
+END_SOLUTION
+ENDDOCUMENT();

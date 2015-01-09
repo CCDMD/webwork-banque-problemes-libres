@@ -1,0 +1,175 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section R&eacute;solution de probl&egrave;mes - Finances
+#     type de question - Achat de tomates au poids, selon un rapport prix:masse 
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('R&eacute;solution de probl&egrave;mes')
+## DBsection('Finance')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'r&eacute;solution', 'finance','argent','monnaie','prix')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+TEXT(beginproblem());
+# d&eacute;terminer la masse des trois tomates, afin qu'elles soient totues diff&eacute;rentes l'une de l'autre
+do{
+do{
+do{
+$tomate1 = random(180,230);
+$tomate2 = random(180,230);
+$tomate3 = random(180,230);
+}while($tomate1 == $tomate2);
+}while($tomate1 == $tomate3);
+}while($tomate2 == $tomate3);
+
+# D&eacute;terminer la masse totale des trois tomates en kilogrammes 
+# &agrave; partir de leur masse individuelle en grammes
+$tomatesg = $tomate1 + $tomate2 + $tomate3;
+$tomateskg = $tomatesg / 1000;
+
+# D&eacute;terminer un prix par kg pour une tomate, &agrave; deux d&eacute;cimales pr&egrave;s
+$prix = sprintf("%1.2f",random(6.50,6.99));
+
+# r&eacute;ponse (&agrave; deux d&eacute;cimales pr&egrave;s)
+$reponse = sprintf("%1.2f",$prix * $tomateskg);
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Les tomates que vous d&eacute;sirez acheter &agrave; l'&eacute;picerie se vendent $prix dollars le kilogramme.<br/>
+Quel sera alors le coût total si vous prenez trois tomates pesant chacune $tomate1 g, $tomate2 g et $tomate3 g respectivement ?<br/>
+ </td></tr>
+  <tr><td>
+
+\{ans_rule(10)\} dollars (&agrave; deux d&eacute;cimales pr&egrave;s)
+<br/><br/>
+<h5>Utiliser le point (au lieu de la virgule) pour s&eacute;parer <br/>la partie enti&egrave;re de la partie d&eacute;cimale dans la r&eacute;ponse.</h5>
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Pour trouver le prix, appliquer la r&egrave;gle de trois, en mettant tout d'abord 1 kg dans la premi&egrave;re colonne, le prix correspondant &agrave; l'achat de 1 kg de tomate dans la seconde colonne, les kg au total de tomates &agrave; acheter dans la colonne des kg, sous la valeur d&eacute;j&agrave; pr&eacute;sente, et un point d'interrogation dans la colonne du prix de ces tomates sous la valeur d&eacute;j&agrave; pr&eacute;sente, pour y trouver la r&eacute;ponse. Multiplier ensuite les deux valeurs pr&eacute;sentes qui sont diagonales l'une &agrave; l'autre et diviser par la troisi&egrave;me valeur pour trouver la quatri&egrave;me valeur (soit le ?).";
+break;
+case '2':text="Trouver tout d'abord la masse totale de tomates en grammes, et ensuite convertir en kilogrammes, pour en trouver ensuite le prix &eacute;quivalent.";
+break;
+case '3':text="On peut aussi multiplier les kg totaux de tomate &agrave; acheter par le rapport prix/kg de tomates appropri&eacute;; afin de trouver leur prix total.";
+break;
+case '4':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/resolution-de-problemes/finances>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<button type="button" name="4" onclick="hint(this)">Astuce 4</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u>:</p>
+<p>Trouver tout d'abord la masse des trois tomates, en kilogrammes:</p>
+<p>$tomate1 g + $tomate2 g + $tomate3 g = $tomatesg g</p>
+
+<table border="0" cellspacing="1" cellpadding="1" width="500">
+    <tbody>
+        <tr>
+            <td align="left">$tomatesg <strike>g</strike> x</td>
+            <td align="left"><u>&nbsp; 1 kg &nbsp;</u> </td>
+            <td>&nbsp;</td>
+            <td>= &nbsp;<strong>$tomateskg kg de tomates</strong></td>
+        </tr>
+        <tr>
+            <td align="left">&nbsp;</td>
+            <td align="left">1000 <strike>g</strike></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+<br/>
+
+<p>Ensuite, appliquer la r&egrave;gle de 3 pour trouver son prix total (&agrave; deux d&eacute;cimales pr&egrave;s) ...</p>
+
+<table border="0" cellspacing="1" cellpadding="1" width="500">
+    <tbody>
+        <tr>
+            <td align="left">1 kg</td>
+            <td align="left">: &nbsp;$prix dollars</td>
+            <td>&nbsp;</td>
+            <td align="center"><u>$tomateskg <strike>kg</strike> x $prix dollars</u></td>
+            <td>= &nbsp;<strong>$reponse </strong> dollars</td>
+        </tr>
+        <tr>
+            <td align="left">$tomateskg kg </td>
+            <td align="left">:&nbsp; ? dollars</td>
+            <td>&nbsp;</td>
+            <td align="center">1 <strike>kg</strike></td>
+            <td>&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+
+
+<p>&nbsp; ... ou, multiplier le rapport prix/kg fournie, pour trouver son prix total (&agrave; deux d&eacute;cimales pr&egrave;s):</p>
+
+<table border="0" cellspacing="1" cellpadding="1" width="400">
+    <tbody>
+        <tr>
+            <td align="right">$tomateskg <strike>kg</strike>&nbsp; x</td>
+            <td align="center"> <u>$prix dollars</u></td>
+            <td>&nbsp;</td>
+            <td align="left">= &nbsp;<strong>$reponse </strong> dollars</td>
+        </tr>
+        <tr>
+            <td align="left">&nbsp;</td>
+            <td align="center">1 kg</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+
+END_SOLUTION
+ENDDOCUMENT();

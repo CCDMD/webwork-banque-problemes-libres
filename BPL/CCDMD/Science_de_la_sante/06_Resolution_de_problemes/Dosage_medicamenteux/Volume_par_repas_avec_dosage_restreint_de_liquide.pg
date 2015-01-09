@@ -1,0 +1,99 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section R&eacute;solution de probl&egrave;mes - Dosage m&eacute;dicamenteux
+#     type de question - Volume par repas avec dosage restreint de liquide
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('R&eacute;solution de probl&egrave;mes')
+## DBsection('Dosage m&eacute;dicamenteux')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'r&eacute;solution', 'dosage','m&eacute;dicament')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+TEXT(beginproblem());
+$volumerepas = random(50,120,10);
+$volumemedicament = random(5,30,5);
+$fois = random(2,4);
+$nombredefois = $fois == 2 ? "deux" : (($fois == 3) ? "trois" : "quatre");
+$volumetotal = ($volumerepas * 3) + ($fois * $volumemedicament);
+$reponse = $volumerepas;
+$volumeresiduel = $volumerepas * 3;
+$volumemedtotal = $volumemedicament * $fois;
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Le m&eacute;decin prescrit un dosage restreint de liquide &agrave; ing&eacute;rer &agrave; un patient, soit une limite de $volumetotal ml par jour. <br/>
+Quelle quantit&eacute; de liquide ce patient pourra-t-il ing&eacute;rer par repas (avec trois repas par jour), <br/>
+sachant qu'il doit prendre $volumemedicament ml d'eau $nombredefois fois par jour avec ses m&eacute;dicaments ?<br/>
+  </td></tr>
+  <tr><td>
+
+\{ans_rule(10)\} ml par repas
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Trouver le volume de liquide &agrave; ing&eacute;rer par jour avec les m&eacute;dicaments, soustraire ce volume du volume total permis afin de trouver le volume pouvant &ecirc;tre pris avec les repas, et diviser ce dernier volume par trois pour le volume permis pour un seul repas.";
+break;
+case '2':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/resolution-de-problemes/dosage>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u>:</p>
+<p>Trouver tout d'abord le volume de liquide &agrave; prendre avec les m&eacute;dicaments et le soustraire au volume total limite de $volumetotal ml, afin de trouver la quantit&eacute; de volume de liquide pouvant &ecirc;tre pris avec les 3 repas; ensuite, diviser ce dernier volume par trois afin de trouver ce volume de liquide pour un repas.</p>
+
+<p>a)&nbsp;&nbsp; $volumetotal &nbsp;ml - ($nombredefois fois $volumemedicament ml) = $volumetotal ml - ($volumemedtotal ml) = <strong>$volumeresiduel ml</strong>&nbsp;(par jour)</p>
+
+<p>b)&nbsp; &nbsp;<strong>$volumeresiduel ml</strong>&nbsp; &#247; 3 repas par jour =<strong> $reponse </strong> ml par repas</p>
+
+END_SOLUTION
+ENDDOCUMENT();

@@ -1,0 +1,116 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Nombre d&eacute;cimal - Multiples de dix
+#     type de question -  Multiplication avec des multiples de 10    
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Nombre d&eacute;cimal')
+## DBsection('Multiples de dix')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'd&eacute;cimal', 'multiplication', 'multiples de dix')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+TEXT(beginproblem());
+
+$choix=random(0,4);
+@multiples=(0.001,0.01,0.1,10,100);
+$multiplechoisi=$multiples[$choix];
+
+
+# &agrave; noter que tout sera fait &agrave; partir des entiers, car la cr&eacute;action directe 
+# de d&eacute;cimales produit des d&eacute;cimales &agrave; l'infini qui ressortent dans les calculs
+# et on s'assure que la derni&egrave;re d&eacute;cimale n'est pas &eacute;gale &agrave; z&eacute;ro
+$aentier=random(10,99);
+$adec12=random(10,99);
+$adec3=random(1,9);
+$aa=($aentier*1000) + ($adec12*100) + $adec3;
+$a= $aa/1000;
+
+
+$rr=$aa * $multiplechoisi;
+$reponse=$rr/1000;
+
+#pour chaque choix de multiple, d&eacute;terminer le nombre de d&eacute;placements requis pour bouger le point d&eacute;cimal lors de la multiplication
+@nombrededeplacement=(3,2,1,1,2);
+@direction=("gauche","gauche","gauche","droite","droite");
+
+
+# si le nombre de d&eacute;placements est sup&eacute;rieur &agrave; 1, rajouter un s au mot position dans la solution
+if ($nombrededeplacement[$choix]==1)
+  {$s="";}
+else
+  {$s="s";}
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>$a&nbsp; x &nbsp; $multiplechoisi&nbsp; = <br/>
+
+\{ans_rule(10)\}<br/>
+<h5>Utiliser le point (au lieu de la virgule) pour s&eacute;parer <br/>la partie enti&egrave;re de la partie d&eacute;cimale dans la r&eacute;ponse.</h5>
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text=" Lorsqu'on multiplie un nombre d&eacute;cimal par un multiple de 10, on d&eacute;place le point d&eacute;cimal vers la droite, selon le nombre de z&eacute;ros pr&eacute;sents dans le multiple de 10, afin de donner un r&eacute;sultat plus gros (ex.: 0.402 X 100 = 40.2).  &Agrave; l'oppos&eacute;, lors d'une multiplication par une fraction de 10, le point d&eacute;cimal est d&eacute;plac&eacute; vers la gauche (en ajoutant des z&eacute;ros, si aucun entier n'est pr&eacute;sent), selon le nombre de d&eacute;cimales pr&eacute;sentes dans la fraction de 10, afin de donner un r&eacute;sultat plus petit (ex..: 0.402 X 0.01 = 0.00402). ";
+break;
+case '2':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/decimales/multiplication>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+BEGIN_SOLUTION
+
+$PAR <U>Solution</U> $PAR
+
+En raison du multiple de $multiplechoisi pr&eacute;sent, d&eacute;placer le point d&eacute;cimal de $a de $nombrededeplacement[$choix] position$s vers la $direction[$choix],<br/>
+pour donner <strong>$reponse</strong>
+
+END_SOLUTION
+
+ENDDOCUMENT();

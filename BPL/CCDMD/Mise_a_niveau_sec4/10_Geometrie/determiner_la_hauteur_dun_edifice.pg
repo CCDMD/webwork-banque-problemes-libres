@@ -1,0 +1,127 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Géométrie
+#     type de question - Déterminer la hauteur d'un édifice à partir de la longueur de son ombre au sol et de l'angle de la lumière
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 4')
+## DBchapter('Géométrie')
+## DBsection('problème')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'géométrie', 'problème','loi', 'triangle')
+
+###########################################################################
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs de la longueur de l'ombre et de l'angle du soleil
+$angle= random(45,65);
+$ombre= random(10,20);
+
+# créer la réponse
+$reponse = "$ombre"."tan"."$angle";
+
+
+# déterminer l'image à afficher dans la question, et celles dans la solution
+$image = "q1_theme_4_v2.jpg";
+$image2 = "q1_theme_4_v2_rep.jpg";
+
+# écrire le symbole trigonométrique sans espaces dans la solution
+$tan="tan";
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+L'ombre d'un édifice mesure $ombre mètres lorsque l'angle d'élévation du soleil (angle entre le sol et le soleil) est de $angle degrés.  Quelle est la hauteur de l'édifice ? 
+<br/><br/>
+\{ image( $image, width=>313, height=>201) \}
+
+<br/><br/>
+ \{ans_rule(12)\} mètres<br/><br/>
+ Vous devez utiliser les fonctions <strong>sin</strong>, <strong>cos</strong> ou <strong>tan</strong> pour donner votre résultat.<br/> Par exemple, la réponse peut être donnée dans la forme: 5cos29 .<br/><br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="L'ombre d'un édifice forme la base d'un triangle rectangle, et la hauteur de l'édifice forme la hauteur de ce triangle. À partir de l'angle du soleil, il est possible de déterminer la mesure de l'un de ces côtés lorsque celle de l'autre côté est connue, ainsi que son angle.";
+break;
+case '2':text="Un triangle rectangle est formé de deux côtés formant un angle de 90<sup>o</sup> entre eux, et reliés par un troisième côté incliné, appelé hypoténuse. Le sinus d'un angle est égal à la mesure du côté opposé de cet angle sur celle de son hypoténuse. Le cosinus d'un angle est égal à la mesure du côté adjacent de cet angle sur celle de son hypoténuse. La tangente d'un angle est égale à la mesure du côté opposé de cet angle sur celle de son côté adjacent.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(str_cmp($reponse,'remove_whitespace'));
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+L'ombre d'un édifice mesure $ombre mètres lorsque l'angle d'élévation du soleil (angle entre le sol et le soleil) est de $angle degrés.  Quelle est la hauteur de l'édifice ? 
+<br/><br/>
+\{ image( $image, width=>313, height=>201) \}
+
+<br/><br/>
+________ mètres<br/><br/>
+ Vous devez utiliser les fonctions <strong>sin</strong>, <strong>cos</strong> ou <strong>tan</strong> pour donner votre résultat.<br/> Par exemple, la réponse peut être donnée dans la forme: 5cos29 .<br/><br/>
+
+
+L'ombre de l'édifice forme un angle droit de 90<sup>o</sup> avec le côté de l'édifice (dont on cherche la mesure) au sein d'un triangle rectangle. Or la tangente de cet angle permettra de trouver la mesure de la hauteur de l'édifice (soit le côté opposé à l'angle) sur la mesure de la largeur de l'ombre (soit le côté adjacent à l'angle).
+<br/><br/>
+
+\{ image( $image2, width=>313, height=>201) \}
+<br/><br/>
+Donc:<br/><br/>
+
+ &nbsp; &nbsp; \( {$tan$angle} = \dfrac{c\hat{o}t\acute{e} \; oppos\acute{e} }{ c\hat{o}t\acute{e}  \; adjacent }  =  \dfrac{ hauteur \; de \; l'\acute{e}difice }{ $ombre \; m\grave{e}tres }  \)   <br/><br/>
+
+Par conséquent, il suffit de multiplier la tangente de l'angle par son côté adjacent pour obtenir la mesure de son côté opposé (c'est-à-dire la hauteur de l'édifice):
+<br/><br/>
+
+($ombre)($tan$angle) = hauteur de l'édifice = <strong>$ombre$tan$angle</strong>
+<br/><br/>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

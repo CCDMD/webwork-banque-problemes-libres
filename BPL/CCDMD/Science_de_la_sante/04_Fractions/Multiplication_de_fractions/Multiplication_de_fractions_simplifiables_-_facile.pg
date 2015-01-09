@@ -1,0 +1,186 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Fractions - Multiplication
+#     type de question - Multiplication de fractions simplifiables (facile) 
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Fraction')
+## DBsection('Multiplication')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'fraction', 'multiplication')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+TEXT(beginproblem());
+
+# cr&eacute;er les deux fractions &agrave; multiplier, &agrave; partir d'entiers, en s'assurant que
+# le d&eacute;nominateur de la seconde fraction soit un multiple de son num&eacute;rateur, 
+# ce qui donnera une fraction simplifiable
+$den1=random(2,8);
+$num1=random(1,($den1-1));
+$num2=random(1,8);
+$den2=random(($num2+$num2),$num2*10,$num2);
+
+#trouver la fraction r&eacute;sultante
+$num=$num1*$num2;
+$den=$den1*$den2;
+
+# si la r&eacute;ponse peut &ecirc;tre r&eacute;duite, la r&eacute;duire et en informer l'utilisateur en lui donnant les deux formes
+$multiple=gcd($num,$den);
+if ($multiple!=1)
+  {
+    $reponsenum=$num/$multiple;
+    $reponseden=$den/$multiple;
+    $signe = "=";
+    $note="La r&eacute;ponse $num/$den peut &ecirc;tre simplifi&eacute;e &agrave; <strong>$reponsenum/$reponseden</strong>";
+  }
+else
+  {
+    $reponsenum="";
+    $reponseden="";
+    $signe = "";
+    $note="";
+  }
+
+# si l'une des deux fractions initiales pr&eacute;sentes peut &ecirc;tre r&eacute;duite avant la multiplication,
+# on en informe l'utilisateur et on lui donne les deux formes.
+$gcd1 = gcd($num1,$den1); 
+$gcd2 = gcd($num2,$den2); 
+$num1simpl=$num1/$gcd1;
+$den1simpl=$den1/$gcd1;
+$num2simpl=$num2/$gcd2;
+$den2simpl=$den2/$gcd2;
+
+
+if($gcd1==1)
+   {$note1=("");}
+else
+   {$note1=("&Agrave; noter que la fraction $num1/$den1 peut &ecirc;tre simplifi&eacute;e &agrave; $num1simpl/$den1simpl avant d'effectuer la multiplication.<br/>");}
+
+if($gcd2==1)
+   {$note2=("");}
+else
+   {$note2=("&Agrave; noter que la fraction $num2/$den2 peut &ecirc;tre simplifi&eacute;e &agrave; $num2simpl/$den2simpl avant d'effectuer la multiplication.<br/>");}
+
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question:</h1>
+<br/>Donner le produit des fractions suivantes:<br/><br/>
+
+<table>
+  <tr>
+    <td align=center><u>$num1</u></td>
+    <td align=center>x</td>
+    <td align=center><u>$num2</u></td>
+    <td align=center>&nbsp;=&nbsp;</td>
+  </tr>
+  <tr>
+    <td>$den1</td>
+    <td>&nbsp;</td>
+    <td>$den2</td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+<br/><br/>
+
+\{ans_rule(10)\}<br/>
+<h5>(utiliser la barre oblique / dans la fraction r&eacute;sultante, au besoin.)</h5>
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text=" Pour multiplier deux fractions, multiplier les num&eacute;rateurs entre eux pour donner le num&eacute;rateur final, et les d&eacute;nominateurs entre eux pour donner le d&eacute;nominateur final. ";
+break;
+case '2':text=" Simplifier la fraction r&eacute;sultante, au besoin. ";
+break;
+case '3':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/fractions/multiplication>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+# accepter en r&eacute;ponse un nombre et/ou une fraction (simplifi&eacute;e ou non)
+Context("Fraction");
+ANS(Compute("$num/$den")->cmp);
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+<table>
+  <tr>
+    <td align=center><u>$num1</u></td>
+    <td align=center>x</td>
+    <td align=center><u>$num2</u></td>
+    <td align=center>&nbsp;=&nbsp;</td>
+    <td align=center><u>$num1&nbsp;x&nbsp;$num2</u></td>
+    <td align=center>&nbsp;=&nbsp;</td>
+    <td align=center><u>$num</u></td>
+    <td align=center>&nbsp;$signe&nbsp;</td>
+    <td align=center><u>$reponsenum</u></td>
+
+  </tr>
+  <tr>
+    <td>$den1</td>
+    <td>&nbsp;</td>
+    <td>$den2</td>
+    <td>&nbsp;</td>
+    <td>$den1&nbsp;x&nbsp;$den2</td>
+    <td>&nbsp;</td>
+    <td>$den</td>
+    <td>&nbsp;</td>
+    <td>$reponseden</td>
+  </tr>
+</table>
+
+<br/>$note1 $note2 $note
+END_SOLUTION
+
+ENDDOCUMENT();
+

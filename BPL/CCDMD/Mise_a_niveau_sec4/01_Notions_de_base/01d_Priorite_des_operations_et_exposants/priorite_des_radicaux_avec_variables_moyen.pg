@@ -1,0 +1,149 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de base - Priorit&eacute; des op&eacute;rations
+#     type de question - Priorite des radicaux avec variables (moyen)
+##ENDDESCRIPTION
+
+## DBsubject('Notions de base')
+## DBchapter('Priorité des opérations')
+## DBsection('Priorit&eacute; des fractions et exposants')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'notions', 'priorit&eacute;', 'priorité des opérations','exposants','fraction','radicaux','racine','variable')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs de l'opération, selon certaines conditions
+
+do {   
+        $racine1=random(2,13);   
+        $racine2=random(2,13);
+        $mult=gcd($racine1,$racine2);
+      }  
+until (($racine1 != $racine2) && ($mult == 1));
+
+$carre1=$racine1**2;
+$carre2=$racine2**2;
+$fa= random(2,4);
+$exposanta=$fa*2;
+
+# déclarer la lettre "x" qui sera la variable non-définie ici (variable réelle)
+Context()->variables->are(x=>"Real");
+
+# créer la réponse
+$rep=Formula("($racine1*(x^$fa))/($racine2)");
+
+#créer les réponses intermédiaires
+$repnum=Formula("$racine1*(x^$fa)");
+$repden= $racine2;
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+
+Simplifier l'expression suivante:  <br/><br/>
+
+<table>
+  <tr>
+    <td> \( \sqrt { \dfrac{$carre1 x^$exposanta}{$carre2} } \)</td>
+    <td> &nbsp; = &nbsp;</td>
+    <td> \{ans_rule(10)\} </td>
+  </tr>
+</table>
+<br/>
+ Note: Inscrire la réponse sous la forme  suivante: 2x^2 /5
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Appliquer la racine au numérateur et au dénominateur";
+break;
+case '2':text="Considérant qu'il y a une multiplication de deux facteurs au numérateur, appliquer la racine à chaque facteur. ";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($rep->cmp);
+
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+Simplifier l'expression suivante:  <br/><br/>
+
+<table>
+  <tr>
+    <td> \( \sqrt { \dfrac{$carre1 x^$exposanta}{$carre2} } \)</td>
+  </tr>
+</table>
+<br/>
+ Note: Inscrire la réponse sous la forme  suivante: 2x^2 /5
+ 
+
+<br/><br/>
+
+<table>
+  <tr>
+    <td> \( \sqrt { \dfrac{$carre1 x^$exposanta}{$carre2} } \)</td>
+    <td>&nbsp;  = &nbsp;</td>
+    <td>\( \dfrac{ \sqrt {$carre1 x^$exposanta} }{ \sqrt {$carre2} }  \)</td>
+    <td>&nbsp;  = &nbsp;</td>
+    <td>\(  \dfrac{ \sqrt {$carre1}  \cdot \sqrt{x^$exposanta}}{ \sqrt {$carre2} }  \)</td>
+    <td>&nbsp;  = &nbsp;</td>
+    <td>\(  \dfrac{ $racine1 x^$fa}{$racine2}  \)</td>
+  </tr>
+</table>
+<br/>
+
+<br/> 
+donc la réponse à inscrire est: <strong> $racine1 x^$fa / $racine2 </strong>
+
+END_SOLUTION
+
+ENDDOCUMENT();

@@ -1,0 +1,166 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de base - Valeur absolue et rationalisation du dénominateur
+#     type de question - Rationnaliser le dénominateur (moyen)
+##ENDDESCRIPTION
+
+## DBsubject('Notions de base')
+## DBchapter('Valeur absolue et rationalisation du dénominateur')
+## DBsection('Rationnaliser le dénominateur')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'notions', 'racine', 'radical','fraction','rationnaliser')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+TEXT(beginproblem());
+
+# créer les valeurs de l'opération, selon certaines conditions
+
+$den1p2=random(3,8,2);
+$den1p1=random(2,5);
+$den1p1carre=$den1p1**2;
+$num1=random(2,5);
+
+#créer les valeurs intermédiaires
+$denrep=$den1p1**2 - $den1p2;
+$multiple=gcd($num1,$denrep);
+$reponsenumsimp=$num1/$multiple;
+$reponsedensimp=$denrep/$multiple;
+
+
+#créer les réponses
+$reponsenum=Formula("($reponsenumsimp*($den1p1+($den1p2^(1/2)))/$reponsedensimp)");
+$rep= Formula ("($reponsenum/$reponsedensimp)");
+
+
+if ($multiple ==1)
+{ $note= " "; }
+else
+{ $note= "Cette réponse peut être simplifiée à <strong>$rep </strong> "; }
+
+if ($reponsedensimp ==-1)
+{ $note= "La réponse peut également s'écrire  <strong>  \( {- $reponsenumsimp { ( $den1p1 + {\sqrt $den1p2}) } } \)</strong> "; }
+else
+{ $note= " "; }
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+
+Écrire l'expression suivante en rationalisant le dénominateur <br/><br/>
+ \(  \dfrac{$num1}{$den1p1 - { \sqrt{$den1p2}} }  \)
+<br/><br/>
+Note: Écrire les radicaux sous la forme suivante: 3^(1/2).<br/>
+Si la réponse est une fraction, utiliser la barre oblique /  pour l'exprimer.
+<br/><br/>
+
+\{ans_rule(10)\}
+
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Pour rationnaliser cette expression, il faut multiplier au numérateur et au dénominateur par le conjugué du dénominateur. ";
+break;
+case '2':text="Le dénominateur étant $den1p1 - racine carrée de $den1p2, son conjugué est $den1p1 + racine carrée de $den1p2 (changer le signe entre les deux termes). ";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS($reponsenum->cmp);
+
+
+BEGIN_SOLUTION
+<br/> <u>Solution</u> <br/>
+
+Écrire l'expression suivante en rationalisant le dénominateur:  <br/><br/>
+ \(  \dfrac{$num1}{$den1p1 - { \sqrt{$den1p2}} }  \)
+
+<br/><br/>
+Note: Écrire les radicaux sous la forme suivante: 3^(1/2).<br/>
+Si la réponse est une fraction, utiliser la barre oblique /  pour l'exprimer.
+<br/>
+
+<table>
+  <tr>
+    <td>  \(  \dfrac{$num1}{$den1p1 - { \sqrt{$den1p2}} }  \) </td>
+    <td>&nbsp;  = &nbsp;</td>
+    <td>  \(  \dfrac{$num1}{$den1p1 - { \sqrt{$den1p2}} }  \)  x   \(  \dfrac{$den1p1 + { \sqrt{$den1p2} } }{$den1p1 + { \sqrt{$den1p2}} } \)</td>
+   <td> &nbsp;  en multipliant par le conjugué du dénominateur</td>
+  </tr>
+
+  <tr>
+    <td> </td>
+    <td>&nbsp;  = &nbsp;</td>
+    <td>  \(  \dfrac{$num1 ( {$den1p1 + {\sqrt $den1p2} }) }{ { ($den1p1 \cdot  $den1p1) } + { ($den1p1 \cdot {\sqrt $den1p2}) } - { ($den1p1 \cdot {\sqrt $den1p2}) } - { (\sqrt $den1p2 \cdot {\sqrt $den1p2}) } } \)</td>
+   <td> &nbsp; </td>
+  </tr>
+  <tr>
+    <td> </td>
+    <td>&nbsp;  = &nbsp;</td>
+    <td>   \(  \dfrac{$num1 ( {$den1p1 + {\sqrt $den1p2} }) }{ $den1p1carre - $den1p2}  \)</td>
+   <td> &nbsp; </td>
+  </tr>
+  <tr>
+    <td> </td>
+    <td>&nbsp;  = &nbsp;</td>
+    <td>   \(  \dfrac{$num1 ( {$den1p1 + {\sqrt $den1p2} }) }{ $denrep}  \)</td>
+   <td> &nbsp; </td>
+  </tr>
+  <tr>
+    <td> </td>
+    <td>&nbsp;  = &nbsp;</td>
+    <td>  \(  \dfrac{$reponsenumsimp { ($den1p1 + {\sqrt $den1p2}) } }{$reponsedensimp}  \)</td>
+   <td> &nbsp; </td>
+  </tr>
+</table>
+<br/>
+
+$note<br/>
+END_SOLUTION
+
+ENDDOCUMENT();

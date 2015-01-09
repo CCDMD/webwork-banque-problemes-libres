@@ -1,0 +1,151 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de base - Priorit&eacute; des op&eacute;rations
+#     type de question - Priorite des exposants avec variable (facile)
+##ENDDESCRIPTION
+
+## DBsubject('Notions de base')
+## DBchapter('Priorité des opérations')
+## DBsection('Priorit&eacute; des fractions et exposants')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'notions', 'priorit&eacute;', 'priorité des opérations','exposants','variables','algèbre','fraction')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer l'exposant $b appliqué à la variable a à l'intérieur des parenthèses, ainsi que l'exposant $a appliqué à l'extérieur des parenthèses
+$a=random(2,7);
+$b=random(-7,0);
+
+#créer l'exposant $c appliqué à la variable a au dénominateur
+$c=random(2,7);
+
+#créer les réponses intermédiaires utilisées dans la solution
+$ab=$a*$b;
+$abplus=$ab*(-1);
+$xp=$c-$ab;
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle)
+Context()->variables->are(a=>"Real");
+
+# créer la réponse à recevoir
+$reponse=Formula("(1/a^{$xp})");
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+
+Simplifier l'expression suivante:  <br/><br/>
+
+\( \dfrac{( {a^{$b}} )^{$a}}{a^{$c}} \)  
+<br/><br/>
+
+ \{ans_rule(10)\} 
+
+<br/>
+ Note: Inscrire l'exposant sous la forme a^2, et utiliser la barre oblique / pour les fractions, au besoin
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Lorsqu'une variable est munie d'un exposant, et que le tout est muni d'un autre exposant,  multiplier alors les deux exposants. Ce produit formera le nouvel exposant de la variable.  Donc, (a<sup>m</sup>) <sup>n</sup> = a <sup>mn</sup>.";
+break;
+case '2':text="Lorsque deux variables identiques munies d'exposants sont multipliées, leurs exposants sont alors additionnés et cette somme est appliquée sous forme d'exposant à la variable dans la réponse. Donc, a<sup>m</sup> a<sup>n</sup> =  a <sup>m+n</sup>.  Si cette somme donne un exposant négatif, changer la variable de place au sein de la fraction (si elle est au numérateur, la mettre au dénominateur, et vice-versa) et lui attribuer la valeur positive de l'exposant (soit sa valeur absolue).";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($reponse->cmp);
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+Simplifier l'expression suivante:  <br/><br/>
+
+<table>
+  <tr>
+     <td>\( \dfrac{( {a^{$b}} )^{$a}}{a^{$c}} \)   </td>
+ </tr>
+</table><br/>
+ Note: Inscrire l'exposant sous la forme a^2, et utiliser la barre oblique / pour les fractions, au besoin<br/><br/>
+
+
+<table>
+           <tr>
+             <td>\( \dfrac{( {a^{$b}} )^{$a}}{a^{$c}} \)  </td> 
+             <td> &nbsp; = &nbsp;</td>
+             <td>\( \dfrac{a^{( {$b} \cdot {$a})}}{a^{$c}} \) </td>
+             <td> en utilisant la propriété \( ( {{a^{m}} )^n}   =    a^{mn} \) <br/> &nbsp;</td>
+           </tr>
+           <tr>
+              <td> </td>
+              <td> = &nbsp;</td>
+              <td>\( \dfrac{a^{$ab}}{a^{$c}} \)  </td> 
+              <td> </td>     
+           </tr>
+           <tr>
+              <td> </td>
+              <td> = &nbsp;</td>
+              <td>\( \dfrac{1}{ {a^{$abplus}}{a^{$c}} } \)  </td> 
+              <td> en rendant positif l'exposant de la variable a</td>     
+           </tr>
+           <tr>
+              <td> </td>
+              <td> = &nbsp;</td>
+              <td>\( \dfrac{1}{a^{$xp}} \)  </td> 
+              <td> </td>     
+           </tr>
+         </table>
+
+<br/><br/>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

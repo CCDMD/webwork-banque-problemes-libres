@@ -1,0 +1,131 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section R&eacute;solution de probl&egrave;mes - Dosage m&eacute;dicamenteux
+#     type de question - Dilution d'un solide pour obtenir un pourcentage de concentration 
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('R&eacute;solution de probl&egrave;mes')
+## DBsection('Dosage m&eacute;dicamenteux')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'r&eacute;solution', 'dosage','m&eacute;dicament')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+TEXT(beginproblem());
+do{
+$pourcentage = random(2,50);
+$volume = random(10,100,10);
+$grammes = sprintf("%1.1f",$pourcentage * $volume / 100);
+}while($grammes == $pourcentage);
+$reponse = $volume;
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Un contenant renfermant $grammes g de solide doit &ecirc;tre dilu&eacute; afin de produire une solution concentr&eacute;e &agrave; $pourcentage% (g/ml).<br/>
+Quel volume d'eau (en ml) doit &ecirc;tre ajout&eacute; &agrave; ce contenant pour atteindre ce pourcentage ?<br/>
+  </td></tr>
+  <tr><td>
+
+\{ans_rule(10)\} ml
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="M&eacute;thode 1: appliquer la r&egrave;gle de trois, en mettant tout d'abord les grammes initiaux (donné dans le % de g/ml) dans la premi&egrave;re colonne, les millilitres correspondantes dans la seconde colonne, le total des grammes dans la colonne des grammes sous la valeur d&eacute;j&agrave; pr&eacute;sente, et un point d'interrogation dans la colonne des millilitres sous la valeur d&eacute;j&agrave; pr&eacute;sente, pour y trouver la r&eacute;ponse. Multiplier ensuite les deux valeurs pr&eacute;sentes qui sont diagonales l'une &agrave; l'autre et diviser par la troisi&egrave;me valeur pour trouver la quatri&egrave;me valeur (soit le ?). ";
+break;
+case '2':text="M&eacute;thode 2: transformer les grammes en ml selon le rapport des g/ml fournis par le pourcentage (ex.: 2 grammes donnant 10% (g/ml) =&nbsp; 2 grammes X (100 ml/10 g) = 20 ml ).";
+break;
+case '3':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/resolution-de-problemes/dosage>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u>:</p>
+
+<p>M&eacute;thode 1: Appliquer la r&agrave;gle de 3 pour trouver le nombre total de ml</p>
+<p>
+<table border="0" cellspacing="1" cellpadding="1" width="500">
+    <tbody>
+        <tr>
+            <td align="left">$pourcentage g </td>
+            <td align="left">: 100 ml </td>
+            <td>&nbsp;</td>
+            <td align="center"><u>$grammes <strike>g</strike> x 100 ml</u></td>
+            <td>= &nbsp;<strong>$reponse </strong> ml</td>
+        </tr>
+        <tr>
+            <td align="left">$grammes g &nbsp;</td>
+            <td align="left">: &nbsp; ? ml</td>
+            <td>&nbsp;</td>
+            <td align="center">$pourcentage <strike>g</strike></td>
+            <td>&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+<br/>
+
+<p>M&eacute;thode 2: Transformer les $grammes grammes en ml selon le rapport 100 ml/$pourcentage g fourni:</p>
+
+<table border="0" cellspacing="1" cellpadding="1" width="300">
+    <tbody>
+        <tr>
+            <td align="center">$grammes<strike> g</strike>&nbsp; x</td>
+            <td align="center">&nbsp;<u>100 ml </u> </td>
+            <td> = &nbsp;<strong>$reponse </strong> ml</td>
+        </tr>
+        <tr>
+            <td align="center">&nbsp;</td>
+            <td align="center"> $pourcentage <strike>g</strike></td>
+            <td>&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+END_SOLUTION
+ENDDOCUMENT();

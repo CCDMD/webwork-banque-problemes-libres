@@ -1,0 +1,135 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Rapports et proportions - Proportion en pourcentage
+#     type de question - Proportion en pourcentage  (complexe) 
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Rapports et proportions')
+## DBsection('Proportion en pourcentage')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'rapport','proportion', 'facteur','pourcentage','proportion')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+TEXT(beginproblem());
+
+# le second nombre de la proportion est soit 4,5,6,10,20 ou 25
+$choix=random(0,5);
+@listedey=(4,5,8,10,20,25);
+$y=$listedey[$choix];
+
+#le premier nombre de la proportion est plus petit que le second, et aura une d&eacute;cimale entre 1 et 9  
+$x = (random(1,($y - 1))) + ((random(1,9) / 10));
+
+# le pourcentage de cette proportion
+$reponse = 100 * $x / $y;
+
+# le multiple, pour les besoins de la solution d&eacute;taill&eacute;e
+$multiple = 100 / $y;
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>La proportion &nbsp; $x : $y &nbsp; donne  &nbsp: 
+
+\{ans_rule(6)\} %.<br/>
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="M&eacute;thode 1: Diviser la proportion et multiplier le tout par 100 (ex: 1 : 2 = 1/2 x 100 = 50%).";
+break;
+case '2':text="M&eacute;thode 2: Trouver le multiple du second nombre de la proportion qui donne 100, et multiplier le premier nombre de la proportion par ce m&ecirc;me multiple (ex.: pour 1 : 2,  2 x <strong>50</strong> = 100, donc 1 x <strong>50 </strong>= 50 d'o� la r&eacute;ponse 1/2 =  50%). ";
+break;
+case '3':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/rapports-et-proportions/pourcentage>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u>:</p>
+<p>M&eacute;thode 1: Diviser la proportion et multiplier le tout par cent:</p>
+<br/>
+<table border="0" width="300">
+    <tbody>
+        <tr>
+            <td align="right">
+              $x : $y en % 
+            </td>
+            <td align="center"><u> $x &nbsp;</u></td>
+            <td align="center">x 100 =</td>
+            <td align="center"><strong>$reponse %</strong></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td align="center">$y</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>M&eacute;thode 2:</p>
+Trouver le multiple du second nombre $y de la proportion afin de l'amener &agrave; 100, <br/>
+et multiplier le premier nombre $x de la proportion par ce multiple:
+<br/><br/>
+<table border="0" width="300">
+    <tbody>
+        <tr>
+            <td align="right">
+               $y X <strong>$multiple</strong> = 100 &nbsp;<br/>
+            </td>
+            <td>donc&nbsp; $x x <strong>$multiple</strong> =</td>
+            <td align="center"><strong>$reponse %</strong></td>
+        </tr>
+    </tbody>
+</table>
+
+END_SOLUTION
+ENDDOCUMENT();

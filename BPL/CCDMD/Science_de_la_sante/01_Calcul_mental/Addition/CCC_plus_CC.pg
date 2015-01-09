@@ -1,0 +1,170 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Entiers - Calcul mental - Addition
+#     type de question - Addition CCC + CC
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Entier')
+## DBsection('Addition')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'entier', 'addition', 'calcul mental')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+
+TEXT(beginproblem());
+
+$a=random(100,999);
+$b=random(10,99);
+$reponse=$a+$b;
+
+#obtenir le chiffre occupant la position de la centaine dans la r&eacute;ponse
+$reponsecentaine=int($reponse/100);
+
+#obtenir le chiffre occupant la position de la dizaine dans la r&eacute;ponse
+$reponsedizaine = int(($reponse-($reponsecentaine*100))/10);
+
+#obtenir le chiffre occupant la position de l'unit&eacute; dans la r&eacute;ponse
+$reponseunite = $reponse-($reponsecentaine*100) - ($reponsedizaine*10);
+
+#obtenir la retenue des unit&eacute;s
+$aunite=$a- (10*(int($a/10))); 
+$bunite=$b- (10*(int($b/10))); 
+$totalunite=$aunite + $bunite;
+$retenueunite= int($totalunite/10);  
+$retunite=(($retenueunite==0)?" " : $retenueunite);
+
+#obtenir la retenue des dizaines
+$adizaine=int($a/10)- (10*(int($a/100))); 
+$bdizaine=int($b/10); 
+$totaldizaine=$adizaine + $bdizaine + $retenueunite;
+$retenuedizaine= int($totaldizaine/10);  
+$retdiz=(($retenuedizaine==0)?" " : $retenuedizaine);
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+<h1>Question : </h1>
+<br/>$a + $b =
+<br/>
+
+\{ans_rule(10)\}<br/>
+
+  </td></tr>
+</table><br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Bien aligner les nombres l'un au-dessus de l'autre, avec les chiffres align&eacute;s dans leur colonne respective. ";
+break;
+case '2':text=" Additionner les unit&eacute;s en premier, suivi des dizaines, et ensuite les centaines. ";
+break;
+case '3':text=" Si le total des unit&eacute;s est sup&eacute;rieur &agrave; 9, inscrire l'unit&eacute; de ce total en r&eacute;ponse, et rajouter 1 en retenue au-dessus de la colonne des dizaines. Si le total des dizaines est sup&eacute;rieur &agrave; 9, rajouter 1 en retenue au-dessus des centaines. ";
+break;
+case '4':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/entiers/addition>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<button type="button" name="4" onclick="hint(this)">Astuce 4</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+BEGIN_SOLUTION
+
+<TABLE CELLPADDING=10><TR>
+<TD valign=top>
+1. Aligner les<br/>
+nombres.<br/><br/>
+
+<table align=center><tr><td align=right>
+&nbsp;<br/>
+$a<br/>
+<u>+ $b</u><br/>
+&nbsp;
+</td></tr></table>
+
+</TD>
+<TD>
+2. Additionner les unit&eacute;s<br/>
+(inscrire les retenues<br/>
+pr&eacute;sentes).<br/>
+
+<table align=center><tr><td align=right>
+<small>$retunite</small> &nbsp;<br/>
+$a<br/>
+<u>+ $b</u><br/>
+<b>$reponseunite</b>
+</td></tr></table>
+
+</TD>
+<TD>
+3. Additionner les<br/>
+dizaines (et ses<br/>
+retenues pr&eacute;sentes).<br/>
+
+<table align=center><tr><td align=right>
+<small>$retdiz  $retunite</small> &nbsp;<br/>
+$a<br/>
+<u>+ $b</u><br/>
+<b>$reponsedizaine</b>$reponseunite
+</td></tr></table>
+
+</TD>
+<TD>
+4. Additionner les <br/>
+centaines (et ses<br/>
+retenues pr&eacute;sentes).<br/>
+<table align=center><tr><td align=right>
+<small>$retdiz  $retunite</small> &nbsp;<br/>
+$a<br/>
+<u>+ $b</u><br/>
+<b>$reponsecentaine</b>$reponsedizaine$reponseunite
+</td></tr></table>
+
+</TD>
+</TR></TABLE>
+
+$solution
+
+END_SOLUTION
+
+ENDDOCUMENT();

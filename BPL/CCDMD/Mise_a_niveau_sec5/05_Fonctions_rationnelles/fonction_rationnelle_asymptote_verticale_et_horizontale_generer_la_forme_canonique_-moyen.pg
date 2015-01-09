@@ -1,0 +1,220 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions rationnelles
+#     type de question - Fonction rationnelle - générer la forme canonique (asymptotes verticale et horizontale demandées) - moyen 
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 5')
+## DBchapter('Fonction rationnelle')
+## DBsection('asymptote')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'secondaire 5', 'fonction', 'algèbre', 'rationnelle','asymptote')
+
+############################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs des paramètres de l'équation
+$a = random(2,6);
+$mult=random(2,6);
+$b=$a*$mult;
+
+$repcte=random(2,6);
+$c= $a*$repcte;
+
+# déterminer les signes dans l'équation
+$choixsignerep=non_zero_random(-1,1);
+if($choixsignerep==1) 
+{
+  $signerep="+";
+  $signerepaff="";
+}
+else
+{
+  $signerep="-";
+  $signerepaff="-";
+}
+
+do {
+  $represte=random(1,9);
+  $cteetape1=$repcte*$b;
+  $d=$repcte*$b + $choixsignerep*$represte;
+} until ($d !=0);
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# déterminer les autres valeurs requises pour la solution
+$dabs=abs($d);
+
+if($d<0) {$signenum= "-"; $signed=-1;}
+else {$signenum= "+"; $signed=1;}
+
+$num="$c$lettre $signenum $dabs";
+$numreel= "$c$lettre + $d";
+
+$denum="$a$lettre + $b";
+$denumaff="$a*$lettre + $b";
+
+
+# déterminer les réponses
+$repa=Formula("($choixsignerep*$represte/$a)");
+$reph=-$mult;
+$repk=$represte;
+
+$gcd=gcd($represte,$a);
+if($gcd!=1) {$cnum=$represte/$gcd; $cdenum=$a/$gcd;}
+else {$cnum=$represte; $cdenum=$a;}
+
+$repaaff="$signerepaff$cnum/$cdenum";
+$rephaff="-$mult";
+$repkaff="$represte";
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+Déterminer l'asymptote verticale et l'asymptote horizontale de la fonction suivante:  <br/><br/>
+\( \dfrac{$num}{$denum} \) 
+<br/><br/>
+
+asymptote verticale :&nbsp; &nbsp; x = \{ans_rule(10)\}<br/>
+asymptote horizontale :&nbsp; &nbsp; y = \{ans_rule(10)\}<br/><br/>
+
+Note: Si la réponse n'est pas un entier, inscrire la fraction en séparant son numérateur de son dénominateur avec la barre oblique / .
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Effectuer d'abord la division de polynômes.";
+break;
+case '2':text="Retrouver la forme canonique <i>f($lettre) = a/($lettre-h) + k </i>  pour identifier les valeurs des paramètres a, h et k.";
+break;
+case '3':text="Avec la forme canonique de la fonction, l'asymptote verticale est x = h et l'asymptote horizontale est y = k.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reph, .0));
+ANS(strict_num_cmp($repk, .0));
+
+
+BEGIN_SOLUTION
+Déterminer l'asymptote verticale et l'asymptote horizontale de la fonction suivante: <br/><br/>
+\( \dfrac{$num}{$denum} \) 
+<br/><br/>
+
+asymptote verticale : &nbsp; &nbsp; x = __________<br/>
+asymptote horizontale : &nbsp; &nbsp; y = __________<br/><br/>
+
+Note: Si la réponse n'est pas un entier, inscrire la fraction en séparant son numérateur de son dénominateur avec la barre oblique / .
+<br/><br/><br/>
+
+<u>Solution</u>
+<br/><br/>
+Effectuons d'abord une division de polynômes afin de pouvoir retrouver la forme canonique  \( f($lettre) = \dfrac{a}{$lettre-h} + k \)   à partir de l'équation \( \dfrac{$num}{$denum} \) :<br/><br/>
+
+Étape 1: <br/> 
+Combien de fois <strong>$a $lettre</strong> entre-t-il dans <strong>$c $lettre</strong> ?
+La réponse est : <strong>$repcte</strong>.<br/>
+Par conséquent, effectuons la multiplication de <strong>$repcte</strong> par le diviseur ($denum):<br/>
+<table>
+  <tr>
+    <td>&nbsp; <strong>$num</strong> &nbsp; &nbsp;</td>
+    <td>|<u><strong>$denum</strong> &nbsp</u></td> 
+  </tr>
+  <tr>
+    <td>&nbsp; $c$lettre + $cteetape1</td>
+    <td align=center>$repcte </td> 
+  </tr>
+</table>
+<br/>
+
+
+Étape 2: <br/> 
+Calculons le reste en soustrayant le polynôme obtenu du dividende: <br/>
+<table>
+  <tr>
+    <td>&nbsp; <strong>$num</strong> &nbsp; &nbsp;</td>
+    <td>|<u><strong>$denum</strong> &nbsp</u></td> 
+  </tr>
+  <tr>
+    <td>-<u>($c$lettre + $cteetape1)</u><br/> &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp;$signerepaff$represte</td>
+    <td align=center>$repcte <br/> &nbsp;</td> 
+  </tr>
+</table>
+<br/>
+
+Étape 3: <br/> 
+Présentons la réponse de la division: <br/>
+<table>
+  <tr>
+    <td>&nbsp; <strong>$num</strong> &nbsp; &nbsp;</td>
+    <td>|<u><strong>$denum</strong> &nbsp</u></td> 
+  </tr>
+  <tr>
+    <td>-<u>($c$lettre + $cteetape1)</u><br/> &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp;$signerepaff$represte</td>
+    <td>$repcte <strong> $signerep ($represte/$a$lettre + $b)</strong><br/> &nbsp;</td> 
+  </tr>
+</table>
+<br/>
+D'où: <br/>
+\( f($lettre) =$represte $signerep \dfrac{$represte}{$a$lettre + $b} \) <br/><br/>
+\( f($lettre) =$signerepaff \dfrac{$represte}{$a($lettre + $mult)} + $represte \) <br/><br/>
+\( f($lettre) =\dfrac{ \dfrac{$signerepaff $represte}{$a} }{$lettre + $mult} + $represte \) <br/><br/>
+\( f($lettre) =\dfrac{ \dfrac{$signerepaff $represte}{$a} }{$lettre - ($reph)} + $represte \) <br/><br/>
+<br/><br/><br/>
+
+Grâce à la forme canonique de base  \( f($lettre) = \dfrac{a}{$lettre-h} + k \) , nous trouvons que:<br/><br/>
+<ul>
+  <li>l'asymptote verticale est x = h = <strong>$rephaff</strong></li>
+  <li>l'asymptote horizontale est y = k = <strong>$repkaff</strong></li>
+</ul>
+<br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

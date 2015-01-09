@@ -1,0 +1,146 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section R&eacute;solution de probl&egrave;mes - G&eacute;n&eacute;ral
+#     type de question - Achats de fournitures scolaires 
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('R&eacute;solution de probl&egrave;mes')
+## DBsection('G&eacute;n&eacute;ral')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'r&eacute;solution', 'g&eacute;n&eacute;ral','r&egrave;gle de trois')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+
+TEXT(beginproblem());
+$stylos = random(2,5);
+$cartables = random(2,5);
+$feuilles = random(2,5);
+$pstylos = sprintf("%1.2f",(random(60,120,20)) / 100);
+$pcartables = sprintf("%1.2f",(random(150,300,50)) / 100);
+$pfeuilles = sprintf("%1.2f",(random(50,100,10)) / 100);
+$total = sprintf("%1.2f",$stylos * $pstylos + $cartables * $pcartables + $feuilles * $pfeuilles);
+$argent = (int($total / 10) + 1) * 10;
+$change = sprintf("%1.2f",$argent - $total);
+$reponse = sprintf("%1.2f",$change);
+
+# prix requis pour la solution d&eacute;taill&eacute;e
+$ps = sprintf("%1.2f",$stylos * $pstylos);
+$pc = sprintf("%1.2f",$cartables * $pcartables);
+$pf = sprintf("%1.2f",$feuilles * $pfeuilles);
+$pt = sprintf("%1.2f",$ps + $pc + $pf);
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Vous allez acheter des fournitures scolaires pour vos &eacute;tudes. Vous achetez $stylos stylos, $cartables cartables et $feuilles paquets de feuilles lign&eacute;es. Sachant que le prix de chaque stylo est de $pstylos dollars, celui de chaque cartable est de $pcartables dollars et celui de chaque paquet de feuilles lign&eacute;es est de $pfeuilles dollars, combien d'argent vous restera-t-il apr&egrave;s cet achat si vous aviez $argent dollars en poche ?<br/>
+  </td></tr>
+  <tr><td>
+
+\{ans_rule(10)\} dollars (&agrave; deux d&eacute;cimales pr&egrave;s)
+<br/><br/>
+<h5>Utiliser le point (au lieu de la virgule) pour s&eacute;parer <br/>la partie enti&egrave;re de la partie d&eacute;cimale dans la r&eacute;ponse.</h5>
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Une fois le coût du mat&eacute;riel &agrave; acheter d&eacute;termin&eacute;, soustraire ce montant de l'argent que vous avez pour les acheter, afin de trouver ce qu'il reste d'argent.";
+break;
+case '2':text="Trouver tout d'abord le coût pour l'ensemble des stylos &agrave; acheter, ensuite celui pour l'ensemble des cartables, et ensuite celui pour l'ensemble des paquets de feuilles, et ensuite additionner tous ceux-ci.";
+break;
+case '3':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/resolution-de-problemes/finances>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u></p>
+<p>Trouver le prix de l'ensemble des stylos, celui de l'ensemble des cartables et celui de l'ensemble des paquets de feuilles. Additionner ensuite ces trois prix et le soustraire de la somme totales disponibles afin de trouver combien d'argent il restera:</p>
+
+<table border="0" cellspacing="1" cellpadding="1" width="500">
+    <tbody>
+        <tr>
+            <td>a)</td>
+            <td align="left">&nbsp;$stylos stylos x $pstylos dollars par stylo =</td>
+            <td align="right">$ps dollars</td>
+            <td width="20">&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td align="left"> $cartables cartables x $pcartables dollars par cartable = </td>
+            <td align="right">$pc dollars</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td align="left"> $feuilles paquets de feuilles x $pfeuilles dollars par paquet = </td>
+            <td align="right"><u>$pf dollars</u></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td align="right">Prix total =</td>
+            <td align="right"><strong>$pt dollars</strong></td>
+            <td>&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+<br/>
+
+<table border="0" cellspacing="1" cellpadding="1" width="550">
+    <tbody>
+        <tr>
+            <td>b)</td>
+            <td align="left">$argent dollars - $pt dollars = <strong>$reponse </strong> dollars</td>
+            <td width="20">&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+
+END_SOLUTION
+ENDDOCUMENT();

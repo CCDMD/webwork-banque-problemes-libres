@@ -1,0 +1,158 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Nombre d&eacute;cimal - Valeur plus grande ou plus petite
+#     type de question - Quelle est la plus petite valeur (choix multiple)
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Nombre d&eacute;cimal')
+## DBsection('Comparaison de grandeur')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'd&eacute;cimal', 'comparaison', 'grandeur')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "parserRadioButtons.pl",
+);
+
+TEXT(beginproblem());
+
+# cr&eacute;er trois nombres d&eacute;cimaux ayant la m&ecirc;me partie enti&egrave;re mais une partie d&eacute;cimale diff&eacute;rente
+$entier=random(0,100);
+$adec=random(10,99);
+$bdec=random(10,99);
+while ($bdec==$adec)
+  {$bdec=random(10,99);}
+$cdec=random(10,99);
+while ($cdec==$adec)
+ {
+  $cdec=random(10,99);
+  while ($cdec==$bdec)
+    {$cdec=random(10,99);}
+ }
+
+$a=($entier.".".$adec);
+$b=($entier.".".$bdec);
+$c=($entier.".".$cdec);
+
+# d&eacute;terminer lequel des trois nombres d&eacute;cimaux est le plus petit entre a, b et c,
+# et d&eacute;terminer lesquels ont les plus petites d&eacute;cimales, ainsi que les plus grandes
+if ($a<$b && $a<$c)
+  {
+    $reponse=$a;
+    $rep1=$adec;
+    if ($b<$c)
+      {
+        $rep2=$bdec;
+        $rep3=$cdec;
+      }
+    else 
+      {
+        $rep2=$cdec;
+        $rep3=$bdec;}
+  }
+elsif ($b<$a && $b<$c)
+  {
+    $reponse=$b;
+    $rep1=$bdec;
+    if ($a<$c)
+      {
+        $rep2=$adec;
+        $rep3=$cdec;
+      }
+    else 
+      {
+        $rep2=$cdec;
+        $rep3=$adec;
+      }
+  }
+else
+  {
+    $reponse=$c;
+    $rep1=$cdec;
+    if ($a<$b)
+      {
+        $rep2=$adec;
+        $rep3=$bdec;
+      }
+    else 
+      {
+        $rep2=$bdec;
+        $rep3=$adec;
+      }
+  }
+
+# assigner chacun de ces trois nombres d&eacute;cimaux &agrave; c&ocirc;t&eacute; d'un bouton radio &agrave; choisir en choix de r&eacute;ponse
+$radio = RadioButtons(["$a","$b","$c"],"$reponse",);
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Quel nombre ci-dessous a la plus petite valeur ? <br/><br/>
+
+\{ $radio->buttons() \}
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text=" Dans le cas de comparaison de nombres d&eacute;cimaux, ajuster la partie au m&ecirc;me nombre de d&eacute;cimales en rajoutant des z&eacute;ros au besoin, afin de faciliter la comparaison entre ces nombres (ex.: 2.4  vs 2.36 =  2.40 vs 2.36 où 2.40 est le plus grand et 2.36 le plus petit). ";
+break;
+case '2':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/decimales/comparaison>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( $radio->cmp() );
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+
+<p>&nbsp;<u>Solution</u></p>
+&Eacute;tant donn&eacute; que seule la partie d&eacute;cimale varie, et que 0.$rep1 < 0.$rep2 < 0.$rep3,<br/>
+alors la plus petite valeur des trois est <strong>$reponse</strong>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

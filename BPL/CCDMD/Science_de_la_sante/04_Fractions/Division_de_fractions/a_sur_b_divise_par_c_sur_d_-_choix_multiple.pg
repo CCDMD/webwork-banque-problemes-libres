@@ -1,0 +1,205 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Fractions - Division
+#     type de question -  Division de fractions en lettre (a/b divis&eacute; par c/d) - choix multiple
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Fraction')
+## DBsection('Division')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'fraction', 'division')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "parserRadioButtons.pl",
+);
+
+
+TEXT(beginproblem());
+
+# assigner un code entre 1 et 4 &agrave; chacun des chiffres composant les deux fractions &agrave; produire
+do
+{
+  do
+  {
+   $n1=random(1,4);
+   $d1=random(1,4);
+  }while($n1==$d1);
+
+  $n2=random(1,4);
+
+} while ($n2==$n1 || $n2 == $d1);
+
+
+$total=$n1 + $n2 + $d1;
+if    ($total==6) {$d2=4;}
+elsif ($total==7) {$d2=3;}
+elsif ($total==8) {$d2=2;}
+else              {$d2=1;}
+
+# d&eacute;terminer laquelle des quatre premi&egrave;res lettres de l'alphabet occupera 
+# une des quatre positions dans les deux fractions &agrave; produire, afin que chaque
+# position soit occup&eacute;e par une lettre diff&eacute;rente
+@liste=("a","b","c","d");
+$num1= $liste[$n1-1];
+$den1= $liste[$d1-1];
+$num2= $liste[$n2-1];
+$den2= $liste[$d2-1];
+
+# produire les quatre choix de r&eacute;ponse, avec rep &eacute;tant la bonne r&eacute;ponse
+$rep= ("$num1$den2/$den1$num2");
+$rep2=("$num1$num2/$den1$den2");
+$rep3=("$den1$num2/$num2$den2");
+$rep4=("$den1$den2/$num1$num2");
+
+
+# assigner chacun de ces quatre r&eacute;ponses &agrave; un bouton radio &agrave; choisir en choix de r&eacute;ponse
+$radio = RadioButtons(["$rep","$rep2","$rep3","$rep4"],"$rep",);
+
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+<tr><td>
+
+<h1>Question : </h1>
+<br/>Simplifier l'expression suivante: <br/><br/>
+     <table>
+       <tr>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+          <td align=center>&nbsp;&nbsp;<u>$num1</u>&nbsp;&nbsp;</td>
+       </tr>
+       <tr>
+         <td></td>
+         <td align=center>$den1</td>
+       </tr>
+       <tr>
+         <td></td>
+         <td align=center><hr color="black"></td>
+       </tr>
+       <tr>
+         <td></td>
+         <td align=center><u>$num2</u></td>
+       </tr>
+       <tr>
+         <td></td>
+         <td align=center>$den2</td>
+       </tr>
+     </table>
+<br/>
+
+\{ $radio->buttons() \}
+</td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Pour diviser deux fractions, inverser tout d'abord la seconde fraction (son num&eacute;rateur devient son d&eacute;nominateur, et vice versa), et multiplier ensuite cette fraction invers&eacute;e avec la premi&egrave;re fraction.";
+break;
+case '2':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/fractions/division>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( $radio->cmp() );
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+
+<p>&nbsp;<u>Solution</u></p>
+
+Pour diviser deux fractions, inverser tout d'abord la seconde fraction et ensuite <br/>
+multiplier cette nouvelle fraction invers&eacute;e avec la premi&egrave;re fraction pr&eacute;sente:<br/>
+
+
+<table>
+  <tr>
+   <td>
+
+     <table>
+       <tr>
+          <td align=center>&nbsp;&nbsp;<u>$num1</u>&nbsp;&nbsp;</td>
+       </tr>
+       <tr>
+         <td align=center>$den1</td>
+       </tr>
+       <tr>
+         <td align=center><hr color="black"></td>
+       </tr>
+       <tr>
+         <td align=center><u>$num2</u></td>
+       </tr>
+       <tr>
+         <td align=center>$den2</td>
+       </tr>
+     </table>
+  
+   </td>
+   <td>  
+
+     <table>
+       <tr>
+         <td align=center>&nbsp;=&nbsp;</td>
+         <td align=center><u>$num1</u></td>
+         <td align=center>&nbsp;.&nbsp;</td>
+         <td align=center><u>$den2</u></td>
+         <td align=center>&nbsp;=&nbsp;</td>
+         <td align=center><u>$num1$den2</u></td>
+       </tr>
+       <tr>
+         <td align=center>&nbsp;</td>
+         <td align=center>$den1</td>
+         <td align=center>&nbsp;</td>
+         <td align=center>$num2</td>
+         <td align=center>&nbsp;</td>
+         <td align=center>$den1$num2</td>
+       </tr>
+     </table>
+
+   </td>
+  </tr>
+</table>
+
+END_SOLUTION
+
+ENDDOCUMENT();

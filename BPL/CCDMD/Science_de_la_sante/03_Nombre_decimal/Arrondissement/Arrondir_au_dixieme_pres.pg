@@ -1,0 +1,170 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Nombre d&eacute;cimal - Arrondissement
+#     type de question - Arrondir au dixi&egrave;me pr&egrave;s    
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Nombre d&eacute;cimal')
+## DBsection('Arrondissement')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'd&eacute;cimal', 'arrondissement')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+
+TEXT(beginproblem());
+
+# cr&eacute;er un nombre &agrave; 4 d&eacute;cimales dont le dernier chiffre n'est pas z&eacute;ro, 
+# et dont la dixi&egrave;me n'est pas de 9, pour &eacute;viter d'arrondir les autres chiffres 
+# si elle est arrondie vers le haut
+$entier=random(10,50);
+$dec1=random(0,8);
+$dec2=random(0,9);
+$dec3=random(0,9);
+$dec4=random(1,9);
+$nombre=($entier.".".$dec1.$dec2.$dec3.$dec4);
+
+#d&eacute;terminer si le chiffre en dixi&egrave;me doit &ecirc;tre augment&eacute; en raison de l'arrondissement, 
+# et d&eacute;termine le signe &agrave; utiliser dans la solution selon cet arrondissement
+
+if ($dec2>=5)
+  {
+    $decarrondi=$dec1+1;
+    $sign=">=";
+  }
+else
+   {
+    $decarrondi=$dec1;
+    $sign="<";
+   }
+
+#partie du nombre d&eacute;cimal &agrave; conserver, avant de l'avoir arrondi
+$avant=($entier.".".$dec1);
+
+#partie du nombre d&eacute;cimal &agrave; retirer
+$apres=($dec2.$dec3.$dec4);
+
+# r&eacute;ponse apr&egrave;s arrondissement
+$reponse=($entier.".".$decarrondi);
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>$nombre arrondi au dixi&egrave;me pr&egrave;s &nbsp;= <br/>
+
+\{ans_rule(10)\}
+<br/>
+<h5>Utiliser le point (au lieu de la virgule) pour s&eacute;parer <br/>la partie enti&egrave;re de la partie d&eacute;cimale dans la r&eacute;ponse, au besoin.</h5>
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text=" Les positions finissant par le suffixe aine repr&eacute;sentent une position d'un entier (un chiffre &agrave; la gauche du point d&eacute;cimal) dans un nombre d&eacute;cimal alors que celles finissant par le suffixe i&egrave;me repr&eacute;sentent une position d'une d&eacute;cimale (un chiffre &agrave; la droite du point d&eacute;cimal) dans un nombre d&eacute;cimal. ";
+break;
+case '2':text=" Les 6 principales positions d'un nombre d&eacute;cimal sont:  \n centaine dizaine unit&eacute; . dixi&egrave;me centi&egrave;me milli&egrave;me. ";
+break;
+case '3':text=" Pour arrondir un chiffre, examiner l'ensemble des chiffres &agrave; retirer apr&egrave;s la position pr&eacute;cis&eacute;e. Si ceux-ci forment une proportion &eacute;gale ou sup&eacute;rieure  &agrave; 50% de leur position, incr&eacute;menter de 1 le dernier chiffre &agrave; conserver; sinon, le laisser tel quel. (ex.:  5.249 au dixi&egrave;me pr&egrave;s = 5.2 , car les chiffres 49 &agrave; retirer repr&eacute;sentent 49/100, ce qui est inf&eacute;rieur &agrave; 50%). ";
+break;
+case '4':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/decimales/arrondissement>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<button type="button" name="4" onclick="hint(this)">Astuce 4</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+
+<p>&nbsp;<u>Solution</u></p>
+
+<table>
+  <tr>
+    <td>
+      $avant<strong><strike>$apres</strike></strong> &nbsp;= <strong>$reponse</strong>
+    </td>
+    <td align=right>
+       car
+    </td>
+    <td align=center>
+       <u>$apres</u>
+    </td>
+    <td align=center>
+      $sign
+    </td>
+    <td align=center>
+      <u>500</u>
+    </td>
+    <td>
+       (soit 50%)
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+      &nbsp;
+    </td>
+    <td align=center>
+      1000
+    </td>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+      1000
+    </td>
+    <td>
+      &nbsp;
+    </td>
+  </tr>
+
+</table>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

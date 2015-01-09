@@ -1,0 +1,111 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Rapports et proportions - Dose finale requise
+#     type de question - Quantit&eacute; finale requise (style: le tiers)
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Rapports et proportions')
+## DBsection('Dose finale requise')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'rapport','proportion', 'quantit&eacute;')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+TEXT(beginproblem());
+# choisir un terme de fraction ainsi que son diviseur correspondant
+$choix = random(1,7);
+@listedefois=("la demie", "le tiers", "le quart", "le cinqui&egrave;me", "le sixi&egrave;me", "le huiti&egrave;me", "le dixi&egrave;me");
+$fois=$listedefois[$choix];
+
+@listedediv=(2,3,4,5,6,8,10);
+$div = $listedediv[$choix];
+
+# d&eacute;terminer la r&eacute;ponse, ainsi que la dose &agrave; partir de cette r&eacute;ponse
+$reponse = random(1,12);
+$dose=$reponse*$div;
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Combien donne $fois de $dose ml ?<br/>
+  </td></tr>
+  <tr><td>
+
+\{ans_rule(10)\} ml
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Multiplier la dose par la fraction repr&eacute;sentant la partie exprim&eacute;e (ex.: la demie de 0.4 cm = 0.4 x 1/ 2 = 0.4 / 2  = 0.2 cm).";
+break;
+case '2':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/rapports-et-proportions/facteurs-et-multiples>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u>:</p>
+<p>Diviser la dose par le facteur correspondant &agrave; la fraction recommand&eacute;e:</p>
+<br/>
+<table border="0" cellspacing="1" cellpadding="1">
+    <tbody>
+        <tr>
+            <td align="left">$fois de $dose ml = </td>
+            <td align="center"><u>$dose ml</u></td>
+            <td>=&nbsp; <strong>$reponse</strong> ml</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td align="center">$div</td>
+            <td>&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+
+END_SOLUTION
+ENDDOCUMENT();

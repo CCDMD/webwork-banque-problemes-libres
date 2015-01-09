@@ -1,0 +1,162 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section R&eacute;solution de probl&egrave;mes - G&eacute;n&eacute;ral
+#     type de question - Prix d'un taxi 
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('R&eacute;solution de probl&egrave;mes')
+## DBsection('G&eacute;n&eacute;ral')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'r&eacute;solution', 'g&eacute;n&eacute;ral','r&egrave;gle de trois')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+TEXT(beginproblem());
+$coutdebase = sprintf("%1.2f",random(3,5));
+$prixadd = sprintf("%1.2f",(random(20,30,5) / 100));
+$distance = random(2,10);
+$centmetres = ($distance * 1000 - 200) / 100;
+$coutadd = sprintf("%1.2f",$prixadd * $centmetres);
+$prix = sprintf("%1.2f",($coutdebase + $coutadd));
+$reponse = sprintf("%1.2f",$prix);
+
+
+# valeurs requises pour la solution d&eacute;taill&eacute;e
+$d = sprintf("%4.0f",$distance * 1000);
+$dres = sprintf("%4.0f",$d - 200);
+$pres = sprintf("%1.2f",$dres * $prixadd / 100);
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Vous devez prendre un taxi pour vous rendre &agrave; l'a&eacute;roport. Si le taxi charge un tarif initial de $coutdebase dollars pour le premier 200 m&egrave;tres et ensuite $prixadd dollar pour chaque 100 m&egrave;tres suppl&eacute;mentaires parcourus, combien vous coûtera le taxi si la distance vers l'a&eacute;roport est de $distance kilom&egrave;tres ?<br/>
+  </td></tr>
+  <tr><td>
+
+\{ans_rule(10)\} dollars (&agrave; deux d&eacute;cimales pr&egrave;s)
+<br/><br/>
+<small>Utiliser le point (au lieu de la virgule) pour s&eacute;parer <br/>la partie enti&egrave;re de la partie d&eacute;cimale dans la r&eacute;ponse.</small>
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Convertir tout d'abord la distance &agrave; parcourir de kilom&egrave;tres &agrave; m&egrave;tres.";
+break;
+case '2':text="Soustraire les 200 premiers m&egrave;tres des m&egrave;tres &agrave; parcourir au total, &eacute;tant donn&eacute; que le tarif initial s'applique &agrave; ces 200 premiers m&egrave;tres seulement. Vous trouverez ainsi la distance qui sera charg&eacute;e au m&egrave;tre.";
+break;
+case '3':text="Appliquer le coût additionnel pour chaque tranche de 100 m&egrave;tres sur la distance additionnelle, en utilisant la r&egrave;gle de trois.";
+break;
+case '4':text="Additionner les deux coûts trouv&eacute;s (le tarif initial + le tarif pour chaque 100 m&egrave;tres suppl&eacute;mentaires effectu&eacute;) pour trouver le prix total.";
+break;
+case '5':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/resolution-de-problemes/finances>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<button type="button" name="4" onclick="hint(this)">Astuce 4</button>&nbsp;
+<button type="button" name="5" onclick="hint(this)">Astuce 5</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u>:</p>
+<p>Tout d'abord, convertir la distance de kilom&egrave;tres &agrave; m&egrave;tres et en soustraire les 200 premiers m&egrave;tres <br/>
+pour lequels le prix de base de $coutdebase dollars est automatiquement appliqu&eacute;.</p>
+
+<table border="0" cellspacing="1" cellpadding="1" width="500">
+    <tbody>
+        <tr>
+            <td>&nbsp;&nbsp; a)</td>
+            <td align="left">$distance km&nbsp; = <strong>&nbsp; $d m&egrave;tres</strong></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;&nbsp; b)&nbsp;</td>
+            <td align="left">$d m&egrave;tres - 200 m&egrave;tres = <strong>$dres m&egrave;tres r&eacute;siduels</strong></td>
+            <td>&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+<br/>
+
+<p>Ces m&egrave;tres r&eacute;siduels seront charg&eacute;s $prixadd dollar du 100 m&egrave;tres:</p>
+
+<table border="0" cellspacing="1" cellpadding="1" width="600">
+    <tbody>
+        <tr>
+            <td>&nbsp;&nbsp; c)</td>
+            <td align="left">$dres m&egrave;tres </td>
+            <td align="left">: ? dollars</td>
+            <td align="center"><u>$dres m&egrave;tres x $prixadd dollar</u></td>
+            <td align="left">= <strong>$pres dollars</strong></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td align="left">&nbsp;100 m&egrave;tres </td>
+            <td align="left">: $prixadd dollar</td>
+            <td align="center">100 m&egrave;tres</td>
+            <td align="left">&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+<br/>
+
+<p>Il suffira d'additionner ce coût avec le prix de base de $coutdebase dollars pour obtenir le coût total.</p>
+ 
+<table border="0" cellspacing="1" cellpadding="1" width="600">
+    <tbody>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp; d)</td>
+            <td align="left">$coutdebase dollars + $pres dollar =&nbsp;<strong>$reponse </strong> dollars</td>
+            <td width="20">&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+
+END_SOLUTION
+ENDDOCUMENT();

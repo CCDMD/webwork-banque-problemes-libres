@@ -1,0 +1,196 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions logarithmes
+#     type de question - Résoudre une équation logarithmique (moyen)
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 5')
+## DBchapter('Fonctions logarithmes')
+## DBsection('Résolution')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'secondaire 5', 'fonction', 'algèbre', 'logarithme', 'résolution')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs des coefficients et constantes des deux formes
+
+
+do {
+  $a=random(2,10);
+  $b=random(2,5);
+  $a2= random(2,10);
+  $c2=random(2,9);
+  $ac2=$a*$c2;
+  $exp=random(2,5);
+  $bexp=$b**$exp;
+  $coefc= $ac2 - $bexp;
+  $coefcabs= abs($coefc);
+  $aa2=$a*$a2;
+  $coefb= $c2-$aa2;
+  $coefbabs=abs($coefb);
+}  until ( ($b != $exp) & ($a2 != $c2) & ($coefc != 0) & ($coefbabs > 1) );
+
+
+$mult=gcd($a2,$c2);
+if ($a2/$c2 == int($a2/$c2)) {$frac= $a2/$c2;}
+elsif ($mult == 1) {$frac="$a2/$c2";}
+else {
+          $a2mult=$a2/$mult;
+          $c2mult=$c2/$mult;
+          $frac="$a2mult/$c2mult";
+        }
+
+#créer  les signes à insérer selon la valeur des coefficients c et b
+if ($coefx > 0) {$signec="+";}
+else { $signec="-";}
+
+if ($coefb > 0) {$signeb="+";}
+else { $signeb="-";}
+
+
+# déclarer la lettre qui seront la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# créer les valeurs intermédiaires requises pour la solution
+if ($mult==1) {$note1="";}
+else {$note1="$lettre < $frac"; }
+
+$intervalle="(-$a, $frac)";
+
+
+# créer la réponse
+$reponse=Formula("( -$a2 $lettre^2 $signeb $coefbabs $lettre $signec $coefcabs )");        
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Résoudre l'équation logarithmique suivante à l'aide des exposants. Donner seulement l'équation polynomiale de degré 2 à laquelle doivent répondre les valeurs de x de l'équation logarithmique.
+<br/><br/>   
+log<sub>$b</sub>($lettre + $a) + log<sub>$b</sub>($c2 - $a2$lettre) = $exp
+<br/><br/>
+
+ \{ans_rule(20)\} = 0
+
+<br/><br/>
+Note: Indiquer votre réponse sous la forme <strong>ax^2 + bx +c</strong>, sans la partie "= 0".
+
+<br/><br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="L'expression logarithmique log<sub>b</sub><i>x</i> est définie si <i>x</i>> 0. Pour une expression de la forme log<sub>b</sub>(<i>x-a</i>), il faut résoudre l'inéquation <i>x-a</i> > 0 pour trouver quand celle-ci est définie.";
+break;
+case '2':text="Voici une propriété des logarithmes:  log<sub>b</sub>u + log<sub>b</sub>v = log<sub>b</sub> (uv).";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($reponse->cmp);
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Résoudre l'équation logarithmique suivante à l'aide des exposants. Donner seulement l'équation polynomiale de degré 2 à laquelle doivent répondre les valeurs de x de l'équation logarithmique.
+<br/><br/>   
+log<sub>$b</sub>($lettre + $a) + log<sub>$b</sub>($c2 - $a2$lettre) = $exp
+<br/><br/>
+
+ ___________________ = 0
+
+<br/><br/>
+Note: Indiquer votre réponse sous la forme <strong>ax^2 + bx +c</strong>, sans la partie "= 0".
+<br/><br/><br/>
+
+D'abord, il faut déterminer l'intervalle pour lequel l'équation logarithmique est définie. Soit la forme de base pour le logarithme,   log<sub>b</sub>x. Par définition, l'argument (x) d'un log doit être plus grand que 0, donc  x > 0.<br/><br/>
+ 
+Par conséquent, l'équation <strong>log<sub>$b</sub>($lettre + $a) + log<sub>$b</sub>($c2 - $a2$lettre) = $exp</strong>  sera définie si  :
+<br/><br/>
+ &nbsp; &nbsp; a) $lettre + $a > 0 <br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $lettre > -$a <br/><br/>
+
+et si:
+<br/><br/>
+ &nbsp; &nbsp; b) $c2 - $a2$lettre > 0 <br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  -$a2$lettre > -$c2 <br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  $a2$lettre < $c2 <br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  $lettre < $c2/$a2 <br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $note1<br/><br/>
+
+Il est souvent utile de faire une représentation visuelle de l'ensemble solution pour qu'il soit plus facile d'exprimer la réponse sous forme d'intervalle. Soit A= -$a  et B = $frac:<br/><br/>
+
+
+\{ image(("intervalle_ouverte_ouverte.jpg"), width=>332, height=>39) \}
+
+<br/><br/>
+Par conséquent, l'expression <strong>log<sub>$b</sub>($lettre + $a) + log<sub>$b</sub>($c2 - $a2$lettre) = $exp</strong> est définie sur l'intervalle  $intervalle ; donc la réponse devra être incluse dans cet intervalle !<br/><br/>
+
+On demande dans ce problème de trouver l'équation de degré 2 à laquelle doivent répondre les valeurs de x de l'équation logarithmique:
+<br/><br/>
+log<sub>$b</sub>($lettre + $a) + log<sub>$b</sub>($c2 - $a2$lettre) = $exp <br/><br/>
+
+log<sub>$b</sub>( ($lettre + $a)($c2 - $a2$lettre) ) = $exp   &nbsp; &nbsp; en utilisant la propriété log<sub>b</sub>u + log<sub>b</sub>v = log<sub>b</sub>(uv)<br/><br/>
+
+($lettre + $a)($c2 - $a2$lettre) = $b<sup>$exp</sup>   &nbsp; &nbsp; en utilisant la définition du logarithme ( $exp est l'exposant qu'il faut donner à la base $b pour obtenir ($lettre + $a)($c2 - $a2$lettre)). <br/><br/>
+
+-$a2$lettre<sup>2</sup> $signeb $coefbabs$lettre + $ac2 = $bexp <br/><br/>
+
+-$a2$lettre<sup>2</sup> $signeb $coefbabs$lettre $signec $coefcabs = 0 &nbsp; &nbsp; (en regroupant les termes semblables)<br/><br/>
+
+D'où la réponse:<strong>  -$a2$lettre^2 $signeb $coefbabs$lettre $signec $coefcabs </strong>   = 0 <br/>
+(présenter la réponse sans " = 0").
+<br/><br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

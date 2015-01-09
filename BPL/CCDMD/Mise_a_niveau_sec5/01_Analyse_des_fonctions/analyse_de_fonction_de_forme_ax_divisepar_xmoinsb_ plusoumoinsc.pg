@@ -1,0 +1,355 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Analyse des fonctions 
+#     type de question - Analyse d'une fonction de forme ( ax/(x - b) ) +/- c
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 5')
+## DBchapter('Analyse des fonctions')
+## DBsection('Fonction')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'secondaire 5', 'fonction', 'algèbre')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+  "PGgraphmacros.pl",
+);
+
+TEXT(beginproblem());
+
+# créer les valeurs pour a et b
+
+$a=random(2,9);
+$b=random(2,9);
+$choixb=non_zero_random(-1,1);
+$sb=$b*$choixb;
+$invb=-1*$sb;
+
+do {
+  $c=random(2,9);
+  $choixc=non_zero_random(-1,1);
+  $sc=$c*$choixc;
+  $zerodex=(-$sc*$sb)/($a+$sc);
+}
+until ( ($a + $sc != 0)  && ($zerodex == int($zerodex) )  );
+
+# déterminer les signes à mettre dans l'équation selon les valeurs de b et c
+if ($choixb == 1) {$signeb = "+";}
+else {$signeb= "-";}
+
+if ($choixc == 1) {$signec = "+";}
+else {$signec= "-"; }
+
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# déterminer le type de graphique présent
+if (($sb > 0)  && ($zerodex> $invb))   {$g = "0";}
+elsif (($sb > 0)  && ($zerodex <= $invb))   {$g = "1";}
+elsif (($sb <= 0)  && ($zerodex > $invb))   {$g = "2";}
+else {$g = "3";}
+
+
+# déterminer les limites négatives et positives selon le type de graphique présent
+@neg1= ("$invb","-infini", "-infini", "$zerodex");
+@neg2= ("$zerodex","$zerodex","$invb","$invb");
+@neg3= ("aucun", "$invb", "$zerodex","aucun"); 
+@neg4= ("aucun","infini","infini","aucun");
+@pos1= ("-infini", "$zerodex","$invb","-infini");
+@pos2= ("$invb", "$invb","$zerodex","$zerodex");
+@pos3= ("$zerodex","aucun","aucun", "$invb");
+@pos4= ("infini","aucun","aucun", "infini");
+
+if ($neg3[$g]=="aucun") {$negatif="("."$neg1[$g]".","."$neg2[$g]".")" ;}
+else {$negatif= "("."$neg1[$g]".","."$neg2[$g]".")"."U"."("."$neg3[$g]".","."$neg4[$g]".")";}
+
+if ($pos3[$g]=="aucun") {$positif="("."$pos1[$g]".","."$pos2[$g]".")" ;}
+else {$positif= "("."$pos1[$g]".","."$pos2[$g]".")"."U"."("."$pos3[$g]".","."$pos4[$g]".")";}
+
+# déterminer les autres valeurs pour la solution
+$scinv= -1 *$sc;
+$bscinv=$sb*$scinv;
+$bsc=$sb*$sc;
+$diff=$scinv - $a;
+
+
+# déterminer les valeurs pour les réponses
+$ordonnee = $sc;
+$zero = $zerodex;
+$domaine= $invb;
+
+
+#créer le graphique de cette fonction, afin de pouvoir l'afficher dans la solution
+
+$distance=(abs($invb-$zerodex))*3;
+$gxpos=$invb+$distance;
+$gxneg=$invb-$distance;
+$gypos= 50;
+$gyneg= -50;
+
+$graphique=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique, "(($a$lettre)/($lettre + $sb))+$sc  for x in <$gxneg,$gxpos> using color:blue and weight:2 ");
+
+
+$gx=5; 
+$gy= 10;
+
+for ($i = 0; $i <= int( ($gxpos /$gx) +1); $i++)
+  {
+     $graphique->lb(new Label($gx*$i+$gx+0.2,-0.15,$gx*$i+$gx,'black','center','top'));
+     $graphique->moveTo($gx*$i+$gx+0.2,-0.15); 
+   }
+for ($i = 0; $i <= int( ($gxpos /$gx) +1); $i++)
+  {
+     $graphique->lb(new Label(-$gx*$i-$gx-0.2,-0.15,-$gx*$i-$gx,'black','center','top'));
+     $graphique->moveTo(-$gx*$i-$gx-0.2,-0.15); 
+   }
+for ($i = 0; $i <=  int( ($gypos /$gy) +1); $i++)
+  {
+     $graphique->lb(new Label(-0.5,$gy*$i+$gy,$gy*$i+$gy,'black','right','top'));
+     $graphique->v_ticks(0,"black",10*$i-2);
+     $graphique->moveTo(-0.5, $gy*$i+$gy); 
+   }
+for ($i = 0; $i <=  int( (-$gyneg/$gy) +1); $i++)
+  {
+     $graphique->lb(new Label(-0.5,-$gy*$i-$gy+0.4,-$gy*$i-$gy,'black','right','top'));
+     $graphique->v_ticks(0,"black",-10*$i-2);
+     $graphique->moveTo(-0.5, -$gy*$i-$gy+0.4); 
+   }
+
+foreach my $i (1..$gxpos) {  $graphique->h_ticks(0,"black",$i); }
+foreach my $i ($gxneg..-1) {  $graphique->h_ticks(0,"black",$i); }
+
+#for ($i = 1; $i <=  $gypos/5; $i++)  { $graphique->v_ticks(0,"black",$i*5);}
+#for ($i = 1; $i <=  -$gyneg/5; $i++)  { $graphique->v_ticks(0,"black",$i*-5);}
+
+$graphique->stamps( closed_circle(0,$zerodex,'blue') );
+$graphique->stamps( closed_circle($sc,0,'blue') );
+
+$graphique->moveTo($invb,$gypos);
+$graphique->lineTo($invb,$gyneg,'black',1,'dashed');
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Pour la fonction suivante:  &nbsp; &nbsp; <b> \( f($lettre) = \dfrac{$a$lettre}{$lettre $signeb $b} $signec $c \)</b>
+<br/><br/>
+
+a) Quelle est l'ordonnée à l'origine de cette fonction ? &nbsp;&nbsp; \{ans_rule(10)\} 
+
+<br/><br/>
+
+b) Donner tous les zéros de cette fonction. &nbsp;&nbsp; \{ans_rule(10)\} 
+<br/><br>
+
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+<br/><br/>
+
+c) Le domaine de cette fonction est R sauf : &nbsp;&nbsp;  { \{ans_rule(15)\}    } 
+
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+<br/><br/>
+
+d) La fonction ci-dessus est négative sur l'intervalle  &nbsp;&nbsp;  \{ans_rule(20)\} 
+<br/><br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; La fonction ci-dessus est positive sur l'intervalle &nbsp;&nbsp;  \{ans_rule(20)\} 
+
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels, entrer: <b> R </b><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: <b>aucun</b> <br/>
+
+  </td></tr>
+</table>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Le domaine représente l'ensemble des nombres qui peuvent être insérés dans x pour obtenir un nombre réel pour y. Les nombres menant à une division par zéro ne donneront pas de nombre réel.";
+break;
+case '2':text="L'ordonnée à l'origine d'une fonction est la valeur de f(x) lorsque x est égal à zéro. ";
+break;
+case '3':text="Le zéro d'une fonction représente la valeur de x lorsque f(x) est égal à zéro. Il faut donc remplacer f(x) par zéro et isoler x pour en trouver la valeur résultante.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+$showPartialCorrectAnswers = 0;
+
+ANS(strict_num_cmp($ordonnee, .0));
+
+ANS(strict_num_cmp($zero, .0));
+
+ANS(strict_num_cmp($domaine, .0));
+
+ANS(str_cmp($negatif,'remove_whitespace'));
+
+ANS(str_cmp($positif,'remove_whitespace'));
+
+
+
+BEGIN_SOLUTION
+<br/> <u>Solution</u> <br/>
+
+<br/>Pour la fonction suivante:  &nbsp; &nbsp; <b>  \( f($lettre) = \dfrac{$a$lettre}{$lettre $signeb $b} $signec $c \)</b>
+<br/><br/>
+
+a) Quelle est l'ordonnée à l'origine de cette fonction ? &nbsp;&nbsp; ____________
+
+<br/><br/>
+
+b) Donner tous les zéros de cette fonction. &nbsp;&nbsp; ______________
+<br/><br>
+
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+<br/><br/>
+
+c) Le domaine de cette fonction est R sauf &nbsp;&nbsp; _____________
+
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+<br/><br/>
+
+d) La fonction ci-dessus est négative sur l'intervalle  &nbsp;&nbsp; ___________
+
+<br/><br/>La fonction ci-dessus est positive sur l'intervalle &nbsp;&nbsp; ______________ 
+
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels, entrer: <b> R </b><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: <b>aucun</b> <br/>
+<br/><br/>
+
+
+a) L'ordonnée à l'origine est la valeur de <strong>f($lettre)</strong> lorsque <strong>$lettre</strong> est égal à zéro. Donc: <br/><br/> 
+
+&nbsp; &nbsp; &nbsp; \( f($lettre) = \dfrac{$a$lettre}{$lettre $signeb $b} $signec $c \)<br/> 
+&nbsp; &nbsp; &nbsp;\(  f(0) = \dfrac{$a(0)}{(0) $signeb $b} $signec $c \) <br/> 
+&nbsp; &nbsp; &nbsp;\(  f(0) = \dfrac{0}{$sb} $signec $c  \)  <br/> 
+&nbsp; &nbsp; &nbsp;\(  f(0) = 0 $signec $c  \) <br/>
+&nbsp; &nbsp; &nbsp;\(  f(0) = $sc  \) <br/> <br/>
+
+Donc l'ordonnée à l'origine est <strong>$ordonnee</strong>
+<br/><br/> 
+
+b) Le zéro d'une fonction est la valeur de <strong>$lettre</strong> lorsque <strong>f($lettre)</strong> est égal à zéro.  Donc:<br/><br/>
+
+&nbsp; &nbsp; &nbsp;\(  0 =   \dfrac{$a$lettre}{$lettre $signeb $b} $signec $c \) <br/> 
+&nbsp; &nbsp; &nbsp;\(  $scinv =  \dfrac{$a$lettre}{$lettre $signeb $b}  \) <br/> 
+&nbsp; &nbsp; &nbsp;\(  $scinv($lettre $signeb $b) =  $a$lettre \) <br/> 
+&nbsp; &nbsp; &nbsp;\(  $scinv$lettre $bscinv =  $a$lettre \) <br/> 
+&nbsp; &nbsp; &nbsp;\(  $scinv$lettre -  $a$lettre = $bsc \) <br/> 
+&nbsp; &nbsp; &nbsp;\(  $diff$lettre =  $bsc \) <br/>
+&nbsp; &nbsp; &nbsp;\(  $lettre = \dfrac{$bsc} {$diff} \) <br/>
+&nbsp; &nbsp; &nbsp;\(  $lettre = $zerodex \)
+ <br/> <br/>
+
+Donc il y a un seul zéro pour cette fonction, soit <strong>$zerodex</strong>
+<br/><br/>
+
+
+
+c) Le domaine de la fonction représente l'ensemble des nombres que peut prendre la variable $lettre afin de donner un f($lettre) qui est un nombre réel.<br/><br/>
+
+Ici, une seule valeur de x ne permet pas d'obtenir une valeur réelle de f(x), soit la valeur de x qui donne zéro au dénominateur (étant donné que la division par zéro n'est pas définie). Ce point représente l'emplacement de l'asymptote verticale pour cette fonction. Par conséquent, le domaine de la fonction représente tous les nombres réels, sauf pour $sbinv.<br/><br/>
+
+ &nbsp; &nbsp; &nbsp;  Réponse =   R sauf <strong>$sbinv</strong><br/><br/>
+
+
+d)  La partie négative de la fonction f(x) telle que décrit ci-haut dépendra de deux facteurs:
+<br/><br/>
+<ul>
+  <li>si le dénominateur implique une addition ou une soustraction; </li>
+  <li>si le zéro de l'équation se retrouve avant ou après l'asymptote. </li>
+</ul>
+<br/>
+ Voici quelques exemples de situations possibles:<br/>
+
+<table>
+  <tr>
+    <td> \{ image("g0.jpg", width=>221, height=>202) \}
+            <br/>Si le dénominateur implique une addition et que le zéro de la fonction est inférieur à l'asymptote,  la partie négative se situe avant le zéro de la fonction ainsi qu'après l'asymptote de la fonction.</td>
+    <td>\{ image("g1.jpg", width=>223, height=>201) \}
+            <br/>Si le dénominateur implique une addition et que le zéro de la fonction est supérieur à l'asymptote,  la partie négative se situe avant l'asymptote  ainsi qu'après le zéro de la fonction.</td>
+  </tr>
+  <tr>
+    <td>\{ image("g2.jpg", width=>201, height=>230) \}
+            <br/>Si le dénominateur implique une soustraction et que le zéro de la fonction est inférieur à l'asymptote,  la partie négative se situe se situe entre l'asymptote et le zéro de la fonction.</td>
+    <td>\{ image("g3.jpg", width=>187, height=>216) \}
+            <br/>Si le dénominateur implique une soustraction et que le zéro de la fonction est supérieur à l'asymptote,  la partie négative se situe entre le zéro de la fonction et l'asymptote de la fonction.</td>
+  </tr>
+</table>  
+
+En faisant le tableau de signes pour la  fonction ci-dessus (mettre d'abord sur le même dénominateur) avec un dénominateur de <strong>$lettre $signeb $b</strong>, un zéro de l'équation égal à <strong>$zerodex</strong> et une asymptote à <strong>$sb</strong> :<br/>
+<ul>
+  <li>La fonction ci-dessus est négative sur l'intervalle <strong> $negatif </strong> . </li>
+  <li>La fonction ci-dessus est positive  sur l'intervalle <strong> $positif </strong>  . </li>
+</ul>
+<br/><br/>
+\{ image(insertGraph($graphique), width=>250, height=>250, tex_size=>500) \}
+<br/><br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

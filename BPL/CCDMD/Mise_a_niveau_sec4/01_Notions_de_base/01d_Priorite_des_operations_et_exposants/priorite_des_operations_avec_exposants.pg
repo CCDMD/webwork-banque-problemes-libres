@@ -1,0 +1,199 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de base - Priorit&eacute; des op&eacute;rations
+#     type de question - Priorite des opérations avec exposants
+##ENDDESCRIPTION
+
+## DBsubject('Notions de base')
+## DBchapter('Priorité des opérations')
+## DBsection('Priorit&eacute; des fractions et exposants')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'notions', 'priorit&eacute;', 'priorité des opérations','exposants','fraction')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs de l'opération, selon certaines conditions
+
+do {   $a=non_zero_random(-6,6); }  
+until ($a != 1);
+
+$b=random(2,6);
+$c=random(2,4);
+$f=random(2,4);
+
+do {   $d=random(2,6); $e=non_zero_random(-6,6); }  
+until ((($d + $e) != 0)  &&  (($e)!=1) && (($a*$b)!=($d+$e)));
+
+
+#créer les réponses intermédiaires utilisées dans la solution
+$num=($a*$b)**$c;
+$den=($d+$e)**$f;
+$num2=$a*$b;
+$den2=$d + $e;
+
+
+#créer les réponses
+$repnum=Formula("$num");
+$repden=Formula("$den");
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+
+Simplifier l'expression suivante:  <br/><br/>
+
+<table>
+  <tr>
+     <td align=center valign=bottom>( $a ($b))<sup>$c</sup></td>
+     <td> &nbsp;</td>
+     <td>  \{ans_rule(10)\}  </td>
+  </tr>
+  <tr>
+     <td valign=top>_______</td>
+     <td> &nbsp; = &nbsp;</td>
+     <td valign=top>___________</td>
+  </tr>
+  <tr>
+     <td align=center valign=top>($d + ($e))<sup>$f</sup></td>
+     <td> &nbsp;</td>
+     <td>  \{ans_rule(10)\}   </td>
+ </tr>
+</table>
+<br/>
+ Note: Chaque réponse peut être écrite sous forme  d'exposant (ex.: 2^3) ou sous forme entière (ex.: 8) 
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Voici l'ordre de priorité des opérations: contenu entre parenthèses, puissances et racines, multiplications et divisions, additions et soustractions. .";
+break;
+case '2':text="Étant donné que les puissances présentes dans la question s'appliquent à des parenthèses, il faut tout d'abord résoudre le contenu des parenthèses avant de pouvoir leur appliquer la puissance. Par la suite, la division pourra être entreprise, car elle s'appliquera au numérateur entier et au dénominateur entier. .";
+break;
+case '3':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/entiers/priorites>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+# s'assurer que toutes les r&eacute;ponses sont bonnes pour avoir le point (pas de points partiels)
+$showPartialCorrectAnswers = 0;
+ANS($repnum->cmp);
+ANS($repden->cmp);
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+Simplifier l'expression suivante:  <br/><br/>
+
+<table>
+  <tr>
+     <td align=center valign=bottom>( $a ($b))<sup>$c</sup></td>
+  </tr>
+  <tr>
+     <td valign=top>_______</td>
+  </tr>
+  <tr>
+     <td align=center valign=top>($d + ($e))<sup>$f</sup></td>
+ </tr>
+</table>
+<br/><br/>
+ Note: Chaque réponse peut être écrite sous forme  d'exposant (ex.: 2^3) ou sous forme entière (ex.: 8) <br/><br/>
+
+
+Résoudre tout d'abord l'intérieur de chacune des parenthèses, étant donné que les puissances sont appliquées aux résultats de chacune de ces parenthèses. La réponse peut être fournie sous cette forme, sans la développer plus loin.
+<br/><br/>
+
+<table>
+  <tr>
+     <td align=center valign=bottom>( $a ($b))<sup>$c</sup></td>
+     <td> &nbsp; </td>
+     <td align=center> ( $num2 )<sup>$c</sup> </td>
+  </tr>
+  <tr>
+     <td valign=top>_______</td>
+     <td> &nbsp; = &nbsp</td>
+     <td valign=top>_______ </td>
+  </tr>
+  <tr>
+     <td align=center valign=top>($d + ($e))<sup>$f</sup></td>
+     <td> &nbsp; </td>
+     <td align=center> ( $den2 )<sup>$f</sup>  </td>
+ </tr>
+</table>
+
+<br/> 
+donc le numérateur serait: $num2 ^ $c <br/>
+et le dénominateur serait: $den2 ^$f<br/><br/>
+
+Pour la développer davantage, il suffit d'appliquer les exposants au contenu résolu de leur parenthèse: 
+<br/>
+<table>
+  <tr>
+     <td align=center valign=bottom>($num2)<sup>$c</sup></td>
+     <td> &nbsp; </td>
+     <td align=center> $num </td>
+  </tr>
+  <tr>
+     <td valign=top>_______</td>
+     <td> &nbsp; = &nbsp</td>
+     <td valign=top>_______ </td>
+  </tr>
+  <tr>
+     <td align=center valign=top>($den2)<sup>$f</sup></td>
+     <td> &nbsp; </td>
+     <td align=center> $den </td>
+ </tr>
+
+</table>
+<br/> 
+
+END_SOLUTION
+
+ENDDOCUMENT();

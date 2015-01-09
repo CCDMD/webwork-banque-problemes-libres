@@ -1,0 +1,274 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Analyse de fonctions avec graphique
+#     type de question - Analyse d'une fonction de forme x - c/( (x-a)(b-x) ) avec graphique
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 4')
+## DBchapter('Analyse de fonctions')
+## DBsection('Fonction')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'polynôme', 'fonction', 'algèbre','variable', 'analyse')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+# définir les valeurs des constantes a et b
+$a = random(2,6);
+$b=random(10,15);
+do {$c= random(6, 10);}
+  until ($a != $c);
+
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# déterminer les zéros de la fonction
+$zero = $c;
+
+# déterminer le domaine de la fonction  (R sauf ...)
+$domaine1=$a;
+$domaine2=$b;
+
+# déterminer le codomainede la fonction
+$codomaine= "R";
+
+# déterminer l'intervalle où la fonction est négative, et celle où elle est positive
+$negatif= "("."$a".","."$zero".")"."U"."("."$b".","."infini".")";
+$positif= "("."-infini".","."$a".")"."U"."("."$zero".","."$b".")";
+
+#créer le graphique de cette fonction, afin de pouvoir l'afficher dans la solution
+$gxneg=-8;
+$gxpos=$b+8;
+$gyneg=-1.6;
+$gypos= 1.6;
+
+$graphique=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[300,250] );
+add_functions($graphique, "(x-$c)/( (x-$a)($b-x) ) for x in <$gxneg,$a> using color:blue and weight:2 ");
+add_functions($graphique, "(x-$c)/( (x-$a)($b-x) ) for x in <$a,$b> using color:blue and weight:2 ");
+add_functions($graphique, "(x-$c)/( (x-$a)($b-x) ) for x in <$b,$gxpos> using color:blue and weight:2 ");
+
+$gx=5; 
+$gy=0.5;
+
+for ($i = 0; $i <= int( ($gxpos /5) +1); $i++)
+  {
+     $graphique->lb(new Label($gx*$i+$gx,-0.15,$gx*$i+$gx,'black','center','top'));
+     $graphique->moveTo($gx*$i+$gx,-0.15); 
+   }
+for ($i = 0; $i <= int( ($gxpos /5) +1); $i++)
+  {
+     $graphique->lb(new Label(-$gx*$i-$gx,-0.15,-$gx*$i-$gx,'black','center','top'));
+     $graphique->moveTo(-$gx*$i-$gx,-0.15); 
+   }
+for ($i = 0; $i <= int( ($gypos /0.5) +1); $i++)
+  {
+     $graphique->lb(new Label(-0.5,$gy*$i+$gy+0.1,$gy*$i+$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, $gy*$i+$gy+0.1); 
+   }
+for ($i = 0; $i <= int( ($gypos/0.5)+1); $i++)
+  {
+     $graphique->lb(new Label(-0.5,-$gy*$i-$gy+0.1,-$gy*$i-$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, -$gy*$i-$gy+0.1); 
+   }
+
+
+foreach my $i (1..$gxpos) {  $graphique->h_ticks(0,"black",$i); }
+foreach my $i ($gxneg..-1) {  $graphique->h_ticks(0,"black",$i); }
+for ($i = 0; $i <= $gypos/0.1; $i++)
+  {  
+      $graphique->v_ticks(0,"black",0.1*$i); 
+      $graphique->moveTo(0, 0.1*$i + 0.1); 
+  }
+for ($i = 0; $i <= (abs($gyneg))/0.1; $i++)
+  {  
+      $graphique->v_ticks(0,"black",-0.1*$i); 
+      $graphique->moveTo(0, -0.1*$i  - 0.1); 
+  }
+
+
+$graphique->stamps( closed_circle($zero,0,'blue') );
+
+$graphique->moveTo($a,$gypos);
+$graphique->lineTo($a,$gyneg,'black',1,'dashed');
+
+$graphique->moveTo($b,$gypos);
+$graphique->lineTo($b,$gyneg,'black',1,'dashed');
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Pour la fonction suivante: <br/><br/>
+\{ image(insertGraph($graphique), width=>250, height=>250, tex_size=>500) \}
+<br/><br/>
+
+a) Donner tous les zéros de cette fonction. &nbsp;&nbsp; \{ans_rule(10)\} 
+<br/><br>
+
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+<br/><br/>
+
+b) Le domaine de cette fonction est &nbsp;&nbsp; R sauf : { \{ans_rule(15)\}    } 
+
+<br/><br/>
+
+&nbsp; &nbsp; &nbsp;&nbsp; Si le domaine a une seule restriction, inscrire cette restriction. <br/>
+&nbsp; &nbsp; &nbsp;&nbsp; Si le domaine a plus d'une restriction, énumérer ces restrictions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp; Si le domaine n'a aucune restriction, inscrire <strong>aucun</strong>.
+<br/><br/>
+
+c) L'image (codomaine) de la fonction ci-dessus est : &nbsp;&nbsp;   \{ans_rule(15)\}   
+<br/>
+&nbsp; &nbsp; &nbsp;&nbsp; (voir les choix de réponse sous la question "d" ci-dessous)
+<br/><br/>
+
+d) La fonction ci-dessus est négative sur l'intervalle:  &nbsp;&nbsp;  \{ans_rule(20)\} 
+<br/><br/>
+&nbsp;&nbsp; &nbsp;&nbsp; La fonction ci-dessus est positive sur l'intervalle:  &nbsp;&nbsp;  \{ans_rule(20)\} 
+
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp; Pour c) et d), donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp; lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp; Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp; Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp; Pour l'ensemble des réels, entrer: <strong>R</strong><br/>
+&nbsp; &nbsp; &nbsp;&nbsp; Lorsqu'il n'y a aucune solution, entrer <strong>aucun</strong> <br/><br/>
+
+  </td></tr>
+</table>
+END_TEXT
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Le zéro d'une fonction représente la valeur de x lorsque f(x) est égal à zéro. Il faut donc prendre les intersections avec l'axe des x.";
+break;
+case '2':text="Le domaine représente l'ensemble des nombres qui peuvent être insérés dans x pour obtenir un nombre réel pour y.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+$showPartialCorrectAnswers = 0;
+
+ANS(str_cmp($zero,'remove_whitespace'));
+
+ANS(List($domaine1,$domaine2)->cmp);
+
+ANS(str_cmp($codomaine,'remove_whitespace'));
+
+ANS(str_cmp($negatif,'remove_whitespace'));
+
+ANS(str_cmp($positif,'remove_whitespace'));
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u></p>
+<br/>Pour la fonction suivante: <br/><br/>
+\{ image(insertGraph($graphique), width=>250, height=>250, tex_size=>500) \}
+<br/><br/>
+
+a) Donner tous les zéros de cette fonction. &nbsp;&nbsp; _________
+<br/><br>
+
+&nbsp; &nbsp; &nbsp;&nbsp; Si l'équation a une seule solution, inscrire cette solution. <br/>
+&nbsp; &nbsp; &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+<br/><br/>
+
+b) Le domaine de cette fonction est &nbsp;&nbsp; R sauf   { _________   } 
+
+<br/><br/>
+
+&nbsp; &nbsp; &nbsp;&nbsp; Si le domaine a une seule restriction, inscrire cette restriction. <br/>
+&nbsp; &nbsp; &nbsp;&nbsp; Si le domaine a plus d'une restriction, énumérer ces restrictions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si le domaine n'a aucune restriction, inscrire <strong>aucun</strong>.
+<br/><br/>
+
+c) L'image (codomaine) de la fonction ci-dessus est : &nbsp;&nbsp;   _____________    
+<br/>
+&nbsp; &nbsp; &nbsp;&nbsp; (voir les choix de réponse sous la question "d" ci-dessous)
+<br/><br/>
+
+d) La fonction ci-dessus est négative sur l'intervalle &nbsp;&nbsp __________________
+
+<br/><br/>La fonction ci-dessus est positive sur l'intervalle &nbsp;&nbsp  __________________
+
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp; Pour c) et d), donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp; lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp; Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp; Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp; Pour l'ensemble des réels, entrer: <strong>R</strong><br/>
+&nbsp; &nbsp; &nbsp;&nbsp; Lorsqu'il n'y a aucune solution, entrer <strong>aucun</strong> <br/><br/><br/>
+
+
+a) Le zéro d'une fonction est la valeur de <strong>$lettre</strong> lorsque <strong>f($lettre)</strong> est égal à zéro.  C'est donc les intersections avec l'axe des x, soit: <strong>$zero</strong>. <br/><br/>
+
+b) Le domaine de la fonction représente l'ensemble des nombres que peut prendre la variable $lettre afin de donner un f($lettre) qui est un nombre réel. Dans ce graphique, toutes les valeurs de R sont possibles, sauf <strong>$domaine1</strong> et <strong>$domaine2</strong>; donc la réponse est R sans <strong>$domaine1, $domaine2</strong>
+  </br><br/>
+
+c) L'image (codomaine) de la fonction ci-dessus représente toutes les valeurs possibles de y pour cette fonction. La réponse est donc: <strong> $codomaine </strong>.
+<br/><br/>
+
+d) La fonction sera négative pour toutes les valeurs de x qui donnent un <strong>y situé sous l'axe des x</strong>.  La fonction sera positive pour toutes les valeurs de x qui donnent un <strong>y situé au-dessus de l'axe des x</strong>.  
+<br/><br/>
+Par conséquent, avec le graphique donné dans la question:
+<br/><br/>
+
+\{ image(insertGraph($graphique), width=>250, height=>250, tex_size=>500) \}
+<br/><br/>
+
+  <ul> 
+      <li>La fonction ci-dessus est négative sur l'intervalle <strong>$negatif</strong>.</li>
+
+      <li>La fonction ci-dessus est positive sur l'intervalle  <strong>$positif</strong>.</li>
+  </ul>
+<br/><br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

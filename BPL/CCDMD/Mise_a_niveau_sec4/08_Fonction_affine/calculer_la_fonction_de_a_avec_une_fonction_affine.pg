@@ -1,0 +1,122 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Fonctions affines
+#     type de question - Calculer f(a) avec une fonction affine
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 4')
+## DBchapter('Fonctions affines')
+## DBsection('Fonction constante')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'polynôme', 'résolution', 'algèbre','variable', 'affine','fonction affine')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer la valeur du coefficient a (autre que -1, 0 ou 1)
+$aa = random(2,10);
+$signedea=non_zero_random(-1,1);
+$a=$aa*$signedea;
+
+# créer la valeur de b et de la variable x
+$b = random(1,10);
+$x = non_zero_random(-10,10);
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real");
+$lettre = "x";
+
+# créer la réponse
+$reponse = ($a*$x) + $b;
+
+# créer les valeurs intermédiaires pour la solution
+$ax=$a*$x;
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Calculer f($x) pour: <br/><br/>
+
+  &nbsp; &nbsp;  f($lettre) = $a$lettre + $b <br/>
+<br/><br/>
+
+f($x) =  \{ans_rule(5)\}<br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Remplacer la valeur de x, précisée dans f(x), par la variable x de l'équation, et résoudre l'équation mathématique résultante.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS(strict_num_cmp($reponse, .0));
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Calculer f($x) pour: <br/><br/>
+
+  &nbsp; &nbsp;  f($lettre) = $a$lettre + $b <br/>
+<br/>
+
+f($x) = _____<br/>
+<br/><br/>
+
+Remplacer la variable $lettre de l'équation par sa valeur fournie dans f($x) (soit <strong>$x</strong>), et résoudre l'équation mathématique résultante:
+<br/>
+
+ &nbsp; &nbsp; f($lettre) = $a$lettre + $b <br/>
+ &nbsp; &nbsp; f($x) = $a(<strong>$x</strong>) + $b  <br/>
+ &nbsp; &nbsp; f($x) = $ax + $b  <br/>
+ &nbsp; &nbsp; f($x) = <strong>$reponse</strong>  <br/>
+<br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

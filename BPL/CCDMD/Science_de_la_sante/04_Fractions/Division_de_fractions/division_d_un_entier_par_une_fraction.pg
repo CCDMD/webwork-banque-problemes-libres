@@ -1,0 +1,226 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Fractions - Division
+#     type de question - Division d'un entier par une fraction 
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Fraction')
+## DBsection('Division')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'fraction', 'division')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+TEXT(beginproblem());
+
+# cr&eacute;er un entier, ainsi qu'une fraction, dont la division donne un entier fractionnaire
+do
+{
+$entier= random(2,10);
+$denx=random(3,10);
+$numx=random(2,($denx-1));
+$reste= ($entier*$denx/$numx) - int($entier*$denx/$numx);
+}while ($reste==0);
+
+#r&eacute;duire la fraction avant de l'afficher
+$fraction=gcd($numx,$denx);
+$num=$numx/$fraction;
+$den=$denx/$fraction;
+
+#cr&eacute;er la fraction r&eacute;sultante
+$reponsenum=$entier*$den;
+$reponseden=$num;
+
+#si la fraction r&eacute;sultante a  un num&eacute;rateur plus grand ou &eacute;gal &agrave; son d&eacute;nominateur, 
+# &eacute;crire cette fraction en entier fractionnaire 
+if ($reponsenum>$reponseden)
+  {
+    $repentier=int($reponsenum/$reponseden);
+    $repnum= $reponsenum-($reponseden*$repentier);
+    $repden=$reponseden;
+}
+else
+  {
+    $repnum= $reponsenum;
+    $repden=$reponseden;
+    $repentier="";
+  }
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Effectuer l'op&eacute;ration suivante:<br/><br/>
+
+<table>
+  <tr>
+    <td>
+
+      <table>
+        <tr>
+           <td align=center>&nbsp;&nbsp;<font size="+1">$entier</font>&nbsp;&nbsp;</td>
+           <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td align=center><hr color="black"></u></td>
+           <td>&nbsp; = &nbsp;</td>
+        </tr>
+        <tr>
+          <td align=center><u>$num</u></td>
+           <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td align=center>$den</td>
+           <td>&nbsp;</td>
+        </tr>
+      </table>
+
+   </td>
+   <td>
+
+      <table>
+        <tr>
+          <td rowspan=3>\{ans_rule(5)\}</td>
+          <td>&nbsp; \{ans_rule(5)\}</td>
+        </tr>
+        <tr>
+          <td><hr color="black"></td>
+        </tr>
+        <tr>
+          <td>&nbsp; \{ans_rule(5)\}</td>
+        </tr>
+      </table>
+
+    </td>
+  </tr>
+</table>  
+<br/>
+
+</td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Afin de diviser un entier par une fraction, inverser la fraction et multiplier cette fraction invers&eacute;e avec l'entier.";
+break;
+case '2':text="Si le num&eacute;rateur est sup&eacute;rieur au d&eacute;nominateur de la fraction r&eacute;sultante, &eacute;crire la fraction sous forme d'entier fractionnaire.";
+break;
+case '3':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/fractions/division>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+$showPartialCorrectAnswers = 0;
+
+# accepter en r&eacute;ponse un nombre et/ou une fraction (simplifi&eacute;e ou non)
+ANS(strict_num_cmp($repentier, .0));
+ANS(strict_num_cmp($repnum, .0));
+ANS(strict_num_cmp($repden, .0));
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+<table>
+  <tr>
+   <td>
+
+     <table>
+       <tr>
+          <td align=center>&nbsp;&nbsp;<font size="+1">$entier</font>&nbsp;&nbsp;</td>
+       </tr>
+       <tr>
+         <td align=center><hr color="black"></td>
+       </tr>
+       <tr>
+         <td align=center><u>$num</u></td>
+       </tr>
+       <tr>
+         <td align=center>$den</td>
+       </tr>
+     </table>
+  
+   </td>
+   <td>  
+
+     <table>
+       <tr>
+         <td align=center>&nbsp;=&nbsp;</td>
+         <td align=center>$entier</td>
+         <td align=center> x </td>
+         <td align=center><u>$den</u></td>
+         <td align=center>&nbsp;=&nbsp;</td>
+         <td align=center><u>$entier x $den</u></td>
+         <td align=center>&nbsp;=&nbsp;</td>
+         <td align=center><u>$reponsenum</u></td>
+         <td align=center>&nbsp;=&nbsp;</td>
+         <td align=center rowspan=2><font size="+2">$repentier</font>&nbsp;</td>
+         <td align=center><u>$repnum</u></td>
+       </tr>
+       <tr>
+         <td align=center>&nbsp;</td>
+         <td align=center>&nbsp;</td>
+         <td align=center>&nbsp;</td>
+         <td align=center>$num</td>
+         <td align=center>&nbsp;</td>
+         <td align=center>$num</td>
+         <td align=center>&nbsp;</td>
+         <td align=center>$reponseden</td>
+         <td align=center>&nbsp;</td>
+         <td align=center>$repden</td>
+       </tr>
+     </table>
+
+   </td>
+  </tr>
+</table>
+
+<br/>$note
+
+END_SOLUTION
+
+ENDDOCUMENT();

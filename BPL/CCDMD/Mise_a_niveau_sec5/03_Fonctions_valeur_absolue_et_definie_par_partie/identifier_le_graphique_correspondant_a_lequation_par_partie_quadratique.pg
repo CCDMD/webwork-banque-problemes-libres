@@ -1,0 +1,300 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions de valeur absolue et définies par partie
+#     type de question - Identifier le graphique de a|x-h| +k donné (fonction définie par partie)
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 5')
+## DBchapter('Fonctions par partie')
+## DBsection('identification de graphique')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'secondaire 5', 'fonction', 'algèbre', 'par partie')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+# déterminer la valeur de a et de ses valeurs associées 
+$a=random(2,6);
+$acarre=$a*$a;
+
+do { $arep4=random(2,6);} until ($arep4 != $a);
+$arep4carre=$arep4*$arep4;
+
+
+# déterminer le point où la fonction change
+$changefct1=$a-2;
+
+# déterminer les valeurs de b et de l'ordonnée et de leurs valeurs associées
+$b=random(2,4);
+
+
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# déterminer l'équation réponse
+$reponse=random(1,4);
+
+# déterminer les paramètres pour la réponse et pour la solution selon l'équation réponse choisie
+
+if ($reponse==1)
+{
+   # alors l'équation réponse est le graphique 1, soit: -x2 + acarre 
+  $choixsignex= -1;
+  $signeaffichex="-";
+  $txtsigne="<";
+  $signea = "-";
+  $ordonnee=$acarre;
+  $equation1 = "-$lettre<sup>2</sup> + $acarre";
+  $zero=$a;
+  $eq1="-$lettre^2 + $acarre";
+$concavite ="bas";
+}
+elsif ($reponse==2)
+{
+   # alors l'équation réponse est le graphique 2, soit: x2 - acarre 
+  $choixsignex= 1;
+  $signeaffichex="";
+  $txtsigne=">";
+  $signea = "+";
+  $ordonnee=-1*$acarre;
+  $equation1 = "$lettre<sup>2</sup> - $acarre";
+  $zero=$a;
+  $eq1="$lettre^2 - $acarre";
+$concavite ="haut";
+}
+elsif ($reponse==3)
+{
+   # alors l'équation réponse est le graphique 3, soit: x2 - arep4carre
+  $choixsignex= -1;
+  $signeaffichex="-";
+  $txtsigne="<";
+  $signea = "+";
+  $ordonnee=-1*$arep4carre;
+  $equation1 = "$lettre<sup>2</sup> - $arep4carre";
+  $zero=$arep4;
+  $eq1="$lettre^2 - $arep4carre";
+  $concavite ="haut";
+}
+else
+{
+   # alors l'équation réponse est le graphique 4, soit:  -x2 + arep4carre 
+  $choixsignex= -1;
+  $signeaffichex="-";
+  $txtsigne="<";
+  $signea = "-";
+  $ordonnee=$arep4carre;
+  $equation1 = "-$lettre<sup>2</sup> + $arep4carre";
+  $zero=$arep4;
+  $eq1="-$lettre^2 + $arep4carre";
+  $concavite ="bas";
+}
+
+$equation2 = "$b$lettre";
+
+# créer le graphique de la parabole à afficher dans la question
+$gxneg=-10;
+$gxpos=20;
+
+if ($acarre > 20 ) {$gypos = $acarre + 2; $gyneg=-$acarre - 2;}
+elsif ($arep4carre > 20) {$gypos = $arep4carre + 2; $gyneg=-$arep4carre - 2;}
+  else {$gypos = 20; $gyneg=-20;}
+
+
+$graphique1=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique1, "-$lettre^2 + $acarre for x in <$gxneg,$changefct1> using color:blue and weight:2 ");
+add_functions($graphique1, "$equation2 for x in <$changefct1,$gxpos> using color:blue and weight:2 ");
+
+
+$graphique2=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique2, "$lettre^2 - $acarre for x in <$gxneg,$changefct1> using color:blue and weight:2 ");
+add_functions($graphique2, "$equation2 for x in <$changefct1,$gxpos> using color:blue and weight:2 ");
+
+
+$graphique3=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique3, "$lettre^2 - $arep4carre for x in <$gxneg,$changefct1> using color:blue and weight:2 ");
+add_functions($graphique3, "$equation2 for x in <$changefct1,$gxpos> using color:blue and weight:2 ");
+
+
+$graphique4=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique4, "-$lettre^2 + $arep4carre for x in <$gxneg,$changefct1> using color:blue and weight:2 ");
+add_functions($graphique4, "$equation2 for x in <$changefct1,$gxpos> using color:blue and weight:2 ");
+
+
+$graphiqueparabole=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphiqueparabole, "$eq1 for x in <$gxneg,$gxpos> using color:blue and weight:2 ");
+$graphiqueparabole->stamps( closed_circle(-$zero, 0,'black') );
+$graphiqueparabole->stamps( closed_circle($zero, 0,'black') );
+
+
+$graphiquelineaire=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphiquelineaire, "$equation2 for x in <$gxneg,$gxpos> using color:blue and weight:2 ");
+
+
+$gx=5;
+$gy=10;
+
+
+# ajouter les graduations pour mieux situer les points sur chacun des 4 graphiques
+
+@graph=($graphique1,$graphique2,$graphique3,$graphique4,$graphiqueparabole,$graphiquelineaire);
+
+for ($j=0; $j<=5; $j++)
+{
+
+   for ($i = 0; $i <= 2; $i++)
+     {
+        $graph[$j]->lb(new Label($gx*$i+$gx+0.2,-0.15,$gx*$i+$gx,'black','center','top'));
+        $graph[$j]->moveTo($gx*$i+$gx+0.2,-0.15); 
+      }
+   for ($i = 0; $i <= 2; $i++)
+     {
+        $graph[$j]->lb(new Label(-$gx*$i-$gx-0.2,-0.15,-$gx*$i-$gx,'black','center','top'));
+        $graph[$j]->moveTo(-$gx*$i-$gx-0.2,-0.15); 
+      }
+   for ($i = 0; $i <= 2; $i++)
+     {
+        $graph[$j]->lb(new Label(-0.5,$gy*$i+$gy,$gy*$i+$gy,'black','right','top'));
+        $graph[$j]->moveTo(-0.5, $gy*$i+$gy); 
+      }
+   for ($i = 0; $i <= ($x+2); $i++)
+     {
+        $graph[$j]->lb(new Label(-0.5,-$gy*$i-$gy+0.4,-$gy*$i-$gy,'black','right','top'));
+        $graph[$j]->moveTo(-0.5, -$gy*$i-$gy+0.4); 
+      }
+}
+
+# déterminer quel graphique représente le graphique de la réponse
+$graphiquereponse=$graph[($reponse-1)];
+
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>
+Identifier le graphique ci-dessous qui correspond à l'équation:<br/><br/>
+<table>
+  <tr>
+    <td><i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$equation1 &nbsp; &nbsp;</td><td>si x &#8804; $changefct1</td>
+  </tr>
+  <tr>
+    <td><i>f(x) = </td>
+  </tr>
+   <tr>
+    <td><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;$equation2</td><td>si x > $changefct1</td>
+  </tr>
+</table>
+<br/>
+réponse = Graphique \{ans_rule(4)\}   (choisir entre 1, 2, 3 ou 4)
+<br/><br/>
+
+<table border=1>
+  <tr>
+    <td>\{ image(insertGraph($graphique1), width=>250, height=>250, tex_size=>500) \} &nbsp; </td>
+    <td> &nbsp; \{ image(insertGraph($graphique2), width=>250, height=>250, tex_size=>500) \}</td>
+  </tr>
+  <tr>
+    <td align=center>Graphique 1</td>
+    <td align=center>Graphique 2</td>
+  </tr>
+  <tr>
+    <td>\{ image(insertGraph($graphique3), width=>250, height=>250, tex_size=>500) \}  &nbsp; </td>
+    <td>  &nbsp; \{ image(insertGraph($graphique4), width=>250, height=>250, tex_size=>500) \}</td>
+  </tr>
+  <tr>
+    <td align=center>Graphique 3</td>
+    <td align=center>Graphique 4</td>
+  </tr>
+</table>
+<br/><br/>
+  </td></tr>
+</table>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Une fonction de la forme f(x) = ax<sup>2</sup> +bx +c est représentée graphiquement par une parabole qui est tournée vers le haut si le coefficient a est positif ou tournée vers le bas si a est négatif. Vous pouvez factoriser l'expression de degré 2 pour obtenir les zéros de la fonction, cela vous aidera connaître le graphique pour cette partie.";
+break;
+case '2':text="Une fonction de la forme f(x) = ax +b est représentée graphiquement par une droite qui est croissante, lorsque la valeur du coefficient a est positive ou est décroissante si la valeur de a est négative. La valeur de b est l'ordonnée à l'origine, donc l'intersection avec l'axe des y.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u></p>
+
+Analysons la partie 1 du graphique:<br/><br/>
+
+La première partie de la fonction est <i> f($lettre) = $equation1 </i>. C'est une parabole tournée vers le $concavite (considérant que le coefficient du x<sup>2</sup> = $choixsignex $txtsigne 0) et dont les zéros sont -$zero et $zero. Voici son graphique:
+<br/>
+\{ image(insertGraph($graphiqueparabole), width=>250, height=>250, tex_size=>500) \}
+<br/>
+
+Le graphique final représentant la fonction définie par parties sera constitué du graphique précédent pour la portion <i>$lettre &#8804; $changefct1</i>, donc sur l'intervalle ]-&#8734;, $changefct1].
+ <br/><br/><br/>
+
+Analysons la partie 2 du graphique:<br/><br/>
+ 
+La deuxième partie de la fonction est <i>f($lettre) = $equation2</i>. C'est une droite ayant une pente de $b et dont l'ordonnée à l'origine est 0. Voici son graphique:
+<br/>
+\{ image(insertGraph($graphiquelineaire), width=>250, height=>250, tex_size=>500) \}
+
+<br/>
+Le graphique final représentant la fonction définie par parties sera constitué du graphique précédent pour la portion où <i>$lettre > $changefct1 </i>, donc  sur l'intervalle  ]$changefct1, &#8734;[.
+<br/><br/><br/>
+
+Par conséquent, le seul graphique qui est constitué tel que décrit est le graphique <strong>$reponse</strong> :<br/><br/>
+
+\{ image(insertGraph($graphiquereponse), width=>250, height=>250, tex_size=>500) \}
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

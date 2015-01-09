@@ -1,0 +1,149 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Fractions - Transformation
+#     type de question -  Transformation d'une fraction en nombre fractionnaire
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Fraction')
+## DBsection('Transformation')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'fraction', 'transformation')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+TEXT(beginproblem());
+
+# cr&eacute;er un entier fractionnaire qui servira de r&eacute;ponse
+$entier=random(1,9);
+$den1=random(2,10);
+$num1=random(1,($den1-1));
+
+# en simplifier la partie fractionnaire
+$multiple=gcd($num1,$den1);
+$numsimple=$num1/$multiple;
+$den=$den1/$multiple;
+$num=($entier*$den) + $numsimple;
+
+#trouver la fraction sans entiers qui est &eacute;quivalente &agrave; l'entier fractionnaire
+# et qui produira la fraction de la question &agrave; transformer
+$reponsenum=$numsimple;
+$reponseden=$den;
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question:</h1>
+<p>Transformer la fraction suivante en nombre fractionnaire : <br/><br/>
+
+<table>
+  <tr>
+    <td align=center valign=bottom>
+      $num
+    </td>
+    <td>
+     &nbsp;
+    </td>
+    <td align=center valign=bottom>
+      \{ans_rule(5)\}
+    </td>
+  </tr>
+  <tr>
+    <td align=center valign=top>
+      <hr/ color="black"> 
+    </td>
+    <td>
+     &nbsp;=&nbsp; \{ans_rule(3)\}&nbsp;
+    </td>
+    <td align=center>
+      <hr color="black"> 
+    </td>
+  </tr>
+  <tr>
+    <td align=center>
+      $den
+    </td>
+    <td>
+       &nbsp;
+    </td>
+    <td align=center>
+      \{ans_rule(5)\}
+    </td>
+  </tr>
+</table>
+
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text=" Simplifier la fraction de cet entier fractionnaire, au besoin. ";
+break;
+case '2':text=" Lorsque le num&eacute;rateur d'une fraction est plus grand que son d&eacute;nominateur, la fraction r&eacute;sultante peut &ecirc;tre convertie en entier fractionnaire: diviser le num&eacute;rateur par le d&eacute;nominateur pour obtenir la valeur enti&egrave;re, et placer le reste de cette division au num&eacute;rateur, sur le d&eacute;nominateur de la fraction initiale. ";
+break;
+case '3':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/fractions/entier-fractionnaire>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+# s'assurer que toutes les r&eacute;ponses sont bonnes pour avoir le point (pas de points partiels)
+$showPartialCorrectAnswers = 0;
+
+
+ANS(strict_num_cmp($numsimple, .0));
+ANS(strict_num_cmp($entier, .0));
+ANS(strict_num_cmp($den, .0));
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Diviser le num&eacute;rateur $reponsenum par son d&eacute;nominateur $reponseden; l'entier r&eacute;sultant $entier forme l'entier de la r&eacute;ponse. Le reste de la division (soit $numsimple) forme le num&eacute;rateur de la fraction r&eacute;sultante et le d&eacute;nominateur reste le m&ecirc;me:
+<br/>
+
+&nbsp;&nbsp;&nbsp;&nbsp;$num &nbsp;&#247;&nbsp; $reponseden &nbsp;=&nbsp; $entier avec un reste de $reponsenum<br/>
+Donc: &nbsp;$num/$den = <strong>$entier &nbsp;$reponsenum/$reponseden</strong>
+
+END_SOLUTION
+
+ENDDOCUMENT();
+

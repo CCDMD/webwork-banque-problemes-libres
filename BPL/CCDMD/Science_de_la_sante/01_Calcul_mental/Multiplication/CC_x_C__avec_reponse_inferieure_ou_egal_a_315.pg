@@ -1,0 +1,140 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Entiers - Calcul mental - Multiplication
+#     type de question - Multiplication CC x C  (avec r&eacute;ponse inf&eacute;rieure ou &eacute;gale &agrave; 315)
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Entier')
+## DBsection('Multiplication')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'entier', 'multiplication', 'calcul mental')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+
+TEXT(beginproblem());
+$a=random(10,35);
+$b=random(2,9);
+$reponse=$a*$b;
+
+# ci-dessous les variables requises pour produire la solution d&eacute;taill&eacute;e 
+#  &agrave; afficher pour cette &eacute;quation
+$adizaine=int($a/10);
+$aunit=abs($a-($adizaine*10));
+$repaunit=$aunit*$b;
+$ret=int($repaunit/10);
+$retenue=($ret==0) ? "&nbsp;" : $ret;
+$repunit=$repaunit-($ret*10);
+$repdiz=($adizaine*$b)+$ret;
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>$a&nbsp; X&nbsp; $b =<br/>
+
+\{ans_rule(10)\}
+  </td></tr>
+</table>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text=" Pour multiplier un nombre par un chiffre, dont le produit est difficile &agrave; d&eacute;terminer directement (ex.: avec l'aide du tableau de multiplication), placer le chiffre sous le nombre. Multiplier le chiffre par l'unit&eacute;) du nombre (ex.: 2 x 6 = 12); inscrire le premier chiffre (l'unit&eacute;) de ce r&eacute;sultat sous le tout, et le second chiffre (la dizaine) en retenue. Multiplier ensuite le chiffre par la dizaine du nombre et y additionner la retenue, si pr&eacute;sente (ex.: 2 x 3 + 1 = 7). Inscrire ce nouveau r&eacute;sultat &agrave; la gauche de celui d&eacute;j&agrave; pr&eacute;sent. ";
+break;
+case '2':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/entiers/multiplication>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u></p>
+<p>
+<table border="0" cellspacing="1" cellpadding="1" width="400" align="left">
+    <tbody>
+        <tr>
+            <td valign="top">
+            <p>1. Multiplier l'unit&eacute;; inscrire l'unit&eacute; de ce r&eacute;sultat&nbsp;et garder sa dizaine (si pr&eacute;sente) en retenue.</p>
+            </td>
+            <td valign="top">&nbsp;&nbsp;</td>
+            <td valign="top">
+            <p>2. Multiplier la dizaine et y additionner la retenue (si pr&eacute;sente), ajouter ce r&eacute;sultat&nbsp;&agrave; la gauche de l'autre r&eacute;sultat pour former la r&eacute;ponse.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+            <table border="0" cellspacing="1" cellpadding="1" width="80" align="center">
+                <tbody>
+                    <tr>
+                        <td align="right">
+                        <font size="1"><strong>$retenue </strong></font>&nbsp;&nbsp;<br/>
+                        $adizaine<strong>$aunit</strong><br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp; <u>&nbsp;&nbsp;&nbsp;<strong>$b</strong></u><br/>
+                        <strong>$repunit</strong><br/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            </td>
+            <td>&nbsp;</td>
+            <td>
+            <table border="0" cellspacing="1" cellpadding="1" width="80" align="center">
+                <tbody>
+                    <tr>
+                        <td align="right">
+                        <font size="1">$retenue </font>&nbsp;&nbsp;<br/>
+                        <strong>$adizaine</strong>$aunit<br/>
+                        x&nbsp; <u>&nbsp;&nbsp;<strong> $b</strong></u><br/>
+                        <strong>$repdiz</strong>$repunit<br/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</p>
+END_SOLUTION
+
+ENDDOCUMENT();

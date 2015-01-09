@@ -1,0 +1,214 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Nombre d&eacute;cimal - Addition
+#     type de question - Addition impliquant 1 d&eacute;cimale (complexe)    
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Nombre d&eacute;cimal')
+## DBsection('Addition')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'd&eacute;cimal', 'addition')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+
+TEXT(beginproblem());
+
+# &agrave; noter que tout sera fait &agrave; partir des entiers, car la cr&eacute;ation directe
+# de d&eacute;cimales produit des d&eacute;cimales &agrave; l'infini qui ressortent dans les calculs
+# et on s'assure que la derni&egrave;re d&eacute;cimale n'est pas z&eacute;ro.
+$aentier=random(25,99);
+$bentier=random(25,99);
+$adec=random(1,9);
+$bdec=random(1,9);
+$aa=$aentier*10 + $adec;
+$bb=$bentier*10 + $bdec;
+$a=$aa/10;
+$b=$bb/10;
+
+# s'assurer que les deux variables sont diff&eacute;rentes l'une de l'autre
+while ($b == $a) 
+  {$bdec=random(1,9);
+   $bb=$bentier*10 + $bdec;
+   $b=$bb/10;}
+
+$rr=$aa+$bb;
+$reponse=$rr/10;
+
+# si le total des deux d&eacute;cimales donne un chiffre plus &eacute;lev&eacute; que 9,
+# il y aura une retenue de valeur 1 &agrave; mettre au-dessus des entiers
+$dec=$adec + $bdec;
+if($dec>9)
+  {$retenue=1;
+    $retenueafficher=1;}
+else
+  {$retenue=0;
+   $retenueafficher="";}
+
+# obtenir la valeur repr&eacute;sentant la d&eacute;cimale dans la r&eacute;ponse 
+$repdec=$rr - (10*int($rr/10));
+
+# si le total des deux unit&eacute;s (et sa retenue) donne un chiffre plus &eacute;lev&eacute; que 9,
+# il y aura une retenue de valeur 1 &agrave; mettre au-dessus des dizaines
+$aunite=$aentier - (10*int($aentier/10));
+$bunite=$bentier - (10*int($bentier/10));
+$unite=$aunite + $bunite + $retenue;
+if($unite>9)
+  {$retenue2afficher=1;}
+else
+  {$retenue2afficher=" ";}
+
+# obtenir la valeur de l'entier dans la r&eacute;ponse
+$repentier=($rr- $repdec)/10;
+
+# obtenir la valeur de l'unit&eacute; dans la r&eacute;ponse
+$repunite=$repentier - (10*(int($repentier/10)));
+
+# obtenir la valeur du reste de l'entier dans la r&eacute;ponse, soit sa dizaine et sa centaine
+$repdizcent= ($repentier-$repunite)/10;
+
+
+# pour afficher le nombre d&eacute;cimal &agrave; une d&eacute;cimale pr&egrave;s, m&ecirc;me si sa d&eacute;cimale est z&eacute;ro,
+# concat&eacute;ner la partie enti&egrave;re &agrave; la partie d&eacute;cimale avec un point; sinon, si la d&eacute;cimale 
+# est z&eacute;ro, par d&eacute;faut, le syst&egrave;me retirera le z&eacute;ro &agrave; la valeur num&eacute;rique.
+$ax=($aentier.".".$adec);
+$bx=($bentier.".".$bdec);
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>$a&nbsp; +&nbsp; $b&nbsp; = <br/>
+
+\{ans_rule(10)\}<br/>
+
+<h5>Utiliser le point (au lieu de la virgule) pour s&eacute;parer <br/>la partie enti&egrave;re de la partie d&eacute;cimale dans la r&eacute;ponse.</h5>
+  </td></tr>
+</table>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text=" Superposer les deux nombres d&eacute;cimaux de fa&ccedil;on &agrave; aligner le point d&eacute;cimal, ainsi que les autres chiffres selon leur position dans le nombre. ";
+break;
+case '2':text=" Additionner la colonne la plus &agrave; droite, et proc&eacute;der ainsi jusqu'&agrave; la colonne la plus &agrave; gauche (effectuer des retenues au besoin). ";
+break;
+case '3':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/decimales/addition>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+
+BEGIN_SOLUTION
+
+$PAR <U>Solution</U> $PAR
+
+<table border="0" cellspacing="1" cellpadding="1">
+    <tbody>
+        <tr>
+            <td width="80" colspan="3" align="right">
+            <table border="0" cellspacing="1" cellpadding="1" width="50" align="left">
+                <tbody>
+                    <tr>
+                        <td align="right">
+                        <p>&nbsp;</p>
+                        <p>$ax</p>
+                        <p>+ <u>$bx</u></p>
+                        <p>&nbsp;</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            </td>
+            <td width="80" colspan="2" align="right">
+            <table border="0" cellspacing="1" cellpadding="1" width="50" align="left">
+                <tbody>
+                    <tr>
+                        <td align="right">
+                        <p><font size="1">$retenueafficher</font>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                        <p>$ax</p>
+                        <p>+ <u>$bx</u></p>
+                        <p><strong>$repdec</strong></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            </td>
+            <td width="80" colspan="2" align="right">
+            <table border="0" cellspacing="1" cellpadding="1" width="50" align="left">
+                <tbody>
+                    <tr>
+                        <td align="right">
+                        <p><font size="1">$retenue2afficher&nbsp;&nbsp;<strong>$retenueafficher</strong></font>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                        <p>$ax</p>
+                        <p>+ <u>$bx</u></p>
+                        <p><strong>$repunite.</strong>$repdec</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            </td>
+            <td width="80" colspan="2" align="right">
+            <table border="0" cellspacing="1" cellpadding="1" width="50" align="left">
+                <tbody>
+                    <tr>
+                        <td align="right">
+                        <p><font size="1"><strong>$retenue2afficher</strong>&nbsp;&nbsp;$retenueafficher</font>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                        <p>$ax</p>
+                        <p>+ <u>$bx</u></p>
+                        <p><strong>$repdizcent</strong>$repunite.$repdec</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+          </td>
+       </tr>
+    </tbody>
+</table>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

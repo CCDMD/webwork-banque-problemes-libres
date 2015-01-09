@@ -1,0 +1,204 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Fractions - Division
+#     type de question - Simplifier une expression fractionnaire (1)
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Fraction')
+## DBsection('Division')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'fraction', 'division')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+);
+
+TEXT(beginproblem());
+
+# cr&eacute;er le premier chiffre au d&eacute;nominateur, pouvant &ecirc;tre positif ou n&eacute;gatif
+$choixden1=random(0,1);
+if ($choixden1 ==0)
+  {$den1=random(1,10);}
+else
+  {$den1=random(-1,-10);}
+
+# cr&eacute;er le second chiffre au d&eacute;nominateur, qui doit &ecirc;tre diff&eacute;rent du premier, pour ne pas que
+# leur soustraction donne un d&eacute;nominateur final de valeur z&eacute;ro
+do
+  {$den2=random(1,15);}
+while ($den2==abs($den1));
+
+
+# trouver le premier num&eacute;rateur 
+if ($choixnum1 ==0)
+  {$num1=random(1,10);}
+else
+  {$num1=random(-1,-10);}
+
+# trouver le second num&eacute;rateur afin que le tout donne une fraction, nom pas un entier
+do
+{
+  $num2=random(-1,-15);
+  $division=($num1-$num2)/($den1-$den2);
+}
+while (int($division)==$division);
+
+
+# trouver le num&eacute;rateur ainsi que le d&eacute;nominateur r&eacute;sultants, 
+# et les r&eacute;duire au besoin
+$num=$num1-$num2;
+$den=$den1-$den2;
+$multiple=gcd($num,$den);
+$reponsenum=$num/$multiple;
+$reponseden=$den/$multiple;
+
+# si l'un des deux r&eacute;sultats ou les deux r&eacute;sultats sont n&eacute;gatifs, 
+# r&eacute;organiser le signe n&eacute;gatif afin qu'il apparaisse &agrave; la bonne place (ou pas du tout)
+if ($reponsenum<0 && $reponseden<0)
+  {
+    $repnum=abs($reponsenum);
+    $repden=abs($reponseden);
+  } 
+elsif ($reponsenum>0 && $reponseden<0)
+  {
+    $repnum=-1*$reponsenum;
+    $repden=-1*$reponseden;
+  } 
+else
+  {
+    $repnum=$reponsenum;
+    $repden=$reponseden;
+  } 
+  
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question:</h1>
+<br/>
+<table width=400>
+  <tr>
+    <td>&nbsp;</td>
+    <td align=center>$num1 - ($num2)</td>
+    <td> &nbsp; </td>
+    <td align=center>\{ans_rule(3)\}</td>
+  </tr>
+  <tr>
+    <td>Simplifier l'expression suivante:</td>
+    <td><hr color=black></td>
+    <td> = </td>
+    <td><hr color=black></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align=center>$den1 - $den2</td>
+    <td> &nbsp; </td>
+    <td align=center>\{ans_rule(3)\}</td>
+  </tr>
+</table>
+<br/>
+
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="R&eacute;duire les expressions au num&eacute;rateur &agrave; une seule valeur, ainsi que celles au d&eacute;nominateur &agrave; une seule valeur. Ensuite simplifier la fraction r&eacute;sultante, lorsque possible. ";
+break;
+case '2':text="Effectuer chacune des soustractions en premier, &eacute;tant donn&eacute; que c'est le r&eacute;sultat de chacun qui sera divis&eacute;. ";
+break;
+case '3':text="Deux signes n&eacute;gatifs qui se suivent vont former un signe positif. Par exemple: 2 --3 = 2 + 3 = 5. ";
+break;
+case '4':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/decimales/division>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<button type="button" name="4" onclick="hint(this)">Astuce 4</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($repnum, .0));
+ANS(strict_num_cmp($repden, .0));
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+<p>1. R&eacute;soudre l'expression pr&eacute;sente au num&eacute;rateur:<br/>
+<blockquote>
+  $num1 - ($num2) = <strong>$num</strong>
+</blockquote>
+</p>
+
+<p>2. R&eacute;soudre l'expression pr&eacute;sente au d&eacute;nominateur:<br/>
+<blockquote>
+  $den1 - ($den2) = <strong>$den</strong>
+</blockquote>
+</p>
+
+
+<p>3. Simplifier la fraction r&eacute;sultante, lorsque possible:<br/>
+<blockquote>
+  <table>
+    <tr>
+      <td align=center>$num</td>  
+      <td>&nbsp;</td>  
+      <td align=center>$repnum</td>  
+    </tr>
+    <tr>
+      <td><hr color=black></td>  
+      <td> = </td>  
+      <td><hr color=black></td>  
+    </tr>
+    <tr>
+      <td align=center><strong>$den</strong></td>  
+      <td>&nbsp;</td>  
+      <td align=center><strong>$repden</strong></td>  
+    </tr>
+  </table>
+</blockquote>
+</p>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();
+
+ 

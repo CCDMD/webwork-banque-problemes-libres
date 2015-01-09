@@ -1,0 +1,110 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de base - Priorit&eacute; des op&eacute;rations
+#     type de question - Simplification d'une expression de la forme (a^n * x^m * y^p)^1/q  (version difficile)
+##ENDDESCRIPTION
+
+## DBsubject('Notions de base')
+## DBchapter('Priorité des opérations')
+## DBsection('Priorit&eacute; des exposants')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'notions', 'priorit&eacute;', 'priorité des opérations','exposants','exposant fractionnaire')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs de la formule
+$n=random(2,16);
+$a=random(2,9);
+$b=random(2,9);
+$c=random(2,5);
+$facteur=random(2,5);
+$fa=$a*$facteur;
+$fb=$b*$facteur;
+$fc=$c*$facteur;
+
+# déclarer les lettres qui seront les variables non-définies (variables réelles)
+Context()->variables->are(x=>"Real",y=>"Real");
+
+# créer la réponse ainsi que les réponses intermédiaires pour la solution
+$arep=$a**$b;
+$reponse=Formula("($n^$a)*(x^$b)*(y^$c)");
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+
+Simplifier l'expression suivante: ( $n<sup>$fa</sup>x<sup>$fb</sup>y<sup>$fc</sup> )<sup>1/$facteur</sup>
+<br/><br/>
+Note: Votre réponse doit être donnée sous forme exponentielle avec un exposant positif (ex.:  9^3 x^2 y^1 )<br/>
+\{ans_rule(10)\}<br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Lorsqu'une variable est munie d'un exposant, et que le tout est muni d'un autre exposant,  multiplier alors les deux exposants. Ce produit formera le nouvel exposant de la variable. ";
+break;
+case '2':text="La loi des exposants élevés à un exposant s'applique aussi aux constantes; multiplier alors les deux exposants ; ce produit formera le nouvel exposant de la constante.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($reponse->cmp);
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+Simplifier l'expression suivante: ( $n<sup>$fa</sup>x<sup>$fb</sup>y<sup>$fc</sup> )<sup>1/$facteur</sup>
+<br/><br/>
+
+Distribuer l'exposant de la parenthèse à chacun des termes de la parenthèse; si ceux-ci sont déjà munis d'exposants,multiplier cer derniers avec l'exposant à distribuer: <br/>
+( $n<sup>$fa</sup>x<sup>$fb</sup>y<sup>$fc</sup> )<sup>1/$facteur</sup>&nbsp; = &nbsp;  $n<sup>($fa)(1/$facteur)</sup>x<sup>($fb)(1/$facteur)</sup>y<sup>($fc)(1/$facteur)</sup>  &nbsp; = &nbsp;  <strong> $n<sup>$a</sup> x<sup>$b</sup> y<sup>$c</sup></strong>
+<br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

@@ -1,0 +1,137 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section R&eacute;solution de probl&egrave;mes - G&eacute;n&eacute;ral
+#     type de question - Les pointes de pizza 
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('R&eacute;solution de probl&egrave;mes')
+## DBsection('G&eacute;n&eacute;ral')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'r&eacute;solution', 'g&eacute;n&eacute;ral','r&egrave;gle de trois')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+
+TEXT(beginproblem());
+do{
+  $pointesparpizza = random(4,10,2);
+  $pointesparpersonne = random(1,2);
+  $personnes = random(3,12);
+  $pointesmangees = $personnes * $pointesparpersonne;
+  $pizzarequise = $pointesmangees / $pointesparpizza;
+  $pizza = int($pizzarequise) + 1;
+}while(!($pizza > 1));
+
+$pointesrestantes = $pizza * $pointesparpizza - $pointesmangees;
+$reponse = $personnes;
+$terme = $pointesparpersonne > 1 ? "pointes ont &eacute;t&eacute; donn&eacute;es" : "pointe a &eacute;t&eacute; donn&eacute;e";
+$pointestotales = $pizza * $pointesparpizza;
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>$pizza pizzas ont &eacute;t&eacute; command&eacute;es pour un party. Si chaque pizza est coup&eacute;e en $pointesparpizza pointes, et que $pointesparpersonne $terme &agrave; chaque personne pr&eacute;sente au party, combien de personnes &eacute;taient pr&eacute;sentes s'il reste $pointesrestantes&nbsp; pointes de pizza?<br/>
+  </td></tr>
+  <tr><td>
+
+\{ans_rule(10)\} personnes pr&eacute;sentes
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Une fois le nombre de pointes mang&eacute;es d&eacute;termin&eacute;, diviser ceci par le nombre de pointes distribu&eacute;es par personne afin de trouver combien de personnes en ont mang&eacute;.";
+break;
+case '2':text="Trouver tout d'abord le nombre de pointes de pizza au total qui sont disponibles, selon le nombre de pizzas pr&eacute;sentes et le nombre de pointes par pizza, et en soustraire le nombre de pointes qui n'ont pas &eacute;t&eacute; mang&eacute;es afin de trouver combien ont &eacute;t&eacute; mang&eacute;es par les personnes pr&eacute;sentes.";
+break;
+case '3':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/resolution-de-problemes/le-probleme>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u>:</p>
+<p>Tout d'abord, trouver le nombre total de pointes de pizza disponibles et en soustraire les pointes qui n'ont pas &eacute;t&eacute; mang&eacute;es:</p>
+
+<table border="0" cellspacing="1" cellpadding="1" width="600">
+    <tbody>
+        <tr>
+            <td>&nbsp;&nbsp; a)</td>
+            <td align="left">$pizza pizzas x $pointesparpizza pointes par pizza = $pointestotales pointes totales pr&eacute;sentes</td>
+        </tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;b)</td>
+            <td align="left"> $pointestotales pointes totales - $pointesrestantes pointes qui restent (non-mang&eacute;es) = $pointesmangees pointes mang&eacute;es</td>
+        </tr>
+    </tbody>
+</table>
+<br/>
+
+<p>Ensuite, trouver le nombre de personnes &agrave; l'aide des pointes mang&eacute;es et du nombre de pointes mang&eacute;es par personne:</p>
+
+<table border="0" cellspacing="1" cellpadding="1" width="500">
+    <tbody>
+        <tr>
+            <td>&nbsp;&nbsp; c)</td>
+            <td align="left">$pointesmangees pointes</td>
+            <td align="left">: ?  personnes</td>
+            <td align="center"><u>$pointesmangees <strike>pointes</strike> x 1 personne</u></td>
+            <td align="left">= <strong>$personnes </strong> personnes</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td align="left"> $pointesparpersonne pointes</td>
+            <td align="left">: 1 personne</td>
+            <td align="center">$pointesparpersonne <strike>pointes</strike></td>
+            <td align="left">&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+
+END_SOLUTION
+ENDDOCUMENT();

@@ -1,0 +1,117 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section R&eacute;solution de probl&egrave;mes - Finances
+#     type de question - Rabais sur achat de bouteilles d'eau en paquet
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('R&eacute;solution de probl&egrave;mes')
+## DBsection('Finance')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'r&eacute;solution', 'finance','argent','monnaie','prix')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+TEXT(beginproblem());
+#prix d'une bouteille d'eau &agrave; l'unit&eacute;
+$prixunitaire = sprintf("%1.2f",random(0.75,0.90,0.05));
+
+#somme d'argent rajout&eacute; pour trouver le prix par groupe de bouteilles
+$x = sprintf("%1.2f",random(1.26,1.49,0.01));
+
+# nombre de bouteilles dans le groupe de bouteilles
+@listedebouteilles=(4,10,12,20,24);
+$choix=random(0,4);
+$bouteilles=$listedebouteilles[$xchoix];
+
+# prix pour le paquet de bouteilles
+$prixpaquet = sprintf("%1.2f",(($bouteilles / 2) + $x));
+
+# prix d'une bouteille d'eau du paquet, si elle &eacute;tait vendue &agrave; l'unit&eacute;
+$prixtotal = sprintf("%1.2f",$bouteilles * $prixunitaire);
+
+#reponse
+$reponse = sprintf("%1.2f",($prixtotal - $prixpaquet));
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>L'achat d'une bouteille d'eau de source d'une marque particuli&egrave;re est de $prixunitaire dollars (taxes incluses). <br/>
+Toutefois, l'achat d'un paquet de $bouteilles de ces bouteilles est en sp&eacute;cial &agrave;  $prixpaquet dollars (taxes incluses).<br/>
+Quel montant &eacute;pargnez-vous lorsque les $bouteilles bouteilles sont achet&eacute;es en paquet au lieu de les acheter &agrave; l'unit&eacute; ?<br/>
+  </td></tr>
+  <tr><td>
+
+\{ans_rule(10)\} dollars (&agrave; deux d&eacute;cimales pr&egrave;s)
+<br/><br/>
+<h5>Utiliser le point (au lieu de la virgule) pour s&eacute;parer <br/>la partie enti&egrave;re de la partie d&eacute;cimale dans la r&eacute;ponse.</h5>
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Proc&eacute;der par &eacute;tapes. D&eacute;terminer tout d'abord le prix de l'ensemble des bouteilles du paquet si elles &eacute;taient achet&eacute;es &agrave; l'unit&eacute;. Soustraire ensuite de ce total le prix pour le paquet de bouteilles afin d'en obtenir le rabais.";
+break;
+case '2':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/resolution-de-problemes/finances>http://math.cchic.ca</a>.";
+break;
+
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u>:</p>
+
+<p>Prix de $bouteilles bouteilles pay&eacute;es &agrave; l'unit&eacute;: </p>
+<blockquote style="margin-right: 0px" dir="ltr">
+  <p>$bouteilles bouteilles x $prixunitaire dollars par bouteille = <strong>$prixtotal dollars</strong></p>
+</blockquote>
+<p>Rabais:</p>
+<blockquote style="margin-right: 0px" dir="ltr">
+  <p>$prixtotal dollars (bouteilles achet&eacute;es &agrave; l'unit&eacute;) - $prixpaquet dollars (pour un paquet de $bouteilles)&nbsp; = <strong>$reponse </strong>  dollars de rabais</p>
+</blockquote>
+END_SOLUTION
+ENDDOCUMENT();

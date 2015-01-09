@@ -1,0 +1,143 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions exponentielles
+#     type de question - Résoudre une équation exponentielle (facile, version 2)
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 5')
+## DBchapter('Fonction exponentielle')
+## DBsection('Résolution')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'secondaire 5', 'fonction', 'algèbre', 'exponentielle', 'résolution')
+
+############################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+# définir les valeurs de a, b,c et d dans l'équation
+do 
+{
+  $a=random(2,6);
+  $b=random(2,6);
+  $c=random(2,4);
+} until ( ($b != $c) & ($b != $c*$c));
+
+do {$f=random(1,6);} until ($f != $c);
+$g= $c-$f;
+
+
+if ($g/$b == int($g/$b)) { $d=$g/$b;}
+else 
+{
+   $gcd=gcd($g,$b);
+   if ($gcd==1){$d="$g/$b";}
+   else { $dnum=$g/$gcd;
+             $dden=$b/$gcd;
+             $d="$dnum/$dden";
+           } 
+ }
+
+$e= $a**$c;
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# déterminer la réponse
+$rep= Formula("$d");
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>
+Trouver la valeur de <i>$lettre</i> si \( $a^{$b$lettre + $f} = $e \)
+<br/><br/>
+
+<i>$lettre</i> =  \{ans_rule(10)\} 
+<br/> 
+Note: Si la réponse est une fraction, simplifer cette fraction et l'inscrire en séparant son numérateur de son dénominateur avec la barre oblique /.  <br/><br/>
+  </td></tr>
+</table>
+END_TEXT
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Tout d'abord, placer la valeur de droite ($e) dans la même base que l'expression de gauche (base $a). Puisque vous aurez la même base des deux côtés, vous pourrez poser l'égalité des exposants et isoler x. ";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS($rep -> cmp);
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u></p>
+Trouver la valeur de <i>$lettre</i> si  \( $a^{$b$lettre + $f} = $e \)
+<br/><br/>
+
+<i>$lettre</i> =  ________
+<br/> 
+Note: Si la réponse est une fraction, simplifer cette fraction et l'inscrire en séparant son numérateur de son dénominateur avec la barre oblique /. 
+<br/><br/><br/>
+
+Tout d'abord, nous pouvons déterminer que la puissance qui doit être apposée à la base $a pour obtenir la réponse $e doit être <strong>$c</strong>.<br/><br/>
+
+&nbsp; &nbsp;  Donc sachant que <i>$a<sup>$b$lettre + $f</sup> = $e </i>  et que <i> $a<sup>$c</sup> = $e</i>, alors  <i> $a<sup>$b$lettre + $f</sup> = $a<sup>$c</sup></i> .
+<br/><br/>
+Par conséquent, la puissance de l'expression de gauche (<strong>$b$lettre + $f</strong>)  doit être égale à celle de droite (<strong>$c</strong>) puisque les expressions ont la même base:
+<br/><br/>
+
+&nbsp; &nbsp;  $b$lettre + $f = $c
+<br/><br/>
+
+Il suffit alors d'isoler $lettre de cette égalité pour trouver sa valeur:
+<br/><br/>
+ &nbsp; &nbsp; $b$lettre + $f = $c <br/>
+ &nbsp; &nbsp; $b$lettre = $c-$f <br/>
+ &nbsp; &nbsp; $b$lettre = $g<br/>
+ &nbsp; &nbsp; $lettre =  $g/$b = <strong>$d</strong>
+
+<br/><br/>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

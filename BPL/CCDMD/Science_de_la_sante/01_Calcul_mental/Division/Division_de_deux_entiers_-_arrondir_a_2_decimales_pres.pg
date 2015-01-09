@@ -1,0 +1,109 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Entiers - Calcul mental - Division
+#     type de question - Division d'entiers donnant une r&eacute;ponse &agrave; arrondir &agrave; 2 d&eacute;cimale pr&egrave;s
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Entier')
+## DBsection('Division')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'entier', 'division', 'calcul mental')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+
+TEXT(beginproblem());
+
+$a=random(2,20);
+$b=random($a,50);
+$div=$b/$a;
+$x=($div*10000)-int($div*10000);
+while ($x==0) {$b=random($a,50);}
+
+$reponse=(int(($div+0.005)*100))/100;
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+ <tr><td>
+
+<h1>Question : </h1>
+<br/>Effectuer la division suivante et arrondir la r&eacute;ponse &agrave; 2 d&eacute;cimales pr&egrave;s:<br/>
+<br/>$b&nbsp;&nbsp;&nbsp; &#247; &nbsp; $a&nbsp; =<br/>
+
+\{ans_rule(10)\}
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+
+case '1':text=" V&eacute;rifier tout d'abord combien de fois le diviseur peut entrer dans le premier chiffre de gauche du dividende. Si ce chiffre est trop petit, utiliser alors les deux premiers chiffres de gauche de ce dividende. Ce nombre de fois repr&eacute;sente le d&eacute;but de la r&eacute;ponse. ";
+break;
+case '2':text=" Lorsqu'on a d&eacute;termin&eacute; combien de fois le diviseur peut entrer dans le dividende, multiplier le diviseur par ce nombre de fois, inscrire ce r&eacute;sultat sous le dividende, et en faire la soustraction, afin de trouver le reste. ";
+break;
+case '3':text=" Une fois le reste trouv&eacute;, abaisser le prochain chiffre de droite du dividende qui n'a pas &eacute;t&eacute; utilis&eacute; pour la premi&egrave;re partie de la division, et continuer ainsi la division. ";
+break;
+case '4':text=" Lorsqu'il n'y a plus de chiffres &agrave; abaisser, et que la division n'est pas encore termin&eacute;e, il faut alors ajouter un point &agrave; la r&eacute;ponse et abaisser d&eacute;sormais des z&eacute;ros imaginaires; ceci permet de produire la partie d&eacute;cimale de la r&eacute;ponse. ";
+break;
+case '5':text=" Pour arrondir un chiffre, examiner le premier chiffre &agrave; la gauche de l'ensemble des chiffres &agrave; retirer; s'il est &eacute;gal ou sup&eacute;rieur &agrave; 5, il faut augmenter de 1 le dernier chiffre du nombre &agrave; conserver; sinon, le nombre &agrave; conserver reste tel quel. ";
+break;
+case '6':text="Consulter la th&eacute;orie sur la division d'entiers au site web suivant: <a target=_blank href=http://math.cchic.ca/entiers/division>http://math.cchic.ca</a>.";
+break;
+case '7':text="Consulter la th&eacute;orie sur l'arrondissement au site web suivant: <a target=_blank href=http://math.cchic.ca/decimales/arrondissement>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<button type="button" name="4" onclick="hint(this)">Astuce 4</button>&nbsp;
+<button type="button" name="5" onclick="hint(this)">Astuce 5</button>&nbsp;
+<button type="button" name="6" onclick="hint(this)">Astuce 6</button>&nbsp;
+<button type="button" name="7" onclick="hint(this)">Astuce 7</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p>&nbsp;<u>Solution</u></p>
+<p>$b &nbsp; &#247; &nbsp; $a = &nbsp; $div </p>
+<p>$div arrondi &agrave;&nbsp;2 d&eacute;cimales pr&egrave;s = $reponse</p>
+END_SOLUTION
+
+ENDDOCUMENT();

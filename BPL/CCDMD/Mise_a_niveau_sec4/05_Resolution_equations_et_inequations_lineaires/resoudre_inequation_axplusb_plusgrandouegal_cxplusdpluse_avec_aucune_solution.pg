@@ -1,0 +1,162 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Résolution d'équations et inéquations linéaires
+#     type de question - Résoudre une inéquation de style ax+b <= c(x+d) + e avec aucune solution possible
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 4')
+## DBchapter('Résoudre des équations et inéquations linéaires')
+## DBsection('Équation linéaire')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'polynôme', 'résolution', 'algèbre','variable', 'exposant','inequation')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# définir les variables, afin que la réponse x donne un entier qui n'est pas égal à zéro
+
+do {$a=non_zero_random(-6,6);}
+until (($a !=1) &&($a!=-1));
+
+$c=$a;
+
+do
+{
+   $b=non_zero_random(-5,5);
+   $d=non_zero_random(-6,6);
+   $e=non_zero_random(-6,6);
+}
+until ( (($a-$c) > (($c*$d)+$e -$b)) );
+
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# déterminer les détails supplémentaires pour la solution
+$cfoisd=$c*$d;
+$cfoisdpluse= $cfoisd + $e;
+$num=$cfoisd + $e - $b;
+$amoinsc=$a - $c;
+
+# déterminer la réponse
+$reponse = "aucun";
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Résoudre l'inéquation <b> \( $a$lettre + $b \leq $c($lettre + $d) + $e \) </b> .
+<br/><br/>
+
+\{ans_rule(15)\} 
+
+<br/><br/>
+Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+Pour l'ensemble des réels entier, entrer: (-infini, infini)<br/>
+Lorsqu'il n'y a aucune solution, entrer: aucun <br/>
+
+  </td></tr>
+</table>
+END_TEXT
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Regrouper d'un côté les termes en x et de l'autre côté les constantes.";
+break;
+case '2':text="N'oubliez pas que  - x &#8804; 4 est équivalent à x &#8805; -4 ! ";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(str_cmp($reponse,'remove_whitespace'));
+
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u></p>
+<br/>Résoudre l'inéquation <b> \( $a$lettre + $b \leq $c($lettre + $d) + $e \) </b> .<br/><br/>
+
+Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+Pour l'ensemble des réels entier, entrer: (-infini, infini)<br/>
+Lorsqu'il n'y a aucune solution, entrer: aucun <br/>
+<br/><br/>
+
+<table>
+  <tr>
+    <td align=right> \( $a$lettre + $b \)</td><td> ­\( \leq \) </td><td> \( $c($lettre + $d) + $e \) </td><td> <br>&nbsp;</td>
+  </tr>
+  <tr>
+    <td align=right> \( $a$lettre + $b \)</td><td> ­\( \leq  \) </td><td> \( $c$lettre + $cfoisd + $e \) </td><td> <br>&nbsp;</td>
+  </tr>
+  <tr>
+    <td align=right> \( $a$lettre + $b \)</td><td> ­\( \leq  \) </td><td> \( $c$lettre + $cfoisdpluse \) </td><td> <br>&nbsp;</td>
+  </tr>
+  <tr>
+    <td align=right> \( $a$lettre + $b - $c$lettre \)</td><td> ­\( \leq  \) </td><td> \( $c$lettre + $cfoisdpluse - $c$lettre\) </td><td> <br>&nbsp;</td>
+  </tr>
+  <tr>
+    <td align=right> \( $amoinsc$lettre + $b \)</td><td> ­\( \leq  \) </td><td> \( $cfoisdpluse \) </td><td> <br>&nbsp;</td>
+  </tr>
+  <tr>
+    <td align=right> \( $amoinsc$lettre + $b - $b \)</td><td> ­\( \leq  \) </td><td> \( $cfoisdpluse - $b \)</td><td> <br>&nbsp;</td>
+  </tr>
+  <tr>
+    <td align=right> \( $amoinsc$lettre \)</td><td> ­\( \leq  \) </td><td> \( $num \)</td><td> <br>&nbsp;</td>
+  </tr>
+  <tr>
+    <td align=right> \( $amoinsc \)</td><td> ­\( \leq  \) </td><td> \( $num \)</td><td> <br>&nbsp;</td>
+  </tr>
+</table> 
+<br/>
+$note<br/><br/>
+Comme la dernière inégalité est évidemment fausse, l'inéquation ci-dessus n'admet aucune solution.<br/>
+La réponse est donc: <strong>aucun</strong>.<br/>
+<br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

@@ -1,0 +1,180 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Entiers - Calcul mental - Multiplication
+#     type de question - Multiplication CCC x CC (avec CCC inf&eacute;rieur &agrave; 500)
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Entier')
+## DBsection('Multiplication')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'entier', 'multiplication', 'calcul mental')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+
+TEXT(beginproblem());DOCUMENT();
+loadMacros("PGbasicmacros.pl",
+"PGanswermacros.pl",
+);
+$a=random(100,499);
+$b=random(10,99);
+$reponse=$a*$b;
+
+# ci-dessous les variables requises pour produire la solution d&eacute;taill&eacute;e 
+# &agrave; afficher pour cette &eacute;quation
+$bdizaine=int($b/10);
+$bunit=$b-($bdizaine*10);
+$rep1=abs($bunit*$a);
+$rep2=abs($bdizaine*$a);
+
+
+# trouver les unit&eacute;s pour l'addition &agrave; la fin de la multiplication
+$rep1colonne2= int($rep1/10) - 10*(int($rep1/100)); 
+$rep1colonne3= int($rep1/100) - 10*(int($rep1/1000)); 
+$rep1colonne4= int($rep1/1000) - 100*(int($rep1/10000));
+$rep2colonne2= $rep2 - 10*(int($rep2/10)); 
+$rep2colonne3= int($rep2/10) - 10*(int($rep2/100));
+$rep2colonne4=int($rep2/100) - 100*(int($rep2/1000));
+$retenuecolonne3 =int(($rep1colonne2 + $rep2colonne2)/10);
+$retenuecolonne4=int(($rep1colonne3 + $rep2colonne3 + $retenuecolonne3)/10);
+$retenuecolonne5=int(($rep1colonne4 + $rep2colonne4 + $retenuecolonne4)/10);
+$ret3=(($retenuecolonne3==0)?"&nbsp;" : $retenuecolonne3);
+$ret4=(($retenuecolonne4==0)?"&nbsp;" : $retenuecolonne4);
+$ret5=(($retenuecolonne5==0)?"&nbsp;" : $retenuecolonne5);
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+ <tr><td>
+
+<h1>Question : </h1>
+<br/>$a&nbsp; X&nbsp; $b&nbsp; =<br/>
+
+\{ans_rule(10)\}
+  </td></tr>
+</table
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text=" Pour multiplier un nombre par un chiffre, dont le produit est difficile &agrave; d&eacute;terminer directement (ex.: avec l'aide du tableau de multiplication), placer le chiffre sous le nombre. Multiplier le chiffre par l'unit&eacute;) du nombre (ex.: 2 x 6 = 12). Inscrire le premier chiffre (l'unit&eacute;) de ce r&eacute;sultat sous le tout, et le second chiffre (la dizaine) en retenue. Multiplier ensuite le chiffre par la dizaine du nombre et y additionner la retenue, si pr&eacute;sente (ex.: 2 x 3 + 1 = 7). Placer l'unit&eacute; de son r&eacute;sultat &agrave; la gauche du r&eacute;sultat pr&eacute;sent, et sa dizaine comme retenue. Multiplier enfin le chiffre par la centaine du nombre. Inscrire ce nouveau r&eacute;sultat &agrave; la gauche de celui d&eacute;j&agrave; pr&eacute;sent. ";
+break;
+case '2':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/entiers/multiplication>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u></p>
+<p>
+<table border="0" cellspacing="1" cellpadding="1" width="400" align="left">
+    <tbody>
+        <tr>
+            <td valign="top">
+            <p>1. Multiplier le premier nombre par l'unit&eacute; du second nombre et inscrire son r&eacute;sultat sous le tout.&nbsp;</p>
+            <p>&nbsp;</p>
+            </td>
+            <td valign="top">&nbsp;&nbsp;&nbsp;</td>
+            <td valign="top">
+            <p>2. Multiplier le premier nombre par la dizaine du second nombre et inscrire son r&eacute;sultat sous le tout, en le d&eacute;calant d'une unit&eacute; vers la gauche.</p>
+            </td>
+            <td valign="top">&nbsp;&nbsp;&nbsp;</td>
+            <td valign="top">
+            <p>3. Faire la somme des deux r&eacute;sultats obtenus.
+             </p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+            <table border="0" cellspacing="1" cellpadding="1" width="80" align="center">
+                <tbody>
+                    <tr>
+                        <td align="right">
+                        $a<br/>
+                        x&nbsp;&nbsp;&nbsp; <u>&nbsp;&nbsp;&nbsp;$bdizaine<strong>$bunit</strong></u><br/>
+                        <strong>$rep1</strong><br/>
+                        &nbsp;<br/>
+                        &nbsp;<br/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            </td>
+            <td>&nbsp;</td>
+            <td>
+            <table border="0" cellspacing="1" cellpadding="1" width="80" align="center">
+                <tbody>
+                    <tr>
+                        <td align="right">
+                        $a<br/>
+                        x&nbsp; <u>&nbsp;&nbsp;<strong> $bdizaine</strong>$bunit</u><br/>
+                        $rep1<br/>
+                        <strong>$rep2&nbsp;&nbsp; </strong><br/>
+                        &nbsp;<br/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            </td>
+            <td>&nbsp;</td>
+            <td>
+            <table border="0" cellspacing="1" cellpadding="1" width="80" align="center">
+                <tbody>
+                    <tr>
+                        <td align="right">
+                        $a<br/>
+                        x&nbsp;&nbsp;&nbsp;<u>&nbsp;&nbsp;&nbsp;$b</u><br/>
+                        $ret5$ret4$ret3&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+                        <strong>$rep1</strong><br/>
+                        <u><strong>+ $rep2</strong>&nbsp;&nbsp; </u><br/>
+                        <strong>$reponse</strong><br/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</p>
+
+END_SOLUTION
+
+ENDDOCUMENT();

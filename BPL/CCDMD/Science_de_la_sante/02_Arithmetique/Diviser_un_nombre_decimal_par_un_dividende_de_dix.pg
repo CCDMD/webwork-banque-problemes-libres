@@ -1,0 +1,127 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Nombre d&eacute;cimal - Division
+#     type de question - Diviser un nombre d&eacute;cimal par un dividence de dix     
+##ENDDESCRIPTION
+
+## DBsubject('Arithm&eacute;tique')
+## DBchapter('Nombre d&eacute;cimal')
+## DBsection('Division')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'arithm&eacute;tique', 'd&eacute;cimal', 'division')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+);
+
+
+TEXT(beginproblem());
+
+$choix=random(0,2);
+@multiples=(0.001,0.01,0.1);
+$multiplechoisi=$multiples[$choix];
+
+
+# cr&eacute;er un nombre &agrave; trois d&eacute;cimales dont le dernier chiffre n'est pas z&eacute;ro
+$adernier=random(1,9);
+$aautre=random(1,100);
+$a=((10*$aautre)+$adernier)/1000;
+
+$reponse=$a/$multiplechoisi;
+
+#pour chaque choix de multiple, d&eacute;terminer le nombre de d&eacute;placements requis pour bouger le point d&eacute;cimal lors de la multiplication
+@nombrededeplacement=(3,2,1);
+
+# si le nombre de d&eacute;placements est sup&eacute;rieur &agrave; 1, rajouter un s au mot position dans la solution
+if ($nombrededeplacement[$choix]==1)
+  {$s="";}
+else
+  {$s="s";}
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Effectuer l'op&eacute;ration suivante et donner le r&eacute;sultat sous forme d&eacute;cimale:
+<br/><br/>
+<table>
+  <tr>
+   <td align=center><u>$a</u></td>
+  </tr>
+  <tr>
+   <td align=center>$multiplechoisi</td>
+  </tr>
+</table>
+<br/>
+
+\{ans_rule(10)\}<br/>
+<h5>Utiliser le point (au lieu de la virgule) pour s&eacute;parer <br/>la partie enti&egrave;re de la partie d&eacute;cimale dans la r&eacute;ponse.</h5>
+
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text=" Lors de la division d'un nombre d&eacute;cimal par une puissance n&eacute;gative de 10, d&eacute;placer vers la droite le point d&eacute;cimal du nombre d&eacute;cimal du m&ecirc;me nombre de positions qu'il y a de d&eacute;cimales dans la puissance. Par exemple, la division de 1.32 par 0.01 donnera 132, car 0.01 a deux d&eacute;cimales, ce qui implique deux d&eacute;placements vers la droite du point d&eacute;cimal de 1.32 . ";
+break;
+case '2':text=" La division par 0.1 est &eacute;gale &agrave; la multiplication par 10, celle par 0.01 est &eacute;gale &agrave; la multiplication par 100, et celle par 0.001 est &eacute;gale &agrave; la multiplication par 1000.  Effectuer ces multiplications est souvent plus facile qu'effectuer les divisions avec les puissances n&eacute;gatives de 10.. ";
+break;
+case '3':text="Consulter la th&eacute;orie sur le sujet au site web suivant: <a target=_blank href=http://math.cchic.ca/dcimales/division>http://math.cchic.ca</a>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+ANS(strict_num_cmp($reponse, .0));
+
+BEGIN_SOLUTION
+
+$PAR <U>Solution</U> $PAR
+
+D&eacute;placer le point d&eacute;cimal du nombre $a de $nombrededeplacement[$choix] position$s vers la droite<br/>
+(car il y $nombrededeplacement[$choix] d&eacute;cimale$s dans le diviseur $multiplechoisi):
+<br/><br/> 
+
+<blockquote>
+   $a / $multiplechoisi =  <strong>$reponse</strong>
+</blockquote>
+END_SOLUTION
+
+ENDDOCUMENT();
