@@ -45,7 +45,6 @@ TEXT(beginproblem());
 
 Context("Numeric");
 #Context()->variables->are(x=>"Real");
-#Context()->variables->set(x=>{limits=>[2,3]});
 
 $a = random(2,8,1);
 do{$b = random(2,8,1);} until( gcd($a,$b)==1 );
@@ -56,7 +55,7 @@ do{$d = non_zero_random(-9,9,1);} until ($d!=$c);
 $expression = "\displaystyle $a \left( \log (x+$c) + \frac{$b}{$a} \log (x+$d) \right)";
 $logtype = "\log";
 
-$answer = Compute("(x+$c)^($a) * (x+$d)^($b)");
+$answer = Compute("((x+$c) * (x+$d)^($b/$a))^($a)");
 
 
 ####################################
@@ -79,7 +78,7 @@ Context()->normalStrings;
 ###################################
 #  Answer evaluation
 
-ANS($answer->cmp() );
+ANS($answer->cmp(limits=>[10,11]));
 
 Context()->texStrings;
 BEGIN_SOLUTION
