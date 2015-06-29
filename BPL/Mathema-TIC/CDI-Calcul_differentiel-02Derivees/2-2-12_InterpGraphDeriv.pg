@@ -62,24 +62,68 @@ $c = Compute("1");
 Context("ABCD-List");
 $ans = List("B,D,C,A");
 Context("Numeric");
+
+### Les informations pour tracer les tangentes
+$Df = $f->D('x');
+$Dg = $g->D('x');
+$y0 = $g->eval(x=>-2);
+$y1 = $g->eval(x=>0);
+$y2 = $f->eval(x=>2);
+$y3 = $f->eval(x=>4);
+
+$m0 = $Dg->eval(x=>-2);
+$m1 = $Dg->eval(x=>0);
+$m2 = $Df->eval(x=>2);
+$m3 = $Df->eval(x=>4);
+
 }
 if ($a==2){
-$g = Compute("-2((x^3/3)-x)");
-$f = Compute("-3((x-1)^2/((x-1)^2+1))+(4/3)");
+$g = Formula("-2((x^3/3)-x)");
+$f = Formula("-3((x-1)^2/((x-1)^2+1))+(4/3)");
 $c = Compute("1");
 
 Context("ABCD-List");
 $ans = List("A,C,D,B");
 Context("Numeric");
+
+### Les informations pour tracer les tangentes
+$Df = $f->D('x');
+$Dg = $g->D('x');
+$y0 = $g->eval(x=>-2);
+$y1 = $g->eval(x=>0);
+$y2 = $f->eval(x=>2);
+$y3 = $f->eval(x=>4);
+
+$m0 = $Dg->eval(x=>-2);
+$m1 = $Dg->eval(x=>0);
+$m2 = $Df->eval(x=>2);
+$m3 = $Df->eval(x=>4);
+
+
+
 }
 if ($a==3){
-$f = Compute("2((-(x-2)^3/3)+(x-2))");
-$g = Compute("-3((x-3)^2/((x-3)^2+1))+(4/3)");
+$f = Formula("2((-(x-2)^3/3)+(x-2))");
+$g = Formula("-3((x-3)^2/((x-3)^2+1))+(4/3)");
 $c = Compute("3");
 
 Context("ABCD-List");
 $ans = List("D,A,B,C");
 Context("Numeric");
+
+### Les informations pour tracer les tangentes
+$Df = $f->D('x');
+$Dg = $g->D('x');
+$y0 = $g->eval(x=>-2);
+$y1 = $g->eval(x=>0);
+$y2 = $g->eval(x=>2);
+$y3 = $f->eval(x=>4);
+
+$m0 = $Dg->eval(x=>-2);
+$m1 = $Dg->eval(x=>0);
+$m2 = $Dg->eval(x=>2);
+$m3 = $Df->eval(x=>4);
+
 }
 ###############################################################
 
@@ -114,6 +158,43 @@ Context()->normalStrings;
 #####################################################################
 
 ANS($ans->cmp(ordered=>1));
+
+
+
+###############################################################
+
+$graph2 = init_graph(-4,-5,6,5,'axes'=>[0,0],'ticks'=>[10,10],'grid'=>[10,10],'size'=>[500,500]);
+
+#### Dessiner les tangentes
+$d0 = "$m0*(x+2)+$y0 for x in <-2.8,-1.2> using color:red weight:2";
+$d1 = "$m1*(x)+$y1 for x in <-0.8,0.8> using color:red weight:2";
+$d2 = "$m2*(x-2)+$y2 for x in <1.2,2.8> using color:red weight:2";
+$d3 = "$m3*(x-4)+$y3 for x in <3.2,4.8> using color:red weight:2";
+
+add_functions($graph2, $p1, $p2, $d0, $d1,$d2,$d3);
+
+### les points
+$graph2->stamps( closed_circle(-2,$y0,'red') );
+$graph2->stamps( closed_circle(0,$y1,'red') );
+$graph2->stamps( closed_circle(2,$y2,'red') );
+$graph2->stamps( closed_circle(4,$y3,'red') );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+Sachant que la valeur de \(g'(a)\), si elle existe, est déterminée par la pente de la droite tangente à la courbe au point \((a,g(a))\), on peut ainsi placer dans l'ordre croissant les 
+valeurs de \(A:g'(-2)\), \(B:g'(0)\), \(C:g'(2)\) et \(D:g'(4)\) en traçant les tangentes associées et en comparant les pentes de ces droites 
+tangentes (voir le graphique ci-dessous).
+$PAR
+Par conséquent, on aura comme réponse : \($ans\).
+$PAR
+$BCENTER
+\{image(insertGraph($graph2),width=>$w,height=>$w,tex_size=>$tw)\}
+$ECENTER
+
+
+END_SOLUTION
+Context()->normalStrings;
 
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.
