@@ -1,0 +1,139 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Probabilités)
+## DBchapter(Vecteurs aléatoires)
+## DBsection(Espérance et moments)
+##Modifié par Jean-Sébastien Turcotte - Université de Montréal
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+
+## ZDESCRIPTION
+## Z Joint Probability
+## ZENDDESCRIPTION
+
+## ZKEYWORDS('joint', 'probability', 'marginal', 'mean', 'variance', 'covariance', 'coefficient of correlation')
+## ZCMKK tagged this problem.
+
+## ZZDBsubject('Probability')
+## ZDBchapter('Theory')
+## ZDBsection('Joint Distributions')
+## ZDate('6/24/2005')
+## ZAuthor('Cristina Murray-Krezan')
+## ZInstitution('UVA')
+## ZTitleText1('Statistics for Management and Economics')
+## ZEditionText1('6')
+## ZAuthorText1('Keller, Warrack')
+## ZSection1()
+## ZProblem1()
+###############Source###############
+## KEYWORDS('Loi marginale','Espérance','Variance','Covariance','Coefficient de corrélation')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl",,                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+#"PGstatisticsmacros.pl",   #Donne accès à des commandes de stats
+#"PGnumericalmacros.pl",    #Nécessaire pour certaines macros dans statistics
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+## install_problem_grader(~~&std_problem_grader);
+
+$a1 = random(.60,.62,.01);
+$a2 = random(.16,.18,.01);
+$a3 = random(.07,.08,.01);
+$a4 = 1-($a1+$a2+$a3);
+$marbot0 = $a1+$a3;                      #marginal prob of 0 bottles
+$marbot1 = $a2+$a4;                      #marginal prob of 1 bottle
+$marcar0 = $a1+$a2;                      #marginal prob of 0 cartons
+$marcar1 = $a3+$a4;                      #marginal prob of 1 carton
+$meanbott = 0*($marbot0)+1*($marbot1);     #mean of bottles
+$meancart = 0*($marcar0)+1*($marcar1);     #mean of cartons
+$varbott = $marbot0*(0-$meanbott)**2+$marbot1*(1-$meanbott)**2;             #variance of bottles
+$varcart = $marcar0*(0-$meancart)**2+$marcar1*(1-$meancart)**2;             #variance of cartons
+$cov = (0*0*$a1+1*0*$a2+0*1*$a3+1*1*$a4)-($meanbott*$meancart);             #covariance of bottles and cartons
+$coc = ($cov)/(sqrt($varbott)*sqrt($varcart));        #coefficient of correlation
+
+BEGIN_TEXT
+$PAR
+Les Canadiens qui se rendent aux États-Unis achètent souvent de l'alcool et des cigarettes, qui coûtent moins cher de l'autre côté de la frontière. Cependant, les quantités permises sont limitées. Les Canadiens qui séjournent aux États-Unis durant plus de deux jours peuvent rapporter une bouteille d'alcool et une cartouche de cigarettes.  Un agent des douanes du Canada a produit la loi de probabilité conjointe du nombre de bouteilles d'alcool et du nombre de cartouches de cigarettes importées par des Canadiens ayant séjourné aux États-Unis durant plus de deux jours.
+
+$PAR
+$BCENTER
+\[
+\begin{array}{c|c|c}
+& \mbox{Bouteilles d'alcool} \\ \hline
+\mbox{Cartouches de cigarettes} & 0 & 1 \\ \hline 
+0 & $a1 & $a2 \\ \hline
+1 & $a3 & $a4 \\ \hline
+\end{array}
+\]
+$ECENTER
+$PAR
+
+
+A.  Trouver la loi de probabilité marginale du nombre de bouteilles d'alcool importées.
+$PAR
+    P(0 bouteille) = \{ans_rule(15)\}
+$PAR
+    P(1 bouteille) = \{ans_rule(15)\}
+$PAR
+
+B.  Trouver la loi de probabilité marginale du nombre de cartouches de cigarettes importées.
+$PAR
+     P(0 cartouche) = \{ans_rule(15)\}
+$PAR
+     P(1 cartouche) = \{ans_rule(15)\}
+$PAR
+
+C.  Calculer la moyenne et la variance du nombre de bouteilles d'alcool importées.
+$PAR
+     Moyenne = \{ans_rule(15)\}
+$PAR
+     Variance = \{ans_rule(15)\}
+$PAR
+
+D.   Calculer la moyenne et la variance du nombre de cartouches de cigarettes importées.
+$PAR
+     Moyenne = \{ans_rule(15)\}
+$PAR
+     Variance = \{ans_rule(15)\}
+$PAR
+
+E.  Calculer la covariance et le coefficient de corrélation.
+$PAR
+    Covariance = \{ans_rule(15)\}
+$PAR
+    Coefficient de corrélation = \{ans_rule(15)\}
+$PAR
+
+END_TEXT
+
+
+
+ANS(num_cmp($marbot0)); #A
+ANS(num_cmp($marbot1)); #A
+ANS(num_cmp($marcar0)); #B
+ANS(num_cmp($marcar1)); #B
+ANS(num_cmp($meanbott));  #C 
+ANS(num_cmp($varbott));    #C 
+ANS(num_cmp($meancart)); #D 
+ANS(num_cmp($varcart));    #D  
+ANS(num_cmp($cov)); #E
+ANS(num_cmp($coc)); #E
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

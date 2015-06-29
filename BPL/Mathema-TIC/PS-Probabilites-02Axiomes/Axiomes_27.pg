@@ -1,0 +1,119 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+## DBsubject(Probabilités)
+## DBchapter(Probabilité conditionnelle et indépendance)
+## DBsection(Indépendance)
+##Modifié par Jean-Sébastien Turcotte - Université de Montréal
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## DESCRIPTION
+##  Probability
+## ENDDESCRIPTION
+
+## 
+## NAW tagged this problem.
+
+## ZDBsubject('Probability')
+## ZDBchapter('Theory')
+## ZDBsection('Conditional Probability')
+## ZDate('6/8/2005')
+## ZAuthor('Nolan A. Wages')
+## ZInstitution('UVA')
+## ZTitleText1('Statistics for Management and Economics')
+## ZEditionText1('6')
+## ZAuthorText1('Keller, Warrack')
+## ZSection1()
+## ZProblem1()
+###############Source###############
+## KEYWORDS('Théorie des ensemble','Indépendance','Probabilités conditionnelles')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 0;
+install_problem_grader(~~&std_problem_grader);
+
+$mc[1] = new_multiple_choice(); 
+$mc[1]->qa('Si P(A) = 0,20, P(B) = 0,30 et P(A \cap B) = 0,06, alors A et B sont : ',
+    'des événements indépendants'
+);
+$mc[1]->extra(
+     'des événements dépendants',
+    'des événements mutuellement exclusifs',
+    'des événements complémentaires'
+); 
+
+
+$mc[2] = new_multiple_choice(); 
+$mc[2]->qa('Si A et B sont des événements mutuellement exclusifs et que P(A) = 0,70, alors P(B) :',
+    'ne peut pas être supérieure à 0,30'
+);
+$mc[2]->extra(
+    "peut prendre n'importe quelle valeur entre 0 and 1",
+    "peut prendre n'importe quelle valeur entre 0 and 0,70",
+    'ne peut pas être inférieure à 0,30'
+);
+
+
+
+$mc[3] = new_multiple_choice(); 
+$mc[3]->qa('Deux événements A et B sont indépendants si :',
+    '\(P(A \cap B) = P(A)\cdot P(B)\)'
+);
+
+$mc[3]->extra(
+    '\(P(A \mbox{ et } B) = P(A) + P(B)\)',
+    '\(P(A|B) = P(B)\)',
+    '\(P(B|A) = P(A)\)'
+);
+
+
+$mc[4] = new_multiple_choice(); 
+$mc[4]->qa('Deux événements A et B sont mutuellement exclusifs si :',
+    '\(P(A \cap B) = 0\)'
+);
+$mc[4]->extra(
+    '\(P(A|B) = 1\)',
+    '\(P(B|A) = 1\)',
+    '\(P(A \cap B) = 1\)'
+);
+
+
+
+$a = random(1,4,1);
+$b = random(1,4,1);
+while ($a == $b) {
+    $b = random(1,4,1);
+}
+
+
+BEGIN_TEXT
+$PAR
+\{ $mc[$a]->print_q() \}
+
+\{ $mc[$a]->print_a() \}
+$PAR
+\{ $mc[$b]->print_q() \}
+
+\{ $mc[$b]->print_a() \}
+$PAR
+
+END_TEXT
+
+ANS(radio_cmp($mc[$a]->correct_ans));
+ANS(radio_cmp($mc[$b]->correct_ans));
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

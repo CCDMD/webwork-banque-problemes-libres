@@ -1,0 +1,142 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+## DBsubject(Probabilités)
+## DBchapter(Axiomes des probabilités)
+## DBsection(Théorie des ensembles)
+##Modifié par Jean-Sébastien Turcotte
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+##DESCRIPTION
+##
+##ENDDESCRIPTION
+
+## Tagged by ynw2d
+
+## ZDBsubject(Probability)
+## ZDBchapter(Counting and probability)
+## ZDBsection(Counting Principles)
+## IZnstitution(ASU)
+###############Source###############
+## KEYWORDS(Théorie des ensembles)
+## Level(1)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+@slice = NchooseK(10,10);
+@A = ($slice[0], $slice[1], $slice[2], $slice[3], $slice[4], $slice[5]);
+@B = ($slice[0], $slice[1], $slice[2], $slice[6]);
+@Ac = ($slice[6], $slice[7], $slice[8], $slice[9]);
+@AUBc = ($slice[7], $slice[8], $slice[9]);
+$AUBCc = $slice[6];
+@AiBC = ($slice[3], $slice[4], $slice[5]);
+
+for ($k=5; $k>0; $k-=1) {
+  for ($i=0; $i<$k; $i+=1){
+    if($A[$i]>$A[$k]) {
+       $b = $A[$i];
+       $A[$i] = $A[$k];
+       $A[$k] = $b;
+    }
+  }
+}
+
+for ($k=3; $k>0; $k-=1) {
+  for ($i=0; $i<$k; $i+=1){
+    if($B[$i]>$B[$k]) {
+       $b = $B[$i];
+       $B[$i] = $B[$k];
+       $B[$k] = $b;
+    }
+  }
+}
+
+for ($k=3; $k>0; $k-=1) {
+  for ($i=0; $i<$k; $i+=1){
+    if($Ac[$i]>$Ac[$k]) {
+       $b = $Ac[$i];
+       $Ac[$i] = $Ac[$k];
+       $Ac[$k] = $b;
+    }
+  }
+}
+
+for ($k=2; $k>0; $k-=1) {
+  for ($i=0; $i<$k; $i+=1){
+    if($AUBc[$i]>$AUBc[$k]) {
+       $b = $AUBc[$i];
+       $AUBc[$i] = $AUBc[$k];
+       $AUBc[$k] = $b;
+    }
+  }
+}
+
+for ($k=2; $k>0; $k-=1) {
+  for ($i=0; $i<$k; $i+=1){
+    if($AiBC[$i]>$AiBC[$k]) {
+       $b = $AiBC[$i];
+       $AiBC[$i] = $AiBC[$k];
+       $AiBC[$k] = $b;
+    }
+  }
+}
+
+$LEFT_BRACE='\{';
+$RIGHT_BRACE='\}';
+
+BEGIN_TEXT
+
+Soient  U,  l'ensemble universel \( = ${LEFT_BRACE} \) 0, 1,  2, 3, 4, 5, 6, 7, 8, 9 
+\(${RIGHT_BRACE} \), 
+\( A = ${LEFT_BRACE} $A[0],  $A[1],  $A[2],  $A[3], $A[4],  $A[5] ${RIGHT_BRACE} \) 
+ $SPACE et 
+\(  B = ${LEFT_BRACE} $B[0],  $B[1],  $B[2], $B[3] ${RIGHT_BRACE} \). $BR
+Énumérer les éléments des ensembles ci-dessous. Séparer les éléments à l'aide de virgules. $BR
+
+\( A^{c} = ${LEFT_BRACE} \) \{ans_rule(20 )\}
+ \( ${RIGHT_BRACE} \) $BR
+
+END_TEXT
+
+ANS(number_list_cmp("$Ac[0],$Ac[1],$Ac[2],$Ac[3]"));
+
+BEGIN_TEXT
+\( (A \cup B)^{c} = ${LEFT_BRACE}\) \{ans_rule(20)\}
+ \( ${RIGHT_BRACE} \) $BR
+END_TEXT
+
+ANS(number_list_cmp("$AUBc[0],$AUBc[1],$AUBc[2]"));
+
+BEGIN_TEXT
+
+\( (A \cup B^{c})^{c} = ${LEFT_BRACE}\) \{ans_rule(20)\} \(${RIGHT_BRACE}\) $BR
+
+END_TEXT
+
+ANS(number_list_cmp("$AUBCc"));
+
+BEGIN_TEXT
+\( A \cap B^{c} = ${LEFT_BRACE}\) \{ans_rule(20)\}
+ \( ${RIGHT_BRACE} \) $BR
+END_TEXT
+
+ANS(number_list_cmp("$AiBC[0],$AiBC[1],$AiBC[2]"));
+
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

@@ -1,0 +1,54 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+## DBsubject(Probabilités)
+## DBchapter(Probabilité conditionnelle et indépendance)
+## DBsection(Probabilités conditionnelles)
+## Author(Jean-Sébastien Turcotte - Université de Montréal)  # ou ##Modifié par 
+## KEYWORDS('Indépendance','Avec remise',Probabilités conditionnelles','Formule de Bayes')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl"
+);
+TEXT(beginproblem());
+#####Initialisation des paramètres######################
+Context("Numeric");
+$urn1=random(6,8,1);
+$urn1c=10-$urn1;
+$ans1=Compute("1/2*$urn1/10+1/2*$urn1c/10");      #calcul bidon, au cas où on voudrait généraliser
+$ans2=Compute("(1/2*($urn1/10)^3+1/2*($urn1c/10)^3)/(1/2*($urn1/10)^2+1/2*($urn1c/10)^2)");
+$ans3=Compute("1/2*($urn1/10)**2/(1/2*($urn1/10)**2+1/2*($urn1c/10)**2)");
+BEGIN_TEXT
+On lance une pièce équilibrée. Si on obtient face, on tire des billes sans remise d'une urne contenant \($urn1\) billes noires et \($urn1c\) billes blanches. Si la pièce tombe sur pile, on utilise plutôt une urne contenant \($urn1c\) billes noires et \($urn1\) billes blanches. 
+
+\{BeginList("OL")\}
+$ITEM Quelle est la probabilité de tirer une bille noire?  \{ $ans1->ans_rule(10) \}
+$ITEMSEP
+
+$ITEM Sachant que les deux premières  billes tirées sont noires, quelle est la probabilité que la prochaine le soit aussi? \{$ans2-> ans_rule(10) \}
+$ITEMSEP
+
+$ITEM Sachant que les deux premières  billes tirées sont noires, quelle est la probabilité que la pièce soit tombée sur face? \{ $ans3->ans_rule(10) \}
+$ITEMSEP
+\{EndList("OL")\}
+
+
+END_TEXT
+
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+
+ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

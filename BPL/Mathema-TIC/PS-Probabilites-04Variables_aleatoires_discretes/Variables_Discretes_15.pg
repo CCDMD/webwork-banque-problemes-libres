@@ -1,0 +1,70 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+## DBsubject(Probabilités)
+## DBchapter(Variables aléatoires discrètes)
+## DBsection(Variables discrètes)
+ ##Author(Jean-Sébastien Turcotte - Université de Montréal)
+## KEYWORDS('Variables aléatoires discrètes','Probabilités')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl"                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+);
+
+
+TEXT(beginproblem());
+Context("Numeric");
+@prob=(0,1/36,2/36,2/36,3/36,2/36,4/36,0/36,2/36,1/36,2/36,0/36,4/36,0/36,0/36,2/36,1/36,0/36,2/36,0/36,2/36,0/36,0/36,0/36,2/36,1/36,0/36,0/36,0/36,0/36,2/36,0/36,0/36,0/36,0/36,0/36,1/36); #le premier 0 est bidon pour faciliter les référence étant donné que les arrays commence à l'indice 0
+@numpos=(1,2,3,4,5,6,8,9,10,12,15,16,18,20,24,25,30,36); #nombre avec prob pos
+@numimpos=(7,11,13,14,17,19,21,22,23,26,27,28,29,21,32,33,34,35); #nombre avec prob 0
+@slice1=NchooseK(18,4);
+@slice2=NchooseK(18,2);
+@choixpos=@numpos[@slice1];                    #4 choix parmi les pos
+@choiximpos=@numimpos[@slice2];          #2 choix parmie les imposs
+@questions=(@choixpos,@choiximpos);    #les questions
+@questionsalea = @questions[ NchooseK(6, 6) ];      #permutées au hasard
+@rep=@prob[@questionsalea];                                   #les rep
+BEGIN_TEXT
+On lance un dé équilibré deux fois. Soit \(P\) la variable aléatoire qui représente le produit des deux nombres. Calculer les probabilités ci-dessous:
+\{BeginList("OL")\}
+$ITEM
+\(\mathbb{P}(P=$questionsalea[0])=\)\{Compute("$rep[0]")->ans_rule(10)\}
+$ITEMSEP
+$ITEM
+\(\mathbb{P}(P=$questionsalea[1])=\)\{Compute("$rep[1]")->ans_rule(10)\}
+$ITEMSEP
+$ITEM
+\(\mathbb{P}(P=$questionsalea[2])=\)\{Compute("$rep[2]")->ans_rule(10)\}
+$ITEMSEP
+$ITEM
+\(\mathbb{P}(P=$questionsalea[3])=\)\{Compute("$rep[3]")->ans_rule(10)\}
+$ITEMSEP
+$ITEM
+\(\mathbb{P}(P=$questionsalea[4])=\)\{Compute("$rep[4]")->ans_rule(10)\}
+$ITEMSEP
+$ITEM
+\(\mathbb{P}(P=$questionsalea[5])=\)\{Compute("$rep[5]")->ans_rule(10)\}
+$ITEMSEP
+\{EndList("OL")\}
+$PAR
+END_TEXT
+ANS( Compute("$rep[0]")->cmp() );
+ANS( Compute("$rep[1]")->cmp() );
+ANS( Compute("$rep[2]")->cmp() );
+ANS( Compute("$rep[3]")->cmp() );
+ANS( Compute("$rep[4]")->cmp() );
+ANS( Compute("$rep[5]")->cmp() );
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

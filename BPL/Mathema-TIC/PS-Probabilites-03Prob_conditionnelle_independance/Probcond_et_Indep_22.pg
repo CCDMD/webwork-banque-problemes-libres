@@ -1,0 +1,95 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+## DBsubject(Probabilités)
+## DBchapter(Probabilité conditionnelle et indépendance)
+## DBsection(Indépendance)
+##Modifié par Jean-Sébastien Turcotte - Université de Montréal
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## DESCRIPTION
+##   Conditional Probability
+## ENDDESCRIPTION
+## Tagged by nhamblet
+
+## ZDBsubject('Probability')
+## ZDBchapter('Theory')
+## ZDBsection('Conditional Probability')
+## ZDate('')
+## ZAuthor('')
+## ZInstitution('Rochester')
+## ZTitleText1('')
+## ZEditionText1('')
+## ZAuthorText1('')
+## ZSection1('')
+## ZProblem1('')
+###############Source###############
+## KEYWORDS('Indépendance','Probabilités conditionnelles')
+## Level()    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+);
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(0.2,0.8,0.1);
+$b = random(0.1,0.4,0.1);
+while ($b==$a) {$b = random(0.1,0.8,0.1);}
+
+$low = max(0.1,-int(-10*($a+$b-1)/$b)/10);
+$high = min(0.9,int(10*$a/$b)/10);
+
+$c = random($low,$high,0.1);
+if ($c == $a) { $c = $c - .05; } 
+
+$ans11 = $a*$b;
+$ans12 = $a;
+$ans13 = $a+$b-$ans11;
+
+$ans21 = $c*$b;
+$ans22 = ($c*$b)/$a;
+
+@event1 = ('\(P(A \cap B) \)', '\(P(A|B)\)', '\(P(A \cup B)\)');
+@event2 = ('\(P(A \cap B) \)', '\(P(B|A)\)');
+@ans1 = ($ans11, $ans12, $ans13);
+@ans2 = ($ans21, $ans22);
+
+@slice1 = NchooseK(3,3);
+@slice2 = NchooseK(2,2);
+
+@sevent1 = (@event1[@slice1]);
+@sevent2 = (@event2[@slice2]);
+@sans1 = (@ans1[@slice1]);
+@sans2 = (@ans2[@slice2]);
+
+
+BEGIN_TEXT
+$BR
+Soient \(A \) et \(B \) deux événements tels que \(P(A) = $a\) et \(P(B) = $b\). $PAR
+a)\( \) Si \(A\) et \(B\) sont indépendants, alors$PAR
+$sevent1[0] \(=\) \{ans_rule(10)\}$PAR
+$sevent1[1] \(=\) \{ans_rule(10)\}$PAR
+$sevent1[2] \(=\) \{ans_rule(10)\}$PAR
+b)\( \) Si \(A\) et \(B\) sont dépendants et \(P(A|B) = $c\), alors $PAR
+$sevent2[0] \(=\) \{ans_rule(10)\}$PAR
+$sevent2[1] \(=\) \{ans_rule(10)\}$PAR
+
+END_TEXT
+
+ANS(num_cmp($sans1[0], mode=>"arith"));
+ANS(num_cmp($sans1[1], mode=>"arith"));
+ANS(num_cmp($sans1[2], mode=>"arith"));
+ANS(num_cmp($sans2[0], mode=>"arith"));
+ANS(num_cmp($sans2[1], mode=>"arith"));
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

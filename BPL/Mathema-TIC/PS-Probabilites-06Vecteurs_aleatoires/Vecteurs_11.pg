@@ -1,0 +1,74 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Probabilités)
+## DBchapter(Vecteurs aléatoires)
+## DBsection(Lois conjointes)
+## Modifié par Jean-Sébastien Turcotte - Université de Montréal
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+
+## ZDESCRIPTION
+##   Joint Distributions
+## ZENDDESCRIPTION
+
+## ZKEYWORDS('Joint Distribution', 'Uniform', 'Roots')
+## ZTagged by nhamblet
+
+## ZDBsubject('Probability')
+## ZDBchapter('Theory')
+## ZDBsection('Joint Distributions')
+## ZDate('')
+## ZAuthor('')
+## ZInstitution('Rochester')
+## ZTitleText1('')
+## ZEditionText1('')
+## ZAuthorText1('')
+## ZSection1('')
+## ZProblem1('')
+###############Source###############
+## KEYWORDS('Probabilités','Loi conjointes','Loi uniforme)
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl",,                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+#"PGstatisticsmacros.pl",   #Donne accès à des commandes de stats
+#"PGnumericalmacros.pl",    #Nécessaire pour certaines macros dans statistics
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,10,1);
+$b = random(2,10,1);
+if ($a == $b) { $b = $b+1; }
+$l = int(sqrt(4*$a*$b));
+if ($l > 12) { $l = 12; }
+$c = random(1,$l,1);
+while (($c == $a) or ($c == $b)) { $c = $c - 1; }
+
+$ans = $c**2/12/$a/$b * (5/3 + ln(4*$a*$b/$c**2));
+
+BEGIN_TEXT
+
+Soient \(A\), \(B\) et \(C\) des variables aléatoires indépendantes, uniformément distribuées sur \( [0,$a ], \) \( [0,$b] \) \( [0,$c] \)
+respectivement. Quelle est la probabilité que l'équation \(Ax^2 + Bx + C = 0\) ait toutes ses racines réelles? \{ans_rule(20)\}
+
+END_TEXT
+
+ANS(num_cmp($ans));
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

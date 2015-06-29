@@ -1,0 +1,55 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+## DBsubject(Probabilités)
+## DBchapter(Variables aléatoires discrètes)
+## DBsection(Variables discrètes)
+ ##Author(Jean-Sébastien Turcotte - Université de Montréal)
+## KEYWORDS('Variables aléatoires discrètes',Probabilités')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl"                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+);
+
+
+TEXT(beginproblem());
+Context("Numeric");
+Context("IntegerFunctions");
+@prob=(1/2,1/6,1/12,1/20,1/5);
+@vic=(0,1,2,3,4);
+@slice=NchooseK(5,3);
+@quest=@vic[@slice];
+@rep=@prob[@quest];
+
+
+BEGIN_TEXT
+Un jeu consiste à donner aléatoirement à \(5\) participants \(A,B,C,D\) et \(E\) un nombre entre \(1\) et \(5\). Par la suite, \(A\) compare son nombre avec \(B\) et celui qui a le plus grand nombre est déclaré vainqueur. Le gagnant compare ensuite son nombre à celui du joueur \(C\) et ainsi de suite. Calculer
+\{BeginList("OL")\}
+$ITEM
+\(\mathbb{P}(A  \mbox{ gagne } $quest[0] \mbox{ duels}) =\) \{Compute("$rep[0]")->ans_rule(10)\}
+$ITEMSEP
+$ITEM
+\(\mathbb{P}(A  \mbox{ gagne } $quest[1] \mbox{ duels}) =\) \{Compute("$rep[1]")->ans_rule(10)\}
+$ITEMSEP
+$ITEM
+\(\mathbb{P}(A  \mbox{ gagne } $quest[2] \mbox{ duels}) =\) \{Compute("$rep[2]")->ans_rule(10)\}
+
+\{EndList("OL")\}
+END_TEXT
+ANS( Compute("$rep[0]")->cmp() );
+ANS( Compute("$rep[1]")->cmp() );
+ANS( Compute("$rep[2]")->cmp() );
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

@@ -1,0 +1,62 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Probabilités)
+## DBchapter(Théorèmes limites)
+## DBsection(Approximation Poissonienne)
+## Author(Jean-Sébastien Turcotte)
+
+## KEYWORDS('Approximation', 'Loi de Poisson','Poker')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl",,                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+"PGstatisticsmacros.pl",   #Donne accès à des commandes de stats
+"PGnumericalmacros.pl",    #Nécessaire pour certaines macros dans statistics
+);
+TEXT(beginproblem());
+#####Initialisation des paramètres######################
+Context("Numeric");
+@mains=('flush','main pleine','carré','quinte flush');
+@probs=(0.00197,0.00144,0.00024,0.00001539);
+$choix=random(0,3);
+$nbr=random(800,1500,100);
+$np=$nbr*$probs[$choix];
+$aumoins=random(1,2);
+$exact=random(1,3);
+$ans1=0;
+foreach my $i(0..$aumoins-1){
+$ans1+=$E**(-$np)*($np)**($i)/(fact($i));
+}
+$ans1=Compute("1-$ans1");
+$ans2=$E**(-$np)*($np)**($exact)/(fact($exact));
+$ans2=Compute("$ans2");
+BEGIN_TEXT
+Au poker, la probabilité d'obtenir la main "$mains[$choix]" est d'environ \($probs[$choix]\). Estimer les probabilités ci-dessous si \($nbr\) mains sont jouées:
+\{BeginList("OL")\}
+
+$ITEM  avoir la main "$mains[$choix]" au moins \($aumoins\) fois,\{ $ans1->ans_rule(10) \}
+$ITEMSEP
+
+$ITEM avoir la main "$mains[$choix]" exactement \($exact\) fois. \{ $ans2->ans_rule(10) \}
+$ITEMSEP
+
+
+\{EndList("OL")\}
+
+END_TEXT
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+
+ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

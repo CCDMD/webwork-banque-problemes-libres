@@ -1,0 +1,51 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Probabilités)
+## DBchapter(Théorèmes limites)
+## DBsection(Théorème central limite)
+## Author(Jean-Sébastien Turcotte)
+
+## KEYWORDS('Approximation', 'Théorème central limite')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl",,                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+"PGstatisticsmacros.pl",   #Donne accès à des commandes de stats
+"PGnumericalmacros.pl",    #Nécessaire pour certaines macros dans statistics
+);
+TEXT(beginproblem());
+#####Initialisation des paramètres######################
+Context("Numeric");
+Context()->flags->set(
+  tolerance => 0.001,     #Donc 4 chiffres après le point décimal
+  tolType => "absolute",
+);
+
+do{
+$prob=random(0.95,0.99,0.002);
+$obj=random(100,200,10);
+$defect=random(5,15,1);
+$borne=($defect+0.5-(1-$prob)*$obj)/(sqrt($obj*$prob*(1-$prob)));} until($borne<=3 && $borne>0);
+$ans1=normal_prob($borne,infty);
+$ans1=Compute("$ans1");
+BEGIN_TEXT
+Une usine fabrique des objets qui sont jugés acceptables avec probabilité \($prob\). Les objets sont vendus en lot de \($obj\). La compagnie rembourse le lot aux clients si plus de \($defect\) sont inacceptables. Approximer
+la probabilité qu'un lot soit remboursable.
+$BR
+\{$ans1->ans_rule(10)\}
+END_TEXT
+ANS($ans1->cmp);
+
+ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

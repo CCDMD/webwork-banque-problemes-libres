@@ -1,0 +1,91 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+## DBsubject(Probabilités)
+## DBchapter(Variables aléatoires discrètes)
+## DBsection(Variables discrètes)
+##Modifié par Jean-Sébastien Turcotte - Université de Montréal
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## ZDESCRIPTION
+## ZPoisson Distribution
+## ZENDDESCRIPTION
+
+## ZKEYWORDS('probability', 'Poisson')
+## ZCMMK tagged this problem.
+
+## ZDBsubject('Probability')
+## ZDBchapter('Distributions')
+## ZDBsection('Poisson Distribution')
+## ZDate('6/27/2005')
+## ZAuthor('Cristina Murray-Krezan')
+## IZnstitution('UVA')
+## ZTitleText1('Statistics for Management and Economics')
+## ZEditionText1('6')
+## ZAuthorText1('Keller, Warrack')
+## ZSection1()
+## ZProblem1()
+###############Source###############
+## KEYWORDS('Probabilités','Variables aléatoires discrètes','Loi de Poisson')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+#”unionLists.pl”                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+## install_problem_grader(~~&std_problem_grader);
+
+$mu = random(3,7,1); #number of complaints per day
+$a = $mu + non_zero_random(-2,2,1);
+$days = random(3,5,1);
+$newmu = $mu*$days;
+$b = $newmu + non_zero_random(-4,4,1);
+
+BEGIN_TEXT
+$PAR
+Une entreprise de courtage en ligne reçoit des plaintes au rythme de $mu par jour.  Le nombre de plaintes semble suivre une loi de Poisson.
+$PAR
+A.  Calculer la probabilité que l'entreprise reçoive au moins $a plaintes dans une journée.
+$PAR
+Probabilité = \{ans_rule(15)\}
+$PAR
+B.  Calculer la probabilité que l'entreprise reçoive au moins $b plaintes sur une période de $days jours.
+$PAR
+Probabilité = \{ans_rule(15)\}
+$PAR
+
+END_TEXT
+
+$accum1 = 0;
+$i = 0;
+while ($i < $a) {
+    $accum1 += (exp(-$mu)*$mu**$i)/fact($i);
+    $i++;
+}
+$ans1 =Compute("1-$accum1");
+ANS($ans1->cmp);
+
+$accum2 = 0;
+$i = 0;
+while ($i < $b) {
+    $accum2 += (exp(-$newmu)*$newmu**$i)/fact($i);
+    $i++;
+}
+$ans2 =Compute("1-$accum2")->reduce();
+ANS($ans2->cmp);
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

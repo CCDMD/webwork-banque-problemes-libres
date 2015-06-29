@@ -1,0 +1,55 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+## DBsubject(Probabilités)
+## DBchapter(Variables aléatoires discrètes)
+## DBsection(Espérance et moments)
+ ##Author(Jean-Sébastien Turcotte - Université de Montréal)
+## KEYWORDS('Variables aléatoires discrètes','Probabilités','Espérance')
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+#"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl"                 #Permet l’utilisation de liste (voir fichier commandes utiles)
+);
+
+
+TEXT(beginproblem());
+Context("Numeric");
+$prob=random(11,14);
+$qprob=30-$prob;
+$valposs=List(1,-3,-1,);
+$gain=Compute("$prob/30+$qprob/30*($prob/30)**2");
+$esp=Compute("$prob/30+$qprob/30*($prob/30)**2-$qprob/30*2*(($qprob/30)*($prob/30))-3*($qprob/30)**3");
+BEGIN_TEXT
+Un jeu au casino est gagnant pour le joueur avec probabilité \(\frac{$prob}{30}\). Un joueur essaie la stratégie suivante: il mise \(1\) $ au premier tour, s'il gagne, il repart avec un gain de \(1\) $ et s'il perd, il joue deux tours supplémentaires en misant \(1\) $ chaque fois.
+$BR
+\{BeginList("OL")\}
+$ITEM 
+On note par \(G\) le gain du joueur. Quelles sont les valeurs possibles pour \(G\)? Écrire votre réponse en séparant chaque valeur par une virgule, par exemple 1,2.\{$valposs->ans_rule(20)\}
+$ITEMSEP
+$ITEM
+Calculer la probabilité que le joueur fasse un gain.
+$BR
+\(\mathbb{P}(G>0)=\)\{$gain->ans_rule(10)\}.
+$ITEMSEP
+$ITEM
+Calculer l'espérance de \(G\).
+$BR
+\(\mathbb{E}(G)=\)\{$esp->ans_rule(10)\}
+\{EndList("OL")\}
+END_TEXT
+ANS($valposs->cmp);
+ANS($gain->cmp);
+ANS($esp->cmp);
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

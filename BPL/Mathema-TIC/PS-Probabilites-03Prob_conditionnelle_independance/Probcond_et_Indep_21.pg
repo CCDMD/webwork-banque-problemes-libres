@@ -1,0 +1,170 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+## DBsubject(Probabilités)
+## DBchapter(Probabilité conditionnelle et indépendance)
+## DBsection(Indépendance)
+##Modifié par Jean-Sébastien Turcotte - Université de Montréal
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## DESCRIPTION
+##   Conditional Probability
+## ENDDESCRIPTION
+
+## Tagged by nhamblet
+
+## ZDBsubject('Probability')
+## ZDBchapter('Theory')
+## ZDBsection('Conditional Probability')
+## ZDate('')
+## ZAuthor('')
+## ZInstitution('Rochester')
+## ZTitleText1('')
+## ZEditionText1('')
+## ZAuthorText1('')
+## ZSection1('')
+## ZProblem1('')
+###############Source###############
+## KEYWORDS('Indépendance','Probabilités conditionnelles')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+@b = (1,6);
+$taga = random(0,1,1); 
+$a = $b[$taga];
+
+@event = ("Les deux nombres sont identiques", "Le dé bleu montre un $a", "La somme des nombres est paire",
+          "La différence entre les deux nombres est d'au moins 3");
+$tag1 = random(0,3,1);
+$tag2 = random(0,3,1); 
+while ( $tag2 == $tag1 ) {$tag2 = random(0,3,1);}
+
+@prob = (1/6, 1/6, 1/2, 1/3);
+$ans1 = $prob[$tag1];
+$ans2 = $prob[$tag2];
+
+@ans5 = ('oui','non','oui');
+
+if ($tag1 == 0) {
+   if ($tag2 == 1) {
+      $ans3 = 1/36;   
+      $tag5 = 0;     
+   }
+   if ($tag2 == 2) {
+      $ans3 = 1/6;  
+      $tag5 = 1;       
+   }
+   if ($tag2 == 3) {
+      $ans3 = 0;  
+      $tag5 = 1;       
+   }
+}
+
+if ($tag1 == 1) {
+   if ($tag2 == 0) {
+      $ans3 = 1/36;        
+      $tag5 = 0;
+   }
+   if ($tag2 == 2) {
+      $ans3 = 1/12;       
+      $tag5 = 0; 
+   }
+   if ($tag2 == 3) {
+      $ans3 = 1/12;        
+      $tag5 = 1;
+   }
+}
+
+
+if ($tag1 == 2) {
+   if ($tag2 == 0) {
+      $ans3 = 1/6;       
+      $tag5 = 1;  
+   }
+   if ($tag2 == 1) {
+      $ans3 = 1/12;       
+      $tag5 = 0;
+   }
+   if ($tag2 == 3) {
+      $ans3 = 1/9;        
+      $tag5 = 1;
+   }
+}
+
+if ($tag1 == 3) {
+   if ($tag2 == 0) {
+      $ans3 = 0;        
+      $tag5 = 1;
+   }
+   if ($tag2 == 1) {
+      $ans3 = 1/12;        
+      $tag5 = 1;
+   }
+   if ($tag2 == 2) {
+      $ans3 = 1/9;        
+      $tag5 = 1;
+   }
+}
+
+$ans4 = $ans3 / $ans2;
+$ans5 = $ans3 / $ans1;
+
+$mc = new_multiple_choice();
+
+$mc->qa('Les événements E et F sont-ils indépendants?',$ans5[$tag5]);
+
+$tag6 = $tag5+1;
+
+$mc->extra($ans5[$tag6]);
+
+BEGIN_TEXT
+$BR
+On jette deux dés équilibrés, un bleu et un rouge, et on note le nombre obtenu sur chaque dé.  $BR
+Soient E et F les événements suivants : $BR
+
+\(E: $LB \) $event[$tag1] \( $RB \) $BR
+
+\(F: $LB \) $event[$tag2]  \( $RB \) $BR
+
+Calculer les probabilités suivantes : $BR
+
+a) \( \) \( P(E) = \) \{ans_rule(10)\} $BR
+
+b) \( \) \( P(F) = \) \{ans_rule(10)\} $BR
+
+c) \( \) \( P(E \cap F) = \) \{ans_rule(10)\} $BR
+
+d) \( \) \( P(E|F) = \) \{ans_rule(10)\} $BR
+
+e) \( \) \( P(F|E) = \) \{ans_rule(10)\} $PAR
+
+\{ $mc->print_q() \} $BR
+\{ $mc->print_a() \}  
+
+END_TEXT
+
+ANS(num_cmp($ans1, mode=>"arith"));
+ANS(num_cmp($ans2, mode=>"arith"));
+ANS(num_cmp($ans3, mode=>"arith"));
+ANS(num_cmp($ans4, mode=>"arith"));
+ANS(num_cmp($ans5, mode=>"arith"));
+
+ANS(radio_cmp($mc->correct_ans));
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

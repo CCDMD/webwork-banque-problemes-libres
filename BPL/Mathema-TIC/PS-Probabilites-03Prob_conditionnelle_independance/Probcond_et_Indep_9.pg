@@ -1,0 +1,54 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+## DBsubject(Probabilités)
+## DBchapter(Probabilité conditionnelle et indépendance)
+## DBsection(Probabilités conditionnelles)
+## Author(Jean-Sébastien Turcotte - Université de Montréal)  # ou ##Modifié par 
+## KEYWORDS('Probabilités conditionnelles')
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+"unionLists.pl"
+);
+TEXT(beginproblem());
+#####Initialisation des paramètres######################
+Context("Numeric");
+$UrnAbl=random(4,7,1);
+$UrnAro=random(8,10,1);
+$UrnAno=random(11,15,1);
+$totA=$UrnAbl+$UrnAro+$UrnAno;
+do{$UrnBbl=random(4,7,1);} until($UrnBbl!=$UrnAbl);
+do{$UrnBro=random(8,10,1);}    until($UrnBro!=$UrnAro);
+do{$UrnBno=random(11,15,1);}  until($UrnBno!=$UrnAno);
+$totB=$UrnBbl+$UrnBro+$UrnBno;
+$couleur=list_random("blanche","rouge","noire");
+$urne=list_random("A","B");
+do{$noturne=list_random("A","B");} until($urne ne $noturne);
+%Urnes;
+$Urnes{"A"}{blanche}=$UrnAbl/$totA;
+$Urnes{"A"}{rouge}=$UrnAro/$totA;
+$Urnes{"A"}{noire}=$UrnAno/$totA;
+$Urnes{"B"}{blanche}=$UrnBbl/$totB;
+$Urnes{"B"}{rouge}=$UrnBro/$totB;
+$Urnes{"B"}{noire}=$UrnBno/$totB;
+$ans=$Urnes{$urne}{$couleur}/($Urnes{$urne}{$couleur}+$Urnes{$noturne}{$couleur});
+$ans=Compute("$ans");
+BEGIN_TEXT
+Deux urnes identifiées par \(A\) et \(B\)  contiennent des billes. L'urne \(A\) contient \($UrnAbl\) billes blanches, \($UrnAro\) billes rouges et \($UrnAno\) billes noires. L'urne \(B\) contient \($UrnBbl\) billes blanches, \($UrnBro\) billes rouges et \($UrnBno\) billes noires. Une bille est tirée au hasard dans l'une des deux urnes (le choix de l'urne est fait de façon équiprobable) et est de couleur $couleur. Quelle est la probabilité qu'elle provienne de l'urne \($urne\)?
+$BR
+La probabilité que la bille $couleur provienne de l'urne \($urne\) est \{$ans->ans_rule(20)\}
+END_TEXT
+ANS($ans->cmp);
+
+ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

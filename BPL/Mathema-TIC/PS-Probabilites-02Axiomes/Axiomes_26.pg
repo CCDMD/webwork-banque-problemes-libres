@@ -1,0 +1,81 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+## DBsubject(Probabilités)
+## DBchapter(Axiomes des probabilités)
+## DBsection(Théorie des ensembles)
+##Modifié par Jean-Sébastien Turcotte - Université de Montréal
+## Traduction française : Sylvie Charbonneau
+
+##DESCRIPTION
+##
+##ENDDESCRIPTION
+
+## Tagged by ynw2d
+
+## ZDBsubject(Probability)
+## ZDBchapter(Counting and probability)
+##ZDBsection(Counting Principles)
+## ZInstitution(ASU)
+###############Source###############
+## KEYWORDS('Théorie des ensembles')
+## Level(1)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+#"PGgraphmacros.pl",       #Pour l’utilisation de graphiques
+"PGchoicemacros.pl",     #Permet l’utilisation de NchooseK, retournant un array de K nombres aléatoires parmi 0.. N-1
+);
+
+TEXT(beginproblem(), 
+$BR,$BBOLD, "Question Vrai ou Faux", $EBOLD, $BR,$BR);
+#Afin que si une des réponses des étudiants est fausses, ils ne sachent pas laquelle
+$showPartialCorrectAnswers = 0;
+
+# True false questions are a special case of a "select list"
+# Make a new select list
+$tf = new_select_list();
+# $tf now "contains" the select list object.
+# Insert some  questions and whether or not they are true.
+
+$tf -> qa ( # each entry has to end with a comma
+"Si A est un sous-ensemble de B, alors \( \#(A) < \#(B) \).",
+"F",
+"Pour tous les ensembles A et B sous-ensembles de U, \( \#(A \cup B) > \#(U)\).",
+"F",
+"Si A et B sont des ensembles disjoints, alors \( \#(A \cup B) = \#(A)+\#(B) \) .",
+"V",
+"Si A et B ne sont pas des ensembles disjoints, alors \( \#(A \cup B) < \#(A)+\#(B) \).",
+"V",
+);   # every statement has to end with a semi-colon.
+
+# Choose two of the question and answer pairs at random.
+$tf ->choose(2);
+
+# Now print the text using $ml->print_q for the questions
+# and $ml->print_a to print the answers.
+
+BEGIN_TEXT
+$PAR
+
+Entrer V ou F pour indiquer si l'énoncé est vrai ou faux.
+(Entrer uniquement V ou F – les mots Vrai et Faux ne sont pas acceptés.)$BR
+
+\{ $tf-> print_q \}
+
+$PAR
+
+END_TEXT
+
+# Enter the correct answers to be checked against the answers to the students.
+
+ANS(str_cmp( $tf->ra_correct_ans )   ) ;
+
+ENDDOCUMENT();        # This should be the last execut

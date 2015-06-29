@@ -1,0 +1,93 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+## DBsubject(Probabilités)
+## DBchapter(Axiomes des probabilités)
+## DBsection(Théorie des ensembles)
+# ou ##Modifié par Jean-Sébastien Turcotte - Université de Montréal
+## Traduction française : Sylvie Charbonneau
+###############Source###############
+## DESCRIPTION
+## Probability
+## ENDDESCRIPTION
+
+## Tagged by cmd6a 7/18/07
+
+## ZDBsubject('Probability')
+## ZDBchapter('Discrete Probability')
+## ZDBsection('Conditional Probability')
+## ZDate('')
+## ZAuthor('')
+## ZInstitution('')
+## ZTitleText1('')
+## ZEditionText1('')
+## ZAuthorText1('')
+## ZSection1('')
+## ZProblem1('')
+###############Source###############
+## KEYWORDS('Probabilités')
+## Level(1)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();        # Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"extraAnswerEvaluators.pl",
+"contextIntegerFunctions.pl",	   #Mettre cette macro pour la fonction C(n,k)
+"PGauxiliaryFunctions.pl",                #Même chose, mais avec d’autres fonctions utiles;
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(50,100);
+$b = random(20,$a-1);
+$c = random(10,$a-10);
+$d = random(10,$b-5);
+
+$total = $a + $b + $c + $d;
+$Mtotal = $a + $b;
+$Ftotal = $c+ $d;
+$Ctotal = $a+$c;
+$notCtotal = $b+ $d;
+
+
+BEGIN_TEXT
+Dans un sondage auprès de $total personnes, on a obtenu l'information suivante sur la répartition du daltonisme selon le sexe :
+\{begintable(4)\}
+\{row(" ", "Daltonienne (D)", "Non daltonienne (\( D^c \))","Total" )\}
+\{row("Sexe masculin (M)", "$a", "$b", "$Mtotal ") \}
+\{row("Sexe féminin (F)", "$c", "$d"," $Ftotal ") \}
+\{row("Total", "$Ctotal", "$notCtotal","$total")\}
+\{endtable()\}
+
+$BR
+On choisit une personne au hasard. Quelle est la probabilité que cette personne soit :
+$BR
+a) un homme?  \{ Compute("$Mtotal/$total")->ans_rule(20) \}
+$BR
+b) un homme daltonien? \{ Compute("$a/$total")->ans_rule(20) \}
+$BR
+c) un homme, sachant qu'il est daltonien? \{ Compute("$a/$Ctotal")->ans_rule(20) \}
+$BR
+d) une personne daltonienne, sachant qu'elle est de sexe masculin? \{ Compute("$a/$Mtotal")->ans_rule(20) \}
+$BR
+e) une femme, si elle n'est pas daltonienne?  \{Compute("$d/$notCtotal")-> ans_rule(20) \}
+$BR
+f) Les événements « Sexe masculin » et « Daltonien » sont-ils des événements indépendants? \{ ans_rule(10)\}  Entrer ${BITALIC}oui$EITALIC or ${BITALIC}non$EITALIC.
+
+END_TEXT
+
+ANS(Compute("$Mtotal/$total")->cmp);
+ANS(Compute("$a/$total")->cmp);
+ANS(Compute("$a/$Ctotal")->cmp);
+ANS(Compute("$a/$Mtotal")->cmp);
+ANS(Compute("$d/$notCtotal")->cmp);
+if ($a*$d==$b*$c) {$ans="oui";} else {$ans="non";}
+ANS(str_cmp("$ans"));
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+
