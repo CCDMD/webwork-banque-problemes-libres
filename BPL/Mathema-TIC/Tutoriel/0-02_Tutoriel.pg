@@ -1,0 +1,82 @@
+## DESCRIPTION
+## Webwork:  Question de tutoriel
+## Fait par Julie Tremblay, juin 2015
+## ENDDESCRIPTION
+
+## KEYWORDS('Tutoriel','français')
+
+## DBsubject(WeBWorK)
+## DBchapter(Tutoriel de WeBWorK)
+## DBsection('BdeB')
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne)
+
+
+DOCUMENT();
+
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"unionLists.pl",
+"contextLimitedNumeric.pl",
+"alignedChoice.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#### Les priorités des opérations
+
+
+BEGIN_TEXT
+<center><h2>La priorité des opérations</h2></center>
+La priorité des opérations déterminent l'ordre par lequel WeBWorK effectue ses calculs et interprète l'expression entrée. Il est primordial de maîtriser ce concept afin d'écrire correctement vos réponses. Voici quelques exemples pour vous rafraîchir la mémoire.
+$PAR
+\{BeginList("UL")\}
+$ITEM
+\(4*3/6-2*7+10 = 2 - 14 + 10 = -2\)$BR
+car \(4\ast 3/6 = 12/6 = 2\) (les multiplications et les divisions sont effectuées de gauche à droite) et \(2\ast 7 = 14\).$BR
+Notez que \(4*3/6-2*7+10 =  \frac{4\ast 3}{6} - 2\ast 7 + 10\).
+$ITEM
+\(12/3/2 = 4/2 = 2\) (les multiplications et les divisions sont effectuées de gauche à droite).$BR
+Notez que \(12/3/2 = \dfrac{\frac{12}{3}}{2}\).
+$ITEM
+\(12/(3/2) = 12/1.5 = 8\)
+(les expressions entre parenthèses sont effectuées en premier).$BR
+Notez que \(12/(3/2) = \dfrac{12}{\frac{3}{2}}\).
+$ITEM
+\(2*4^{\small\wedge}2 - 3*4 = 2*16 - 3*4 = 32 - 12 = 20\)$BR
+car \(2*4^{\small\wedge} 2 = 2*16 = 32\) (l'exposant a la priorité sur la multiplication).
+\{EndList("UL")\}
+$PAR
+
+Voici maintenant des expressions que vous devez calculer en utilisant l'ordre de priorité des opérations. L'objectif de cet exercice est de vérifier que vous maîtrisez ce concept. Ainsi WeBWorK acceptera seulement des nombres décimaux comme réponse, c'est-à-dire que vous ne pouvez utiliser aucun des symboles \(+\,, -\,, *\,, /\text{ et } \wedge\). Par contre, vous pouvez utiliser votre calculatrice.
+$PAR
+
+END_TEXT
+
+Context("LimitedNumeric");
+
+$a = random(1,6,1);
+$b = random(2,6,1);
+$c = random(3,6,1);
+$d = random(2,25,1);
+$al = new_aligned_list(equals => 1);
+
+$al->qa(
+  "\($a+$b*$c\)",         Real($a+($b*$c))->cmp,
+  "\($a/$b*$c\)",         Real(($a/$b)*$c)->cmp,
+  "\(3\ast $b-$a/5\ast $c+$d\)",  Real((3*$b)-(($a/5)*$c)+$d)->cmp,
+  "\(2^{\small\wedge}$b+1\)",    Real((2**$b)+1)->cmp,
+  "\(2^{\small\wedge}($b+1)\)",  Real(2**($b+1))->cmp,
+);
+
+BEGIN_TEXT
+\{$al->print_q\}
+END_TEXT
+
+ANS($al->correct_ans);
+
+ENDDOCUMENT();

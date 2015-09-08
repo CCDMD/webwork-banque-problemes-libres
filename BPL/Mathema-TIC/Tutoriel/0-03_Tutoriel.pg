@@ -1,0 +1,113 @@
+## DESCRIPTION
+## Webwork:  Question de tutoriel
+## Fait par Julie Tremblay, juin 2015
+## ENDDESCRIPTION
+
+## KEYWORDS('Tutoriel','français')
+
+## DBsubject(WeBWorK)
+## DBchapter(Tutoriel de WeBWorK)
+## DBsection('BdeB')
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne)
+
+
+DOCUMENT();
+
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"unionLists.pl",
+"alignedChoice.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#### Erreurs fréquentes à éviter
+
+BEGIN_TEXT
+<center><h2>Erreurs fréquentes à éviter</h2></center>
+Plusieurs réponses que vous entrerez dans WeBWorK seront des expressions contenant des variables. Voici des points importants à retenir.
+
+$PAR
+
+\{BeginParList("UL")\}
+
+$ITEM
+La lettre utilisée est importante. Par exemple, si l'on vous demande d'entrer une fonction définie en \(t\), alors il est incorrect d'écrire votre fonction en utilisant la variable \(x\). WeBWorK ne l'acceptera pas. De plus, il différencie les lettres minuscules et majuscules. Ainsi, vous ne devez pas écrire la lettre majuscule \(\verb+T+\) à la place de la lettre minuscule \(\verb+t+\).
+$PAR
+La case réponse suivante doit recevoir \(t^3\) comme fonction, que vous entreriez par l'expression \(\verb+t^3+\) ou \(\verb+t**3+\). Voyez ce qui se passe si vous entrez \(\verb+x^3+\) à la place et soumettez votre réponse.
+$PAR
+\{ans_rule(10)\}
+$PAR
+WeBWorK affiche le message d'erreur suivant : ${LQ}Variable 'x' is not defined in this context$RQ, vous informant que WeBWorK n'a pas reçu la bonne variable et ne sait pas comment interpréter votre réponse. Maintenant, entrez \(\verb+t^3+\) et soumettez une autre fois votre réponse pour avoir les points associés à cette partie du problème.
+
+END_TEXT
+
+Context()->variables->are(t=>"Real");
+ANS(Formula("t^3")->cmp);
+
+##################################################
+
+$IMGA = "1/(x+1)";
+$IMGB = "\(\frac{1}{x+1}\)";
+$IMGC = "\(\frac{1}{x} + 1\)";
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$ITEM
+WeBWorK s'attend à ce que vous soyez précis dans la réponse que vous lui soumettez. En plus de bon choix de variables, vous devez également respecter la priorité des opérations dans l'expression que vous voulez entrer. Dans la majorité des cas, cela inclut l'utilisation adéquate des parenthèses.
+
+$PAR
+
+Par exemple, si vous voulez écrire l'expression \(\frac{1}{x+1}\), mais que vous entrez \(\verb|1/x + 1|\), ce sera incorrect. En fait, l'expression \(\verb|1/x+1|\) est équivalente à \(\frac{1}{x}+1\) selon la priorité des opérations. Ainsi, si vous désirez écrire l'expression \(\frac{1}{x+1}\), il vous faudra plutôt écrire \(\verb|1/(x+1)|\). De même, pour écrire l'expression \(5^{2x}\), il faudra écrire \(\verb+5^(2x)+\) et non \(\verb+5^2 x+\) qui est plutôt équivalent à \(5^2x\).
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+##################################################
+
+$al = new_aligned_list(
+  equals => 1, ans_rule_len => 30,
+  tex_spacing => "5pt", spacing => 10
+);
+
+Context("Numeric")->variables->are(t=>'Real');
+
+$f1 = Formula("t/(2*t+6)")->reduce;
+
+Context("Numeric")->variables->are(x=>'Real');
+$f2 = Formula("1/(2*(x-5))");
+
+$f4 = Formula("(2x+5)/( 1/(x+1)-x/3)")->reduce;
+
+Context("Numeric")->variables->are(y=>'Real');
+$f3 =   Formula("(2*y-3)**4");
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+\{EndParList("UL")\}
+$HR
+$PAR
+À présent, entrez les fonctions suivantes et soumettez vos réponses :
+$PAR
+\(\displaystyle $f1= \) \{ans_rule(10)\} $BR
+\(\displaystyle $f2= \) \{ans_rule(10)\} $BR
+\(\displaystyle $f3= \) \{ans_rule(10)\} $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($f1->cmp);
+ANS($f2->cmp);
+ANS($f3->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

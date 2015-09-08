@@ -1,0 +1,168 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Résoudre des équations trigonométriques)
+## Institution(BdeB)
+## Author(Julie Tremblay)
+######## Source ############
+## Fichier source : Library/Rochester/setTrig08Equations/srw7_5_39.pg
+## ZDBsubject(Trigonometry)
+## ZDBchapter(Analytic trigonometry)
+## ZDBsection(Solving trigonometric equations numerically)
+## ZDate(6/3/2002)
+## ZMLT(KentMoreLike6)
+#######  Source #############
+## Level(3)
+## Language(fr)
+## KEYWORDS()
+
+ 
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"answerHints.pl",
+"PGgraphmacros.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+#### équation :  cos(3x) = 1/2  , sqrt(3)/2 ou sqrt(2)/2
+
+@c = (1,"\sqrt{3}","\sqrt{2}");
+
+### choix de la constante
+$n = random(0,2);
+
+if($n==0) {  ## cte 1/2
+$d = 3;
+} elsif ($n==1) {
+$d = 6;
+} else {
+$d = 4;
+}
+
+$exp = Formula("2*cos(3x)")->reduce;
+
+$ans1triple = Formula("pi/$d");
+$dd1 = 3*$d;
+$ans1 = Formula("pi/$dd1")->reduce;
+$ans2 = Real("(2*pi - $ans1triple)/3");
+$ans3 = Real("(2*pi + $ans1triple)/3");
+
+$ans = Compute("$ans1,$ans2,$ans3");
+
+
+### pour la partie Solution dans le graph
+$cos[0] = Real("cos(3*$ans1)");
+$sin[0] = Real("sin(3*$ans1)");
+$cos[1] = Real("cos(3*$ans2)");
+$sin[1] = Real("sin(3*$ans2)");
+
+
+### écrire les solutions des angles en format latex
+
+
+
+$deg2triple = round(Real("$ans2*540/pi"));
+($n2,$d2) = reduce($deg2triple,180);
+$ans2triple = Formula("$n2*pi/$d2")->reduce;
+($nd2,$dd2) = reduce($n2,3*$d2);
+$ans2txt = Formula("$nd2*pi/$dd2")->reduce;
+
+$deg3triple = round(Real("$ans3*540/pi"));
+($n3,$d3) = reduce($deg3triple,180);
+$ans3triple = Formula("$n3*pi/$d3")->reduce;
+($nd3,$dd3) = reduce($n3,3*$d3);
+$ans3txt = Formula("$nd3*pi/$dd3")->reduce;
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+À l'aide du cercle trigonométrique, trouver toutes les valeurs de \(x\) dans l'intervalle \(\left[0,\pi\right[\)
+qui vérifient l'équation 
+\[ $exp = $c[$n]\]$BR
+Séparer les valeurs par une virgule.$BR
+${BBOLD}Note${EBOLD} : Une réponse doit être la valeur exacte écrite sous la forme d'une fraction ou d'une expression arithmétique. Elle ne doit pas être écrite avec des décimales ou 
+à l'aide des fonctions trigonométriques inverses.
+$PAR
+\( x = \) \{ans_rule(30)\}
+
+END_TEXT
+Context()->normalStrings;
+
+
+$anshint1 =Compute("3*$ans1");
+$anshint2 = Compute("3*$ans1,3*$ans2");
+$anshint3 = Compute("3*$ans1,3*$ans2,3*$ans3");
+
+
+Context()->functions->disable("Trig");
+Parser::Number::NoDecimals();
+
+ANS($ans->cmp->withPostFilter(AnswerHints( 
+  [$ans1] => ["Vous y êtes presque! Il vous manque deux autres angles. Si le domaine est x &#1028 [0,&#960[, alors 3x &#1028 [0,3&#960[.",replaceMessage=>1],
+  [$anshint1,$anshint2,$anshint3] => ["Il faut que 3x = &#960/$d",replaceMessage=>1],
+)));
+
+
+### Pour rafraîchir le cache lorsqu’il a des graphiques dynamiques, sinon une image dans le cache peut s’afficher à la place
+$refreshCachedImages = 1;
+
+
+#### Cercle pour réponse
+$c1 = "sqrt(1-x^2) for x in <-1,1> using color:black and weight:2";
+$c2 = "-sqrt(1-x^2) for x in <-1,1> using color:black and weight:2";
+
+$gr = init_graph(-1.5,-1.5,1.5,1.5,axes=>[0,0], size=>[300,300]);
+$gr->lb('reset');
+	
+
+## Créer les points trigonométriques
+
+foreach $i (0..1) {
+$gr->stamps( closed_circle( $cos[$i], $sin[$i], 'red'));	
+
+
+
+## Créer les rayons
+$gr->moveTo(0,0);
+$gr->lineTo($cos[$i], $sin[$i], 'black');
+$gr->lineTo($cos[$i], 0, 'black');
+}
+
+
+add_functions($gr, $c1, $c2);
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Transformons l'équation \($exp = $c[$n]\) par une équation équivalente de la forme \(\cos(3x) = c\), où \(c\) est une constante réelle.
+\[ \begin{aligned}
+$exp &= $c[$n]\\
+\cos(3x) &= \frac{$c[$n]}{2}
+\end{aligned}\]
+Pour résoudre l'équation ci-dessus, il faut poser \(\theta = 3x\) et trouver tous les angles tels que \(\cos(\theta)=\frac{$c[$n]}{2}\).
+$PAR
+Par contre, étant donné que le domaine de l'équation est \(x\in\left[0,\pi\right[\), alors les solutions pour \(\theta=3x\) se trouvent dans l'intervalle \(\left[0,3\pi\right[\).
+$PAR
+$BCENTER
+\{ image(insertGraph($gr), width=> 200, tex_size=> 200) \}
+$ECENTER
+$BR
+On peut représenter les solutions de cette équation sur le cercle trigonométrique ci-dessus.  Les solutions de \(\cos(\theta) = \frac{$c[$n]}{2}\) sont les points rouges sur le cercle. C'est-à-dire lorsque  \(\theta \in\left[0,3\pi\right[\), on a
+\[ \cos(\theta) = \frac{$c[$n]}{2} \text{ si }\theta = $ans1triple, $ans2triple \text{ ou }$ans3triple\]
+
+$PAR
+Étant donné que \(\theta = 3x\), on trouve les trois solutions de l'équation \($exp= $c[$n] \) pour \(x \in\left[0,\pi\right[\) en divisant par \(3\) chacun des angles \(\theta\) ci-dessus. Par conséquent, on obtient
+\[x_1 = $ans1,\;x_2 = $ans2txt \text{ et }x_3 = $ans3txt.\]
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,112 @@
+## DESCRIPTION
+## Webwork:  Question de tutoriel
+## Fait par Julie Tremblay, juin 2015
+## ENDDESCRIPTION
+
+## KEYWORDS('Tutoriel','français')
+
+## DBsubject(WeBWorK)
+## DBchapter(Tutoriel de WeBWorK)
+## DBsection('BdeB')
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne)
+
+
+DOCUMENT();
+
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGanswermacros.pl",
+"unionLists.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#### Quelques fonctions dans Webwork
+
+BEGIN_TEXT
+<center><h2>Les fonctions utiles dans WeBWorK</h2></center>
+$PAR
+WeBWorK reconnaît plusieurs fonctions que vous utilisez souvent en mathématiques, dont celles qui sont énumérées ci-dessous. Notez que leur nom commence tous par une lettre minuscule. Par conséquent, si vous utilisez une lettre majuscule, WeBWorK vous affichera un message d'erreur.
+
+\{BeginParList("UL")\}
+$ITEM ${BBOLD}Les racines.${EBOLD}${SPACE}
+Pour écrire une expression ou un nombre avec une racine carrée, utilisez la commande \(\verb|sqrt()|\). Ainsi, le nombre \(\sqrt{5}\) s'écrit \(\verb|sqrt(5)|\). Les racines n-ièmes qui sont différentes de la racine carrée n'ont pas de syntaxe particulière. Il suffit d'écrire le nombre avec un exposant fractionnaire. Par exemple, \(\sqrt[3]{8}\) s'écrit \(\verb|8^(1/3)|\).
+$PAR
+Écrivez les expressions suivantes. Vous pouvez vous aider de l'éditeur d'équations :
+$PAR
+\(\sqrt{x^2+1} =\) \{ans_rule(20) \} $BR
+\(\sqrt[4]{20}+\sqrt[3]{12} =\) \{ans_rule(20) \} $BR
+$BR
+$PAR
+$ITEM ${BBOLD}La fonction valeur absolue.${EBOLD}${SPACE}
+La fonction valeur absolue, \(|x|\), peut s'écrire en écrivant \(\verb+|x|+\) ou la commande \(\verb|abs(x)|\).
+$PAR
+Écrivez les expressions suivantes en utilisant les deux écritures.
+$PAR
+\(|2x-1|=\) \{ans_rule(20) \} $BR
+\(\dfrac{|3-x|}{x^2}=\) \{ans_rule(20) \} $BR
+$BR
+$PAR
+$ITEM ${BBOLD}Les fonctions trigonométriques.${EBOLD}${SPACE} 
+Les fonctions trigonométriques \(\verb|cos()|\), \(\verb|sin()|\), \(\verb|tan()|\), \(\verb|sec()|\), \(\verb|cot()|\) et \(\verb|csc()|\) sont reconnues par WeBWorK et l'angle défini par défaut est en radians.
+$PAR Pour les fonctions trigonométriques inverses, plusieurs syntaxes sont acceptées. Par exemple, vous pouvez écrire \(\verb|arccos()|\) ou \(\verb|acos()|\). Consultez le \{htmlLink( "http://departements.bdeb.qc.ca/mathematiques/portail/pages/didactitiel/symboles.html",
+  "didacticiel suivant","TARGET='_blank'")\} pour plus de détails.
+$PAR
+Écrivez les expressions suivantes :
+$PAR
+\(\sin\left(\frac{4\pi}{3}\right) - \cos\left(\frac{\pi}{6}\right) =\) \{ans_rule(20) \} $BR
+\(\arctan(\sqrt{3}) =\) \{ans_rule(20) \} $BR
+$BR
+$PAR
+$ITEM ${BBOLD}Les fonctions exponentielles et logarithmiques.${EBOLD}${SPACE} 
+La fonction exponentielle en base e peut s'écrire avec la commande \(\verb|exp()|\) ou avec la syntaxe \(\verb|e^|\). La fonction logarithmique en base e s'écrit \(\verb|ln()|\). Pour écrire une fonction logarithmique en base 10, la commande \(\verb|log10()|\) suffit. Par défaut, \(\verb|log()|\) est la fonction logarithmique en base e. Par contre, cette commande peut être redéfinie pour exprimer une fonction logarithmique en base 10.$BR
+Pour les autres bases, vous devez utiliser la formule de changement de base : \(\log_a(b)=\dfrac{\ln(b)}{\ln(a)}\).
+$PAR
+Écrivez les expressions suivantes :
+$PAR
+\(e^{x\ln(x)} =\) \{ans_rule(20) \} $BR
+\(\log_{10}(30) =\) \{ans_rule(20) \} $BR
+\(\log_{5}(100) =\) \{ans_rule(20) \} $BR
+$BR
+$PAR
+\{EndParList("UL")\}
+Plusieurs autres fonctions sont reconnues par WeBWorK, comme \(\verb|sinh()|\) et \(\verb|n!|\). Consultez la page \{htmlLink( "http://webwork.maa.org/wiki/Available_Functions",
+  "Fonctions que WeBWorK reconnaît","TARGET='_blank'")\} (en anglais) pour une liste plus complète des différentes fonctions.
+
+END_TEXT
+
+Parser::Number::NoDecimals();
+
+$ans1 = Compute("sqrt(x^2+1)");
+ANS($ans1->cmp);
+
+$ans2 = Compute("20^(1/4)+12^(1/3)");
+ANS($ans2->cmp);
+
+
+ANS(Compute("abs(2x-1)")->cmp);
+ANS(Compute("abs(3-x)/x^2")->cmp);
+
+$ans3 = Real("sin(4pi/3)-cos(pi/6)");
+ANS($ans3->cmp);
+
+$ans4 = Real("arctan(sqrt(3))");
+ANS($ans4->cmp);
+
+$ans5 = Compute("exp(x*ln(x))")->with(limits => [1,6]);;
+ANS($ans5->cmp);
+
+$ans6 = Real("log10(30)");
+ANS($ans6->cmp);
+
+$ans6 = Real("ln(100)/ln(5)");
+ANS($ans6->cmp);
+
+
+
+ENDDOCUMENT();
+
