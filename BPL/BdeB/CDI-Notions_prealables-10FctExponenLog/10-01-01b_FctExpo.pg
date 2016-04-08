@@ -36,6 +36,7 @@ $refreshCachedImages=1;
 $showPartialCorrectAnswers = 1;
 
 @b = (2,3,4,1/2,1/3,1/4);
+@btext = (2,3,4,"1/2","1/3","1/4");
 $c = random(2,3)*random(-1,1,2);
 $i = random(0,5,1);  ### choix de la base
 
@@ -56,6 +57,10 @@ $eq[3] =  Formula("($b[$n])^x");
 $eq[4] =  Formula("-$c*($b[$i])^x");
 $eq[5] =  Formula("-$c*($b[$n])^x");
 
+if($b[$i]>1 && $c >0) {$pick_re = 0;}
+elsif($b[$i]<1 && $c > 0) {$pick_re = 1;}
+elsif($b[$i]>1 && $c <0) {$pick_re = 2;}
+else {$pick_re = 3;}
 
 for ($j = 0; $j <= 5; $j++){
 
@@ -125,17 +130,23 @@ for ($j = 0; $j <= 5; $j++){
 
 
 @reason = ("Pour de grandes valeurs positives de \(x\), \(f(x)\) croît rapidement au-dessus de l'axe des \(x\). 
-Mais pour de grandes valeurs négatives de \(x\), \(f(x)\) se rapproche de plus en plus près de l'axe des \(x\).",
+Mais pour de grandes valeurs négatives de \(x\), \(f(x)\) se rapproche de plus en plus de l'axe des \(x\).",
 
-"Pour de grandes valeurs positives de \(x\), \(f(x)\) décroît et s'approche de plus en plus près de l'axe des \(x\). 
+"Pour de grandes valeurs positives de \(x\), \(f(x)\) décroît et s'approche de plus en plus de l'axe des \(x\). 
+Mais pour de grandes valeurs négatives de \(x\), \(f(x)\) s'éloigne rapidement de l'axe des \(x\).",
+
+"Pour de grandes valeurs positives de \(x\), \(f(x)\) décroît et s'éloigne rapidement de l'axe des \(x\).
+Mais pour de grandes valeurs négatives de \(x\), \(f(x)\) s'approche de plus en plus de l'axe des \(x\).",
+
+"Pour de grandes valeurs positives de \(x\), \(f(x)\) croît et s'approche de plus en plus de l'axe des \(x\).
 Mais pour de grandes valeurs négatives de \(x\), \(f(x)\) s'éloigne rapidement de l'axe des \(x\).");
 
 Context()->texStrings;
 BEGIN_TEXT
-Soit la fonction \( f(x) = $c\left( $b[$i]\right)^x \).
+Soit la fonction \( f(x) = $c\left( $btext[$i]\right)^x \).
 $PAR
-(a) Compléter la table de valeurs de \( f(x) \) pour \( x = -3,-2,-1,0,1, 2, 3 \) en donnant les valeurs exactes. 
-$BR ${BBOLD}Note :$EBOLD Vous ne pouvez pas utiliser l'opérateur exposant $LQ\(\wedge\)$RQ. Par exemple, pour \(4^2\), écrire \(16\).
+a) Remplir la table de valeurs de \( f(x) \) pour \( x = -3, -2, -1, 0, 1, 2, 3 \) en calculant les valeurs exactes. 
+$BR ${BBOLD}Note :$EBOLD Ne pas utiliser d'exposant (« ^ ») dans la réponse. Par exemple, pour \(4^2\), écrire \(16\).
 $BR
 $BCENTER
 \{
@@ -146,7 +157,7 @@ EndTable();
 \}
 $ECENTER
 $PAR
-(b) Choisir le graphique ci-dessous correspondant au graphique de \( f\).
+b) Choisir parmi les graphiques ci-dessous celui qui correspond au graphique de \( f\).
 \{ pop_up_list(["?","A","B","C","D","E","F"]) \}
 $PAR
 $BCENTER
@@ -162,7 +173,7 @@ BeginTable().
 EndTable();
 \}
 $BR
-(Cliquer sur une image pour l'agrandir)
+(Cliquer sur une figure pour l'agrandir)
 $ECENTER
 
 END_TEXT
@@ -178,7 +189,7 @@ ANS(str_cmp($letter[$ans]));
 Context()->texStrings;
 BEGIN_SOLUTION
 $PAR
-(a) Voici la table des valeurs complétée.
+a) Voici la table des valeurs remplie.
 $BR
 \{
 BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>5).
@@ -187,7 +198,7 @@ BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>5).
 EndTable();
 \}
 $PAR
-(b) $reason[$pick_re]  Par conséquent $letter[$ans] représente le graphique de \( f(x) = $c\left( $b[$i]\right)^x \).
+b) $reason[$pick_re]  De plus, \(f(0)=$y[3]\). Par conséquent, le graphique ${BBOLD}$letter[$ans]$EBOLD est celui qui représente \( f(x) = $c\left( $btext[$i]\right)^x \).
 $BR
 END_SOLUTION
 Context()->normalStrings;
