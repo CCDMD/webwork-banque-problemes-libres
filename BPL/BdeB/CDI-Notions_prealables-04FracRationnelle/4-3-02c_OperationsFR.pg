@@ -1,0 +1,115 @@
+##DESCRIPTION
+##  Rational Expressions and Functions: Multipy and Divide
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Fractions rationnelles)
+## DBsection(Opérations sur les fractions rationnelles)
+## KEYWORDS('fonction rationnelle','français','addition','simplification')
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+## Level(2)
+## Language(fr)
+
+
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+ "PGcourse.pl",
+);
+
+
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+#  Forme: A/x(x-a) + B/(x-a)^2
+
+Context("Numeric");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+$a= random(1,9,1);
+
+$A = random(1,12,1);
+do{$B = non_zero_random(-9,9,1);} until ($B!=-$A);
+
+
+
+#les coefficients du numérateur
+$c0 = $A*$a; 
+$c1 = $A+$B;
+$num= Formula("$c1*x-$c0")->reduce;
+$den = Formula("x*(x-$a)^2")->reduce;
+
+$f = Compute("$A/(x*(x-$a))+ $B/(x-$a)^2")->reduce;
+
+
+
+######################################
+#  Main text
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Effectuer l'opération suivante.
+\[$f\]
+$BR
+$PAR
+Exprimer la réponse en fraction rationnelle simplifiée \(\dfrac{A}{B}\) 
+et donner la ou les restrictions sur le domaine de l'expression. 
+$PAR 
+Réponse : \(A =\) \{ans_rule(20)\} et \(B =\) \{ans_rule(20)\} 
+$PAR 
+Restriction(s) :  \(x=\) \{ans_rule(30)\}
+$BR $BR
+${BITALIC}${BBOLD}Note${EBOLD} : S'il y a plusieurs restrictions de \(x\), les séparer par une virgule. (Exemple : x = 1, –4)$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+######################################
+#  Answer
+
+ANS( $num->cmp );
+ANS( $den->cmp );
+
+ANS(List(0,$a)->cmp(
+list_type  => 'liste',
+));
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+$ans = Formula("$answer")->reduce->TeX;
+
+
+
+$p1 = Compute("$A x")->reduce;
+$p2 = Compute("$B x")->reduce;
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+Le plus petit dénominateur commun aux deux fractions rationnelles est : 
+$BR
+\[  $den \]
+$BR
+Ainsi les restrictions sur le domaine sont : \(x= 0\) et \($a\). $BR
+Voici la démarche pour effectuer l'opération sur les fractions :
+$PAR
+\[\begin{array}{ll}  \displaystyle $f &= \dfrac{$A(x-$a)}{$den}+\dfrac{$p2}{$den}\\
+&= \dfrac{$p1 - $c0 + $p2}{$den}\\
+&= \dfrac{$num}{$den} \end{array}
+\]
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

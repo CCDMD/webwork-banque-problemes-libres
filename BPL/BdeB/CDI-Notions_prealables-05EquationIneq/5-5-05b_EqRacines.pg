@@ -1,0 +1,67 @@
+## DESCRIPTION
+##  Algebra: Equations involving radicals 
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra', 'radicals', 'francais')
+## Traduction('Julie Tremblay')
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Other Equations')
+
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+"PGstandard.pl",
+"PGauxiliaryFunctions.pl",
+"Parser.pl",
+"MathObjects.pl",
+);
+
+########################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+########################################################################
+
+Context()->noreduce('(-x)-y');
+Context()->strings->add(aucune => {});
+
+$a = random(1,20,1);
+$b = random(1,9,1);
+
+
+$gauche = Formula("sqrt(x^2-$a)-$b")->reduce;
+
+$bb = $b*$b;
+$c = $bb + $a;
+
+$ans = Compute("sqrt($c),-sqrt($c)");
+
+
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre l'équation suivante, si possible. S'il n'y a aucune solution, écrire « aucune » dans la case réponse.
+$BR $BR
+\[
+$gauche = 0
+\]
+$BR $BR
+Solution(s) : \(x =\) \{ ans_rule(30) \} $BR
+$BBOLD Note : S'il y a plusieurs solutions, les séparer par une virgule. (Exemple : 4, sqrt(10))
+$EBOLD
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+ANS( $ans->cmp() );
+
+ENDDOCUMENT();

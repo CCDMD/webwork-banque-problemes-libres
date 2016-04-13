@@ -1,0 +1,91 @@
+## DESCRIPTION
+##  Algebra: Equations involving radicals 
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra', 'radicals', 'francais')
+## Traduction('Julie Tremblay')
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Other Equations')
+
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+);
+
+########################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+########################################################################
+
+Context()->noreduce('(-x)-y');
+Context()->strings->add(aucune => {});
+
+$a = random(1,30,1);
+
+
+$gauche = Formula("sqrt(2x+$a)-x")->reduce;
+
+$sol = Compute("1+sqrt($a+1)");
+
+$ans = List("$sol");
+
+
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre l'équation suivante, si possible. S'il n'y a aucune solution, écrire « aucune » dans la case réponse.
+$BR $BR
+\[
+$gauche = 0
+\]
+$BR $BR
+Solution(s) : \(x =\) \{ ans_rule(30) \} $BR
+$BBOLD Note : S'il y a plusieurs solutions, les séparer par une virgule. (Exemple : 4, sqrt(10))
+$EBOLD
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+ANS( $ans->cmp() );
+
+$ap1 = $a+1;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+Pour résoudre cette équation, il faut tout d'abord isoler la racine, puis élever chacun des membres de l'égalité au carré. On obtient :
+\[\begin{aligned}
+$gauche &= 0 \\
+\sqrt{2x+$a} &= x &&;\text{restriction : }x > 0 \\
+\left(\sqrt{2x+$a}\right)^2 &= x^2 \\
+2x + $a &= x^2 \\
+0 &= x^2 -2x - $a
+\end{aligned}
+\]
+
+On trouve les deux solutions possibles pour cette équation quadratique au moyen de la formule quadratique, \(\frac{-b \pm \sqrt{b^2-4ac}}{2a}\).
+\[ x_1 = \frac{2 + \sqrt{4 - 4(-$a)}}{2} = \frac{2 + \sqrt{4 + 4($a)}}{2} = 1 + \sqrt{$ap1}\]
+
+et 
+\[ x_2 = 1 - \sqrt{$ap1} \]
+
+$PAR
+Comme  \(1 - \sqrt{$ap1}\) est négatif et qu'une racine carrée ne peut donner un nombre négatif (voir la démarche ci-dessus), on a que \(x_2\) n'est pas une solution réelle de cette équation.
+$PAR
+Par conséquent, l'unique solution est : \(x_1 =  1 + \sqrt{$ap1}\).
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();
