@@ -1,0 +1,128 @@
+##DESCRIPTION
+## Graphiques des fonctions de bases
+## 
+##ENDDESCRIPTION
+
+
+## DBsubject(Algebra)
+## DBchapter(Linear functions, expressions, and equations)
+## DBsection(Functions and Function Notation)
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+
+## Level(1)
+## Language(fr)
+## créé le 14 avril, 2016
+
+## KEYWORDS('functions','definition of function','function notation','français')
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"PGgraphmacros.pl",
+"PGunion.pl",
+"imageChoice.pl",
+"PGgraders.pl",
+);
+
+TEXT(beginproblem());
+$refreshCachedImages=1;
+
+####################################
+#  Setup
+
+$dim = 4;
+$xmin = -$dim;
+$xmax =  $dim;
+$ymin = -$dim;
+$ymax =  $dim;
+$labelsep = 0.5;
+
+$F[0] = "x";
+$F[1] = "|x|";
+$F[2] = "\dfrac{1}{x}";
+$F[3] = "x^2";
+$F[4] = "\sqrt{x}";
+$F[5] = "\dfrac{1}{x^2}";
+$F[6] = "x^3";
+$F[7] = "\sqrt[3]{x}";
+
+
+$f[0] = " x for x in <$xmin,$xmax> using color:blue and weight:2";
+$f[1] = "abs(x) for x in <$xmin,$xmax> using color:blue and weight:2";
+$f[2] = "1/x for x in <$xmin,$xmax> using color:blue and weight:2";
+$f[3] = "x**2 for x in <$xmin,$xmax> using color:blue and weight:2";
+$f[4] = "sqrt(x) for x in <0,$xmax> using color:blue and weight:2";
+$f[5] = "1/x**2 for x in <$xmin,$xmax> using color:blue and weight:2";
+$f[6] = "x**3 for x in <$xmin,$xmax> using color:blue and weight:2";
+$f[7] = "-(-x)**(1/3) for x in <$xmin,0> using color:blue and weight:2";
+$f[8] = "x**(1/3) for x in <0,$xmax> using color:blue and weight:2";
+
+foreach my $i (0..7) {
+  $gr[$i] = init_graph($xmin,$ymin,$xmax,$ymax,axes=>[0,0],grid=>[$xmax-$xmin,$ymax-$ymin],size=>[275,275]);
+  $gr[$i]->lb('erase');
+  $gr[$i]->lb( new Label($xmax-$labelsep,$labelsep,'x','black','center','middle'));
+  $gr[$i]->lb( new Label($labelsep,$ymax-$labelsep,'y','black','center','middle'));
+  foreach my $j (1,2,3) {
+    $gr[$i]->lb( new Label( $j,$ymin+$labelsep, $j,'black','center','middle'));
+    $gr[$i]->lb( new Label(-$j,$ymin+$labelsep,-$j,'black','center','middle'));
+    $gr[$i]->lb( new Label($xmin+$labelsep, $j, $j,'black','center','middle'));
+    $gr[$i]->lb( new Label($xmin+$labelsep,-$j,-$j,'black','center','middle'));
+  }
+  
+  if($i<7) {add_functions($gr[$i],$f[$i]);} 
+  else{add_functions($gr[$i],$f[$i],$f[$i+1]);}
+}
+
+@QA = ();
+foreach my $i (0..7) { push( @QA, "\($F[$i]\)",  $gr[$i] ); }
+
+$ml = new_image_match_list(
+  link => 1,                #  do not link to separate image
+  size => [200,200],        #  image width, height in pixels
+  tex_size => 500,          #  tex size in precent times 10
+  columns => 3,             #  number of columns
+  separation => 20,         #  space between images
+);
+
+$ml->rf_print_q(~~&pop_up_list_print_q); # use pop-up-lists
+$ml -> ra_pop_up_list(
+[ No_answer=>"?", A=>"A", B=>"B", C=>"C", D=>"D", E=>"E", "F"=>"F", "G"=>"G", "H"=>"H" ] );
+
+$ml->qa(@QA);               #  set the questions and answers
+$ml->choose(5);             #  select 5 of them
+$ml->choose_extra(3);       #  and show the other 3
+
+
+######################################
+#  Main text
+
+BEGIN_TEXT
+$BR
+\{
+ColumnTable(
+"Associer chaque équation à son graphique.".
+$ml->print_q() # no period!
+, # comma!
+$BCENTER.
+$ml->print_a().
+$BR.
+"(Cliquer sur la figure pour l'agrandir)".
+$ECENTER # no period!
+, # comma!
+indent => 0, separation => 20, valign => "TOP"
+)
+\}
+END_TEXT
+
+
+######################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 0;
+
+ANS(str_cmp($ml->ra_correct_ans));
+
+ENDDOCUMENT();

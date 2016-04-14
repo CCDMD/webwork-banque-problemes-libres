@@ -1,0 +1,120 @@
+##DESCRIPTION
+## Graphiques des fonctions trigonométriques
+## 
+##ENDDESCRIPTION
+
+
+## DBsubject('Trigonométrie')
+## DBchapter()
+## DBsection()
+## Author(Julie Tremblay)
+## Institution(BdeB)
+
+
+## Level(1)
+## Language(fr)
+## créé le 14 avril, 2016
+
+## KEYWORDS('functions','definition of function','function notation','français')
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"PGgraphmacros.pl",
+"PGunion.pl",
+"imageChoice.pl",
+"PGgraders.pl",
+);
+
+TEXT(beginproblem());
+$refreshCachedImages=1;
+
+####################################
+#  Setup
+
+
+$dim = 7;
+$xmin = -$dim;
+$xmax =  $dim;
+$ymin = -2.5;
+$ymax =  2.5;
+$labelsep = 0.5;
+
+$F[0] = "\sin(x)";
+$F[1] = "\cos(x)";
+$F[2] = "\tan(x)";
+
+
+
+$f[0] = "sin(x) for x in <$xmin,$xmax> using color:blue and weight:2";
+$f[1] = "cos(x) for x in <$xmin,$xmax> using color:blue and weight:2";
+
+$n = -5*pi/2;
+foreach my $k (0..4) {
+$x1 = $n+$k*pi + 0.01;
+$x2 = $n+($k+1)*pi -0.01;
+$f[$k+2] = "tan(x) for x in <$x1,$x2> using color:blue and weight:2";
+}
+
+foreach my $i (0..2) {
+  $gr[$i] = init_graph($xmin,$ymin,$xmax,$ymax,axes=>[0,0],grid=>[$xmax-$xmin,$xmax-$xmin],size=>[300,300]);
+  $gr[$i]->lb('erase');
+  $gr[$i]->lb( new Label($xmax-$labelsep,$labelsep,'x','black','center','middle'));
+  $gr[$i]->lb( new Label($labelsep,$ymax-$labelsep,'y','black','center','middle'));
+  $j = 1;
+    $gr[$i]->lb( new Label( $j,$ymin+$labelsep, $j,'black','center','middle'));
+    $gr[$i]->lb( new Label(-$j,$ymin+$labelsep,-$j,'black','center','middle'));
+    $gr[$i]->lb( new Label($xmin+$labelsep, $j, $j,'black','center','middle'));
+    $gr[$i]->lb( new Label($xmin+$labelsep,-$j,-$j,'black','center','middle'));
+  
+  
+  if ($i < 2) {add_functions($gr[$i],$f[$i]);}
+  else {add_functions($gr[$i],$f[$i],$f[$i+1],$f[$i+2],$f[$i+3],$f[$i+4]);}
+  
+}
+
+@QA = ();
+foreach my $i (0..2) { push( @QA, "\($F[$i]\)",  $gr[$i] ); }
+
+$ml = new_image_match_list(
+  link => 1,                #  do not link to separate image
+  size => [200,200],        #  image width, height in pixels
+  tex_size => 500,          #  tex size in precent times 10
+  columns => 3,             #  number of columns
+  separation => 20,         #  space between images
+);
+
+$ml->rf_print_q(~~&pop_up_list_print_q); # use pop-up-lists
+$ml -> ra_pop_up_list(
+[ No_answer=>"?", A=>"A", B=>"B", C=>"C" ]);
+
+$ml->qa(@QA);               #  set the questions and answers
+$ml->choose(3);             #  select 3 of them
+
+
+######################################
+#  Main text
+
+BEGIN_TEXT
+$BR
+Associer chaque équation à son graphique.
+\{$ml->print_q() \}
+
+$BCENTER.
+\{$ml->print_a()\}
+$PAR
+(Cliquer sur la figure pour l'agrandir)
+$ECENTER
+
+END_TEXT
+
+
+######################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 0;
+
+ANS(str_cmp($ml->ra_correct_ans));
+
+ENDDOCUMENT();

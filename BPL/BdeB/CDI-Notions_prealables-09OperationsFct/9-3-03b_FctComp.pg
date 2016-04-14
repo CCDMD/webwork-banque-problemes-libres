@@ -1,0 +1,96 @@
+##DESCRIPTION
+#Fonctions composées et domaine
+#Fait par Julie Tremblay, juin 2014
+##ENDDESCRIPTION
+
+## DBsubject(Algèbre)
+## DBchapter(Opérations sur les fonctions)
+## DBsection(Fonctions composées)
+## Institution(Collège de Bois-de-Boulogne)
+## Author(Julie Tremblay)
+######## Source ############
+## Fichier source:  1050s13p4.pg
+## ZAuthor('Utah ww group')
+## ZInstitution('Univeristy of Utah')
+## ZDBsubject('Algebra')
+## ZDBchapter('Functions')
+## ZDBsection('Domain and Range')
+#######  Source #############
+## Level(2)
+## Language(fr)
+## KEYWORDS('Fonction composée','français','composition')
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"AnswerFormatHelp.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+
+TEXT(beginproblem());
+
+
+Context()->variables->add(t=>"Real");
+Context()->strings->add(nep=>{});
+
+$a = non_zero_random(-8,8);
+do{$b = non_zero_random(-8,8);} until($a!=$b);
+do{$c = random(-10,10);} until($c!=$b);
+
+$f = Formula("(x+$a)/(x-$b)")->reduce;
+
+
+
+$ans2 = $f->eval(x=>"$c");
+$ans3 = $f->substitute(x=>"t+1");
+
+
+Context()->texStrings;
+BEGIN_TEXT 
+${BBOLD}Fonctions composées. $EBOLD
+$BR
+Soit \[f(x) = $f\]
+Alors le domaine de \(f\) est \(\mathbb{R}\setminus $LBRACE\) \{ ans_rule(10) \} \($RBRACE\)
+$BR
+Évaluer si possible, la fonction aux valeurs de \(x\) suivantes. La simplification n'est pas exigée.$BR
+(${BITALIC}Écrire ${BBOLD}nep${EBOLD} si la valeur n'existe pas.$EITALIC)
+$BR
+a) \(f($c) = \) \{ ans_rule(10) \}
+$BR
+b) \(f(t+1)= \)\{ ans_rule(10) \}
+END_TEXT
+Context()->normalStrings;
+
+
+ANS(Real($b)->cmp);
+ANS(Real($ans2)->cmp);
+ANS($ans3->cmp(limits=>[[0,5]]));
+
+$c1 = 1+$a;
+$c2 = 1-$b;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Soit \[f(x) = $f.\]
+Le domaine de cette fonction est l'ensemble des nombres réels à l'exception de la valeur de
+\(x\) pour laquelle il y a une division par zéro, c'est-à-dire \(x=$b\).
+$BR $BR
+De plus,
+$PAR
+a) \(f($c) = $ans2\)
+$PAR
+b) \(f(t+1) = \displaystyle $ans3 = \dfrac{t+$c1}{t+$c2}\)
+$PAR
+
+
+END_SOLUTION
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
