@@ -21,8 +21,7 @@ DOCUMENT();
 loadMacros(
 "PGstandard.pl",
 "MathObjects.pl",
-"contextPolynomialFactors.pl",
-"contextLimitedPowersFr.pl",
+"parserMultiAnswer.pl",
 "AnswerFormatHelpFr.pl",
 "PGcourse.pl",
 );
@@ -36,7 +35,7 @@ TEXT(beginproblem());
 #(x^2 + a)(x^2 - b^2) = (x^2 + a)(x - b)(x + b) = x^4 - b^2 x^2 + a x^2 - ab^2
 
 
-Context("PolynomialFactors");
+Context("Numeric");
 
 
 $a = random(1,9,1);
@@ -48,7 +47,42 @@ $ab2 = $a*$b2;
 $expression = Compute("x^4 - $b2*x^2 + $a*x^2 - $ab2")->reduce();
 
 
-$answer = Compute("(x^2 + $a)(x-$b)(x+$b)")->reduce();
+$fac1 = Compute("(x^2 + $a)");
+$fac2 = Compute("(x-$b)");
+$fac3 = Compute("(x+$b)");
+
+$multians = MultiAnswer($fac1, $fac2, $fac3)->with(
+  singleResult => 0,
+  allowBlankAnswers => 1,
+  checker => sub {
+      my ( $correct, $student, $self ) = @_;
+      my ( $f1stu, $f2stu, $f3stu ) = @{$student};
+      my ( $f1, $f2, $f3 ) = @{$correct};
+      $expstudent = Compute("$f1stu*$f2stu*$f3stu");
+      $diffcarre = Compute("$fac2*$fac3");
+      
+      if ( $expression == $expstudent)  {
+           if ( ($f1==$f1stu && $f2==$f2stu && $f3==$f3stu) 
+           ||($f1==$f1stu && $f2==$f3stu && $f3==$f2stu) 
+           ||($f1==$f2stu && $f2==$f1stu && $f3==$f3stu) 
+           ||($f1==$f2stu && $f2==$f3stu && $f3==$f1stu)
+           ||($f1==$f3stu && $f2==$f1stu && $f3==$f2stu)
+           ||($f1==$f3stu && $f2==$f2stu && $f3==$f1stu) 
+           ) {
+          return [1,1,1];
+            } elsif ($f1stu == $diffcarre || $f2stu == $diffcarre || 
+                   $f3stu == $diffcarre) 
+            {
+              return [0,0,0];
+            } else {
+        
+          return [1,1,1];
+         } 
+      } else {
+          return [0,0,0];
+      }
+  }
+);
 
 
 
@@ -62,7 +96,13 @@ BEGIN_TEXT
 Factoriser l'expression \($expression\).
 $BR
 $BR
-\{ ans_rule(30) \}
+\( \big( \)
+\{ $multians->ans_rule(10) \}
+\( \big) \big( \)
+\{ $multians->ans_rule(10) \}
+\( \big) \big( \)
+\{ $multians->ans_rule(10) \}
+\( \big) \)
 END_TEXT
 Context()->normalStrings;
 
@@ -72,21 +112,7 @@ Context()->normalStrings;
 
 $showPartialCorrectAnswers = 1;
 
-ANS($answer->cmp(
-checker => sub {
-        my ($correct,$student,$ans) = @_;
-        my $nonfact = Compute("(x^2 + $a)(x^2 - $b2)");    
-
-    if ($student eq $expression) {
-      $ans->{ans_message} = "Ce polynôme se factorise.";
-       return 0; }
-    if ($student eq $nonfact) {
-         $ans->{ans_message} = "Cette expression se factorise encore";
-       return 0; }
-
-  return $ans; 
-})
-);
+ANS($multians->cmp());
 
 
 $cd = $c*$d;

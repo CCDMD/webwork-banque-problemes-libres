@@ -1,0 +1,86 @@
+###DESCRIPTION
+## Multiplying Polynomials
+## 
+##ENDDESCRIPTION
+## DBsubject(Algebra)
+## DBchapter(Polynomials, polynomial functions, and factoring)
+## DBsection('Multiplication of Polynomials')
+## KEYWORDS('polynomials','français')
+## Traduction('Julie Tremblay')
+## TitleText1('Essentials of Intermediate Algebra')
+## EditionText1('1')
+## AuthorText1('Blitzer')
+## Section1('5.2')
+## Problem1('')
+## Author('RA Cruz')
+## Institution('The College of Idaho')
+## Date: 2007/10
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextLimitedPolynomialFr.pl",
+  "AnswerFormatHelp.pl",
+  "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+
+Context("LimitedPolynomial-Strict");
+Context()->variables->are(x=>'Real',y=>'Real');
+$a= random(2,7,1);
+do{$b= non_zero_random(-6,6,1);} until($a!=$b); 
+
+
+$poly = Formula("$a*x + $b*y")->reduce;
+
+
+######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Développer le binôme suivant sous la forme d'un polynôme.
+$PAR $BR
+ \( ( $poly )^2 = \)  \{ ans_rule(40) \}  \{ AnswerFormatHelp("formulas") \}
+
+END_TEXT
+Context()->normalStrings;
+
+######################################
+#  Answer
+
+($c2,$c1,$c0) = ($a**2, 2*$a*$b,$b**2);
+$ans = Formula("$c2*x^2 + $c1*x*y + $c0*y^2")->reduce;
+ANS($ans->cmp);
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+$aa = $a*$a;
+$ab = $a*$b;
+$bb = $b*$b;
+
+$p1 = Formula("$aa x^2 + $ab xy")->reduce;
+$p2 = Formula("$ab yx + $bb y^2")->reduce;
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+\[  \begin{array}{rl} ($poly )^2 &=  ($poly)($poly) \\
+&=  $p1 + $p2 \\
+&= $ans \end{array}
+\] 
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

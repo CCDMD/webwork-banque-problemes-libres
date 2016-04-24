@@ -23,7 +23,7 @@ loadMacros(
 "MathObjects.pl",
 "AnswerFormatHelp.pl",
 "contextPolynomialFactors.pl",
-"contextLimitedPowersFr.pl",
+"contextLimitedPowers.pl",
 "PGcourse.pl",
 );
 
@@ -39,8 +39,6 @@ TEXT(beginproblem());
 Context("PolynomialFactors");
 Context()->{error}{msg}{"Simplified polynomials can have at most one term of each degree"}= "Simplifier la réponse en combinant les termes semblables";
 
-
-#ProblemRandomize(style=>"Button",label=>"Générer une autre expression");
 
 $a = random(1,9,1);
 $b = random(1,9,1);
@@ -58,6 +56,13 @@ $d = $b + $c;
 
 $fac2 = Formula("$a x - $d")->reduce;
 
+
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+);
+Context()->{error}{msg}{"Powers must be integer constants"}= " ";
+Context()->{error}{msg}{"Subtraction is allowed only between monomials"}= " ";
 $answer = Compute("($fac2)($fac)");
 
 

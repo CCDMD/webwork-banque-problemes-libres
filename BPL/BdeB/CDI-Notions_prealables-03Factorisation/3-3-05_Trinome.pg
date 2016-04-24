@@ -23,7 +23,6 @@ loadMacros(
 "PGcourse.pl",
 "contextPolynomialFactors.pl",
 "contextLimitedPowersFr.pl",
-#"problemRandomize.pl",
 );
 
 TEXT(beginproblem());
@@ -39,8 +38,6 @@ Context()->{error}{msg}{"Each factor can appear only once (combine like factors)
 
 #(x^2+a)^2 = x^4 + 2ax^2 +a^2
 Context("Numeric");
-
-#ProblemRandomize(style=>"Button",label=>"Générer un autre polynôme");
 
 $a = random(1,12,1);
 
@@ -58,7 +55,7 @@ $answer = Formula("(x^2 + $a)^2")->reduce();
 
 Context()->texStrings;
 BEGIN_TEXT
-Factoriser l'expression \($expression\).  Simplifier la réponse.
+Factoriser l'expression \($expression\).
 $BR
 $BR
 \{ ans_rule(30) \}
@@ -71,7 +68,26 @@ Context()->normalStrings;
 
 $showPartialCorrectAnswers = 0;
 
-ANS($answer->cmp);
+ANS($answer->cmp(
+checker => sub {
+        my ($correct,$student,$ans) = @_; 
+    $ans2 = Compute("($a + x^2)^2")->reduce;
+    $ans3 = Compute("(-x^2 - $a)^2");
+    $ans4 = Compute("(-$a - x^2)^2");
+    if($student == $correct) {
+    if ($student eq $expression) {
+       return 0;
+     } elsif ($student eq $answer || $student eq $ans2
+     || $student eq $ans3 || $student eq $ans4){
+       return 1;
+     } else {
+     return 0;
+     }
+  } else {
+  return 0;
+}
+}
+));
 
 Context()->texStrings;
 BEGIN_SOLUTION

@@ -24,8 +24,7 @@ loadMacros(
 "AnswerFormatHelp.pl",
 "PGcourse.pl",
 "contextPolynomialFactors.pl",
-"contextLimitedPowersFr.pl",
-#"problemRandomize.pl",
+"contextLimitedPowers.pl",
 );
 
 TEXT(beginproblem());
@@ -34,43 +33,39 @@ TEXT(beginproblem());
 #  Set-up
 
 Context("PolynomialFactors-Strict");
-Context()->flags->set(singleFactors=>1);
+Context()->noreduce('(-x)-y','(-x)+y');
+Context()->flags->set(singleFactors=>0);
 Context()->{error}{msg}{"Each factor can appear only once (combine like factors)"} 
   = "Combiner les facteurs communs en un seul facteur";
 
 
 #(ax+b)(cx+d) = (ac)x^2 + (ad+bc)x + bd
 
-#ProblemRandomize(style=>"Button",label=>"Générer un autre polynôme");
-
 
 
 $a = random(-4,-1,1);
 $b = random(1,4,1);
 
-if( gcf($a,$b) != 1) {$b=$b+1};
 
-$c = random(1,5,1);
-$d = non_zero_random(-4,4,1);
+do {$c = random(1,5,1);
+$d = non_zero_random(-4,4,1);}
+until(abs($a) != abs($c) && abs($b) != abs($d));
 
-if( gcf($c,$d) != 1) {$c=$c+1};
-
-if(abs($a) == abs($c) && abs($b) == abs($d)){
-
-$c = $c+1;
-while( gcf($c,$d) != 1){ $c++};
-}
 
 $a1 = $a*$c;
 $a2 = $a*$d+$b*$c;
-
-
 $a3 = $b*$d;
 
 
 $expression = Compute("$a1*x^2+$a2*x+$a3")->reduce();
 $fact1 = Compute("$b + $a x")->reduce();
 $fact2 = Compute("$c*x+$d")->reduce();
+
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+);
+Context()->{error}{msg}{"Powers must be integer constants"}= " ";
+Context()->{error}{msg}{"Subtraction is allowed only between monomials"}= " ";
 
 $answer = Compute("($fact1)($fact2)");
 
@@ -95,22 +90,7 @@ Context()->normalStrings;
 
 $showPartialCorrectAnswers = 0;
 
-ANS($answer->cmp(
-checker => sub {
-        my ($correct,$student,$ans) = @_; 
-      
-    if ($student eq $expression) {
-      $ans->{ans_message} = "Ce polynôme se factorise.";
-       return 0;
-} elsif ($student == $answer) {
-return 1;
-} else {
-return 0;
-}
-
-  return $ans; 
-})
-);
+ANS($answer->cmp());
 
 $u = $a*$d;
 $v = $b*$c;

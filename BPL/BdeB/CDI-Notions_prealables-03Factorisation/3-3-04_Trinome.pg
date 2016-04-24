@@ -23,7 +23,6 @@ loadMacros(
 "PGcourse.pl",
 "contextPolynomialFactors.pl",
 "contextLimitedPowersFr.pl",
-#"problemRandomize.pl",
 );
 
 TEXT(beginproblem());
@@ -40,7 +39,6 @@ Context()->{error}{msg}{"Each factor can appear only once (combine like factors)
 
 #(ax+by)^2 = a^2x^2 + 2abxy +b^2y^2
 
-#ProblemRandomize(style=>"Button",label=>"Générer un autre polynôme");
 
 $a = random(2,7,1);
 $b = non_zero_random(-7,7,1);
@@ -51,7 +49,7 @@ $ab2 = 2*$a*$b;
 
 $expression = Compute("$aa*x^2 + $ab2*x*y + $bb*y^2")->reduce();
 
-$answer = Formula("($a*x + $b*y)^2")->reduce();
+$answer = Formula("($a*x + $b*y)")->reduce();
 
 
 ################################################
@@ -60,10 +58,10 @@ $answer = Formula("($a*x + $b*y)^2")->reduce();
 
 Context()->texStrings;
 BEGIN_TEXT
-Factoriser l'expression \($expression\).  Simplifier la réponse.
+Factoriser l'expression \($expression\) sous la forme demandée.
 $BR
 $BR
-\{ ans_rule(30) \}
+\(\Big(\)\{ ans_rule(20) \}\(\Big)^2\)
 END_TEXT
 Context()->normalStrings;
 
@@ -76,19 +74,14 @@ $showPartialCorrectAnswers = 0;
 ANS($answer->cmp(
 checker => sub {
         my ($correct,$student,$ans) = @_; 
-      
-    if ($student eq $expression) {
-      $ans->{ans_message} = "Ce polynôme se factorise.";
-       return 0;
-} elsif ($student == $answer) {
-return 1;
-} else {
-return 0;
+    
+    if ($student == -$correct || $student == $correct) {
+       return 1;
+     } else {
+   return 0;
+    }
 }
-
-  return $ans; 
-})
-);
+));
 
 Context()->texStrings;
 BEGIN_SOLUTION
@@ -102,7 +95,7 @@ $BR $BR
 \[
 \begin{array}{lrl}  & a^2 + 2ab + b^2 &= (a + b)^2    \\[0.5em]
       \Rightarrow &  $expression &= ($a x)^2 + 2($a x)($b y) + ($b y)^2 \\[0.5em]
-       & &= $answer \end{array}
+       & &= \left($answer\right)^2 \end{array}
 \]
 END_SOLUTION
 Context()->normalStrings;

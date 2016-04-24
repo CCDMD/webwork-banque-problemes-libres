@@ -17,6 +17,7 @@ DOCUMENT();
 loadMacros(
 "PGstandard.pl",
 "MathObjects.pl",
+"PGcourse.pl"
 );
 
 ########################################################################
@@ -30,12 +31,16 @@ $showPartialCorrectAnswers = 1;
 Context()->noreduce('(-x)-y');
 Context()->strings->add(aucune => {});
 
-$a = random(1,30,1);
+$a = random(2,10,1);
+$b = random(1,30);
+
+$sqrtb = sqrt($b);
+do{$c = random(1,9);} until($c > $sqrtb);
 
 
-$gauche = Formula("sqrt(2x+$a)-x")->reduce;
+$gauche = Formula("sqrt($a*x+$b)-$c")->reduce;
 
-$sol = Compute("1+sqrt($a+1)");
+$sol = Compute("($c*$c - $b)/$a");
 
 $ans = List("$sol");
 
@@ -60,7 +65,16 @@ Context()->normalStrings;
 
 ANS( $ans->cmp() );
 
-$ap1 = $a+1;
+$cc = $c*$c;
+$ccmb = $cc - $b;
+
+($num,$den) = reduce($ccmb,$a);
+if ($den == 1 ) {$solfrac = $num;}
+else {$solfrac = "\frac{$num}{$den}";}
+
+($db, $da) = reduce(-$b,$a);
+if ($da == 1 ) {$rest = $db;}
+else {$rest = "\frac{$db}{$da}";}
 
 Context()->texStrings;
 BEGIN_SOLUTION
@@ -68,23 +82,19 @@ $BR
 Pour résoudre cette équation, il faut tout d'abord isoler la racine, puis élever chacun des membres de l'égalité au carré. On obtient :
 \[\begin{aligned}
 $gauche &= 0 \\
-\sqrt{2x+$a} &= x &&;\text{restriction : }x > 0 \\
-\left(\sqrt{2x+$a}\right)^2 &= x^2 \\
-2x + $a &= x^2 \\
-0 &= x^2 -2x - $a
+\sqrt{$a x + $b} &= $c \\
+\left(\sqrt{$a x+$b}\right)^2 &= $c^2 \\
+$a x + $b &= $cc\\
+$a x &= $ccmb \\
+x &= $solfrac
 \end{aligned}
 \]
 
-On trouve les deux solutions possibles pour cette équation quadratique au moyen de la formule quadratique, \(\frac{-b \pm \sqrt{b^2-4ac}}{2a}\).
-\[ x_1 = \frac{2 + \sqrt{4 - 4(-$a)}}{2} = \frac{2 + \sqrt{4 + 4($a)}}{2} = 1 + \sqrt{$ap1}\]
-
-et 
-\[ x_2 = 1 - \sqrt{$ap1} \]
-
 $PAR
-Comme  \(1 - \sqrt{$ap1}\) est négatif et qu'une racine carrée ne peut donner un nombre négatif (voir la démarche ci-dessus), on a que \(x_2\) n'est pas une solution réelle de cette équation.
+Il faut vérifier si cette solution appartient au domaine de l'équation. Le domaine est :
+\[  $a x + $b \geq 0 \Rightarrow x \geq $rest \]
 $PAR
-Par conséquent, l'unique solution est : \(x_1 =  1 + \sqrt{$ap1}\).
+Étant donné que \($solfrac \ge $rest\) et par conséquent, satisfait le domaine de l'équation, l'unique solution est : \(x = $solfrac\).
 END_SOLUTION
 Context()->normalStrings;
 

@@ -31,8 +31,7 @@ loadMacros(
 "AnswerFormatHelpFr.pl",
 "PGcourse.pl",
 "contextPolynomialFactors.pl",
-"contextLimitedPowersFr.pl",
-#"problemRandomize.pl",
+"contextLimitedPowers.pl",
 );
 
 TEXT(beginproblem());
@@ -44,14 +43,15 @@ TEXT(beginproblem());
 #n(x+a)(x+b) = nx^2 +n(a+b)x + nab
 
 Context("PolynomialFactors-Strict");
+Context()->noreduce('(-x)-y','(-x)+y');
 Context()->flags->set(singleFactors=>0);
+Context()->{error}{msg}{"Each factor can appear only once (combine like factors)"} 
+  = "Combiner les facteurs communs en un seul facteur";
 
-
-#ProblemRandomize(style=>"Button",label=>"Générer un autre polynôme");
 
 $a = random(1,7,1);
-$b = non_zero_random(-7,7,1);
-$n = non_zero_random(-5,5,1);
+do{$b = non_zero_random(-7,7,1);} until(abs($a)!=abs($b));
+$n = random(2,3,1)*random(-1,1,2);
 
 $s = $a + $b;
 $p = $a * $b;
@@ -64,6 +64,12 @@ $expression = Compute("$n*x^2 + $a1*x + $a2")->reduce();
 $fac1 = Compute("x + $a")->reduce();
 $fac2 = Compute("x + $b")->reduce();
 
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+);
+Context()->{error}{msg}{"Powers must be integer constants"}= " ";
+Context()->{error}{msg}{"Subtraction is allowed only between monomials"}= " ";
+
 $answer = Compute("$n*($fac1)($fac2)")->reduce();
 
 
@@ -72,7 +78,7 @@ $answer = Compute("$n*($fac1)($fac2)")->reduce();
 
 Context()->texStrings;
 BEGIN_TEXT
-Factoriser l'expression \($expression\), si possible, et simplifier la réponse.$BR
+Factoriser, si possible, l'expression \($expression\). $BR
 Si la factorisation est impossible, recopier l'expression dans la case réponse.
 $BR
 $BR
@@ -84,24 +90,9 @@ Context()->normalStrings;
 ################################################
 #  Answer evaluation
 
-$showPartialCorrectAnswers = 1;
+$showPartialCorrectAnswers = 0;
 
-ANS($answer->cmp(
-checker => sub {
-        my ($correct,$student,$ans) = @_; 
-      
-    if ($student eq $expression) {
-      $ans->{ans_message} = "Ce polynôme se factorise.";
-       return 0;
-} elsif ($student == $answer) {
-return 1;
-} else {
-return 0;
-}
-
-  return $ans; 
-})
-);
+ANS($answer->cmp());
 
 Context()->texStrings;
 BEGIN_SOLUTION

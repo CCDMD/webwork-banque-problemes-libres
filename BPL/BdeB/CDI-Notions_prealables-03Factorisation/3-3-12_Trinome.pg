@@ -23,9 +23,6 @@ loadMacros(
 "MathObjects.pl",
 "AnswerFormatHelp.pl",
 "PGcourse.pl",
-"contextPolynomialFactors.pl",
-"contextLimitedPowersFr.pl",
-#"problemRandomize.pl",
 );
 
 TEXT(beginproblem());
@@ -39,20 +36,10 @@ TEXT(beginproblem());
 Context("Numeric");
 
 
-#ProblemRandomize(style=>"Button",label=>"Générer un autre polynôme");
-
 $a = non_zero_random(1,7,1);
 $b = random(-4,4,1);
-$c = non_zero_random(1,9,1);
 
-$b2 = Compute("($b)^2");
-$ac4 = Compute("4*$a*$c");
-
-
-while($b2 >= $ac4 ) {
-$c ++;
-$ac4 = Compute("4*$a*$c");
-}
+do{$c = non_zero_random(1,9,1);} until ($b*$b < 4*$a*$c);
 
 
 $answer = Formula("$a*x^2 + $b*x + $c")->reduce();
@@ -80,7 +67,8 @@ $showPartialCorrectAnswers = 1;
 
 ANS($answer->cmp());
 
-
+$b2 = $b*$b;
+$ac4 = 4*$a*$c;
 $discri = $b2 - $ac4;
 
 Context()->texStrings;

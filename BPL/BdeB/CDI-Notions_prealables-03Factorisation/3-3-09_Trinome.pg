@@ -19,8 +19,7 @@ loadMacros(
 "AnswerFormatHelpFr.pl",
 "PGcourse.pl",
 "contextPolynomialFactors.pl",
-"contextLimitedPowersFr.pl",
-#"problemRandomize.pl",
+"contextLimitedPowers.pl",
 );
 
 TEXT(beginproblem());
@@ -33,37 +32,30 @@ Context("PolynomialFactors-Strict");
 
 #(ax+b)(cx+d) = (ac)x^2 + (ad+bc)x + bd    a et c >0 , b et d \neq 0 
 
-#ProblemRandomize(style=>"Button",label=>"Générer un autre polynôme");
 
+$a = random(2,3,1);
+do{$b = non_zero_random(-4,4,1);} until(gcd($a,$b) ==1);
 
-
-$a = random(1,5,1);
-$b = non_zero_random(-4,4,1);
-
-if( gcf($a,$b) != 1) {$a=$a+1};
-
-$c = random(1,5,1);
-$d = non_zero_random(-4,4,1);
-
-if( gcf($c,$d) != 1) {$d=$d+1};
-
-if($a == $c && abs($b) == abs($d)){
-
-$c = $c+1;
-while( gcf($c,$d) != 1){ $c++};
-}
+do {$c = random(1,3,1);
+$d = non_zero_random(-4,5,1);}
+until($a != $c || abs($b) != abs($d));
 
 $a1 = $a*$c;
 $a2 = $a*$d+$b*$c;
-
-
 $a3 = $b*$d;
 
 
 $expression = Compute("$a1*x^2+$a2*x+$a3")->reduce();
-$fact1 = Compute("$a x + $b")->reduce();
-$fact2 = Compute("$c*x+$d")->reduce();
 
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+);
+Context()->{error}{msg}{"Powers must be integer constants"}= " ";
+Context()->{error}{msg}{"Subtraction is allowed only between monomials"}= " ";
+
+$fact1 = Compute("$a*x+$b")->reduce();
+$fact2 = Compute("$c*x+$d")->reduce();
 $answer = Compute("($fact1)($fact2)");
 
 
@@ -87,22 +79,7 @@ Context()->normalStrings;
 
 $showPartialCorrectAnswers = 0;
 
-ANS($answer->cmp(
-checker => sub {
-        my ($correct,$student,$ans) = @_; 
-      
-    if ($student eq $expression) {
-      $ans->{ans_message} = "Ce polynôme se factorise.";
-       return 0;
-} elsif ($student == $answer) {
-return 1;
-} else {
-return 0;
-}
-
-  return $ans; 
-})
-);
+ANS($answer->cmp());
 
 $u = $a*$d;
 $v = $b*$c;

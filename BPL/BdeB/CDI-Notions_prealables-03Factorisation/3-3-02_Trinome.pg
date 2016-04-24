@@ -22,8 +22,7 @@ loadMacros(
 "AnswerFormatHelpFr.pl",
 "PGcourse.pl",
 "contextPolynomialFactors.pl",
-"contextLimitedPowersFr.pl",
-#"problemRandomize.pl",
+"contextLimitedPowers.pl",
 );
 
 TEXT(beginproblem());
@@ -32,14 +31,14 @@ TEXT(beginproblem());
 #  Set-up
 
 Context("PolynomialFactors-Strict");
+Context()->noreduce('(-x)-y','(-x)+y');
 Context()->flags->set(singleFactors=>1);
 Context()->{error}{msg}{"Each factor can appear only once (combine like factors)"} 
   = "Combiner les facteurs communs en un seul facteur";
 
 
-#(x+a)^2 = x^2 - 2ax +a^2
+#(x+a)^2 = x^2 - 2ax +a^2 où a > 1
 
-#ProblemRandomize(style=>"Button",label=>"Générer un autre polynôme");
 
 $a = random(2,11,1);
 
@@ -49,7 +48,7 @@ $aa = $a * $a;
 
 $expression = Compute("x^2 - $a2 x + $aa");
 
-$answer = Compute("(x - $a)^2");
+$answer = Compute("(x - $a)^2")->reduce;
 
 
 ################################################
@@ -58,7 +57,8 @@ $answer = Compute("(x - $a)^2");
 
 Context()->texStrings;
 BEGIN_TEXT
-Factoriser l'expression \($expression\).  Simplifier la réponse.
+Factoriser, si possible, l'expression \($expression\). $BR
+Si la factorisation est impossible, recopier l'expression dans la case réponse.
 $BR
 $BR
 \{ ans_rule(30) \}
@@ -74,19 +74,23 @@ $showPartialCorrectAnswers = 0;
 ANS($answer->cmp(
 checker => sub {
         my ($correct,$student,$ans) = @_; 
-      
+    $ans2 = Compute("(-$a + x)^2")->reduce;
+    $ans3 = Compute("(-x + $a)^2")->reduce;
+    $ans4 = Compute("($a - x)^2")->reduce;
+    if($student == $correct) {
     if ($student eq $expression) {
-      $ans->{ans_message} = "Ce polynôme se factorise.";
        return 0;
-} elsif ($student == $answer) {
-return 1;
-} else {
-return 0;
+     } elsif ($student eq $answer || $student eq $ans2
+     || $student eq $ans3 || $student eq $ans4){
+       return 1;
+     } else {
+     return 0;
+     }
+  } else {
+  return 0;
 }
-
-  return $ans; 
-})
-);
+}
+));
 
 Context()->texStrings;
 BEGIN_SOLUTION

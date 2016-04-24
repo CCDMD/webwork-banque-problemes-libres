@@ -23,7 +23,6 @@ loadMacros(
 "PGcourse.pl",
 "contextPolynomialFactors.pl",
 "contextLimitedPowersFr.pl",
-#"problemRandomize.pl",
 );
 
 TEXT(beginproblem());
@@ -32,17 +31,16 @@ TEXT(beginproblem());
 #  Set-up
 
 Context("PolynomialFactors-Strict");
-Context()->flags->set(singleFactors=>0);
 
+Context()->flags->set(singleFactors=>0);
 LimitedPowers::OnlyIntegers(
 minPower => 0, maxPower => 1,
-message => "soient 0 ou 1",
 );
+Context()->{error}{msg}{"Powers must be integer constants"}= " ";
+Context()->{error}{msg}{"Subtraction is allowed only between monomials"}= " ";
 
 
 #(x+a)(x+b) = x^2 +(a+b)x + ab
-
-#ProblemRandomize(style=>"Button",label=>"Générer un autre polynôme");
 
 $a = random(1,10,1);
 $b = random(1,10,1);
@@ -61,7 +59,7 @@ $answer = Compute("(x + $a)(x + $b)");
 #  Main text
 
 BEGIN_TEXT
-Factoriser l'expression $expression.  Simplifier la réponse.
+Factoriser l'expression $expression.
 $BR
 $BR
 \{ ans_rule(30) \}

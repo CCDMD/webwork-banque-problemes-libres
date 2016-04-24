@@ -31,7 +31,7 @@ loadMacros(
 "AnswerFormatHelp.pl",
 "PGcourse.pl",
 "contextPolynomialFactors.pl",
-"contextLimitedPowersFr.pl",
+"contextLimitedPowers.pl",
 );
 
 TEXT(beginproblem());
@@ -39,23 +39,31 @@ TEXT(beginproblem());
 #######################################
 #  Set-up
 
-Context("Numeric");
+Context("PolynomialFactors-Strict");
+Context()->noreduce('(-x)-y','(-x)+y');
 Context()->variables->are(t=>"Real");
 
 
-#(b-at)(b-at)=b^2- a^2t^2
+#(b-at)(b-at)=b^2- a^2t^2  où a>0 et b>0
 
 
 
 $a = random(2,9,1);
-$b = random(1,10,1);
-
-if($a==$b){$b=$b+1};
+do{$b = random(1,10,1);} until($a!=$b);
 
 
-$expression = Compute("$b^2 - $a^2*t^2");
+$aa = $a*$a;
+$bb = $b*$b;
+$expression = Compute("$bb - $aa*t^2");
 
-$answer = Compute("($b- $a*t)($b + $a*t)");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+);
+Context()->{error}{msg}{"Powers must be integer constants"}= " ";
+Context()->{error}{msg}{"Subtraction is allowed only between monomials"}= " ";
+
+$answer = Compute("($b- $a*t)($b + $a*t)")->reduce;
 
 
 ################################################
@@ -64,7 +72,8 @@ $answer = Compute("($b- $a*t)($b + $a*t)");
 
 Context()->texStrings;
 BEGIN_TEXT
-Factoriser, si possible, le polynôme \($expression\). Si la factorisation est impossible, recopier le polynôme dans la case réponse.
+Factoriser, si possible, l'expression \($expression\). $BR
+Si la factorisation est impossible, recopier l'expression dans la case réponse.
 $BR
 $BR
 \{ ans_rule(30) \}

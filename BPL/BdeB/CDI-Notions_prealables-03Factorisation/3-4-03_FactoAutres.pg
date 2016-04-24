@@ -31,7 +31,7 @@ loadMacros(
 "AnswerFormatHelpFr.pl",
 "PGcourse.pl",
 "contextPolynomialFactors.pl",
-"contextLimitedPowersFr.pl",
+"contextLimitedPowers.pl",
 );
 
 TEXT(beginproblem());
@@ -42,19 +42,27 @@ TEXT(beginproblem());
 Context("Numeric");
 
 
-#(ax-b)(ax+b)=a^2x^2-b^2
+#(ax-b)(ax+b)=a^2x^2-b^2  où a>0 et b>0
 
+Context("PolynomialFactors-Strict");
+Context()->noreduce('(-x)-y','(-x)+y');
 
 
 $a = random(2,7,1);
-$b = random(1,12,1);
+do{$b = random(1,10,1);} until($b!=$a);
 
-if($a==$b){$b=$b+1;};
+$aa = $a*$a;
+$bb = $b*$b;
+$expression = Compute("$aa*x^2 - $bb");
 
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+);
+Context()->{error}{msg}{"Powers must be integer constants"}= " ";
+Context()->{error}{msg}{"Subtraction is allowed only between monomials"}= " ";
 
-$expression = Compute("$a^2*x^2 - $b^2");
-
-$answer = Compute("($a*x - $b)($a*x+$b)");
+$answer = Compute("($a*x - $b)($a*x+$b)")->reduce;
 
 
 ################################################
@@ -63,7 +71,8 @@ $answer = Compute("($a*x - $b)($a*x+$b)");
 
 Context()->texStrings;
 BEGIN_TEXT
-Factoriser, si possible, le polynôme \($expression\). Si la factorisation est impossible, recopier le polynôme dans la case réponse.
+Factoriser, si possible, l'expression \($expression\). $BR
+Si la factorisation est impossible, recopier l'expression dans la case réponse.
 $BR
 $BR
 \{ ans_rule(30) \}
@@ -76,22 +85,7 @@ Context()->normalStrings;
 
 $showPartialCorrectAnswers = 0;
 
-ANS($answer->cmp(
-checker => sub {
-        my ($correct,$student,$ans) = @_; 
-      
-    if ($student eq $expression) {
-      $ans->{ans_message} = "Ce polynôme se factorise.";
-       return 0;
-} elsif ($student == $answer) {
-return 1;
-} else {
-return 0;
-}
-
-  return $ans; 
-})
-);
+ANS($answer->cmp());
 
 Context()->texStrings;
 BEGIN_SOLUTION

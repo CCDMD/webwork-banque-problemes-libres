@@ -21,10 +21,10 @@
 DOCUMENT();
 loadMacros(
 "PGstandard.pl",
+"MathObjects.pl",
 "PGgraphmacros.pl",
 "PGunion.pl",
 "imageChoice.pl",
-"PGgraders.pl",
 );
 
 TEXT(beginproblem());
@@ -37,8 +37,8 @@ $refreshCachedImages=1;
 $dim = 7;
 $xmin = -$dim;
 $xmax =  $dim;
-$ymin = -2.5;
-$ymax =  2.5;
+$ymin = -3;
+$ymax =  3;
 $labelsep = 0.5;
 
 $F[0] = "\sin(x)";
@@ -47,42 +47,57 @@ $F[2] = "\tan(x)";
 
 
 
-$f[0] = "sin(x) for x in <$xmin,$xmax> using color:blue and weight:2";
-$f[1] = "cos(x) for x in <$xmin,$xmax> using color:blue and weight:2";
 
-$n = -5*pi/2;
+$sin = "sin(x) for x in <$xmin,$xmax> using color:blue and weight:2";
+$cos = "cos(x) for x in <$xmin,$xmax> using color:blue and weight:2";
+
+$x = pi/2;
+$n = -5*$x;
+$p = -4*$x;
 foreach my $k (0..4) {
 $x1 = $n+$k*pi + 0.01;
 $x2 = $n+($k+1)*pi -0.01;
-$f[$k+2] = "tan(x) for x in <$x1,$x2> using color:blue and weight:2";
+$x3 = $p+$k*pi + 0.01;
+$x4 = $p+($k+1)*pi -0.01;
+$tan[$k] = "tan(x) for x in <$x1,$x2> using color:blue and weight:2";
+$sec[$k] = "sec(x) for x in <$x1,$x2> using color:blue and weight:2";
+$cot[$k] = "cot(x) for x in <$x3,$x4> using color:blue and weight:2";
+$csc[$k] = "csc(x) for x in <$x3,$x4> using color:blue and weight:2";
 }
 
-foreach my $i (0..2) {
-  $gr[$i] = init_graph($xmin,$ymin,$xmax,$ymax,axes=>[0,0],grid=>[$xmax-$xmin,$xmax-$xmin],size=>[300,300]);
+
+foreach my $i (0..5) {
+  $gr[$i] = init_graph($xmin,$ymin,$xmax,$ymax,axes=>[0,0],size=>[300,300]);
+  $gr[$i]->h_ticks(0,"black",-5*$x, -4*$x, -3*$x, -2*$x, -1*$x, $x, 2*$x, 3*$x, 4*$x, 5*$x);
+  $gr[$i]->v_ticks(0,"black",-1, 1);
   $gr[$i]->lb('erase');
   $gr[$i]->lb( new Label($xmax-$labelsep,$labelsep,'x','black','center','middle'));
   $gr[$i]->lb( new Label($labelsep,$ymax-$labelsep,'y','black','center','middle'));
   $j = 1;
-    $gr[$i]->lb( new Label( $j,$ymin+$labelsep, $j,'black','center','middle'));
-    $gr[$i]->lb( new Label(-$j,$ymin+$labelsep,-$j,'black','center','middle'));
-    $gr[$i]->lb( new Label($xmin+$labelsep, $j, $j,'black','center','middle'));
-    $gr[$i]->lb( new Label($xmin+$labelsep,-$j,-$j,'black','center','middle'));
-  
-  
-  if ($i < 2) {add_functions($gr[$i],$f[$i]);}
-  else {add_functions($gr[$i],$f[$i],$f[$i+1],$f[$i+2],$f[$i+3],$f[$i+4]);}
-  
+    $gr[$i]->lb( new Label(-$labelsep, $j, $j,'black','center','middle'));
+    $gr[$i]->lb( new Label(-$labelsep,-$j,-$j,'black','center','middle'));
+    $gr[$i]->lb( new Label($x,-0.25,'pi/2','black','center','middle'));
 }
 
-@QA = ();
+add_functions($gr[0],$sin);
+add_functions($gr[1],$cos);
+add_functions($gr[2],$tan[0],$tan[1],$tan[2],$tan[3],$tan[4]);
+add_functions($gr[3],$sec[0],$sec[1],$sec[2],$sec[3],$sec[4]);
+add_functions($gr[4],$cot[0],$cot[1],$cot[2],$cot[3],$cot[4]);
+add_functions($gr[5],$csc[0],$csc[1],$csc[2],$csc[3],$csc[4]);
+  
+
+@QA = (); @extra = ();
 foreach my $i (0..2) { push( @QA, "\($F[$i]\)",  $gr[$i] ); }
+foreach my $i (3..5) { push( @extra, $gr[$i] ); }
+
 
 $ml = new_image_match_list(
-  link => 1,                #  do not link to separate image
+  link => 0,                #  do not link to separate image
   size => [200,200],        #  image width, height in pixels
   tex_size => 500,          #  tex size in precent times 10
   columns => 3,             #  number of columns
-  separation => 20,         #  space between images
+ separation => 20,         #  space between images
 );
 
 $ml->rf_print_q(~~&pop_up_list_print_q); # use pop-up-lists
@@ -92,23 +107,25 @@ $ml -> ra_pop_up_list(
 $ml->qa(@QA);               #  set the questions and answers
 $ml->choose(3);             #  select 3 of them
 
+$ml->extra(@extra);         #  extra answer
+$ml->choose_extra(3);       #  include the extra as well
 
 ######################################
 #  Main text
 
+Context()->texStrings;
 BEGIN_TEXT
-$BR
 Associer chaque équation à son graphique.
-\{$ml->print_q() \}
+\{$ml->print_q\}
 
-$BCENTER.
-\{$ml->print_a()\}
+$BCENTER
+\{$ml->print_a\}
 $PAR
 (Cliquer sur la figure pour l'agrandir)
 $ECENTER
 
 END_TEXT
-
+Context()->normalStrings;
 
 ######################################
 #  Answer evaluation
