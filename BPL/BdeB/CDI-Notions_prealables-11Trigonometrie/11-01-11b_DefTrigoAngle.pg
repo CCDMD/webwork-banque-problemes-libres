@@ -1,0 +1,106 @@
+## DBsubject(Algèbre)
+## DBchapter(Trigonométrie)
+## DBsection(Définition - Rapports trigonométriques et angles)
+## Author(Julie Tremblay)
+## Institution(BdeB)
+## KEYWORDS('français', 'géométrie','trigonométrie','loi', 'triangle')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGunion.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+### Pour rafraîchir le cache lorsqu’il a des graphiques dynamiques, sinon une image dans le cache peut s’afficher à la place
+$refreshCachedImages = 1;
+
+# créer les valeurs des côtés a et b
+$a= random(3,15);
+$b= random(($a+1),25);
+
+
+# créer la valeur de l'hypoténuse c et l'arrondir à une décimale près
+
+$c=sqrt( ($a*$a)+($b*$b) );
+
+$cint=(int($c*10))/10;
+
+# déterminer la valeur des deux réponses recherchées
+$sin= Compute("$a/$cint");
+$cos= Compute("$b/$cint");
+
+# déterminer l'image à afficher dans la question
+$gr = init_graph(-1,-1,5,3,pixels=>[180,120]);
+
+### le triangle
+$gr->moveTo(0,0);
+$gr->lineTo(4,0,'black',2); # bottom edge
+$gr->lineTo(0,2,'black',2); # hypotenuse
+$gr->lineTo(0,0,'black',2); # left edge
+
+### angle droit
+$l = 0.5;
+
+$gr->moveTo(0,0);
+$gr->lineTo($l,0,'black',1);
+$gr->lineTo($l,$l,'black',1);
+$gr->lineTo(0,$l,'black',1);
+$gr->lineTo(0,0,'black',1);   
+
+$gr->lb('reset');
+
+$gr->lb( new Label(-0.5,0,'B','black','center','middle'));
+$gr->lb( new Label(-0.5,2.2,'A','black','center','middle'));
+$gr->lb( new Label(4.5,0,'C','black','center','middle'));
+$gr->lb( new Label(-0.5,1.1,'a','black','center','middle'));
+$gr->lb( new Label(2,-0.5,'b','black','center','middle'));
+$gr->lb( new Label(2.2,1.6,'c','black','center','middle'));
+
+  
+
+BEGIN_TEXT
+Dans le triangle ci-dessous, \(a = $a\), \(b = $b\) et \(c = $cint\). 
+$PAR
+\{ image( insertGraph($gr), width=>180 ) \}
+$PAR
+Déterminer les valeurs des six rapports trigonométriques de l'angle au sommet C.
+$PAR
+1) \(\sin C =\) \{ans_rule(10)\} $BR
+2) \(\cos C =\) \{ans_rule(10)\} $BR
+
+END_TEXT
+
+$showPartialCorrectAnswers = 1;
+
+### réponses
+ANS($sin->cmp);
+ANS($cos->cmp);
+
+
+BEGIN_SOLUTION
+Dans le triangle ci-dessous, \(a = $a\), \(b= $b\) et \(c = $cint\) . 
+$BR
+\{ image( insertGraph($gr), width=>150 ) \}
+$PAR
+1) Le sinus est égal à la mesure du côté opposé à l'angle C (ici : \(a\)) sur la mesure de l'hypoténuse du triangle (ici : \(c\)).$BR
+Donc dans le triangle rectangle ci-dessus, on peut déterminer que  :
+$PAR
+
+$SPACE \( \text{sinus de C} = \dfrac{a}{c}  =  \dfrac{$a}{$cint}   \)
+$PAR
+2) Le cosinus est égal à la mesure du côté adjacent à l'angle C (ici : \(b\)) sur la mesure de l'hypoténuse du triangle (ici : \(c\)).$BR
+Donc basé sur le triangle rectangle ci-dessus, on peut déterminer que  :
+$PAR
+
+$SPACE \( \text{cosinus de C} = \dfrac{b}{c}  =  \dfrac{$b}{$cint}   \)
+
+END_SOLUTION
+
+ENDDOCUMENT();
