@@ -22,6 +22,7 @@ loadMacros(
 "PGauxiliaryFunctions.pl",
 "Parser.pl",
 "MathObjects.pl",
+"answerHints.pl",
 "PGcourse.pl",
 );
 
@@ -29,7 +30,7 @@ loadMacros(
 
 TEXT(beginproblem());
 
-$showPartialCorrectAnswers = 1;
+$showPartialCorrectAnswers = 0;
 
 ########################################################################
 
@@ -71,11 +72,13 @@ Context()->normalStrings;
 
 ########################################################################
 
-ANS( $ans->cmp() );
-
-
 $ans1 = Compute("$n1/$d1");
 $ans2 = Compute("$n2/$d2");
+
+ANS($ans->cmp->withPostFilter(AnswerHints( 
+  List($ans1) => "Cette solution est bonne, mais il manque une autre solution",
+  List($ans2) => "Cette solution est bonne, mais il manque une autre solution", 
+)));
 
 if($ans1 - floor($ans1) != 0) {
 $ans1 = "\frac{$n1}{$d1}";

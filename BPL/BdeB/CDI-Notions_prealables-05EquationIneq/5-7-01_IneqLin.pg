@@ -15,7 +15,7 @@ DOCUMENT();
 loadMacros(
    "PGstandard.pl",     # Standard macros for PG language
    "MathObjects.pl",
-   "contextInequalitiesFr.pl",
+   "contextInequalities.pl",
    "AnswerFormatHelp.pl",
    "PGchoicemacros.pl",
    "PGcourse.pl",
@@ -39,46 +39,32 @@ Context()->flags->set(formatStudentAnswer=>'parsed');
 
 @r = NchooseK(4,4);
 
-$a1 = random(2,20,1)*random(-1,1,2);
-$b1 = non_zero_random(-60,60,1);
+$a1 = random(2,20,1);
+do{$b1 = random(1,60,1);} until ($a1!=$b1);
 
-$a2 = random(2,20,1)*random(-1,1,2);
-$b2 = non_zero_random(-60,60,1);
+$a2 = random(2,20,1);
+do{$b2 = random(-60,-1);} until ($a2!=-$b2);
 
-$a3 = random(2,20,1)*random(-1,1,2);
-$b3 = non_zero_random(-60,60,1);
+$a3 = random(-20,-2,1);
+do{$b3 = random(1,60,1);} until ($a3!=-$b3);
 
-$a4 = random(2,20,1)*random(-1,1,2);
-$b4 = non_zero_random(-60,60,1);
+$a4 = random(-20,-2,1);
+do{$b4 = random(-60,-1);} until ($a4!=$b4);
 
 
 $exp[0] = "Une solution de \( $a1 x < $b1 \) est ";
-if ($a1<0) {
- $ans[0] = Compute(" x > $b1/$a1 " || "$b1/$a1 < x" );
-} else {
- $ans[0] = Compute(" x < $b1/$a1 " || "$b1/$a1 > x" );
-}
+$ans[0] = Compute(" x < $b1/$a1 " || "$b1/$a1 > x" );
+
 
 $exp[1] = "Une solution de \( $a2 x > $b2 \) est ";
-if ($a2<0) {
-  $ans[1] = Compute(" x < $b2/$a2 " || "$b2/$a2 > x" );
-} else {
-  $ans[1] = Compute(" x > $b2/$a2 " || "$b2/$a2 < x" );
-}
+$ans[1] = Compute(" x > $b2/$a2 " || "$b2/$a2 < x" );
 
 $exp[2] = "Une solution de \( $a3 x \le $b3 \) est ";
-if ($a3<0) {
-  $ans[2] = Compute(" x >= $b3/$a3 " || "$b3/$a3 <= x" );
-} else {
-  $ans[2] = Compute(" x <= $b3/$a3 " || "$b3/$a3 >= x" );
-}
+$ans[2] = Compute(" x >= $b3/$a3 " || "$b3/$a3 <= x" );
 
 $exp[3] = "Une solution de \( $a4 x \ge $b4 \) est ";
-if ($a4<0) {
-  $ans[3] = Compute(" x <= $b4/$a4" || "$b4/$a4 >= x" );
-} else {
-  $ans[3] = Compute(" x >= $b4/$a4 " || "$b4/$a4 <= x" );
-}
+$ans[3] = Compute(" x <= $b4/$a4" || "$b4/$a4 >= x" );
+
 ##############################################################
 #
 #  Text
