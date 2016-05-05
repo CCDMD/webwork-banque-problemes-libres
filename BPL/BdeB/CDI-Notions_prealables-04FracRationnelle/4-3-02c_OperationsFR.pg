@@ -20,9 +20,9 @@ DOCUMENT(); # This should be the first executable line in the problem.
 loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
+  "parserMultiAnswer.pl",
  "PGcourse.pl",
 );
-
 
 
 TEXT(beginproblem());
@@ -50,6 +50,31 @@ $den = Formula("x*(x-$a)^2")->reduce;
 $f = Compute("$A/(x*(x-$a))+ $B/(x-$a)^2")->reduce;
 
 
+$mp = MultiAnswer($num,$den)->with(
+         singleResult => 0,
+         checker => sub {
+            my ($correct,$student,$self) = @_;  # get the parameters
+            my ( $p1, $p2 ) = @{$correct};      # get the correct num, denom
+            my ( $p1stu, $p2stu ) = @{$student};# get the student's num, denom
+          
+            $numeratorValid   = ( $p1==$p1stu || Compute("-1")*$p1==$p1stu );
+            $denominatorValid = ( $p2==$p2stu || Compute("-1")*$p2==$p2stu );
+            $quotientValid    = ( $p1/$p2 == Compute($p1stu)/Compute($p2stu) );
+
+	
+			if ($quotientValid) {
+				return[$numeratorValid,$denominatorValid];
+			} elsif ($numeratorValid && $denominatorValid ) {
+				return[0,$denominatorValid];
+			} elsif  ($numeratorValid || $denominatorValid ) {
+			   return[$numeratorValid,$denominatorValid];
+			} else {
+                           return[0,0];
+                        }
+		}
+        );
+
+
 
 ######################################
 #  Main text
@@ -64,7 +89,7 @@ $PAR
 Exprimer la réponse en fraction rationnelle simplifiée \(\dfrac{A}{B}\) 
 et donner la ou les restrictions sur le domaine de l'expression. 
 $PAR 
-Réponse : \(A =\) \{ans_rule(20)\} et \(B =\) \{ans_rule(20)\} 
+Réponse : \(A =\) \{$mp->ans_rule(20)\} et \(B =\) \{$mp->ans_rule(20)\} 
 $PAR 
 Restriction(s) :  \(x \neq \) \{ans_rule(30)\}
 $BR $BR
@@ -75,19 +100,17 @@ Context()->normalStrings;
 ######################################
 #  Answer
 
-ANS( $num->cmp );
-ANS( $den->cmp );
-
-ANS(List(0,$a)->cmp(
-list_type  => 'liste',
-));
 
 $showPartialCorrectAnswers = 1;
 
+$ans2 = List(0,$a);
+ANS( $mp->cmp() );
+ANS( $ans2->cmp(list_type  => 'liste') );
+
+
+
+
 ######################################
-
-$ans = Formula("$answer")->reduce->TeX;
-
 
 
 $p1 = Compute("$A x")->reduce;

@@ -60,39 +60,27 @@ $mp = MultiAnswer($ans1,$ans2)->with(
          singleResult => 0,
          checker => sub {
             my ($correct,$student,$self) = @_;  # get the parameters
-            
             my ( $p1, $p2 ) = @{$correct};      # get the correct num, denom
             my ( $p1stu, $p2stu ) = @{$student};# get the student's num, denom
-
-            my $isPreview = $main::inputs_ref->{previewAnswers};
-
-            
+          
             $numeratorValid   = ( $p1==$p1stu || Compute("-1")*$p1==$p1stu );
             $denominatorValid = ( $p2==$p2stu || Compute("-1")*$p2==$p2stu );
             $quotientValid    = ( $p1/$p2 == Compute($p1stu)/Compute($p2stu) );
 
-            if (! $isPreview) { # Don't show messages if previewing....
-			  Value::Error("As-tu simplifié ta réponse?") 
-                if ($quotientValid && !$numeratorValid && !$denominatorValid);
-			  Value::Error("Ton numérateur et dénominateur sont incorrects.") 
-                unless ($numeratorValid || $denominatorValid);
-   			  Value::Error("Ton numérateur est incorrect") 
-                unless $numeratorValid;
-              Value::Error("Ton dénominateur est incorrect") 
-                unless $denominatorValid;
-              Value::Error("Une de tes réponses est de signe contraire") 
-                unless $quotientValid;
-            
-			}
-			
+	
 			if ($quotientValid) {
 				return[$numeratorValid,$denominatorValid];
+			} elsif ($numeratorValid && $denominatorValid ) {
+				return[0,$denominatorValid];
+			} elsif  ($numeratorValid || $denominatorValid ) {
+			   return[$numeratorValid,$denominatorValid];
 			} else {
-				return[0,0];
-			}
+                           return[0,0];
+                        }
 		}
-           
         );
+
+
 
 	
 
