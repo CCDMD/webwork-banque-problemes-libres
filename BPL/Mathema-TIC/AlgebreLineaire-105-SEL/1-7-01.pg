@@ -1,0 +1,90 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('applications', 'méthode de Cramer', 'méthode de Gauss', 'méthode de Gauss-Jordan', 'méthode de la matrice inverse', 'solution unique', 'système à deux variables')
+
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##level(1)
+##Language(fr)
+
+##########################################SOURCE################
+## ZInstitution('Rochester')
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('1.2')
+## Problem1('')
+##########################################SOURCE################
+
+###Traduction française : Sylvie Charbonneau
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+	   "MathObjects.pl",
+	   "PGcourse.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+@girls = (4, 3, 3, 2, 2, 5, 2);
+@boys  = (3, 4, 2, 3, 2, 2, 5);
+
+@shehas = ('autant de frères que de sœurs', 'deux fois plus de frères que de sœurs', 
+        'autant de frères que de sœurs', 'trois fois plus de frères que de sœurs', 
+        'deux fois plus de frères que de sœurs', 'deux fois plus de sœurs que de frères', 
+        'cinq fois plus de frères que de sœurs');  
+@hehas = ('deux fois plus de sœurs que de frères', 'autant de frères que de sœurs', 
+       'trois fois plus de sœurs que de frères', 'autant de frères que de sœurs', 
+       'deux fois plus de sœurs que de frères', 'cinq fois plus de sœurs que de frères', 
+       'deux fois plus de frères que de sœurs');
+
+$probversiontag = random(0,6,1);
+$gnum = $girls[$probversiontag];
+$bnum = $boys[$probversiontag];
+$gsent = $shehas[$probversiontag];
+$bsent = $hehas[$probversiontag];
+
+@gnames = ('Amanda', 'Kate', 'Emily', 'Tonya', 'Lisa', 'Sasha');
+$gntag = random(0,5,1);
+$gname = $gnames[$gntag];
+
+@bnames = ('Mike', 'Sam', 'Fred', 'John', 'Steve', 'Bob');
+$bntag = random(0,5,1);
+$bname = $bnames[$bntag];
+
+@name = ($gname, $bname);
+@sb = ('sœur', 'frère');
+@sent = ($gsent, $bsent);
+@gb = ('filles', 'garçons');
+@ans = ($gnum, $bnum);
+
+$first = random(0,1,1);
+$second = 1-$first;
+$reponse1=Compute($ans[$first]);
+$reponse2=Compute($ans[$second]);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+
+$name[$first] et $name[$second] sont $sb[$first] et $sb[$second]. $name[$first] a $sent[$first] et
+$name[$second] a $sent[$second]. Combien de $gb[$first] et de $gb[$second] y a-t-il dans cette famille? 
+$PAR
+Réponse :  \{ans_rule(10)\} $gb[$first] et \{ans_rule(10)\} $gb[$second]. 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $reponse1->cmp() );
+ANS( $reponse2->cmp() );
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

@@ -1,0 +1,91 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('compatibilité d\'un système', 'déterminant', 'système à deux variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##level(1)
+##Language(fr)
+
+
+##########################################SOURCE################
+## ZInstitution(TCNJ)
+## ZMLT(1unknowncoeff)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('1.2')
+## Problem1('')
+#########################################Source###################
+
+
+###Traduction française : Sylvie Charbonneau
+
+
+DOCUMENT();         #Ceci est la première ligne exécutable
+
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+
+$a = random(2,5,1)*random(-1,1,2);
+$b = random(2,5,1)*random(-1,1,2);
+$c = random(-5,5,1);
+$m = random(2,4,1);
+$n = random(5,7,1);
+$m1 = $a*$m;
+$m2 = $b*$m;
+$m3 = $c*$m;
+$n1 = $a*$n;
+$n2 = $b*$n;
+$n3 = $c*$n + random(2,5,1)*random(-1,1,2);
+
+
+
+Context("Matrix");
+Context()->noreduce('(-x)-y','(-x)+y');    
+
+$expr1 = Formula("$m1 * x + $m2* y ")->reduce;
+$expr2 = Formula("x + $n2 * y ")->reduce;
+
+
+
+$REP = Compute($n1);
+Context()->texStrings; 
+BEGIN_TEXT
+$BR
+Si le système
+$BR
+$BR
+\[
+\left\lbrace
+\begin{array}{rcl}
+$expr1 & = & $m3 \\
+k $expr2 & = & $n3\\
+\end{array}
+\right.
+\]
+
+$BR
+est compatible, alors \(k\neq\) \{ans_rule(10)\}
+
+END_TEXT
+Context()->normalStrings; 
+
+
+ANS($REP->cmp());
+
+
+ENDDOCUMENT();        # Ceci est la dernière ligne executable

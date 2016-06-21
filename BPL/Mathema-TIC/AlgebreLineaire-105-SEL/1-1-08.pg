@@ -1,0 +1,96 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('méthode de Cramer', 'méthode de Gauss', 'méthode de Gauss-Jordan', 'méthode de la matrice inverse', 'solution unique', 'système à deux variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##level(2)
+##Language(fr)
+
+
+##########################################SOURCE##############
+## ZInstitution(Rochester)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('1.2')
+## Problem1('')
+##########################################SOURCE##############
+
+
+###Traduction française : Sylvie Charbonneau
+
+
+
+DOCUMENT();               #Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl"
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$l = random(3,5,2) * random(-1,1,2);
+$m = random(3,5,2) * random(-1,1,2);
+$det = random(-1,1,2);
+$kn = $det + $l*$m; 
+if ($kn/4 == int($kn/4)) { $k=4; $n=$kn/$k; }
+else { $k=2; $n=$kn/2; } 
+
+
+Context("Numeric");
+Context()->variables->add(a=>"Real");
+Context()->variables->add(b=>"Real");
+
+
+
+# det = 1 or -1, so mult. is same as dividing
+$repx= Formula("(-$l*b+$n*a)*$det");
+$repy= Formula("($k*b-$m*a)*$det");
+
+Context()->texStrings; 
+
+BEGIN_TEXT
+
+Résoudre le système :
+$BR
+$BR
+\[
+\left\lbrace
+\begin{array}{rcl}
+$k x+$l y  & = & a \\
+$m x+ $n y & = & b\\
+\end{array}
+\right.
+\]
+$BR
+$BR
+\( x= \) \{ans_rule(20) \}
+$BR 
+\( y= \) \{ans_rule(20) \}
+
+
+
+
+
+
+END_TEXT
+Context()->normalStrings; 
+
+
+ANS($repx->cmp());
+ANS($repy->cmp());
+
+
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

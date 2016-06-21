@@ -1,0 +1,102 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Vecteurs et espace euclidien)
+## KEYWORDS('R^3', 'angle', 'produit scalaire', 'produit vectoriel', 'vecteur')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE################## 
+## Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+## originally from 5ed (with updates)
+## WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZTitleText1('Calculus')
+## ZAuthorText1('Hughes-Hallett')
+## ZEditionText1('5')
+## ZSection1('13.4')
+## ZProblem1('29')
+## ZTitleText2('Calculus')
+## ZAuthorText2('Hughes-Hallett')
+## ZEditionText2('6')
+## ZSection2('13.4')
+## ZProblem2('33')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+ "PGcourse.pl",
+);
+
+
+
+Context("Vector");
+
+@cross = ( random(1,4,1), non_zero_random(-3,3,1), non_zero_random(-5,5,1) );
+$crvec = Vector( @cross );
+$dot = random(2,5,1);
+
+$crnorm = norm( $crvec );
+$tantheta = Compute( "$crnorm/$dot" );
+$theta = Compute( "arctan($crnorm/$dot)" );
+
+$showPartialCorrectAnswers = 1;
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+
+Soit \( \vec v \times \vec w = $crvec \),
+\( \quad  \vec v \cdot \vec w = $dot \), et soit \( \theta \) l'angle entre \( \vec v \) et \( \vec w \), alors
+$PAR
+${BBOLD}a)$EBOLD
+\( \tan \theta = \) \{ ans_rule(45) \}
+
+$PAR
+${BBOLD}b)$EBOLD
+\( \theta = \) \{ ans_rule(45) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($tantheta->cmp() );
+ANS($theta->cmp() );
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+$PAR SOLUTION $PAR
+
+${BBOLD}a)$EBOLD
+Puisque
+\[ \Vert{\vec v \times \vec w }\Vert  =
+   \Vert{ \vec v}\Vert\cdot\Vert{ \vec w}\Vert \sin{\theta},\]
+et
+\[\vec v \cdot \vec w =
+  \Vert{\vec v}\Vert\cdot \Vert{ \vec w }\Vert\cos{\theta},
+\]
+on a
+\[ \frac{\Vert{\vec v \times \vec w }\Vert}{\vec v\cdot\vec w} =
+   \frac{\Vert{ \vec v}\Vert\cdot\Vert{ \vec w}\Vert \sin{\theta}}
+      {\Vert{\vec v}\Vert\cdot \Vert{ \vec w }\Vert\cos{\theta}} =
+   \tan\theta, \]
+et donc
+\[ \tan{\theta} = \frac{\Vert $crvec\Vert}{$dot}
+   = \frac{$crnorm}{$dot} = $tantheta. \]
+
+${BBOLD}b)$EBOLD Alors \( \theta = \arctan( $tantheta ) = $theta\).
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

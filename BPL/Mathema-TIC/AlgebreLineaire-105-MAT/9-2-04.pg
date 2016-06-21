@@ -1,0 +1,102 @@
+##Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('déterminant', 'matrice carrée', 'multiplication par un scalaire', 'permutation', 'propriétés')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution('Rochester')
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('5.2')
+## Problem1('')
+##########################################SOURCE##################
+
+##Level(2)
+##Language(fr)
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros("PGstandard.pl",
+"MathObjects.pl",
+		   "PGcourse.pl"
+           );
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+Context('Matrix')->variables->add(v1=>"Real");
+Context()->variables->add(v2=>"Real");
+Context()->variables->add(v3=>"Real");
+Context()->variables->add(v4=>"Real");
+
+$det = non_zero_random(-9,9,1);
+
+$A=Matrix([["v1"],["v2"],["v3"],["v4"]]);
+$m = random(2,9,1);
+
+
+@b1 = ("v1", "v1", "v1", "$m v1");
+@b2 = ("v2", "$m v2", "v2", "v2");
+@b3 = ("v3", "v3", "$m v3", "v3");
+@b4 = ("$m v4", "v4", "v4", "v4");
+
+$slice1 = random(0,3,1);
+
+$B=Matrix([[$b1[$slice1]],[$b2[$slice1]],[$b3[$slice1]],[$b4[$slice1]]]);
+
+
+$ans1 =Compute("$det*$m");
+
+$m = random(2,9,1);
+@c1 = ("v2", "v2", "v4", "v4");
+@c2 = ("v1", "v3", "v3", "v1");
+@c3 = ("v4", "v4", "v2", "v2");
+@c4 = ("v3", "v1", "v1", "v3");
+$slice2 = random(0,3,1);
+
+$C=Matrix([[$c1[$slice2]],[$c2[$slice2]],[$c3[$slice2]],[$c4[$slice2]]]);
+
+
+$ans2 = Compute("$det * (-1)**$slice2");
+
+$k = random(2,9,1);
+@d1 = ("v1", "v1", "v1", "v1 + $k*v3");
+@d2 = ("v2", "v2 + $k*v1", "v2", "v2");
+@d3 = ("v3", "v3", "v3 + $k*v4", "v3");
+@d4 = ("v4 + $k*v2", "v4", "v4", "v4");
+$slice3 = random(0,3,1);
+
+
+$D=Matrix([[$d1[$slice3]],[$d2[$slice3]],[$d3[$slice3]],[$d4[$slice3]]]);
+
+$ans3 =Compute("$det"); 
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit \(A\) une matrice \(4 \times 4\) dont les lignes sont \(v_1\), \(v_2\), \(v_3\) et \(v_4\) et dont le déterminant est \( \det A = $det\). Calculer les déterminants suivants.
+$BR
+$BR
+\( \det $B =  \)  \{ans_rule(5) \},
+$BR
+$BR
+\( \det $C =  \)  \{ans_rule(5) \},
+$BR
+$BR
+\( \det $D =  \)  \{ans_rule(5) \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $ans1->cmp );
+ANS( $ans2->cmp );
+ANS( $ans3->cmp );
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

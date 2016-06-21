@@ -1,0 +1,92 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('déterminant', 'méthode de Cramer', 'solution unique', 'système à deux variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(TCNJ)
+## ZMLT(mlt001)
+## ZMLTleader(1)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('5.3')
+## Problem1('')
+##########################################SOURCE##################
+
+##Level(1)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+loadMacros("PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl"
+           );
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+Context()->noreduce('(-x)-y','(-x)+y');  
+
+
+
+do {
+$a = non_zero_random(-9,9,1);
+$b = non_zero_random(-9,9,1);
+$c = non_zero_random(-9,9,1);
+$d = non_zero_random(-9,9,1);
+$det = Compute("$a*$d-$b*$c");
+} until ($det!=0);
+
+
+$m = non_zero_random(-5,5,1);
+$n = non_zero_random(-5,5,1);
+
+
+
+$expr1=Formula("$a x+$b y")->reduce;
+$expr2=Formula("$c x+$d y")->reduce;
+
+
+
+$ans1 = Compute("($m*$d-$b*$n)/$det");
+$ans2 = Compute("($a*$n-$m*$c)/$det"); 
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Résoudre le système à l'aide de la règle de Cramer où \(A\) est la matrice des coefficients du système.
+$BR $BR
+\[  \left\lbrace \begin{array}{rcr} $expr1 &=& $m\\
+ $expr2&=& $n\\
+\end{array}
+ \right. \]
+$BR
+\( \det A= \) \{ans_rule(10) \}
+$BR
+\( x= \) \{ans_rule(10) \}
+$BR 
+\( y= \) \{ans_rule(10) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS($det->cmp());
+ANS($ans1->cmp());
+ANS($ans2->cmp());
+
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem. 

@@ -1,0 +1,185 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('aucune solution', 'déterminant', 'infinité de solutions', 'méthode de Gauss', 'méthode de Gauss-Jordan', 'nombre de solutions', 'solution unique', 'système à trois variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(TCNJ)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('1.2')
+## Problem1('')
+##########################################SOURCE#############
+##level(2)
+##Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+loadMacros(
+        "PGstandard.pl",
+        "PGchoicemacros.pl",
+        "PGanswermacros.pl",
+		"MathObjects.pl",
+		"PGcourse.pl",
+        "PGmatrixmacros.pl"
+        );
+ 
+TEXT(beginproblem());    
+# Do not show which answers are incorrect.
+$showPartialCorrectAnswers = 0;
+
+
+Context("Matrix");
+Context()->noreduce('(-x)-y','(-x)+y');  
+
+   
+# Variables for first and third problem
+$a = random(1,7,2)*random(-1,1,2);
+$b = random(1,7,2)*random(-1,1,2);
+$c = random(1,7,2)*random(-1,1,2);
+$d = random(1,7,2)*random(-1,1,2);
+$e = random(1,5,1)*random(-1,1,2);
+$f = random(1,5,1)*random(-1,1,2);
+$g = random(1,5,1)*random(-1,1,2);
+$h = random(1,5,1)*random(-1,1,2);
+$mult1 = random(1,5,2)*random(-1,1,2);
+$mult2 = random(2,4,2)*random(-1,1,2);
+$i = $a*$mult1+$e*$mult2;
+$j = $b*$mult1+$f*$mult2;
+$k = $c*$mult1+$g*$mult2;
+$l = $d*$mult1+$h*$mult2;
+$alt = $l + random(-5,5,2);
+
+$Q1expr1=Formula("$a x+$b y+$c z")->reduce;
+$Q1expr2=Formula("$e*x+$f*y+$g*z")->reduce;
+$Q1expr3=Formula("$i*x+$j*y+$k*z")->reduce;
+$Q1b1=$d;
+$Q1b2=$h;
+$Q1b3=$l;
+
+$Q3b1=$d;
+$Q3b2=$h;
+$Q3b3=$alt;
+
+
+# Variables for second problem
+$v1 = random(1,5,1)*random(-1,1,2);
+$v2 = random(1,5,1)*random(-1,1,2);
+$v3 = random(1,5,1)*random(-1,1,2);
+$v4 = random(1,5,1)*random(-1,1,2);
+$coeff1 = random(2,3,1)*random(-1,1,2);
+$coeff2 = random(4,5,1)*random(-1,1,2);
+$coeff3 = random(6,7,1)*random(-1,1,2);
+$p1 = $v1*$coeff1;
+$p2 = $v2*$coeff1;
+$p3 = $v3*$coeff1;
+$p4 = $v4*$coeff1;
+$p5 = $v1*$coeff2;
+$p6 = $v2*$coeff2;
+$p7 = $v3*$coeff2;
+$p8 = $v4*$coeff2;
+$p9 = $v1*$coeff3;
+$p10 = $v2*$coeff3;
+$p11 = $v3*$coeff3;
+$p12 = $v4*$coeff3;
+
+
+$Q2expr1=Formula("$p1*x+$p2*y+$p3*z")->reduce;
+$Q2expr2=Formula("$p5*x+$p6*y+$p7*z")->reduce;
+$Q2expr3=Formula("$p9*x+$p10*y+$p11*z")->reduce;
+$Q2b1=$p4;
+$Q2b2=$p8;
+$Q2b3=$p12;
+
+
+
+# Variables for fourth problem
+$r11 = random(1,5,1)*random(-1,1,2);
+$r21 = random(1,5,1)*random(-1,1,2);
+$r31 = random(1,5,1);
+$num1 = random(2,4,1);
+$n = random(-1,1,2);
+$r12 = $num1*$r11;
+$r22 = $num1*$r21+$n;
+$r32 = $num1*$r31;
+$num2 = random(1,3,1);
+$num3 = random(1,3,1);
+$m = random(-1,1,2);
+$r13 = $num2*$r11+$num3*$r12+$m;
+$r23 = $num2*$r21+$num3*$r22;
+$r33 = $num2*$r31+$num3*$r32;
+$r14 = random(0,10,1);
+$r24 = random(0,10,1);
+$r34 = random(0,10,1);
+
+
+
+$Q4expr1=Formula("$r11*x+$r12*y+$r13*z")->reduce;
+$Q4expr2=Formula("$r21*x+$r22*y+$r32*z")->reduce;
+$Q4expr3=Formula("$r31*x+$r32*y+$r33*z")->reduce;
+$Q4b1=$r14;
+$Q4b2=$r24;
+$Q4b3=$r34;
+
+Context()->texStrings; 
+
+
+# Make a new checkbox multiple choice
+$tf = new_pop_up_select_list();
+$tf->ra_pop_up_list(["?"=>"Choisir une réponse", "Une seule solution" => "Une seule solution", "Une infinité de solutions" => "Une infinité de solutions", "Aucune solution" => "Aucune solution" ]);
+# $cmc now "contains" the checkbox multiple choice object.
+
+# Insert some  questions and matching answers in the q/a list
+$tf -> qa (
+
+"\(  \left\lbrace \begin{array}{rlr}   $Q1expr1 &=& $Q1b1\\
+ $Q1expr2&=& $Q1b2\\
+$Q1expr3 &=& $Q1b3
+\end{array}
+ \right. 
+ \)", "Une infinité de solutions",
+                       
+"\( \left\lbrace \begin{array}{rlr} $Q2expr1 &=& $Q2b1\\
+ $Q2expr2&=& $Q2b2\\
+$Q2expr3 &=& $Q2b3
+\end{array}
+ \right.  \)", "Une infinité de solutions",
+
+"\( \left\lbrace \begin{array}{rlr} $Q1expr1 &=& $Q3b1\\
+ $Q1expr2&=& $Q3b2\\
+$Q1expr3 &=& $Q3b3
+\end{array}
+ \right.  \)", "Aucune solution",
+
+"\( \left\lbrace \begin{array}{rlr} $Q4expr1 &=& $Q4b1\\
+ $Q4expr2&=& $Q4b2\\
+$Q4expr3 &=& $Q4b3
+\end{array}
+ \right. \)", "Une seule solution",
+
+);
+
+$tf->choose(4);
+
+
+
+
+BEGIN_TEXT
+Déterminer si chaque système d'équations n'a aucune solution, une infinité de solutions ou une seule solution.
+
+$BR
+
+ \{ $tf -> print_q \}
+
+END_TEXT
+Context()->normalStrings; 
+ANS(str_cmp( $tf->ra_correct_ans )   ) ;
+
+ENDDOCUMENT();

@@ -1,0 +1,155 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('aire', 'angle', 'applications', 'direction', 'longueur et norme', 'parallélipipède', 'perpendiculaire', 'point', 'produit vectoriel')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE################## 
+## Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+## originally from 5ed (with updates)
+## WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('5')
+## Section1('13.4')
+## Problem1('42')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('6')
+## Section2('13.4')
+## Problem2('50')
+##########################################SOURCE##################
+##Level(3)
+##Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+## Tagged by glr 06/18/09
+
+
+Context("Vector");
+Context()->flags->set( ijk=>1 );
+
+Context()->constants->set(
+  i => {TeX => "\vec{\mathit{i}}"},
+  j => {TeX => "\vec{\mathit{j}}"},
+  k => {TeX => "\vec{\mathit{k}}"},
+);
+
+$showPartialCorrectAnswers = 1;
+
+@p1 = ( 0, 0, 0 );
+$xd = non_zero_random(-3,3,1);
+$yd = non_zero_random(-3,3,1);
+
+@p2 = ( $xd, 0, 0 );
+@p3 = ( $xd, $yd, 0 );
+@p4 = ( 0, $yd, 0 );
+
+$v1 = Vector( @p2 );
+$v2 = Vector( @p4 );
+$n0 = $v1 x $v2;
+$n1 = $n0;
+
+## make sure this is oriented downwards
+if ( $n1 . Vector((0,0,1)) > 0 ) {
+    $n1 = $v2 x $v1;
+    $n1msg = "Toutefois, puisque le vecteur pointe vers le haut, " .
+        "on veut sa valeur opposée : \( $n1 \).  On aurait pu l'obtenir " .
+	"directement en utilisant la règle de la main droite" .
+	"Remarquer que \(\vec a\times\vec b\) est orienté vers le haut " .
+	"alors que \(\vec b\times\vec a = -\vec a\times\vec b\) " .
+	"pointe vers le bas.";
+} else {
+    $n1msg = "Le vecteur pointe vers le bas, c'est donc celui qu'on cherche.  " .
+        "On aurait pu anticiper que c'était la bonne direction " .
+	"en utilisant la règle de la main droite pour \(\vec a\times\vec b\).";
+}
+
+$rad = random(2,4,1);
+$whichPl = list_random(0,1);
+$xz = ( 'xz', 'yz' )[$whichPl];
+$x  = ( 'y', 'x' )[$whichPl];
+if ( $whichPl ) {
+    $n2 = Vector( ( "pi*$rad^2", 0, 0 ) );
+    $ivec = "\,\vec i";
+} else {
+    $n2 = Vector( ( 0, "pi*$rad^2", 0 ) );
+    $ivec = "\,\vec j";
+}
+
+$rsq = $rad*$rad;
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+
+Dans chaque cas, déterminer le vecteur qui représente l'aire de la surface.
+La norme du vecteur est égale à la valeur de l'aire; sa direction est perpendiculaire à la surface.  Puisqu'il y a deux directions possibles,
+ on en a choisi une en fixant une orientation pour la surface.
+
+$PAR
+${BBOLD}a)$EBOLD
+Le vecteur \(\vec{A_1}\) qui représente l'aire du rectangle dont les sommets sont
+\(P (0,0,0) \), \( Q($p2[0],$p2[1],$p2[2]) \),
+\(R ($p3[0],$p3[1],$p3[2]) \) et \( S($p4[0],$p4[1],$p4[2]) \),
+orienté vers le bas.
+$BR
+\( \vec{A_1} = \) \{ ans_rule(45) \}
+
+$PAR
+${BBOLD}b)$EBOLD
+Le vecteur \(\vec{A_2}\) qui représente l'aire d'un cercle de rayon $rad dans le plan \( $xz \), orienté dans la direction de l'axe des
+\( $x \).
+$BR
+\( \vec{A_2} = \) \{ ans_rule(45) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($n1->cmp() );
+ANS($n2->cmp() );
+
+
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+$PAR SOLUTION $PAR
+
+${BBOLD}a)$EBOLD
+On joint d,abord les sommets du rectangle avec les vecteurs
+\(\vec a\) et \(\vec b\): en utilisant les vecteurs de \((0,0,0)\)
+à \( ($p2[0],$p2[1],$p2[2]) \) et  de \((0,0,0)\) à
+\( ($p4[0],$p4[1],$p4[2]) \), on obtient
+\[ \vec a = $v1, \qquad \vec b = $v2. \]
+Puisque l'aire du rectangle est donné par le produit vectoriel des vecteurs des côtés, on calcule le vecteur de l'aire par
+\[ \vec a\times\vec b = $n0. \]
+$n1msg
+
+$PAR
+${BBOLD}b)$EBOLD
+Le vecteur de l'aire du cercle doit avoir une norme égale à
+\(\pi r^2 = $rsq\,\pi \) et doit avoir une direction dans le sens de l'axe des
+\($x\), alors
+\( \vec{A_2} = $rsq\,\pi $ivec \).
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

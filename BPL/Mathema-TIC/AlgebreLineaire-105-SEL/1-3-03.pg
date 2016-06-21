@@ -1,0 +1,74 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('forme matricielle d\'un système', 'infinité de solutions', 'méthode de Gauss', 'méthode de Gauss-Jordan', 'système homogène', 'système à quatre variables et plus', 'variable libre')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(TCNJ and Hope College)
+## ZAuthor(Paul Pearson)
+##########################################SOURCE################
+##Level(2)
+##Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserMultiAnswer.pl",
+"MatrixCheckers.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+
+$a = random(-5,5,1);
+$b = random(-5,5,1);
+$c = non_zero_random(-5,5,1);
+$mult = random(2,4,1);
+$d = $a*$mult;
+$e = $b*$mult;
+$f = $c*$mult;
+
+$basis1 = Matrix([- $a, 1, 0, 0])->transpose;
+$basis2 = Matrix([- $b, 0, 1, 0])->transpose;
+$basis3 = Matrix([- $c, 0, 0, 1])->transpose;
+
+$A = Matrix( [[1, $a, $b, $c],[$mult, $d, $e, $f]]);
+
+$multians = MultiAnswer($basis1, $basis2, $basis3)->with(
+  singleResult => 1,
+  separator => ',',
+  tex_separator => ',',
+  allowBlankAnswers=>0,
+  checker => ~~&basis_checker_columns,
+);
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \[ A = $A. \]
+Déterminer toutes les solutions de  \( A\vec{x} = \vec{0} \).
+$BR
+$BR
+\( \vec{x} = \)
+\{ $multians->ans_array \}
+\( s + \)
+\{ $multians->ans_array \}
+\( t + \)
+\{ $multians->ans_array \} \( u \).
+END_TEXT
+Context()->normalStrings;
+
+ANS( $multians->cmp() );
+
+ENDDOCUMENT() ;

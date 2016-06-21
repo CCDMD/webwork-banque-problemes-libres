@@ -1,0 +1,97 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('compatibilité d\'une opération', 'multiplication matricielle')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## Institution('Dartmouth')
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('3.2')
+## Problem1('')
+##########################################SOURCE##################
+##Level(1)
+##Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+			"MathObjects.pl",
+			"PGchoicemacros.pl",
+			"PGstandard.pl",
+			"PGcourse.pl",
+     );
+ 
+
+
+ TEXT(beginproblem());
+## Do NOT show partial correct answers
+$showPartialCorrectAnswers = 1;
+Context("Matrix");
+
+
+## Generate the entries of a 2X3 3x4 and 4X2 matrix
+#@a=();
+#@b=();
+#@c=();
+for ($i = 0; $i < 6; $i++)
+{
+    $a[$i] = random(1,10,1);
+}
+for ($i = 0; $i < 12; $i++)
+{
+    $b[$i] = random(1,10,1);
+}
+for ($i = 0; $i < 8; $i++)
+{
+    $c[$i] = random(1,10,1);
+}
+
+
+$A=Matrix([[$a[0],$a[1],$a[2]],[$a[3],$a[4],$a[5]]]);
+$B=Matrix([[$b[0],$b[1],$b[2],$b[3]],[$b[4],$b[5],$b[6],$b[7]],[
+    $b[8],$b[9],$b[10],$b[11]]]);
+$C=Matrix([ [$c[0],$c[1]],[$c[2],$c[3]],[$c[4],$c[5]],[$c[6],$c[7]]]);
+
+
+$mc = new_checkbox_multiple_choice();
+	 
+$mc->qa("question","\(ABC\)","\(BCA\)","\(CAB\)");
+$mc->extra("\(ACB\)","\(BAC\)","\(CBA\)");
+$mc->makeLast("aucun");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Soit les matrices
+
+\( A=$A\),   \(  B=$B\)  et  \( C=$C \).
+$PAR
+
+Quels produits de matrices, parmi les suivants,
+sont définis? 
+$PAR
+\{ $mc -> print_a() \}  
+END_TEXT
+
+
+Context()->normalStrings;
+
+
+install_problem_grader(~~&std_problem_grader);
+
+
+ANS( checkbox_cmp( $mc->correct_ans() ) );
+
+ENDDOCUMENT();
+
+
+
+

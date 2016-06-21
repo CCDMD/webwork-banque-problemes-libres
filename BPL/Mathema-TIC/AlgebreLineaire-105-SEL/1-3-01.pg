@@ -1,0 +1,126 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('méthode de Gauss', 'méthode de Gauss-Jordan', 'solution unique', 'système à quatre variables et plus')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(Rochester)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('1.2')
+## Problem1('')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+Context()->variables->add(x1=>"Real");
+Context()->variables->add(x2=>"Real");
+Context()->variables->add(x3=>"Real");
+Context()->variables->add(x4=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');  
+
+$x1 = random(-5,5,1);
+$x2 = non_zero_random(-5,5,1);
+$x3 = non_zero_random(-9,9,1);
+$x4 = random(-5,5,1);
+
+$rx1 =Compute("$x1");
+$rx2 =Compute("$x2");
+$rx3 =Compute("$x3");
+$rx4 =Compute("$x4");
+
+
+$a11 = 1;
+$a12 = 0;
+$a13 = random(2,4,1);
+$a14 = random(2,4,1);
+
+$b1 = $a11*$x1 + $a12*$x2 + $a13*$x3 + $a14*$x4;
+$expr1=Formula("$a11*x1 + $a12*x2 + $a13*x3 + $a14*x4")->reduce;
+
+$a21 = 0; 
+$a22 = 1;
+$a23 = random(-4,-2,1);
+$a24 = random(-4,-2,1);
+
+$b2 = $a21*$x1 + $a22*$x2 + $a23*$x3 + $a24*$x4;
+$expr2=Formula("$a21*x1 + $a22*x2 + $a23*x3 + $a24*x4")->reduce;
+
+$k = non_zero_random(2,3,1);
+$l = non_zero_random(-3,-2,1);
+$a31 = $k*$a11 + $l*$a21;
+$a32 = $k*$a12 + $l*$a22;
+$a33 = $k*$a13 + $l*$a23 + non_zero_random(-4,4,1);
+if ($a33 == 0) { $a33 = $k*$a13 + $l*$a23 + 5;}
+$a34 = $k*$a14 + $l*$a24;
+
+$b3 = $a31*$x1 + $a32*$x2 + $a33*$x3 + $a34*$x4;
+$expr3=Formula("$a31*x1 + $a32*x2 + $a33*x3 + $a34*x4")->reduce;
+
+$a41 = - $a21;
+$a42 = - $a22;
+$a43 = - $a23;
+$a44 = - $a24 + random(4,6,1);
+
+$b4 = $a41*$x1 + $a42*$x2 + $a43*$x3 + $a44*$x4;
+$expr4=Formula("$a41*x1 + $a42*x2 + $a43*x3 + $a44*x4")->reduce;
+
+Context()->texStrings;
+
+
+##Disposition ou les variables sont aliignees.
+##\[ \left\{ "\{"; \}
+##\begin{array}{r${NO_SPACE}r${NO_SPACE}r${NO_SPACE}r${NO_SPACE}r${NO_SPACE}r}
+##               x_1 &           & +$a13 x_3 & + $a14 x_4 & = & $b1 \\
+##                   &       x_2 & +$a23 x_3 & + $a24 x_4 & = & $b2 \\
+##         $a31 x_1 & +$a32 x_2 & +$a33 x_3 & + $a34 x_4 & = & $b3 \\
+##                  &     - x_2 & +$a43 x_3 & + $a44 x_4 & = & $b4  
+##\end{array}\right. \]
+
+
+BEGIN_TEXT
+
+Résoudre le système d'équations
+\[  \left\lbrace \begin{array}{rcr} 
+$expr1 &=& $b1\\
+ $expr2&=& $b2\\
+$expr3 &=& $b3\\
+$expr4 &=& $b4
+\end{array}
+ \right. \]
+ 
+\(x_1 = \) \{ans_rule(5)\}$BR
+\(x_2 = \) \{ans_rule(5)\}$BR
+\(x_3 = \) \{ans_rule(5)\}$BR
+\(x_4 = \) \{ans_rule(5)\}$BR
+
+END_TEXT
+Context()->normalStrings;
+ANS($rx1->cmp());
+ANS($rx2->cmp());
+ANS($rx3->cmp());
+ANS($rx4->cmp());
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

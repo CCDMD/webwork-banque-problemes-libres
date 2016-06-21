@@ -1,0 +1,120 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('plan', 'vecteur', 'vecteurs coplanaires')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE################## 
+## ZDate(8/23/07)
+## ZInstitution(Union College)
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "contextTF.pl",
+  "parserVectorUtils.pl",
+  "alignedChoice.pl",
+  "PGchoicemacros.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+Context("Vector");
+
+#
+#  The vectors u and v
+#
+do {
+  $U = non_zero_vector3D(-3,3);
+  $V = non_zero_vector3D(-3,3);
+  $N = $U x $V;
+} until norm($N) != 0;
+
+#
+#  Some vectors in the plane
+#
+$W1 = 2*$U + $V;
+$W2 = -$U + 2*$V;
+$W3 = -3*$V;
+
+#
+#  Some other vectors
+#
+$W4 = non_zero_vector3D(-3,3);
+$W5 = non_zero_vector3D(-3,3);
+$W6 = non_zero_vector3D(-3,3);
+
+##############################################
+
+#
+#  Use a selection list of vectors and T/F answers
+#
+sub inPlane {("\(".$_[0]->TeX."\)",($_[0].$N == 0) ? "V" : "F")}
+
+$sl = new_select_list();
+$sl->{separation} = 3;
+$sl->{rf_print_q} = ~~&alt_print_q;
+
+$sl->qa(
+  inPlane($W1), inPlane($W2), inPlane($W3),
+  inPlane($W4), inPlane($W5), inPlane($W6),
+);
+
+$sl->choose(4);
+
+##############################################
+#  Main text
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Les deux vecteurs  \(\vec u = $U\) et \( \vec v = $V\)
+déterminent un plan dans l'espace.  Pour chaque vecteur ci-dessous, entrer
+${LQ}${BBOLD}V ${EBOLD}${RQ} si le vecteur est dans le même plan que 
+\( \vec u\) et \(\vec v\) et ${LQ}${BBOLD}F${EBOLD}${RQ} sinon.
+
+$BCENTER
+$PAR
+\{$sl->print_q\}
+$ECENTER
+
+END_TEXT
+Context()->normalStrings;
+
+HINT($BBOLD,"Indice : ",$EBOLD,
+ EV2("Quel est le lien entre \(\vec u \times \vec v\) et les autres vecteurs du plan?"));
+
+$showHint = 3;
+
+##################################################
+#  Answers
+
+Context("TF");
+Context()->strings->add(V);
+ANS(string_cmp($sl->ra_correct_ans));
+
+$showPartialCorrectAnswers = 0;
+install_problem_grader(~~&std_problem_grader);
+
+##################################################
+
+
+ENDDOCUMENT();

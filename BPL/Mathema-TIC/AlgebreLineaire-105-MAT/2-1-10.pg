@@ -1,0 +1,85 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('multiplication matricielle', 'propriétés')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## Institution('Rochester')
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('3.3')
+## Problem1('')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+DOCUMENT() ;        
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"parserPopUp.pl",
+"PGcourse.pl"
+) ;
+
+$showPartialCorrectAnswers = 1 ;
+
+############
+
+TEXT(beginproblem());
+
+Context('Matrix');
+
+do {
+
+$A = Matrix([
+[non_zero_random(-4,4,1),random(-4,4,1),random(-4,4,1)],
+[random(-4,4,1),random(-4,4,1),non_zero_random(-4,4,1)],
+[random(-4,4,1),non_zero_random(-4,4,1),random(-4,4,1)]
+]);
+
+$B = Matrix([
+[non_zero_random(-4,4,1),random(-4,4,1),random(-4,4,1)],
+[random(-4,4,1),random(-4,4,1),non_zero_random(-4,4,1)],
+[random(-4,4,1),non_zero_random(-4,4,1),random(-4,4,1)]
+]);
+
+$AB = $A * $B;
+$BA = $B * $A;
+
+} until ($AB != $BA);
+
+$popup = PopUp(["?","Vrai","Faux"],"Faux");
+
+Context()->texStrings;
+BEGIN_TEXT
+Si \(A = $A\) et \(B = $B\), alors
+$BR
+$BR
+\(AB=\) \{ $AB->ans_array() \} et
+$BR
+$BR
+\( BA=\) \{ $BA->ans_array() \}.
+$BR
+$BR
+\{ $popup->menu() \} Vrai ou faux : \( AB = BA \) pour toutes les matrices carrées \( A \) et \( B \) de même dimension.
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( $AB->cmp() );
+ANS( $BA->cmp() );
+ANS( $popup->cmp() );
+
+
+
+ENDDOCUMENT() ; 
+

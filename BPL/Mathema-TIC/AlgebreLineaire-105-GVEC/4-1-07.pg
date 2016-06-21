@@ -1,0 +1,118 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('angle', 'direction', 'longueur et norme', 'point', 'vecteur')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZDate(8/23/07)
+## ZInstitution(Union College)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('12.1')
+## Problem1('5 33')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "contextLimitedVector.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+
+
+Context("Vector");
+
+# the points P and Q
+$P = non_zero_point2D(-5,5,.1);
+$Q = non_zero_point2D(-5,5,.1);
+while ($P == $Q) {$Q = non_zero_point2D(-5,5,.1)}
+
+$PQ = Vector($Q - $P);
+
+# another 2 points
+$X = non_zero_point2D(-5,5,.1);
+while ($X == $P) {$X = non_zero_point2D(-5,5,.1)}
+$Y = non_zero_point2D(-5,5,.1);
+while ($Y == $Q) {$Y = non_zero_point2D(-5,5,.1)}
+
+
+
+$v = "\vec{v}";
+
+$norm = norm($PQ);
+$vector = Context()->copy;
+$vector->functions->undefine('norm');
+$vector->lists->set(AbsoluteValue => {class => 'LimitedVector::List::AbsoluteValue'});
+$vector->flags->set(ijk => 1);
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit le vecteur \($v\) allant de \(P$P\) à \(Q$Q\).
+$PAR
+
+\{BeginList("OL")\}
+
+$ITEM
+Le vecteur \($v\) est \{ans_rule(20)\}.
+$ITEMSEP
+
+$ITEM
+La longueur de \($v\) est \{ans_rule(20)\}.
+$ITEMSEP
+
+$ITEM
+Si l'origine de \($v\) est au point \(R$X\), alors son extrémité est au point  \{ans_rule(20)\}.
+$ITEMSEP
+
+$ITEM
+Si l'extrémité de \($v\) est au point \(S$Y\) alors son origine est au point \{ans_rule(20)\}.
+$ITEMSEP
+
+$ITEM
+Quel vecteur est de même longueur que \($v\), mais pointe dans la direction opposée? \{ans_rule(20)\}.
+$ITEMSEP
+
+$ITEM
+Quelle vecteur a la même direction que \($v\), mais est deux fois plus long?
+\{ans_rule(20)\}.
+
+\{EndList("OL")\}
+
+END_TEXT
+Context()->normalStrings;
+Context()->operators->undefine(".","><");
+Context()->operators->undefine("norm");
+
+
+
+ANS($PQ->cmp);
+ANS($norm->cmp);
+ANS(Point($X+$PQ)->cmp);
+ANS(Point($Y-$PQ)->cmp);
+ANS((-$PQ)->cmp);
+ANS((2*$PQ)->cmp);
+
+$showPartialCorrectAnswers = 1;
+
+##################################################
+
+
+
+ENDDOCUMENT();

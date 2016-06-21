@@ -1,0 +1,103 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Programmation linéaire)
+## KEYWORDS('applications', 'contraintes', 'fonction économique', 'maximisation', 'simplexe', 'trois variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZAuthor: C Fortin, Champlain College St-Lambert
+## ZInstitution('Champlain College')
+##########################################SOURCE################
+##Level(3)
+##Language(fr)
+
+DOCUMENT();    
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+  "PGcourse.pl",
+"PGmatrixmacros.pl",
+"LinearProgramming.pl",
+);
+
+TEXT(beginproblem());
+Context("Numeric");
+install_problem_grader(~~&std_problem_grader);
+$showPartialCorrectAnswers=0;
+
+$c1 = random(2,5);
+$c2 = random(2,5);
+$c3 = random(2,5);
+$u1 = random(20,30);
+$u2 = random(20,30);
+$u3 = random(20,30);
+
+$m = [[0,2,3,2,1,0,0,$u1],
+[0,1,2,2,0,1,0,$u2],
+[0,2,1,1,0,0,1,$u3],
+[1,-$c1,-$c2,-$c3,0,0,0,0]];
+
+($m, $endcode, $pivcount) = lp_solve($m, pivot_limit=>200);
+
+$PP = lp_current_value(0, $m);
+$P=Compute("$PP");
+#$fin0 = ($fin0->times(-1))->print_inline();
+$xxopt = lp_current_value(1, $m);#->print_inline();
+$yyopt = lp_current_value(2, $m);#->print_inline();
+$zzopt = lp_current_value(3, $m);#->print_inline();
+
+$xopt=Compute("$xxopt");
+$yopt=Compute("$yyopt");
+$zopt=Compute("$zzopt");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+L'usine Bernard veut maximiser les profits générés par ses produits A, B et C. Le revenu marginal par unité de chaque produit est le suivant :
+$PAR
+$BCENTER
+\{ begintable(2) \}
+\{ row( "Produit","Revenu marginal")\}
+\{ row( "A"," $c1 dollars ")\}
+\{ row( "B"," $c2 dollars")\}
+\{ row( "C"," $c3 dollars")\}
+\{ endtable() \}
+$ECENTER
+
+Le temps requis pour la production et la capacité de production de chaque service de l'usine sont les suivants :
+$PAR
+$BCENTER
+\{ begintable(3) \}
+\{ row( "Service", "Temps requis (heures)", "Capacité de production (milliers d'heures)" ) \}
+\{ row("$SPACE " , " $SPACE $SPACE$SPACE  $SPACE $SPACE$SPACE A$SPACE $SPACE$SPACE $SPACE $SPACE$SPACE B $SPACE $SPACE$SPACE $SPACE$SPACE$SPACE C"," $SPACE" )\}
+\{ row( "Assemblage", "$SPACE $SPACE$SPACE  $SPACE $SPACE$SPACE 2 $SPACE $SPACE$SPACE  $SPACE $SPACE$SPACE 3$SPACE $SPACE$SPACE  $SPACE $SPACE$SPACE $SPACE 2","   $u1 ")\}
+\{ row( "Peinture", "$SPACE $SPACE$SPACE  $SPACE $SPACE$SPACE 1 $SPACE $SPACE$SPACE  $SPACE $SPACE$SPACE 2$SPACE $SPACE$SPACE  $SPACE $SPACE$SPACE $SPACE 2","  $u2 ")\}
+\{ row( "Emballage", "$SPACE $SPACE$SPACE  $SPACE $SPACE$SPACE 2 $SPACE $SPACE$SPACE  $SPACE $SPACE$SPACE 1$SPACE $SPACE$SPACE  $SPACE $SPACE$SPACE $SPACE 1","  $u3 ")\}
+\{ endtable() \}
+$ECENTER
+$PAR
+
+À l'aide de la méthode du simplexe, déterminer la quantité de produits A, B, C (en milliers) que l'usine Bernard doit produire pour maximiser ses profits.
+$BR
+a) Le profit maximal en milliers de dollars est égal à  \{ ans_rule(10) \} $BR
+$SPACE (si la réponse en dollars est 34768 $, écrire 34.768)
+$PAR
+b) L'usine Bernard doit produire \(x\) = \{ ans_rule(5)\} mille produits A, \(y\) = \{ ans_rule(5)\} mille produits B $BR
+$SPACE et \(z\) = \{ ans_rule(5) \} mille produits C.
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( $P->cmp() );
+ANS( $xopt->cmp() );
+ANS( $yopt->cmp() );
+ANS( $zopt->cmp() );
+
+ENDDOCUMENT();        

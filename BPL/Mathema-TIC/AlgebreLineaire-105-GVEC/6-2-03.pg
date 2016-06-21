@@ -1,0 +1,104 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('distance', 'droite', 'longueur et norme', 'point', 'projection orthogonale', 'vecteur')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(Union College)
+## TitleText1('Calculus')
+## AuthorText1('Anton')
+## EditionText1('7')
+## Section1('12.3')
+## Problem1('51')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Rogawski')
+## EditionText2('1')
+## Section2('12.3')
+## Problem2('51')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+Context("Vector");
+
+#
+#  The points A, B and P
+#
+$A = non_zero_point2D();
+$B = non_zero_point2D();
+$P = non_zero_point2D();
+
+while (norm($B-$A) == 0) {$B = non_zero_point2D()};
+while (norm($P-$A) == 0) {$P = non_zero_point2D()};
+
+$AB = Vector($B - $A);
+$AP = Vector($P - $A);
+
+#
+#  The projection and distance
+#
+$V = $AP - (($AP.$AB)/($AB.$AB)) * $AB;
+$D = norm($V);
+
+##############################################
+
+
+
+
+#
+#  The projection image
+#
+$diagram = Image('an12_3_25.gif',size=>[196,160],tex_size=>500,tex_center=>1);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+\{ColumnTable(
+  "La distance \(d\) entre un point \(P\) et la droite qui passe par  \(A\) et
+   \(B\) est la longueur de la composante de \(\vec{AP}\) qui est orthogonal à
+   \( \vec{AB}\), tel qu'illustré sur le diagramme.",
+  $diagram, separation => 5)\}
+$PAR
+
+Alors, la distance de \(P  $P\) à la droite passant par \(A  $A\) et \(B $B\) est \{ans_rule(25)\}.
+
+$PAR
+
+
+END_TEXT
+Context()->normalStrings;
+
+##################################################
+#  Answers
+
+ANS($D->cmp);
+$showPartialCorrectAnswers = 1;
+
+##################################################
+
+
+ENDDOCUMENT();

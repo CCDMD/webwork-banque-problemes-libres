@@ -1,0 +1,134 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Programmation linéaire)
+## KEYWORDS('contraintes', 'fonction économique', 'maximisation', 'simplexe', 'trois variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## Author('Charles Fortin')
+## Institution('ChamplainCollege')
+## <cfortin(at)champlaincollege.qc.ca(dot)ca>
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+
+
+# Find the solution of a linear program using the
+# simplex method. The program is
+#
+# max (3-2p)x + (-3+p)y - z
+# s.t. x +2y - 3z <= 5
+#      2x + y -4z <= 7
+#      y <= 2
+# x,y,z >=0
+#
+# which we can be written as
+#
+# max (3-2p)x + (-3+p)y - z
+# s.t. x +2y - 3z + s_1 = 5
+#      2x + y -4z + s_2 = 7
+#      y + s_3 = 2
+# x,y,z,s_1,s_2,s_3 >=0
+#
+# A basic feasible solution is x=y=z=0 s_1=5, s_2 = 7, s_3 = 2 (P=1)
+#
+# The initial simplex tableau is
+#
+# 1    2  -3  1 0 0 0 5
+# 2    1  -4  0 1 0 0 7
+# 0    1   0  0 0 1 0 2
+# 2p-3 3-p 1  0 0 0 1 0 
+#
+# p is the parameter of this LP. The solution are as follow:
+#
+# [7/2,0,0,3/2,0,2] is optimal when 5/4 <= p <= 3/2 and P = 21/2-7p
+# [0,0,0,5,7,2] is optimal when 3/2 <= p <= 3 and P = 0
+# [0,2,0,1,5,2] is optimal when 3 <= p and P = 2p-6
+#
+# Let's avoid 3/2 <= p <= 3 since the initial basic feasible solution x=y=z=0
+# would be optimal and no work would be required by the student.
+
+
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"PGgraphmacros.pl",
+"PGcourse.pl",
+);
+
+# make sure we're in the context we want
+Context("Numeric");
+$showPartialCorrectAnswers = 0;
+Context()->variables->add(y=>"Real");
+Context()->variables->add(z=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');  
+
+
+$r = random(1,2);
+
+# generate the parameter of the problem based on $r
+# and record the optimal solution
+if ($r ==1){
+	$p = random(10/8,1/8,12/8);
+	$xopt = Real("7/2");
+	$yopt = Real("0");
+	$zopt = Real("0");
+	$Popt = Real("21/2-7*$p");}
+else {
+	$p = random(4,6); # make sure p is >= 3
+	$xopt = Real("0");
+	$yopt = Real("2");
+	$zopt = Real("0");
+	$Popt = Real("2*$p-6");}
+
+$c1 = Real("3-2*$p");
+$c2 = Real("-3+$p");
+
+
+
+
+$expr1=Formula("$c1 x+$c2 y- z")->reduce;
+
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+Soit le problème suivant :
+\[\begin{array}{rc} \ \textrm{maximiser :} & p = $expr1\\ 
+					\textrm{contraintes :} & \left\lbrace \begin{array}{rrr} 
+							x + 2y - 3z &\leq& 5 \\
+							2x+y-4z &\leq& 7 \\
+							y & \leq & 2 \\
+							x,y,z & \geq & 0
+
+							  \end{array}\right.
+\end{array}
+\]
+Déterminer la valeur maximale de \(p\) en utilisant la méthode du simplexe.
+$PAR
+a) La valeur maximale de \(p\) est  \{ ans_rule(10) \}.
+$BR
+b) Cette valeur est atteinte quand  \(x\)= \{ ans_rule(5)\}, \(y\)= \{ ans_rule(5)\}, et  \(z\) = \{ ans_rule(5)\}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $Popt->cmp() );
+ANS( $xopt->cmp() );
+ANS( $yopt->cmp() );
+ANS( $zopt->cmp() );
+
+
+
+ENDDOCUMENT();
+

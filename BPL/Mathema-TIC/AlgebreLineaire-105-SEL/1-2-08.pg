@@ -1,0 +1,89 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('aucune solution', 'compatibilité d\'un système', 'déterminant', 'méthode de Gauss', 'méthode de Gauss-Jordan', 'système à trois variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(TCNJ)
+## ZMLT(2params)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('1.2')
+## Problem1('')
+##########################################SOURCE################
+##Level(2)
+##Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+Context()->variables->add(h=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');  
+
+$a = random(3,7,1)*random(-1,1,2);
+$b = random(3,7,1)*random(-1,1,2);
+$c = random(3,7,1)*random(-1,1,2);
+$d = random(3,7,1)*random(-1,1,2);
+$e = random(2,9,1)*random(-1,1,2);
+$f = random(2,9,1)*random(-1,1,2);
+$g = random(2,9,1)*random(-1,1,2);
+$h = random(2,9,1)*random(-1,1,2);
+$mult1 = random(1,3,2)*random(-1,1,2);
+$mult2 = random(2,4,2)*random(-1,1,2);
+$i = $a*$mult1+$e*$mult2;
+$j = $b*$mult1+$f*$mult2;
+$K = $c*$mult1+$g*$mult2;
+$L = $d*$mult1+$h*$mult2;
+
+$expr1=Formula("$a x+$b y+$c z")->reduce;
+$expr2=Formula("$e x+$f y+$g z")->reduce;
+$expr3=Formula("$i x+$j y+h z")->reduce;
+
+
+
+$repk = Compute("$L");
+$reph = Compute("$K");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Déterminer les valeurs \(h\) et \(k\) pour lesquelles le système 
+$BR
+$BR
+\[  \left\lbrace \begin{array}{rcr} $expr1 &=& $d\\
+ $expr2&=& $h\\
+$expr3 &=& k
+\end{array}
+ \right. \]
+
+$BR
+$BR
+n'a aucune solution. 
+$BR
+\(k\neq\) \{ans_rule(10)\}
+$BR
+\(h=\) \{ans_rule(10)\}
+
+END_TEXT
+Context()->normalStrings;
+ANS($repk->cmp());
+ANS($reph->cmp());
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

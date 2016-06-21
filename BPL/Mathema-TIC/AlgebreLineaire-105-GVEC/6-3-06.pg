@@ -1,0 +1,81 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('applications', 'parallélipipède', 'point', 'produit mixte', 'volume')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(Dartmouth)
+## TitleText1('Calculus')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('13.4')
+## Problem1('')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Rogawski')
+## EditionText2('1')
+## Section2('12.4')
+## Problem2('40')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+DOCUMENT();
+loadMacros("PGstandard.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl");
+ 
+
+## Do NOT show partial correct answers
+$showPartialCorrectAnswers = 0;
+TEXT(beginproblem());
+Context("Vector");
+
+## Lots of set up goes here
+$P=non_zero_point3D(-4,4);
+$Q=non_zero_point3D();
+$R=non_zero_point3D();
+$S=non_zero_point3D();
+$PQ=$Q-$P;
+$PR=$R-$P;
+$PS=$S-$P;
+
+$rep=abs($PS.($PQ x $PR));
+
+while ($rep==0  ) 
+{ 
+$R=non_zero_point3D();
+$S=non_zero_point3D();
+$PR=$R-$P;
+$PS=$S-$P;
+$rep=abs($PS.($PQ x $PR));
+ } 
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Calculer le volume du parallélépipède de côtés adjacents \( \vec{PQ} \), \( \, \vec{PR} \), \( \, \vec{PS} \) où 
+\(P$P  \), 
+\(Q$Q \),
+\( R$R  \) et 
+\(S$S  \). 
+$BR
+Le volume est :\{ans_rule()\}
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+ANS($rep->cmp());
+ENDDOCUMENT();
+
+
+
+

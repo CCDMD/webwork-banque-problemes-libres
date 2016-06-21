@@ -1,0 +1,98 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('déterminant', 'méthode de Cramer', 'solution unique', 'système à trois variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(TCNJ)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('5.3')
+## Problem1('')
+##########################################SOURCE##################
+
+##Level(1)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+loadMacros("PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGmatrixmacros.pl"
+           );
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+Context()->noreduce('(-x)-y','(-x)+y');  
+
+
+do
+{
+$a11 =non_zero_random(-5,5,1);
+$a21 = non_zero_random(-5,5,1);
+$a31 =non_zero_random(-5,5,1);
+$a12 = non_zero_random(-5,5,1);
+$a22 = non_zero_random(-5,5,1);
+$a32 = non_zero_random(-5,5,1);
+$a13 = non_zero_random(-5,5,1);
+$a23 = non_zero_random(-5,5,1);
+$a33 = non_zero_random(-5,5,1);
+$b1 = non_zero_random(-5,5,1);
+$b2 = non_zero_random(-5,5,1);
+$b3 = non_zero_random(-5,5,1);
+$A=Matrix([[$a11, $a12, $a13], [$a21, $a22, $a23], [$a31, $a32, $a33]]);
+$det =$A->det;
+} until ($det!=0);
+
+
+$ans1 = Compute(($b1*($a22*$a33-$a32*$a23)-$a12*($b2*$a33-$a23*$b3)+$a13*($b2*$a32-$a22*$b3))/$det);
+$ans2 = Compute(($a11*($b2*$a33-$b3*$a23)-$b1*($a21*$a33-$a23*$a31)+$a13*($a21*$b3-$b2*$a31))/$det);
+$ans3 = Compute(($a11*($a22*$b3-$a32*$b2)-$a12*($a21*$b3-$b2*$a31)+$b1*($a21*$a32-$a22*$a31))/$det);
+
+$expr1=Formula("$a11 x+$a12 y+$a13 z")->reduce;
+$expr2=Formula("$a21 x+$a22 y+$a23 z")->reduce;
+$expr3=Formula("$a31 x+$a32 y+$a33 z")->reduce;
+
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+$BR
+Résoudre le système à l'aide de la règle de Cramer où \(A\) est la matrice des coefficients du système.
+$BR
+\[ \left\lbrace  \begin{array}{rcr} $expr1 &=& $b1\\
+ $expr2&=& $b2\\
+$expr3 &=& $b3
+\end{array}  \right. 
+\]
+$BR
+\( \det A= \) \{ans_rule(10) \}
+$BR
+$BR
+\( x= \) \{ans_rule(10) \}
+$BR
+\( y= \) \{ans_rule(10) \}
+$BR
+\( z= \) \{ans_rule(10) \}
+END_TEXT
+
+Context()->normalStrings;
+
+ANS($det->cmp());
+ANS($ans1->cmp());
+ANS($ans2->cmp());
+ANS($ans3->cmp());
+
+ENDDOCUMENT();       # This should be the last executable line in the problem. 

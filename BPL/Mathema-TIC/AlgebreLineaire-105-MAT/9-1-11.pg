@@ -1,0 +1,88 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('cofacteur', 'déterminant', 'matrice', 'matrice des cofacteurs', 'mineur', 'élément')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution('Rochester')
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('5.1')
+## Problem1('')
+#########################################SOURCE##################
+
+##Level(1)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"PGcourse.pl"
+) ;
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+Context('Matrix');
+
+$a11 = random(-9,9,1);
+$a12 = non_zero_random(-9,9,1);
+$a21 = non_zero_random(-9,9,1);
+$a22 = non_zero_random(-9,9,1);
+
+$A=Matrix([[$a11, $a12], [$a21, $a22]]);
+
+$m11=Compute("$a22");
+$m12=Compute("$a21");
+$m21=Compute("$a12");
+$m22=Compute("$a11");
+
+
+$C=Matrix([[$a22, -$a21],[-$a12, $a11]]) ;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Déterminer le mineur de chaque élément de la matrice \( A \) ainsi que sa matrice des cofacteurs si 
+$BR
+$BR
+
+\(A= $A\).
+$BR
+$BR
+
+\(M_{11}=\) \{ans_rule(5)\}, 
+$BR
+\(M_{12}=\) \{ans_rule(5)\}, 
+$BR
+\(M_{21}=\) \{ans_rule(5)\}, 
+$BR
+\(M_{22}=\) \{ans_rule(5)\},
+$BR $BR 
+\(C=\) \{$C->ans_array()\} .
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( $m11->cmp );
+ANS( $m12->cmp );
+ANS( $m21->cmp );
+ANS( $m22->cmp );
+ANS( $C->cmp );
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

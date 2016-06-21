@@ -1,0 +1,85 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('droite', 'parallèle', 'point', 'vecteur', 'vecteur directeur', 'équation vectorielle', 'équations paramétriques')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(Dartmouth)
+## TitleText1('Calculus')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('13.5')
+## Problem1('')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+DOCUMENT();
+loadMacros( "PGstandard.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl",
+"parserParametricLine.pl"
+);
+
+
+ TEXT(beginproblem());
+
+## Do NOT show partial correct answers
+$showPartialCorrectAnswers = 0;
+
+
+Context("Vector");
+Context()->variables->are(t=>"Real");
+
+
+$p = non_zero_point3D();
+$v = non_zero_vector3D();
+($p1,$p2,$p3) = $p->value;
+($v1,$v2,$v3) = $v->value;
+
+
+$rep1=Formula("$p1+t*$v1");
+$rep2=Formula("$p2+t*$v2");
+$rep3=Formula("$p3+t*$v3");
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Déterminer les équations, sous les formes paramétriques et vectorielle, de la droite qui passe par le point
+\(P$p \) et qui est parallèle au vecteur \(\vec v =$v\).
+
+
+$PAR
+Équations paramétriques (paramètre \( t \),  passant par \(P\) quand \(t = 0\)) :
+$BR
+\( x(t) = \)\{ans_rule(10)\}$BR
+\( y(t) = \)\{ans_rule(10)\}$BR
+\( z(t) = \)\{ans_rule(10)\}$BR
+
+$PAR
+Équation vectorielle : \( \vec{r}(t)  = \)\{ans_rule(40)\}
+
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+ANS( $rep1->cmp() );
+ANS( $rep2->cmp() );
+ANS( $rep3->cmp() );
+ANS( ParametricLine("$p + t * $v")->cmp() );
+
+
+ENDDOCUMENT();
+
+
+
+

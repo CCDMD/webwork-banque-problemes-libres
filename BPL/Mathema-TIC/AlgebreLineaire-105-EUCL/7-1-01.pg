@@ -1,0 +1,129 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Vecteurs et espace euclidien)
+## KEYWORDS('R^3', 'arithmétique vectorielle', 'produit scalaire', 'vecteur')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZTitleText1('Calculus')
+## ZAuthorText1('Hughes-Hallett')
+## ZEditionText1('5')
+## ZSection1('13.3')
+## ZProblem1('5')
+## ZTitleText2('Calculus')
+## ZAuthorText2('Hughes-Hallett')
+## ZEditionText2('6')
+## ZSection2('13.3')
+## ZProblem2('5')
+##########################################SOURCE##################
+
+##Level(1)
+##Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"parserVectorUtils.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+ "PGcourse.pl",
+"contextLimitedVector.pl"
+);
+
+
+Context("LimitedVector");
+Context()->flags->set( ijk=>1 );
+
+Context()->constants->set(
+  i => {TeX => "\,\mathit{\vec i}"},
+  j => {TeX => "\,\mathit{\vec j}"},
+  k => {TeX => "\,\mathit{\vec k}"},
+);
+
+$showPartialCorrectAnswers = 1;
+
+$a = Vector( (0, random(1,5,1), random(1,5,1)) );
+$b = Vector( (non_zero_random(-5,5,1), random(1,8,1), random(1,8,1)) );
+$c = Vector( (random(1,5,1), non_zero_random(-8,8,1), 0) );
+$y = Vector( (non_zero_random(-8,8,1), non_zero_random(-8,8,1), 0) );
+
+
+
+$aans = ($c.$a) + ($a.$y);
+$bans = ($a . $b)*$a;
+$cans = ($c . $c)*($a . $a);
+
+
+$aans1 = ($a . Vector(0,1,0))*($c . Vector(0,1,0));
+$aans2 = ($a . Vector(0,1,0))*($y . Vector(0,1,0));
+$adb = $a . $b;
+$cdc = $c . $c;
+$ada = $a . $a;
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+Soit \(\vec a\), \(\vec b\), \(\vec c\) et \(\vec y\) des vecteurs dans l'espace :
+\[ \vec a = $a,\quad \vec b = $b,\quad \vec c = $c,\quad \vec y = $y \]
+
+$PAR
+Effectuer les opérations suivantes sur les vecteurs.
+$PAR
+${BBOLD}a)$EBOLD
+\(\vec c\cdot\vec a + \vec a\cdot\vec y = \) \{ ans_rule(35) \}
+
+$PAR
+${BBOLD}b)$EBOLD
+\((\vec a\cdot\vec b)\,\vec a = \) \{ ans_rule(35) \}
+
+$PAR
+${BBOLD}c)$EBOLD
+\( ( (\vec c\cdot\vec c)\,\vec a )\cdot\vec a = \) \{ ans_rule(35) \}
+
+END_TEXT
+Context()->normalStrings;
+
+
+
+ANS($aans->cmp() );
+ANS($bans->cmp() );
+ANS($cans->cmp() );
+
+
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+$PAR SOLUTION $PAR
+
+${BBOLD}a)$EBOLD
+\( \vec c\cdot \vec a + \vec a \cdot \vec y =
+    ($c)\cdot($a) + ($a)\cdot($y) = $aans1 + $aans2 = $aans. \)
+
+$PAR
+${BBOLD}b)$EBOLD
+\( (\vec a\cdot\vec b)\vec a =
+    (($a)\cdot($b)) ($a) = ($adb) ($a) = $bans. \)
+
+$PAR
+${BBOLD}c)$EBOLD
+\( ( (\vec c\cdot\vec c)\vec a )\cdot\vec a =
+    ((($c)\cdot($c)) ($a))\cdot ($a) =
+    (($cdc)($a))\cdot ($a) =
+    ($cdc)($ada) = $cans. \)
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();

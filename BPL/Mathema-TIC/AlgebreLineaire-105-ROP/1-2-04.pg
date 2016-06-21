@@ -1,0 +1,168 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Programmation linéaire)
+## KEYWORDS('deux variables', 'fonction économique', 'forme standard', 'maximisation', 'trois variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(ASU)
+## ZMLT(state)
+## ZKEYWORDS('Simplex Method')
+##########################################SOURCE##################
+
+##Level(2)
+##Language(fr)
+
+DOCUMENT(); 
+
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGchoicemacros.pl",
+);
+
+TEXT(beginproblem());
+Context("Numeric");
+
+$showPartialCorrectAnswers=0;
+install_problem_grader(~~&std_problem_grader);
+
+for $j (0..30) { $a[$j] = random(2, 10);}
+
+@mc = ();
+
+$sys1 = "Maximiser \[p = $a[0] x_1 + $a[1] x_2\] sous les contraintes  \[ \left\lbrace  \begin{array}{rcl}
+-$a[2] x_1  +  $a[3] x_2 & \ge & -$a[4] \\
+$a[5] x_1 - x_2 &\le &$a[6] \\
+x_1&\ge& 0 \\
+x_2 & \ge & 0
+\end{array} \right. \] ";
+
+$mc1 = new_multiple_choice();
+$mc1->qa("$sys1", 
+"On peut l'écrire sous la forme standard en remplaçant
+\( -$a[2] x_1  +  $a[3] x_2 \ge  -$a[4]\) par
+\( $a[2] x_1  -  $a[3] x_2 \le  $a[4]\)"
+);
+$mc1->extra("On peut l'écrire sous la forme standard en remplaçant
+\( $a[5] x_1 - x_2 \le $a[6] \) par \( $a[5] x_1 + x_2 \le $a[6] \) ",
+"On peut l'écrire sous la forme standard en remplaçant
+\( -$a[2] x_1  +  $a[3] x_2 \ge  -$a[4]\) par
+\( $a[2] x_1  +  $a[3] x_2 \le  $a[4]\)"
+);
+$mc1->makeLast("Ce système est déjà sous la forme standard",
+"Ce système ne peut pas s'écrire sous la forme standard");
+push @mc, $mc1;
+
+$sys1 = "Maximiser \[p = $a[7] x_1 +  x_2 + $a[8] x_3\] sous les contraintes  \[ \left\lbrace  \begin{array}{rcl}
+ x_1  +  $a[9] x_2 +  $a[10] x_3 & \ge & -$a[11] \\
+ x_1  -  $a[12] x_2   & \le & -$a[13] \\
+ x_1&\ge& 0 \\
+x_2 &\ge& 0 \\
+x_3& \ge & 0\\
+\end{array} \right. \] ";
+
+$mc1 = new_multiple_choice();
+$mc1->qa("$sys1", "Ce système ne peut pas s'écrire sous la forme standard"); 
+$mc1->extra("On peut l'écrire sous la forme standard en remplaçant
+\(x_1  + $a[9] x_2 + $a[10] x_3  \ge  -$a[11]\) par
+\(-x_1 - $a[9] x_2 - $a[10] x_3  \le  $a[11]\)",
+"On peut l'écrire sous la forme standard en remplaçant
+\( x_1 - $a[12] x_2 \le -$a[13]\) par \( x_1 + $a[12] x_2 \le $a[13]\)",
+"On peut l'écrire sous la forme standard en remplaçant
+\(x_1  + $a[9] x_2 + $a[10] x_3  \ge  -$a[11]\) par
+\(-x_1 - $a[9] x_2 - $a[10] x_3  \le  $a[11]\) et en remplaçant
+\( x_1 - $a[12] x_2 \le -$a[13]\) par \( x_1 + $a[12] x_2 \le $a[13]\)"
+);
+$mc1->makeLast("Ce système est déjà sous la forme standard",
+"Ce système ne peut pas s'écrire sous la forme standard");
+
+push @mc, $mc1;
+
+$c = random(2,3);
+$sys1 = "Maximiser \[p = $a[15] x_1 + $a[16] x_2 + $a[17] x_3\] sous les contraintes   \[ \left\lbrace  \begin{array}{rcl}
+ x_1  -  x_2 +  $a[18] x_3 & \le & $a[14] \\
+ x_1  -  x_2    & \ge & $a[20] \\
+x_{$c} & \le & $a[19] \\
+x_1&\ge &0 \\
+ x_2 &\ge & 0 \\
+x_3 &\ge &  0
+\end{array} \right. \] ";
+
+$mc1 = new_multiple_choice();
+$mc1->qa("$sys1", "Ce système ne peut pas s'écrire sous la forme standard"); 
+$mc1->extra("On peut l'écrire sous la forme standard en remplaçant
+\( x_1  -  x_2 +  $a[18] x_3  \le  $a[14]\) par
+\( x_1  + x_2 +  $a[18] x_3  \le  $a[14]\)",
+"On peut l'écrire sous la forme standard en remplaçant
+\( x_1  -  x_2     \ge  $a[20]\) par \( x_1 - x_2 \le $a[20]\)",
+"On peut l'écrire sous la forme standard en laissant tomber \(x_{$c} \le $a[19]\)"
+);
+$mc1->makeLast("Ce système est déjà sous la forme standard",
+"Ce système ne peut pas s'écrire sous la forme standard");
+
+push @mc, $mc1;
+
+$sys1 = "Maximiser \[p =  x_1 + $a[21] x_2 + x_3\] sous les contraintes \[ \left\lbrace  \begin{array}{rcl}
+ $a[22] x_1   -   $a[23] x_2  & \ge & - $a[24]  \\
+ -$a[25] x_1  +  x_2 -  x_3 & \le &  $a[26] \\
+ x_1&\ge& 0 \\
+ x_2 &\ge& 0 \\
+ x_3 &\ge&  0
+\end{array} \right. \] ";
+
+$mc1 = new_multiple_choice();
+$mc1->qa("$sys1", "On peut l'écrire sous la forme standard en remplaçant
+\( $a[22] x_1  -  $a[23] x_2 \ge - $a[24]\) par 
+\(-$a[22] x_1  + $a[23] x_2 \le $a[24]\)"
+); 
+$mc1->extra("On peut l'écrire sous la forme standard en remplaçant
+\( $a[22] x_1  -  $a[23] x_2 \ge - $a[24]\) par 
+\($a[22] x_1  -  $a[23] x_2 \le  $a[24]\)",
+"On peut l'écrire sous la forme standard en remplaçant
+\(-$a[25] x_1  +   x_2 -  x_3  \le   $a[26]\) par 
+\($a[25] x_1  -  x_2 +  x_3  \ge -$a[26]\)"
+);
+$mc1->makeLast("Ce système est déjà sous la forme standard",
+"Ce système ne peut pas s'écrire sous la forme standard");
+
+push @mc, $mc1;
+
+@mc = @mc[NchooseK(4,4)];
+
+Context()->texStrings;
+BEGIN_TEXT
+Indiquer si chaque système ci-dessous est sous la forme standard ou si on peut le modifier pour l'écrire sous la forme standard.  Le système modifié doit non seulement être sous la forme standard, mais il doit aussi être équivalent au système initial.
+	$BR$HR$BR
+\{ $mc[0]->print_q() \}
+$BR
+\{ $mc[0]->print_a() \}
+$BR $HR $BR
+\{ $mc[1]->print_q() \}
+$BR
+\{ $mc[1]->print_a() \}
+$BR $HR $BR
+\{ $mc[2]->print_q() \}
+$BR
+\{ $mc[2]->print_a() \}
+$BR $HR $BR
+\{ $mc[3]->print_q() \}
+$BR
+\{ $mc[3]->print_a() \}
+
+END_TEXT
+Context()->normalStrings;
+ANS(radio_cmp($mc[0]->correct_ans));
+ANS(radio_cmp($mc[1]->correct_ans));
+ANS(radio_cmp($mc[2]->correct_ans));
+ANS(radio_cmp($mc[3]->correct_ans));
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem. 

@@ -1,0 +1,88 @@
+##Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Programmation linéaire)
+## KEYWORDS('contraintes', 'deux variables', 'domaine admissible', 'fonction économique', 'maximisation', 'minimisation', 'optimisation sous contrainte dans le plan', 'polygone convexe')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##############
+## ZInstitution(Univeristy of Utah)
+## ZAuthor(Utah ww group)
+## ZMLT(StraightOptimize)
+## TitleText1('Mathematical Applications')
+## AuthorText1('Ronald J. Harshbarger and James J. Reynolds')
+## EditionText1('8')
+## Section1('.')
+## Problem1('')
+##########################################SOURCE##############
+
+##level(3)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPoint.pl",
+"PGcourse.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl");
+
+install_problem_grader(~~&std_problem_grader);
+
+
+$showPartialCorrectAnswers = 1;
+$showPartialCredit = 0;
+
+
+Context()->variables->add(n=>"Real");
+Context()->variables->add(y=>"Real");
+
+$a = random(1,3,1);
+$b = random(4,6,1);
+$c = random(1,3,1);
+$d = random(4,6,1);
+$e = random(7,9,1);
+$co1 = $d-$a;
+$co2 = $e-$a;
+$co3 = $e*$c;
+
+$expr1=Formula("$c x + $co1 y")->reduce;
+$expr2=Formula("$c x + $co2 y")->reduce;
+
+$lcb = "\{";
+
+
+$ans1 = Compute("$d*$c");  
+$ans2 = Formula("n" ); 
+
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+Déterminer la valeur minimale et la valeur maximale de la fonction \( f = $expr1 \) sujette aux contraintes
+
+\[ \left$lcb\begin{array}{rcr} 
+            y & \le & $b \cr
+	    x & \ge & $a \cr
+	    $expr2 & \ge & $co3 
+	   \end{array}\right.\]
+
+Entrer la lettre \( n\) s'il n'y a aucune réponse.
+
+Le minimum est \{ans_rule(5)\} et le maximum est \{ans_rule(5)\}.
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($ans1->cmp());
+ANS($ans2->cmp());
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,76 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('infinité de solutions', 'méthode de Gauss', 'méthode de Gauss-Jordan', 'système à quatre variables et plus')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(Rochester)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('2.1')
+## Problem1('')
+##########################################SOURCE##################
+##Level(1)
+##Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+
+loadMacros( 
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGmatrixmacros.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+Context("Matrix");
+
+
+$a = non_zero_random(-5,5,1);
+$c = non_zero_random(-5,5,1);
+$b = non_zero_random(-5,5,1);
+$d = $a - $b + $c;
+$rep2=Matrix([-1],[1],[-1],[1]);
+$rep1=Matrix([$a - $b + $c],[$b - $c],[$c], [0]);
+$var=Matrix([x1],[x2],[x3],[x4]);
+$NO_SPACE = '@{}';
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Résoudre le système d'équations
+\[ \left\{'\{'\} \begin{array}{r${NO_SPACE}r${NO_SPACE}r${NO_SPACE}r${NO_SPACE}r${NO_SPACE}r}
+x_1 & + x_2 &       &       & = & $a \cr
+    &   x_2 & + x_3 &       & = & $b \cr 
+    &       &   x_3 & + x_4 & = & $c \cr
+x_1 &       &       & + x_4 & = & $d 
+\end{array} \right. \]
+
+
+Si l'on pose \(x_4=s\), alors:
+
+ \{ mbox( display_matrix([['\(x_1\)'], ['\(x_2\)'], ['\(x_3\)'], ['\(x_4\)']]), 
+	 '\(=\)',$rep1->ans_array , '\(+\)', $rep2->ans_array, '\(s\).' ) \}
+
+	
+END_TEXT
+Context()->normalStrings;
+ANS($rep1->cmp());
+ANS($rep2->cmp());
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

@@ -1,0 +1,109 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('méthode de Gauss', 'méthode de Gauss-Jordan', 'solution unique', 'système à trois variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##Traduction française : Sylvie Charbonneau
+
+
+##########################################SOURCE################
+## ZInstitution(Rochester)
+## ZAuthor(Arnie Pizer)
+## ZMLT(3elimuniq)
+## ZMLTleader(1)
+## TitleText1('Elementary Linear Algebra')
+## AuthorText1('Larson, Edwards, Falvo')
+## EditionText1('5')
+## Section1('1.2')
+## Problem1('')
+## TitleText2('Linear Algebra with Applications')
+## AuthorText2('Jeffrey Holt')
+## EditionText2('1')
+## Section2('1.2')
+## Problem2('')
+##########################################SOURCE#############
+##Level(2)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"PGmatrixmacros.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+Context()->noreduce('(-x)-y','(-x)+y');     
+
+
+do{
+$a11 = random(2,6,2) * random(-1,1,2);
+$a12 = random(2,5,1) * random(-1,1,2);
+$a13 = random(3,5,2) * random(-1,1,2);
+$a21 = random(3,5,2) * random(-1,1,2);
+$a22 = random(2,6,2) * random(-1,1,2);
+$a23 = random(2,6,2) * random(-1,1,2);
+$a31 = random(2,6,1) * random(-1,1,2);
+$a32 = random(3,5,2) * random(-1,1,2);
+$a33 = non_zero_random(-6,6,2);
+
+
+$M = Matrix([$a11 ,$a12,$a13],[$a21 ,$a22,$a23],[$a31 ,$a32,$a33]);
+$d=$M->det;
+}
+ until ($d!=0);
+
+$x = non_zero_random(-5,5,1);
+$y = random(-5,5,1);
+$z = random(-5,5,1);
+$repx=Compute("$x");
+$repy=Compute("$y");
+$repz=Compute("$z");
+
+$b1 = $a11*$x + $a12*$y + $a13*$z;
+$b2 = $a21*$x + $a22*$y + $a23*$z;
+$b3 = $a31*$x + $a32*$y + $a33*$z;
+
+$expr1=Formula("$a11*x+$a12*y+$a13*z")->reduce;
+$expr2=Formula("$a21*x +$a22*y +$a23*z")->reduce;
+$expr3=Formula("$a31*x + $a32*y + $a33*z")->reduce;
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre le système d'équations par la méthode d'élimination $BR
+\[  \left\lbrace \begin{array}{rlr} 
+$expr1 &=& $b1\\
+  $expr2 &=& $b2 \\
+$expr3 &=& $b3 
+\end{array}
+ \right. \]
+$BR
+\(x = \) \{ans_rule(5)\}
+$BR
+\(y = \) \{ans_rule(5)\}
+$BR
+\(z = \) \{ans_rule(5)\}
+
+END_TEXT
+
+Context()->normalStrings;
+
+
+ANS($repx->cmp());
+ANS($repy->cmp());
+ANS($repz->cmp());
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

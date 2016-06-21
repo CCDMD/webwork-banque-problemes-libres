@@ -1,0 +1,103 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('normal', 'parallèle', 'plan', 'point', 'vecteur', 'équation cartésienne')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(Dartmouth)
+## TitleText1('Basic Multivariable Calculus')
+## AuthorText1('Marsden, Tromba, Weinstein')
+## EditionText1('3')
+## Section1('1.4')
+## Problem1('')
+##########################################SOURCE##################
+##Level(1)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+"parserImplicitEquation.pl",
+ "PGcourse.pl",
+);
+
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+Context("Vector");
+Context()->noreduce('(-x)-y','(-x)+y');  
+Context()->flags->set( ijk=>1 );
+
+Context()->constants->set(
+  i => {TeX => "\,\mathit{\vec i}"},
+  j => {TeX => "\,\mathit{\vec j}"},
+  k => {TeX => "\,\mathit{\vec k}"},
+);
+
+$a = non_zero_random( -5,5,1 );
+$b = non_zero_random( -5,5,1 );
+$c = non_zero_random( -5,5,1 );
+$vec = Vector( ($a, $b, $c) );
+
+$p1 = non_zero_random( -5,5,1 );
+$p2 = non_zero_random( -5,5,1 );
+$p3 = non_zero_random( -5,5,1 );
+$pvec = Vector( ("x-$p1", "y-$p2", "z-$p3") );
+
+## for the plane, if we take x in [-5,5] and y in [-5,5], then
+##    the upper and lower corners of the plane are the max and min
+##    values of
+$z1 = (-1*$a*(5-$p1) + -1*$b*(5-$p2))/$c + $p3;
+$z2 = (-1*$a*(5-$p1) + -1*$b*(-5-$p2))/$c + $p3;
+$z3 = (-1*$a*(-5-$p1) + -1*$b*(5-$p2))/$c + $p3;
+$z4 = (-1*$a*(-5-$p1) + -1*$b*(-5-$p2))/$c + $p3;
+$min = $z1;
+$max = $z1;
+foreach my $z ( ( $z2, $z3, $z4 ) ) {
+    $min = $z if ( $z < $min );
+    $max = $z if ( $z > $max );
+}
+$min--;
+$max++;
+
+## then define the equation
+Context("ImplicitEquation");
+Context()->variables->add( z=>'Real' );
+Context()->variables->set(
+    x=>{limits=>[-5,5]},
+    y=>{limits=>[-5,5]},
+    z=>{limits=>[$min,$max]},
+);
+
+
+$expr1=Formula("$a x+$b y+$c z ")->reduce;
+$plane = ImplicitEquation( "$a*(x-$p1) + $b*(y-$p2) + $c*(z-$p3) = 0" );
+
+Context()->texStrings;
+
+BEGIN_TEXT
+Déterminer l'équation cartésienne d'un plan parallèle au plan
+\( \pi: $expr1=\{ $p1 + $p2 + $p3 + 5\} \), passant par le point \(P($p1, $p2, $p3)\).
+
+$PAR
+Équation du plan : \{ ans_rule(55) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($plane->cmp() );
+
+
+
+
+ENDDOCUMENT();

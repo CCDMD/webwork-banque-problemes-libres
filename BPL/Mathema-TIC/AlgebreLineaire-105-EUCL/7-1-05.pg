@@ -1,0 +1,126 @@
+##Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Vecteurs et espace euclidien)
+## KEYWORDS('R^3', 'arithmétique vectorielle', 'norme', 'vecteur')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZDate(8/23/07)
+## ZInstitution(Union College)
+## ZTitleText1('Calculus')
+## ZAuthorText1('Anton')
+## ZEditionText1('7')
+## ZSection1('12.2')
+## ZProblem1('20')
+## ZTitleText2('Calculus: Early Transcendentals')
+## ZAuthorText2('Rogawski')
+## ZEditionText2('1')
+## ZSection2('12.2')
+## ZProblem2('20')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "contextLimitedVector.pl",
+  "parserVectorUtils.pl",
+  "alignedChoice.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+Context("Vector");
+
+# the vectors
+$U = non_zero_vector3D();
+$V = non_zero_vector3D();
+$W = non_zero_vector3D();
+
+# some coefficients
+($a,$b,$c,$d) = (random(2,8,1),random(2,8,1),random(2,8,1),random(2,8,1));
+
+##############################################
+#  Set up the context
+
+#
+#  Don't allow norm or |v| in student answers
+#
+$vector = Context()->copy;
+$vector->functions->undefine('norm');
+$vector->lists->set(AbsoluteValue => {class => 'LimitedVector::List::AbsoluteValue'});
+$vector->flags->set(ijk => 1);
+
+$u = "\vec{u}";
+$v = "\vec{v}";
+$w = "\vec{w}";
+
+Context()->constants->add(u => $U, v => $V, w => $W);
+Context()->constants->set(u => {TeX => $u}, v => {TeX => $v}, w => {TeX => $w});
+Context()->flags->set(reduceConstants => 0, ijk => 1);
+
+##############################################
+#
+#  Create a formula for display and an answer checker for it
+#
+sub QA {
+  my @qa;
+  foreach (@_) {
+    my $f = Formula($_); push (@qa,"\(".$f->TeX."\)");
+    $f = $f->eval; $f->{context} = $vector;
+    push (@qa, $f->cmp);
+  }
+  return @qa;
+}
+
+##############################################
+
+$al = new_aligned_list(equals => 1, ans_rule_len => 30, tex_spacing => "3pt");
+$al->qa(QA(
+  "|u| + |v|",
+  "|-$a u| + $b*|v|",
+  "|$c u - $d v + w|",
+  "(1/|w|) w",
+  "|(1/|w|) w|",
+));
+
+##############################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit \($u = $U\), \($v = $V\) et \($w = $W\).$BR
+Calculer les valeurs suivantes :
+
+$BCENTER
+$PAR
+\{$al->print_q\}
+$ECENTER
+
+END_TEXT
+Context()->normalStrings;
+
+##################################################
+#  Answers
+
+ANS($al->correct_ans);
+$showPartialCorrectAnswers = 1;
+
+##################################################
+
+
+ENDDOCUMENT();

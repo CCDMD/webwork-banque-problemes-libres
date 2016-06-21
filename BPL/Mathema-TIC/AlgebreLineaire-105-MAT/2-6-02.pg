@@ -1,0 +1,82 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('déterminant', 'inversion', 'matrice inverse', 'matrice régulière', 'matrice singulière')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution('Rochester')
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('3.3')
+## Problem1('')
+##########################################SOURCE##################
+##Level(1)
+##Language(fr)
+
+
+DOCUMENT() ;        
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGchoicemacros.pl",
+"PGcourse.pl",
+"PGmatrixmacros.pl",
+"PGauxiliaryFunctions.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 0;
+Context("Matrix");
+
+$A=Matrix([
+[non_zero_random(-9,9,1),non_zero_random(-9,9,1)],
+[non_zero_random(-9,9,1),non_zero_random(-9,9,1)],
+]);
+
+ $d = $A->det;
+if ($d != 0) {
+    $rep = "Oui";
+	 $I = $A->inverse;
+}
+else {
+    $rep = "Non";
+   $I=$A
+}
+$popup = PopUp(
+  ["?","Oui","Non"],
+  $rep,);
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit A la matrice
+\($A \).
+$BR
+a) Cette matrice est-elle inversible?
+$BR
+Réponse: \{ $popup->menu() \}:
+$BR
+b) Si la réponse est oui, déterminer la matrice inverse, sinon, réécrire la matrice A:
+$BR
+ \{ $I->ans_array(5) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS( $popup->cmp() );
+
+if ($d != 0) {
+	ANS($I->cmp);
+}
+else {
+   ANS($I->cmp);
+
+}
+ENDDOCUMENT();        # This should be the last executable line in the problem.

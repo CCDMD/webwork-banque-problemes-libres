@@ -1,0 +1,80 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('méthode de Cramer', 'méthode de Gauss', 'méthode de Gauss-Jordan', 'méthode de la matrice inverse', 'solution unique', 'système à deux variables')
+## Auteure Mélisande Fortin Boisvert - Collège de Maisonneuve
+
+
+##level(1)
+##Language(fr)
+
+DOCUMENT();        #Ceci est la première ligne exécutable
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl"
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+$b = random(-6,6,2);
+$c = random(-8,8,1);
+$d =non_zero_random(-8,8,2);
+$a=floor($b*$c/$d)+1;
+$rep1=non_zero_random(-5,5,1);
+$rep2=non_zero_random(-5,5,1);
+$m = $a*$rep1+$b*$rep2;
+$n = $c*$rep1+$d*$rep2;
+$REP1=Compute($rep1);
+$REP2=Compute($rep2);
+
+Context("Matrix");
+Context()->noreduce('(-x)-y','(-x)+y');    
+
+$expr1 = Formula("$a * x + $b* y ")->reduce;
+$expr2 = Formula("$c * x + $d * y ")->reduce;
+
+
+Context()->texStrings;
+ 
+BEGIN_TEXT
+
+Résoudre le système d'équations. 
+
+$PAR
+
+\[
+\left\lbrace
+\begin{array}{rcl}
+$expr1 & = & $m \\
+$expr2 & = & $n\\
+\end{array}
+\right.
+\]
+
+$PAR 
+
+\( x= \)\{ ans_rule(10) \}
+$BR
+\( y= \)\{ ans_rule(10) \}
+
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $REP1->cmp() );
+ANS( $REP2->cmp() );
+
+
+
+ENDDOCUMENT();       # Ceci est la dernière ligne executable

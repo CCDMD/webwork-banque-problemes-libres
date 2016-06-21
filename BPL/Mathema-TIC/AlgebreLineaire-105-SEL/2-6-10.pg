@@ -1,0 +1,126 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('déterminant', 'méthode de la matrice inverse', 'solution unique', 'système à deux variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution('ASU')
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('3.3')
+## Problem1('')
+##########################################SOURCE##################
+##Level(1)
+##Language(fr)
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+loadMacros(
+			"PGstandard.pl", 
+		   "MathObjects.pl",
+"PGcourse.pl"
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+Context("Matrix");
+Context()->noreduce('(-x)-y','(-x)+y');  
+
+
+
+
+$a = non_zero_random(-6,6,1);
+$b = non_zero_random(-5,5,1);
+$c = non_zero_random(-4,4,1);
+do {$d = random(-9,9,2);} until (($a * $d - $b * $c) != 0);
+
+$A=Matrix([[$a,$b],[$c,$d]]);
+
+$B11 = non_zero_random(-3,3,1);
+$B21 = non_zero_random(-3,3,1);
+
+do {$B12 = non_zero_random(-3,3,1);} until ($B12 != $B11);
+$B22 = non_zero_random(-4,4,1);
+
+$B1=Matrix([[$B11],[$B21]]);
+$B2=Matrix([[$B12],[$B22]]); 
+
+
+$det = $A->det;
+$Ainv=$A->inverse;
+$ans11 = $d / $det;
+$ans12 = - $b / $det;
+$ans21 = - $c / $det;
+$ans22 = $a / $det ;
+
+$x1 = $ans11*$B11+$ans12*$B21;
+$y1 = $ans21*$B11+$ans22*$B21;
+
+$x2 = $ans11*$B12+$ans12*$B22;
+$y2 = $ans21*$B12+$ans22*$B22;
+
+
+$expr1=Formula("$a x+$b y")->reduce;
+$expr2=Formula("$c x+$d y")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Supposons les deux systèmes d'équations suivants :
+$BR
+a) 
+
+\[  \left\lbrace \begin{array}{rcr} $expr1 &=& $B11\\
+ $expr2&=& $B21
+\end{array}
+ \right. \]
+
+$BR
+b)
+
+\[  \left\lbrace \begin{array}{rcr} $expr1 &=& $B12\\
+ $expr2&=& $B22
+\end{array}
+ \right. \]
+$BR
+1. Trouver l'inverse de la matrice des coefficients commune aux deux systèmes.
+$BR
+$BCENTER
+\(A^{-1}=\)  \{ $Ainv->ans_array() \}
+$ECENTER
+
+$BR
+2. Résoudre chaque système d'équations à l'aide de la matrice inverse, c'est-à-dire en évaluant
+\( A^{-1} B \), où \( B \) désigne le vecteur du côté droit de l'équation ( c'est-à-dire
+\(B = $B1 \) dans le système \(  a) \) et
+\(B = $B2 \) dans le système \(  b) \) ).
+$BR
+Solution du système \(  a) \)  :  \( x  = \) \{ ans_rule(10)\} , \(y\) =\{ ans_rule(10) \}.
+$BR
+Solution du système \(  b) \)  :  \(x  =\) \{ans_rule(10)\} , \(y\) =\{ans_rule(10)\}.
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Ainv->cmp());
+ANS($x1->cmp());
+ANS($y1->cmp());
+ANS($x2->cmp());
+ANS($y2->cmp());
+
+
+
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

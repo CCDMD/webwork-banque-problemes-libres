@@ -1,0 +1,146 @@
+##Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Programmation linéaire)
+## KEYWORDS('deux variables', 'domaine admissible', 'fonction économique', 'maximisation', 'minimisation', 'optimisation sous contrainte dans le plan', 'polygone convexe')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##############
+## ZInstitution(ASU)
+## ZMLT(CornerPointsAndExtrema)
+## ZMLTleader(1)
+##########################################SOURCE##############
+##level(1)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPoint.pl",
+"PGcourse.pl"
+);
+
+
+
+
+Context("LimitedPoint");
+Context()->variables->add(y=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');  
+$showPartialCorrectAnswers = 0;
+
+
+$a = random(2,10);
+$b = random(2*$a,40);
+$c = floor($b/$a)-1;
+$m = random(1,$c);
+
+$c1 = random(3,7);
+$c2 = random(2,10);
+
+$expr1=Formula("$c1 x + $c2 y")->reduce;
+$expr2=Formula("$m x")->reduce;
+
+# constraints:  x > = a,  y < = b,  y>= m*x  (x,y>=0)
+
+$NO_SPACE = '@{}';
+
+$xs = $b/$m;
+$ys = $m*$a;
+
+
+$zmax = $c1*$a +$c2*$b;
+$xmax = $a;
+$ymax = $b;
+$z = $c1*$xs+$c2*$b;
+if ($z > $zmax) {$zmax=$z,$xmax=$xs,$ymax=$b;}
+$z = $c1*$a+$c2*$ys;
+if ($z > $zmax){$zmax=$z,$xmax=$a,$ymax=$ys;}
+$zzmax=Compute("$zmax");
+$yymax=Compute("$ymax");
+$xxmax=Compute("$xmax");
+
+
+
+
+$zmin = $c1*$a+$c2*$b;
+$xmin = $a;
+$ymin = $b;
+$z = $c1*$xs+$c2*$b;
+if ($z < $zmin) {$zmin=$z,$xmin=$xs,$ymin=$b;}
+$z = $c1*$a+$c2*$ys;
+if ($z < $zmin){$zmin=$z,$xmin=$a,$ymin=$ys;}
+$zzmin=Compute("$zmin");
+$yymin=Compute("$ymin");
+$xxmin=Compute("$xmin");
+
+
+#CORNER POINTS: ($a,$b), ($xs,$b),($a,$ys)
+
+$P1=Point($a,$b);
+$P2=Point($xs,$b);
+$P3=Point($a,$ys);
+
+$rep= List( $P1, $P2, $P3);
+
+
+
+
+
+
+TEXT(beginproblem());
+Context()->texStrings;
+
+BEGIN_TEXT
+Soit la fonction économique \( p = $expr1 \) sujette aux contraintes suivantes :
+
+\[ \left\{"\{"\}
+\begin{array}{r${NO_SPACE}r${NO_SPACE}r${NO_SPACE}r}
+ x & \ge & $a & \cr
+ y & \le & $b & \cr
+ y &  \ge & $expr2 \cr
+ x & \ge & 0 & \cr
+ y & \ge & 0 &
+\end{array} \right. \]
+$BR
+$BR
+Déterminer la région admissible et donner la liste des points extrémaux. 
+$BR
+Points extrémaux : \{ ans_rule(40) \}
+$BR
+S'il y a plusieurs points, les séparer par des virgules
+(par exemple : (1,2),(3,4)).
+$BR
+$BR
+Trouver la valeur maximale et la valeur minimale de \(p\).
+$BR
+
+La valeur maximale de \(p\) est : \{ans_rule(10) \}
+quand \(x = \) \{ans_rule(10) \}  et \( y = \) \{ans_rule(10) \}
+$BR
+La valeur minimale de \(p\) est : \{ans_rule(10) \}
+quand \(x = \) \{ans_rule(10) \}  et \( y = \) \{ans_rule(10) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS($rep->cmp());
+
+
+ANS($zzmax->cmp());
+ANS($xxmax->cmp());
+ANS($yymax->cmp());
+ANS($zzmin->cmp());
+ANS($xxmin->cmp());
+ANS($yymin->cmp());
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+
+
+

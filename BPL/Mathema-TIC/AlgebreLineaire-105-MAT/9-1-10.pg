@@ -1,0 +1,124 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('cofacteur', 'déterminant', 'matrice', 'matrice des cofacteurs', 'mineur', 'élément')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution('Rochester')
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('5.1')
+## Problem1('')
+#########################################SOURCE##################
+##Level(1)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"PGcourse.pl"
+) ;
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+
+$a11 = random(-9,9,1);
+$a12 = non_zero_random(-9,9,1);
+$a13 = non_zero_random(-9,9,1);
+$a21 = random(-9,9,1);
+$a22 = random(-9,9,1);
+$a23 = non_zero_random(-9,9,1);
+$a31 = non_zero_random(-9,9,1);
+$a32 = random(-9,9,1);
+$a33 = random(-9,9,1);
+
+$A = Matrix([
+[$a11,$a12,$a13],
+[$a21,$a22,$a23],
+[$a31,$a32,$a33],
+]);
+
+
+
+$m11=Compute("$a22*$a33 - $a23*$a32");
+$m12=Compute("$a21*$a33 - $a23*$a31");
+$m13=Compute("$a21*$a32 - $a22*$a31");
+$m21=Compute("$a12*$a33 - $a13*$a32");
+$m22=Compute("$a11*$a33 - $a13*$a31");
+$m23=Compute("$a11*$a32 - $a12*$a31");
+$m31=Compute("$a12*$a23 - $a22*$a13");
+$m32=Compute("$a11*$a23 - $a13*$a21");
+$m33=Compute("$a11*$a22 - $a12*$a21");
+
+
+
+$M = Matrix([
+[$m11,$m12,$m13],
+[$m21,$m22,$m23],
+[$m31,$m32,$m33],
+]);
+
+$C = Matrix([
+[$m11,-1*$m12,$m13],
+[-1*$m21,$m22,-1*$m23],
+[$m31,-1*$m32,$m33],
+]);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Déterminer le mineur de chaque élément de la matrice \( A \) ainsi que sa matrice des cofacteurs si 
+\(A= $A\).
+$BR
+$BR
+
+\(M_{11}=\) \{ans_rule(5)\}, 
+$BR
+\(M_{12}=\) \{ans_rule(5)\}, 
+$BR
+\(M_{13}=\) \{ans_rule(5)\}, 
+$BR
+\(M_{21}=\) \{ans_rule(5)\}, 
+$BR
+\(M_{22}=\) \{ans_rule(5)\},
+$BR 
+\(M_{23}=\) \{ans_rule(5)\}, 
+$BR
+\(M_{31}=\) \{ans_rule(5)\}, 
+$BR
+\(M_{32}=\) \{ans_rule(5)\}, 
+$BR
+\(M_{33}=\) \{ans_rule(5)\}, 
+$BR $BR 
+\(C=\) \{$C->ans_array()\} .
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $m11->cmp );
+ANS( $m12->cmp );
+ANS( $m13->cmp );
+ANS( $m21->cmp );
+ANS( $m22->cmp );
+ANS( $m23->cmp );
+ANS( $m31->cmp );
+ANS( $m32->cmp );
+ANS( $m33->cmp );
+ANS( $C->cmp );
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

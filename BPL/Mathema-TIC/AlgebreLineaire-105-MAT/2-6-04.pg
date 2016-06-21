@@ -1,0 +1,106 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('addition et soustraction', 'inversion', 'matrice carrée', 'équation matricielle')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(TCNJ and Hope College)
+## ZAuthor(Paul Pearson)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('3.2')
+## Problem1('')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+
+
+## Traduction française : Sylvie Charbonneau
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"MatrixReduce.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Fraction');
+Context()->parens->set("[" => {formMatrix => 1});
+
+do {
+
+do {
+
+$A = Matrix([
+[non_zero_random(-9,9,1),non_zero_random(-9,9,1)],
+[non_zero_random(-9,9,1),non_zero_random(-9,9,1)],
+]);
+
+} until ($A->det != 0);
+
+$A = apply_fraction_to_matrix_entries($A);
+
+$a = $A->element(1,1);
+$b = $A->element(1,2);
+$c = $A->element(2,1);
+$d = $A->element(2,2);
+
+$det = $a * $d - $b * $c;
+
+$Ainv = Matrix([
+[$d / $det, - $b / $det],
+[- $c / $det, $a / $det],
+]);
+
+$B = Matrix([
+[non_zero_random(-9,9,1),non_zero_random(-9,9,1)],
+[non_zero_random(-9,9,1),non_zero_random(-9,9,1)],
+]);
+
+$C = Matrix([
+[non_zero_random(-9,9,1),non_zero_random(-9,9,1)],
+[non_zero_random(-9,9,1),non_zero_random(-9,9,1)],
+]);
+
+$num = random(2,5,1)*random(-1,1,2);
+$m = random(2,5,1)*random(-1,1,2);
+
+$B = apply_fraction_to_matrix_entries($B);
+$C = apply_fraction_to_matrix_entries($C);
+
+$X = ($Ainv) * ($C - $B);
+
+$Y = ($C - $B) * ($Ainv); # common incorrect answer
+
+} until ($X != $Y);
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer la matrice  \(X\). 
+$BR
+$BR
+\[ $A X + $B = $C. \]
+$BR
+\(X=\) \{ $X->ans_array(15) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS($X->cmp);
+
+
+ENDDOCUMENT();

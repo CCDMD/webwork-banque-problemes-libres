@@ -1,0 +1,76 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('angle', 'applications', 'parallélogramme', 'point', 'produit vectoriel')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################         
+## File Created: 5/31/2000
+## Last Modified: 5/31/2000
+## Problem Author: Joseph Neisendorfer
+## WeBWorK Entry: Victoria Sweetser
+## Location: University of Rochester
+## ZDate(5/31/2000)
+## ZInstitution(Rochester)
+## ZAuthor(Joseph Neisendorfer)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('12.4')
+## Problem1('34')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Rogawski')
+## EditionText2('1')
+## Section2('12.4')
+## Problem2('34')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+        
+DOCUMENT();	# This should be the first executable line in the problem.
+
+
+loadMacros("PGstandard.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl");
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Vector");
+Context()->operators->undefine(".","><");
+
+
+$p=Point(random(1, 5),random(1, 5));
+$u=Point(random(1, 5),random(1, 5));
+$v=Point(random(1, 5),random(1, 5));
+($u1,$u2) = $u->value;
+($v1,$v2) = $v->value;
+while ($u1/$v1==$u2/$v2){$v=Point(random(1, 5),random(1, 5)); ($v1,$v2) = $v->value;} 
+$q=$p+$u;
+$r=$p+$v;
+$s=$p+$u+$v;
+$rep=Compute( "abs($u1*$v2-$v1*$u2)");
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer l'aire du parallélogramme de sommets 
+\( P$p\), \( Q$q\), \(R $r\) et \(S $s  \). 
+$BR
+$BR
+Réponse : \{ ans_rule() \}
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $rep->cmp() ); 
+
+ENDDOCUMENT();	# This should be the last executable line in the problem.

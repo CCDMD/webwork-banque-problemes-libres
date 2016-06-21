@@ -1,0 +1,119 @@
+##Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Programmation linéaire)
+## KEYWORDS('applications', 'deux variables', 'domaine admissible', 'fonction économique', 'maximisation', 'optimisation sous contrainte dans le plan', 'polygone convexe')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##############
+## ZInstitution(ASU)
+##########################################SOURCE##############
+
+##level(3)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPoint.pl",
+"PGcourse.pl"
+);
+
+
+
+Context("LimitedPoint");
+
+$showPartialCorrectAnswers = 0;
+
+
+
+
+$x2 = random(3,10);
+$x3 = random(2,$x2-1);
+$y1 = random(ceil(2*$x2/$x3),10);
+$b = $y1*($x2-$x3)/$x2; 
+$y3 = random(floor($b)+1,$y1-1);
+
+#corner points (0,y1),(x2,0),(x3,y3),(0,0)
+$P1=Point(0,$y1);
+$P2=Point($x2,0);
+$P3=Point( $x3,$y3);
+$P4=Point(0,0);
+$rep= List( $P1, $P2, $P3, $P4 );
+
+
+
+# constraints lines: $y3*x      +($x2 - $x3)*y = $y3*$x2
+#                    ($y1-$y3)x + y*$x3        = $y1*$x3 
+
+$man1 = $y1-$y3;
+$man2= $x3;
+$fin1 = $y3;
+$fin2 = $x2-$x3;
+
+$man = $y1*$x3;
+$fin = $y3*$x2;
+
+# profit function: p1*x+p2*y (make sure the slope does not equal any of
+# constraints slopes
+
+$p1 = random(40,80,1);
+do {$p2 = random(50,95,1);} until ($p1*$x3 != $p2*($y1-$y3) & $p1*($x2-$x3) != $p2*$y3 & $p1 != $p2); 
+
+
+$pmax = $p2*$y1;
+$xmax = 0;
+$ymax = $y1;
+$p = $p1*$x2;
+if ($p > $pmax) {$pmax=$p,$xmax=$x2,$ymax=0;}
+$p = $p1*$x3+$p2*$y3;
+if ($p > $pmax){$pmax=$p,$xmax=$x3,$ymax=$y3;}
+$ppmax=Compute("$zmax");
+$yymax=Compute("$ymax");
+$xxmax=Compute("$xmax");
+
+
+
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+
+Un manufacturier de skis alpins et de skis de fond note qu'il faut respectivement $man1 heures et $man2 heures pour fabriquer chaque type de ski et que la finition nécessite 
+$fin1 heures par ski alpin $fin2 heures par ski  de fond. On peut consacrer $man heures par semaine à la fabrication et  $fin heures à la finition. 
+
+Le profit moyen est de $DOLLAR$p1 par ski alpin et de $DOLLAR$p2 par ski de fond.
+Le manufacturier voudrait déterminer la quantité de chaque type de ski à produire pour maximiser son profit.
+$BR
+$BR
+Points extrémaux de la région admissible : $SPACE \{ ans_rule(40)\}
+$BR
+S'il y a plusieurs points, les séparer par des virgules
+(par exemple : (1,2),(3,4)).
+
+$BR
+$BR
+Le profit maximal est :  \{ans_rule(15) \}$SPACE  $DOLLAR
+$BR
+lorsqu'on produit $SPACE \{ans_rule(15) \}  skis alpins
+$BR
+ et $SPACE  \{ans_rule(15) \} skis de fond.
+END_TEXT
+Context()->normalStrings;
+
+ANS($rep->cmp());
+
+ANS($ppmax->cmp());
+ANS($xxmax->cmp());
+ANS($yymax->cmp());
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

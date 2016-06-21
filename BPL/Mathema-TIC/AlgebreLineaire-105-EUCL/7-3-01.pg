@@ -1,0 +1,136 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Vecteurs et espace euclidien)
+## KEYWORDS('R^3', 'angle', 'produit scalaire', 'vecteurs orthogonaux', 'vecteurs parallèles')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE################
+## ZInstitution(Dartmouth)
+
+## ZTitleText1('Calculus')
+## ZAuthorText1('Stewart')
+## ZEditionText1('5')
+## ZSection1('13.3')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGchoicemacros.pl",
+  "PGcourse.pl",
+);
+
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 0;
+
+
+Context("Vector");
+
+
+$s1 = random(2,4) * non_zero_random(-1,1);
+
+
+
+$a1 = random(-3,3);
+$a2 = random(-3,3);
+$a3 = non_zero_random(-4,4);
+
+$c=$s1*$a3;
+
+
+$A=Vector($a1,$a2,$a3);
+
+
+
+$b1 = $c*$a2;
+$b2 = -$c*($a1+1);
+$b3 = $s1*$a2;
+
+$B[0]=Vector($b1,$b2,$b3);
+
+
+$popup[0] = PopUp(
+  ["?","orthogonaux","parallèles","ni l'un ni l'autre"],
+  "orthogonaux",
+);
+
+$s2 = random(2,4) * non_zero_random(-1,1);
+
+$c1 = $s2*$a1;
+$c2 = $s2*$a2;
+$c3 = $s2*$a3;
+
+$B[1]=Vector($c1,$c2,$c3);
+
+$popup[1] = PopUp(
+  ["?","orthogonaux","parallèles","ni l'un ni l'autre"],
+  "parallèles",
+);
+
+
+$s3 = random(2,5) * non_zero_random(-1,1);
+$offset = random(-1,1);
+
+$d1 = $s3 * $a1;
+$d2 = $s3 * $a2;
+$d3 = $s3 * $a3 + $offset;
+$B[2]=Vector($d1,$d2,$d3);
+
+
+$popup[2] = PopUp(
+  ["?","orthogonaux","parallèles","ni l'un ni l'autre"],
+  "ni l'un ni l'autre",
+);
+
+
+@slice=NchooseK(3,3);
+
+Context()->texStrings;
+
+BEGIN_TEXT
+$BR
+
+Déterminer si les vecteurs ci-dessous sont parallèles, orthogonaux, ou ni l'un ni l'autre.
+$PAR
+Les vecteurs \( \vec a = $A \)  et 
+\( \vec b = $B[$slice[0]]  
+ \) sont 
+  \{$popup[$slice[0]]->menu\}.
+  
+  $PAR 
+Les vecteurs \( \vec a = $A \) et 
+\( \vec c = $B[$slice[1]]  
+\) sont 
+
+  \{$popup[$slice[1]]->menu\}.
+$PAR
+Les vecteurs \( \vec a = $A \) et 
+\( \vec d = $B[$slice[2]] \) sont 
+
+  \{$popup[$slice[2]]->menu\}.
+$BR
+END_TEXT
+Context()->normalStrings;
+
+  ANS($popup[$slice[0]]->cmp); 
+  ANS($popup[$slice[1]]->cmp);
+  ANS($popup[$slice[2]]->cmp);
+  
+
+
+ENDDOCUMENT();
+
+
+
+

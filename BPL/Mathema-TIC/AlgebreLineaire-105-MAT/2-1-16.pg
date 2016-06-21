@@ -1,0 +1,67 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('addition et soustraction', 'multiplication par un scalaire', 'équation matricielle')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## Institution(TCNJ and Hope College)
+## Author(Paul Pearson)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('3.2')
+## Problem1('')
+##########################################SOURCE##################
+##Level(1)
+##Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"MatrixReduce.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+
+$A = Matrix([
+[non_zero_random(-9,9,1),non_zero_random(-9,9,1),non_zero_random(-9,9,1)],
+[non_zero_random(-9,9,1),non_zero_random(-9,9,1),non_zero_random(-9,9,1)],
+]);
+
+$B = Matrix([
+[non_zero_random(-9,9,1),non_zero_random(-9,9,1),non_zero_random(-9,9,1)],
+[non_zero_random(-9,9,1),non_zero_random(-9,9,1),non_zero_random(-9,9,1)],
+]);
+
+$num = random(2,5,1)*random(-1,1,2);
+$m = random(2,5,1)*random(-1,1,2);
+
+$X = ($A - Compute("$num") * $B)*Compute("1/$m");
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer la matrice \(X\).
+$BR
+$BR
+\[ $A  = $m X + $num $B. \]
+$BR
+\(X=\) \{ $X->ans_array(15) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS($X->cmp);
+ 
+ENDDOCUMENT();

@@ -1,0 +1,120 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('déterminant', 'méthode de Cramer', 'solution unique', 'système à trois variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## Author('Charles Fortin')
+## Institution('Champlain College')
+## Solve a linear system using Cramer's Rule
+##########################################SOURCE##################
+##Level(1)
+##Language(fr)
+
+
+DOCUMENT(); 
+
+loadMacros("PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl"
+           );
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+Context()->noreduce('(-x)-y','(-x)+y');  
+
+$a11 = random(-6,6);
+$a12 = random(-6,6);
+$a13 = random(-6,6);
+$a21 = random(-6,6);
+$a22 = random(-6,6);
+$a23 = random(-6,6);
+$a31 = random(-6,6);
+$a32 = random(-6,6);
+$a33 = random(-6,6);
+$A = Matrix([[$a11,$a12,$a13],[$a21,$a22,$a23],[$a31,$a32,$a33]]);
+$detA = Compute("$a11*($a22*$a33-$a23*$a32)-$a21*($a12*$a33-$a13*$a32)+$a31*($a12*$a23-$a13*$a22)");
+
+while ($detA == 0 )
+	{
+	$a11 = random(-6,6);
+	$a12 = random(-6,6);
+	$a13 = random(-6,6);
+	$a21 = random(-6,6);
+	$a22 = random(-6,6);
+	$a23 = random(-6,6);
+	$a31 = random(-6,6);
+	$a32 = random(-6,6);
+	$a33 = random(-6,6);
+	$A = Matrix([[$a11,$a12,$a13],[$a21,$a22,$a23],[$a31,$a32,$a33]]);
+	$detA = Compute("$a11*($a22*$a33-$a23*$a32)-$a21*($a12*$a33-$a13*$a32)+$a31*($a12*$a23-$a13*$a22)");
+	}
+$r1 = random(-6,6);
+$r2 = random(-6,6);
+$r3 = random(-6,6);
+$x1 = Compute("$r1");
+$x2 = Compute("$r2");
+$x3 = Compute("$r3");
+
+$b1 = Compute("$a11*$x1+$a12*$x2+$a13*$x3");
+$b2 = Compute("$a21*$x1+$a22*$x2+$a23*$x3");
+$b3 = Compute("$a31*$x1+$a32*$x2+$a33*$x3");
+$b = Matrix([[$b1],[$b2],[$b3]]);
+# b is chosen so that Ax=b
+
+$detA1 = Compute("$b1*($a22*$a33-$a23*$a32)-$b2*($a12*$a33-$a13*$a32)+$b3*($a12*$a23-$a13*$a22)");
+$detA2 = Compute("$a11*($b2*$a33-$a23*$b3)-$a21*($b1*$a33-$a13*$b3)+$a31*($b1*$a23-$a13*$b2)");
+$detA3 = Compute("$a11*($a22*$b3-$b2*$a32)-$a21*($a12*$b3-$b1*$a32)+$a31*($a12*$b2-$b1*$a22)");
+
+
+
+$expr1=Formula("$a11 x+$a12 y+$a13 z")->reduce;
+$expr2=Formula("$a21 x+$a22 y+$a23 z")->reduce;
+$expr3=Formula("$a31 x+$a32 y+$a33 z")->reduce;
+
+
+
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Résoudre le système suivant à l'aide de la règle de Cramer pour déterminer la valeur de \(y\), sans trouver les valeurs de \(x\) et de \(z\).
+$BR
+$BR
+\[ \left\lbrace  \begin{array}{rcr} $expr1 &=& $b1\\
+ $expr2&=& $b2\\
+$expr3 &=& $b3 
+\end{array}  \right. 
+\]
+$BR
+Si \(A_i\) est la matrice \(A\) des coefficients où on a remplacé la i-ième colonne par le vecteur
+\(b = [$b1,$b2,$b3]^T\), alors
+$BR
+$BR
+\(\det(A_2) = \) \{ans_rule(5)\} et \(\det(A) = \) \{ans_rule(5)\}.
+$BR
+$BR
+ Par conséquent,
+\(y = \) \{ans_rule(5)\}.
+ 
+END_TEXT
+
+Context()->normalStrings;
+
+ANS($detA2->cmp());
+ANS($detA->cmp());
+ANS($x2->cmp());
+
+ENDDOCUMENT() ;

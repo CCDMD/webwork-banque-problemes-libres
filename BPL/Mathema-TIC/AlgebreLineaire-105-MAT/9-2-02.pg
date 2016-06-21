@@ -1,0 +1,99 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('déterminant', 'matrice carrée', 'multiplication par un scalaire', 'permutation', 'propriétés')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('5.2')
+## Problem1('')
+##########################################SOURCE##################
+##Level(1)
+##Language(fr)
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros("PGstandard.pl",
+               "MathObjects.pl",
+                  "PGmatrixmacros.pl",
+ 		   "PGcourse.pl"
+           );
+		   
+		   
+		  
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix')->variables->add(a=>"Real");
+Context()->variables->add(b=>"Real");
+Context()->variables->add(c=>"Real");
+Context()->variables->add(d=>"Real");
+Context()->variables->add(e=>"Real");
+Context()->variables->add(f=>"Real");
+Context()->variables->add(g=>"Real");
+Context()->variables->add(h=>"Real");
+Context()->variables->add(i=>"Real");
+
+
+$det1 = non_zero_random(-5,5,1);
+
+$k = random(2,9,1)*random(-1,1,2);
+$j = random(2,9,1)*random(-1,1,2);
+$l = random(2,9,1)*random(-1,1,2);
+
+
+$A=Matrix([["a", "b","c"],["d","e","f"], ["g","h","i"]]);
+
+$ans1 = Compute("$det1*$k");
+$ans2 = Compute("$det1*$j*$l");
+$ans3 = Compute("- $det1");
+
+$str1 = Formula("$k*g");
+$str2 = Formula("$k*h");
+$str3 = Formula("$k*i");
+
+
+$str4 = Formula("$j*d");
+$str5 = Formula("$j*e");
+$str6 = Formula("$j*f");
+
+$str7 = Formula("$l*g");
+$str8 = Formula("$l*h");
+$str9 = Formula("$l*i");
+
+$B=Matrix([["a", "b", "c"], ["d", "e", "f"], ["$str1", "$str2", "$str3"]]);
+
+$C=Matrix([["a", "b", "c"], ["$str4", "$str5", "$str6"], ["$str7", "$str8", "$str9"]]);
+
+$D=Matrix([["a", "b", "c"], ["g", "h", "i"], ["d", "e", "f"]]);
+	
+Context()->texStrings;
+BEGIN_TEXT
+
+Sachant que \(  \det $A =$det1 \), calculer les déterminants suivants.
+$BR
+$BR
+\( \det $B =  \)  \{ans_rule(5) \}
+$BR
+$BR
+\( \det $C =  \)  \{ans_rule(5) \}
+$BR
+$BR
+\( \det $D =  \)  \{ans_rule(5) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $ans1->cmp );
+ANS( $ans2->cmp );
+ANS( $ans3->cmp );
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

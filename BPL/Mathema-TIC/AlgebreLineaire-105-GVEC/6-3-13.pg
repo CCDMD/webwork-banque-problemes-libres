@@ -1,0 +1,113 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('normal', 'perpendiculaire', 'plan', 'point', 'produit vectoriel', 'vecteur')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE################## 
+## ZDate(8/23/07)
+## ZInstitution(Union College)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('12.5')
+## Problem1('11 15')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+Context("Vector");
+Context()->operators->undefine("><");
+#
+#  The points A, B and C
+#
+$A = non_zero_point3D();
+do {
+$B = non_zero_point3D();
+} until ( $B !=$A);
+
+do {
+$C = non_zero_point3D();
+}  until ( ( $C !=$A) && ( $C !=$B));
+#
+#  Vectors in the plane
+#
+$AB = Vector($B-$A);
+$AC = Vector($C-$A);
+
+#
+#  The normal vector
+#
+$N = $AB x $AC;
+
+#
+#  Fix it up if AB is parallel to AC
+#
+if (abs($N) == 0) {
+  ($a,$b,$c) = $AB->value;
+  if ($a == 0 && $b == 0) {
+    $C = $C + Vector(-$c,0,$a);
+  } else {
+    $C = $C + Vector(-$b,$a,0);
+  }
+  $AC = Vector($C-$A);
+  $N = $AB x $AC;
+}
+
+##############################################
+#  Main text
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Déterminer un vecteur  \( \vec n\) perpendiculaire au plan passant par les
+points
+$PAR
+$BCENTER
+\(A  $A\), \(B  $B\) et \(C  $C\).
+$PAR
+
+\(\vec n\) = \{ans_rule(40)\}.
+$ECENTER
+
+END_TEXT
+Context()->normalStrings;
+
+HINT($BBOLD,"Indice : ",$EBOLD,"Si un vecteur est perpendiculaire à ",
+$BITALIC,"deux",$EITALIC," vecteurs dans le plan, il est nécessairement",
+" perpendiculaire à tous les vecteurs dans le plan.  Connaît-on deux vecteurs dans ce plan?");
+
+$showHint = 3;
+
+##################################################
+
+ANS($N->cmp(parallel=>1));
+$showPartialCorrectAnswers = 1;
+
+##################################################
+
+ENDDOCUMENT();

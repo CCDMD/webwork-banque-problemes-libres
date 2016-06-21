@@ -1,0 +1,106 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('normal', 'parallèle', 'plan', 'produit scalaire', 'vecteur', 'équation cartésienne')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('5')
+## Section1('13.3')
+## Problem1('17')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('6')
+## Section2('13.3')
+## Problem2('31')
+#########################################SOURCE##################
+##Level(1)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+ "PGcourse.pl",
+);
+
+
+
+
+TEXT(beginproblem());
+Context("Vector");
+Context()->flags->set( ijk=>1 );
+
+Context()->constants->set(
+  i => {TeX => "\,\mathit{\vec i}"},
+  j => {TeX => "\,\mathit{\vec j}"},
+  k => {TeX => "\,\mathit{\vec k}"},
+);
+
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,8,1);
+$b = random(2,8,1);
+$b++ if ( $a == $b );
+
+$n = Vector( "<$a, $b, -1>" );
+$v = Vector( "<$b, -$a, 0>" );
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+${BBOLD}a)$EBOLD
+Déterminer un vecteur \(\vec n\) perpendiculaire au plan
+\[ z = $a x + $b y. \]
+\( \vec n = \) \{ ans_rule(35) \}
+
+$PAR
+${BBOLD}b)$EBOLD
+Déterminer un vecteur \(\vec v\) parallèle à ce même plan.
+$BR
+\( \vec v = \) \{ ans_rule(35) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($n->cmp( checker=>sub {
+    my ($correct, $student, $ansHash) = @_;
+    return $correct->isParallel($student);
+  } ) );
+
+ANS($v->cmp( checker=>sub {
+    my ($correct, $student, $ansHash) = @_;
+    return $student.$n == 0;
+  } ) );
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+$PAR SOLUTION $PAR
+
+${BBOLD}a)$EBOLD
+En exprimant le plan sous la forme
+\( $a x + $b y - z = 0\), on trouve le vecteur normal au plan :
+\[ \vec n = $a \vec i + $b \vec j - \vec k.\]
+Tout multiple de ce vecteur constitue également une bonne réponse.
+
+$PAR
+${BBOLD}b)$EBOLD
+Tout vecteur orthogonal à \(\vec n\) est parallèle au plan, alors une réponse possible est \[\vec v= $b\vec i - $a\vec j.\]
+Plusieurs autres réponses sont possibles.
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

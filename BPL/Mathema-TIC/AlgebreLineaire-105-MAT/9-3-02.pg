@@ -1,0 +1,90 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('cofacteur', 'déterminant', 'inversion', 'matrice', 'matrice adjointe', 'matrice des cofacteurs', 'matrice inverse', 'mineur', 'élément')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution('Rochester')
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('5.3')
+## Problem1('')
+#########################################SOURCE##################
+##Level(1)
+##Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"PGcourse.pl"
+) ;
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+
+do {
+$a11 = random(-2,2,1);
+$a12 = random(-2,2,1);
+$a13 = random(-3,3,1);
+$a21 = random(-3,3,1);
+$a22 = random(-3,3,1);
+$a23 = random(-3,3,1);
+$a31 = random(-3,3,1);
+$a32 = random(-2,2,1);
+$a33 = random(-3,3,1);
+$A=Matrix([[$a11, $a12,$a13], [$a21, $a22,$a23],[$a31, $a32,$a33]]);
+$detA=$A->det;}
+until ($detA!=0);
+
+$m11 = $a22*$a33 - $a23*$a32;
+$m12 = $a21*$a33 - $a23*$a31;
+$m13 = $a21*$a32 - $a22*$a31;
+$m21 = $a12*$a33 - $a13*$a32;
+$m22 = $a11*$a33 - $a13*$a31;
+$m23 = $a11*$a32 - $a12*$a31;
+$m31 = $a12*$a23 - $a22*$a13;
+$m32 = $a11*$a23 - $a13*$a21;
+$m33 = $a11*$a22 - $a12*$a21;
+
+$C=Matrix([[$m11, -$m12,$m13], [-$m21, $m22,-$m23],[$m31, -$m32,$m33]]);
+$ADJ=$C->transpose;
+$Ainv=$A->inverse;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit \(A= $A\). Alors
+$BR
+$BR 
+a)$BR 
+\( \det(A) = \) \{ans_rule(5)\},  
+$BR
+b)$BR la matrice des cofacteurs \(C=\) \{$C->ans_array()\},
+$BR
+c) $BR \( adj(A)=\) \{$ADJ->ans_array()\},
+$BR
+$BR
+d)$BR \(A^{-1}=\) \{$Ainv->ans_array()\}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $detA->cmp );
+ANS( $C->cmp );
+ANS( $ADJ->cmp );
+ANS( $Ainv->cmp );
+ENDDOCUMENT();       # This should be the last executable line in the problem.

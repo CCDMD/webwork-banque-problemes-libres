@@ -1,0 +1,70 @@
+###Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('déterminant', 'matrice triangulaire', 'propriétés')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(TCNJ)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('5.1')
+## Problem1('')
+#########################################SOURCE##################
+
+##Level(1)
+##Language(fr)
+ 
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"PGcourse.pl"
+) ;
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1; 
+
+Context('Matrix')->variables->add(k=>"Real");
+
+$k=random(1,3,1);
+do {$j=random(1,3,1); } until ($j!=$k);
+
+
+
+ $I = Value::Matrix->I(3);
+
+ foreach $i (1..3) { 
+	foreach $j (1..3) { 
+		$a[$i][$j] =$I->element($i,$j) ;
+	}
+}
+ 
+$a[$k][$j] = "k";
+
+
+$A=Matrix([[$a[1][1],$a[1][2],$a[1][3]],[$a[2][1],$a[2][2],$a[2][3]],[$a[3][1],$a[3][2],$a[3][3]]]);
+$Adet = Compute("1");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Si \(A= $A \)
+$PAR
+alors \(\det A= \) \{ ans_rule(10)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Adet->cmp);
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

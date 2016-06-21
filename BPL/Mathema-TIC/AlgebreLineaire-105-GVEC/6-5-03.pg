@@ -1,0 +1,115 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('normal', 'plan', 'vecteur', 'équation cartésienne')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## Date(6/3/2002)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('12.5')
+## Problem1('23 24 32 34')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Stewart')
+## EditionText2('6')
+## Section2('12.1')
+## Problem2('23 24 32 34')
+#########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+ "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectProblems = 0;
+
+
+Context()->variables->add(y=>"Real");
+Context()->variables->add(z=>"Real");
+
+
+
+Context()->noreduce('(-x)-y','(-x)+y');  
+
+
+$a = random(-10, 10);
+$b = random(1, 10);
+$c = random(-10, 10);
+$d = random(-10, 10);
+$e = random(-10, 10);
+$f = random(-10, 10);
+
+$plan[0]=Formula("$a x+$b y")->reduce;
+$constante[0]=$c;
+
+$plan[1]=Formula("x")->reduce;
+$constante[1]=$d;
+
+$plan[2]=Formula("y")->reduce;
+$constante[2]=$e;
+
+$plan[3]=Formula("z")->reduce;
+$constante[3]=$f;
+
+$popup[0] = PopUp(
+  ["","Un plan vertical","Un plan horizontal","Un plan qui n'est ni vertical, ni horizontal"],
+  "Un plan vertical",
+);
+
+$popup[1] = PopUp(
+  ["","Un plan vertical","Un plan horizontal","Un plan qui n'est ni vertical, ni horizontal"],
+  "Un plan vertical",
+);
+
+$popup[2] = PopUp(
+  ["","Un plan vertical","Un plan horizontal","Un plan qui n'est ni vertical, ni horizontal"],
+  "Un plan vertical",
+);
+
+$popup[3] = PopUp(
+  ["","Un plan vertical","Un plan horizontal","Un plan qui n'est ni vertical, ni horizontal"],
+  "Un plan horizontal",
+);
+
+@slice=NchooseK(4,4);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Qu'est-ce que les équations suivantes représentent dans \( \mathrm{I\!R}^3 \)?
+
+
+$BR
+  \{$popup[$slice[0]]->menu\} \( $plan[$slice[0]]=$constante[$slice[0]] \)
+  $BR
+    \{$popup[$slice[1]]->menu\} \( $plan[$slice[1]]=$constante[$slice[1]] \)
+	 $BR
+	 \{$popup[$slice[2]]->menu\} \( $plan[$slice[2]]=$constante[$slice[2]] \)
+$BR
+	    \{$popup[$slice[3]]->menu\} \( $plan[$slice[3]]=$constante[$slice[3]] \)
+END_TEXT
+Context()->normalStrings;
+
+
+  ANS($popup[$slice[0]]->cmp); 
+    ANS($popup[$slice[1]]->cmp); 
+	  ANS($popup[$slice[2]]->cmp); 
+	    ANS($popup[$slice[3]]->cmp); 
+
+
+ENDDOCUMENT();

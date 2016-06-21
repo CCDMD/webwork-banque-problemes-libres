@@ -1,0 +1,83 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('forme matricielle d\'un système', 'infinité de solutions', 'méthode de Gauss', 'méthode de Gauss-Jordan', 'système homogène', 'système à quatre variables et plus', 'variable libre')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(TCNJ and Hope College)
+## ZAuthor(Paul Pearson)
+##Level(3)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserMultiAnswer.pl",
+"MatrixCheckers.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+
+$a = non_zero_random(-5,5,1);
+$b = non_zero_random(-5,5,1);
+$c = non_zero_random(-5,5,1);
+$d = non_zero_random(-5,5,1);
+$e = non_zero_random(-5,5,1);
+$f = non_zero_random(-5,5,1);
+$g = non_zero_random(-5,5,1);
+$h = non_zero_random(-5,5,1);
+
+$A = Matrix( [[1, $a, $b, $c, $d, $e],
+				  [0, 0, 1, $f, 0, $g],
+				  [0, 0, 0, 0, 1, $h],
+				  [0, 0, 0, 0, 0, 0]]);
+
+$ans1 = -$a;
+$ans2 = -$c+$b*$f;
+$ans3 = -$f;
+$ans4 = -$e+$d*$h+$b*$g;
+$ans5 = -$g;
+$ans6 = -$h;
+
+$basis1 = Matrix([$ans1, 1, 0, 0, 0, 0])->transpose;
+$basis2 = Matrix([$ans2, 0, $ans3, 1, 0, 0])->transpose;
+$basis3 = Matrix([$ans4, 0, $ans5, 0, $ans6, 1])->transpose;
+
+$multians = MultiAnswer($basis1, $basis2, $basis3)->with(
+  singleResult => 1,
+  separator => ',',
+  tex_separator => ',',
+  allowBlankAnswers=>0,
+  checker => ~~&basis_checker_columns,
+);
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \[ A = $A. \]
+Déterminer toutes les solutions de  \( A\vec{x} = \vec{0} \).
+$BR
+$BR
+\( \vec{x} =  \)
+\{ $multians->ans_array \}
+\( s+  \)
+\{ $multians->ans_array \}
+\( t+  \)
+\{ $multians->ans_array \} \( u  \).
+END_TEXT
+Context()->normalStrings;
+
+ANS( $multians->cmp() );
+
+ENDDOCUMENT() ;

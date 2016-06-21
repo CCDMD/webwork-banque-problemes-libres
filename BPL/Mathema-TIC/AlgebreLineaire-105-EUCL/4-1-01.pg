@@ -1,0 +1,128 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Vecteurs et espace euclidien)
+## KEYWORDS('R^2', 'composante', 'repère', 'vecteur')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+# Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+# originally from 5ed (with updates)
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+## ZAuthor(Gavin LaRose)
+## ZTitleText1('Calculus')
+## ZAuthorText1('Hughes-Hallett')
+## ZEditionText1('5')
+## ZSection1('13.1')
+## ZProblem1('1')
+## ZTitleText2('Calculus')
+## ZAuthorText2('Hughes-Hallett')
+## ZEditionText2('6')
+## ZSection2('13.1')
+## ZProblem2('1')
+##########################################SOURCE##################
+
+##Level(1)
+##Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGgraphmacros.pl",
+ "PGcourse.pl",
+);
+
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+$refreshCachedImages = 1;
+
+$gr = init_graph( -3, -3, 3, 3, axes=>[0,0], grid=>[6,6], size=>[250,250] );
+
+$ax = random(1,3,1);
+$ay = random(1,3,1);
+$bx = random(-3,-1,1);
+$by = random(1,3,1);
+$vx = random(1,3,1);
+$vy = random(-3,-1,1);
+$wx = random(-3,-1,1);
+$wy = random(-3,-1,1);
+
+## add the arrows to the graph
+$gr->moveTo(0,0);
+$gr->arrowTo($ax, $ay, 'blue', 2 );
+$gr->moveTo(0,0);
+$gr->arrowTo($bx, $by, 'blue', 2 );
+$gr->moveTo(0,0);
+$gr->arrowTo($vx, $vy, 'blue', 2 );
+$gr->moveTo(0,0);
+$gr->arrowTo($wx, $wy, 'blue', 2 );
+
+## label them
+$dbx = ( $bx < 0 ) ? -.15: .15;
+$dvy = ( $vy < 0 ) ? -.15: .15;
+$gr->lb( new Label( .75*$ax-.15, .75*$ay-.15, "a", "black" ) );
+$gr->lb( new Label( .75*$bx-.15, .75*$by-.15, "b", "black" ) );
+$gr->lb( new Label( .75*$vx-.15, .75*$vy-.15, "v", "black" ) );
+$gr->lb( new Label( .75*$wx+.15, .75*$wy-.15, "w", "black" ) );
+
+Context()->texStrings;
+
+BEGIN_TEXT
+Définir les vecteurs de la figure ci-dessous à l'aide de leurs composantes.  
+$PAR
+$BCENTER
+\{ image( insertGraph($gr), tex_size=>750, height=>250, width=>250,
+	  extra_html_tags=>'alt="graph showing the vectors a, b, ' .
+	  'v and w, all starting at the origin and going to, respectively, ' .
+	  '(' . $ax . ',' . $ay . '), (' . $bx . ',' . $by . '), (' .
+	  $vx . ',' . $vy . '), and (' . $wx . ',' . $wy . ')."' ) \}
+$ECENTER
+
+\( \vec a = \) \{ ans_rule(5) \} \( \vec i \) + \{ ans_rule(5) \} \( \vec j \)
+$BR
+\( \vec b = \) \{ ans_rule(5) \} \( \vec i \) + \{ ans_rule(5) \} \( \vec j \)
+$BR
+\( \vec v = \) \{ ans_rule(5) \} \( \vec i \) + \{ ans_rule(5) \} \( \vec j \)
+$BR
+\( \vec w = \) \{ ans_rule(5) \} \( \vec i \) + \{ ans_rule(5) \} \( \vec j \)
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( Compute($ax)->cmp() );
+ANS( Compute($ay)->cmp() );
+ANS( Compute($bx)->cmp() );
+ANS( Compute($by)->cmp() );
+ANS( Compute($vx)->cmp() );
+ANS( Compute($vy)->cmp() );
+ANS( Compute($wx)->cmp() );
+ANS( Compute($wy)->cmp() );
+
+Context("Vector");
+$avec = Vector("<$ax,$ay>")->ijk();
+$bvec = Vector("<$bx,$by>")->ijk();
+$vvec = Vector("<$vx,$vy>")->ijk();
+$wvec = Vector("<$wx,$wy>")->ijk();
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+$PAR SOLUTION $PAR
+
+Les vecteurs sont 
+\( \vec a = $avec \), \( \vec b = $bvec \), \( \vec v = $vvec \) et
+\( \vec w = $wvec \).
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

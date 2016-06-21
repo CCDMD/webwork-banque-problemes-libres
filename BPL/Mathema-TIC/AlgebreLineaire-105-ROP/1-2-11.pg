@@ -1,0 +1,86 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Programmation linéaire)
+## KEYWORDS('deux variables', 'fonction économique', 'maximisation', 'simplexe')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(ASU)
+## ZMLT(currentvalue)
+## ZMLTleader(1)
+##########################################SOURCE##################
+##Level(1)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"LinearProgramming.pl",
+"PGmatrixmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+
+$tops1 = ['p', 'x_1', 'x_2', 'e_1', 'e_2', 'b'];
+
+
+$sys1 = [[0, 0, random(-20,20), 1, 0, random(15, 45)],
+[0, random(2,20), random(2,20), 0, 1, random(15, 80)],
+[1, random(2,20), random(2,20), 0, 0, random(20, 200)]];
+
+@sl1 = (0, 4,1,3,2, 5);
+@ans1 = (0, 0, 0, $sys1->[0][5], $sys1->[1][5],$sys1->[2][5]);
+@ans1=@ans1[@sl1];
+
+
+for my  $jj (0..2) {
+  $sys1->[$jj] = [ @{$sys1->[$jj]}[@sl1] ];
+}
+
+for my $k (1..5) {
+  $rep[$k] =Compute("$ans1[$k]");
+ }
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Entrer la valeur de chaque variable demandée, à partir du tableau du simplexe ci-dessous.
+
+	$BR$BR
+\[\{ lp_display_mm($sys1, top_labels=>$tops1) \} \]
+$BR
+\(x_1 = \) \{ ans_rule(10) \}
+$BR
+\(x_2 = \) \{ ans_rule(10) \}
+$BR
+\(e_1 = \) \{ ans_rule(10) \}
+$BR
+\(e_2 = \) \{ ans_rule(10) \}
+$BR
+\(p = \) \{ ans_rule(10) \}
+
+END_TEXT
+Context()->normalStrings;
+
+
+
+
+for my $k (1..5) {
+  ANS($rep[$k]->cmp()); 
+}
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

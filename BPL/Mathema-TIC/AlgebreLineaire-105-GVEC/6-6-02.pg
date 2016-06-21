@@ -1,0 +1,134 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('droite', 'intersection', 'système de coordonnées', 'équations paramétriques')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZDate(8/23/07)
+## ZInstitution(Union College)
+## TitleText1('Calculus')
+## AuthorText1('Anton')
+## EditionText1('7')
+## Section1('12.5')
+## Problem1('19')
+##########################################SOURCE##################
+##Level(3)
+##Language(fr) 
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "unorderedAnswer.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+Context("Vector")->variables->are(t=>'Real');
+Context()->noreduce('(-x)-y','(-x)+y');  
+
+sub coord () {non_zero_random(-5,5,1)}
+
+#
+#  The points line p + tv
+#
+($v0,$v1) = (coord,coord);
+$x0 = coord;
+$y0 = $x0*$x0 + random(1,3,1);  # make sure the line crosses y = x^2
+
+$v = Vector($v0,$v1); 
+$p = Point($x0,$y0);
+$L = Line($p,$v);
+
+#
+#  The intersection with the axes:
+#
+$tx = -$y0/$v1; $X = Point($L->eval(t=>$tx));
+$ty = -$x0/$v0; $Y = Point($L->eval(t=>$ty));
+$ttx=Compute( "$tx" );
+$tty=Compute( "$ty" );
+
+
+#
+#  The intersection with y = x^2
+#
+$a = $v0*$v0; $b = 2*$x0*$v0 - $v1; $c = $x0*$x0 - $y0;
+$t1 = (-$b+sqrt($b*$b-4*$a*$c))/(2*$a);
+$t2 = (-$b-sqrt($b*$b-4*$a*$c))/(2*$a);
+$tt1=Compute( "$t1" );
+$tt2=Compute( "$t2" );
+
+$P1 = Point($L->eval(t=>$t1));
+$P2 = Point($L->eval(t=>$t2));
+
+##############################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit la droite \(\Delta(t) = $L\). Alors la droite \(\Delta\) coupe :
+$PAR
+
+\{BeginList()\}
+
+$ITEM
+l'axe des \(x\) au point  \{ans_rule(25)\}, quand
+\(t\) = \{ans_rule(15)\},
+$ITEMSEP
+
+$ITEM
+l'axe des \(y\)  au point  \{ans_rule(25)\}, quand
+\(t\) = \{ans_rule(15)\},
+$ITEMSEP
+
+$ITEM
+la parabole \(y = x^2\) aux points
+\{NAMED_ANS_RULE(P1,30)\} et \{NAMED_ANS_RULE(P2,30)\}, quand
+\(t\) = \{NAMED_ANS_RULE(t1,20)\} et \{NAMED_ANS_RULE(t2,20)\}.
+
+\{EndList()\}
+Donner une précision d'au moins trois décimales.
+
+END_TEXT
+Context()->normalStrings;
+
+##################################################
+#  Answers
+
+ANS($X->cmp,$ttx->cmp);
+ANS($Y->cmp,$tty->cmp);
+UNORDERED_NAMED_ANS(
+  P1 => $P1->cmp,
+  P2 => $P2->cmp,
+);
+
+
+UNORDERED_NAMED_ANS(
+  t1 => $tt1->cmp,
+  t2 =>$tt2->cmp,
+);
+
+
+
+$showPartialCorrectAnswers = 1;
+
+##################################################
+
+
+
+ENDDOCUMENT();

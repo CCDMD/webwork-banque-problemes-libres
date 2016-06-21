@@ -1,0 +1,96 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('droite', 'intersection', 'plan', 'point', 'équation cartésienne', 'équations paramétriques')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################           
+## File Created: 5/31/2000
+## Problem Author: Joseph Neisendorfer
+## WeBWorK Entry: Victoria Sweetser
+## Location: University of Rochester
+## ZInstitution(Rochester)
+## ZAuthor(Joseph Neisendorfer)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('12.5')
+## Problem1('30')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Rogawski')
+## EditionText2('1')
+## Section2('12.5')
+## Problem2('30')
+##########################################SOURCE##################
+
+##Level(2)
+##Language(fr)
+       
+DOCUMENT();	# This should be the first executable line in the problem.
+
+
+loadMacros("PGstandard.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl"     
+          );         
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+ 
+Context("Vector");
+Context()->variables->add(t=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');  
+              
+
+
+
+$p = non_zero_point3D();
+$v = non_zero_vector3D();
+do{$n = non_zero_vector3D();} until ($v.$n != 0);
+
+($p1,$p2,$p3) = $p->value;
+($n1,$n2,$n3) = $n->value;
+($v1,$v2,$v3) = $v->value;
+
+$pp = Vector($p1,$p2,$p3);
+$pexpr1=Formula("$n1 x+$n2 y+$n3 z ")->reduce;
+
+
+## Fudge the value of t
+$t = random(2,6);
+
+$d=Compute("$n.$p+$t*$n.$v");
+
+$rep=Point($p1 + $t*$v1,$p2 + $t*$v2,$p3 + $t*$v3);
+
+
+$expr1 = Formula("$p1 + $v1*t")->reduce;
+$expr2 = Formula("$p2 + $v2*t")->reduce;
+$expr3 = Formula("$p3 + $v3*t")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer \(P\), le point d'intersection entre la droite \( \Delta \) donnée par les équations:
+$BR
+\( x(t) = $expr1 \),
+$BR
+ \(y(t) = $expr2  \), 
+$BR
+\(z(t) = $expr3 \) 
+$BR
+et le plan \( \pi: $pexpr1 = $d\).
+$PAR
+\(P\) = \{ ans_rule(10) \}.
+END_TEXT
+Context()->normalStrings;
+
+ANS($rep->cmp);
+
+
+ENDDOCUMENT();	# This should be the last executable line in the problem.

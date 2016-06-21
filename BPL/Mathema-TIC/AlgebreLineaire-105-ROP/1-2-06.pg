@@ -1,0 +1,88 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+## DBsubject(Algèbre linéaire)
+## DBchapter(Programmation linéaire)
+## KEYWORDS('applications', 'fonction économique', 'minimisation', 'simplexe', 'trois variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(ASU)
+##########################################SOURCE################
+##Level(3)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGmatrixmacros.pl",
+"LinearProgramming.pl",
+);
+
+TEXT(beginproblem());
+
+$a = random(7,10);
+$b = random(2,4);
+$b3 = 3*$b;
+
+
+
+$newsys = [
+[0, 1,   1,  2, 1, 0, $a],
+[0, -2, -1, -1, 0, 1, -6],
+[1, $b3,$b3, $b, 0,0, 0]];
+
+for $j (0..2) {
+ for $k (0..6) {
+  $newsys->[$j][$k] = new Fraction($newsys->[$j][$k],1);
+}}
+
+$newsys = lp_pivot($newsys, 1, 1, 1);
+($newsys,$endcode,$pcount) = lp_solve($newsys, fraction_mode=>1);
+
+
+$rep1=$newsys->[1][6]->print_inline();
+$rep2=Compute("0");
+$rep3=$newsys->[0][6]->print_inline();
+$rep4=$newsys->[2][6]->times(-1)->print_inline();
+$repp1=Compute("$rep1");
+$repp3=Compute("$rep3");
+$repp4=Compute("$rep4");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+L'entreprise Fauteuils Roméo Fauteux fabrique trois types de fauteuils : le 
+${BITALIC}Montaigu${EITALIC}, le ${BITALIC}Capulet${EITALIC} et le
+${BITALIC}Vérone${EITALIC}.  La fabrication de chaque fauteuil comporte l'assemblage et la finition et requiert une certaine quantité de bois.  Le service d'assemblage peut fonctionner $a heures par jour.  La personne chargée de l'assemblage doit travailler 6 heures par jour pour se tenir occupée.
+La fabrication d'un fauteuil ${BITALIC}Montaigu${EITALIC} nécessite 1 heure d'assemblage, 2 heures de finition et $b3 pieds linéaires de bois.
+La fabrication d'un fauteuil ${BITALIC}Capulet${EITALIC} nécessite 1 heure d'assemblage, 1 heure de finition et $b3 pieds linéaires de bois.
+Enfin, la fabrication d'un fauteuil ${BITALIC}Vérone${EITALIC} nécessite 2 heures d'assemblage, 1 heure de finition et $b pieds linéaires de bois.  Si l'entreprise veut minimiser la quantité de bois utilisée, combien de fauteuils de chaque type doit-elle fabriquer?
+(Il est possible de produire une fraction de fauteuil dans une journée; à la longue, tous les fauteuils sont terminés.)
+$BR$BR
+	Nombre de fauteuils ${BITALIC}Montaigu${EITALIC} : \{ans_rule(40)\}
+$BR$BR
+	Nombre de fauteuils ${BITALIC}Capulet${EITALIC} : \{ans_rule(40)\}
+$BR$BR
+	Nombre de fauteuils ${BITALIC}Vérone${EITALIC} : \{ans_rule(40)\}
+$BR$BR
+Combien de pieds linéaires de bois l'entreprise utilise-t-elle chaque jour?
+\{ans_rule(40)\}
+END_TEXT
+Context()->normalStrings;
+
+
+
+ANS($repp1->cmp());
+ANS($rep2->cmp());
+ANS($repp3->cmp());
+ANS($repp4->cmp());
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

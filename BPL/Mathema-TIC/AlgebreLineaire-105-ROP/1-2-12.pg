@@ -1,0 +1,86 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Programmation linéaire)
+## KEYWORDS('fonction économique', 'maximisation', 'simplexe', 'trois variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(ASU)
+## ZMLT(currentvalue)
+##########################################SOURCE##################
+##Level(1)
+##Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"LinearProgramming.pl",
+"PGmatrixmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+
+
+$tops2 = ['p', 'x_1', 'x_2', 'x_3', 'e_1', 'e_2', 'e_3', 'b'];
+
+
+$sys1 = [[0, 0, random(-20,20), random(-20,20), 1, 0, 0, random(15, 45)],
+[0, random(-20,20), random(-20,20), random(-20,20), 0, 1, 0, random(15, 80)],
+[0, random(-20,20), random(-20,20), random(-20,20), 0, 0, 1, random(15, 80)],
+[1, random(2,20), random(2,20), random(2,20), 0, 0, 0, random(20, 200)]];
+
+@sl1 = (0, 5,1,6,4, 2, 3, 7);
+@ans1 = (0, 0, 0, 0, $sys1->[0][7], $sys1->[1][7],$sys1->[2][7],$sys1->[3][7]);
+@ans1=@ans1[@sl1];
+for $jj (0..3) {
+  $sys1->[$jj] = [ @{$sys1->[$jj]}[@sl1] ];
+}
+
+
+for my $k (1..7) {
+  $rep[$k] =Compute("$ans1[$k]");
+ }
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Entrer la valeur de chaque variable demandée, à partir du tableau du simplexe ci-dessous.
+
+	$BR$BR
+\[\{ lp_display_mm($sys1, top_labels=>$tops2) \} \]
+$BR
+\(x_1 = \) \{ ans_rule(10) \}
+$BR
+\(x_2 = \) \{ ans_rule(10) \}
+$BR
+\(x_3 = \) \{ ans_rule(10) \}
+$BR
+\(e_1 = \) \{ ans_rule(10) \}
+$BR
+\(e_2 = \) \{ ans_rule(10) \}
+$BR
+\(e_3 = \) \{ ans_rule(10) \}
+$BR
+\(p = \) \{ ans_rule(10) \}
+
+END_TEXT
+Context()->normalStrings;
+
+for my $k (1..7) {
+  ANS($rep[$k]->cmp()); 
+}
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

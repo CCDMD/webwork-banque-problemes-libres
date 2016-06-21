@@ -1,0 +1,105 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Programmation linéaire)
+## KEYWORDS('fonction économique',  'maximisation', 'simplexe', 'trois variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(ASU)
+## ZMLT(mixedmax)
+##########################################SOURCE##################
+
+##Level(2)
+##Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+Context("Numeric");
+Context()->strings->add(Aucune=>{});
+
+
+sub isnz {
+ my $jj;
+ for $jj (@_) {
+   if($jj == 0) { return(0);}
+ }
+ return(1);
+}
+
+do {
+# middle row
+@r2 = (1, random(2,4), 1, random(2,4));
+
+#top row after reduction
+@a = (0, -2*$r2[1]-random(1,4), -random(2,6), -random(1,2));
+# bottom row after reduction
+@c = @a;
+$c[3] -= random(4, 8); #not identical
+# Now unreduce them
+for $j (0..3) {
+ $a[$j] += 2*$r2[$j];
+ $c[$j] += $r2[$j];
+}
+} until( isnz(@a) and isnz(@c));
+
+@as = ('+','+');
+@cs = ('+','+');
+for $j (0..1) {
+ $as[$j] = '-' if($a[$j+1]<0); 
+ $cs[$j] = '-' if($c[$j+1]<0);
+ $a[$j+1] = -$a[$j+1] if($a[$j+1]<0);
+ $c[$j+1] = -$c[$j+1] if($c[$j+1]<0);
+ $a[$j+1] = '' if($a[$j+1] == 1);
+ $c[$j+1] = '' if($c[$j+1] == 1);
+}
+
+$fun = nicestring([random(1,4), random(1,4), random(-3, -1)], ['x_1', 'x_2', 'x_3']);
+
+#$ns1 = nicestring( ~~@a, ['x_1', 'x_2', 'x_3','']);
+#$ns2 = nicestring( ~~@c, ['x_1', 'x_2', 'x_3','']);
+
+$answer = String("Aucune");
+
+Context()->texStrings;
+BEGIN_TEXT
+Utiliser la méthode du simplexe des contraintes mixtes pour maximiser
+\[ p = $fun \]
+sous les contraintes
+
+\[ \left\lbrace  \begin{array}{rcl}
+ $a[0] x_1  $as[0]  $a[1] x_2  $as[1]  $a[2] x_3  &\le & $a[3] \\
+ x_1  +  $r2[1] x_2  +   x_3 &\ge & $r2[3] \\
+ x_1  $cs[0]  $c[1] x_2  $cs[1]  $c[2] x_3 &\le & $c[3] \\
+x_1 &\ge &0\\
+ x_2  &\ge &  0 \\
+ x_3  &\ge &  0
+\end{array} \right. \]
+$BR
+
+
+S'il n'y a aucune solution, entrer $BITALIC  Aucune $EITALIC comme valeur de  \(p\).
+$BR$BR
+	\( p = \) \{ans_rule(40)\}
+END_TEXT
+Context()->normalStrings;
+
+
+
+ANS( $answer->cmp() );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

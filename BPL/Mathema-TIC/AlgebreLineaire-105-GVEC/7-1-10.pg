@@ -1,0 +1,82 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('angle', 'perpendiculaire', 'point', 'produit scalaire', 'vecteur')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZDate(8/23/07)
+## ZInstitution(Union College)
+##########################################SOURCE##################
+
+##Level(2)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+Context("Vector");
+
+#
+#  The points A and B
+#
+$A = non_zero_point3D();
+$B = non_zero_point3D();
+
+#
+#  The vector from A to B
+#
+$AB = Vector($B-$A);
+
+#
+#  Make sure the solution exists
+#
+$B = $B+Point(1,0,0), $AB = Vector($B-$A)
+   if ($AB . Vector(1,1,1) == 0);
+
+#
+#  The answer
+#
+$k = Real(($A.$AB)/($AB.Vector(1,1,1)));
+
+##############################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit \(A  $A\), \(B  $B\) et \(P  (k,k,k)\).
+Le vecteur allant de \(A\) à \(B\) est orthogonal au vecteur allant de
+\(A\) à \(P\) si \(k\) = \{ans_rule(30)\}.
+
+END_TEXT
+Context()->normalStrings;
+
+##################################################
+#  Answers
+
+ANS($k->cmp);
+
+
+##################################################
+
+
+
+ENDDOCUMENT();

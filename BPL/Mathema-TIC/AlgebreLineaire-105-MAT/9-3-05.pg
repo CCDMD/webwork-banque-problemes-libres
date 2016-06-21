@@ -1,0 +1,84 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('applications', 'déterminant', 'inversion', 'matrice', 'matrice régulière', 'matrice singulière')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(TCNJ)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('5.1')
+## Problem1('')
+
+
+##########################################SOURCE##################
+
+##Level(1)
+##Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+
+loadMacros("PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGchoicemacros.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+Context('Matrix');
+
+
+$a = random(-9,9,1);
+$d = random(-9,9,1);
+$b = random(-9,9,1);
+$c = random(-9,9,1);
+$det = $a * $d - $b * $c; 
+
+$A=Matrix([[$a, $b], [$c, $d]]);
+$mc=new_multiple_choice();
+
+if ($det!=0)  {  
+$mc->qa('La matrice \(A\) est-elle inversible?','Oui');
+$mc->extra('Non');  
+$mc->makeLast("Non");
+} else {
+$mc->qa('La matrice \(A\) est-elle inversible?','Non');
+$mc->extra('Oui');  
+$mc->makeLast("Non");
+}
+
+$rep=Compute("$det");
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+
+Si \(A= $A\), alors \(\det\,(A)=  \) \{ ans_rule(10) \}.
+$BR
+
+\{ $mc-> print_q; \}
+\{ $mc-> print_a; \}
+
+END_TEXT
+Context()->normalStrings;
+ANS(num_cmp($rep));
+ANS(radio_cmp( $mc->correct_ans )   ) ;
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

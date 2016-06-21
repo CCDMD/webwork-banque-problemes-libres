@@ -1,0 +1,74 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('droite', 'parallèle', 'point', 'vecteur', 'vecteur directeur', 'équation vectorielle', 'équations paramétriques')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################      
+## File Created: 5/31/2000
+## Last Modified: 5/31/2000
+## Problem Author: Joseph Neisendorfer
+## WeBWorK Entry: Victoria Sweetser
+## Location: University of Rochester
+## ZDate(6/3/2002)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('12.5')
+## Problem1('2')
+##########################################SOURCE##################
+##Level(1)
+##Language(fr)
+
+           
+DOCUMENT();	# This should be the first executable line in the problem.
+
+loadMacros("PGstandard.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl"     
+          );      
+              
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+ 
+Context("Vector");
+Context()->variables->add(t=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');  
+	
+$p=Point(random(-5, 5),random(-5, 5),random(-5, 5));
+($p1,$p2,$p3) = $p->value;
+$q=Vector(non_zero_random(-5, 5),non_zero_random(-5, 5),non_zero_random(-5, 5));
+($q1,$q2,$q3) = $q->value;
+
+
+$ans1 = Formula("$p1 + $q1 * t")->reduce;
+$ans2 = Formula("$p2 + $q2 * t")->reduce;;
+$ans3 = Formula("$p3 + $q3 * t")->reduce;;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Écrire les équations paramétriques de la droite dont l'équation vectorielle est donnée par  
+\( \Delta (t) = 
+($ans1) \vec{i}  + 
+($ans2) \vec j  +
+($ans3) \vec{k} \).
+$BR  $BR
+Bien que plusieurs réponses soient possibles, donner la plus évidente.
+$BR
+\(x(t) =\) \{ ans_rule(10) \}$BR
+\(y(t) =\) \{ ans_rule(10) \}$BR
+\(z(t) =\) \{ ans_rule(10) \}
+END_TEXT
+Context()->normalStrings;
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+ENDDOCUMENT();	# This should be the last executable line in the problem.

@@ -1,0 +1,271 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('aucune solution', 'compatibilité d\'un système', 'déterminant', 'infinité de solutions', 'méthode de Gauss', 'méthode de Gauss-Jordan', 'nombre de solutions', 'solution unique', 'système à deux variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+
+########################################SOURCE##################
+## ZInstitution(Rochester)
+## ZMLT(multsystems)
+## ZMLTleader(1)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('1.2')
+## Problem1('')
+########################################SOURCE###############
+##level(1)
+##Language(fr)
+
+###Traduction française : Sylvie Charbonneau
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+
+loadMacros(
+		"PGstandard.pl",
+		"MathObjects.pl",
+		"PGcourse.pl",
+        "PGchoicemacros.pl",
+		"parserRadioButtons.pl"
+);
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 0;
+
+
+Context("Numeric");
+
+$a1 = random(3,9,2) * random(-1,1,2);
+$b1 = non_zero_random(-10,10,2);
+$c1 = random(2,10,1) * random(-1,1,2);
+$d1 = random(3,9,2) * random(-1,1,2);
+$x1 = random(1,9,1);
+$y1 = random(-9,-1,1);
+$m1 = $a1 * $x1 + $b1 * $y1;
+$n1 = $c1 * $x1 + $d1 * $y1;
+
+$a2 = non_zero_random(2,6,1);
+$b2 = non_zero_random(2,6,1);
+@mult = (-3,-2,-1,3);
+$tag = random(0,3,1);
+$c2 = $a2 * $mult[$tag];
+$d2 = $b2 * $mult[$tag];
+$x2 = random(-5,5,1);
+$y2 = random(-5,5,1);
+$m2 = $a2 * $x2 + $b2 * $y2;
+$n2 = $m2 * $mult[$tag] + 1;
+
+$a3 = -2;
+$b3 = random(2,5,1);
+@mult = (-3,-2,2,3);
+$tag = random(0,3,1);
+$c3 = $a3 * $mult[$tag];
+$d3 = $b3 * $mult[$tag];
+$x3 = random(-5,-1,1);
+$y3 = random(1,5,1);
+$m3 = $a3 * $x3 + $b3 * $y3;
+$n3 = $m3 * $mult[$tag];
+
+do{
+  $a4 = random(2,9) * random(-1,1,2);
+  $b4 = random(2,10) * random(-1,1,2);
+  $c4 = random(3,9) * random(-1,1,2);
+  $d4 = random(3,9) * random(-1,1,2);
+} until ($a4*$d4 != $b4*$c4);
+$m4 = 0;
+$n4 = 0;
+$p4 = $a4 + $b4;
+$q4 = $c4 + $d4;
+
+$md4 = - $d4;
+
+$fr = $m3/$a3;
+
+@a = ($a1, $a2, $a3, $a4);
+@b = ($b1, $b2, $b3, $b4);
+@c = ($c1, $c2, $c3, $c4);
+@d = ($d1, $d2, $d3, $d4);
+@m = ($m1, $m2, $m3, $m4);
+@n = ($n1, $n2, $n3, $n4);
+
+@cor_ans = ('Une seule solution : \(x=$x1,\ y=$y1\) ', 
+                'Aucune solution', 
+                    'Une infinité de solutions', 
+                        'Une seule solution : \(x=0,\ y=0\)');
+
+@ans1 =    ('Une seule solution : \(x=$y1,\ y=$x1\)',  
+                'Une seule solution : \(x=0,\ y=0\)', 
+                    'Aucune solution',  
+                        'Une seule solution : \(x=$md4,\ y=$a4\)');
+
+@ans2 =    ('Une seule solution : \(x=0,\ y=0\)', 
+                'Une infinité de solutions', 
+                    'Une seule solution : \(x=0,\ y=0\)',
+                        'Aucune solution');
+
+@ans3 =    ('Aucune solution',
+                'Une seule solution : \(x=$m2,\ y=$n2\)',
+                    'Une seule solution : \(x=$fr,\ y=0\)',
+                        'Une infinité de solutions');
+
+@ans4 =    ('Une infinité de solutions',
+                'Une seule solution : \(x=$n2,\ y=$m2\)',
+                    'Une seule solution : \(x=$m3,\ y=$n3\)',
+                        'Une seule solution : \(x=$p4,\ y=$q4\)');
+
+#Permutation des indices, même permutation pour toutes les listes
+
+
+@slice = NchooseK(4,4);
+
+
+@sa = @a[@slice];
+@sb = @b[@slice];
+@sc = @c[@slice];
+@sd = @d[@slice];
+@sm = @m[@slice];
+@sn = @n[@slice];
+
+@scor_ans = @cor_ans[@slice];
+@sans1 = @ans1[@slice];
+@sans2 = @ans2[@slice];
+@sans3 = @ans3[@slice];
+@sans4 = @ans4[@slice];
+
+@m11 = ("$a1 x", "$a2 x", "$a3 x", "$a4 x");
+@m12 = ("+$b1 y", "+$b2 y", "+$b3 y", "+$b4 y");
+@m13 = ("$m1", "$m2", "$m3", "$m4");
+@m21 = ("$c1 x", "$c2 x", "$c3 x", "$c4 x");
+@m22 = ("+$d1 y", "+$d2 y", "+$d3 y", "+$d4 y");
+@m23 = ("$n1", "$n2", "$n3", "$n4");
+
+@sm11 = @m11[@slice];
+@sm12 = @m12[@slice];
+@sm13 = @m13[@slice];
+@sm21 = @m21[@slice];
+@sm22 = @m22[@slice];
+@sm23 = @m23[@slice];
+
+
+
+
+$radio0 = RadioButtons(
+  [$sans1[0],$sans2[0],$sans3[0],$sans4[0],$scor_ans[0],'Aucune de ces réponses'],
+  $scor_ans[0], # correct answer
+  last => ['Aucune de ces réponses'], 
+  labels => "ABC"
+);
+
+$radio1 = RadioButtons(
+  [$sans1[1],$sans2[1],$sans3[1],$sans4[1],$scor_ans[1],'Aucune de ces réponses'],
+  $scor_ans[1], # correct answer
+  last => ['Aucune de ces réponses'], 
+  labels => "ABC"
+);
+
+$radio2 = RadioButtons(
+  [$sans1[2],$sans2[2],$sans3[2],$sans4[2],$scor_ans[2],'Aucune de ces réponses'],
+  $scor_ans[2], # correct answer
+  last => ['Aucune de ces réponses'], 
+  labels => "ABC"
+);
+
+
+$radio3 = RadioButtons(
+  [$sans1[3],$sans2[3],$sans3[3],$sans4[3],$scor_ans[3],'Aucune de ces réponses'],
+  $scor_ans[3], # correct answer
+  last => ['Aucune de ces réponses'], 
+  labels => "ABC"
+);
+
+#Question1
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Indiquer si chaque système a une seule solution 
+(dans ce cas, déterminer la solution), une infinité de solutions ou s'il n'a aucune solution.
+$PAR
+1. \[ \left\lbrace\begin{array}{r${NO_SPACE}l${NO_SPACE}l${NO_SPACE}r${NO_SPACE}r${NO_SPACE}r}
+$sm11[0] & $sm12[0] & = & $sm13[0] \cr
+$sm21[0] & $sm22[0] & = & $sm23[0]
+\end{array} \right.\]
+
+$PAR 
+\{ $radio0->buttons() \}
+END_TEXT
+Context()->normalStrings;
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+ANS( $radio0->cmp() );
+
+
+#Question2
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+ 2. \[ \left\lbrace\begin{array}{r${NO_SPACE}l${NO_SPACE}l${NO_SPACE}r${NO_SPACE}r${NO_SPACE}r}
+$sm11[1] & $sm12[1] & = & $sm13[1] \cr
+$sm21[1] & $sm22[1] & = & $sm23[1]
+\end{array} \right.\]
+
+$PAR 
+\{ $radio1->buttons() \}
+END_TEXT
+Context()->normalStrings;
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+ANS( $radio1->cmp() );
+
+
+#Question3
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+ 3. \[ \left\lbrace\begin{array}{r${NO_SPACE}l${NO_SPACE}l${NO_SPACE}r${NO_SPACE}r${NO_SPACE}r}
+$sm11[2] & $sm12[2] & = & $sm13[2] \cr
+$sm21[2] & $sm22[2] & = & $sm23[2]
+\end{array} \right.\]
+
+$PAR 
+\{ $radio2->buttons() \}
+END_TEXT
+Context()->normalStrings;
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+ANS( $radio2->cmp() );
+
+
+#Question4
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+ 4. \[ \left\lbrace\begin{array}{r${NO_SPACE}l${NO_SPACE}l${NO_SPACE}r${NO_SPACE}r${NO_SPACE}r}
+$sm11[3] & $sm12[3] & = & $sm13[3] \cr
+$sm21[3] & $sm22[3] & = & $sm23[3]
+\end{array} \right.\]
+
+$PAR 
+\{ $radio3->buttons() \}
+END_TEXT
+Context()->normalStrings;
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+ANS( $radio3->cmp() );
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

@@ -1,0 +1,156 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Vecteurs et espace euclidien)
+## KEYWORDS('R^2', 'R^3', 'angle', 'composante', 'direction', 'norme', 'vecteur')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+# Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+# originally from 5ed (with updates)
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZLevel(2)
+## ZTitleText1('Calculus')
+## ZAuthorText1('Hughes-Hallett')
+## ZEditionText1('5')
+## ZSection1('13.1')
+## ZProblem1('33')
+## ZTitleText2('Calculus')
+## ZAuthorText2('Hughes-Hallett')
+## ZEditionText2('6')
+## ZSection2('13.1')
+## ZProblem2('34')
+##########################################SOURCE##################
+
+##Level(2)
+##Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+ "PGcourse.pl",
+);
+
+
+
+Context("Numeric");
+$showPartialCorrectAnswers = 1;
+
+@angles = ( "\pi/6", "\pi/4", "\pi/3", "3\pi/4", "2\pi/3", "5\pi/6" );
+@xcomp  = ( Compute("sqrt(3)/2"), Compute("1/sqrt(2)"), Compute("1/2"),
+	    Compute("-1/sqrt(2)"), Compute("-1/2"), Compute("-sqrt(3)/2") );
+@ycomp  = ( Compute("1/2"), Compute("1/sqrt(2)"), Compute("sqrt(3)/2"),
+	    Compute("1/sqrt(2)"), Compute("sqrt(3)/2"), Compute("1/2") );
+
+## why is it so hard to avoid decimals in MathObjects?
+@xcompT  = ( "{\sqrt 3\over 2}", "{1\over\sqrt 2}", "{1\over 2}",
+	    "-{1\over\sqrt 2}", "-{1\over 2}", "-{\sqrt 3\over 2}" );
+@ycompT  = ( "{1\over 2}", "{1\over\sqrt 2}", "{\sqrt 3\over 2}",
+	    "{1\over\sqrt 2}", "{\sqrt 3\over 2}", "{1\over 2}" );
+
+
+$which2 = random(0, @angles-1, 1);
+$which3 = random(0, @angles-1, 1);
+if ( $which2 == $which3 ) {
+    $which3 = ( $which2 == 0 ? $which2 + 1 : $which2 - 1 );
+}
+
+$len2 = random(4,8,2);
+$len3 = $len2 - 2;
+
+$x2 = Compute("$len2*$xcomp[$which2]");
+$y2 = Compute("$len2*$ycomp[$which2]");
+$xT2 = $xcompT[$which2];
+$xT2 =~ s/1?(~~~~sqrt 3)?~~~~over/$len2$1 ~~~~over/;
+$yT2 = $ycompT[$which2];
+$yT2 =~ s/1?(~~~~sqrt 3)?~~~~over/$len2$1 ~~~~over/;
+
+$whichPlane = list_random(0,1);
+$xyz = ( 'xz', 'yz' )[$whichPlane];
+$xy = ( 'x', 'y' )[$whichPlane];
+$yx = ( 'y', 'x' )[$whichPlane];
+
+if ( $whichPlane ) {
+    $x3 = Compute(0);
+    $y3 = Compute("$len3*$xcomp[$which3]");
+    $xy3 = $xcompT[$which3];
+    $xy3 =~ s/1?(~~~~sqrt 3)?~~~~over/$len3$1 ~~~~over/;
+    $z3 = Compute("$len3*$ycomp[$which3]");
+    $zT3 = $ycompT[$which3];
+    $zT3 =~ s/1?(~~~~sqrt 3)?~~~~over/$len3$1 ~~~~over/;
+    $w = "$xy3\,\vec j + $zT3\,\vec k";
+} else {
+    $x3 = Compute("$len3*$xcomp[$which3]");
+    $xy3 = $xcompT[$which3];
+    $xy3 =~ s/1?(~~~~sqrt 3)?~~~~over/$len3$1~~~~over/;
+    $y3 = Compute(0);
+    $z3 = Compute("$len3*$ycomp[$which3]");
+    $zT3 = $ycompT[$which3];
+    $zT3 =~ s/1?(~~~~sqrt 3)?~~~~over/$len3$1~~~~over/;
+    $w = "$xy3\,\vec i + $zT3\,\vec k";
+}
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+
+Déterminer les composantes des vecteurs suivants :
+$PAR
+${BBOLD}a)$EBOLD
+Le vecteur \(\vec v\) est un vecteur dans le plan dont la longueur est $len2 et qui forme un angle de \( $angles[$which2] \) avec l'axe des \( x \).
+$BR
+\( \vec v = \) \{ ans_rule(10) \} \(\vec i\) + \{ ans_rule(10) \} \(\vec j\)
+
+$PAR
+${BBOLD}b)$EBOLD
+Le vecteur \(\vec w\) est un vecteur dans l'espace dont la longueur est $len3, qui est situé dans le plan
+\( $xyz \), qui pointe vers le haut et forme un angle de \( $angles[$which3] \)
+avec l'axe des \( $xy \).
+$BR
+\( \vec w = \) \{ ans_rule(10) \} \(\vec i\) +
+    \{ ans_rule(10) \} \(\vec j\) +  \{ ans_rule(10) \} \(\vec k\)
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($x2->cmp() );
+ANS($y2->cmp() );
+ANS($x3->cmp() );
+ANS($y3->cmp() );
+ANS($z3->cmp() );
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+$PAR SOLUTION $PAR
+
+${BBOLD}a)$EBOLD
+Les composantes du vecteur sont
+\( v_1 = $len2 \cos $angles[$which2] = ($len2)($xcompT[$which2]) = $xT2\)
+et
+\( v_2 = $len2 \sin $angles[$which2] = ($len2)($ycompT[$which2]) = $yT2\).
+Par conséquent, 
+\(\vec v = $xT2\,\vec i + $yT2\,\vec j\).
+
+$PAR
+${BBOLD}b)$EBOLD
+Puisque le vecteur se situe dans le plan \($xyz\), sa composante en \($yx\) est égale à 0.
+Sa composante en \($xy\) est \(($len3)(\cos $angles[$which3]) = $xy3 \)
+et sa composante en \(z\) est \(($len3)(\sin $angles[$which3]) = $zT3 \).
+Le vecteur est donc \( \vec w = $w \).
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();

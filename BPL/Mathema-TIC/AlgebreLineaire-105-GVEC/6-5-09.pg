@@ -1,0 +1,86 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('normal', 'perpendiculaire', 'plan', 'point', 'produit vectoriel', 'vecteur', 'équation cartésienne')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE################## 
+## ZDate(8/23/07)
+## ZInstitution(Union College)
+## TitleText1('Calculus')
+## AuthorText1('Anton')
+## EditionText1('7')
+## Section1('12.6')
+## Problem1('27')
+##########################################SOURCE##################
+##Level(3)
+##Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "parserImplicitPlane.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+Context("ImplicitPlane");
+
+#
+#  The two planes
+#
+$P1 = non_zero_point3D(); $N1 = non_zero_vector3D();
+$P2 = non_zero_point3D(); $N2 = non_zero_vector3D();
+
+#
+#  Fix it up if N1 is parallel to N2
+#
+while (areParallel $N1 $N2) {$N2 = non_zero_vector3D()}
+
+#
+#  The plane perpendicular to both
+#
+$P = non_zero_point3D();
+$N = cross $N1 $N2;
+
+##############################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Le plan qui passe par le point \(P$P\) et qui est perpendiculaire aux deux plans  \( \pi_1: \{ImplicitPlane($P1,$N1)\}\) et
+\( \pi_2: \{ImplicitPlane($P2,$N2)\}\) a comme équation cartésienne : 
+\{ans_rule(40)\}.
+
+END_TEXT
+
+HINT($PAR,$BBOLD,"Indice : ",$EBOLD,"quelle est la relation entre les vecteurs normaux de deux plans perpendiculaires?");
+
+$showHint = 3;
+
+##################################################
+Context()->normalStrings;
+
+ANS(ImplicitPlane($P,$N)->cmp);
+$showPartialCorrectAnswers = 1;
+
+##################################################
+
+
+ENDDOCUMENT();

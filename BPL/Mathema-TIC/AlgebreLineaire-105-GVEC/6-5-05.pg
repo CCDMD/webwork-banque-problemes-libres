@@ -1,0 +1,131 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('normal', 'parallèle', 'perpendiculaire', 'plan', 'position relative', 'vecteur', 'équation cartésienne')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(Dartmouth)
+## TitleText1('Calculus')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('13.5')
+## Problem1('')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Rogawski')
+## EditionText2('1')
+## Section2('12.5')
+## Problem2('4 49')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+DOCUMENT();
+loadMacros( "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+"parserPopUp.pl",
+   "parserVectorUtils.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+);
+
+ 
+TEXT(beginproblem());
+## Do NOT show partial correct answers
+$showPartialCorrectAnswers = 0;
+
+
+Context("Vector");
+Context()->noreduce('(-x)-y','(-x)+y');  
+
+
+
+$n = non_zero_vector3D();
+($n1,$n2,$n3) = $n->value;
+
+$k=non_zero_random(-5,5,2);
+$np=$k*$n;
+($np1,$np2,$np3) = $np->value;
+
+
+
+$nrien = Vector($n1, $n2+1, $n3);
+($nr1,$nr2,$nr3) = $nrien->value;
+
+$d = random(-5,5);
+$dp = random(-5,5);
+$do = random(-5,5);
+$dn = random(-5,5);
+
+
+$eqt=Formula("$n1 x + $n2 y + $n3 z")->reduce;
+
+$plan[0]=Formula("$np1 x + $np2 y + $np3 z ")->reduce;
+$constante[0]=$dp;
+
+$plan[1]=Formula("-$n2 x+$n1 y  ")->reduce;
+$constante[1]=$do;
+
+$plan[2]=Formula("$nr1 x + $nr2 y + $nr3 z")->reduce;
+$constante[2]=$dn;
+
+
+$popup[0] = PopUp(
+  ["","parallèles","orthogonal","ni l'un ni l'autre"],
+  "parallèles",
+);
+
+$popup[1] = PopUp(
+  ["","parallèles","orthogonal","ni l'un ni l'autre"],
+  "orthogonal",
+);
+
+$popup[2] = PopUp(
+  ["","parallèles","orthogonal","ni l'un ni l'autre"],
+  "ni l'un ni l'autre",
+);
+
+
+@slice=NchooseK(3,3);
+
+
+
+        
+                 
+
+Context()->texStrings;
+BEGIN_TEXT
+Comparer chaque plan ci-dessous au plan \($eqt =
+$d\).  
+
+$BR
+  \{$popup[$slice[0]]->menu\} \( $plan[$slice[0]]=$constante[$slice[0]] \)
+  $BR
+    \{$popup[$slice[1]]->menu\} \( $plan[$slice[1]]=$constante[$slice[1]] \)
+	 $BR
+	 \{$popup[$slice[2]]->menu\} \( $plan[$slice[2]]=$constante[$slice[2]] \)
+$BR
+	 
+END_TEXT
+Context()->normalStrings;
+
+
+  ANS($popup[$slice[0]]->cmp); 
+    ANS($popup[$slice[1]]->cmp); 
+	  ANS($popup[$slice[2]]->cmp); 
+
+
+
+ENDDOCUMENT();
+
+
+
+
+

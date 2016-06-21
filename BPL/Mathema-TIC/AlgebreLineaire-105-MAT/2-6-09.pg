@@ -1,0 +1,92 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('déterminant', 'inversion', 'matrice inverse')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## TitleText1('Elementary Linear Algebra')
+## AuthorText1('Larson, Edwards, Falvo')
+## EditionText1('5')
+## Section1('2.3')
+## Problem1('38')
+##########################################SOURCE##################
+##Level(3)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl", 
+"MathObjects.pl", 
+"PGcourse.pl" 
+  
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+Context("Matrix");
+Context()->variables->add(t=>"Real");
+
+$a[1] = random(2,6,1) * random(-1,1,2);
+$a[2] = $a[1];
+$a[3] = random(2,6,1) * random(-1,1,2);
+$a[4] = $a[3]; 
+
+$tag = random(1,4,1);
+$a[$tag] = - $a[$tag];
+
+$m = random(2,5,1);
+$n = random(2,5,1);
+if ($m == $n) {$n = $n+1;} 
+
+$p = random(2,9,1);
+
+$a142 = $a[1]*$a[4]/$a[2];
+$a143 = $a[1]*$a[4]/$a[3];
+
+$expr1 = Compute("$a[1] e^{$m t} sin($p t)");
+$expr2 = Compute("$a[2] e^{$n t} cos($p t)");
+$expr3 = Compute("$a[3] e^{$m t} cos($p t)");
+$expr4 = Compute("$a[4] e^{$n t} sin($p t)");
+
+
+$M = Matrix([[$expr1,$expr2],[$expr3,$expr4]]);
+
+$exp1 = Compute("sin($p*t)/$a[1]/e^($m*t)");
+$exp2 = Compute("- cos($p*t)/$a142/e^($m*t)");
+$exp3 = Compute("- cos($p*t)/$a143/e^($n*t)");
+$exp4 = Compute("sin($p*t)/$a[4]/e^($n*t)");
+
+$Minv = Matrix([[$exp1,$exp2],[$exp3,$exp4]]);
+
+
+
+
+# det = $a[1] * $a[4] * e^(($m+$n)*t); 
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Si \(A= $M\),
+$BR
+
+alors \(A^{-1}=\)\{ $Minv->ans_array()\}.
+END_TEXT
+
+Context()->normalStrings;
+
+ANS($Minv->cmp());
+
+ENDDOCUMENT() ;
+
+
+
+

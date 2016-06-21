@@ -1,0 +1,107 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('matrice échelonnée réduite', 'méthode de Gauss-Jordan')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(Rochester and Hope College)
+## ZAuthor(Paul Pearson)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('1.2')
+## Problem1('')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+DOCUMENT() ;        
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"PGcourse.pl"
+) ;
+
+$showPartialCorrectAnswers = 1 ;
+
+############
+
+TEXT(beginproblem());
+
+Context('Matrix');
+
+$a = random(-4,4,1);
+$b = random(-4,4,1);
+$c = random(-4,4,1);
+
+do {
+  $k = random(-3,3,2);
+  $l = non_zero_random(-3,3,1);
+  $m = non_zero_random(-4,4,2);
+  $n = non_zero_random(-3,3,2);
+  $p = random(-3,3,1);
+  $q = random(-3,3,1);
+  $r = random(-3,3,1);
+  $s = random(-3,3,2);
+  $t = random(-2,2,4);
+
+  $m1 = [[$k, $l, $p], [$m, $n, $q], [$t, $r, $s]];
+  $mm = Matrix->new(3,3);
+  for $i (0..2) {
+    for $j (0..2) {
+      $mm->assign($i+1, $j+1, $m1->[$i]->[$j]);
+   }}
+  $mm = $mm->decompose_LR();
+  $det = $mm->det_LR();
+} until ($det != 0);
+
+$a14 = $k*$a + $l*$b + $p*$c;
+
+$a24 = $m*$a + $n*$b + $q*$c;
+
+$a34 = $t*$a + $r*$b + $s*$c;
+
+
+
+$A = Matrix([
+[$k, $l, $p, $a14], 
+[$m, $n, $q, $a24], 
+[$t, $r, $s, $a34]
+]);
+
+
+# reduced row echelon form of A
+$answer = Matrix([
+[1,0,0,$a],
+[0,1,0,$b],
+[0,0,1,$c],
+]);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Transformer la matrice suivante \[ A= $A\]
+pour qu'elle devienne une matrice échelon de Gauss-Jordan. 
+
+$BR
+$BR
+$BCENTER
+\{ $answer->ans_array() \} 
+$ECENTER
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( $answer->cmp() );
+
+
+
+ENDDOCUMENT();

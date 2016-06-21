@@ -1,0 +1,87 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('droite', 'intersection', 'plan', 'point', 'équation cartésienne', 'équation vectorielle')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(Dartmouth)
+## TitleText1('Calculus')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('13.5')
+## Problem1('')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Rogawski')
+## EditionText2('1')
+## Section2('12.5')
+## Problem2('30')
+##########################################SOURCE##################
+
+##Level(2)
+##Language(fr)
+
+
+DOCUMENT();
+loadMacros("PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl",
+         );
+ 
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 0;
+
+
+Context("Vector");
+Context()->noreduce('(-x)-y','(-x)+y'); 
+
+
+$p = non_zero_point3D();
+$v = non_zero_vector3D();
+do{$n = non_zero_vector3D();} until ($v.$n != 0);
+
+
+
+
+($p1,$p2,$p3) = $p->value;
+($n1,$n2,$n3) = $n->value;
+($v1,$v2,$v3) = $v->value;
+
+$pp = Vector($p1,$p2,$p3);
+$expr1=Formula("$n1 x+$n2 y+$n3 z ")->reduce;
+
+## Fudge the value of t
+$t = random(2,6);
+
+$d=Compute("$n.$p+$t*$n.$v");
+
+$rep=Point($p1 + $t*$v1,$p2 + $t*$v2,$p3 + $t*$v3);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Déterminer le point d'intersection entre la droite 
+\( \Delta: $pp + t $v \)
+et le plan \( \pi: $expr1 = $d\).
+
+ $BR 
+\{ans_rule()\}
+
+
+
+END_TEXT
+Context()->normalStrings;
+  ANS($rep->cmp);
+ENDDOCUMENT();
+
+
+
+

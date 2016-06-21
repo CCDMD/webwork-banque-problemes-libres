@@ -1,0 +1,161 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Programmation linéaire)
+## KEYWORDS('deux variables', 'fonction économique', 'forme standard', 'maximisation', 'trois variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(ASU)
+## ZMLT(state)
+## ZMLTleader(1)
+##########################################SOURCE##################
+
+##Level(1)
+##Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGchoicemacros.pl",
+);
+
+TEXT(beginproblem());
+Context("Numeric");
+ 
+
+
+$showPartialCorrectAnswers=0;
+install_problem_grader(~~&std_problem_grader);
+
+$y = "Oui, présenté sous la forme standard.";
+$n = "Non, pas présenté sous la forme standard.";
+
+for $j (0..30) { $a[$j] = random(2, 10);}
+$b = random(30,90);
+
+@mcs = ();
+
+
+$sys1 = "Maximiser \[p = $a[0] x_1 + $a[1] x_2\] sous les contraintes $BR$BR \[ \left\lbrace  \begin{array}{rcl}
+$a[2] x_1  +  x_2 & \le & $a[3] \\
+x_1 + $a[4]x_2 &\le &$b \\
+x_1 & \ge & 0 \\
+x_2 & \ge & 0
+\end{array} \right. \] ";
+
+
+
+$mc1 = new_multiple_choice();
+$mc1->qa("$sys1", $y);
+$mc1->makeLast($n);
+push @mcs, $mc1;
+
+
+
+
+
+
+$sys1 = "Maximiser \[p = $a[10] x_1 +  x_2\] sous les contraintes $BR$BR \[ \left\lbrace \begin{array}{rcl}
+$a[11] x_1  +  x_2 & \le & $a[12] \\
+$a[13] x_1  - x_2 &\ge & $a[14] \\
+x_1&\ge &0 \\
+ x_2 & \ge & 0
+\end{array}   \right. \] ";
+
+$mc1 = new_multiple_choice();
+$mc1->qa("$sys1", $n); $mc1->extra($y);
+$mc1->makeLast($n);
+push @mcs, $mc1;
+
+$c = random(1,3);
+$sys1 = "Maximiser \[p = $a[5] x_1 + $a[6] x_2 + x_3\] sous les contraintes $BR$BR \[\left\lbrace \begin{array}{rcl}
+ x_1  +  $a[7] x_2 + $a[8] x_3 & \le & $a[9] \\
+x_{$c} & \ge & 0
+\end{array}  \right. \] ";
+
+$mc1 = new_multiple_choice();
+$mc1->qa("$sys1", $n); $mc1->extra($y);
+$mc1->makeLast($n);
+push @mcs, $mc1;
+
+$c = random(1,2);
+$sys1 = "Maximiser \[p = $a[15] x_1 + $a[16] x_2 + $a[17] x_3\] sous les contraintes $BR$BR \[\left\lbrace \begin{array}{rcl}
+ x_1  - x_2 +  x_3 & \le & $a[18] \\
+x_{$c} & \le & $a[19] \\
+ x_1&\ge &0\\
+ x_2& \ge& 0 \\
+ x_3  &\ge & 0
+\end{array} \right. \] ";
+
+$mc1 = new_multiple_choice();
+$mc1->qa("$sys1", $y); #$mc1->extra($y);
+$mc1->makeLast($n);
+
+push @mcs, $mc1;
+
+$sys1 = "Maximiser \[p =  x_1 + $a[20] x_2 + x_3\] sous les contraintes $BR$BR \[\left\lbrace \begin{array}{rcl}
+ $a[21] x_1 & + & x_2& + & x_3 & \le & - $a[22]  \\
+ $a[23] x_1 & + & $a[24] x_2& - & x_3 & \le &  $a[25]  \\
+ x_1&\ge& 0 \\
+ x_2 &\ge& 0 \\
+ x_{3} &\ge&  0
+\end{array} \right. \] ";
+
+$mc1 = new_multiple_choice();
+$mc1->qa("$sys1", $n); $mc1->extra($y);
+$mc1->makeLast($n);
+
+push @mcs, $mc1;
+
+
+@slice = NchooseK(5,5);
+@mcs = @mcs[@slice];
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Indiquer si chaque problème ci-dessous est présenté sous la forme standard ou non. 
+	$BR$HR$BR
+
+	
+\{ $mcs[0]->print_q() \}
+$BR
+\{ $mcs[0]->print_a() \}
+$BR $HR $BR
+\{ $mcs[1]->print_q() \}
+$BR
+\{ $mcs[1]->print_a() \}
+$BR $HR $BR
+\{ $mcs[2]->print_q() \}
+$BR
+\{ $mcs[2]->print_a() \}
+$BR $HR $BR
+\{ $mcs[3]->print_q() \}
+$BR
+\{ $mcs[3]->print_a() \}
+$BR $HR $BR
+\{ $mcs[4]->print_q() \}
+$BR
+\{ $mcs[4]->print_a() \}
+END_TEXT
+Context()->normalStrings;
+
+ANS(radio_cmp($mcs[0]->correct_ans));
+ANS(radio_cmp($mcs[1]->correct_ans));
+ANS(radio_cmp($mcs[2]->correct_ans));
+ANS(radio_cmp($mcs[3]->correct_ans));
+ANS(radio_cmp($mcs[4]->correct_ans));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem. 
+

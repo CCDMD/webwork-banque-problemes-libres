@@ -1,0 +1,109 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('compatibilité d\'un système', 'déterminant', 'méthode de Gauss', 'méthode de Gauss-Jordan', 'nombre de solutions', 'solution unique', 'système à trois variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(TCNJ)
+## ZMLT(2params)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('1.2')
+## Problem1('')
+##########################################SOURCE################
+##Level(2)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+
+Context("Matrix");
+Context()->variables->add(h=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');  
+
+#First Row
+$a = random(3,7,1)*random(-1,1,2);
+$b = random(3,7,1)*random(-1,1,2);
+$c = random(3,7,1)*random(-1,1,2);
+
+$d = random(3,7,1)*random(-1,1,2);
+
+#Check that second row is not a multiple of first by comparing standardized forms of the two rows.
+
+do {
+  $e = random(2,9,1)*random(-1,1,2);
+  $f = random(2,9,1)*random(-1,1,2);
+  $g = random(2,9,1)*random(-1,1,2); 
+} while($b*$e == $a*$f);
+
+$h = random(2,9,1)*random(-1,1,2);
+
+#third row
+$mult1 = random(1,3,2)*random(-1,1,2);
+$mult2 = random(2,4,2)*random(-1,1,2);
+$i = $a*$mult1+$e*$mult2;
+$j = $b*$mult1+$f*$mult2;
+$K = $c*$mult1+$g*$mult2;
+$l = $d*$mult1+$h*$mult2;
+
+
+$expr1=Formula("$a x+$b y+$c z")->reduce;
+$expr2=Formula("$e x+$f y+$g z")->reduce;
+$expr3=Formula("$i x+$j y+h z")->reduce;
+
+
+
+$reph = Compute("$K");
+
+# Make a new checkbox multiple choice
+$mc = new_multiple_choice();
+$mc-> qa('',  'une seule valeur');
+$mc-> extra('aucune valeur',  'une infinité de valeurs');
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit le système d'équations linéaires suivant, où \(k\) et \(h\)  sont des constantes :
+$BR
+$BR
+\[  \left\lbrace \begin{array}{rcr} 
+$expr1 &=& $d\\
+$expr2&=& $h\\
+$expr3 &=& k
+\end{array}
+ \right. \]
+
+$BR
+$BR
+Le système a une seule solution quand  
+\(h\neq\) \{ans_rule(10)\}.
+$BR
+$BR
+Si on remplace \(h\) par la valeur (correcte) entrée dans la case réponse ci-dessus, pour combien de valeurs de \(k\) le système est-il compatible?
+\{ $mc -> print_a \}
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($reph->cmp());
+ANS(radio_cmp( $mc->correct_ans )   ) ;
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

@@ -1,0 +1,127 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Vecteurs et espace euclidien)
+## KEYWORDS('R^3', 'angle', 'produit scalaire', 'vecteur')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(Union College)
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "contextString.pl",
+  "parserVectorUtils.pl",
+  "PGchoicemacros.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+install_problem_grader(~~&std_problem_grader);
+$showPartialCorrectAnswers = 0;
+
+
+Context("Vector");
+
+sub coord () {random(-5,5,1)}
+sub pos_coord () {non_zero_random(1,5,1)}
+
+
+@u = (pos_coord,coord,coord);
+$U = Vector(@u);
+
+#
+#  Vectors to test against
+#
+$V1 = Vector(coord,pos_coord,-(pos_coord));
+$V2 = Vector(coord,pos_coord,pos_coord);
+$V3 = Vector(pos_coord,-(pos_coord),coord);
+$V4 = Vector(-2*$u[2],0,2*$u[0]);  # perpendicular to this one
+
+##############################################
+
+$context{'String'}->strings->add(
+  "un angle obtus" => {},
+  "un angle droit"   => {},
+  "un angle aigu"  => {},
+  "no_answer" => {string => "", TeX => ""},
+);
+
+$u = "\vec{u}";
+
+#
+#  The various pop-up choices
+#
+@pop_up_choices = (
+  no_answer => "?",
+  "un angle obtus" => "un angle obtus",
+  "un angle droit"   => "un angle droit",
+  "un angle aigu"  => "un angle aigu",
+);
+
+@ans;
+
+#
+#  Make a pop up question and answer
+#
+sub PopUp {
+  my $V = shift;
+  my @ropts = (align=>"RIGHT",valign=>"TOP",separation=>5);
+  my $type = 2*(($U.$V) <=> 0) + 4;
+  push(@ans,$pop_up_choices[$type]);
+  Row(["\(".$V->TeX."\) forme ",
+       pop_up_list(@pop_up_choices)." avec \($u\)".$PAR],@ropts);
+}
+
+#
+#  Print the list of questions as a table
+#
+sub PrintQ {
+  my @questions = @_;
+  my @rows = ();
+  foreach my $v (@questions) {push(@rows,PopUp($v))}
+  return join(TableSpace(5,0),@rows);
+}
+
+##############################################
+#  Main text & answers
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit \($u = \{$U->TeX\}\).  Alors
+
+$BCENTER
+$PAR
+\{
+  BeginTable(center=>0).
+    PrintQ(($V1,$V2,$V3,$V4)[shuffle(4)]).
+  EndTable()
+\}
+$ECENTER
+
+END_TEXT
+Context()->normalStrings;
+
+##################################################
+
+Context("String");
+ANS(string_cmp(@ans));
+
+
+
+##################################################
+
+ENDDOCUMENT();

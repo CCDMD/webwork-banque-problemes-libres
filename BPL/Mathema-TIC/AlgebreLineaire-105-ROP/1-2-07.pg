@@ -1,0 +1,125 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Programmation linéaire)
+## KEYWORDS('fonction économique', 'maximisation', 'minimisation', 'simplexe', 'trois variables', 'variable d\'écart')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(ASU)
+
+##########################################SOURCE##################
+
+##Level(1)
+##Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGchoicemacros.pl",
+);
+
+TEXT(beginproblem());
+
+for $j (0..30) { $a[$j] = random(2, 15);}
+$b = random(30,90);
+
+@mcs = ();
+$sys = "Maximiser \[p = $a[0] x_1 + $a[1] x_2\] sous les contraintes $BR$BR \[ \left\lbrace  \begin{array}{rcl}
+$a[2] x_1  +  x_2 & \le & $a[3] \\
+$a[4] x_1 - x_2 &\le &$b \\
+x_1&\ge &0 \\
+x_2 & \ge & 0
+\end{array} \right. \]";
+
+
+push @mcs, ["$sys", 2, 3, 6];
+
+$sys = "Maximiser \[p = $a[5] x_1 + x_2 + $a[6]x_3\] sous les contraintes $BR$BR \[ \left\lbrace  \begin{array}{rcl}
+ $a[7] x_1  -   x_2 +  $a[8] x_3 & \le & $a[9] \\
+ x_1&\ge& 0 \\
+ x_2 &\ge &0 \\ 
+ x_3 &\ge&  0
+\end{array} \right. \]";
+
+push @mcs, ["$sys", 1,2, 6];
+
+$c = random(1,2);
+$sys = "Maximiser \[p = $a[15] x_1 + $a[16] x_2 + $a[17] x_3\] sous les contraintes$BR$BR \[ \left\lbrace  \begin{array}{rcl}
+ x_1  -  x_2 +  x_3 & \le & $a[18] \\
+ $a[21] x_1    +  x_3 & \le & $a[19] \\
+ x_1  +  $a[23] x_2 -  $a[22] x_3 & \le & $a[20] \\
+x_{$c} & \le & $a[19] \\
+ x_1&\ge& 0 \\
+ x_2 &\ge &0 \\ 
+ x_3 &\ge&  0
+\end{array} \right. \]";
+
+push @mcs, ["$sys", 4,5, 9];
+
+
+@slice = NchooseK(3,3);
+@mcs = @mcs[@slice];
+
+$rep1=Compute("$mcs[0][1]");
+$rep2=Compute("$mcs[0][2]");
+$rep3=Compute("$mcs[0][3]");
+
+$rep4=Compute("$mcs[1][1]");
+$rep5=Compute("$mcs[1][2]");
+$rep6=Compute("$mcs[1][3]");
+
+$rep7=Compute("$mcs[2][1]");
+$rep8=Compute("$mcs[2][2]");
+$rep9=Compute("$mcs[2][3]");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Pour chaque système, déterminer le nombre de variables d'écart et les dimensions de la matrice initiale associée au tableau du simplexe.
+	$BR$HR$BR
+$mcs[0][0]
+$BR
+Combien y a-t-il de variables d'écart? \{ ans_rule(6) \}
+$BR$BR
+La matrice initiale comporte \{ ans_rule(6) \}
+lignes et \{ ans_rule(6) \} colonnes.
+	$BR$HR$BR
+$mcs[1][0]
+$BR
+Combien y a-t-il de variables d'écart? \{ ans_rule(6) \}
+$BR$BR
+La matrice initiale comporte \{ ans_rule(6) \}
+lignes et \{ ans_rule(6) \} colonnes.
+	$BR$HR$BR
+$mcs[2][0]
+$BR
+Combien y a-t-il de variables d'écart? \{ ans_rule(6) \}
+$BR$BR
+La matrice initiale comporte \{ ans_rule(6) \}
+lignes et \{ ans_rule(6) \} colonnes.
+
+END_TEXT
+Context()->normalStrings;
+ANS($rep1->cmp());
+ANS($rep2->cmp());
+ANS($rep3->cmp());
+
+ANS($rep4->cmp());
+ANS($rep5->cmp());
+ANS($rep6->cmp());
+
+ANS($rep7->cmp());
+ANS($rep8->cmp());
+ANS($rep9->cmp());
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,81 @@
+##Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Programmation linéaire)
+## KEYWORDS('contraintes', 'deux variables', 'domaine admissible', 'fonction économique', 'maximisation', 'minimisation', 'optimisation sous contrainte dans le plan', 'polygone convexe')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##############
+## ZInstitution(Univeristy of Utah)
+## ZAuthor(Utah ww group)
+## ZMLT(StraightOptimize)
+## ZMLTleader(1)
+## TitleText1('Mathematical Applications')
+## AuthorText1('Ronald J. Harshbarger and James J. Reynolds')
+## EditionText1('8')
+##########################################SOURCE##############
+
+##level(1)
+##Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+install_problem_grader(~~&std_problem_grader);
+
+Context()->variables->add(n=>"Real");
+Context()->variables->add(y=>"Real");
+
+$showPartialCorrectAnswers = 1;
+$showPartialCredit = 0;
+
+# output the text of the problem
+
+$a = random(1,4,1);
+$b = random(6,9,1);
+$co1 = $a*$b;
+
+$expr1=Formula("$b x + $a y")->reduce;
+
+
+$lcb = "\{";
+$ans1 = Formula("n" ); 
+$ans2 = Compute("-$a");  
+
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+Déterminer la valeur minimale et la valeur maximale de la fonction \( f = x + y \) sujette aux contraintes 
+
+\[ \left$lcb\begin{array}{rcr} 
+            y & \le & 0 \cr
+	    x & \le & 0 \cr
+	    $expr1 & \le & -$co1 
+	   \end{array}\right.\]
+
+Entrer la lettre \( n \) s'il n'y a aucune réponse. 
+
+Le minimum est \{ans_rule(5)\} et le maximum est \{ans_rule(5)\}.
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($ans1->cmp());
+ANS($ans2->cmp());
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

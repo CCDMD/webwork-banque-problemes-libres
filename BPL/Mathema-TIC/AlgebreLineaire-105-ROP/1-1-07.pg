@@ -1,0 +1,79 @@
+##Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Programmation linéaire)
+## KEYWORDS('domaine admissible', 'fonction économique', 'maximisation', 'minimisation')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##############
+## ZInstitution(ASU)
+## ZMLT(TrueFalseQuestions)
+## ZMLTleader(1)
+##########################################SOURCE##############
+
+##level(2)
+##Language(fr)
+
+DOCUMENT();      
+loadMacros("PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+
+);
+
+
+
+# Since this is a true questions, we do not usually wish to tell students which
+# parts of the matching question have been answered correctly and which are
+# incorrect.  That is too easy.  To accomplish this we set the following flag to
+# zero.
+$showPartialCorrectAnswers = 0;
+
+# True false questions are a special case of a "select list"
+# Make a new select list
+$tf = new_select_list();
+# $tf now "contains" the select list object.
+# Insert some  questions and whether or not they are true.
+
+$tf -> qa ( # each entry has to end with a comma
+"Si la région admissible est limitée, il y a un nombre fini de solutions possibles.",
+"F",
+"Si la région admissible est illimitée, alors le problème de programmation linéaire n'a aucune solution.",
+"F",
+"Un problème de programmation linéaire peut avoir un nombre infini de solutions.",
+"V",
+"Pour qu'un problème de programmation linéaire ait une solution, la région admissible doit avoir au moins trois points extrémaux.",
+"F",
+);   # every statement has to end with a semi-colon.
+
+# Choose two of the question and answer pairs at random.
+$tf ->choose(2);
+
+# Now print the text using $ml->print_q for the questions
+# and $ml->print_a to print the answers.
+
+
+TEXT(beginproblem()), 
+Context()->texStrings;
+BEGIN_TEXT
+ $BBOLD  Question Vrai ou Faux $EBOLD $BR $BR
+Entrer V ou F selon que chaque énoncé est vrai ou faux.
+(Entrer uniquement V or F -- les mots complets ne sont pas acceptés.)$BR
+
+\{ $tf-> print_q \}
+
+$PAR
+
+END_TEXT
+Context()->normalStrings;
+# Enter the correct answers to be checked against the answers to the students.
+
+ANS(str_cmp( $tf->ra_correct_ans )   ) ;
+
+ENDDOCUMENT();        # This should be the last executable line i

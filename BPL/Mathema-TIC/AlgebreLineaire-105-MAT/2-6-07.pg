@@ -1,0 +1,59 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('déterminant', 'inversion', 'matrice carrée', 'matrice inverse')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(TCNJ and Hope College)
+## ZAuthor(Paul Pearson)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('3.2')
+## Problem1('')
+##########################################SOURCE##################
+##Level(1)
+##Language(fr)
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"MatrixReduce.pl",
+"PGcourse.pl",
+);
+
+
+Context('Matrix');
+
+do {
+
+$A = Matrix([
+[non_zero_random(-9,9,1),non_zero_random(-9,9,1)],
+[non_zero_random(-9,9,1),non_zero_random(-9,9,1)],
+]);
+
+
+} until ($A->det != 0);
+$B = $A->inverse;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Si \(A=$A\),
+$BR
+Alors \(A^{-1}=\) \{ $B->ans_array(15) \}.
+END_TEXT
+Context()->normalStrings;
+
+ANS($B->cmp);
+
+ENDDOCUMENT();

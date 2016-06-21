@@ -1,0 +1,120 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université #de Montréal), financé par le programme d’arrimage universités-collèges #(PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la #Science du Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Système d\'équations linéaires)
+## KEYWORDS('matrice augmentée', 'système à trois variables')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##level(1)
+##Language(fr)
+
+##########################################SOURCE#############
+## ZInstitution(Rochester)
+## ZAuthor(Arnie Pizer)
+## ZMLT(augmat)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('1.2')
+## Problem1('')
+##########################################SOURCE#############
+
+
+
+###Traduction française : Sylvie Charbonneau
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserMultiAnswer.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix')->variables->are(
+'x'=>'Real',
+'y'=>'Real',
+'z'=>'Real',
+);
+Context()->noreduce('(-x)-y');
+
+$b1 = non_zero_random(-99,99,6);
+$c1 = non_zero_random(-27,27,6);
+$d1 = random(2,99,1) * random(-1,1,2);
+$a2 = 0;
+$b2 = non_zero_random(-99,-2,1);
+$c2 = non_zero_random(-10,10,4);
+$d2 = random(-9,9,1);
+$a3 = random(2,99,1) * random(-1,1,2);
+$b3 = 0;
+$c3 = random(2,99,1);
+$d3 = random(-9,9,1);
+$a4 = random(2,9,1) * random(-1,1,2);
+$b4 = random(2,9,1) * random(-1,1,2);
+$d4 = random(-9,9,1);
+$a5 = random(2,99,1);
+$b5 = random(2,99,1);
+$c5 = 0;
+$d5 = random(-9,9,1);
+
+
+$expr0=Formula("x+$b1*y+$c1*z")->reduce();
+$expr1=Formula("$b2*y+$c2*z")->reduce();
+$expr2=Formula("$a3*x+$c3*z")->reduce();
+$expr3=Formula("$a4*x+$b4*y-z")->reduce();
+$expr4=Formula("$a5*x+$b5*y")->reduce();
+
+@expr=($expr0,$expr1,$expr2,$expr3,$expr4);
+
+@mmx = ("1",      "0",       "$a3 ",  "$a4 ",  "$a5 ");
+@mmy = ("$b1 ", "$b2 ",  "0",       "$b4 ", "$b5 ");
+@mmz = ("$c1 ", "$c2 ", "$c3 ", "-1", "0");
+@mm =  ("$d1",    "$d2",    "$d3",    "$d4",    "$d5");
+
+$tag1 = random(0,2,1);
+$tag2 = $tag1 +1;
+$tag3 = $tag1 +2;
+
+
+Context('Matrix');
+$Matrice = Matrix([
+[$mmx[$tag1],$mmy[$tag1],$mmz[$tag1],$mm[$tag1]],
+[$mmx[$tag2],$mmy[$tag2],$mmz[$tag2],$mm[$tag2]],
+[$mmx[$tag3],$mmy[$tag3],$mmz[$tag3],$mm[$tag3]]
+]);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Déterminer la matrice augmentée qui correspond au système $BR
+
+\[
+\left\lbrace
+\begin{array}{rcc}
+$expr[$tag1]& = & $mm[$tag1] \\
+$expr[$tag2] & = & $mm[$tag2]\\
+$expr[$tag3] &=& $mm[$tag3]
+\end{array}
+\right.
+\]
+$BR
+$BR
+$BCENTER
+\{ $Matrice->ans_array \}
+$ECENTER
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $Matrice->cmp() );
+
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

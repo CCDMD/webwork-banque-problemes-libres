@@ -1,0 +1,92 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('droite', 'intersection', 'parallèle', 'plan', 'point', 'système de coordonnées', 'équations paramétriques')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(Dartmouth)
+## TitleText1('Calculus')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('13.5')
+## Problem1('')
+##########################################SOURCE##################
+
+##Level(2)
+##Language(fr)
+
+
+DOCUMENT();
+loadMacros("PGstandard.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl");
+ 
+TEXT(beginproblem());
+## Do NOT show partial correct answers
+$showPartialCorrectAnswers = 0;
+
+
+
+Context("Vector");
+$p = Point(non_zero_random(-5,5),non_zero_random(-5,5),non_zero_random(-5,5));
+$v = Vector(random(1,7), random(1,7),random(1,7));
+($p1,$p2,$p3) = $p->value;
+($v1,$v2,$v3) = $v->value;
+$a=non_zero_random(-5,5);
+$b=non_zero_random(-5,5);
+$c=non_zero_random(-5,5);
+
+$txy = - $p3/$v3;  ##Value of t for intersection with xy-plane
+$txz = - $p2/$v2;
+$tyz = - $p1/$v1;
+$rep1=Point($p1 + $txy*$v1,$p2 + $txy*$v2,0);
+$rep2=Point($p1 + $txz*$v1,0,$p3 + $txz*$v3);
+$rep3=Point(0,$p2 + $tyz*$v2,$p3 + $tyz*$v3);
+
+
+## Ok, we are ready to begin the problem...
+##
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+
+Soit la droite \(\Delta \) passant par le point
+\(P$p\) et parallèle à la droite d'équations $BR
+\( x = $a + $v1 t\), $BR
+\(y = $b + $v2 t\),$BR
+\( z = $c + $v3 t \).
+
+$BR
+$BR
+Déterminer le point d'intersection de la droite \(\Delta \)  avec chaque plan de coordonnées : $BR
+
+plan xy : \{ans_rule(10)\},$BR
+plan xz : \{ans_rule(10)\},$BR
+plan yz : \{ans_rule(10)\}.$BR
+$BR
+
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($rep1->cmp());
+ANS($rep2->cmp());
+ANS($rep3->cmp());
+
+
+
+ENDDOCUMENT();
+
+
+
+

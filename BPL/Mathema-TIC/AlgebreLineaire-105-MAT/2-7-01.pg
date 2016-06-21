@@ -1,0 +1,166 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('déterminant', 'inversion', 'matrice inverse', 'matrice régulière', 'matrice élémentaire', 'multiplication matricielle', 'multiplication par un scalaire', 'permutation')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(TCNJ)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('3.4')
+## Problem1('')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "MathObjects.pl",
+"PGstandard.pl", 
+"PGcourse.pl" 
+           );
+
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+
+$c = non_zero_random(2, 6, 1);
+$d = non_zero_random(-6, -2, 1);
+$e = non_zero_random(3, 7, 1);
+
+$f = non_zero_random(2, 6, 1);
+$g = non_zero_random(-6, -2, 1);
+$h = non_zero_random(3, 7, 1);
+
+Context("Matrix");
+
+$a=Matrix([[non_zero_random(-5,5,1),non_zero_random(-5,5,1)],[non_zero_random(-5,5,1),non_zero_random(-5,5,1)]]);
+
+$b=Matrix([[non_zero_random(-5,5,1),non_zero_random(-5,5,1),non_zero_random(-5,5,1)],
+[non_zero_random(-5,5,1),non_zero_random(-5,5,1),non_zero_random(-5,5,1)],[non_zero_random(-5,5,1),non_zero_random(-5,5,1),non_zero_random(-5,5,1)]]);
+
+$E1=Matrix([[1/$c,0],[0,1]]);
+$E1inv=Matrix([[$c,0],[0,1]]);
+
+
+$E2=Matrix([[1,0],[0,$d]]);
+$E2inv=Matrix([[1/$d,0],[0,1]]);
+
+
+$E3=Matrix([[0,1],[1,0]]);
+$E3inv=Matrix([[0,1],[1,0]]);
+
+$E4=Matrix([[1,0],[$e,1]]);
+$E4inv=Matrix([[1,0],[-$e,1]]);
+
+
+$E5=Matrix([[1,0,0],[0,1/$f,0],[0,0,1]]);
+$E5inv=$E5->inverse;
+
+$E6=Matrix([[1,0,0],[0,1,0],[0,0,$g]]);
+$E6inv=$E6->inverse;
+
+
+$E7=Matrix([[0,0,1],[0,1,0],[1,0,0]]);
+$E7inv=$E7->inverse;
+
+
+$E8=Matrix([[1,0,0],[0,1,$h],[0,0,1]]);
+$E8inv=$E8->inverse;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Supposons les matrices initiales
+$BR
+\(A = $a\) et \(B = $b \)
+$BR
+À partir de l'information fournie, déterminer chaque matrice élémentaire ainsi que son inverse.
+$BR$BR
+
+a.  La matrice élémentaire \(E_1\) multiplie la première ligne de A par
+1/\{$c\}.$BR
+
+\(E_1=\)\{ $E1->ans_array() \}, \(E_1^{-1} =\) \{ $E1inv->ans_array() \}.
+$BR
+
+b.  La matrice élémentaire \(E_2\) multiplie la deuxième ligne de A par
+\{$d\}.$BR
+
+\(E_2=\)\{ $E2->ans_array() \}, \(E_2^{-1} =\)\{ $E2inv->ans_array() \}.
+
+$BR
+
+c. La matrice élémentaire \(E_3\) permute les deux premières lignes de A.$BR
+\(E_3=\)\{ $E3->ans_array() \}, \(E_3^{-1} =\) \{ $E3inv->ans_array() \}.
+$BR
+
+d.  La matrice élémentaire \(E_4\) ajoute \{$e\} fois la première ligne de A à la seconde ligne de A.$BR
+\(E_4=\)\{ $E4->ans_array() \}, \(E_4^{-1} =\) \{ $E4inv->ans_array() \}.
+$BR
+
+e.  La matrice élémentaire \(E_5\) multiplie la deuxième ligne de B par
+1/\{$f\}.$BR
+\(E_5=\)\{ $E5->ans_array() \}, \(E_5^{-1} =\) \{ $E5inv->ans_array() \}.
+$BR
+
+
+f.  La matrice élémentaire \(E_6\) multiplie la troisième ligne de B par
+\{$g\}.$BR
+\(E_6=\)\{ $E6->ans_array() \}, \(E_6^{-1} =\) \{ $E6inv->ans_array() \}.
+$BR
+
+g.  La matrice élémentaire \(E_7\) permute la première et la troisième ligne de B.$BR
+\(E_7=\)\{ $E7->ans_array() \}, \(E_7^{-1} =\) \{ $E7inv->ans_array() \}.
+$BR
+
+h.  La matrice élémentaire \(E_8\) ajoute \{$h\} fois la troisième ligne de B à la deuxième ligne de B.$BR
+\(E_8=\)\{ $E8->ans_array() \}, \(E_8^{-1} =\) \{ $E8inv->ans_array() \}.
+$BR
+END_TEXT
+
+Context()->normalStrings;
+
+ANS($E1->cmp()); 
+ANS($E1inv->cmp()); 
+
+
+ANS($E2->cmp()); 
+ANS($E2inv->cmp()); 
+
+
+ANS($E3->cmp()); 
+ANS($E3inv->cmp()); 
+
+
+ANS($E4->cmp()); 
+ANS($E4inv->cmp()); 
+
+
+ANS($E5->cmp()); 
+ANS($E5inv->cmp()); 
+
+ANS($E6->cmp()); 
+ANS($E6inv->cmp()); 
+
+
+ANS($E7->cmp()); 
+ANS($E7inv->cmp()); 
+
+ANS($E8->cmp()); 
+ANS($E8inv->cmp()); 
+
+
+ENDDOCUMENT() ;

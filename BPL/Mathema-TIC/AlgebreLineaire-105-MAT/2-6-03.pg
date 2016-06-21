@@ -1,0 +1,90 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('addition et soustraction', 'déterminant', 'inversion', 'matrice carrée', 'matrice inverse', 'multiplication par un scalaire', 'propriétés', 'transposition')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## Problem 1.4.7 in Anton Elementary Linear Algebra, 9th edition
+## ZAuthor('Charles Fortin')
+## ZInstitution('Champlain College')
+##########################################SOURCE##################
+##Level(3)
+##Language(fr)
+
+DOCUMENT(); 
+
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGmatrixmacros.pl",
+	   "MathObjects.pl"
+           );
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+
+$a = Compute("2");
+$b = random(3,9,2);
+$c = random(3,9,2);
+
+$d = Compute("(1+$b*$c)/2");
+$B = Matrix([[$a,$b],[$c,$d]]);
+# det(B) = 1
+
+$Binv = Matrix([[$d,-$b],[-$c,$a]]);
+$BinvT = Matrix([[$d,-$c],[-$b,$a]]);
+$Eye = Matrix([[1,0],[0,1]]);
+
+$c1 = random(2,9);
+$c2 = random(2,9);
+$c3 = random(2,9);
+
+#A1 = Binv
+$A2 = Compute("1/$c1*$Binv");
+$A3 = Compute("1/$c2*$BinvT");
+$A4 = Compute("1/$c3*($Binv-$Eye)"); 
+
+Context()->texStrings;
+BEGIN_TEXT
+À partir de l'information fournie, déterminer \(A\).
+$BR
+$BR
+ \{ mbox('a) \(A^{-1} =\)', '\($B\)')\}
+$BR
+\{ mbox('\(A =\)', $Binv->ans_array )\}
+$BR
+$BR
+\{ mbox('b) \(($c1 A)^{-1} =\)', '\($B\)')\}
+$BR
+\{ mbox('\(A =\)', $A2->ans_array )\}
+$BR
+$BR
+\{ mbox('c) \(($c2 A^T)^{-1} =\)', '\($B\)' )\}
+$BR
+\{ mbox('\(A =\)', $A3->ans_array )\}
+$BR
+$BR
+\{ mbox('d) \((I + $c3 A)^{-1} =\)', '\($B\)')\}
+$BR
+\{ mbox('\(A =\)', $A4->ans_array )\}
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS($Binv->cmp());
+ANS($A2->cmp());
+ANS($A3->cmp());
+ANS($A4->cmp());
+
+ENDDOCUMENT() ;

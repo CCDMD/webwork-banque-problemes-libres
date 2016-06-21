@@ -1,0 +1,80 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('distance', 'droite', 'point', 'produit scalaire', 'produit vectoriel', 'projection orthogonale', 'équations paramétriques')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZDate(8/23/07)
+## ZInstitution(Union College)
+## TitleText1('Calculus')
+## AuthorText1('Anton')
+## EditionText1('7')
+## Section1('12.3')
+## Problem1('25')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr) 
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+Context("Vector")->variables->are(t=>'Real');
+Context()->noreduce('(-x)-y','(-x)+y');  
+
+#
+#  The point P and the line p+tv
+#
+$P = non_zero_point3D();
+$p = non_zero_point3D();
+$v = non_zero_vector3D();
+
+$pP = Vector($P-$p);
+$L = Line($p,$v);
+
+#
+#  The projection and distance
+#
+$perp = $pP - (($pP.$v)/($v.$v)) * $v;
+$D = norm($perp);
+
+##############################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit la droite  \(\Delta(t)= $L\) et le point  \(P  $P\).
+$PAR
+Quelle est la distance entre le point \(P\) et la droite \(\Delta(t)\)? \{ans_rule(15)\}.
+
+END_TEXT
+
+
+Context()->normalStrings;
+
+ANS($D->cmp);
+
+$showPartialCorrectAnswers = 1;
+
+
+
+ENDDOCUMENT();

@@ -1,0 +1,91 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('droite', 'droites gauches', 'intersection', 'parallèle', 'point', 'position relative', 'vecteur directeur', 'équations paramétriques')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(ASU)
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+DOCUMENT();
+loadMacros("PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl",
+         );
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 0;
+
+Context("Vector");
+Context()->variables->add(t=>"Real");
+
+$p = Vector(random(-5,5), random(-5,5),random(-5,5));
+$v = Vector(random(1,7), random(1,7),random(1,7));
+$w = $v+Vector(1,2,3);
+
+($p1,$p2,$p3) = $p->value;
+($v1,$v2,$v3) = $v->value;
+($w1,$w2,$w3) = $w->value;
+if($v2==2*$v1 and $v3 == 3*$v1) {
+  $w = $w+Vector(0,0,1);
+}
+#vecteurs v et w non parallèles
+
+
+$pv = $p+3*$v;
+$pw = $p-2*$w;
+($pv1,$pv2,$pv3) = $pv->value;
+($pw1,$pw2,$pw3) = $pw->value;
+
+
+$pp1 =Formula("$pv1+$v1*t")->reduce;
+$pp2 =Formula("$pv2+$v2 t")->reduce;
+$pp3=Formula("$pv3+$v3 t")->reduce;
+
+$pp4 =Formula("$pw1+$w1 t")->reduce;
+$pp5 =Formula("$pw2+$w2 t")->reduce;
+$pp6 =Formula("$pw3+$w3 t")->reduce;
+
+$popup = PopUp(
+  ['?', 'concourantes','gauches',
+'parallèles'],
+  "concourantes",
+);
+$rep=Point($p1,$p2,$p3);
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer si les droites
+    \[\Delta_1:   x = $pp1, \quad  y = $pp2, \quad z = $pp3 \]
+et 
+\[\Delta_2:  x = $pp4 \quad y = $pp5  \quad z = $pp6 \]
+sont concourantes, gauches ou parallèles. Si elles sont concourantes, trouver leur point d'intersection; sinon, laisser la case réponse du point d'intersection en blanc.
+$BR
+$BR
+
+Les deux droites sont : \{ $popup->menu() \}
+$BR
+Point d'intersection : \{ans_rule(10)\},
+
+END_TEXT
+Context()->normalStrings;
+install_problem_grader(~~&std_problem_grader);
+ANS( $popup->cmp() );
+ANS($rep->cmp);
+
+
+ENDDOCUMENT();
+
+
+
+

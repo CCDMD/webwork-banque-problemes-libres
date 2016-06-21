@@ -1,0 +1,137 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('droite', 'point', 'vecteur', 'vecteur directeur', 'équations paramétriques')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution(Dartmouth)
+## TitleText1('Basic Multivariable Calculus')
+## AuthorText1('Marsden, Tromba, Weinstein')
+## EditionText1('3')
+## Section1('1.1')
+## Problem1('')
+##########################################SOURCE##################
+##Level(1)
+##Language(fr)
+
+DOCUMENT();
+loadMacros(  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl",
+          "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+);
+ 
+TEXT(beginproblem());
+## Do NOT show partial correct answers
+$showPartialCorrectAnswers = 0;
+
+## Give the coordinates of two random vectors (a,b,c) and (d,e,f)
+
+Context("Vector");
+
+$a = random(-5,5,1);
+$b = random(-10,10,1);
+$c = random(1,10,1);
+$P=Point($a,$b,$c);
+
+$d = random(1,10,1);
+$e = random(-5,5,1);
+$f = random(-10,10,1);
+$Q=Point($d,$e,$f);
+
+$V = Vector($Q-$P);
+$r = $d - $a;
+$s = $e - $b;
+$t = $f - $c;
+
+
+
+
+
+## Now the second part of the question
+## Equation of lines
+
+## Set up a select list by creating a new select list object.
+## $tf points to a new select list object.
+$tf = new_select_list();
+
+
+$tf->rf_print_q(~~&pop_up_list_print_q);
+
+
+# Choices presented to students
+
+$tf->ra_pop_up_list( [ 
+"No answer" => "?", 
+"V"  => "Oui", 
+"F" => "Non",
+]);
+  
+## Now assign to the select list object an array of "question", "answer" 
+## pairs from which a subset will be selected.
+##
+$line1 = "\( (x,y,z) = ($a, $b, $c) + t\, (- $r, - $s, - $t) \)";
+$line2 = "\( (x,y,z) = ($d, $e, $f) + t\, ($r, $s, $t) \)";
+$line3 = "\( (x,y,z) = ($a, $b, $c) + t\, ($r, $s, $t) \)";
+$line4 = "\( (x,y,z) = ($a, $b, $c) + t\, ($d, $e, $f) \)";
+$line5 = "\( (x,y,z) = ($d, $e, $f) + t\, ($a, $b, $c) \)";
+
+$tf -> qa ($line1, "V",
+                         $line2, "V", 
+                         $line3, "V", 
+                         $line4, "F",
+                         $line5, "F"
+                         );
+
+## Choose all five of the possible question-answer pairs
+$tf -> choose(5);
+
+
+
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+
+$BBOLD Vecteurs : $EBOLD Déterminer \( \vec v\), le vecteur du point  \(P $P
+\) au point \(Q $Q \).
+$BR
+
+\(\vec v \) =  \{ans_rule(40)\}
+
+$PAR 
+$BBOLD Équations de droites : $EBOLD Soit l'équation vectorielle de la droite passant par les deux points précédents.  Dire si les équations suivantes représentent cette droite.
+
+
+$BR
+
+
+Voici les équations :
+\{ $tf -> print_q \}
+$PAR
+
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($V->cmp());
+ANS(str_cmp( $tf->ra_correct_ans ) ) ;
+
+ENDDOCUMENT();
+
+
+
+

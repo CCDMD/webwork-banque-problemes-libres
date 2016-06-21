@@ -1,0 +1,94 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+## DBsubject(Algèbre linéaire)
+## DBchapter(Vecteurs et espace euclidien)
+## KEYWORDS('R^3', 'angle', 'produit scalaire', 'produit vectoriel', 'vecteur')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE################## 
+## Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+## originally from 5ed (with updates)
+## WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZTitleText1('Calculus')
+## ZAuthorText1('Hughes-Hallett')
+## ZEditionText1('5')
+## ZSection1('13.4')
+## ZProblem1('28')
+## ZTitleText2('Calculus')
+## ZAuthorText2('Hughes-Hallett')
+## ZEditionText2('6')
+## ZSection2('13.4')
+## ZProblem2('32')
+##########################################SOURCE##################
+##Level(2)
+##Language(fr)
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+Context("Numeric");
+$showPartialCorrectAnswers = 1;
+
+$dot = random(4,8,1);
+$cross = random(2,4,1);
+$dot++ if ( $dot == $cross );
+
+$tantheta = Compute("$cross/$dot");
+$theta = Compute("arctan($cross/$dot)");
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+
+Soit \( \vec v\cdot \vec w=$dot \) et
+\( ||\vec v\times\vec w|| = $cross \), et soit  \( \theta \) l'angle entre \( \vec v \) et \( \vec w \).  Déterminer 
+$PAR
+${BBOLD}a)$EBOLD
+\( \tan\theta = \) \{ ans_rule(45) \}
+
+$PAR
+${BBOLD}b)$EBOLD
+\( \theta  = \) \{ ans_rule(45) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($tantheta->cmp() );
+ANS($theta->cmp() );
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+$PAR SOLUTION $PAR
+
+${BBOLD}a)$EBOLD
+Puisque \(\vec v\cdot \vec w= ||\vec v||\,||\vec w||\cos \theta\) et
+\(||\vec v\times\vec w||=||\vec v||\, ||\vec w||\sin\theta\),
+\[
+\tan \theta = \frac{\sin\theta}{\cos\theta} =
+   \frac{||\vec v\times\vec w||}{\vec v\cdot \vec w} =
+   \frac{$cross}{$dot} = $tantheta.
+\]
+
+$PAR
+${BBOLD}b)$EBOLD
+Alors  \(\theta = \arctan($tantheta) = $theta\).
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

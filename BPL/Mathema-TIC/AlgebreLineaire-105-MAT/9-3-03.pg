@@ -1,0 +1,96 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Algèbre matricielle)
+## KEYWORDS('cofacteur', 'déterminant', 'inversion', 'matrice', 'matrice adjointe', 'matrice des cofacteurs', 'matrice inverse', 'mineur', 'élément')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################
+## ZInstitution('Rochester')
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('3.3')
+## Problem1('')
+#########################################SOURCE##################
+
+##Level(2)
+##Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"PGcourse.pl"
+) ;
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix')->variables->add(t=>"Real");
+
+
+do{$a11 = random(3,5,2) * random(-1,1,2);
+$a12 = random(2,6,1) * random(-1,1,2);
+$a21 = random(2,6,2) * random(-1,1,2);
+$a22 = random(3,5,2) * random(-1,1,2);
+$det_num = $a11 * $a22 - $a12 * $a21;} 
+until ($det_num!=0);
+
+
+do{$m = random(2,4,1);
+$n = random(2,4,1);}
+until ($m!=$n);
+
+$s = $m+$n;
+
+
+$detA = Formula("$det_num * $E**($s*t)"); 
+
+
+$A=Matrix([["$a11*e^{$m*t}", "$a12*e^{$n t}"], 
+				       ["$a21*e^{$m*t}", "$a22*e^{$n*t}"]]);
+
+
+$C=Matrix([["$a22*e^{$n*t}", "-$a21*e^{$m*t}"], 
+				       ["-$a12*e^{$n t}", "$a11*e^{$m*t}"]]);
+					   
+$ADJ=Matrix([["$a22*e^{$n*t}", "-$a12*e^{$n t}"], 
+				       [ "-$a21*e^{$m*t}", "$a11*e^{$m*t}"]]);
+					   
+$Ainv=Matrix([["$a22*e^{$n*t}/$detA", "-$a12*e^{$n t}/$detA"], 
+				       [ "-$a21*e^{$m*t}/$detA", "$a11*e^{$m*t}/$detA"]]);
+					   
+					   
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit \(A= $A\). Alors
+$BR
+$BR
+a) $BR
+\( \det(A) = \) \{ans_rule(5)\},  
+$BR
+b)$BR la matrice des cofacteurs \(C=\) \{$C->ans_array()\},
+$BR
+c) $BR \( adj(A)=\) \{$ADJ->ans_array()\},
+$BR
+$BR
+d)$BR \(A^{-1}=\) \{$Ainv->ans_array()\}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $detA->cmp );
+ANS( $C->cmp );
+ANS( $ADJ->cmp );
+ANS( $Ainv->cmp );
+ENDDOCUMENT();       # This should be the last executable line in the problem.

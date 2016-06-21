@@ -1,0 +1,103 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+## DBsubject(Géométrie)
+## DBchapter(Géométrie vectorielle)
+## KEYWORDS('droite', 'intersection', 'normal', 'parallèle', 'plan', 'produit vectoriel', 'vecteur', 'équation cartésienne')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##################   
+## Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+## originally from 5ed (with updates)
+## WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('5')
+## Section1('13.4')
+## Problem1('21')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('6')
+## Section2('13.4')
+## Problem2('25')
+## ZKEYWORDS('cross product', 'vectors')
+##########################################SOURCE##################
+
+##Level(3)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+
+
+
+
+Context("Vector");
+Context()->noreduce('(-x)-y','(-x)+y');  
+$showPartialCorrectAnswers = 1;
+
+@n1 = ( non_zero_random(-3,3,1), non_zero_random(-5,5,1),
+	non_zero_random(-6,6,1) );
+@n2 = ( non_zero_random(-4,4,1), non_zero_random(-3,3,1),
+	non_zero_random(-4,4,1) );
+$norm1 = Vector( @n1 );
+$norm2 = Vector( @n2 );
+
+## make sure that we didn't get parallel planes
+if ( $norm1->isParallel($norm2)) {
+    $n2[1]++;
+    $n2[2]++;
+    $norm2 = Vector( @n2 );
+}
+
+$d1 = random(1,8,1);
+$d2 = random(1,8,1);
+
+$p1lhs = Compute( "$n1[0]*x + $n1[1]*y + $n1[2]*z" )->reduce();
+$p2lhs = Compute( "$n2[0]*x + $n2[1]*y + $n2[2]*z" )->reduce();
+
+$vvec = $norm1 x $norm2;
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+Déterminer un vecteur  \(\vec v\) parallèle à l'intersection des plans
+\( \pi_1: $p1lhs = $d1 \)  et  \( \pi_2: $p2lhs = $d2 \).
+
+$PAR
+\(\vec v =\) \{ ans_rule(20) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($vvec->cmp( checker=>sub {
+    my ($correct, $student, $ansHash) = @_;
+    return $student->isParallel($correct);
+} ) );
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+$PAR SOLUTION $PAR
+
+Les vecteurs normaux aux plans sont \(\vec{n_1} = $norm1\) et
+\(\vec{n_2}= $norm2\).  La droite d'intersection est perpendiculaire aux deux vecteurs normaux (imaginer les pages d'un livre ouvert).
+Par conséquent, le vecteur est
+\(\vec{n_1} \times \vec{n_2} = $vvec\).
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

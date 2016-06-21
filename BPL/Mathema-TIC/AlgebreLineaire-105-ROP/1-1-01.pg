@@ -1,0 +1,93 @@
+#Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - 
+#Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de 
+#Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du 
+#ministère de l'Enseignement supérieur, de la Recherche et de la Science du 
+#Québec (MESRS) ainsi que par le Collège de Maisonneuve.
+
+
+## DBsubject(Algèbre linéaire)
+## DBchapter(Programmation linéaire)
+## KEYWORDS('deux variables', 'domaine admissible', 'maximisation', 'minimisation', 'optimisation sous contrainte dans le plan', 'polygone convexe')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Traduction française : Sylvie Charbonneau
+##########################################SOURCE##############
+## Find the max and min of a 2D feasible region by 
+## examining the objective at the vextex points.
+## A graphical approach is used to solve an LP.
+## WeBWorK problem written by Charles Fortin, 
+## <cfortin(at)champlaincollege.qc.ca(dot)ca>
+## Author('Charles Fortin')
+## Institution('ChamplainCollege')
+##########################################SOURCE##############
+
+##level(1)
+##Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGchoicemacros.pl",
+"PGgraphmacros.pl",
+);
+
+# make sure we're in the context we want
+Context("Numeric");
+Context()->variables->add(y=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');  
+$showPartialCorrectAnswers = 0;
+
+# The feasible region is the region enclosed by the curves y=mx+b
+# y=nx+a, x=0, and y=0. The variables are set up so that the 
+# intersection of the two curves y=mx+b and y=nx+a is (k,mk+b).
+# The slope of y=mx+b is positive and the slope of y=nx+a is negative.
+# q, which is the slope of the level curves, is positive and less than n.
+# The objective function is p = -qx+y.
+# Therefore the min occurs at (-b/m,0) and the max at (k,mk+b).
+
+$a = random(1,4);
+$n = random(3,6);
+$k = random(1,4);
+$q = random(1,$n);
+$b = random(1+$k*$n+$a,3+$k*$n+$a);
+$m = Real("($k*$n + $a - $b)/$k");
+
+$min = Real("$q*$b/$m");
+$max = Real("$m*$k+$b-$q*$k");
+
+
+
+$expr1=Formula("-$q x+y")->reduce;
+$expr2=Formula("y - $m x")->reduce;
+$expr3=Formula("y - $n x")->reduce;
+
+
+
+
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+Soit le problème suivant :
+\[ \left\lbrace  \begin{array}{rcl} p&=&$expr1 \\ 
+$expr2  &\leq& $b \\
+$expr3  &\leq& $a \\
+x &\geq& 0\\
+y &\geq& 0 \end{array}
+\right. \]
+Déterminer les valeurs maximale et minimale de \( p\) en traçant le domaine admissible dans le plan cartésien et en examinant la valeur de \( p\)  aux sommets. 
+$BR
+a) La valeur maximale de \( p\)  dans le domaine admissible est \{ ans_rule(10) \}
+$BR
+b) La valeur minimale de \( p\)  dans le domaine admissible est \{ ans_rule(10) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $max->cmp() );
+ANS( $min->cmp() );
+
+
+ENDDOCUMENT();
