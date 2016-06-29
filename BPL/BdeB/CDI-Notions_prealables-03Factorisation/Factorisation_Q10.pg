@@ -2,33 +2,27 @@
 ## Algebra: Basic Algebra
 ## ENDDESCRIPTION
 
-## KEYWORDS ('factoring','francais')
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('binôme', 'différence de cubes', 'factorisation')
 ## Traduction('Julie Tremblay')
-## Tagged by cmd6a 4/4/06
+## Language(fr)
+########### Source ##############
+## ZDate('2001/2002')
+## ZAuthor('Mark Schmitt')
+## ZInstitution('Rochester')
 
-## DBsubject('Algebra')
-## DBchapter('Basic Algebra')
-## DBsection('Algebraic Expressions')
-## Date('2001/2002')
-## Author('Mark Schmitt')
-## Institution('Rochester')
-## TitleText1('')
-## EditionText1('')
-## AuthorText1('')
-## Section1('')
-## Problem1('')
 
 DOCUMENT();        # This should be the first executable line in the problem.
 
 loadMacros(
-"PG.pl",
-"PGbasicmacros.pl",
-"PGchoicemacros.pl",
-"PGanswermacros.pl",
-"PGauxiliaryFunctions.pl",
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
 );
 
 $showPartialCorrectAnswers = 1;
+Context()->variables->add(y=>"Real");
 
 TEXT(beginproblem());
 
@@ -44,9 +38,12 @@ $c2 = $B**3;
 $e1 = $K*3;
 $e2 = $L*3;
 
+$poly = Compute("$c1*x^($e1) - $c2*y^($e2)")->reduce;
+
+Context()->texStrings;
 BEGIN_TEXT
 
-Le polynôme \($c1 x^{$e1} - $c2 y^{$e2} \) se factorise en
+Le polynôme \($poly \) se factorise en
 produit de deux polynômes, \(A \cdot B\), où le degré de \(A\) est
 plus grand que le degré de \(B\).  Déterminer \(A\) et \(B\).
 $BR
@@ -56,12 +53,13 @@ $BR
 \(B = \) \{ans_rule(30)\}
 
 END_TEXT
+Context()->normalStrings;
 
-$ans1 = "$A**2 * x**(2*$K) + $A*$B*x**$K*y**$L +($B**2)*y**(2*$L)";
-$ans2 = "$A*x**$K  - $B*y**$L";
+$ans1 = Compute("$A**2 * x**(2*$K) + $A*$B*x**$K*y**$L +($B**2)*y**(2*$L)")->reduce;
+$ans2 = Compute("$A*x**$K  - $B*y**$L")->reduce;
 
-ANS(fun_cmp ($ans1,var=>['x','y']));
-ANS(fun_cmp ($ans2,var=>['x','y']));
+ANS($ans1->cmp);
+ANS($ans2->cmp);
 
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.;

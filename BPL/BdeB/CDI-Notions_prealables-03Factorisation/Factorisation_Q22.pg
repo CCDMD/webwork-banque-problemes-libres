@@ -3,33 +3,32 @@
 ##  x^n(x+a)(x+b)
 ##ENDDESCRIPTION
 
-##KEYWORDS('algebra', 'factoring', 'francais')
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('factorisation', 'mise en évidence simple', 'méthode somme-produit', 'trinôme')
 ## Traduction('Julie Tremblay')
-## hcao tagged and PAID on 12-12-2003
+## Language(fr)
 
-## DBsubject('Algebra')
-## DBchapter('Basic Algebra')
-## DBsection('Algebraic Expressions')
+########## Source ################
 ## Date('6/3/2002')
-## Author('')
-## Institution('')
 ## TitleText1('College Algebra')
 ## EditionText1('3')
 ## AuthorText1('Stewart, Redlin, Watson')
 ## Section1('1.4')
 ## Problem1('69')
+
+
 DOCUMENT();        # This should be the first executable line in the problem.
 
 loadMacros(
-"PG.pl",
-"PGbasicmacros.pl",
-"PGchoicemacros.pl",
-"PGanswermacros.pl",
-"PGauxiliaryFunctions.pl"
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
 );
 
 TEXT(beginproblem());
 $showPartialCorrectAnswers = 1;
+Context()->variables->are(t=>"Real");
 
 $m = random(2,5,1);
 $a = random(1,4,1);
@@ -39,33 +38,25 @@ $m2 = $m+2;
 $t = $b-$a;
 $n = $a*$b;
 
-TEXT(EV2(<<EOT));
-Factoriser le polynôme \(t^$m2+$t t^$m1-$n t^$m\). La réponse doit être sous la forme
-\(t^N(t+A)(t+B)\), où \(A \lt B\). $BR $BR
-\(N\) =
-\{ans_rule(10) \},
+$poly = Compute("t^($m2)+$t*t^($m1)-$n*t^($m)")->reduce;
 
-EOT
-
-$ans = $m;
-ANS(num_cmp($ans));
-
-TEXT(EV2(<<EOT));
- \(A\) =
+Context()->texStrings;
+BEGIN_TEXT
+Factoriser le polynôme \($poly\). La réponse doit être sous la forme
+\(t^n(t+A)(t+B)\), où \(A \lt B\). $BR $BR
+\(n\) = \{ans_rule(10) \}, \(A\) = \{ans_rule(10) \} et \(B\) =
 \{ans_rule(10) \}
+END_TEXT
+Context()->normalStrings;
 
-EOT
+$ans1 = Real("$m");
+$ans2 = Real("-$a");
+$ans3 = Real("$b");
 
-$ans =  -$a;
-ANS(num_cmp($ans));
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
 
-TEXT(EV2(<<EOT));
-et \(B\) =
-\{ans_rule(10) \}
-$BR
-EOT
 
-$ans =  $b;
-ANS(num_cmp($ans));
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.

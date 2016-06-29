@@ -2,56 +2,52 @@
 ##  Algebra problem: factor a quadratic equation
 ##ENDDESCRIPTION
 
-##KEYWORDS('algebra', 'factoring', 'francais')
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('factorisation', 'méthode somme-produit', 'trinôme')
 ## Traduction('Julie Tremblay')
-## hcao tagged and PAID on 12-12-2003
+## Language(fr)
 
-## DBsubject('Algebra')
-## DBchapter('Basic Algebra')
-## DBsection('Algebraic Expressions')
+########## Source #############
 ## Date('6/3/2002')
-## Author('')
-## Institution('')
 ## TitleText1('College Algebra')
 ## EditionText1('3')
 ## AuthorText1('Stewart, Redlin, Watson')
 ## Section1('1.4')
 ## Problem1('47')
+
 DOCUMENT();        # This should be the first executable line in the problem.
 
 loadMacros(
-"PG.pl",
-"PGbasicmacros.pl",
-"PGchoicemacros.pl",
-"PGanswermacros.pl",
-"PGauxiliaryFunctions.pl"
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
 );
 
 TEXT(beginproblem());
 $showPartialCorrectAnswers = 1;
 
-$a = random(1,3,1);
-$b = random(4,6,1);
+$a = random(1,6,1);
+do{$b = random(2,8,1);} until ($b > $a);
 $t = $a+$b;
 $n = $a*$b;
 
-TEXT(EV2(<<EOT));
-Factoriser le polynôme \(x^2-$t x+$n\). La réponse doit être sous la forme
+$poly = Compute("x^2-$t*x+$n")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Factoriser le polynôme \($poly\). La réponse doit être sous la forme
 \((x+A)(x+B)\), où \(A \lt B\). $BR $BR
- \(A\) =
+ \(A\) = \{ans_rule(10) \}
+ et \(B\) =
 \{ans_rule(10) \}
-EOT
+END_TEXT
+Context()->normalStrings;
 
-$ans = -$b;
-ANS(num_cmp($ans));
+$ans1 = Real(-$b);
+$ans2 = Real(-$a);
 
-TEXT(EV2(<<EOT));
-et \(B\) =
-\{ans_rule(10) \}
-$BR
-EOT
-
-$ans =  -$a;
-ANS(num_cmp($ans));
+ANS($ans1->cmp);
+ANS($ans2->cmp);
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.

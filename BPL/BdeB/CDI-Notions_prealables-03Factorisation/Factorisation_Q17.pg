@@ -2,28 +2,19 @@
 ## Algebra: Basic Algebra
 ## ENDDESCRIPTION
 
-## KEYWORDS ('factoring','francais')
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('binôme', 'différence de carrés', 'factorisation')
 ## Traduction('Julie Tremblay')
-## Tagged by cmd6a 4/4/06
+## Language(fr)
 
-## DBsubject('Algebra')
-## DBchapter('Basic Algebra')
-## DBsection('Algebraic Expressions')
-## Date('')
-## Author('')
-## Institution('Rochester')
-## TitleText1('')
-## EditionText1('')
-## AuthorText1('')
-## Section1('')
-## Problem1('')
 
 
 DOCUMENT();     
-loadMacros("PGbasicmacros.pl",     
-           "PGchoicemacros.pl",     
-           "PGanswermacros.pl",
-           "PGauxiliaryFunctions.pl"    
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
 );     
 
 TEXT(beginproblem());
@@ -34,14 +25,27 @@ $a2=random(2,7,1);
 $a3=$a1**2;
 $a4=$a2**2;
 
+$poly = Compute("$a4-$a3*x^2")->reduce;
+
+Context()->texStrings;
 BEGIN_TEXT
 
-Factoriser \( $a4-$a3 x^2 \),  sous la forme $PAR
-\( $a4-$a3 x^2=( A-Bx)(C+ Dx) \)
+Factoriser \( $poly\),  sous la forme $PAR
+\( $poly=( A-Bx)(C+ Dx) \)
 $PAR
-A = \{ans_rule(5) \}, B = \{ans_rule(5) \}, C = \{ans_rule(5) \} et D = \{ans_rule(5) \}. $BR
+\(A =\) \{ans_rule(5) \}, \(B =\) \{ans_rule(5) \},$BR
+\(C =\) \{ans_rule(5) \} et \(D =\) \{ans_rule(5) \}. $BR
 END_TEXT
+Context()->normalStrings;
 
+$ans1 = Real("$a2");
+$ans2 = Real("$a1");
+$ans3 = Real("$a2");
+$ans4 = Real("$a1");
 
-ANS(num_cmp([$a2,$a1,$a2,$a1], relTol=>.01));
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+ANS($ans4->cmp);
+
 ENDDOCUMENT();

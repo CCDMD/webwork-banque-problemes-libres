@@ -2,33 +2,28 @@
 ## Algebra: Basic Algebra
 ## ENDDESCRIPTION
 
-## KEYWORDS ('factoring','francais')
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('différence de carrés', 'factorisation', 'trinôme carré parfait')
 ## Traduction('Julie Tremblay')
-## Tagged by cmd6a 4/4/06
+## Language(fr)
 
-## DBsubject('Algebra')
-## DBchapter('Basic Algebra')
-## DBsection('Algebraic Expressions')
-## Date('2001/2002')
-## Author('Mark Schmitt')
-## Institution('Rochester')
-## TitleText1('')
-## EditionText1('')
-## AuthorText1('')
-## Section1('')
-## Problem1('')
+########## Source ################
+## ZDate('2001/2002')
+## ZAuthor('Mark Schmitt')
+## ZInstitution('Rochester')
+
 
 DOCUMENT();        # This should be the first executable line in the problem.
 
 loadMacros(
-"PG.pl",
-"PGbasicmacros.pl",
-"PGchoicemacros.pl",
-"PGanswermacros.pl",
-"PGauxiliaryFunctions.pl",
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
 );
 
 $showPartialCorrectAnswers = 1;
+Context()->variables->are(a=>"Real",b=>"Real",c=>"Real");
 
 TEXT(beginproblem());
 
@@ -46,26 +41,31 @@ $c4 = -$C**2;
 $e = random(2,7,1);
 $e2 = 2*$e;
 
-$E = non_zero_random(-8,8,2);
+$E = non_zero_random(2,8,2);
 
+$poly = Compute("$c1*a^($e2) + $c2*a^($e)*b + $c3*b^2 + $c4*c^($E)")->reduce;
+
+Context()->texStrings;
 BEGIN_TEXT
 
-Le polynôme \($c1 a^{$e2} + $c2 a^{$e}b + $c3 b^2 + $c4 c^{$E}\) 
+Le polynôme \($poly\) 
 se factorise en produit
 de deux polynômes, \(A \cdot B \), 
 où le coefficient de \(c\) dans \(A\) est
 inférieur au coefficient de \(c\) dans \(B\). Déterminer \(A\) et \(B\).
 $BR
 $BR
-\(A = \) \{ans_rule(10)\}
+\(A = \) \{ans_rule(20)\}
 $BR
-\(B = \) \{ans_rule(10)\}
+\(B = \) \{ans_rule(20)\}
 END_TEXT
+Context()->normalStrings;
 
-$ans1 = "$A*a**$e+$B*b-$C*c**($E/2)";
-$ans2 = "$A*a**$e+$B*b+$C*c**($E/2)";
+$ans1 = Compute("$A*a**$e+$B*b-$C*c**($E/2)")->reduce;
+$ans2 = Compute("$A*a**$e+$B*b+$C*c**($E/2)")->reduce;
 
-ANS(fun_cmp ($ans1, var=>['a','b','c']));
-ANS(fun_cmp ($ans2, var=>['a','b','c']));
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+
 ENDDOCUMENT();        # This should be the last executable line in the problem.;
 

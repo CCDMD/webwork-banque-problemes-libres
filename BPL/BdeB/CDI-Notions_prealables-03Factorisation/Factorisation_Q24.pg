@@ -2,30 +2,22 @@
 ## Algebra: Basic Algebra
 ## ENDDESCRIPTION
 
-## KEYWORDS ('factoring','francais')
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('factorisation', 'méthode somme-produit', 'trinôme')
 ## Traduction('Julie Tremblay')
-## Tagged by cmd6a 4/4/06
+## Language(fr)
 
-## DBsubject('Algebra')
-## DBchapter('Basic Algebra')
-## DBsection('Algebraic Expressions')
-## Date('')
-## Author('')
-## Institution('Rochester')
-## TitleText1('')
-## EditionText1('')
-## AuthorText1('')
-## Section1('')
-## Problem1('')
+########## Source #############
+## ZInstitution('Rochester')
+
 
 DOCUMENT();        # This should be the first executable line in the problem.
 
 loadMacros(
-"PG.pl",
-"PGbasicmacros.pl",
-"PGchoicemacros.pl",
-"PGanswermacros.pl",
-"PGauxiliaryFunctions.pl"
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
 );
 
 TEXT(beginproblem());
@@ -36,23 +28,23 @@ $b = random(6,9,1);
 $t = -($a-$b);
 $n = $a*$b;
 
-TEXT(EV2(<<EOT));
-Factoriser le polynôme \(x^2-$t x-$n\). La réponse doit être sous la forme
-\((x+A)(x+B)\), où \(A \lt B\). $BR $BR
-\(A\) =
+$poly = Compute("x^2-$t*x-$n")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Factoriser le polynôme \($poly\). La réponse doit être sous la forme
+\((x+A)(x+B)\), où \(A \lt B\). 
+$PAR
+\(A\) = \{ans_rule(10) \} et \(B\) =
 \{ans_rule(10) \}
-EOT
+END_TEXT
+Context()->normalStrings;
 
-$ans = -$b;
-ANS(num_cmp($ans));
+$ans1 = Real(-$b);
+$ans2 = Real($a);
 
-TEXT(EV2(<<EOT));
-et \(B\) =
-\{ans_rule(10) \}
-$BR
-EOT
+ANS($ans1->cmp);
+ANS($ans2->cmp);
 
-$ans =  $a;
-ANS(num_cmp($ans));
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.
