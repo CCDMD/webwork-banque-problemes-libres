@@ -1,0 +1,80 @@
+##DESCRIPTION
+##  Stewart, Concepts, 5.4, #19
+##  Find a derivative of a given integral
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('intégrale définie', 'propriétés', 'théorème fondamental du calcul')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/Utah/AP_Calculus_I/set5_The_Integral/sc5_4_19a.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Fundamental theorem of calculus)
+## ZInstitution(Univeristy of Utah)
+## ZAuthor(Utah ww group)
+## ZMLT(FTC_01)
+## ZLevel(3)
+## TitleText1('Calculus I')
+## AuthorText1('Jerrold Marsden and Alan Weinstein')
+## EditionText1('2')
+## Section1('.')
+## Problem1('')
+###############Source###############
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "answerHints.pl",
+  "PGcourse.pl", 
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+Context()->variables->add(u =>'Real');
+
+$a= random(2, 9, 1);
+do {$b= random(2, 9, 1);} until ($a != $b);
+$c= random(1, 5, 1);
+$d= random(1, 5, 1);
+
+$showHint = 4; 
+
+BEGIN_TEXT
+Déterminer la dérivée de \[ g(x)  = \int_{${a}x}^{${b}x} \frac{u+$c}{u-$d} du \]
+$BR \(g'(x) =\) \{ans_rule(35)\}
+$BR
+$HR
+${BBOLD}Note :$EBOLD ${BITALIC}Un indice sera donné après $showHint tentatives.$EITALIC
+END_TEXT
+
+
+BEGIN_HINT
+ \[ \int_{${a}x}^{${b}x} \frac{u+$c}{u-$d} du =
+ \int_{0}^{${b}x} \frac{u+$c}{u-$d} du + 
+\int_{${a}x}^{0} \frac{u+$c}{u-$d} du
+\]
+END_HINT
+
+
+$answer=Compute("$b*($b*x+$c)/($b*x-$d)-$a*($a*x+$c)/($a*x-$d)");
+
+ANS($answer->cmp->withPostFilter(AnswerHints( 
+  Compute("$b*($b*u+$c)/($b*u-$d)-$a*($a*u+$c)/($a*u-$d)") => "Vous n'avez pas la bonne variable.",
+  )));
+  
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

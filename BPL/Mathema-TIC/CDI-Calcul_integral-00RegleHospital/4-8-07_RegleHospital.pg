@@ -1,0 +1,95 @@
+##DESCRIPTION
+##  Find limits using L'Hopital's rule
+##Ellis & Gulick section 6.6
+##Authored by Zig Fiedorowicz 4/17/2000
+##ENDDESCRIPTION
+
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('0/0', 'fonction exponentielle', 'fonction trigonométrique', 'forme indéterminée', 'limite', 'règle de L\'Hospital')
+ 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/Rochester/setDerivatives21LHospital/osu_dr_21_2_mo.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Indeterminate forms and L'Hopital's rule)
+## ZDate(4/17/2000)
+## ZInstitution(Rochester)
+## ZLevel(3)
+###############Source###############
+
+DOCUMENT();
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "PGcourse.pl",      # Customization file for the course
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Numeric");
+Context()->flags->set(useBaseTenLog => 1);
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+$a = random(2,8,1);
+do{$b = random(3,9,1);} until($a!=$b);
+$b1 = $b +1;
+
+
+$fun1 = Compute("(1-cos($a x))/(1-cos($b x))");
+$fun2 = Compute("($b1^x-$b^x -1)/(x^2-1)");
+
+$aa = $a*$a;
+$bb = $b*$b;
+$limit1 = Compute("$aa/$bb");
+$limit2 = Compute("($b1*ln($b1)-$b*ln($b))/2");
+
+
+##############################################################
+#
+#  Text
+#
+#
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer les limites suivantes, en utilisant la règle de L'Hospital s'il y a lieu.$BR
+Entrer $BBOLD inf$EBOLD pour \(\infty\), $BBOLD -inf$EBOLD pour \(-\infty\) et $BBOLD nep$EBOLD si la limite n'existe pas.
+$PAR
+\( \displaystyle \lim_{x\to 0} $fun1 =\) \{ ans_rule()\}
+$PAR
+
+\( \displaystyle \lim_{x\to 1} $fun2 =\)  \{ ans_rule()\}
+END_TEXT
+Context()->normalStrings;
+
+
+##############################################################
+#
+#  Answers
+#
+#
+
+ANS($limit1->cmp, 
+    $limit2->cmp
+);
+
+
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

@@ -1,0 +1,60 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('aire', 'approximation', 'méthode du point milieu', 'partition régulière', 'somme de Riemann')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_5_2/Stewart5_5_2_3.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Riemann sums)
+## ZInstitution(UCSB)
+## ZMLT(small)
+## ZLevel(2)
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$a=random(1,6,1);
+$b= $a+5;
+$c=random(2,6,1);
+$Delta = ($b-$a)/5;  ### égale 1
+
+$f = Formula("sqrt(x)-$c");
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \(f(x) = $f,\,\, $a \le x \le $b,\) calculer la somme de Riemann avec \(n = 5\), en utilisant le point milieu de chaque sous-intervalle pour la sommation.  Donner une réponse précise à trois décimales près.
+
+$PAR
+\(M_{5} = \) \{ans_rule(40)\}
+
+END_TEXT
+Context()->normalStrings;
+
+$Mn = 0;
+
+foreach $i (1..5) {
+$Mn = $Mn + $f->eval(x=>"$a + (2*$i-1)*$Delta/2") * $Delta;
+}
+
+ANS(Real($Mn)->cmp(tol => 0.001, 
+     tolType => "absolute",));
+
+
+ENDDOCUMENT();

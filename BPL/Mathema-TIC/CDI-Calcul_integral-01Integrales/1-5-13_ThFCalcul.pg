@@ -1,0 +1,70 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction polynomiale', 'formule d\'intégration de base', 'intégrale définie', 'propriétés de l\'intégrale', 'théorème fondamental du calcul')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_5_3/Stewart5_5_3_21.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Fundamental theorem of calculus)
+## ZInstitution(UCSB)
+## ZLevel(2)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('5.3')
+## Problem1('21')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+Context()->strings->add(nep=>{});
+Context()->noreduce('(-x)-y','(-x)+y');
+
+
+$a=random(1,10,1)*random(-1,1,2);
+$b=random(1,10,1)*random(-1,1,2);
+
+$f = Compute("$a*x+$b")->reduce;
+
+# bornes
+$c = random(1,5,1);
+$d = $c + random(2,5,1);
+
+BEGIN_TEXT
+Utiliser le théorème fondamental du calcul pour évaluer, si possible,
+\[\int_{$c}^{\,$d}{($a x + $b)}\,dx.\]
+Si l'intégrale n'existe pas, entrer ${BBOLD}nep$EBOLD comme réponse.
+
+$PAR
+Réponse : \{ans_rule(30)\}
+
+END_TEXT
+
+
+$F = Compute("$a*x^2/2 + $b*x");
+$Fd = $F->eval(x=>$d);
+$Fc = $F->eval(x=>$c);
+$ans = Compute("$Fd - $Fc");
+
+ANS($ans->cmp);
+
+ENDDOCUMENT();

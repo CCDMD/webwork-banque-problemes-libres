@@ -1,0 +1,107 @@
+## DESCRIPTION
+##   Getting Comfortable with Sigma Notation
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('notation', 'sommation', 'terme général')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level()    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter('Infinite Sequences and Series')
+## ZDBsection('Series')
+## ZDate('8/23/07')
+## ZAuthor('K. Lesh')
+## ZInstitution('Union')
+###############Source###############
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+	"PGstandard.pl",
+	"MathObjects.pl",
+	"PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+Context()->variables->are(k=>'Real');
+
+# Construit le terme général ak+b pour la question a
+
+$a = random(2,4);
+$b = non_zero_random(-$a+1,8);
+$c = random(20,50,5);
+
+foreach my $i (1..5) {
+$ak[$i] = $a*$i+$b;
+}
+
+$ac = Compute("$a*$c+$b");
+
+
+# Construit le terme général (-1)^n bk) ou (-1)^n+1 bk pour la question b
+# où bk = k^2, k^3, 2^k ou 3^k
+
+$sgn = random(0,1);
+@fk = (Formula("(-1)^(k+$sgn)*k^2")->reduce,
+Formula("(-1)^(k+$sgn)*k^3")->reduce,
+Formula("(-1)^(k+$sgn)*2^k")->reduce,
+Formula("(-1)^(k+$sgn)*3^k")->reduce);
+
+## choix de bk
+$j = random(0,3);
+$fk[$j]->{test_points} = [[1],[2],[3],[4],[5]];
+
+foreach my $i (1..5) {
+$bk[$i] = $fk[$j]->eval(k=>$i);
+}
+
+
+###################################
+# Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Pour chaque somme, préciser le terme général.
+$PAR
+(a) Trouver \(a_k\) et \(n\) tels que
+\[ $ak[1] + $ak[2] + $ak[3] + $ak[4] + $ak[5] + \dots + $ac = \sum\limits_{k=1}^{n}  a_k.\]
+\(a_k = \) \{ans_rule(15)\} $BR
+\(n = \) \{ans_rule(15)\} $BR
+$PAR
+(b) Trouver \(b_k\) tel que
+\[$bk[1] + $bk[2] + $bk[3] + $bk[4] + $bk[5] = \sum\limits_{k=1}^{5}  b_k. \]
+\(b_k \) = \{ans_rule(15)\}
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+
+$ansa = Compute("$a*k+$b") ;
+$na = Compute("$c");
+
+ANS($ansa->cmp);
+ANS($na->cmp);
+ANS($fk[$j]->cmp);
+
+###################################
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

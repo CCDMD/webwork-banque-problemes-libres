@@ -1,0 +1,129 @@
+#DESCRIPTION
+##  Calculus: The fundamental theorem of calculus
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('aire', 'graphique', 'théorème fondamental du calcul')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_5_4_20.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Fundamental theorem of calculus)
+## ZDate(03/01/2011)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(FTC_07)
+## ZLevel(4)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('5.4')
+## Problem1('20')
+###############Source###############
+
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+  "PGcourse.pl", 
+);
+#####################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+$refreshCachedImages = 1;
+
+#####################################################################
+
+Context("Numeric");
+Context()->strings->add(aucune=>{},EmptySet=>{alias=>"aucune"});
+
+$a = random(1,2,1);
+
+if ($a==1){
+
+$f = Compute("-10/(x+1)*sin(pi*(x-7)/2+pi/2)");
+
+$ans3 = List(2);
+}
+
+if ($a==2){
+
+$f = Compute("-10/(-x+11)*sin(pi*(-x+3)/2+pi/2)");
+
+$ans3 = List(10);
+}
+
+$ans1 = List(2,6,10);
+$ans2 = List(0,4,8);
+
+###############################################################
+
+$w = 400;  # graph size
+$tw = 500; # graph size in TeX
+
+$graph1 = init_graph(-1,-6,11,6,'axes'=>[0,0],'ticks'=>[12,12],'grid'=>[12,12],'size'=>[500,500]);
+$graph1 -> lb('reset');
+
+$p1 = FEQ("$f for x in <-0.5,2> using color:blue weight:2");
+$p2 = FEQ("$f for x in <2,5> using color:blue weight:2");
+$p3 = FEQ("$f for x in <5,8> using color:blue weight:2");
+$p4 = FEQ("$f for x in <8,10.5> using color:blue weight:2");
+
+foreach my $i (1..10) {
+  $graph1 -> lb(new Label ( $i,-0.4, $i,'black','center','middle'));
+}
+
+$graph1 -> lb(new Label ( -0.4,1,1,'black','center','middle'));
+$graph1 -> lb(new Label ( 4.5,4.5,"f",'black','center','middle'));
+
+plot_functions($graph1,$p1,$p2,$p3,$p4);
+
+###############################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \(g(x) = \int_0^x f(t)\,dt,\) où \(f\) est la fonction représentée ci-dessous.  Répondre aux questions suivantes pour les valeurs $BBOLD $BITALIC uniquement dans l'intervalle \([0,10]\).$EITALIC $EBOLD
+$PAR
+$BCENTER
+\{image(insertGraph($graph1),width=>$w,height=>$w,tex_size=>$tw)\}
+$ECENTER
+$HR
+$BBOLD 1. $EBOLD Pour quelles valeurs de \(x\) la fonction \(g\) a-t-elle un maximum relatif? $BR
+Réponse (séparer par des virgules) : \(x = \) \{ans_rule(30)\} $PAR
+$BBOLD 2. $EBOLD Pour quelles valeurs de \(x\) la fonction \(g\) a-t-elle un minimum relatif? $BR
+Réponse (séparer par des virgules) : \(x = \) \{ans_rule(30)\} $PAR
+$BBOLD 3. $EBOLD Pour quelle valeur de \(x\) la fonction \(g\) a-t-elle un maximum absolu?$BR
+Réponse : \(x = \) \{ans_rule(20)\}
+$HR
+$BBOLD Note : $EBOLD $BITALIC Cliquer sur le graphique pour agrandir l'image.$EITALIC
+$HR
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+Context("Numeric");
+ANS(
+$ans1->cmp(showHints=>0,showTypeWarnings=>0,tolType=>'absolute',tolerance=>.2));
+ANS(
+$ans2->cmp(showHints=>0,showTypeWarnings=>0,tolType=>'absolute',tolerance=>.2));
+ANS( $ans3->cmp(showHints=>0,showTypeWarnings=>0,tolType=>'absolute',tolerance=>.2) );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

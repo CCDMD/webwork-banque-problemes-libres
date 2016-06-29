@@ -1,0 +1,56 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('condition initiale', 'constante d\'intégration', 'fonction trigonométrique', 'primitive')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_4_10/Stewart5_4_10_35.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Antiderivatives (with trigonometric functions))
+## ZInstitution(UCSB)
+## ZMLT(AntiSinPlusCos)
+## ZLevel(3)
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "answerHints.pl",
+  "PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+Context()->noreduce('(-x)-y');  
+
+# conditions initiales
+$a=non_zero_random(-20,20,1);
+$b=non_zero_random(-20,20,1);
+
+$ans = Formula("-sin(x)-cos(x)+($b+1)*x+($a+1)")->reduce;
+
+BEGIN_TEXT
+Déterminer \(f\) si \(f''(x) = \sin(x)+\cos(x),\,f(0)=$a,\,f'(0)=$b.\)
+
+$PAR
+\(f(x) =\) \{ans_rule(50)\}
+
+END_TEXT
+
+ANS($ans->cmp->withPostFilter(AnswerHints( 
+  Formula("-sin(x)-cos(x)+($b-1)*x+($a+1)") => "Tu as peut-être dérivé au lieu de trouver les primitives.",
+)));
+
+ENDDOCUMENT();

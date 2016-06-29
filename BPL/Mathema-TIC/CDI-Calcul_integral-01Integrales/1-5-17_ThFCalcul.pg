@@ -1,0 +1,65 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction inverse', 'formule d\'intégration de base', 'intégrale définie', 'théorème fondamental du calcul')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_5_3/Stewart5_5_3_35.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Fundamental theorem of calculus)
+## ZInstitution(UCSB)
+## ZMLT(FTC_06)
+## ZLevel(2)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('5.3')
+## Problem1('35')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+Context()->strings->add(nep=>{});
+Context()->flags->set(useBaseTenLog=>1);
+
+$a=random(2,10,1);
+
+# bornes
+$b=random(1,8,1);
+$c=$b + random(1,6);
+
+BEGIN_TEXT
+Utiliser le théorème fondamental du calcul pour évaluer, si possible,
+\[\int_{$b}^{\,$c}{\frac{1}{$a x}}\,dx.\]
+Si l'intégrale n'existe pas, entrer ${BBOLD}nep$EBOLD comme réponse.
+
+$PAR
+Réponse : \{ans_rule(30)\}
+
+END_TEXT
+
+$f = Compute("1/$a * ln(x)");
+$fc = $f->eval(x=>"$c");
+$fb = $f->eval(x=>"$b");
+$ans = Compute("$fc - $fb");
+
+ANS($ans->cmp);
+
+ENDDOCUMENT();

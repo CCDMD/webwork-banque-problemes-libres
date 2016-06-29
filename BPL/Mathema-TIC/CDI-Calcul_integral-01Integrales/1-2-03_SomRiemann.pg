@@ -1,0 +1,84 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('aire', 'limite', 'partition régulière', 'rectangles à droite', 'somme de Riemann')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_5_1/Stewart5_5_1_17.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Riemann sums)
+## ZInstitution(UCSB)
+## ZLevel(2)
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+"PGchoicemacros.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+# intervalle [1,b]
+$a = 1;
+$b=random(3,15);
+$bma = $b - $a;
+
+BEGIN_TEXT
+$PAR
+
+Définition : L'aire \(A\) de la région \(S\) sous la courbe de la fonction continue \(f\) est la limite de la somme des aires de rectangles 
+\[A= \lim_{n\rightarrow\infty} D_n=\lim_{n\rightarrow\infty}\Big(f(x_1)\Delta x+f(x_2)\Delta x+...+f(x_n)\Delta x\Big)\]
+$BR
+où \(D_n\) est une somme de Riemann de la fonction \(f\) avec la méthode des rectangles à droite.
+
+$PAR
+
+END_TEXT
+
+# Make a new checkbox multiple choice
+$cmc = new_checkbox_multiple_choice();
+
+# Insert some  questions and matching answers in the q/a list.
+$cmc -> qa (
+	"Soit la fonction \(f(x)=\sqrt[4]{x},\quad $a \le x \le $b.\)  À partir de la définition ci-dessus, déterminer quelle expression de limite représente l'aire sous la courbe de \(f\).",  
+        "\( \displaystyle \lim_{n \rightarrow \infty} \sum_{i=1}^{n} \sqrt[4]{$a+\frac{$bma i}{n}} \frac{$bma}{n} \)",
+        );
+
+# Insert some incorrect answers
+$cmc -> extra(
+	"\( \displaystyle \lim_{n \rightarrow \infty} \sum_{i=1}^{n} \sqrt[4]{\frac{$bma i}{n}} \frac{$bma}{n} \)",
+        "\( \displaystyle \lim_{n \rightarrow \infty} \sum_{i=1}^{n} \sqrt[4]{$a +\frac{$b i}{n}} \frac{$b}{n}\)",
+        "\(  \displaystyle \lim_{n \rightarrow \infty} \sum_{i=1}^{n} \sqrt[4]{\frac{$b i}{n}} \)",
+		"\(  \displaystyle \lim_{n \rightarrow \infty} \sum_{i=1}^{$b} \sqrt[4]{x} \)",
+        );
+
+# Print the text using $cmc->print_q for the questions and
+# $cmc->print_a to print the answers.
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+\{$cmc -> print_q \}
+$PAR
+\{$cmc -> print_a \}
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+ANS( checkbox_cmp( $cmc->correct_ans )   ) ;
+
+ENDDOCUMENT();

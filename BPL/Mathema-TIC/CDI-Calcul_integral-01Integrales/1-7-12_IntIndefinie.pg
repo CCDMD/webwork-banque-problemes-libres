@@ -1,0 +1,75 @@
+## DESCRIPTION
+## Calculus: Indefinite Integrals and the Net Change Theorem
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction constante', 'fonction puissance', 'fonction trigonométrique inverse', 'intégrale indéfinie', 'propriétés de l\'intégrale')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/UVA-Stew5e/setUVA-Stew5e-C05S04-IndefInts/5-4-10.pg
+## ZDate(6/3/2005)
+## ZInstitution(UVA)
+## ZAuthor(Jeff Holt)
+## MLT(polyarctan)
+## ZLevel(2)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('5.4')
+## Problem1('10')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Stewart')
+## EditionText2('6')
+## Section2('5.4')
+## Problem2('')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+  "parserFormulaUpToConstant.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,8,1);
+$b = random(2,6,1);
+$p = random(3,6,1);
+
+# choix de la fct trigo inverse
+$c = random(0,1);
+@f = (Compute("$b/(x^2+1)"),Compute("$b/sqrt(1-x^2)"));
+@prim = (Compute("$b*arctan(x)"),Compute("$b*arcsin(x)"));
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer l'intégrale indéfinie :
+$BR
+$PAR
+   \( \displaystyle{ \int \left(x^{$p} + $a + $f[$c]\right) \,dx} = \)
+   \{ans_rule(35) \} + \( C\).
+END_TEXT
+Context()->normalStrings;
+
+$p1 = $p+1;
+$ans = Formula("x^($p1)/($p1)+$a*x+$prim[$c]")->reduce;
+$ans->{limits} = [-1,1];
+
+ANS($ans->cmp(upToConstant=>1));
+
+ENDDOCUMENT();

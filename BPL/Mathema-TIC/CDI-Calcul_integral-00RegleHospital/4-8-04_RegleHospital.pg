@@ -1,0 +1,73 @@
+##DESCRIPTION
+## Find a limit using L'Hopital's applied three times.
+## the existing pl/setDerivatives21LHospital/osu_dr_21_2.pg has part (a) requiring two applications
+## by Jim.Swift@nau.edu
+## JWS put in $lops = MODES(TeX=>"l'H\^opital's",HTML=>"l'Hospital's");
+##ENDDESCRIPTION
+
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('0/0', 'fonction exponentielle', 'forme indéterminée', 'limite', 'règle de L\'Hospital')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/NAU/setCalcI/lHospitalThrice.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Indeterminate forms and L'Hopital's rule)
+## ZInstitution(NAU)
+## ZAuthor(Jim Swift)
+## ZMLT(Indeterminate-ExponentialNoTrig)
+## ZLevel(2)
+###############Source###############
+
+
+DOCUMENT();       ##This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+Context()->noreduce('(-x)-y','(-x)+y');   
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+$a = non_zero_random(-5,5,2);  # I made $a odd to avoid common factors in numerator and denominator
+$b = random(1,9,1);
+$sign = random(-1,1,2);
+
+$pm2 = $sign*2;
+#$ax = nicestring([$a],['x']); ## avoids 1 x
+#$numTerm = nicestring([-$a**2*$sign, -2*$a*$sign, -2*$sign], ['x^2', 'x', '']);
+#$denom = nicestring([$b], ['x^3']); ## avoids 1 x^3
+
+$num = Compute("$pm2*e^{$a*x}-$a**2*$sign*x^2 -2*$a*$sign*x -2*$sign")->reduce;
+$f = Formula("$num/($b*x^3)")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer la limite en appliquant plusieurs fois la règle de L'Hospital.
+$BR $BR
+\(\displaystyle \lim_{ x \rightarrow 0 } $f = \) \{ans_rule(10) \} .
+END_TEXT
+Context()->normalStrings;
+
+
+$n = $sign*$a**3;
+$d = 3*$b;
+$ans=Compute("$n/$d");
+ANS($ans->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

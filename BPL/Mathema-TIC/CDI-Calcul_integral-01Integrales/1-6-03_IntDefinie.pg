@@ -1,0 +1,110 @@
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction trigonométrique', 'formule d\'intégration de base', 'intégrale définie')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/Indiana/Indiana_setIntegrals3Definite/s4_4_41.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Definite integrals (with trigonometric functions))
+## ZDate(8/23/07)
+## ZInstitution(Univeristy of Utah)
+## ZAuthor(Utah ww group)
+## ZLevel(2)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('5.3')
+## Problem1('35')
+## TitleText2('Calculus')
+## AuthorText2('Dale Varberg, Edwin J. Purcell, and Steven E. Rigdon')
+## EditionText2('9')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a1 = random(2,10,1);
+
+# borne inférieure
+$a = 0;
+
+# choix de la fonction
+
+$i = random(0,1);
+@t = ("\sin","\cos");
+
+if($i == 0) {
+$f = Compute("sin(x)");
+$btex = "\pi";
+$b = pi;
+$F = Compute("-cos(x)")->reduce;
+$j = 1;
+$s = "-";
+} else {
+$f = Compute("cos(x)");
+$btex = "\pi/2";
+$b = pi/2;
+$F = Compute("sin(x)");
+$j = 0;
+$s = " ";
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer l'intégrale définie.
+\[ \int_{ 0 } ^ { $btex } $a1 $f dx \]
+Réponse : \{ans_rule(30) \}
+END_TEXT
+Context()->normalStrings;
+
+$Fb = $F->eval(x=>$b);
+$Fa = $F->eval(x=>$a);
+
+$ans = Compute("$a1*($Fb - $Fa)");
+ANS($ans->cmp);
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+On peut évaluer cette intégrale parce qu'on sait que la primitive de \($t[$i](x)\) est :
+\[ F(x) = $s $t[$j](x) + C\] 
+En appliquant le théorème fondamental du calcul, on obtient :
+\[
+\begin{aligned}
+\int_0^{$btex} $a1 $f dx 
+&=	$a1 \int_0^{$btex} $f dx	\\
+&= $a1 \left(F($btex) - F(0) \right)\\
+&=	$a1 \left( $s $t[$j](x) \Big\vert_0^{$btex} \right)	\\
+&=	$s $a1 \left( $t[$j]($btex) - $t[$j](0) \right) \\
+&= $s $a1( $s $Fb - $s $Fa) = $ans
+\end{aligned}
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

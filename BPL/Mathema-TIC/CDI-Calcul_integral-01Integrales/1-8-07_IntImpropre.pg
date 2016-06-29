@@ -1,0 +1,87 @@
+#DESCRIPTION
+##  Calculus: Integration
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('convergence et divergence', 'discontinuité infinie', 'fractions partielles', 'intégrale impropre')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/UMN/calculusStewartET/s_7_8_35.pg
+## Date(09/28/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(improper_partial_fractions)
+## ZMLTleader(1)
+## ZLevel(2)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('7.8')
+## Problem1('35')
+###############Source###############
+
+
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+#####################################################################
+
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem());
+
+#####################################################################
+
+### int impropre avec discontinuité infinie dans la borne supérieure
+
+Context("Numeric");
+Context()->strings->add(divergente=>{},div=>{alias=>'divergente'});
+
+$a = random(1,5,1);
+
+$c1 = 2*$a + 2;
+$c0 = $a*$a + 2*$a;
+
+
+## poly de la forme (x-a)(x-a-2)
+$f = Formula("x^2-$c1*x+$c0");
+
+$ans = Compute("inf");
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer l'intégrale impropre suivante. Si elle est convergente, l'évaluer. 
+Si elle diverge vers l'infini, répondre ${BBOLD}inf$EBOLD.
+Si elle diverge vers l'infini négatif, répondre ${BBOLD}-inf$EBOLD.
+Sinon, répondre ${BBOLD}divergente$EBOLD.
+\[ 
+\int_{0}^{$a}\! \frac{dx}{$f}
+\]
+Réponse : \{ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+ANS( $ans->cmp() );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

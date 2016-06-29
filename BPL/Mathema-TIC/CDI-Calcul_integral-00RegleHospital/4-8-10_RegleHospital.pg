@@ -1,0 +1,56 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('0/0', 'fonction rationnelle', 'forme indéterminée', 'limite', 'règle de L\'Hospital')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+
+$a=random(1,5,1);
+do{$b1 = non_zero_random(-3,3);} until($b1!=-$a);   ## $c2 est non nul
+do{$b0 = random(1,6);} until($b0 > abs($b1/2));
+
+$c2 = $b1 + $a;
+$c1 = $a*$b1 + $b0;
+$c0 = $a*$b0;
+
+
+$poly = Compute("x^3 + $c2*x^2 + $c1*x + $c0")->reduce;
+$den_ans = $a*$a - $a*$b1 + $b0;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$PAR
+
+Évaluer la limite.  Utiliser la règle de L'Hospital s’il y a lieu. Entrer $BBOLD inf$EBOLD pour \(\infty\), $BBOLD -inf$EBOLD pour \(-\infty\) et $BBOLD nep$EBOLD si la limite n'existe pas.
+$PAR
+
+\(\lim\limits_{x\rightarrow -$a}\dfrac{x+$a}{$poly}=\) \{ans_rule(20)\}
+
+END_TEXT
+Context()->normalStrings;
+
+
+$ans = Compute("1/$den_ans");
+ANS($ans->cmp());
+
+ENDDOCUMENT();

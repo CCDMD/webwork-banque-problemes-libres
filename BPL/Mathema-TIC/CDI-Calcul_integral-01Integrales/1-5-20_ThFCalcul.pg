@@ -1,0 +1,72 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction puissance', 'formule d\'intégration de base', 'intégrale définie', 'théorème fondamental du calcul')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_5_3/Stewart5_5_3_47.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Fundamental theorem of calculus)
+## ZInstitution(UCSB)
+## ZMLT(FTC_06)
+## ZLevel(2)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('5.3')
+## Problem1('47')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+# coefficient
+$a = non_zero_random(-10,10,1);
+# exposant entier positif
+$b = random(3,10);
+
+$f = Compute("$a*x^($b)")->reduce;
+
+$b1 = $b+1;
+
+$prim = Compute("$a*x^($b1)/$b1");
+
+# bornes
+$c= random(-8,3);
+$d= $c + random(1,6);
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer \(\displaystyle \int_{$c}^{\,$d}{$f}\,dx.\)
+
+$PAR
+Réponse : \{ans_rule(30)\}
+
+END_TEXT
+Context()->normalStrings;
+
+$primd = $prim->eval(x=>"$d");
+$primc = $prim->eval(x=>"$c");
+$ans = Compute("$primd - $primc");
+
+ANS($ans->cmp);
+
+ENDDOCUMENT();

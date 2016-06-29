@@ -1,0 +1,82 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('0/0', 'fonction exponentielle', 'fonction trigonométrique', 'forme indéterminée', 'limite', 'règle de L\'Hospital')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/Utah/AP_Calculus_I/set13_Limits_LHopitals_Rule_and_Numerical_Methods/s16p2.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Indeterminate forms and L'Hopital's rule)
+## ZInstitution(Univeristy of Utah)
+## ZAuthor(Utah ww group)
+## ZMLT(Indeterminate-TrigAndExponentials)
+## ZMLTleader(1)
+## ZLevel(3)
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+TEXT(beginproblem());
+
+Context()->strings->add(nep=>{});
+
+$a = random(1,5);
+$b = random(2,8);
+
+$f = Compute("(e^($a*x) - e^(-$a*x))/($b*sin(x))")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+  Calculer
+$PAR
+
+\( \displaystyle \lim_{x \to 0} $f =\)  \{ans_rule(30)\} 
+END_TEXT
+Context()->normalStrings;
+
+($ans_num,$ans_den) = reduce(2*$a,$b);
+$ans = Compute("$ans_num/$ans_den");
+ANS($ans->cmp());
+
+
+# Pour l'affichage des fonctions dans la solution (RH)
+$Dfnum = Compute("$a*e^{$a*x} + $a*e^{-$a*x}")->reduce;
+$Dfden = Compute("$b*cos(x)")->reduce; 
+
+
+# Pour l'affichage de la réponse dans la solution
+if($ans_den != 1) { $ans = "\frac{$ans_num}{$ans_den}"; }
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+ \[ \lim_{x \to 0} $f = \frac{0}{0} \]
+$BR
+C'est une indétermination \(\frac{0}{0}\), alors on peut appliquer la règle de L'Hospital :
+$BR
+ \[ \begin{aligned}
+\lim_{x \to 0} $f &\overset{H}{=} \lim_{x \to 0} \frac{$Dfnum}{$Dfden} \\
+&= \frac{$a+$a}{$b} \\
+&= $ans
+\end{aligned}
+\]
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

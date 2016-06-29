@@ -1,0 +1,120 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 5th ed.
+# WeBWorK problem written by Paul Pearson
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('fonction trigonométrique', 'intégrale définie', 'théorème fondamental du calcul')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/FortLewis/Calc1/05-04-Integral-theorems/HGM5-05-04-Integral-theorems-15.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Fundamental theorem of calculus)
+## ZInstitution(Fort Lewis College)
+## ZAuthor(Paul Pearson)
+## ZLevel(2)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('5')
+## Section1('5.4')
+## Problem1('15')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"compoundProblemFr.pl",
+"answerHints.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$cp = new compoundProblem( parts=>2, 
+                           totalAnswers => 2,
+					#	   nextVisible => 'Always',   
+						   nextStyle=>'Button',
+						   nextLabel => "Passer à la prochaine partie",
+						   );
+
+###################################
+#  Setup
+
+Context("Numeric")->variables->are(t=>"Real");
+
+$k = random(3,9,2);
+
+$a = 0;
+$b = "\pi/3";
+
+
+$F = list_random(Formula("sin($k * t)")->reduce,Formula("cos($k * t)")->reduce);
+
+
+$f = $F->D('t')->reduce;
+
+
+$answer1 = $f;
+$answer2 = ($F->eval(t=>pi/3))-($F->eval(t=>$a));
+
+
+
+###################################
+#  Main text part 1
+Context()->texStrings;
+BEGIN_TEXT
+${BBOLD}Première partie :${EBOLD}
+$BR
+Ce problème comporte deux parties.  Si \( F(t) = $F \), déterminer \( F^{\prime}(t) \).
+$BR
+$BR
+\( F^{\prime}(t) = \) \{ ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+
+######################################
+#  Begin do not edit
+
+ANS($answer1->cmp());
+
+if( $cp->part > 1) {
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+$HR
+${BBOLD}Deuxième partie :${EBOLD} 
+$BR
+Utiliser le théorème fondamental du calcul pour évaluer l'intégrale définie suivante.
+$BR
+$BR
+\( \displaystyle \int_{$a}^{$b} $f \, dt  = \)
+\{ ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS($answer2->cmp()->withPostFilter(AnswerHints( 
+  Compute("-$answer2") => "Vous avez peut-être évalué F($a) - F(pi/3).",
+  )));
+
+} ## fin de la partie 2
+
+COMMENT("This is a multi-part problem in which the next part is revealed only after the previous part is correct.");
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

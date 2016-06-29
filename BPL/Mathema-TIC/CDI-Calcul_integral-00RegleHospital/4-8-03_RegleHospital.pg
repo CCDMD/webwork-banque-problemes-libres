@@ -1,0 +1,133 @@
+##DESCRIPTION
+##  WHETHER to find limits using L'Hopital's rule
+##Ellis & Gulick section 6.6
+##Authored by Zig Fiedorowicz 4/17/2000
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('forme indéterminée', 'limite', 'règle de L\'Hospital')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level()    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+### source : Library/NAU/setCalcI/indeterminate.pg
+## Modified version of Library/Rochester/setDerivatives21LHospital/osu_dr_21_20.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Indeterminate forms and L'Hopital's rule)
+## ZDate('4/17/2000')
+## ZInstitution('Rochester')
+###############Source###############
+
+
+DOCUMENT();      
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl"
+);
+
+COMMENT("10 tentatives sont recommandés pour faire ce problème");
+
+$showPartialCorrectAnswers = 1;
+
+
+TEXT(&beginproblem);
+
+
+$questStr1 = EV2("\(\frac{\infty}{0}\)" );
+$ansStr1 = "NF";
+$questStr2 = EV2("\(\frac{0}{\infty}\)" );
+$ansStr2 = "0";
+$questStr3 = EV2("\(0\times\infty\)" );
+$ansStr3 = EV2("IND");
+$questStr4 = EV2("\(1\times\infty\)" );
+$ansStr4 = "NF";
+$questStr5 = EV2("\(1^\infty\)" );
+$ansStr5 = EV2("IND");
+$questStr6 = EV2("\(\infty^1\)" );
+$ansStr6 = "NF";
+$questStr7 = EV2("\(\infty^\infty\)" );
+$ansStr7 = "NF";
+$questStr8 = EV2("\(0^\infty\)" );
+$ansStr8 = "0";
+$questStr9 = EV2("\(0^0\)" );
+$ansStr9 = EV2("IND");
+$questStr10 = EV2("\(1^0\)" );
+$ansStr10 = EV2("1");
+$questStr11 = EV2("\(\infty^0\)" );
+$ansStr11 = "IND";
+$questStr12 = EV2("\(\infty^{-e}\)" );
+$ansStr12 = "0";
+$questStr13 = EV2("\(\infty^{-\infty}\)" );
+$ansStr13 = "0";
+$questStr14 = EV2("\(0^{-\infty}\)" );
+$ansStr14 = "NF";
+$questStr15 = EV2("\(\frac{1}{-\infty}\)" );
+$ansStr15 = "0";
+$questStr16 = EV2("\(\infty -\infty\)" );
+$ansStr16 = "IND";
+$questStr17 = EV2("\(\infty\times\infty\)" );
+$ansStr17 = "NF";
+$questStr18 = EV2("\(\pi^\infty\)" );
+$ansStr18 = "NF";
+$questStr19 = EV2("\(1^{-\infty}\)" );
+$ansStr19 = "IND";
+$questStr20 = EV2("\(\pi^{-\infty}\)" );
+$ansStr20 = "0";
+
+
+@questions =( $questStr1,$questStr2,$questStr3,$questStr4,$questStr5,
+               $questStr6,$questStr7,$questStr8,$questStr9,$questStr10,
+               $questStr11,$questStr12,$questStr13,$questStr14,$questStr15,
+               $questStr16,$questStr17,$questStr18,$questStr19,$questStr20
+               );
+@answers = ( $ansStr1,$ansStr2,$ansStr3,$ansStr4,$ansStr5,
+               $ansStr6,$ansStr7,$ansStr8,$ansStr9,$ansStr10,
+               $ansStr11,$ansStr12,$ansStr13,$ansStr14,$ansStr15,
+               $ansStr16,$ansStr17,$ansStr18,$ansStr19,$ansStr20
+               );
+
+# Now randomize the questions:
+@shuffle = &shuffle(scalar(@questions));
+################################################################################
+
+
+BEGIN_TEXT
+Pour chaque forme ci-dessous, indiquer si elle est une forme indéterminée (entrer $BBOLD IND $EBOLD), est égale à une valeur numérique (entrer la valeur numérique) ou jamais égale à une valeur finie (entrer $BBOLD NF $EBOLD).
+Voici un exemple de chaque cas :
+$BR
+\( \bullet \) La forme \( \frac{0}{0} \) s'obtient dans le cas d'une limite de type  \( \displaystyle \lim_{x \rightarrow a} \frac{f(x)}{g(x)} \)
+où \(\displaystyle \lim_{x \rightarrow a} f(x) = 0\) et
+\(\displaystyle \lim_{x \rightarrow a} g(x) = 0\). Puisqu'il s'agit d'une indétermination,  la réponse est $BBOLD IND $EBOLD.
+$BR
+\( \bullet \) La forme \( \frac{0}{1} \) s'obtient dans le cas d'une limite de type \( \displaystyle \lim_{x \rightarrow a} \frac{f(x)}{g(x)} \)
+où \(\displaystyle \lim_{x \rightarrow a} f(x) = 0\) et
+\(\displaystyle \lim_{x \rightarrow a} g(x) = 1\). 
+Puisque la limite est toujours égale à 0, la réponse est 0.
+$BR
+\( \bullet \) La forme \( \frac{1}{0} \) s'obtient dans le cas d'une limite de type \( \displaystyle \lim_{x \rightarrow a} \frac{f(x)}{g(x)} \)
+où \(\displaystyle \lim_{x \rightarrow a} f(x) = 1\) et
+\(\displaystyle \lim_{x \rightarrow a} g(x) = 0\). 
+Puisque \( \frac{f(x)}{g(x) }\) ne tend pas vers une valeur finie, la réponse est $BBOLD NF $EBOLD.
+$BR
+Remarque : la règle L'Hospital s'applique SEULEMENT dans le cas d'une indétermination \(\frac{0}{0}\) ou \(\frac{\infty}{\infty}\).
+
+$PAR
+\{ &match_questions_list(@questions[@shuffle])\}
+
+END_TEXT
+
+&ANS(str_cmp([@answers[@shuffle] ]));
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

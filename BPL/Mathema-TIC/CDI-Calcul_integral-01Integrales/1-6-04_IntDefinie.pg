@@ -1,0 +1,100 @@
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction trigonométrique inverse', 'formule d\'intégration de base', 'intégrale définie')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/Indiana/Indiana_setIntegrals3Definite/sc5_3_25.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Definite integrals (with trigonometric functions))
+## ZDate(6/3/2002)
+## ZInstitution(ASU)
+## ZMLT(DefAOverOnePlXSq)
+## ZMLTleader(1)
+## ZLevel(2)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('5.3')
+## Problem1('37')
+###############Source###############
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+# borne
+$a= random(2, 10, 1);
+
+
+
+$b= random(2, 10, 1);
+$F = Compute("$b*arctan(x)");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer l'intégrale
+\[ \int_{1}^{\sqrt{$a}} \frac{$b}{1+x^2} dx \]
+$BR
+Réponse : \{ans_rule( 40)\}
+END_TEXT
+Context()->normalStrings;
+
+
+$sqra = Real(sqrt($a));
+$Fa = $F->eval(x=>$sqra);
+$F1 = $F->eval(x=>"1");
+
+$ans = Compute("$Fa - $F1");
+ANS($ans->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La première étape est de trouver la primitive de \( \frac{$b}{1+x^2} \). 
+Vous pouvez consulter un tableau des intégrales des  fonctions trigonométriques. Vous devriez trouver une intégrale ayant cette forme :
+$PAR
+\[
+  \int \frac{du}{1+u^2} = \arctan(u) + C
+\]
+Dans le cas présent, \( u = x \).  Par conséquent,  la primitive cherchée est :
+\[
+  F(x) = $b\arctan(x) + C
+\]
+Puis, en appliquant le théorème fondamental du calcul, on obtient :
+\[
+  \begin{aligned}
+    \int_1^{\sqrt{$a}} \frac{$b}{1+x^2} dx &= F(\sqrt{$a}) - F(1) \\
+    &= $b\arctan(x)\Big\vert_1^{\sqrt{$a}} \\
+	&= $b\left( \arctan\left(\sqrt{$a}\right) - \arctan(1) \right) \\
+	&= $b\left( \arctan\left(\sqrt{$a}\right) - \frac{\pi}{4} \right) \\
+    &= !{$ans:%5.4f}
+  \end{aligned}
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

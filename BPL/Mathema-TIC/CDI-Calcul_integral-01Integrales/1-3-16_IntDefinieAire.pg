@@ -1,0 +1,122 @@
+#DESCRIPTION
+##  Calculus: Properties of the definite integral
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('aire', 'graphique', 'intégrale définie')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_5_2_47.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Conceptual understanding of integration)
+## ZDate(02/21/2011)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZLevel(2)
+###############Source###############
+
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl", 
+  "contextABCD.pl",
+  "PGgraphmacros.pl",
+  "PGcourse.pl", 
+);
+#####################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+$refreshCachedImages = 1;
+
+#####################################################################
+
+Context("Numeric");
+
+$a = random(1,4,1);
+
+if ($a==1){
+$f = Compute("(1/8)*[x*(x-3)*(x-8)]");
+
+Context("ABCD-List");
+$ans = List("C,A,D,B");
+Context("Numeric");
+}
+
+if ($a==2){
+$f = Compute("-(1/8)*[x*(x-3)*(x-8)]");
+
+Context("ABCD-List");
+$ans = List("B,D,A,C");
+Context("Numeric");
+}
+
+if ($a==3){
+$f = Compute("(1/8)*[x*(x-5)*(x-8)]");
+
+Context("ABCD-List");
+$ans = List("C,A,B,D");
+Context("Numeric");
+}
+
+if ($a==4){
+$f = Compute("-(1/8)*[x*(x-5)*(x-8)]");
+
+Context("ABCD-List");
+$ans = List("D,B,A,C");
+Context("Numeric");
+}
+
+###############################################################
+
+$w = 300;  # graph size
+$tw = 400; # graph size in TeX
+
+$graph1 = init_graph(-1,-5,9,5,'axes'=>[0,0],'ticks'=>[10,10],'grid'=>[10,10],'size'=>[400,400]);
+
+$graph1->lb('reset');
+
+$p1 = FEQ("$f for x in <-1,4> using color:blue weight:2");
+$p2 = FEQ("$f for x in <4,9> using color:blue weight:2");
+foreach my $i (1..8) {
+  $graph1 -> lb(new Label ( $i,-0.5, $i,'black','center','middle'));
+}
+
+plot_functions($graph1,$p1,$p2);
+
+###############################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+À partir du graphique de la fonction \(f\), replacer les intégrales suivantes en ordre croissant, de la plus petite valeur à la plus grande.
+\[
+\text{A : } \int_0^{8}\! f(x) \, dx \qquad \text{B : } \int_0^{3}\! f(x) \, dx \qquad \text{C : } \int_5^{8}\! f(x) \, dx \qquad \text{D : } \int_0^{5}\! f(x) \, dx
+\]
+$PAR
+$BCENTER
+\{image(insertGraph($graph1),width=>$w,height=>$w,tex_size=>$tw)\} $BR
+$BITALIC Cliquer sur le graphique pour agrandir l'image.$EITALIC
+$ECENTER $PAR
+Réponse (énumérer les lettres A, B, C et D dans le bon ordre, en les séparant par des virgules) : \{ans_rule(30)\}
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+ANS($ans->cmp(ordered=>1));
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,85 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('formule de sommation', 'limite', 'somme d\'une série')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/5_The_Integral/5.1_Approximating_and_Computing_Area/5.1.42.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Riemann sums)
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Justask)
+## ZLevel(2)
+###############Source###############
+
+
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+          );
+
+
+TEXT(beginproblem());
+#$solutionexits=1;
+$showPartialCorrectAnswers = 1;
+
+$p = random(1,3,1);
+$q = $p + 1;
+# let's choose $k relatively prime to $p, so the answer is a reduced fraction
+$k = ($q % 2 == 0) ? list_random(3,5,7,9) : list_random(2,4,5,7);
+# varying expressions, depending on $p
+@eandfandg = (
+          ["i", "\frac{n^2}{2}+\frac{n}{2}"
+              , "\frac{$k}{2}+\frac{$k}{2n}"],
+          ["i^2", "\frac{n^3}{3}+\frac{n^2}{2}+\frac{n}{6}"
+              , "\frac{$k}{3}+\frac{$k}{2n}+\frac{$k}{6n^2}"],
+          ["i^3", "\frac{n^4}{4}+\frac{n^3}{2}+\frac{n^2}{4}"
+              , "\frac{$k}{4}+\frac{$k}{2n}+\frac{$k}{4n^2}"],
+         );
+($e,$f,$g) = @{$eandfandg[$p-1]};
+
+BEGIN_TEXT
+Évaluer la limite suivante.
+$PAR
+\(\displaystyle \lim_{n\to\infty}\sum\limits_{i=1}^{n}\frac{$k $e}{n^{$q}} =\) \{ans_rule()\}
+END_TEXT
+
+$s=Compute("$k/$q");
+ANS($s->cmp);
+
+
+BEGIN_SOLUTION
+Soit
+\[ \begin{aligned}
+S_{n} &= \sum_{i=1}^{n}\frac{$k $e}{n^{$q}}\\
+&= \frac {$k}{n^{$q}}\sum_{i=1}^{n} $e\\
+&= \frac{$k}{n^{$q}}\left( \frac{n(n+1)(2n+1)}{6}\right) \\
+&=\frac{$k}{n^{$q}}\left( $f \right)\\
+&=$g. 
+\end{aligned}
+\] $BR
+Alors
+\[ \begin{aligned}
+\lim_{n\to\infty}\sum\limits_{i=1}^{n}\frac{$k $e}{n^{$q}} 
+&=\lim_{n\to\infty}S_{n} \\
+&=\lim_{n\to\infty} \left($g\right) \\
+&=\frac{$k}{$q}. 
+\end{aligned}
+\]
+END_SOLUTION
+
+
+
+ENDDOCUMENT();

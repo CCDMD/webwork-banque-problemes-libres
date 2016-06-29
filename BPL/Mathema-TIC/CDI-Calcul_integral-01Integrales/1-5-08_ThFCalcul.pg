@@ -1,0 +1,126 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('intégrale définie', 'théorème fondamental du calcul')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/Michigan/Chap5Sec4/Q11.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Fundamental theorem of calculus)
+## ZInstitution(UMich)
+## ZAuthor(Gavin LaRose)
+## ZLevel(3)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('5.4')
+## Problem1('11')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('5.4')
+## Problem2('14')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('5.3')
+## Problem3('11')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+Context("Numeric");
+Context()->variables->add( t=>'Real' );
+
+## make sure that we display the answer with the correct formula
+Context()->flags->set(reduceConstants=>0);
+
+
+## pick a function to use
+$whichF = list_random(0,1,2,3);
+if ( $whichF == 0 ) {
+    $func = Compute("ln(2*t+1)");
+	$Dfunc = "\frac{2}{2t+1}";
+    $a = 0;
+    $b = random(2,5,1);
+} elsif ( $whichF == 1 ) {
+    $func = Compute("e^(t^2)");
+	$Dfunc = "e^{t^2}\cdot 2t";
+    $a = 0;
+    $b = random(1,4,1);
+} elsif ( $whichF == 2 ) {
+    $func = Compute("ln(t^2)");
+	$Dfunc = "\frac{2}{t}";
+    $a = 1;
+    $b = random(2,5,1);
+} else {
+    $func = Compute("3^(t^2)");
+	$Dfunc = "3^{t^2}\cdot\ln(3)\cdot 2t ";
+    $a = 0;
+    $b = random(1,4,1);
+}
+
+$fderiv = $func->D();
+$funca = $func->substitute(t=>Formula("$a"));
+$funcb = $func->substitute(t=>Formula("$b"));
+$integ = $funcb - $funca;
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit la fonction \(F(t) = $func\), et soit \(f(t) = F'(t)\).
+Écrire l'intégrale \(\int_a^b\,f(t)\,dt\) et l'évaluer en utilisant le théorème fondamental du calcul.
+
+$PAR
+\( \displaystyle \int_{$a}^{$b}\, \) \{ ans_rule(15) \} \(\,dt = \)
+\{ ans_rule(25) \}
+$BR
+${BITALIC}(Entrer l'expression exacte, et non une approximation en nombre décimal.)$EITALIC
+
+
+END_TEXT
+Context()->normalStrings;
+
+Parser::Number::NoDecimals();
+
+ANS($fderiv->cmp() );
+ANS($integ->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'intégrande \(f(t) = F'(t)\), alors l'intégrale cherchée est 
+\(\displaystyle\int_{$a}^{$b}\,$Dfunc\,dt\).
+$PAR
+On peut l'évaluer en utilisant le théorème fondamental du calcul et on obtient 
+$PAR
+\(\displaystyle\int_{$a}^{$b}\,$Dfunc\,dt = $funcb - $funca\).
+
+END_SOLUTION
+Context()->normalStrings();
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

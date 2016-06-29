@@ -1,0 +1,67 @@
+##DESCRIPTION
+## Evaluate a definite integral
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('fonction impaire', 'fonction paire', 'intégrale définie')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl", 
+  "PGcourse.pl", 
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+# bornes
+$a = random(1,19,1);
+
+# constante
+$b = random(2,9,1);
+
+# valeur de l'intégrale dans [0,a]
+$valeur = random(10,60,2);
+
+# choix de l'exposant de x et de la fct trigo
+$c = random(3,19,1);   
+$ftrigo = list_random(Compute("cos(x)"),Compute("sin(x)"));
+
+if($c % 2==0) {    # exposant paire
+	if ($ftrigo=="cos(x)") {  # fct paire
+		$ans = 2*$valeur;
+	} else { # fct impaire
+		$ans = 0;
+	}	
+} else {   # exposant impaire
+	if ($ftrigo=="cos(x)") {  # fct impaire
+		$ans = 0;
+	} else { # fct paire
+		$ans = 2*$valeur;
+	}
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \(\displaystyle \int_0^{$a} x^{$c} \, $ftrigo \sqrt{x^2+x^8+$b} \,dx  = $valeur\).
+$PAR
+Évaluer l'intégrale suivante.
+$PAR 
+\(\displaystyle\int_{-$a }^{ $a } x^{$c} \,$ftrigo\sqrt{x^2+x^8+$b} \,dx = \) \{ans_rule( 30) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS(Real($ans)->cmp);
+ENDDOCUMENT();        # This should be the last executable line in the problem.

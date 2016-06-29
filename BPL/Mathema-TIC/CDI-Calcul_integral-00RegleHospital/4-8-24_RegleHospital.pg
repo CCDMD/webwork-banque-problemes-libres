@@ -1,0 +1,82 @@
+##DESCRIPTION
+## Evaluate a limit
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('1^inf / 0^0 / inf^0', 'fonction trigonométrique', 'forme indéterminée', 'limite', 'règle de L\'Hospital', 'sinus')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+### source : Library/ma122DB/set8/s4_4_55_mo.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Indeterminate forms and L'Hopital's rule)
+## ZDate(6/3/2002)
+## ZMLT(Indeterminate-FunctionsInExponent)
+## ZMLTleader(1)
+## ZLevel(3)
+###############Source###############
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "PGcourse.pl",      # Customization file for the course
+   "answerHints.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Numeric");
+Context()->strings->add(nep=>{});
+
+
+$a = random(3,9,1);
+$fun = Compute("x^($a sin x)"); # limit as x goes to 0 from the right
+$limit = Real(1);
+
+##############################################################
+#
+#  Text
+#
+#
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer la limite, en utilisant la règle de L'Hospital si nécessaire.
+$PAR
+\( \displaystyle \lim_{ x \rightarrow 0^+ } $fun = \) \{ans_rule(15) \}
+$BR
+END_TEXT
+Context()->normalStrings;
+
+
+##############################################################
+#
+#  Answers
+#
+#
+
+
+ANS($limit->cmp->withPostFilter(AnswerHints( 
+  Real("0") => "Tu viens de trouver la limite de l'exposant de e, mais ce n'est pas la réponse. Tu y es presque!", 
+)));
+
+COMMENT('MathObject version');
+ENDDOCUMENT();
+

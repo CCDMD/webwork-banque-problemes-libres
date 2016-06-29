@@ -1,0 +1,92 @@
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('intégrale définie', 'théorème fondamental du calcul')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/Indiana/Indiana_setIntegrals4FTC/c4s4p4B.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Fundamental theorem of calculus)
+## ZInstitution(Indiana)
+## ZMLT(FTC_01)
+## ZLevel(3)
+###############Source###############
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a1=random(2,5,1);
+$b1=random(2,4,2);
+
+$e1=$b1-1+$a1*$b1;
+
+BEGIN_TEXT
+Si \( \displaystyle f(x) =  \int_x^{x^{$b1}} t^{$a1}dt \) $PAR
+alors
+$BR
+\( f'(x) = \) \{ans_rule(30)\}
+$PAR
+END_TEXT
+
+$ans1=Formula("$b1*x^$e1 -  x^$a1")->reduce;
+
+ANS($ans1->cmp);
+
+$soln_b1m1 = $b1 - 1;
+
+BEGIN_SOLUTION
+
+On utilise le théorème fondamental du calcul, selon lequel si
+\[ g(x) = \int_a^x f(t) dt \]
+alors la dérivée de  \(g(x)\) par rapport à \(x\), qui s'écrit
+\(\frac{d}{dx} g(x)\) ou \(g'(x)\), est égale à \(f(x)\).  C'est la première partie du théorème fondamental du calcul.  $PAR
+
+On sait de plus qu'il faut utiliser la dérivation en chaîne si la limite supérieure de l'intégrale n'est pas simplement  \(x\), mais une fonction de \(x\) :
+\[ \frac{d}{dx} \int_0^u f(t) dt
+	= \frac{d}{du} \left( \int_0^u f(t) dt \right) \frac{du}{dx}
+	= f(u) \frac{du}{dx} \]
+C'est la deuxième partie du théorème fondamental du calcul.  $PAR
+
+
+Dans le cas présent, on obtient
+\[
+\begin{aligned}
+f'(x)   &= \frac{d}{dx} \left( \int_x^{x^{$b1}} t^{$a1} dt \right)  \\\\
+        &= \frac{d}{dx} \left( \int_0^{x^{$b1}} t^{$a1} dt
+		+ \int_x^0 t^{$a1} dt \right)	\\\\
+        &= \frac{d}{dx} \left( \int_0^{x^{$b1}} t^{$a1} dt \right)
+		+ \frac{d}{dx} \left( \int_x^0 t^{$a1} dt \right)	\\\\
+        &= \underset{\text{deuxième partie du théorème}}{\underbrace{\frac{d}{dx} \left( \int_0^{x^{$b1}} t^{$a1} dt \right)}}
+		- \underset{\text{première partie du théorème}}{\underbrace{\frac{d}{dx} \left( \int_0^x t^{$a1} dt \right)}}	\\\\
+	&= \left(x^{$b1}\right)^{$a1} \left($b1 x^{$soln_b1m1}\right)
+		- x^{$a1}	\\\\
+	&= $b1 x^{$e1} - x^{$a1}
+\end{aligned}
+\]
+
+END_SOLUTION
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

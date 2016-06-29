@@ -1,0 +1,71 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('constante d\'intégration', 'fonction trigonométrique', 'intégrale indéfinie', 'primitive')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source  Library/UCSB/Stewart5_4_10/Stewart5_4_10_13.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Antiderivatives (with trigonometric functions))
+## ZInstitution(UCSB)
+## ZLevel(2)
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserFormulaUpToConstant.pl",
+"answerHints.pl",
+"PGcourse.pl", 
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+Context()->variables->are(t=>"Real");
+
+# coefficients
+$a=non_zero_random(-10,10,1);
+$b=non_zero_random(-10,10,1);
+
+# fonction
+$f = Formula("$a*cos(t) + $b*sin(t)")->reduce;
+
+# primitive
+$ans = FormulaUpToConstant("-$a*sin(t) + $b*cos(t)")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Trouver la forme générale de la primitive de  \(f(t) = $f.\)  
+
+$PAR
+$BBOLD Note $EBOLD : Toute constante ajoutée doit être écrite en majuscule "C".
+
+$PAR
+\(F(t) =\) \{ans_rule(50)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $ans->cmp->withPostFilter(sub { 
+  my $ans = shift; 
+  $ans->{ans_message} = "Ne pas oublier la constante d'intégration" 
+    if $ans->{ans_message} eq "Your answer is not the most general solution";
+  return $ans; 
+}));
+
+ENDDOCUMENT();

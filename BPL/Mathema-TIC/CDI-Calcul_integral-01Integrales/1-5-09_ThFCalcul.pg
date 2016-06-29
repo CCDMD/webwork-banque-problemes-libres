@@ -1,0 +1,174 @@
+#DESCRIPTION
+#  Interpreting the integral in terms of area
+#ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('aire', 'graphique', 'intégrale définie', 'primitive', 'théorème fondamental du calcul')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/Rochester/setIntegrals4FTC/S05.03.FundThmCalc.PTP03.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Fundamental theorem of calculus)
+## ZDate(5/16/2008)
+## ZInstitution(University of Rochester)
+## ZAuthor(Paul Pearson)
+## ZLevel(4)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('5.3')
+## Problem1('2 3 4')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGgraphmacros.pl",
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"weightedGrader.pl"
+);
+
+TEXT(beginproblem());
+
+install_weighted_grader();
+$showPartialCorrectAnswers = 1;
+$refreshCachedImages = 1;
+
+Context()->variables->add(t=>"Real");
+
+$a = random(2,5,1);
+do { $b = random(1,4,1); } until ($b != $a);
+$c=2.5;
+
+# Create a graph to hold a function and add labels to it
+$graph = init_graph(-1,-5,9,5,'axes'=>[0,0],'grid'=>[10,10]);
+$graph->lb('reset');
+
+foreach my $i (1..8) {
+     $graph->lb(new Label($i,-.1,$i,'black','center','top'));
+	 if($i<=4) {
+     $graph->lb(new Label(-.1,$i,$i,'black','right','middle'));
+     $graph->lb(new Label(-.1,-$i,-$i,'black','right','middle'));
+	 }
+   }
+
+$graph->lb(new Label ( 8.5,0,'t','black','right','top'));
+$graph->lb(new Label ( $a+$c,0,'x','black','center','bottom'));
+$graph->lb(new Label ( -0.25,4.75,'y','black','left','top'));
+$graph->new_color('lightblue', 148,201,255);
+
+$f = FEQ("-($b * x)/$a + $b for x in <-1,9> using color:blue and weight:2");
+
+add_functions($graph,$f);
+
+$graph->moveTo(0,0);
+$graph->lineTo(0,$b,'black');
+$graph->lineTo($a,0,'blue');
+$graph->lineTo(0,0,'black');
+# the coordinates specify a point inside the shaded region
+$graph->fillRegion([0.5,0.5,'lightblue']);
+
+$graph->moveTo($a,0);
+$graph->lineTo($a+$c,0,'black');
+$graph->lineTo($a+$c,-$c * $b / $a,'black');
+$graph->lineTo($a,0,'blue');
+# the coordinates specify a point inside the shaded region
+$graph->fillRegion([$a+$c-0.1,-0.1,'lightblue']);
+
+
+BEGIN_TEXT
+
+$BCENTER
+\{ begintable(1) \}
+\{ row( image( insertGraph($graph), height=>400, width=>400, tex_size=>800 ) ) \}
+\{ row("Graphique de ~~\(y=f(t)~~\)") \}
+\{ endtable() \}
+$ECENTER
+
+$BR
+
+La droite en bleu dans le graphique ci-dessus représente une fonction linéaire  \( y = f(t) \).  
+
+$BR
+
+a) Soit \( x > $a \) un point qui peut varier sur l'axe des  \( t \).  Déterminer la fonction
+\[
+A(x) = \int_0^x f(t) \, dt
+\]
+qui calcule la valeur de l'intégrale définie dans l'intervalle \( \lbrack 0, x \rbrack \).  Indice : Quelle est l'aire d'un triangle?
+$BR
+\( A(x) = \) \{ans_rule(40)\}
+$BR
+$BR
+
+
+b) Trouver la primitive de la fonction \( f(t) \) dont le terme constant est égal à zéro.
+$BR
+Primitive \( F(t) = \) \{ans_rule(40)\}
+$BR
+$BR
+
+
+c) \{pop_up_list(['?','Vrai','Faux']) \}  Les fonctions \( A \) et \( F \) sont deux primitives de \(f\).
+
+END_TEXT
+
+
+
+($m,$d) = reduce($b,$a);
+
+$primitive = Compute("-$m*t**2/(2*$d)+$b*t")->reduce;
+$netarea = $primitive->substitute(t=>"x");
+
+
+WEIGHTED_ANS($netarea->cmp(), 49);
+WEIGHTED_ANS($primitive->cmp, 49);
+WEIGHTED_ANS(str_cmp("Vrai"),2);
+
+
+# pour l'affichage dans la solution
+($A1,$A1d) = reduce($a*$b,2);
+if($A1d != 1) {$A1 = "\frac{$A1}{$A1d}";}
+
+if($d != 1) {$m = "\frac{$m}{$d}";}
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+a) L'aire du triangle au-dessus de l'axe des \(t\) est égale à \( \frac{$a \cdot $b}{2} = $A1 \).  Le triangle au-dessous de l'axe des \(t\) a une base égale à \(x-$a\).  La hauteur de ce triangle sous l'axe des \(t\) est égale à 
+$BR
+\[ \text{hauteur}= |f(x)| = \left|\frac{-$b}{$a} x + $b\right| = -\left(-$m x + $b\right) = $m x - $b .\]
+
+Ainsi, la valeur de l'intégrale définie dans l'intervalle \( \lbrack 0, x \rbrack \) est  
+$BR
+\[ A(x) = $A1 - \frac{(x-$a)($m x - $b)}{2} = $netarea . \] 
+$BR
+
+b) La primitive ayant son terme constant égal à zéro est \( \displaystyle F(t) = $primitive \).
+$BR
+$BR
+
+c) C'est vrai et ce n'est pas une coïncidence.  Il est toujours vrai que \( A(x) = F(x) + C\) pour une constante quelconque \(C\).  Dans ce cas, \(C\) est égale à zéro.  Toutefois, dans d'autres problèmes, \(C\) pourrait ne pas être égale à zéro.  Note : le fait d'utiliser \(t\) ou \(x\) dans la fonction \( F \) n'a pas d'importance.
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Réponses pondérées. Les deux premières réponses valent 49% chacune et la troisième vaut 2%.');
+
+
+ENDDOCUMENT();

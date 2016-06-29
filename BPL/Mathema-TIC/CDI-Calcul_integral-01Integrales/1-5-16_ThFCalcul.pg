@@ -1,0 +1,70 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction trigonométrique', 'formule d\'intégration de base', 'intégrale définie', 'théorème fondamental du calcul')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_5_3/Stewart5_5_3_34.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Fundamental theorem of calculus)
+## ZInstitution(UCSB)
+## ZMLT(FTC_06)
+## ZLevel(2)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('5.3')
+## Problem1('34')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+Context()->strings->add(nep=>{});
+
+$a=random(2,10,1)*random(-1,1,2);
+
+# choix de la primitive
+$f = list_random(Formula("$a*sec(x)"),Formula("$a*tan(x)"));
+
+
+$Df = $f->D('x');
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Utiliser le théorème fondamental du calcul pour évaluer, si possible,
+\[\int_{0}^{\,\pi/6}{$Df}\,dx.\]
+Si l'intégrale n'existe pas, entrer ${BBOLD}nep$EBOLD comme réponse.
+
+$PAR
+Réponse : \{ans_rule(30)\}
+
+END_TEXT
+Context()->normalStrings;
+
+$fb = $f->eval(x=>"pi/6");
+$fa = $f->eval(x=>"0");
+$ans = Compute("$fb - $fa");
+
+ANS($ans->cmp);
+
+ENDDOCUMENT();

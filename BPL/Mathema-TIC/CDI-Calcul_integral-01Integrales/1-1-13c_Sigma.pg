@@ -1,0 +1,69 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('somme', 'somme télescopique')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+Context()->variables->are(n=>'Real');
+
+$a = random(2,5,1);
+$b = random(0,7);
+$b2 = $b+2;
+$top = random(30,70,5);
+
+
+$terme = Compute("1/(n+$b) - 1/(n+$b2)")->reduce;
+
+
+
+
+###################################
+# Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la somme suivante.
+$PAR
+\(\displaystyle \sum\limits_{n=$a}^{$top} \ \Big($terme \Big) = \) \{ans_rule(50)\}
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+
+$ab = $a+$b;
+$ab1 = $ab+1;
+$btop1 = $b+$top+1;
+$btop2 = $btop1 + 1;
+
+$ans = Compute("1/$ab + 1/$ab1 - 1/$btop1 - 1/$btop2");
+
+ANS($ans->cmp);
+
+###################################
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

@@ -1,0 +1,101 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction algébrique', 'fonction rationnelle', 'forme indéterminée', 'inf/inf', 'limite à l\'infini', 'règle de L\'Hospital')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+### source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/4_Applications_of_the_Derivative/4.5_LHopitals_Rule/4.5.22.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Indeterminate forms and L'Hopital's rule)
+## ZInstitution(W.H.Freeman)
+## ZAuthor(JustAsk!)
+## ZLevel(2)
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+          );
+
+
+## Show partial correct answers
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(nep=>{});
+
+TEXT(beginproblem());
+
+$a=random(2,14,1);
+$b=non_zero_random(-14,14,1);
+$c=random(2,14,1);
+$d=non_zero_random(-14,14,1);
+
+$f = Compute("($a*x^3 + $b*x^2)/($c*x^3-$d)")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Utiliser la règle de L'Hospital (plus d'une fois si nécessaire) pour évaluer la limite suivante.$BR
+Entrer $BBOLD inf$EBOLD pour \(\infty\), $BBOLD -inf$EBOLD pour \(-\infty\) et $BBOLD nep$EBOLD si la limite n'existe pas.
+$PAR
+\( \displaystyle \lim_{x\to \infty} $f = \) \{ ans_rule() \}
+END_TEXT
+Context()->normalStrings;
+
+($na,$nc) = reduce($a,$c);
+$ans= Compute("$na/$nc");
+
+ANS($ans->cmp());
+
+$a3=3* $a;
+$b2=2* $b;
+$c3=3* $c;
+
+$Df_num = Compute("$a3*x^2 + $b2*x")->reduce;
+$Df_den = Compute("$c3*x^2")->reduce;
+
+$a3_2=2* $a3;
+$c3_2=2* $c3;
+
+$DDf_num = Compute("$a3_2*x + $b2")->reduce;
+$DDf_den = Compute("$c3_2*x")->reduce;
+
+# Pour l'affichage de la réponse dans la solution
+if($nc != 1) { $ans = "\frac{$na}{$nc}"; }
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Les fonctions au numérateur et au dénominateur sont dérivables et la limite est une indétermination de la forme \(\frac{\infty}{\infty}\). On applique donc la règle de L'Hospital : $PAR
+
+\[ \lim_{x \to \infty}$f \overset{H}{=} \lim_{x \to \infty} \frac{$Df_num}{$Df_den} \;\left(\frac{\infty}{\infty}\right)\] $BR
+
+On applique la règle de L'Hospital encore une fois et on obtient : $PAR
+
+\[ \lim_{x \to \infty} \frac{$Df_num}{$Df_den} \overset{H}{=} \lim_{x\to \infty}\frac{$DDf_num}{$DDf_den} \; \left(\frac{\infty}{\infty}\right)\] $BR
+
+On applique la règle de L'Hospital une dernière fois et on obtient :$PAR
+
+\[\lim_{x \to \infty} \frac{$DDf_num}{$DDf_den} \overset{H}{=} \lim_{x \to \infty} \frac{$a3_2}{$c3_2} = $ans \]
+
+$PAR
+
+Remarque : $BR
+On obtient le même résultat en conservant le coefficient du terme ayant la puissance la plus élevée dans chaque fonction, ce qui donne : \(\frac{$na}{$nc}\)
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();

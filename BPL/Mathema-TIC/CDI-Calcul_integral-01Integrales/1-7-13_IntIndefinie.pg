@@ -1,0 +1,105 @@
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction algébrique', 'intégrale indéfinie', 'propriétés de l\'intégrale')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/Union/setIntBasic/an7_2_13.pg
+## ZDate(8/23/07)
+## ZInstitution(Union College)
+## ZAuthor(K. Lesh)
+## ZMLT(indefinite_simplify_expression_first)
+## ZLevel(3)
+## TitleText1('Calculus')
+## AuthorText1('Anton')
+## EditionText1('7')
+## Section1('7.2')
+## Problem1('13')
+###############Source###############
+
+
+
+
+DOCUMENT();                 # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+$a = random(2,8,1);
+$b = random(3,8,1);
+
+$c = random(-6,-2,1);
+$d = random(3,9,1);
+$e = random(5,15,1);
+$f = random(2,15,1);
+$g = non_zero_random(-5,-2,1);
+
+$k = non_zero_random(-10,10,2);
+$m = random(2,8,1);
+
+$integranda=Formula("x(x^$m + $k)")->reduce;
+$integrandb=Formula("{$c*x^$d + $e*x^($f) } /{x^($g)}")->reduce;
+$integrandc=Formula("(x^$b+ $a)^{2}")->reduce;
+
+###################################
+# Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer les primitives.
+$PAR
+a) \( \displaystyle\int $integranda  \, dx =\) \{ans_rule(40)\} \( + C\).
+$PAR
+b) \( \displaystyle\int $integrandb  \, dx =\) \{ans_rule(40)\} \( + C\).
+$PAR
+c) \( \displaystyle\int $integrandc  \,dx =\) \{ans_rule(40)\} \( + C\).
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+
+$aa = $a**2;
+$cross = 2*$a;
+$bb = $b + 1;
+$bB = 2*$b + 1;
+
+$dd = $d - $g + 1;
+$ff = $f - $g + 1;
+
+$mm = $m+2;
+
+$antideriva=Formula("($k/2)*x^2 + (1/$mm)*x^$mm")->reduce;
+$antiderivb=Formula("($c/$dd)*x^($dd) + ($e/$ff)*x^($ff)")->reduce;
+$antiderivc=Formula("${aa}*x + ($cross/$bb)*x^($bb)+(1/$bB)*x^($bB)")->reduce;
+
+ANS($antideriva->cmp(upToConstant=>1));
+ANS($antiderivb->cmp(upToConstant=>1));
+ANS($antiderivc->cmp(upToConstant=>1));
+
+###################################
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

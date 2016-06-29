@@ -1,0 +1,218 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('aire', 'graphique', 'intégrale définie')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/FortLewis/Calc1/05-02-Definite-integral/HGM5-05-02-Definite-integral-27.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Conceptual understanding of integration)
+## ZInstitution(University of Michigan, Fort Lewis College)
+## ZAuthor(Gavin LaRose, Paul Pearson)
+## ZLevel(3)
+###############Source###############
+
+
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"PGgraphmacros.pl",
+"MathObjects.pl",
+"unionTables.pl",
+"PGcourse.pl",
+);
+ 
+Context("Numeric");
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+$showPartialCorrectAnswers = 1;
+
+# we plot one of 
+#   f(x) = (3-x) sin(pi(x-1)), for <1,3> (showing <0,4> x <-1,2>), or 
+#   f(x) = 1.75 (x-3) cos(pi(x-1)), for <1.5,3> (showing  <0,4> x <-2,1>), or 
+#   f(x) = (x-3) sin(pi(x-1)), for <1,3> (showing <0,4> x <-2,1>), or 
+#   f(x) = 1.75 (3-x) cos(pi(x-1)), for <1.5,3> (showing  <0,4> x <-2,1>)
+# the first two have a larger first (positive) area than second (negative)
+# and the second two have a larger first (negative) area than second (positive)
+
+
+$whichf = random(1,4,1);
+
+if ( $whichf == 1 ) {
+
+    $f = "(3-x)*sin(pi*(x-1)) for x in <1,3> using color:blue and weight:2";
+    @dom = (-0.5,-1,4,2);
+    $fx = sub { my $x = shift(); return( (3-$x)*sin(pi*($x-1)) ); };
+# the starting point of the curve
+    $x0 = 1;
+# the location of the intersection between f(x) and the x-axis
+    $x1 = 2;
+# the first and second areas under the curve
+    $area1 = random(9,39,3);  # the ratios for the areas are the correct
+    $area2 = -1*$area1/3;     # ratios, so things should look right
+
+} elsif ( $whichf == 2 ) {
+
+    $f = "1.75*(x-3)*cos(pi*(x-1)) for x in <1.5,3> " .
+        "using color:blue and weight:2";
+    @dom = (-0.5,-1,4,2);
+    $fx = sub { my $x = shift(); return( 1.75*($x-3)*cos(pi*($x-1)) ); };
+# the starting point of the curve
+    $x0 = 1.5;
+# the location of the intersection between f(x) and the x-axis
+    $x1 = 2.5;
+# the first and second areas under the curve
+    $area2 = random(-6,-2,1); 
+    $area1 = -11*$area2;
+
+} elsif ( $whichf == 3 ) {
+
+    $f = "(x-3)*sin(pi*(x-1)) for x in <1,3> using color:blue and weight:2";
+    @dom = (-0.5,-2,4,1);
+    $fx = sub { my $x = shift(); return( ($x-3)*sin(pi*($x-1)) ); };
+# the starting point of the curve
+    $x0 = 1;
+# the location of the intersection between f(x) and the x-axis
+    $x1 = 2;
+# the first and second areas under the curve
+    $area1 = random(-39,-9,3);  # the ratios for the areas are the correct
+    $area2 = -1*$area1/3;       # ratios, so things should look right
+
+} else {
+
+    $f = "1.75*(3-x)*cos(pi*(x-1)) for x in <1.5,3> " .
+        "using color:blue and weight:2";
+    @dom = (-0.5,-2,4,1);
+    $fx = sub { my $x = shift(); return( 1.75*(3-$x)*cos(pi*($x-1)) ); };
+# the starting point of the curve
+    $x0 = 1.5;
+# the location of the intersection between f(x) and the x-axis
+    $x1 = 2.5;
+# the first and second areas under the curve
+    $area2 = random(2,6,1); 
+    $area1 = -11*$area2;
+
+}
+
+# ok, build the graph
+$gr = init_graph(@dom, 'axes'=>[0,0],size=>[300,300]);
+$gr->lb('reset');
+add_functions( $gr, $f );
+
+# add some appropriate labels
+$gr->lb( new Label($x0,-0.08,'a','black','center','center') );
+$gr->lb( new Label($x1,-0.08,'b','black','center','center') );
+$gr->lb( new Label(3,-0.08,'c','black','center','center') );
+
+## and shade the different areas
+## the first area
+#$dx = 0.1;
+#for ( my $xv = $x0+$dx; $xv < $x1; $xv+=$dx ) {
+#    $gr->moveTo( $xv, 0 );
+#    $yv = &{$fx}($xv);
+#    $gr->lineTo( $xv, $yv, 'red' );
+#}
+## and the second
+#for ( my $xv = $x1+$dx/2; $xv < 3; $xv+=$dx/2 ) {
+#    $yv = &{$fx}($xv);
+#    last if ( $xv + $yv/3 > 3 );
+#    $gr->moveTo( $xv, $yv );
+#    $gr->lineTo( $xv+$yv/3, 0, 'black' );
+#}
+$gr->new_color("lightblue", 214,230,244); # RGB
+$gr->new_color("lightgreen",156,215,151); 
+$gr->moveTo($x0,0);
+$gr->lineTo(3,0,'blue');
+if ( $whichf == 1 || $whichf == 2 ) {
+  $gr->fillRegion([($x0+$x1)/2,0.1,"lightblue"]);
+  $gr->fillRegion([($x1+3)/2,-0.1,"lightgreen"]);
+} else {
+  $gr->fillRegion([($x0+$x1)/2,-0.1,"lightblue"]);
+  $gr->fillRegion([($x1+3)/2,0.1,"lightgreen"]);
+}
+
+# the absolute values of the areas
+$a1 = abs($area1);
+$a2 = abs($area2);
+
+# then the integrals we ask for are a->b, b->c, a->c and a->c of |f|
+$ans1 = $area1;
+$ans2 = $area2;
+$ans3 = $area1 + $area2;
+$ans4 = $a1 + $a2;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+L'aire de la région à gauche du graphique 
+(ombrée en bleu) est égale à $a1 unités\(^2\) et celle de la région à droite (ombrée en vert) est égale à $a2 unités\(^2\).  À l'aide de la courbe de \( f(x) \) illustrée, évaluer les intégrales suivantes.
+$PAR
+
+\{
+ColumnTable(
+
+"\( \displaystyle \int_a^b f(x) \, dx = \) ".
+ans_rule(15).
+$BR.
+$BR.
+"\( \displaystyle \int_b^c f(x) \, dx = \) ".
+ans_rule(15).
+$BR.
+$BR.
+"\( \displaystyle \int_a^c f(x) \, dx = \) ".
+ans_rule(15).
+$BR.
+$BR.
+"\( \displaystyle \int_a^c |f(x)| dx = \) ".
+ans_rule(15)
+,
+$BCENTER.
+image( insertGraph( $gr ), width=>300, height=>300, 'tex_size'=>500 ).
+$BR.
+$BR.
+"Graphique de \( y = f(x) \)".
+$ECENTER
+,
+indent => 0, separation => 10, valign => "TOP"
+);
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS( Compute("$ans1")->cmp() );
+ANS( Compute("$ans2")->cmp() );
+ANS( Compute("$ans3")->cmp() );
+ANS( Compute("$ans4")->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+On sait que la valeur de l'intégrale définie est égale à l'aire entre la courbe de \(y = f(x)\) et l'axe des \(x\), l'aire sous l'axe des \(x\) ayant une valeur négative.  Par conséquent
+$PAR
+\( \displaystyle \int_a^b f(x) dx = $area1 \), $BR
+\( \displaystyle\int_b^c f(x) dx = $area2 \), $BR
+\( \displaystyle\int_a^c f(x) dx = $area1 + $area2 = $ans3 \) $BR et
+\(\displaystyle \int_a^c |f(x)| dx = |$area1| + |$area2| = $ans4 \).
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();
+

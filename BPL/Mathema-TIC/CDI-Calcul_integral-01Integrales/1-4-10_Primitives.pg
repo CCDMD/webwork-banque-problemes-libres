@@ -1,0 +1,82 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('constante d\'intégration', 'primitive de la fonction puissance')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_4_10/Stewart5_4_10_24.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Antiderivatives (without trigonometric functions))
+## ZInstitution(UCSB)
+## ZMLT(antideriv_most_general_antideriv_higher_order)
+## ZMLTleader(1)
+## ZLevel(3)
+###############Source###############
+
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$a=non_zero_random(-10,10,1);
+$b=non_zero_random(-10,10,1);
+
+Context()->variables->are(t=>"Real");
+Context()->variables->set(t=>{limits=>[1,2]});
+
+Context()->variables->add(C=>"Real",D=>"Real",E=>"Real");
+
+$fd3 = Formula("$a*t + $b*sqrt(t)")->reduce;
+
+$ans1 = Formula("$a*1/2*t^2+$b*2/3*t^(3/2) + C")->reduce;
+$ans2 = Formula("$a*1/6*t^3+$b*4/15*t^(5/2)+C*t+D")->reduce;
+$ans3 = Formula("$a*1/24*t^4+$b*8/105*t^(7/2)+C*t^2/2+D*t+E")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit \(f'''(t) = $a t + $b \sqrt{t}.\)
+
+$PAR
+a) Trouver la forme générale de la primitive \(f''(t).\)  Toute constante ajoutée doit être écrite en majuscule ${BBOLD}C$EBOLD.
+
+$PAR
+\(f''(t) =\) \{ans_rule(50)\}
+
+$PAR
+b) À partir de la réponse obtenue en a), trouver la forme générale de la primitive \(f'(t).\)  Si une autre constante doit être ajoutée, utiliser la majuscule ${BBOLD}D$EBOLD.
+
+$PAR
+\(f'(t) =\) \{ans_rule(50)\}
+
+$PAR
+c) À partir de la réponse obtenue en  b), trouver la forme générale de la primitive \(f(t).\)  Si une autre constante doit être ajoutée, utiliser la majuscule ${BBOLD}E$EBOLD.
+
+$PAR
+\(f(t) =\) \{ans_rule(50)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+
+ENDDOCUMENT();

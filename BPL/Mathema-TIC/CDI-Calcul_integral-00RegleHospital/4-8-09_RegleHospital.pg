@@ -1,0 +1,61 @@
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction exponentielle', 'forme indéterminée', 'inf/inf', 'règle de L\'Hospital')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+### source : Library/Rochester/setDerivatives21LHospital/ur_dr_21_3.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Applications of differentiation)
+## ZDBsection(Indeterminate forms and L'Hopital's rule)
+## ZDate(6/3/2002)
+## ZLevel(2)
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+$a = non_zero_random(-1,3,1);
+$b = random(2,9,1);
+
+$num = Compute("e^x + $a*x -1")->reduce;
+
+if ($a == -1) { 
+    $den = Compute("$b x^2");
+	$b2 = 2*$b;
+	$ans = Compute("1/$b2");     
+} else {
+    $den = Compute("$b x");
+	$a1 = $a+1;
+	$ans = Compute("$a1/$b");    
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer la limite en utilisant la règle de L'Hospital.
+$PAR
+\(\displaystyle\lim_{x\to 0} \frac{$num}{$den} = \) \{ans_rule(20)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($ans->cmp());
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

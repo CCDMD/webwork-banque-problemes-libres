@@ -1,0 +1,105 @@
+## DESCRIPTION
+##   Definite integrals
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('aire', 'graphique', 'intégrale définie')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/FortLewis/Calc1/05-02-Definite-integral/HGM5-05-02-Definite-integral-30.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Conceptual understanding of integration)
+## ZDate(10/14/2010)
+## ZInstitution(Fort Lewis College)
+## ZAuthor(Paul Pearson)
+## ZLevel(2)
+###############Source###############
+
+
+#######################################
+#  Initialization
+
+
+DOCUMENT();	
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);      
+
+TEXT(beginproblem());
+
+#######################################
+#  Set-up
+
+Context("Numeric");
+
+$k = random(2,5,1);
+$a = random(2,7,1);
+$a2 = 2 * $a;
+
+$s = random(-1,1,2);
+
+if ( $s == 1 ) {
+
+  $L = Formula("-$k*x+$k*$a")->reduce;
+  $R = Formula(" $k*x-$k*$a")->reduce;
+
+} else {
+
+  $R = Formula("-$k*x+$k*$a")->reduce;
+  $L = Formula(" $k*x-$k*$a")->reduce;
+
+}
+
+$answer = Real("$s * $k * $a^2");
+
+
+################################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit
+\[
+f(x) =
+\left\lbrace
+\begin{array}{lll}
+$L && \mbox{ si } 0 \leq x \lt $a
+\\
+$R && \mbox{ si } $a \leq x \leq $a2
+\end{array}
+\right.
+\]
+$PAR
+Évaluer l'intégrale définie en l'interprétant comme l'aire d'une région délimitée.
+$PAR
+\( \displaystyle \int_{0}^{$a2} f(x) \, dx = \)
+\{ans_rule(20)\}
+$PAR
+${BBOLD}Suggestion :${EBOLD} Tracer un schéma de l'aire représentée par l'intégrale définie. Calculer ensuite cette aire à l'aide des formules géométriques de base. 
+END_TEXT
+Context()->normalStrings;
+
+
+################################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $answer->cmp() );
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

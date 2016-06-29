@@ -1,0 +1,170 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('aire', 'graphique', 'intégrale définie')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/FortLewis/Calc1/05-02-Definite-integral/HGM5-05-02-Definite-integral-29.pg
+## ZDBsubject(Calculus - single variable)
+## ZDBchapter(Integrals)
+## ZDBsection(Conceptual understanding of integration)
+## ZInstitution(University of Michigan, Fort Lewis College)
+## ZAuthor(Gavin LaRose, Paul Pearson)
+## ZLevel(2)
+###############Source###############
+
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"PGgraphmacros.pl",
+"MathObjects.pl",
+"unionTables.pl",
+"PGcourse.pl",
+);
+ 
+Context("Numeric")->variables->are(A=>'Real');
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+$showPartialCorrectAnswers = 1;
+
+# we graph
+#   f(x) = -m(x+a), -(a+1) < x < -a+1, 
+#        = -m,       -a+1  < x < -1, 
+#        =  mx,        -1  < x < 1, 
+#        =  m,          1  < x < a-1
+#        = -m(x-a),   a-1  < x < a
+#        = -1+(x-(a+1))^2, a < x < a+2
+
+$a = random(3,5,1);
+$m = list_random(1,2);
+
+
+# set up a graph
+$gr = init_graph(-1*$a-1,-$m-1,$a+2,$m+1,'axes'=>[0,0],'grid'=>[2*$a+3,2*$m+2],size=>[300,300]);
+$gr->new_color("lightblue", 214,230,244);
+
+$gr->lb('reset');
+foreach my $i ( 1 .. $a ) {
+  $gr->lb( new Label( $i,-$m-0.5, $i,'black','center','middle'));
+  $gr->lb( new Label(-$i,-$m-0.5,-$i,'black','center','middle'));
+}
+$gr->lb( new Label( $a+1,-$m-0.5, $a+1,'black','center','middle'));
+foreach my $j ( 1 .. $m ) {
+  $gr->lb( new Label(-$a-0.5, $j, $j,'black','center','middle'));
+  $gr->lb( new Label(-$a-0.5,-$j,-$j,'black','center','middle'));
+}
+
+
+$f1 = "-$m*(x+$a) for x in <" . (-1*($a+1)) . "," . (-1*$a+1) .
+    "> using color:blue and weight:2";
+$f2 = "-$m for x in <" . (-1*$a+1) . ",-1> using color:blue and weight:2";
+$f3 = "$m*x for x in <-1,1> using color:blue and weight:2";
+$f4 = "$m for x in <1," . ($a-1) . "> using color:blue and weight:2";
+$f5 = "-$m*(x-$a) for x in <" . ($a-1) . ",$a> using color:blue and weight:2";
+$f6 = "-1 + (x-$a-1)^2 for x in <$a," . ($a+2) . 
+    "> using color:blue and weight:2";
+
+add_functions($gr, $f1,$f2,$f3,$f4,$f5,$f6);
+
+# shade the area between the parabola and the axis
+# a function to generate y-values on the parabola
+#sub fx { my $x = shift(); return( -1+($x-$a-1)*($x-$a-1) ); }
+#$dx = 0.1;
+#$gr->moveTo($a,0);
+#for( my $xval = $a+$dx; $xval < $a+2; $xval+=$dx ) {
+#    $gr->moveTo( $xval, 0 );
+#    $gr->lineTo( $xval, fx($xval), 'red' );
+#}
+$gr->moveTo($a,0);
+$gr->lineTo($a+2,0,'blue');
+$gr->fillRegion([$a+1,-0.1,"lightblue"]);
+
+
+
+
+# then the area between -$a-1 and 0 is 
+$area1 = Real("-1*($m)*($a - 1)");
+# the area from -$a-1 to $a+2 is 
+$area2 = Compute("-A");
+# the upper bound of the second integral
+$ub = $a + 2;
+
+Context()->texStrings;
+BEGIN_TEXT
+\{
+ColumnTable(
+${BBOLD}.
+"a) ".
+$EBOLD.
+"À l'aide du graphique de \(f(x)\) ci-contre, évaluer l'intégrale suivante." .
+$BR.
+$BR.
+"\( \displaystyle \int_{-$a}^0 f(x) \, dx = \) ".
+ans_rule(15).
+$BR.
+$BR.
+${BBOLD}.
+"b) ".
+$EBOLD.
+"Si l'aire de la région ombrée en bleu est égale à \(A\), déterminer la valeur de intégrale en fonction de \( A \).". 
+$BR.
+"\( \displaystyle \int_{-$a}^{$ub} f(x) \, dx = \) ".
+ans_rule(15)
+,
+$BCENTER.
+image( insertGraph($gr), width=>300, height=>300, 'tex_size'=>500 ).
+$BR.
+$BR.
+"Graphique de \( y = f(x) \)".
+$BR.
+"(Cliquer sur la figure pour l'agrandir)".
+$ECENTER
+,
+indent => 0, separation => 30, valign => "TOP"
+);
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $area1->cmp() );
+ANS( $area2->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Puisque l'intégrale définie d'une fonction est l'aire de la région entre
+la courbe et l'axe des \(x\) pour les valeurs de \(x\) dans l'intervalle, on a que
+\[ 
+  \int_{-$a}^0 f(x) dx = $area1.
+\]
+Dans ce cas, l'aire est négative, car la région est située sous l'axe des \(x\).
+Pour la deuxième intégrale, on observe que l'aire négative entre \(x=-$a\) et
+\(x=0\) est égale à l'aire positive entre  \(x=0\) et
+\(x=$a\), de sorte qu'il ne reste plus que l'aire de la région ombragée.  Par conséquent,
+\[ 
+  \int_{-$a}^{$ub} f(x) dx = -A.
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();
+

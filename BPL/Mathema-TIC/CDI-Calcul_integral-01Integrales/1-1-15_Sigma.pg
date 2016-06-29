@@ -1,0 +1,84 @@
+## DESCRIPTION
+##   Find a Closed Form for a Finite Sum
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('formule de sommation', 'somme')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/Union/setIntSigmaNotation/an6_4_13.pg
+## ZDBsubject(Algebra)
+## ZDBchapter(Finite sequences and series)
+## ZDBsection(Summation formulas)
+## ZDate(8/23/07)
+## ZInstitution(Union)
+## ZAuthor(K. Lesh)
+## ZLevel(3)
+###############Source###############
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+"answerHints.pl",
+);
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+$a = random(1,7,1);
+$b = random(2,4,1);
+$summand="($a+$b k)^2";
+
+###################################
+# Main text
+
+$showHint = 3;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Exprimer la somme suivante en fonction de \(n\).
+$PAR
+\(\displaystyle \sum\limits_{k=1}^{n} \ $summand =\) \{ans_rule(50)\}
+$PAR
+$BBOLD Note : Un indice sera donné après $showHint tentatives.$EBOLD
+END_TEXT
+
+
+BEGIN_HINT
+Développer l'expression \($summand\) en effectuant la multiplication.
+END_HINT
+Context()->normalStrings;
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+
+Context()->variables->are(n=>'Real');
+$c0 = $a**2;
+$c1 = 2*$a*$b;
+$c2 = $b**2;
+$ans = Formula("${c0}n + ${c1}n(n+1)/2 + $c2 n(n+1)(2n+1)/6 ")->reduce;
+
+ANS($ans->cmp);
+
+###################################
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

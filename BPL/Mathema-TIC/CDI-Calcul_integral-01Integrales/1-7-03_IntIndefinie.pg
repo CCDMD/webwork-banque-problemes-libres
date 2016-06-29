@@ -1,0 +1,69 @@
+##DESCRIPTION
+##  Evaluate the integral
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction inverse', 'fonction algébrique', 'fonction puissance', 'intégrale indéfinie', 'propriétés de l\'intégrale')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/Rochester/setIntegrals4FTC/S05.03.FundThmCalc.PTP15.pg
+## ZDate(5/17/2008)
+## ZInstitution(Rochester)
+## ZAuthor(Paul Pearson)
+## MLT(indefinite_sums_simple_terms_including_logs)
+## MLTleader(1)
+## ZLevel(2)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('5.3')
+## Problem1('')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "parserFormulaUpToConstant.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+Context()->variables->set(x=>{limits=>[-1,1]});
+Context()->noreduce('(-x)-y','(-x)+y'); 
+
+$c=random(1,9,1);
+$n=random(2,7,1); 
+
+$a=random(2, 8, 2);
+$b=random(3, 15, 2);
+
+BEGIN_TEXT
+
+Évaluer l'intégrale 
+\[ \int \left( \frac{$c}{x^$n}+ \frac{$a}{$b x} \right) dx \]
+Réponse : \{ans_rule(30)\} \(+ C\) 
+
+END_TEXT
+
+$n1 = -$n+1;
+$primitive =Formula("$c/$n1* x^($n1) + $a/$b * ln(abs(x))")->reduce;
+ANS($primitive->cmp(upToConstant=>1));
+
+ENDDOCUMENT();
+
+
+

@@ -1,0 +1,66 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('constante d\'intégration', 'fonction trigonométrique', 'identité trigonométrique', 'intégrale indéfinie')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_5_4/Stewart5_5_4_13.pg
+## ZInstitution(UCSB)
+## ZMLT(identity)
+## ZLevel(3)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('5.4')
+## Problem1('13')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "parserFormulaUpToConstant.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+Context()->noreduce('(-x)/y','(-x)-y','(-x)+y');  
+
+
+$a=random(2,10,1)*random(-1,1,2);
+
+# choix de la fonction trigo
+$c = random(0,1);
+@trig = (Compute("sin(x)"),Compute("cos(x)"));
+@simp = (Compute("tan(x)*sec(x)"),Compute("cot(x)*csc(x)"));
+@prim = (Compute("sec(x)"),Compute("-csc(x)"));
+ 
+$f = Compute("($a*$trig[$c])/(1-$trig[$c]^2)")->reduce; 
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer la forme générale de l’intégrale indéfinie. 
+\[\int $f\,dx\]
+
+$PAR
+Réponse : \{ans_rule(40)\}
+
+END_TEXT
+Context()->normalStrings;
+
+$ans = FormulaUpToConstant("$a*$prim[$c]")->reduce;
+ANS($ans->cmp);
+
+
+ENDDOCUMENT();
