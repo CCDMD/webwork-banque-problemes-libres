@@ -2,49 +2,48 @@
 ## Algebra: Basic Algebra
 ## ENDDESCRIPTION
 
-## KEYWORDS ('factoring','francais')
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('différence de carrés', 'factorisation', 'trinôme')
 ## Traduction('Julie Tremblay')
-## Tagged by cmd6a 4/4/06
+## Language(fr)
 
-## DBsubject('Algebra')
-## DBchapter('Basic Algebra')
-## DBsection('Algebraic Expressions')
-## Date('')
-## Author('')
-## Institution('Rochester')
-## TitleText1('')
-## EditionText1('')
-## AuthorText1('')
-## Section1('')
-## Problem1('')
+######### Source #############
+## ZInstitution('Rochester')
 
 DOCUMENT();        # This should be the first executable line in the problem.
 
 loadMacros(
-"PG.pl",
-"PGbasicmacros.pl",
-"PGchoicemacros.pl",
-"PGanswermacros.pl",
-"PGauxiliaryFunctions.pl"
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
 );
 
 TEXT(beginproblem());
 $showPartialCorrectAnswers = 1;
 
 $a = random(2,4,1);
-$b = random(2,4,1);
+$b = random(2,6,1);
 $coef = $a;
 $n = $a*$b*$b;
 
-TEXT(EV2(<<EOT));
-Factoriser le polynôme \($coef x^2-$n\). La réponse doit être sous la forme
+$poly = Compute("$coef*x^2-$n")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Factoriser le polynôme \($poly\). La réponse doit être sous la forme
 \(A(x+B)(x+C)\) avec des entiers \(A\), \( B\), \(C\) tels que \(B<C \).
 $PAR\(A = \)\{ans_rule(10) \}, \(B = \)\{ans_rule(10)\} et \(C = \)\{ans_rule(10) \}
-$BR
-EOT
 
-ANS(num_cmp($a));
-ANS(num_cmp(-$b));
-ANS(num_cmp($b));
+END_TEXT
+Context()->normalStrings;
+
+$ans1 = Real($a);
+$ans2 = Real(-$b);
+$ans3 = Real($b);
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.

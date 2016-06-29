@@ -2,15 +2,13 @@
 ## Algebra: Basic Algebra
 ## ENDDESCRIPTION
 
-## KEYWORDS ('factoring','francais')
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('facteur commun', 'factorisation', 'trinôme carré parfait')
 ## Traduction('Julie Tremblay')
-## Tagged by cmd6a 4/4/06
+## Language(fr)
 
-## DBsubject('Algebra')
-## DBchapter('Basic Algebra')
-## DBsection('Algebraic Expressions')
-## Date('')
-## Author('')
+######### Source #############
 ## Institution('Rochester')
 ## TitleText1('College Algebra')
 ## EditionText1('3')
@@ -21,11 +19,9 @@
 DOCUMENT();        # This should be the first executable line in the problem.
 
 loadMacros(
-"PG.pl",
-"PGbasicmacros.pl",
-"PGchoicemacros.pl",
-"PGanswermacros.pl",
-"PGauxiliaryFunctions.pl"
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
 );
 
 TEXT(beginproblem());
@@ -37,7 +33,10 @@ $coef = $b*$b;
 $t = 2*$b*$d;
 $n = $d*$d;
 
-TEXT(EV2(<<EOT));
+$poly = Compute("$coef x^2-$t*x+$n")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
 Factoriser le polynôme \($coef x^2-$t x+$n\). La réponse doit être sous la forme
 \((Ax-B)^r\) avec des entiers \(A\), \(B\) et \(r\) tels que \(A>0\).
 $BR$BR
@@ -45,10 +44,15 @@ $BR$BR
 $BR
 \(B\) = \{ans_rule(10) \}
 $BR \(r\) = \{ans_rule(10) \}
-EOT
+END_TEXT
+Context()->normalStrings;
 
-ANS(num_cmp($b));
-ANS(num_cmp($d));
-ANS(num_cmp(2));
+$ans1 = Real($b);
+$ans2 = Real($d);
+$ans3 = Real(2);
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.

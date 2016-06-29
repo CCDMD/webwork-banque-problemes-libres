@@ -2,33 +2,27 @@
 ## Algebra: Basic Algebra
 ## ENDDESCRIPTION
 
-## KEYWORDS ('factoring','francais')
-## Traduction('Julie Tremblay')
-## Tagged by cmd6a 4/4/06
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('binôme', 'différence de carrés', 'factorisation')
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Language(fr)
+######## Source ################
+## ZDate('2001/2002')
+## ZAuthor('Mark Schmitt')
+## ZInstitution('Rochester')
 
-## DBsubject('Algebra')
-## DBchapter('Basic Algebra')
-## DBsection('Algebraic Expressions')
-## Date('2001/2002')
-## Author('Mark Schmitt')
-## Institution('Rochester')
-## TitleText1('')
-## EditionText1('')
-## AuthorText1('')
-## Section1('')
-## Problem1('')
 
 DOCUMENT();        # This should be the first executable line in the problem.
 
 loadMacros(
-"PG.pl",
-"PGbasicmacros.pl",
-"PGchoicemacros.pl",
-"PGanswermacros.pl",
-"PGauxiliaryFunctions.pl",
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
 );
 
 $showPartialCorrectAnswers = 1;
+Context()->variables->add(y=>"Real");
 
 TEXT(beginproblem());
 
@@ -45,9 +39,12 @@ $c2 = $B**2;
 $e1 = $K*2;
 $e2 = $L*2;
 
+$poly = Compute("$c1*x^($e1) - $c2*y^($e2)")->reduce;
+
+Context()->texStrings;
 BEGIN_TEXT
 
-Le polynôme \($c1 x^{$e1} - $c2 y^{$e2} \) se factorise en
+Le polynôme \($poly\) se factorise en
 produit de deux polynômes, \(A \cdot B\), où le 
 coefficient de \(y\) dans \(A\) est
 plus grand que le coefficient de \(y\) dans \(B\).  Déterminer \(A\) et \(B\).
@@ -58,12 +55,13 @@ $BR
 \(B = \) \{ans_rule(10)\}
 
 END_TEXT
+Context()->normalStrings;
 
-$ans1 = "$A*x**$K + $B*y**$L";
-$ans2 = "$A*x**$K - $B*y**$L";
+$ans1 = Compute("$A*x**$K + $B*y**$L")->reduce;
+$ans2 = Compute("$A*x**$K - $B*y**$L")->reduce;
 
-ANS(fun_cmp ($ans1,var=>['x','y']));
-ANS(fun_cmp ($ans2,var=>['x','y']));
+ANS($ans1->cmp);
+ANS($ans2->cmp);
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.;
 

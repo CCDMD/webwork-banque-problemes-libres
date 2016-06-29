@@ -2,69 +2,67 @@
 ## Algebra: Basic Algebra
 ## ENDDESCRIPTION
 
-## KEYWORDS ('factoring','francais')
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('différence de carrés', 'factorisation', 'mise en évidence double')
 ## Traduction('Julie Tremblay')
-## Tagged by cmd6a 4/4/06
+## Language(fr)
 
-## DBsubject('Algebra')
-## DBchapter('Basic Algebra')
-## DBsection('Algebraic Expressions')
-## Date('2001/2002')
-## Author('Mark Schmitt')
-## Institution('Rochester')
-## TitleText1('')
-## EditionText1('')
-## AuthorText1('')
-## Section1('')
-## Problem1('')
+########## Source ################
+## ZDate('2001/2002')
+## ZAuthor('Mark Schmitt')
+## ZInstitution('Rochester')
+
 
 DOCUMENT();        # This should be the first executable line in the problem.
 
 loadMacros(
-"PG.pl",
-"PGbasicmacros.pl",
-"PGchoicemacros.pl",
-"PGanswermacros.pl",
-"PGauxiliaryFunctions.pl",
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
 );
 
 $showPartialCorrectAnswers = 1;
 
 TEXT(beginproblem());
 
-$A = random(1,8,1);
-$B = random(1,9,1);
-while (gcd($A,$B) > 1) {$B = random(1,9,1);}
+$A = random(1,6,1);
+do{$B = random(1,9,1)} until (gcd($A,$B) <= 1);
 
-$D = random($A, 9,1);
+$D = random($A+1, 9,1);
 
 $c1 = $B**2;
 $c2 = ($B**2)*$D;
 $c3 = -$A**2;
 $c4 = -$A**2*$D;
 
+$poly = Compute("$c1*x^3 + $c2*x^2 + $c3*x + $c4")->reduce;
+
+Context()->texStrings;
 BEGIN_TEXT
 
-Le polynôme \($c1 x^3 + $c2 x^2 + $c3 x + $c4 \) se factorise en produit
+Le polynôme \($poly\) se factorise en produit
 de trois polynômes, \(A \cdot B \cdot C\),
 où le terme constant dans \(A\) est
 inférieur ou égal au terme constant dans \(B\), lui-même
 inférieur ou égal au terme constant dans \(C\). Déterminer \(A, B\) et \(C\).
 $BR
 $BR
-\(A = \) \{ans_rule(10)\}
+\(A = \) \{ans_rule(20)\}
 $BR
-\(B = \) \{ans_rule(10)\}
+\(B = \) \{ans_rule(20)\}
 $BR
-\(C = \) \{ans_rule(10)\}
+\(C = \) \{ans_rule(20)\}
 END_TEXT
+Context()->normalStrings;
 
-$ans1 = "$B*x - $A";
-$ans2 = "$B*x + $A";
-$ans3 = "x+$D";
+$ans1 = Compute("$B*x - $A")->reduce;
+$ans2 = Compute("$B*x + $A")->reduce;
+$ans3 = Compute("x+$D")->reduce;
 
-ANS(fun_cmp ($ans1));
-ANS(fun_cmp ($ans2));
-ANS(fun_cmp ($ans3));
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+
 ENDDOCUMENT();        # This should be the last executable line in the problem.;
 

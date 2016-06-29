@@ -2,30 +2,24 @@
 ## Algebra: Basic Algebra
 ## ENDDESCRIPTION
 
-## KEYWORDS ('factoring','francais')
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('factorisation', 'mise en évidence double')
 ## Traduction('Julie Tremblay')
-## Tagged by cmd6a 4/4/06
+## Language(fr)
 
-## DBsubject('Algebra')
-## DBchapter('Basic Algebra')
-## DBsection('Algebraic Expressions')
-## Date('2001/2002')
-## Author('Mark Schmitt')
-## Institution('Rochester')
-## TitleText1('')
-## EditionText1('')
-## AuthorText1('')
-## Section1('')
-## Problem1('')
+############# Source #############
+## ZDate('2001/2002')
+## ZAuthor('Mark Schmitt')
+## ZInstitution('Rochester')
+
 
 DOCUMENT();        # This should be the first executable line in the problem.
 
 loadMacros(
-"PG.pl",
-"PGbasicmacros.pl",
-"PGchoicemacros.pl",
-"PGanswermacros.pl",
-"PGauxiliaryFunctions.pl",
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
 );
 
 $showPartialCorrectAnswers = 1;
@@ -33,36 +27,38 @@ $showPartialCorrectAnswers = 1;
 TEXT(beginproblem());
 
 $A = random(1,9,1);
-$B = random(1,9,1);
-while (gcd($A,$B) > 1) {$B = random(1,9,1);}
+do{$B = random(1,9,1)} until (gcd($A,$B) <= 1);
+
 
 $K = random(1,9,1);
-$L = random(1,9,1);
-while (gcd($K,$L)>1) {$L = random(1,9,1);}
+do{$L = random(1,9,1)} until (gcd($K,$L)<=1);
 
 $c1 = $K*$A;
 $c2 = $K*$B;
 $c3 = $L*$A;
 $c4 = $L*$B;
 
-BEGIN_TEXT
+$poly = Compute("$c1*x^3 + $c2*x^2 + $c3*x + $c4")->reduce;
 
-Le polynôme \($c1 x^3 + $c2 x^2 + $c3 x + $c4 \) se factorise en
+Context()->texStrings;
+BEGIN_TEXT
+Le polynôme \($poly\) se factorise en
 produit de deux polynômes, \(A \cdot B\), où le degré de \(A\) est
 plus grand que le degré de \(B\). Déterminer \(A\) et \(B\).
 $BR
 $BR
-\(A = \) \{ans_rule(10)\}
+\(A = \) \{ans_rule(20)\}
 $BR
-\(B = \) \{ans_rule(10)\}
+\(B = \) \{ans_rule(20)\}
 
 END_TEXT
+Context()->normalStrings;
 
-$ans1 = "$K*x**2 + $L";
-$ans2 = "$A*x + $B";
+$ans1 = Compute("$K*x**2 + $L")->reduce;
+$ans2 = Compute("$A*x + $B")->reduce;
 
-ANS(fun_cmp ($ans1));
-ANS(fun_cmp ($ans2));
+ANS($ans1->cmp);
+ANS($ans2->cmp);
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.;
 

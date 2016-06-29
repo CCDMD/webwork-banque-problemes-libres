@@ -3,29 +3,26 @@
 ##  x^4 + ax^2 + c
 ##ENDDESCRIPTION
 
-##KEYWORDS('algebra', 'factoring', 'francais')
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('factorisation', 'méthode somme-produit', 'trinôme')
 ## Traduction('Julie Tremblay')
-## hcao tagged and PAID on 2-20-2004
+## Language(fr)
 
-## DBsubject('Algebra')
-## DBchapter('Basic Algebra')
-## DBsection('Algebraic Expressions')
+########## Source ################
 ## Date('6/3/2002')
-## Author('')
-## Institution('')
 ## TitleText1('College Algebra')
 ## EditionText1('3')
 ## AuthorText1('Stewart, Redlin, Watson')
 ## Section1('1.4')
 ## Problem1('73')
+
 DOCUMENT();        # This should be the first executable line in the problem.
 
 loadMacros(
-"PG.pl",
-"PGbasicmacros.pl",
-"PGchoicemacros.pl",
-"PGanswermacros.pl",
-"PGauxiliaryFunctions.pl"
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
 );
 
 TEXT(beginproblem());
@@ -36,23 +33,23 @@ $b = random(5,8,1);
 $t = $a+$b;
 $n = $a*$b;
 
-TEXT(EV2(<<EOT));
-Factoriser le polynôme \(x^4+$t x^2+$n\). La réponse doit être sous la forme
+$poly = Compute("x^4+$t*x^2+$n")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Factoriser le polynôme \($poly\). La réponse doit être sous la forme
 \((x^2+A)(x^2+B)\), où \(A \lt B\).
 $BR $BR  Réponse : \(A\) =
+\{ans_rule(10) \} et \(B\) =
 \{ans_rule(10) \}
-EOT
+END_TEXT
+Context()->normalStrings;
 
-$ans = $a;
-ANS(num_cmp($ans));
+$ans1 = Real("$a");
+$ans2 = Real("$b");
 
-TEXT(EV2(<<EOT));
-et \(B\) =
-\{ans_rule(10) \}
-$BR
-EOT
+ANS($ans1->cmp);
+ANS($ans2->cmp);
 
-$ans =  $b;
-ANS(num_cmp($ans));
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.
