@@ -1,0 +1,135 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la fonction puissance', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Racine d'un polynôme, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Cas 45: Racine entière d'un trinôme.
+#Polynôme 
+$k451 =random(3,15);
+$m451 =random(6,9); 
+$k452 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k452) == abs($k451)) {$k452 = 11;};
+$m452 =random(4,5);  
+$k453 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k453) == abs($k451)) {$k453 = 12;};
+$m453 =random(2,3); 
+$k454 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k454) == abs($k453)) {$k454 = 17;};
+$m454 =random(0,1) ; 
+#Exposant du polynôme
+$n451 = random(2,5); 
+#Coefficient du polynôme
+$k455 =random(2,50,2); 
+
+if ($m454 == 0)
+{#Problème d'affichage
+$poly451 = Formula("$k451*x^$m451+$k452*x^$m452+ $k453*x^$m453+$k454")->reduce;}
+else
+{$poly451 = Formula("$k451*x^$m451+$k452*x^$m452+ $k453*x^$m453+$k454*x^$m454")->reduce;}
+$poly451prime =($poly451)->D('x');
+
+#Fonction à dériver
+$f45 = Formula("$k455*sqrt($poly451)")-> reduce;
+#Calcul de la dérivée
+$f45prime1 = $f45 ->D('x')-> reduce;
+
+#Simplification de la dérivée
+$u45 = $poly451;
+$u45prime = $poly451prime;
+$coef451 = Compute("$k451*$m451");
+$coef452 = Compute("$k452*$m452");
+$coef453 = Compute("$k453*$m453");
+$coef454 = Compute("$k454*$m454");
+if ($m454 == 0)
+{#Le dernier terme est constant
+$u45primeS =  Formula("$coef451*x^($m451-1)+$coef452*x^($m452-1) + $coef453*x^($m453-1)")->reduce;}
+else
+{$u45primeS =  Formula("$coef451*x^($m451-1)+$coef452*x^($m452-1) + $coef453*x^($m453-1)+ $coef454*x^($m454-1)")->reduce;}
+
+$f45prime2 = Formula("$k455/2/sqrt($poly451)*$u45primeS")-> reduce;
+
+#Mise en évidence simple
+if ($m454 == 1)
+{#Le dernier terme est constant
+$CoefTemp451 = gcd($coef451,$coef452);
+$CoefTemp452 = gcd($coef453,$coef454);
+$NouveauCoef453 = gcd($CoefTemp451,$CoefTemp452);
+$f45prime3 = Formula("($k455/2*$NouveauCoef453*($coef451/$NouveauCoef453*x^($m451-1)+$coef452/$NouveauCoef453*x^($m452-1) + $coef453/$NouveauCoef453*x^($m453-1)+$coef454/$NouveauCoef453))/sqrt($poly451)")-> reduce;}
+else
+{#$m454 est nul.
+$CoefTemp451 = gcd($coef451,$coef452);
+$NouveauCoef453 = gcd($CoefTemp451,$coef453);
+$ExposantTemp451 = min($m451,$m452);
+$NouveauExposant453 = min($ExposantTemp451-1,$m453-1);
+$f45prime3 = Formula("($k455/2*$NouveauCoef453*x^($NouveauExposant453)*($coef451/$NouveauCoef453*x^($m451-1- $NouveauExposant453)+$coef452/$NouveauCoef453*x^($m452-1-$NouveauExposant453) + $coef453/$NouveauCoef453*x^($m453-1-$NouveauExposant453)))/sqrt($poly451)")-> reduce;}
+
+#La réponse la plus courante
+$Rep45 = $f45prime2 -> reduce;
+#Restreindre le domaine de la réponse pour les racines paires négatives
+$Rep45->{limits} = [10,11];
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f45} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep45->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f45 \) a la forme d'une constante multipliée par une puissance \(k \cdot u^n\) où
+$PAR
+\( \displaystyle k =  $k455\) 
+$PAR
+\(\displaystyle u(x) =  $u45 \)
+$PAR
+\( \displaystyle n =  \frac{1}{2}\) 
+$PAR
+Appliquons la formule de dérivation d'une constante multipliée par une puissance.  
+$BR
+\( \displaystyle f'(x) =  $f45prime1 \) 
+$PAR
+Simplifions.
+$BR
+\( \displaystyle f'(x) =  $f45prime2 \) 
+$BR
+Concluons en faisant, si possible, une mise en évidence simple.
+$BR
+\( \displaystyle f'(x) =  $f45prime3 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

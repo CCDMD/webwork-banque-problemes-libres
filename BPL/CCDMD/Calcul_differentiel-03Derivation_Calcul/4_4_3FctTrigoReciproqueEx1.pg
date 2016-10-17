@@ -1,0 +1,55 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'fonction trigonométrique inverse', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Fonction Arc tangente(x^n) avec solution");
+TEXT(beginproblem());
+
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+
+#Cas 1 argument x^n
+#Argument 
+$F0n1 = random(2,9);
+$U0 = Formula("x^($F0n1)");
+$U0prime = Formula("$F0n1*x^($F0n1-1)");
+$U0carre = Formula("x^(2*$F0n1)");
+$F0Reponse = Formula("$U0prime/(1 + $U0carre)") -> reduce; 
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = }\) Arc tan\(($U0)\).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(80)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($F0Reponse->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La fonction \( \displaystyle {f(x) = }\) Arc tan\(($U0)\) a la forme Arc tan(\(u\)) où \( \displaystyle u(x) = $U0\). Ainsi,
+$BR
+\( \displaystyle {f'(x) = \frac{($U0)'}{1 + ($U0)^2}= \frac{$U0prime}{1 + $U0carre}}\)
+$BR
+END_SOLUTION
+Context()->normalStrings;
+ENDDOCUMENT(); 

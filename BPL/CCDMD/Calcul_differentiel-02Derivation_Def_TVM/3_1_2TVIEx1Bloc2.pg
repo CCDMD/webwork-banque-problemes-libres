@@ -1,0 +1,158 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation - définition et interprétation)
+## KEYWORDS('fonction polynomiale', 'fonction rationnelle', 'taux de variation instantané', 'taux de variation moyen')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionLists.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. 1 fonction est choisie parmi la fonction quotient 1/(k*t), la quadratique simple (-t^2) et la quadratique développée (a*t^2 + b*t).");
+
+
+TEXT(beginproblem());
+
+#Bloc 2 uniquement
+#3 types de fonction sont utilisés dans les blocs. 
+#Les types de fonction sont quotient, quadratique simple et quadratique développée
+#Bloc 1 (Vitesse instantanée): 3
+#Bloc 2 (Taux de variation instantané): 3
+#Bloc 3 (équation de la tangente): 1
+
+
+#Définir des variables autres que x
+Context()->variables->are(h=>"Real",t=>"Real",a=>"Real", x => "Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+
+#Cas 1 
+#Fonction quadratique simple avec -t^2 et non (-t)^2
+$m11 =random(11,25); 
+$f1 = Formula("-x^2+$m11");
+$f1t = $f1->substitute(x=>"t");
+#Réponse pour la vitesse moyenne en deux valeurs numériques
+$a1=random(2,8);
+$h1=random(2,5);
+$a1h1 = Compute("$a1+$h1");
+$f1a = $f1->eval(x=>$a1);
+$f1ah = $f1->eval(x=>$a1h1);
+$RepVm1 = Compute("($f1ah-$f1a)/$h1");
+#Réponse pour la vitesse instantanée en valeur numérique
+$a2=$a1;
+$f1prime = $f1 ->D('x');
+$RepVm2 = $f1prime->eval(x=>$a2);
+#Réponse pour la vitesse instantanée en a
+$a3=a;
+$RepVm3 = $f1prime->substitute(x=>"$a3");
+#Équation de la tangente
+$f1m =  $f1prime->eval(x=>$a1);
+$f1b = Compute("$f1a - $f1m*$a1");
+$RepVmD1 = Formula("$f1m*x+$f1b")->reduce;
+
+#Cas 2
+#Fonction quotient
+$k21 = random(3,8);
+#$m21 =random(11,25); 
+$f2 = Formula("1/($k21*x)");
+$f2t = $f2->substitute(x=>"t");
+#Réponse pour la vitesse moyenne en deux valeurs numériques
+$a4=random(2,8);
+$h4=random(2,5);
+$a4h1 = Compute("$a4+$h4");
+$f2a = $f2->eval(x=>$a4);
+$f2ah = $f2->eval(x=>$a4h1);
+$RepVm4 = Compute("($f2ah-$f2a)/$h4");
+#Réponse pour la vitesse instantanée en valeur numérique
+$a5=$a4;
+$f2prime = $f2 ->D('x');
+$RepVm5 = $f2prime->eval(x=>$a5);
+#Réponse pour la vitesse instantanée en a
+$a6=a;
+$RepVm6old = $f2prime->substitute(x=>"$a6");
+$RepVm6 = Formula("-1/($k21*a^2)") ->reduce;
+#Équation de la tangente
+$f2m =  $f2prime->eval(x=>$a4);
+$f2b = Compute("$f2a - $f2m*$a4");
+$RepVmD2 = Formula("$f2m*x+$f2b")->reduce;
+
+#Cas 3
+#Fonction quadratique développée
+$k31 = random(3,8);
+$m31 =random(11,25); 
+$f3 = Formula("$k31 x^2-$m31 x");
+$f3t = $f3->substitute(x=>"t");
+#Réponse pour la vitesse moyenne en deux valeurs numériques
+$a7=random(2,8);
+$h7=random(2,5);
+$a7h1 = Compute("$a7+$h7");
+$f3a = $f3->eval(x=>$a7);
+$f3ah = $f3->eval(x=>$a7h1);
+$RepVm7 = Compute("($f3ah-$f3a)/$h7");
+
+#Réponse pour la vitesse instantanée en valeur numérique
+$a8=$a7;
+$f3prime = $f3 ->D('x');
+$RepVm8 = $f3prime->eval(x=>$a8);
+#Réponse pour la vitesse instantanée en a
+$a9=a;
+$RepVm9 = $f3prime->substitute(x=>"$a9");
+#Équation de la tangente
+$f3m =  $f3prime->eval(x=>$a7);
+$f3b = Compute("$f3a - $f3m*$a7");
+$RepVmD3 = Formula("$f3m*x+$f3b")->reduce;
+
+
+@ListeAffichageVM1 = ($f1t,$f1, "$a1","$a1h1", "$a2", $f2t,$f2, "$a4","$a4h1","$a5",$f3t,$f3, "$a7","$a7h1","$a8");
+@RepAffichageVM1 = ($RepVm1,$RepVm2,$RepVm3,$RepVmD1, $RepVm4,$RepVm5,$RepVm6,$RepVmD2,$RepVm7,$RepVm8,$RepVm9,$RepVmD3);
+$temp110 =list_random(0,1,2);
+if ($temp110 == 0) {@RVM1 = (0, 1, 2,3,4,5,6,7,8,9,10,11,12,13,14);@RVM2 = (0, 1, 2,4,5,6,11);}
+elsif ($temp110 == 1)  {@RVM1 = (5,6,7,8,9,0, 1, 2,3,4,10,11,12,13,14);@RVM2 = (4,5,6,0, 1, 2,11);}
+else
+ {@RVM1 = (10,11,12,13,14, 0, 1, 2,3,4,5,6,7,8,9);@RVM2 = (8,9,10,0, 1, 2,7);}
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+
+
+Soit la fonction \( f(x) = \displaystyle $ListeAffichageVM1[$RVM1[6]]  \). 
+$PAR
+\{ BeginList("OL", type=>"a") \}
+$ITEM Calculer le taux de variation moyen de la fonction entre  \( x_{1} = $ListeAffichageVM1[$RVM1[7]]\) et  \( x_{2} = $ListeAffichageVM1[$RVM1[8]]\).
+$BR
+\(TVM_{[$ListeAffichageVM1[$RVM1[7]], \ $ListeAffichageVM1[$RVM1[8]]]} =\)  \{ans_rule(20)\}
+$ITEMSEP
+$ITEM Calculer le taux de variation instantané de la fonction en \( x = $ListeAffichageVM1[$RVM1[9]]\).
+$BR
+\(TVI_{x\  =  \ $ListeAffichageVM1[$RVM1[9]]} =\)  \{ans_rule(20)\}
+$ITEMSEP
+$ITEM Calculer le taux de variation instantané de la fonction en \( x = a\), avec \( a \), un nombre réel.
+$BR
+\(TVI_{x \ = \ a} = \)  \{ans_rule(20)\}
+$ITEMSEP
+\{ EndList("OL") \}
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS(num_cmp($RepAffichageVM1[$RVM2[3]]));
+ANS($RepAffichageVM1[$RVM2[4]]->cmp);
+ANS($RepAffichageVM1[$RVM2[5]]->cmp);
+
+
+
+ENDDOCUMENT(); 

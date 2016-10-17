@@ -1,0 +1,62 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivée', 'dérivée de la fonction puissance', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Puissances irrationnelles (a1*x^sqrt(n1)), avec notation standard et solution.");
+
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y'); 
+
+#Cas 15: Puissance non rationnelle
+$n151 =list_random(2,3,5,7,11); 
+$m151 =random(2,9); 
+
+$f15 = Formula("$m151*x^(sqrt($n151))") -> reduce;
+$f15A = "$m151 x^{\sqrt{$n151}}";
+$f15prime = Formula("$m151*sqrt($n151)*x^(sqrt($n151)-1)") -> reduce;
+$f15primeA = "$m151 \sqrt{$n151} x^{\sqrt{$n151}-1}";
+$Rep15 = $f15prime -> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f15A} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep15->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f15A \) a la forme d'une constante multipliée par une puissance. Dérivons.
+$PAR
+\( \displaystyle f'(x) =  $f15primeA \).
+$PAR
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

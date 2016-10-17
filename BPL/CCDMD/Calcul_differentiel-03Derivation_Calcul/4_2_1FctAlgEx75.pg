@@ -1,0 +1,92 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée d\'une constante', 'dérivée de la fonction puissance', 'dérivée de la somme de fonctions', 'fonction exponentielle', 'fonction logarithmique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Somme exponentielle et ln dont un des deux est constant (e^(a) + ln(bx)) ou (e^(ax) + ln(b)), avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Cas 75: Somme exponentielle et ln
+#Exponentielle
+$k751 =random(3,15);
+#ln
+$k752 = random(3,15);
+if (abs($k751) == abs($k752)) {$k752 = $k751 + 1};
+$temp751 = random(0,1);
+
+if ($temp751 == 0)
+{#Exponentielle constante
+$f75 = Formula("e^($k751) + ln($k752*x)")-> reduce;
+$f75A = "e^{$k751} + \ln($k752 x)";
+$f75prime1 = Formula("1/x");}
+else
+{#Ln constante
+$f75 = Formula("e^($k751*x) + ln($k752)")-> reduce;
+$f75A = "e^{$k751 x} + \ln($k752)";
+$f75prime1 = Formula("$k751*e^($k751*x)");}
+
+$Rep75 = $f75prime1 -> reduce;
+#$f75prime5 = $f75 ->D('x')-> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f75A} \).
+$PAR
+\( \displaystyle f'(x) =  \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep75->cmp);
+
+if ($temp751 == 0)
+{#Exponentielle constante
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f75A \) a la forme d'une somme d'un logarithme avec la constante \(e^{$k751}\). Ainsi, 
+$PAR
+\( \displaystyle f'(x) =  (e^{$k751})' +(\ln($k752 x))' \)  $SPACE (Formule de dérivation)
+$PAR
+\( \displaystyle f'(x) =  0 + \frac{($k752 x)'} {$k752 x} \)  $SPACE (Formule de dérivation)
+$PAR
+\( \displaystyle f'(x) =  \frac{$k752} {$k752 x} \) $SPACE (Simplification) 
+$PAR
+\( \displaystyle f'(x) =  \frac{1} {x} \) $SPACE (Simplification) 
+END_SOLUTION
+Context()->normalStrings;}
+else
+{#ln constant
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f75A \) a la forme d'une somme d'une exponentielle avec la constante \(\ln($k752)\). Ainsi, 
+$PAR
+\( \displaystyle f'(x) =  (e^{$k751 x})' +(\ln($k752))' \)  $SPACE (Formule de dérivation)
+$PAR
+\( \displaystyle f'(x) =  e^{$k751 x}($k751 x)' + 0\)  $SPACE (Formule de dérivation)
+$PAR
+\( \displaystyle f'(x) =  $k751 e^{$k751 x} \) $SPACE (Simplification) 
+END_SOLUTION
+Context()->normalStrings;}
+
+ENDDOCUMENT(); 

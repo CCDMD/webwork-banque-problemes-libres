@@ -1,0 +1,54 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('0/0', 'factorisation', 'fonction algébrique', 'fonction rationnelle', 'forme indéterminée', 'limite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Limite algébrique d'indétermination 0/0 et de la forme d'un trinôme au numérateur");
+
+
+TEXT(beginproblem());
+
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Forme 0/0
+
+#Cas 2: Trinôme au numérateur
+$a2t=non_zero_random(-10,10);
+$m2t=non_zero_random(-10,10);
+if ($a2t = $m2t) {$a2 = random(2,10); $m2 =  Compute("$a2+2");}
+else {$a2 = $a2t; $m2 = $m2t;}
+$b2c = Compute("-1*$a2 - $m2");
+$c2c = Compute("$a2 * $m2");
+$f2A =Formula("(x^2+$b2c x +$c2c)/(x-$a2)")->reduce;
+$RepLA2temp =  Compute("$a2 - $m2");
+$RepLA2 =  Compute("$RepLA2temp");
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la limite suivante.$BR
+
+ \( \displaystyle {\lim_{x \rightarrow $a2} $f2A}\)  = \{ans_rule(20)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepLA2->cmp);
+
+
+
+ENDDOCUMENT(); 

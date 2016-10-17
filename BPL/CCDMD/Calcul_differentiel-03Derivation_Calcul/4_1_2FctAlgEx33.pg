@@ -1,0 +1,125 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivée', 'dérivée du quotient de fonctions', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Quotient d'un monôme par un binôme, sans exposant, avec notation standard et solution.");
+
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Cas 33: Quotient d'un monôme par un binôme
+#Monôme
+$k331 =random(2,9);
+$m331 =random(2,9); 
+$k332 = 0; 
+$m332 = 0; 
+#Deuxième binôme
+$k333 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k333) == abs($k331)) {$k333 = 12;};
+$m333 =random(6,9); 
+$k334 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k334) == abs($k333)) {$k334 = 11;};
+$m334 =random(2,5); 
+$n331 = 1;
+$n332 = 1;
+
+$poly331 = Formula("$k331*x^$m331")->reduce;
+$poly331prime =Formula("$k331*$m331*x^($m331-1)")->reduce;
+$poly332 =Formula("$k333*x^$m333+$k334*x^$m334")->reduce;
+$poly332prime =$poly332 ->D('x')-> reduce;
+$u33 = Formula("$poly331")->reduce;
+$u33prime = Formula("$poly331prime")->reduce;
+$v33 = Formula("$poly332")->reduce;
+$v33prime = Formula("$poly332prime")->reduce;
+
+$f33 = Formula("($k331*x^$m331)/($k333*x^$m333+$k334*x^$m334)") -> reduce;
+$f33prime1old = $f33 ->D('x')-> reduce;
+$f33prime1 = Formula("(($u33prime)*($v33) -($u33)*($v33prime))/($poly332^2)")->reduce;
+$coef331 = Compute("$n331*$k331*$m331*$k333 -$n332*$k333*$m333*$k331");
+$exposant331 = Compute("$m333-1+$m331");
+# $coef332 vaut 0, car monôme
+$coef332 = Compute("$n331*$k332*$m332*$k333 -$n332*$k333*$m333*$k332");
+$exposant332 = Compute("$m333-1+$m332");
+$coef333 = Compute("$n331*$k331*$m331*$k334 -$n332*$k334*$m334*$k331");
+$exposant333 = Compute("$m334-1+$m331");
+# $coef334 vaut 0, car monôme
+$coef334 = Compute("$n331*$k332*$m332*$k334 -$n332*$k334*$m334*$k332");
+$exposant334 = Compute("$m334-1+$m332");
+$f33prime3 =Formula("($coef331*x^$exposant331 +$coef332*x^$exposant332 +$coef333*x^$exposant333 +$coef334*x^$exposant334)/($poly332^2)")-> reduce;
+if( ($coef333 == 0) || ($coef331 == 0)) 
+{#Il y a seulement un monôme au numérateur
+#Aucune simplificateur possible
+$f33prime4= $f33prime3;}
+else
+{#Il y a un binôme au numérateur
+$NouveauCoef333 = gcd($coef331,$coef333);
+$NouveauExposant333 = min($exposant331,$exposant333);
+$f33prime4 =Formula("$NouveauCoef333*x^$NouveauExposant333*($coef331/$NouveauCoef333*x^($exposant331-$NouveauExposant333) +$coef333/$NouveauCoef333*x^($exposant333-$NouveauExposant333))/($poly332^2)")-> reduce;}
+
+#C'est la réponse la plus courante
+$Rep33 = $f33prime3 -> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f33} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep33->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f33 \) a la forme d'un quotient \(\displaystyle \frac{u}{v}\) où
+$PAR
+\(\displaystyle u(x) =  $u33 \)
+$PAR
+\( \displaystyle v(x) =  $v33\) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u33prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v33prime\) 
+$PAR
+Appliquons la formule de dérivation d'un quotient.  
+$BR
+\( \displaystyle f'(x) =  $f33prime1 \) 
+$PAR
+Développons le numérateur. 
+$BR
+\( \displaystyle f'(x) =  $f33prime3 \) 
+$PAR
+Concluons en faisant, si possible, une mise en évidence simple au numérateur.
+$BR
+\( \displaystyle f'(x) =  $f33prime4 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

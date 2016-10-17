@@ -1,0 +1,61 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'fonction trigonométrique inverse', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Fonction Arc sinus(x/a) avec solution");
+TEXT(beginproblem());
+
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+
+#Cas 5 argument x/a
+#Argument 
+$F0n1 = random(2,9);
+$F0n1carre = Compute("$F0n1^2");
+$U0 = Formula("x/$F0n1");
+$U0prime = Formula("1/$F0n1");
+$U0carre = Formula("x^2/$F0n1^2");
+$F0Reponse = Formula("1/(sqrt($F0n1^2- x^2))") -> reduce; 
+$F0Reponse->{limits} = [-$F0n1,$F0n1];
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer la dérivée de la fonction \( {f(x) = }\) Arc sin\(\displaystyle\left(\frac{x}{$F0n1}\right)\).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(80)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($F0Reponse->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La fonction \( {f(x) = }\) Arc sin\(\displaystyle\left(\frac{x}{$F0n1}\right)\) a la forme Arc sin(\(u\)) où \( \displaystyle {u(x) = \frac{x}{$F0n1}}\). Ainsi,
+$BR
+\( \displaystyle {f'(x) = \frac{($U0)'}{\sqrt{1- ($U0)^2}} = \frac{\frac{1}{$F0n1}}{\sqrt{\frac{$F0n1^2- x^2}{$F0n1^2}}}
+= \frac{\frac{1}{$F0n1}}{\frac{\sqrt{$F0n1carre- x^2}}{\sqrt{$F0n1^2}}}
+= \frac{1}{$F0n1}\cdot\frac{$F0n1}{\sqrt{$F0n1carre- x^2}}
+= \frac{1}{\sqrt{$F0n1carre- x^2}}
+}\)
+$BR
+END_SOLUTION
+Context()->normalStrings;
+ENDDOCUMENT(); 

@@ -1,0 +1,91 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('0/0', 'fonction algébrique', 'fonction rationnelle', 'forme indéfinie c/0', 'forme indéterminée', 'limite infinie', 'limite à gauche et à droite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl",
+);
+
+COMMENT("Niveau de difficulté: Difficile. Limite algébrique d'indétermination 0/0 dont la simplification produit k/0 avec a entre -10 et 10 (excluant 0)");
+
+
+TEXT(beginproblem());
+
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Forme k/0
+
+
+#Cas 18: Limite avec 0/0 et ensuite k/0
+$a10=non_zero_random(-10,10);
+$m10t=non_zero_random(-10,10);
+#Il ne faut pas que abs(m10) = abs(a10), car la factorisation est trop facile. 
+if (abs($m10t) == abs($a10)){$m10 = Compute("abs($m10t) + 1");}
+else
+{$m10 = $m10t;}
+$b10c = Compute("-1*$a10 - $m10");
+$c10c = Compute("$a10 * $m10");
+$temp10 = random(0, 1);
+if ($temp10 == 0)
+{#L'exposant est pair
+$n10=list_random(2, 4,6, 8);}
+else
+{#L'exposant est impair
+$n10=list_random(3, 5,7, 9);}
+$f10A =Formula("(x^{2}+ $b10c x +  $c10c)/((x- $a10)^{$n10})")->reduce;
+$signe10 = list_random(-1,1);
+if ($signe10 < 0) 
+{$a10A = "$a10^{-}";}
+else
+{$a10A = "$a10^{+}";}
+#Déterminer la réponse
+if ($temp10 == 0)
+{#L'exposant est pair, mais devient impair après simplification
+$Rep10_temp = Compute("$signe10*($a10 - $m10)");}
+else
+{#L'exposant est impair, mais devient pair après simplification
+$Rep10_temp = Compute("($a10 - $m10)");}
+if ($Rep10_temp <0) 
+{$Rep10 = Compute("-Infinity");}
+else
+{$Rep10 = Compute("Infinity");}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+\{
+ColumnTable(
+"Calculer la limite suivante. ".
+$PAR.
+" \( \displaystyle {\lim_{x \rightarrow $a10A} $f10A}  = \)". ans_rule(20),
+$BR.
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["Note:", " Écrire"], align=>LEFT, separation=>0).
+AlignedRow(["$SPACE$SPACE$SPACE  \(\bullet\)","\( \bf inf \), si la limite vaut l'infini positif \( (+\infty) \)."], align=>LEFT, separation=>0).
+AlignedRow(["$SPACE$SPACE$SPACE  \(\bullet\)","\( \bf -inf \), si la limite vaut l'infini négatif \( (-\infty) \)."], align=>LEFT, separation=>0).
+AlignedRow(["$SPACE$SPACE$SPACE  \(\bullet\)","\( \bf nep \), si la limite \( \bf n'e\)xiste \( \bf p\)as."], align=>LEFT, separation=>0).
+EndTable(),
+indent=>"0", separation=>"60", valign=>"TOP"
+);
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep10->cmp);
+
+
+
+ENDDOCUMENT(); 

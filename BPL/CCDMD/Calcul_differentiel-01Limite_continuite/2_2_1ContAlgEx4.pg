@@ -1,0 +1,127 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('0/0', 'continuité en un point', 'discontinuité', 'fonction définie par parties', 'forme indéterminée')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl", "unionLists.pl","unionTables.pl","contextPiecewiseFunction.pl","parserPopUp.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Fonction définie par morceaux (quotient et linéaire) avec une discontinuité ou non.");
+
+
+TEXT(beginproblem());
+
+Context("PiecewiseFunction");
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+Context()->noreduce('(-x)-y'); 
+
+
+
+#Cas 4: Fonction quotient et linéaire 
+#Valeur a41 et a42 
+#ne pas choisir 0, -1,1 car le calcul est trop facile
+$a41 = list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8,9,10);
+$a42 = list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8,9,10);
+if ($a41 == $a42) {$a42 = list_random(-12,12);}
+
+#Choix de la fonction linéaire
+$p41 = random(2,10);
+if ($p41 == $a42) {$p41 = $a42 + 1;}
+#Choix du numérateur de la fonction quadratique
+$N41 = Formula("x^2+(-$a41 -$p41)*x+$a41*$p41")->reduce;
+#Si le saut est nul, alors la fonction est continue.
+$saut41 = list_random(0,0,0,0,0,-1,1,-2,2);
+$k41 = Compute("$p41+$saut41");
+#Choix de l'affichage du premier morceau
+$temp41 = random(-1,1,2);
+if ($temp41 == 1) {
+#Le premier morceau est le quotient
+$f41 = Formula("$N41/(x-$a41)")->reduce; $f41c = Formula("x-$p41"); 
+$f42 = Formula("x-$k41") ->reduce; $f42c = Formula("x-$k41") ->reduce}
+else
+{#Le premier morceau est le linéaire
+$f42 = Formula("$N41/(x-$a41)")->reduce; $f42c = Formula("x-$p41"); 
+$f41 = Formula("x-$k41") ->reduce; $f41c =  Formula("x-$k41") ->reduce}
+
+#Fonction définie par morceaux et réponses
+#Choisir la valeur de la fonction en x = a41
+$temp40 = random(0,1);
+if ($temp40 == 0) 
+{#La fonction n'est pas définie en x = a
+$f40 = PiecewiseFunction("$f41 if  x < $a41 else $f42 if x > $a41 ");
+$f40c = PiecewiseFunction("$f41c if  x < $a41 else $f42c if x > $a41 ");
+#Réponse
+$RepFA41 = Compute("nep");
+$RepLimiteG41 = $f41c->eval(x=>$a41);
+$RepLimiteD41 = $f42c->eval(x=>$a41);
+$RepPopUp41 = PopUp(["Choisir", "Oui", "Non"], "Non");}
+else
+{#La fonction est définie en x = a
+if ($temp41 == 1) {
+#Le premier morceau est le quotient
+$f40 = PiecewiseFunction("$f41 if  x < $a41 else $f42 if x >= $a41  ");
+$f40c = PiecewiseFunction("$f41c if  x < $a41 else $f42c if x >= $a41  ");}
+else
+{#Le premier morceau est le linéaire
+$f40 = PiecewiseFunction("$f41 if  x <= $a41 else $f42 if x > $a41  ");
+$f40c = PiecewiseFunction("$f41c if  x <= $a41 else $f42c if x > $a41  ");}
+$RepFA41 = $f40c->eval(x=>$a41);
+$RepLimiteG41 = $f41c->eval(x=>$a41);
+$RepLimiteD41 = $f42c->eval(x=>$a41);
+if ($RepLimiteG41 == $RepLimiteD41) {$RepPopUp41 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else
+{$RepPopUp41 = PopUp(["Choisir", "Oui", "Non"], "Non");}}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+
+\{
+ColumnTable(
+"Soit la fonction suivante: ".$BR. 
+"\[f(x)=$f40\]".
+$BR.
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["Note: Écrire \( \bf nep \), si la fonction n'est pas $BR définie en \(x = $a41\)"], align=>LEFT).
+EndTable(),
+"Déterminer les valeurs suivantes et répondre à la question:".
+$BR.
+BeginList("OL", type=>"a").
+$ITEM. " \( \displaystyle f($a41)  \)  = ". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{  \lim_{x \rightarrow $a41^{-}} f(x) = }\)". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{\lim_{x \rightarrow $a41^{+}} f(x) = }\)". ans_rule(20).
+$ITEMSEP.
+$ITEM. "Est-ce que la fonction est continue en \(x = $a41\)? ".
+$RepPopUp41->menu().
+EndList("OL"),
+indent=>"0", separation=>"10", valign=>"TOP"
+);
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($RepFA41->cmp());
+ANS(num_cmp($RepLimiteG41));
+ANS(num_cmp($RepLimiteD41));
+ANS( $RepPopUp41->cmp() );
+
+
+ENDDOCUMENT();

@@ -1,0 +1,181 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('asymptote horizontale', 'asymptote verticale', 'fonction rationnelle', 'graphique', 'tracé de courbes')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl",
+"PGcourse.pl", "unionLists.pl","unionTables.pl","parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Fonction ayant une asymptote verticale (forme a/(x-b))");
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Cas 10: Fonction ayant une asymptote verticale (forme a/(x-b))
+#Les valeurs à remplacer sont 60, 61, 62, 63, 64, 65
+
+#Choix du a et de l'axe des x
+$temp60 = random(-1,1,2);
+if ($temp60 == -1) {
+#Prendre un a négatif
+$a61=random(-4, -1);
+$x61=Compute("$a61-5");
+$x62=Compute("4");}
+else {
+#Prendre un a positif
+$a61=random(1, 4);
+$x61=Compute("-4");
+$x62=Compute("$a61+5");
+}
+
+#Choix de la fonction et des autres fonctions
+#Problème d'affichage du 1
+$b61 = list_random(-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8);
+$f60 = Formula("$b61/(x-$a61)")-> reduce;
+$f61 = Formula("-1*$b61/(x-$a61)")-> reduce;
+$f62 = Formula("$b61/abs(x-$a61)")-> reduce;
+$f63 = Formula("-1*$b61/abs(x-$a61)")-> reduce;
+
+#Calcul du quadrillage en x
+$gridX60 = $x62 - $x61;
+
+#Calcul du quadrillage en y
+
+if (abs($b61) >4) 
+{$y61 = -20;  
+$y62 = 20; 
+$gridn60 = 5;}
+else 
+{$y61 = -10;  
+$y62 = 10; 
+$gridn60 = 1;}
+
+$gridY60 = Compute("($y62 - $y61)/$gridn60");
+
+$AffichageX60 =Compute("$x62 -0.5");
+$x611 = Compute("$a61-0.01");
+$x621 = Compute("$a61+0.01");
+
+#Graphique f60
+$f60graphique1 = "$f60 for x in <$x61,$x611> using color:red and weight:2";
+$f60graphique2 = "$f60 for x in <$x621,$x62> using color:red and weight:2";
+$graphique60 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0],'grid'=>[$gridX60,$gridY60]);
+#$graphique60 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique60 -> lb('reset');
+$graphique60 -> lb(new Label ( 1,0,1,'black','left','top'));
+$graphique60 -> lb(new Label ( $a61,0,$a61,'blue','left','top'));
+$graphique60 -> lb(new Label ( 0,$gridn60,$gridn60,'black','right','top'));
+$graphique60 -> lb(new Label ( $AffichageX60,0,'x','black','left','top'));
+$graphique60 -> lb(new Label ( 0,$y62,'f(x)','black','right','top'));
+$graphique60->moveTo($a61,$y61);
+$graphique60->lineTo($a61,$y62,'blue',2,'dashed');
+add_functions($graphique60, $f60graphique1,$f60graphique2);
+$imageG60 = image(insertGraph($graphique60),width =>300,height=>260,tex_size=>360);
+
+#Graphique f61
+$f61graphique1 = "$f61 for x in <$x61,$x611> using color:red and weight:2";
+$f61graphique2 = "$f61 for x in <$x621,$x62> using color:red and weight:2";
+$graphique61 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0],'grid'=>[$gridX60,$gridY60]);
+#$graphique61 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique61 -> lb('reset');
+$graphique61 -> lb(new Label ( 1,0,1,'black','left','top'));
+$graphique61 -> lb(new Label ( $a61,0,$a61,'blue','left','top'));
+$graphique61 -> lb(new Label ( 0,$gridn60,$gridn60,'black','right','top'));
+$graphique61 -> lb(new Label ( $AffichageX60,0,'x','black','left','top'));
+$graphique61 -> lb(new Label ( 0,$y62,'f(x)','black','right','top'));
+$graphique61->moveTo($a61,$y61);
+$graphique61->lineTo($a61,$y62,'blue',2,'dashed');
+add_functions($graphique61, $f61graphique1,$f61graphique2);
+$imageG61 = image(insertGraph($graphique61),width =>300,height=>260,tex_size=>360);
+
+#Graphique f62
+$f62graphique1 = "$f62 for x in <$x61,$x611> using color:red and weight:2";
+$f62graphique2 = "$f62 for x in <$x621,$x62> using color:red and weight:2";
+$graphique62 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0],'grid'=>[$gridX60,$gridY60]);
+#$graphique62 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique62 -> lb('reset');
+$graphique62 -> lb(new Label ( 1,0,1,'black','left','top'));
+$graphique62 -> lb(new Label ( $a61,0,$a61,'blue','left','top'));
+$graphique62 -> lb(new Label ( 0,$gridn60,$gridn60,'black','right','top'));
+$graphique62 -> lb(new Label ( $AffichageX60,0,'x','black','left','top'));
+$graphique62 -> lb(new Label ( 0,$y62,'f(x)','black','right','top'));
+$graphique62->moveTo($a61,$y61);
+$graphique62->lineTo($a61,$y62,'blue',2,'dashed');
+add_functions($graphique62, $f62graphique1,$f62graphique2);
+$imageG62 = image(insertGraph($graphique62),width =>300,height=>260,tex_size=>360);
+
+
+#Graphique f63
+$f63graphique1 = "$f63 for x in <$x61,$x611> using color:red and weight:2";
+$f63graphique2 = "$f63 for x in <$x621,$x62> using color:red and weight:2";
+$graphique63 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0],'grid'=>[$gridX60,$gridY60]);
+#$graphique63 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique63 -> lb('reset');
+$graphique63 -> lb(new Label ( 1,0,1,'black','left','top'));
+$graphique63 -> lb(new Label ( $a61,0,$a61,'blue','left','top'));
+$graphique63 -> lb(new Label ( 0,$gridn60,$gridn60,'black','right','top'));
+$graphique63 -> lb(new Label ( $AffichageX60,0,'x','black','left','top'));
+$graphique63 -> lb(new Label ( 0,$y62,'f(x)','black','right','top'));
+$graphique63->moveTo($a61,$y61);
+$graphique63->lineTo($a61,$y62,'blue',2,'dashed');
+add_functions($graphique63, $f63graphique1,$f63graphique2);
+$imageG63 = image(insertGraph($graphique63),width =>300,height=>260,tex_size=>360);
+
+
+
+#Vecteur des graphiques
+@ImageGraphique60 = ($imageG60,$imageG61,$imageG62,$imageG63); 
+@Choix = shuffle(4);
+
+if ($Choix[0] == 0)
+{$RepPopUp60 = PopUp(["Choisir", "A", "B", "C", "D"], "A");}
+elsif ($Choix[1] == 0)
+{$RepPopUp60 = PopUp(["Choisir", "A", "B", "C", "D"], "B");}
+elsif ($Choix[2] == 0)
+{$RepPopUp60 = PopUp(["Choisir", "A", "B", "C", "D"], "C");}
+else
+{$RepPopUp60 = PopUp(["Choisir", "A", "B", "C", "D"], "D");}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Choisir le graphique qui correspond à la fonction \( \displaystyle {f(x) = \frac{$b61}{x-$a61}} \).
+$BR
+\{$RepPopUp60->menu()\}
+$BR
+$BR
+
+
+\{BeginTable(border=>1,tex_border=>"1pt", spacing=>2, padding=>2).
+  AlignedRow(["Graphique A","Graphique B"], align => CENTER, separation=>0).
+  AlignedRow(["$ImageGraphique60[$Choix[0]]","$ImageGraphique60[$Choix[1]]"], align => CENTER, separation=>0).
+  AlignedRow(["Graphique C","Graphique D"], align => CENTER, separation=>0).
+  AlignedRow(["$ImageGraphique60[$Choix[2]]","$ImageGraphique60[$Choix[3]]"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$BR 
+Cliquer sur un des graphiques pour faire un agrandissement.
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepPopUp60->cmp() );
+
+
+
+ENDDOCUMENT();

@@ -1,0 +1,118 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('0/0', 'factorisation', 'fonction algébrique', 'fonction rationnelle', 'forme indéterminée', 'limite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionLists.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Un bloc de 5 limites algébriques d'indétermination 0/0 et des formes suivantes: Différence de carrés avec ou sans mise en évidence simple, Trinôme au numérateur ou au dénominateur, Forme 2a/k. Ordre de présentation aléatoire.");
+
+
+TEXT(beginproblem());
+
+Context()->variables->are(h=>"Real",t=>"Real", x => "Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Forme 0/0
+
+#Cas 1: Différence de carrés
+$a1=random(2,10);
+$a1c = Compute("$a1^2");
+$f1A = Formula("(x^2-$a1c)/(x-$a1)");
+$RepLA1temp = Compute("2*$a1");
+$RepLA1 = Compute("$RepLA1temp");
+
+#Cas 2: Trinôme au numérateur
+$a2t=non_zero_random(-10,10);
+$m2t=non_zero_random(-10,10);
+if ($a2t = $m2t) {$a2 = random(2,10); $m2 =  Compute("$a2+2");}
+else {$a2 = $a2t; $m2 = $m2t;}
+$b2c = Compute("-1*$a2 - $m2");
+$c2c = Compute("$a2 * $m2");
+$f2A =Formula("(x^2+$b2c x +$c2c)/(x-$a2)")->reduce;
+$RepLA2temp =  Compute("$a2 - $m2");
+$RepLA2 =  Compute("$RepLA2temp");
+
+#Cas 3: Différence de carrés avec mise en évidence simple
+$a3=random(2,10);
+$m3=list_random(2,5,10);
+$a3c = Compute("$a3 * $m3*$a3");
+$f3A =Formula("($m3 x^2-$a3c)/(x-$a3)")-> reduce;
+$RepLA3temp =  Compute("2*$a3*$m3");
+$RepLA3 =  Compute("$RepLA3temp");
+
+#Cas 4: Trinôme au dénominateur
+$a4t=non_zero_random(-10,10);
+$m4t=non_zero_random(-10,10);
+if ($a4t = $m4t) {$a4 = random(2,10); $m4 =  list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,-1);}
+else {$a4 = $a4t; $m4 = $m4t;}
+$b4c = Compute("-1*$a4 - $m4");
+$c4c = Compute("$a4 * $m4");
+$f4A =Formula("(t-$a4)/(t^2+$b4c t +$c4c )")->reduce;
+$RepLA4temp = Compute("$a4 - $m4");
+$RepLA4 = Compute("1/$RepLA4temp");
+
+#Cas 5: Forme 2a/k
+$a5=random(-10,-2);
+$m5=Compute("-1*$a5+1");
+$a5c = Compute("-1*$a5");
+$f5A =Formula("(x-$a5c)/($m5)")->reduce;
+$RepLA5temp =  Compute("2*$a5");
+$RepLA5 =  Compute("$RepLA5temp/$m5");
+
+@ListeAffichage000 = ($f1A,$f2A,$f3A,$f4A,$f5A );
+@ListeAffichage001 = ("$a1","$a2","$a3","$a4","$a5" );
+@ListeAffichage002 = ("x","x","x","t","x" );
+@RepAffichage000 = ($RepLA1,$RepLA2,$RepLA3,$RepLA4,$RepLA5);
+#La fonction shuffle n'a pas été utilisée parce que les premiers doivent être utilisés avant les autres
+$temp200 =random(0,3);
+if ($temp200 == 0) {@R000 = (0, 1, 2, 3,4);}
+elsif ($temp200 == 1)  {@R000 = (1, 0, 3,4, 2);}
+elsif ($temp200 == 2)  {@R000 = (1, 0,4, 2, 3);}
+else {@R000 = (0, 1, 4,3 ,2);}
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer les limites suivantes.$BR
+
+\{ BeginList("OL", type=>"a") \}
+
+$ITEM \( \displaystyle {\lim_{$ListeAffichage002[$R000[0]] \rightarrow $ListeAffichage001[$R000[0]]} $ListeAffichage000[$R000[0]]  }\)  = \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM \( \displaystyle {\lim_{$ListeAffichage002[$R000[1]] \rightarrow $ListeAffichage001[$R000[1]]}$ListeAffichage000[$R000[1]]  }\)  = \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM \( \displaystyle {\lim_{$ListeAffichage002[$R000[2]] \rightarrow $ListeAffichage001[$R000[2]]}$ListeAffichage000[$R000[2]]  }\)  = \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM \( \displaystyle {\lim_{$ListeAffichage002[$R000[3]] \rightarrow $ListeAffichage001[$R000[3]]}$ListeAffichage000[$R000[3]]  }\)  = \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM \( \displaystyle {\lim_{$ListeAffichage002[$R000[4]] \rightarrow $ListeAffichage001[$R000[4]]}$ListeAffichage000[$R000[4]]  }\)  = \{ans_rule(20)\} 
+$ITEMSEP
+
+\{ EndList("OL") \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepAffichage000[$R000[0]]->cmp);
+ANS($RepAffichage000[$R000[1]]->cmp);
+ANS($RepAffichage000[$R000[2]]->cmp);
+ANS($RepAffichage000[$R000[3]]->cmp);
+ANS($RepAffichage000[$R000[4]]->cmp);
+
+
+
+ENDDOCUMENT(); 

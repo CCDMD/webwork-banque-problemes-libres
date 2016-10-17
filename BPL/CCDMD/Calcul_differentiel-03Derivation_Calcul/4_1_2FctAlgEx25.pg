@@ -1,0 +1,158 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la fonction puissance', 'dérivée du produit de fonctions', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Difficile. Produit d'un binôme par un binôme, tous les deux affectés d'un exposant entier, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Cas 25: Produit d'un binôme simple par un binôme simple, tous les deux sont affectés d'un exposant entier
+#Premier binôme
+$k251 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+$m251 =random(6,9); 
+$k252 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k252) == abs($k251)) {$k252 = 11;};
+$m252 =random(2,5);  
+#Deuxième binôme
+$k253 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k253) == abs($k251)) {$k253 = 12;};
+$m253 =random(6,9); 
+$k254 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k254) == abs($k253)) {$k254 = 17;};
+$m254 =random(2,5) ; 
+#Exposant du premier binôme
+$n251 =random(2,5); 
+#Exposant du deuxième binôme
+$n252 =random(2,5); 
+
+$poly251 = Formula("$k251*x^$m251+$k252*x^$m252")->reduce;
+$poly251prime =$poly251 ->D('x')-> reduce;
+
+$poly252 =Formula("$k253*x^$m253+$k254*x^$m254")->reduce;
+$poly252prime =$poly252 ->D('x')-> reduce;
+$u25 = Formula("($poly251)^$n251")->reduce;
+$u25prime = Formula("$n251*($poly251)^($n251-1)*($poly251prime)")->reduce;
+$v25 = Formula("$poly252^$n252")->reduce;
+$v25prime = Formula("$n252*($poly252)^($n252-1)*($poly252prime)")->reduce;
+
+$f25 = Formula("($k251*x^$m251+$k252*x^$m252)^$n251*($k253*x^$m253+$k254*x^$m254)^$n252") -> reduce;
+$f25prime1old = $f25 ->D('x')-> reduce;
+$f25prime1 = Formula("($u25prime)*($v25) +($u25)*($v25prime)")->reduce;
+$f25prime2 = Formula("$poly251^($n251-1)*$poly252^($n252-1)*($n251*$poly251prime*$poly252+$n252*$poly252prime*$poly251)")-> reduce;
+
+#Simplifier la dérivée en développant
+$exposant251 = Compute("$m253-1+$m251");
+$exposant252 = Compute("$m253-1+$m252");
+$exposant253 = Compute("$m254-1+$m251");
+$exposant254 = Compute("$m254-1+$m252");
+
+if ($exposant252 == $exposant253) 
+{#2 exposants sont identiques, donc additionner les coefficients
+$coef251 = Compute("$n251*$k251*$m251*$k253 +$n252*$k253*$m253*$k251");
+$coef252temp = Compute("$n251*$k252*$m252*$k253 +$n252*$k253*$m253*$k252");
+$coef253temp = Compute("$n251*$k251*$m251*$k254 +$n252*$k254*$m254*$k251");
+$coef252 = Compute("$coef252temp + $coef253temp");
+$coef253 = Compute("0");
+$coef254 = Compute("$n251*$k252*$m252*$k254 +$n252*$k254*$m254*$k252");}
+else
+{#aucun exposant n'est identique.
+$coef251 = Compute("$n251*$k251*$m251*$k253 +$n252*$k253*$m253*$k251");
+$coef252 = Compute("$n251*$k252*$m252*$k253 +$n252*$k253*$m253*$k252");
+$coef253 = Compute("$n251*$k251*$m251*$k254 +$n252*$k254*$m254*$k251");
+$coef254 = Compute("$n251*$k252*$m252*$k254 +$n252*$k254*$m254*$k252");}
+
+#dérivée développée
+$f25prime3 =Formula("$poly251^($n251-1)*$poly252^($n252-1)*($coef251*x^$exposant251 +$coef252*x^$exposant252+ $coef253*x^$exposant253 +$coef254*x^$exposant254)")-> reduce;
+
+#Voir s'il est possible de faire une mise en évidence simple
+if ((($coef252 == 0) && ($coef253 == 0) && ($coef254 == 0)) || 
+(($coef251 == 0) && ($coef253 == 0) && ($coef254 == 0))||
+ (($coef251 == 0) && ($coef252 == 0) && ($coef254 == 0))||
+ (($coef251 == 0) && ($coef252 == 0) && ($coef253 == 0)))
+{#Un seul coefficient est non nul. Ne pas faire de mise en évidence simple
+$f25prime4 = $f25prime3;
+}
+else
+{#Faire une mise en évidence simple, si possible
+#$exposant254 n'existe pas.
+$CoefTemp251 = gcd($coef251,$coef252);
+$CoefTemp252 = gcd($coef253,$coef254);
+$NouveauCoef253 = gcd($CoefTemp251,$CoefTemp252);
+$ExposantTemp251 = min($exposant251,$exposant252);
+$ExposantTemp252 = min($exposant253,$exposant254);
+$NouveauExposant253 = min($ExposantTemp251,$ExposantTemp252);
+$f25prime4 =Formula("$NouveauCoef253*x^$NouveauExposant253*$poly251^($n251-1)*$poly252^($n252-1)*($coef251/$NouveauCoef253*x^($exposant251-$NouveauExposant253) +$coef252/$NouveauCoef253*x^($exposant252-$NouveauExposant253) +$coef253/$NouveauCoef253*x^($exposant253-$NouveauExposant253)
++$coef254/$NouveauCoef253*x^($exposant254-$NouveauExposant253))")-> reduce;
+}
+
+#C'est la réponse la plus courante
+$Rep25 = $f25prime3 -> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f25} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep25->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f25 \) a la forme d'un produit \(u \cdot v\) où
+$PAR
+\(\displaystyle u(x) =  $u25 \)
+$PAR
+\( \displaystyle v(x) =  $v25\) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u25prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v25prime\) 
+$PAR
+Appliquons la formule de dérivation d'un produit.  
+$BR
+\( \displaystyle f'(x) =  $f25prime1 \) 
+$PAR
+Faisons une mise en évidence simple.
+$BR
+\( \displaystyle f'(x) =  $f25prime2 \) 
+$PAR
+Développons ce qui n'a pas été mis en évidence. 
+$BR
+\( \displaystyle f'(x) =  $f25prime3 \) 
+$PAR
+Conclusion en faisant, si possible, une mise en évidence simple. 
+$BR
+\( \displaystyle f'(x) =  $f25prime4 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

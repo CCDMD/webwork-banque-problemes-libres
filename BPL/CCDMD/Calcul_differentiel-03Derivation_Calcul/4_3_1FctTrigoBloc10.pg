@@ -1,0 +1,235 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la somme de fonctions', 'dérivée du produit de fonctions', 'fonction trigonométrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionLists.pl","unionTables.pl",
+"PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Produit de fonctions trigonométriques, sauf la dernière, avec présentation aléatoire des fonctions (sauf les deux premières) et avec solution");
+
+TEXT(beginproblem());
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real", A=>"Real", u =>"Real");
+
+#Choix de la fonction u
+
+#Choix de la fonction trigonométrique
+#u0
+$u0= Formula("x");
+#u1
+$n1 = random(2,9);
+$u1= Formula("x^$n1");
+#u2
+$k2 = random(2,9);
+$u2= Formula("$k2*x");
+#u3
+$k31 = random(2,9);
+$k32 = random(2,9);
+if ($k32 == $k31) {$k32 = Compute("$k31 + 1")};
+$u3= Formula("$k31*x+$k32");
+#u4
+$k4 = random(2,9);
+$u4= Formula("$k4*x");
+#u5 = SOMME et non un produit, coef52 devient le coefficient de la fonction trigo
+$k51 = random(2,9);
+$coef52 = random(2,9);
+if ($coef52 == $k51) {$coef52 = Compute("$k51 + 1")};
+$u5= Formula("$k51*x");
+@FonctionU = ($u0, $u1, $u2, $u3, $u4, $u5);
+@FonctionUprime = ($FonctionU[0] ->D('x')-> reduce, $FonctionU[1] ->D('x')-> reduce, $FonctionU[2] ->D('x')-> reduce, $FonctionU[3] ->D('x')-> reduce, $FonctionU[4] ->D('x')-> reduce, $FonctionU[5] ->D('x')-> reduce);
+
+#Choix de la fonction v
+#Forme trigo(argument)
+#Choix de l'argument de la fonction trigonométrique
+#Argument1
+$An1 = random(2,9);
+$Argument1 =Formula("x^$An1"); 
+$Argument1prime =Formula("$An1*x^($An1-1)") ->reduce; 
+#Argument2
+$Argument2 =Formula("x"); 
+$Argument2prime =Formula("1"); 
+#Argument3
+$Ak3 = random(2,9);
+$Argument3 =Formula("$Ak3*x"); 
+$Argument3prime =Formula("$Ak3"); 
+#Argument4
+$Ak41 = random(2,9);
+$Ak42 = random(2,9);
+if ($Ak42 == $Ak41) {$Ak42 = Compute("$Ak41 + 1")};
+$Argument4 = Formula("$Ak41*x+$Ak42");
+$Argument4prime = Formula("$Ak41");
+#Argument5
+$An5 = random(2,9);
+$Argument5 =Formula("x^$An5"); 
+$Argument5prime =Formula("$An5*x^($An5-1)")->reduce; 
+#Argument6
+$Ak6 = random(2,9);
+$Argument6 =Formula("$Ak6*x"); 
+$Argument6prime =Formula("$Ak6"); 
+
+#Vecteur des fonctions trigonométriques
+@Fonction = (Formula("sin(A)"), Formula("cos(A)"), Formula("tan(A)"), Formula("cot(A)"), Formula("sec(A)"), Formula("csc(A)"));
+@FonctionPrime = (Formula("cos(A)"), Formula("-sin(A)"), Formula("sec^2(A)"), Formula("-csc^2(A)"), Formula("sec(A)*tan(A)"), Formula("-csc(A)*cot(A)"));
+#Choix de la fonction trigonométrique
+#Ne pas utiliser shuffle, car il faut afficher les trigonométriques sin, cos, tan en premier. Ce sont les fonctions usuelles.
+@temp2 = shuffle(4);
+$temp1 = random(0,1);
+if ($temp1 == 0) {@CFBloc1 = (0,1,$temp2[0] +2,$temp2[1] +2,$temp2[2] +2,$temp2[3] +2);}
+else  {@CFBloc1 = (1,0,$temp2[0] +2,$temp2[1] +2,$temp2[2] +2,$temp2[3] +2);}
+#@CFBloc1 = shuffle(6);
+#Choix de la fonction v
+@FonctionV = ( $Fonction[$CFBloc1[0]] ->substitute(A => $Argument1), 
+$Fonction[$CFBloc1[1]] ->substitute(A => $Argument2),
+$Fonction[$CFBloc1[2]] ->substitute(A => $Argument3),
+$Fonction[$CFBloc1[3]] ->substitute(A => $Argument4),
+$Fonction[$CFBloc1[4]] ->substitute(A => $Argument5),
+$Fonction[$CFBloc1[5]] ->substitute(A => $Argument6));
+#Dérivée de la fonction trigonométrique  et non de son argument
+@FonctionVPrimeF = ( $FonctionPrime[$CFBloc1[0]] ->substitute(A => $Argument1), 
+$FonctionPrime[$CFBloc1[1]] ->substitute(A => $Argument2),
+$FonctionPrime[$CFBloc1[2]] ->substitute(A => $Argument3),
+$FonctionPrime[$CFBloc1[3]] ->substitute(A => $Argument4),
+$FonctionPrime[$CFBloc1[4]] ->substitute(A => $Argument5),
+$FonctionPrime[$CFBloc1[5]] ->substitute(A => $Argument6));
+#@FonctionVprime = ($FonctionV[0] ->D('x')-> reduce, $FonctionV[1] ->D('x')-> reduce, $FonctionV[2] ->D('x')-> reduce, $FonctionV[3] ->D('x')-> reduce, $FonctionV[4] ->D('x')-> reduce, $FonctionV[5] ->D('x')-> reduce);
+
+#Affichage de la fonction f = u*v
+@FonctionBloc1 =(Formula("x*$FonctionV[0]"), Formula("$u1*$FonctionV[1]"), Formula("$u2*$FonctionV[2]"), Formula("$u3*$FonctionV[3]"), Formula("$u4*$FonctionV[4]"),Formula("$k51*x+$coef52*$FonctionV[5]"));
+
+#Calcul des réponses
+
+@ReponseBloc1 = ( Formula("$FonctionV[0] + ($An1*x^$An1*$FonctionVPrimeF[0])")-> reduce,
+$FonctionBloc1[1]  ->D('x')-> reduce,
+$FonctionBloc1[2]  ->D('x')-> reduce,
+$FonctionBloc1[3]  ->D('x')-> reduce,
+Formula("$k4*$FonctionV[4] + ($k4*$An5*x^$An5*$FonctionVPrimeF[4])")-> reduce,
+Formula("$k51 + $coef52*$Ak6*$FonctionVPrimeF[5]")-> reduce); 
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer la dérivée de chacune des fonctions suivantes.
+$PAR
+\{ BeginList("OL", type=>"a") \}
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[0]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[1]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[2]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[3]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[4]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[5]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+\{ EndList("OL") \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($ReponseBloc1[0]->cmp);
+ANS($ReponseBloc1[1]->cmp);
+ANS($ReponseBloc1[2]->cmp);
+ANS($ReponseBloc1[3]->cmp);
+ANS($ReponseBloc1[4]->cmp);
+ANS($ReponseBloc1[5]->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+\{ BeginList("OL", type=>"a") \}
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[0] \) a la forme d'un produit \( \displaystyle u \cdot v \) avec \( \displaystyle u(x) = $FonctionU[0]\) et \( \displaystyle v(x) = $FonctionV[0]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($FonctionBloc1[0])' \)
+$BR
+\( \displaystyle f'(x) = ($FonctionU[0])'\cdot $FonctionV[0] + $FonctionU[0] \cdot ($FonctionV[0])'\)
+$BR
+\( \displaystyle f'(x) = ($FonctionUprime[0])\cdot $FonctionV[0] + $FonctionU[0] \cdot ($FonctionVPrimeF[0]) \cdot ($Argument1)'\)
+$BR
+\( \displaystyle f'(x) = ($FonctionUprime[0])\cdot $FonctionV[0] + $FonctionU[0] \cdot ($FonctionVPrimeF[0]) \cdot ($Argument1prime)\)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[0]  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[1] \) a la forme d'un produit \( \displaystyle u \cdot v \) avec \( \displaystyle u(x) = $FonctionU[1]\) et \( \displaystyle v(x) = $FonctionV[1]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($FonctionBloc1[1])' \)
+$BR
+\( \displaystyle f'(x) = ($FonctionU[1])'\cdot $FonctionV[1] + $FonctionU[1] \cdot ($FonctionV[1])'\)
+$BR
+\( \displaystyle f'(x) = ($FonctionUprime[1])\cdot $FonctionV[1] + $FonctionU[1] \cdot ($FonctionVPrimeF[1]) \cdot ($Argument2)'\)
+$BR
+\( \displaystyle f'(x) = $FonctionUprime[1] $FonctionV[1] + $FonctionU[1] \cdot ($FonctionVPrimeF[1]) \cdot ($Argument2prime)\)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[1]  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[2] \) a la forme d'un produit \( \displaystyle u \cdot v \) avec \( \displaystyle u(x) = $FonctionU[2]\) et \( \displaystyle v(x) = $FonctionV[2]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($FonctionBloc1[2])' \)
+$BR
+\( \displaystyle f'(x) = ($FonctionU[2])'\cdot $FonctionV[2] + $FonctionU[2] \cdot ($FonctionV[2])'\)
+$BR
+\( \displaystyle f'(x) = ($FonctionUprime[2])\cdot $FonctionV[2] + $FonctionU[2] \cdot ($FonctionVPrimeF[2]) \cdot ($Argument3)'\)
+$BR
+\( \displaystyle f'(x) = $FonctionUprime[2] $FonctionV[2] + $FonctionU[2] \cdot ($FonctionVPrimeF[2]) \cdot ($Argument3prime)\)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[2]  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[3] \) a la forme d'un produit \( \displaystyle u \cdot v \) avec \( \displaystyle u(x) = $FonctionU[3]\) et \( \displaystyle v(x) = $FonctionV[3]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($FonctionBloc1[3])' \)
+$BR
+\( \displaystyle f'(x) = ($FonctionU[3])'\cdot $FonctionV[3] + ($FonctionU[3]) \cdot ($FonctionV[3])'\)
+$BR
+\( \displaystyle f'(x) = ($FonctionUprime[3])\cdot $FonctionV[3] + ($FonctionU[3]) \cdot ($FonctionVPrimeF[3]) \cdot ($Argument4)'\)
+$BR
+\( \displaystyle f'(x) = $FonctionUprime[3] $FonctionV[3] + ($FonctionU[3]) \cdot ($FonctionVPrimeF[3]) \cdot ($Argument4prime)\)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[3]  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[4] \) a la forme d'un produit \( \displaystyle u \cdot v \) avec \( \displaystyle u(x) = $FonctionU[4]\) et \( \displaystyle v(x) = $FonctionV[4]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($FonctionBloc1[4])' \)
+$BR
+\( \displaystyle f'(x) = ($FonctionU[4])'\cdot $FonctionV[4] + $FonctionU[4] \cdot ($FonctionV[4])'\)
+$BR
+\( \displaystyle f'(x) = ($FonctionUprime[4])\cdot $FonctionV[4] + $FonctionU[4] \cdot ($FonctionVPrimeF[4]) \cdot ($Argument5)'\)
+$BR
+\( \displaystyle f'(x) = $FonctionUprime[4] $FonctionV[4] + $FonctionU[4] \cdot ($FonctionVPrimeF[4]) \cdot ($Argument5prime)\)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[4]  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[5] \) a la forme d'une somme \( \displaystyle u + v \) avec \( \displaystyle u(x) = $FonctionU[5]\) et \( \displaystyle v(x) = $coef52 $FonctionV[5]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($FonctionBloc1[5])' \)
+$BR
+\( \displaystyle f'(x) = ($FonctionU[5])' + ($coef52 \cdot $FonctionV[5])'\)
+$BR
+\( \displaystyle f'(x) = $FonctionUprime[5] + $coef52 \cdot ($FonctionVPrimeF[5]) \cdot ($Argument6)'\)
+$BR
+\( \displaystyle f'(x) = $FonctionUprime[5] + $coef52 \cdot ($FonctionVPrimeF[5]) \cdot ($Argument6prime)\)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[5]  \)
+$ITEMSEP
+
+\{ EndList("OL") \}
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

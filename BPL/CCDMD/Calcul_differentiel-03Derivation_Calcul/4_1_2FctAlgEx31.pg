@@ -1,0 +1,123 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivée', 'dérivée du quotient de fonctions', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Quotient d'un binôme simple par un binôme simple, sans exposant, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Cas 31: Quotient d'un binôme simple par un binôme simple
+#Premier binôme
+$k311 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10); 
+$m311 =random(6,9); 
+$k312 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10); 
+if (abs($k312) == abs($k311)) {$k312 = 11;};
+$m312 =0; 
+#Deuxième binôme
+$k313 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k313) == abs($k311)) {$k313 = 12;};
+$m313 =random(6,9); 
+if($m313 == $m311) {$m313 = 10}
+$k314 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k314) == abs($k313)) {$k314 = 17;};
+$m314 =0; 
+$n311 = 1;
+$n312 = 1;
+
+$poly311 = Formula("$k311*x^$m311+$k312")->reduce;
+$poly311prime =Formula("$k311*$m311*x^($m311-1)")->reduce;
+
+$poly312 =Formula("$k313*x^$m313+$k314")->reduce;
+$poly312prime =Formula("$k313*$m313*x^($m313-1)")->reduce;
+$u31 = Formula("$poly311")->reduce;
+$u31prime = Formula("$poly311prime")->reduce;
+$v31 = Formula("$poly312")->reduce;
+$v31prime = Formula("$poly312prime")->reduce;
+
+#$f31 = Formula("($k311*x^$m311+$k312*x^$m312)/($k313*x^$m313+$k314*x^$m314)") -> reduce;
+$f31 = Formula("($k311*x^$m311+$k312)/($k313*x^$m313+$k314)") -> reduce;
+$f31prime1old = $f31 ->D('x')-> reduce;
+$f31prime1 = Formula("(($u31prime)*($v31) -($u31)*($v31prime))/($poly312^2)")->reduce;
+$coef311 = Compute("$n311*$k311*$m311*$k313 -$n312*$k313*$m313*$k311");
+$exposant311 = Compute("$m313-1+$m311");
+$coef312 = Compute("$n311*$k312*$m312*$k313 -$n312*$k313*$m313*$k312");
+$exposant312 = Compute("$m313-1+$m312");
+$coef313 = Compute("$n311*$k311*$m311*$k314 -$n312*$k314*$m314*$k311");
+$exposant313 = Compute("$m314-1+$m311");
+$f31prime3 =Formula("($coef311*x^$exposant311 +$coef312*x^$exposant312 +$coef313*x^$exposant313)/($poly312^2)")-> reduce;
+$CoefTemp311 = gcd($coef311,$coef312);
+$NouveauCoef313 = gcd($CoefTemp311,$coef313);
+$ExposantTemp311 = min($exposant311,$exposant312);
+$NouveauExposant313 = min($ExposantTemp311,$exposant313);
+$f31prime4 =Formula("$NouveauCoef313*x^$NouveauExposant313*($coef311/$NouveauCoef313*x^($exposant311-$NouveauExposant313) +$coef312/$NouveauCoef313*x^($exposant312-$NouveauExposant313) +$coef313/$NouveauCoef313*x^($exposant313-$NouveauExposant313))/($poly312^2)")-> reduce;
+
+#C'est la réponse la plus courante
+$Rep31 = $f31prime3 -> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f31} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+#$Rep5A = $RepBloc2[$Bloc2[0]]->substitute(x => $VariableAffichage[$CVABloc2[0]]);
+#ANS($Rep5A->cmp);
+
+ANS($Rep31->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f31 \) a la forme d'un quotient \(\displaystyle \frac{u}{v}\) où
+$PAR
+\(\displaystyle u(x) =  $u31 \)
+$PAR
+\( \displaystyle v(x) =  $v31\) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u31prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v31prime\) 
+$PAR
+Appliquons la formule de dérivation d'un quotient.  
+$BR
+\( \displaystyle f'(x) =  $f31prime1 \) 
+$PAR
+Développons le numérateur. 
+$BR
+\( \displaystyle f'(x) =  $f31prime3 \) 
+$PAR
+Concluons en faisant, si possible, une mise en évidence simple au numérateur.
+$BR
+\( \displaystyle f'(x) =  $f31prime4 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

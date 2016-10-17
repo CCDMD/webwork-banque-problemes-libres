@@ -1,0 +1,140 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('estimation', 'limite à gauche et à droite', 'tableau de valeurs')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+ "PGcourse.pl",
+"unionTables.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. L'étudiant doit utiliser le tableau de valeurs pour calculer les 4 limites. Les valeurs en x dans le tableau sont en ordre croissant. Les valeurs de la fonction sont similaires. L'ordre de présentation des limites est aléatoire.");
+
+TEXT(beginproblem());
+
+#Pour augmenter le nombre de décimales afin d'éviter d'afficher un nombre entier
+Context()->{format}{number} = "%.10f#";
+
+#Cas 1: a positif 
+#Cas 2: a négatif
+$a1=random(-8,-2);
+$a2=random(2,8);
+#Éviter qu'il y ait une différence d'une unité parce que les suites peuvent être similaires, comme -6+ et 6-
+$diff2 = Compute("abs($a1) - abs($a2)");
+if (abs($diff2) <= 1) { $a1 = Compute("-1*$a2 -2")}
+
+#Générer 4 nombres dont k est aléatoire, un autre est a2 ou a1, un autre est k+1 et un autre est k + 2
+#Ces nombres seront utilisées comme limite
+$k_temp1 = random(11,50);
+$k_temp2 = list_random($a1,$a2);
+@Vecteur1 = ($k_temp1,Compute("$k_temp1+1"),Compute("$k_temp1 +2"),$k_temp2);
+@Choix1 = shuffle(4);
+
+#Définition de la première limite
+$signe11 = random(-1,1,2);
+$signe12 = random(-1,1,2);
+$k11 = $Vecteur1[$Choix1[0]];
+$k12 = $Vecteur1[$Choix1[1]];
+$signe13 = random(-1,1,2);
+$signe14 = random(-1,1,2);
+#Valeurs de x et de fonction
+for ($k = 0; $k <=4; $k++){
+$x1[$k] = Compute("$a1-0.1*10^(-1*($k))");
+$temp11 = random(1,4,1);
+$f1[$k] = Compute("$signe11*$k11+$signe13*$temp11*0.1*10^(-1*($k))");
+$x2[$k] = Compute("$a1+0.1*10^(-1*($k))");
+$temp12 = random(1,4,1);
+$f2[$k] = Compute("$signe12*$k12+$signe14*$temp12*0.1*10^(-1*($k))");}
+#Réponse pour la première limite
+$RepLimiteG1 = Compute("$signe11*$k11");
+$RepLimiteD1 = Compute("$signe12*$k12");
+
+#Définition de la deuxième limite
+$signe21 = random(-1,1,2);
+$signe22 = random(-1,1,2);
+$k21 = $Vecteur1[$Choix1[2]];
+$k22 = $Vecteur1[$Choix1[3]];
+$signe23 = random(-1,1,2);
+$signe24 = random(-1,1,2);
+#Valeurs de x et de fonction
+for ($k = 0; $k <=4; $k++){
+$x3[$k] = Compute("$a2-0.1*10^(-1*($k))");
+$temp21 = random(1,4,1);
+$f3[$k] = Compute("$signe21*$k21+$signe23*$temp21*0.1*10^(-1*($k))");
+$x4[$k] = Compute("$a2+0.1*10^(-1*($k))");
+$temp22 = random(1,4,1);
+$f4[$k] = Compute("$signe22*$k22+$signe24*$temp22*0.1*10^(-1*($k))");}
+#Réponse de la deuxième limite
+$RepLimiteG2 = Compute("$signe21*$k21");
+$RepLimiteD2 = Compute("$signe22*$k22");
+
+#Affichage aléatoire des limites
+@ListeAffichageLN1 = ("\lim_{x\rightarrow $a1^{-}} f(x) =","\lim_{x\rightarrow $a1^{+}} f(x) =","\lim_{x\rightarrow $a2^{-}} f(x) =","\lim_{x\rightarrow $a2^{+}} f(x) =");
+@RepAffichageLN1 = ($RepLimiteG1,$RepLimiteD1,$RepLimiteG2,$RepLimiteD2);
+#Choix aléatoire de présentation des limites
+@RLN1 = shuffle(4); 
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+Voici le tableau de valeurs numériques de la fonction \(f(x)\). 
+$PAR
+
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"1pt", spacing=>0, padding=>2).
+  AlignedRow(["\(x\)", "\(f(x)\)", " |  ", "\(x\)", "\(f(x)\)"," | ","\(x\)", "\(f(x)\)","  | ", "\(x\)", "\(f(x)\)"], align=>CENTER, separation=>0).
+  AlignedRow(["$x1[0]", "$f1[0]"," $SPACE | $SPACE ", "$x2[0]","$f2[0]"," $SPACE | $SPACE ","$x3[0]", "$f3[0]"," $SPACE | $SPACE ", "$x4[0]","$f4[0]"], align => LEFT, separation=>0).
+  AlignedRow(["$x1[1]", "$f1[1]"," $SPACE | $SPACE ", "$x2[1]","$f2[1]"," $SPACE | $SPACE ", "$x3[1]", "$f3[1]"," $SPACE | $SPACE ",  "$x4[1]","$f4[1]"], align => LEFT, separation=>0).
+  AlignedRow(["$x1[2]", "$f1[2]"," $SPACE | $SPACE ", "$x2[2]","$f2[2]"," $SPACE | $SPACE ", "$x3[2]", "$f3[2]"," $SPACE | $SPACE ",  "$x4[2]","$f4[2]"], align => LEFT, separation=>0).
+  AlignedRow(["$x1[3]", "$f1[3]"," $SPACE | $SPACE ", "$x2[3]","$f2[3]"," $SPACE | $SPACE ", "$x3[3]", "$f3[3]"," $SPACE | $SPACE ",  "$x4[3]","$f4[3]"], align => LEFT, separation=>0).
+  AlignedRow(["$x1[4]", "$f1[4]"," $SPACE | $SPACE ", "$x2[4]","$f2[4]"," $SPACE | $SPACE ", "$x3[4]", "$f3[4]"," $SPACE | $SPACE ",  "$x4[4]","$f4[4]"], align => LEFT, separation=>0).
+
+EndTable()
+\}
+
+$ECENTER
+
+$PAR
+
+Utilisez les valeurs du tableau pour déterminer les limites suivantes: 
+$BR
+$BCENTER
+\(\displaystyle $ListeAffichageLN1[$RLN1[0]]  \) \{ans_rule(10)\}
+$SPACE
+$SPACE
+$SPACE
+\(\displaystyle $ListeAffichageLN1[$RLN1[1]] \) \{ans_rule(10)\}
+$BR
+\(\displaystyle $ListeAffichageLN1[$RLN1[2]]  \) \{ans_rule(10)\}
+$SPACE
+$SPACE
+$SPACE
+\(\displaystyle $ListeAffichageLN1[$RLN1[3]] \) \{ans_rule(10)\}
+$BR
+$ECENTER
+$BR
+
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($RepAffichageLN1[$RLN1[0]]));
+ANS(num_cmp($RepAffichageLN1[$RLN1[1]]));
+ANS(num_cmp($RepAffichageLN1[$RLN1[2]]));
+ANS(num_cmp($RepAffichageLN1[$RLN1[3]]));
+
+
+ENDDOCUMENT(); 

@@ -1,0 +1,110 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée du quotient de fonctions', 'fonction logarithmique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+
+COMMENT("Niveau de difficulté: Moyen. Quotient d'un ln par un binôme, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+
+#Cas 83: Quotient binôme par ln(binôme)
+#Binôme
+$k831 =random(3,15);
+$m831 =random(5,9); 
+$k832temp =random(2,9);
+if ($k832temp == $k831) {$k832 = Compute("$k831+1");}
+else
+{$k832 = $k832temp;}
+$m832 =random(2,4); 
+#Ln
+$k833 = random(2, 9);
+$k834temp = list_random(2,3,4); 
+$k834 = Compute("$k833*$k834temp");
+#Facteur à simplifier
+$gcd833 = gcd($k833,$k834);
+
+#Les binômes
+$poly831 = Formula("$k831*x^$m831+$k832*x^$m832")->reduce;
+$poly831prime =Formula("$k831*$m831*x^($m831-1)+ $k832*$m832*x^($m832-1)")->reduce;
+$poly832 = Formula("$k833*x +$k834") -> reduce;
+$poly832prime = Formula("$k833") -> reduce;
+$poly832S = Formula("$k833/$gcd833*x +$k834/$gcd833") -> reduce;
+$poly832primeS = Formula("$k833/$gcd833") -> reduce;
+#u et v
+#Attention u et v ont été inversés
+$v83 = Formula("$poly831")->reduce;
+$v83prime = Formula("$poly831prime")->reduce;
+$u83 = Formula("ln($poly832)")->reduce;
+$u83prime = Formula("$poly832prime/$poly832")->reduce;
+$u83primeS = Formula("$poly832primeS/$poly832S")->reduce;
+#La fonction
+$f83 = Formula("ln($poly832)/($poly831)")-> reduce;
+#$f83prime1 = Formula("($u83prime)*($v83) +($u83)*($v83prime)")->reduce;
+$f83prime1 = Formula("($poly831*$poly832primeS/$poly832S - $poly831prime*ln($poly832) )/($poly831)^2")->reduce;
+$f83prime2 = Formula("($poly831*$poly832primeS -$poly832S* $poly831prime*ln($poly832) )/($poly832S*($poly831)^2)")->reduce;
+
+$Rep83 = $f83prime2 -> reduce;
+$Rep83->{limits} = [0,2];
+
+#$f83prime5 = $f83 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f83} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep83->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f83 \) a la forme d'un quotient \(\displaystyle \frac{u}{v}\) où
+$PAR
+\(\displaystyle u(x) =  $u83 \)
+$PAR
+\( \displaystyle v(x) =  $v83 \) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u83prime = $u83primeS\) 
+$PAR
+\( \displaystyle v'(x) =  $v83prime \) 
+$PAR
+Appliquons la formule de dérivation d'un quotient.  
+$BR
+\( \displaystyle f'(x) =  $f83prime1 \) 
+$BR
+Concluons en simplifiant par une mise au même dénominateur.
+$BR
+\( \displaystyle f'(x) =  $f83prime2 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

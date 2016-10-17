@@ -1,0 +1,250 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction définie par parties', 'graphique', 'limite', 'limite à gauche et à droite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+  "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","parserPopUp.pl","unionLists.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Cas générique: Fonction ayant deux morceaux (constante, linéaire ou quadratique) avec ou sans saut. La limite peut exister ou non. Le cas constant et constant sans saut a été éliminé. ");
+
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+
+#Cas générique: Fonction ayant deux parties (constante, linéaire ou quadratique) avec ou sans saut
+#La limite peut exister ou non.
+#Le cas constante et constante sans saut a été éliminé. 
+#La fonction (Rechercher et remplacer) peut être utilisée pour rechercher 9 et le remplacer par n'importe 
+#quel nombre ou caractère afin d'obtenir le code d'un nouvel exercice.
+
+#Choix du a et de l'axe des x
+$temp9 = random(-1,1,2);
+if ($temp9 == -1) {
+#Prendre un a négatif ou nul
+$a9=random(-5,0);
+$x91=Compute("$a9 - 2");
+$x92=2;}
+else {
+#Prendre un a positif ou nul
+$a9=random(0,5);
+$x91=-1; 
+$x92=Compute("$a9 + 2");}
+
+#Point de continuité possible entre les deux morceaux (si saut est non nul, la fonction fait un saut)
+$k91 = random(2,8);
+$signe91 = random(-1,1,2);
+$saut92 = list_random(0,2,3,-2,-3, 0);
+
+#Première partie 
+#Choix du type de fonction (constante, linéaire ou quadratique)
+$type91 = random(1,3);
+if ($type91 == 1) 
+{#Cas constant
+$f91 = Formula("$signe91*$k91")->reduce;
+$f91a = $f91->eval(x=>$a9);
+$f91max = Compute("$f91a");
+$f91min = Compute("$f91a");}
+elsif ($type91 == 2)
+{#Cas linéaire
+$signe92 = random(-1,1,2);
+$m92 = random(1,2);
+$f91 = Formula("$signe91*$k91 + $signe92*$m92*(x-$a9)")->reduce;
+$f91a = $f91->eval(x=>$a9);
+$f91x1 =$f91->eval(x=>"$a9 - 2"); 
+if ($signe92 > 0) 
+{#La fonction est croissante
+$f91max = Compute("$f91a");
+$f91min = Compute("$f91x1");}
+else
+{#La fonction est décroissante
+$f91max = Compute("$f91x1");
+$f91min = Compute("$f91a");}}
+else
+{#Cas quadratique 
+$signe93 = random(-1,1,2);
+$m93 = 4;
+$f91 = Formula("$signe91*$k91 +  $signe93*$m93*(x-$a9)*(x-$a9 +1 )")->reduce;
+$f91a = $f91->eval(x=>$a9);
+$f91p = $f91->eval(x=>"(2*$a9-1)/2");
+if ($signe93 > 0) 
+{#La parabole est vers le haut
+$f91max = Compute("$f91a");
+$f91min = Compute("$f91p");}
+else
+{#La parabole est vers le bas
+$f91max = Compute("$f91p");
+$f91min = Compute("$f91a");}}
+
+#Deuxième partie
+#Choix du type de fonction (constante, linéaire ou quadratique)
+$type92 = random(1,3);
+if ($type92 == 1) 
+{#Cas constant
+if ($type91 == 1){$saut92 = list_random(2,3,-2,-3);} 
+$f92 = Formula("$signe91*$k91+$saut92")->reduce;
+$f92a = $f92->eval(x=>$a9);
+$f92max = Compute("$f92a +2");
+$f92min = Compute("$f92a - 1");}
+elsif ($type92 == 2)
+{#Cas linéaire
+if (($type91 == 2) && ($saut92 == 0))
+{#Cas linéaire/linéaire 
+#Il n'y a pas de saut et la fonction doit faire un pic
+$signe94 = Compute("-1*$signe92");}
+else
+{#aucune contrainte sur la fonction
+$signe94 = random(-1,1,2);}
+$m94 = random(1,2);
+$f92 = Formula("$signe91*$k91+$saut92 + $signe94*$m94*(x-$a9)")->reduce;
+$f92a = $f92->eval(x=>$a9);
+$f92x2 =$f92->eval(x=>"$a9 + 2"); 
+if ($signe94 > 0) 
+{#La fonction est croissante
+$f92max = Compute("$f92x2");
+$f92min = Compute("$f92a");}
+else
+{#La fonction est décroissante
+$f92max = Compute("$f92a");
+$f92min = Compute("$f92x2");}}
+else
+{#Cas quadratique 
+if ($type91 == 3) 
+{#Cas parabole/parabole 
+$m95 = 8;
+if ($saut92 == 0) 
+{#Il n'y a pas de saut et la parabole doit faire un pic
+$signe95 = $signe93;
+}
+else
+{#Il y a un saut et aucune contrainte sur la parabole
+$signe95 = random(-1,1,2);}}
+else
+{$m95 = 4;
+$signe95 = random(-1,1,2);}
+$f92 = Formula("$signe91*$k91 +$saut92+  $signe95*$m95*(x-$a9)*(x-$a9 -1 )")->reduce;
+$f92a = $f92->eval(x=>$a9);
+$f92p = $f92->eval(x=>"(2*$a9+1)/2");
+if ($signe95 > 0) 
+{#La parabole est vers le haut
+$f92max = Compute("$f92a");
+$f92min = Compute("$f92p");}
+else
+{#La parabole est vers le bas
+$f92max = Compute("$f92p");
+$f92min = Compute("$f92a");}}
+
+
+#Déterminer le maximum et le minimum de la fonction f9
+if ($f91max > $f92max){$f9max = $f91max;} 
+else
+{$f9max = $f92max;}
+if ($f91min < $f92min){$f9min = $f91min;} 
+else
+{$f9min = $f92min;}
+
+#Déterminer l'intervalle en y
+if ($f9min >= 0) 
+{$y92 = Compute("$f9max + 2");
+$y91 = -1;}
+elsif ($f9max > 0)
+{$y92 = Compute("$f9max + 2");
+$y91 = Compute("$f9min -1");}
+else
+{$y92 = 2;
+$y91 =  Compute("$f9min -1");}
+
+#Calcul du quadrillage et du x
+$gridX9 = $x92 - $x91;
+$gridY9 = $y92 - $y91;
+$AffichageX9 =Compute("$x92 -0.5");
+
+#Calculs des limites
+$RepLimiteG9 = $f91->eval(x=>$a9);
+$RepLimiteD9 = $f92->eval(x=>$a9);
+if ($RepLimiteG9 == $RepLimiteD9) { $RepPopUp9 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else {$RepPopUp9 = PopUp(["Choisir", "Oui", "Non"], "Non");}
+
+#Graphique
+$f91graphique = "$f91 for x in <$x91,$a9> using color:red and weight:2";
+$f92graphique = "$f92 for x in <$a9,$x92> using color:red and weight:2";
+$graphique9 = init_graph($x91,$y91,$x92,$y92,'axes'=>[0,0],'grid'=>[$gridX9,$gridY9]);
+$graphique9 -> lb('reset');
+$graphique9 -> lb(new Label ( 1,0,'1','black','left','top'));
+$graphique9 -> lb(new Label ( 0,1,'1','black','right','top'));
+$graphique9 -> lb(new Label ( $AffichageX9,0,'x','black','left','top'));
+$graphique9 -> lb(new Label ( 0,$y92,'f(x)','black','right','top'));
+add_functions($graphique9, $f91graphique,$f92graphique);
+#Choisir la valeur de la fonction
+$temp9 = random(0,2);
+if ($temp9 == 0)
+{$pt91 = closed_circle( $a9,$f91->eval(x=>$a9), red);
+$pt92 = open_circle( $a9,$f92->eval(x=>$a9), red);
+$graphique9->stamps($pt91, $pt92);}
+elsif ($temp9 == 1)
+{$pt91 = open_circle( $a9,$f91->eval(x=>$a9), red);
+$pt92 = closed_circle( $a9,$f92->eval(x=>$a9), red);
+$graphique9->stamps($pt91, $pt92); }
+else
+{$pt91 = open_circle( $a9,$f91->eval(x=>$a9), red);
+$pt92 = open_circle( $a9,$f92->eval(x=>$a9), red);
+$f91a = $f91->eval(x=>$a9);
+$f92a = $f92->eval(x=>$a9);
+$pt93ytemp = random(Compute("$f9min"),Compute("$f9max+1"));
+if ($pt93ytemp == $f91a) {$pt93y = Compute("$f9max+1");}
+elsif ($pt93ytemp == $f92a) {$pt93y = Compute("$f9max+1");}
+else {$pt93y = $pt93ytemp;}
+$pt93 = closed_circle( $a9,$pt93y, red);
+$graphique9->stamps($pt91, $pt92,$pt93);}
+
+$imageG9 = image(insertGraph($graphique9),width =>350,height=>350,tex_size=>350);
+
+$showPartialCorrectAnswers = 1;
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+\{
+ColumnTable("Calculer les limites suivantes en utilisant le graphique ci-contre et répondre à la question.".
+BeginList("OL", type=>"a").
+$ITEM. "\( \displaystyle \lim_{x\rightarrow $a9^{+}} f(x)  = \)". ans_rule(10).
+$ITEMSEP.
+$ITEM. "\( \displaystyle{\lim_{x\rightarrow $a9^{-}} f(x) } = \)". ans_rule(10).
+$ITEMSEP. 
+$ITEM. "La limite en \(x = $a9\) existe-t-elle? ".
+$RepPopUp9->menu().
+$ITEMSEP,
+$BCENTER.
+$imageG9.
+$BR.
+"Cliquer sur le graphique pour faire un agrandissement.".
+$BR.
+$ECENTER,
+indent=>"0", separation=>"50", valign=>"TOP"
+);
+\}
+$PAR
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($RepLimiteD9));
+ANS(num_cmp($RepLimiteG9));
+ANS( $RepPopUp9->cmp() );
+
+
+ENDDOCUMENT(); 

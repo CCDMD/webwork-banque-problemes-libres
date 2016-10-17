@@ -1,0 +1,157 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction définie par parties', 'graphique', 'limite', 'limite à gauche et à droite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+  "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","parserPopUp.pl","unionLists.pl"
+);
+
+COMMENT("Niveau de difficulté: Difficile. Fonction faisant des oscillations dont les amplitudes sont constantes avec un saut.");
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+
+#Cas 11: Fonction faisant des oscillations dont les amplitudes sont constantes. Aucun point de continuité
+
+#Choix du a et de l'axe des x
+$temp11 = random(-1,1,2);
+if ($temp11 == -1) {
+#Prendre un a négatif ou nul
+$a11=random(-4,0);
+$x111=Compute("$a11 - 2");
+$x112=2;}
+else {
+#Prendre un a positif ou nul
+$a11=random(0,4);
+$x111=-1; 
+$x112=Compute("$a11 + 2");}
+
+#Point de continuité possible entre les deux morceaux. La fonction a un saut.
+$k11 = random(-8,8);
+$saut11 = list_random(2,3,-2,-3);
+
+$osc111 = random(2,4,2);
+$osc112 = random(2,4,2);
+$amp111 = random(2,5);
+$amp112 = random(2,5);
+
+#Première partie 
+$f111 = Formula("$amp111*sin(2*pi*$osc111*(x-$a11)/($a11-$x111))+$k11")->reduce;
+$f111a = $f111->eval(x=>$a11);
+$f111max = Compute("$amp111+$k11");
+$f111min = Compute("-1*$amp111+$k11");
+
+#Deuxième partie 
+$f112 = Formula("$amp112*sin(2*pi*$osc112*(x-$a11)/($x112-$a11))+$k11 + $saut11")->reduce;
+$f112a = $f112->eval(x=>$a11);
+$f112max = Compute("$amp112+$k11+ $saut11");
+$f112min = Compute("-1*$amp112+$k11 + $saut11");
+
+#Déterminer le maximum et le minimum de la fonction f11
+if ($f111max > $f112max){$f11max = $f111max;} 
+else
+{$f11max = $f112max;}
+if ($f111min < $f112min){$f11min = $f111min;} 
+else
+{$f11min = $f112min;}
+
+#Déterminer l'intervalle en y
+if ($f11min >= 0) 
+{$y112 = Compute("$f11max + 2");
+$y111 = -1;}
+elsif ($f11max > 1)
+{$y112 = Compute("$f11max + 2");
+$y111 = Compute("$f11min - 1");}
+else
+{$y112 = 2;
+$y111 = Compute("$f11min - 1");}
+
+#Calcul du quadrillage et du x
+$gridX11 = $x112 - $x111;
+$gridY11 = $y112 - $y111;
+$AffichageX11 =Compute("$x112 -0.5");
+
+#Calculs des limites
+$RepLimiteG11 = $f111->eval(x=>$a11);
+$RepLimiteD11 = $f112->eval(x=>$a11);
+if ($RepLimiteG11 == $RepLimiteD11) { $RepPopUp11 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else {$RepPopUp11 = PopUp(["Choisir", "Oui", "Non"], "Non");}
+
+#Graphique
+$f111graphique = "$f111 for x in <$x111,$a11> using color:red and weight:2";
+$f112graphique = "$f112 for x in <$a11,$x112> using color:red and weight:2";
+$graphique11 = init_graph($x111,$y111,$x112,$y112,'axes'=>[0,0],'grid'=>[$gridX11,$gridY11]);
+$graphique11 -> lb('reset');
+$graphique11 -> lb(new Label ( 1,0,'1','black','left','top'));
+$graphique11 -> lb(new Label ( 0,1,'1','black','right','top'));
+$graphique11 -> lb(new Label ( $AffichageX11,0,'x','black','left','top'));
+$graphique11 -> lb(new Label ( 0,$y112,'f(x)','black','right','top'));
+add_functions($graphique11, $f111graphique,$f112graphique);
+$temp11 = random(0,2);
+if ($temp11 == 0)
+{$pt111 = closed_circle( $a11,$f111->eval(x=>$a11), red);
+$pt112 = open_circle( $a11,$f112->eval(x=>$a11), red);
+$graphique11->stamps($pt111, $pt112);}
+elsif ($temp11 == 1)
+{$pt111 = open_circle( $a11,$f111->eval(x=>$a11), red);
+$pt112 = closed_circle( $a11,$f112->eval(x=>$a11), red);
+$graphique11->stamps($pt111, $pt112); }
+else
+{$pt111 = open_circle( $a11,$f111->eval(x=>$a11), red);
+$pt112 = open_circle( $a11,$f112->eval(x=>$a11), red);
+$pt113 = closed_circle( $a11,$f11max - 1, red);
+$graphique11->stamps($pt111, $pt112,$pt113); }
+
+$imageG11 = image(insertGraph($graphique11),width =>350,height=>350,tex_size=>350);
+
+
+
+$showPartialCorrectAnswers = 1;
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+\{
+ColumnTable("Calculer les limites suivantes en utilisant le graphique ci-contre et répondre à la question.".
+BeginList("OL", type=>"a").
+$ITEM. "\( \displaystyle \lim_{x\rightarrow $a11^{+}} f(x)  = \)". ans_rule(10).
+$ITEMSEP.
+$ITEM. "\( \displaystyle{\lim_{x\rightarrow $a11^{-}} f(x) } = \)". ans_rule(10).
+$ITEMSEP. 
+$ITEM. "La limite en \(x = $a11\) existe-t-elle? ".
+$RepPopUp11->menu().
+$ITEMSEP,
+$BCENTER.
+$imageG11.
+$BR.
+"Cliquer sur le graphique pour faire un agrandissement.".
+$BR.
+$ECENTER,
+indent=>"0", separation=>"50", valign=>"TOP"
+);
+\}
+$PAR
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS(num_cmp($RepLimiteD11));
+ANS(num_cmp($RepLimiteG11));
+ANS( $RepPopUp11->cmp() );
+
+
+ENDDOCUMENT(); 

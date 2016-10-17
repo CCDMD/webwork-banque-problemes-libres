@@ -1,0 +1,236 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la fonction puissance', 'fonction trigonométrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionLists.pl","unionTables.pl",
+"PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Compositions et puissances de fonctions trigonométriques avec présentation aléatoire des fonctions et solution");
+
+TEXT(beginproblem());
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real", A=>"Real", u =>"Real");
+Context()->variables->set(x=>{limits=>[0,1.5]});
+
+#Vecteur des fonctions trigonométriques
+@Fonction = (Formula("sin(A)"), Formula("cos(A)"), Formula("tan(A)"), Formula("cot(A)"), Formula("sec(A)"), Formula("csc(A)"));
+@FonctionPrime = (Formula("cos(A)"), Formula("-sin(A)"), Formula("sec^2(A)"), Formula("-csc^2(A)"), Formula("sec(A)*tan(A)"), Formula("-csc(A)*cot(A)"));
+
+#Choix de l'argument de la fonction trigonométrique
+#Argument0 = cas trigo(trigo(ax))
+$An0 = random(2,9);
+$Atemp0 = random(0,5); 
+$Argument0 =$Fonction[$Atemp0] ->substitute(A => Formula("$An0*x")); 
+$Argument0Etape2Prime = $FonctionPrime[$Atemp0] ->substitute(A => Formula("$An0*x")); 
+$Argument0Etape3 =  Formula("$An0*x");
+$Argument0Etape3Prime =  Formula("$An0");
+
+#Argument1 = cas trigo(sqrt(trigo(ax))
+$An1 = random(2,9);
+$Atemp1 = random(0,5); 
+$Argument1temp =$Fonction[$Atemp1] ->substitute(A => Formula("$An1*x")); 
+$Argument1 =Formula("sqrt($Argument1temp)"); 
+$Argument1Etape2Prime = Formula("1/(2*sqrt($Argument1temp))");
+$Argument1Etape3 = $Argument1temp;
+$Argument1Etape3Prime = $FonctionPrime[$Atemp1] ->substitute(A => Formula("$An1*x")); 
+$Argument1Etape4 =  Formula("$An1*x");
+$Argument1Etape4Prime = Formula("$An1");
+
+#Argument2 = cas sqrt(trigo(ax))
+$Ak2 = random(2,9);
+$Argument2 =Formula("$Ak2*x"); 
+$Argument2Prime =Formula("$Ak2"); 
+
+#Argument3 = cas trigo^n(x)
+$n3 = random(2,9);
+$Argument3 =Formula("x"); 
+$Argument3Prime =Formula("1"); 
+
+#Argument4 = cas trigo(x^n)
+$An4 = random(2,9);
+$Argument4 = Formula("x^$An4");
+$Argument4Etape2Prime = Formula("$An4*x^($An4 -1)");
+
+#Argument5 = trigo(sqrt(ax))
+$Ak5 = random(2,9);
+$Argument5 =Formula("sqrt($Ak5*x)"); 
+$Argument5Etape2Prime =Formula("1/(2*sqrt($Ak5*x))"); 
+$Argument5Etape3 =Formula("$Ak5*x"); 
+$Argument5Etape3Prime =Formula("$Ak5"); 
+
+@ArgumentA = ($Argument0, $Argument1, $Argument2, $Argument3, $Argument4, $Argument5);
+
+#Choix de la fonction trigonométrique
+#Utiliser shuffle
+@CFBloc1 = shuffle(6);
+#Ne pas utiliser shuffle, car il faut afficher les trigonométriques sin, cos, tan en premier. Ce sont les fonctions usuelles.
+#@temp2 = shuffle(4);
+#$temp1 = random(0,1);
+#if ($temp1 == 0) {@CFBloc1 = (0,1,$temp2[0] +2,$temp2[1] +2,$temp2[2] +2,$temp2[3] +2);}
+#else  {@CFBloc1 = (1,0,$temp2[0] +2,$temp2[1] +2,$temp2[2] +2,$temp2[3] +2);}
+
+#Choix de la fonction v
+@Fonctiontemp = ( 
+$Fonction[$CFBloc1[0]] ->substitute(A => $Argument0), 
+$Fonction[$CFBloc1[1]] ->substitute(A => $Argument1),
+$Fonction[$CFBloc1[2]] ->substitute(A => $Argument2),
+$Fonction[$CFBloc1[3]] ->substitute(A => $Argument3),
+$Fonction[$CFBloc1[4]] ->substitute(A => $Argument4),
+$Fonction[$CFBloc1[5]] ->substitute(A => $Argument5));
+
+#Affichage de la fonction f 
+@FonctionBloc1 =($Fonctiontemp[0], $Fonctiontemp[1], sqrt($Fonctiontemp[2]), ($Fonctiontemp[3])**$n3, $Fonctiontemp[4], $Fonctiontemp[5]);
+
+#Calcul des réponses
+
+@ReponseBloc1 = ( $FonctionBloc1[0]  ->D('x')-> reduce,
+$FonctionBloc1[1]  ->D('x')-> reduce,
+$FonctionBloc1[2]  ->D('x')-> reduce,
+$FonctionBloc1[3]  ->D('x')-> reduce,
+$FonctionBloc1[4]  ->D('x')-> reduce,
+$FonctionBloc1[5]  ->D('x')-> reduce);
+
+#Donner la forme de la fonction pour la solution.
+@FormeBloc1 = ( $Fonction[$CFBloc1[0]] ->substitute(A => Formula("u")), 
+$Fonction[$CFBloc1[1]] ->substitute(A =>  Formula("u")),
+Formula("sqrt(u)"),
+Formula("u^$n3"),
+$Fonction[$CFBloc1[4]] ->substitute(A =>  Formula("u")),
+$Fonction[$CFBloc1[5]] ->substitute(A =>  Formula("u")));
+@UBloc1 = ($ArgumentA[0], $ArgumentA[1], $Fonctiontemp[2], $Fonctiontemp[3], $ArgumentA[4], $ArgumentA[5]);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer la dérivée de chacune des fonctions suivantes.
+$PAR
+\{ BeginList("OL", type=>"a") \}
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[0]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[1]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[2]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[3]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[4]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[5]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+\{ EndList("OL") \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($ReponseBloc1[0]->cmp);
+ANS($ReponseBloc1[1]->cmp);
+ANS($ReponseBloc1[2]->cmp);
+ANS($ReponseBloc1[3]->cmp);
+ANS($ReponseBloc1[4]->cmp);
+ANS($ReponseBloc1[5]->cmp);
+
+@Etape1 = ($FonctionBloc1[0], $FonctionBloc1[1],$FonctionBloc1[2],$FonctionBloc1[3],$FonctionBloc1[4],$FonctionBloc1[5]);
+@Etape1Prime = ($FonctionPrime[$CFBloc1[0]] ->substitute(A => $ArgumentA[0]), $FonctionPrime[$CFBloc1[1]] ->substitute(A => $ArgumentA[1]), 1/(2*sqrt($Fonction[$CFBloc1[2]] ->substitute(A =>  $ArgumentA[2]))),  $n3*($Fonction[$CFBloc1[3]] ->substitute(A =>  $ArgumentA[3]))**($n3-1), $FonctionPrime[$CFBloc1[4]] ->substitute(A => $ArgumentA[4]),$FonctionPrime[$CFBloc1[5]] ->substitute(A => $ArgumentA[5]) ); 
+@Etape2 = ( $ArgumentA[0], $ArgumentA[1], $Fonction[$CFBloc1[2]] ->substitute(A =>  $ArgumentA[2]),$Fonction[$CFBloc1[2]] ->substitute(A =>  $ArgumentA[3]), $ArgumentA[4],$ArgumentA[5] );
+@Etape2Prime  = ($Argument0Etape2Prime, $Argument1Etape2Prime, $FonctionPrime[$CFBloc1[2]] ->substitute(A =>  $ArgumentA[2]),$FonctionPrime[$CFBloc1[3]] ->substitute(A =>  $ArgumentA[3]), $Argument4Etape2Prime, $Argument5Etape2Prime );
+@Etape3  = ($Argument0Etape3, $Argument1Etape3, $Argument2, $Argument3,$Argument4 , $Argument5Etape3);
+@Etape3Prime  = ($Argument0Etape3Prime, $Argument1Etape3Prime, $Argument2Prime, $Argument3Prime, $Argument4, $Argument5Etape3Prime);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+\{ BeginList("OL", type=>"a") \}
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[0] \) a la forme  \( \displaystyle f(x) = $FormeBloc1[0]\) avec \( \displaystyle u(x) = $UBloc1[0]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($Etape1[0])' \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[0]($Etape2[0])'  \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[0] ($Etape2Prime[0])($Etape3[0])'  \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[0] ($Etape2Prime[0])($Etape3Prime[0])  \)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[0]  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[1] \) a la forme  \( \displaystyle f(x) = $FormeBloc1[1]\) avec \( \displaystyle u(x) = $UBloc1[1]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($Etape1[1])' \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[1]($Etape2[1])'  \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[1] ($Etape2Prime[1])($Etape3[1])'  \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[1] ($Etape2Prime[1])($Etape3Prime[1])($Argument1Etape4)'  \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[1] ($Etape2Prime[1])($Etape3Prime[1]) ($Argument1Etape4Prime)  \)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[1]  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[2] \) a la forme  \( \displaystyle f(x) = $FormeBloc1[2]\) avec \( \displaystyle u(x) = $UBloc1[2]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($Etape1[2])' \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[2]($Etape2[2])'  \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[2] ($Etape2Prime[2])($Etape3[2])'  \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[2] ($Etape2Prime[2])($Etape3Prime[2])  \)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[2]  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[3] \) a la forme  \( \displaystyle f(x) = $FormeBloc1[3]\) avec \( \displaystyle u(x) = $UBloc1[3]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($Etape1[3])' \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[3]($Etape2[3])'  \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[3] ($Etape2Prime[3])($Etape3[3])'  \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[3] ($Etape2Prime[3])($Etape3Prime[3])  \)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[3]  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[4] \) a la forme  \( \displaystyle f(x) = $FormeBloc1[4]\) avec \( \displaystyle u(x) = $UBloc1[4]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($Etape1[4])' \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[4]($Etape2[4])'  \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[4] ($Etape2Prime[4])  \)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[4]  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[5] \) a la forme  \( \displaystyle f(x) = $FormeBloc1[5]\) avec \( \displaystyle u(x) = $UBloc1[5]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($Etape1[5])' \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[5]($Etape2[5])'  \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[5] ($Etape2Prime[5])($Etape3[5])'  \)
+$BR
+\( \displaystyle f'(x) = $Etape1Prime[5] ($Etape2Prime[5])($Etape3Prime[5])  \)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[5]  \)
+$ITEMSEP
+
+\{ EndList("OL") \}
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

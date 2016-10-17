@@ -1,0 +1,53 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('0/0', 'conjugué', 'fonction algébrique', 'fonction racine carrée', 'fonction rationnelle', 'forme indéterminée', 'limite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionLists.pl", "contextFraction.pl",
+);
+
+COMMENT("Niveau de difficulté: Difficile. Limite algébrique d'indétermination 0/0 qui doit être levée par une mise au même dénominateur et par la multiplication par le conjugué.");
+
+TEXT(beginproblem());
+
+Context("Fraction-NoDecimals");
+Context()->variables->are(h=>"Real",t=>"Real", x => "Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Forme 0/0
+
+#Cas 9 Mise au même dénominateur et multiplication par le conjugué
+$a9=non_zero_random(-10,10);
+$m9=random(2,10);
+$m9c = Compute("$a9+$m9^2");
+$f9A =Formula("(1/(sqrt($m9c-x))-1/$m9)/(x-$a9)")->reduce;
+$RepLA9 = Compute("1/(2*$m9^3)");
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la limite suivante.$BR
+
+ \( \displaystyle {\lim_{x \rightarrow $a9} $f9A}\)  = \{ans_rule(20)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepLA9->cmp);
+
+
+
+
+ENDDOCUMENT(); 

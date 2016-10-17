@@ -1,0 +1,236 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction définie par parties', 'graphique', 'limite', 'limite à gauche et à droite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+  "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","parserPopUp.pl","unionLists.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Fonction définie par morceaux (linéaire et constant) avec ou sans saut");
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+
+#Cas 6: Fonction linéaire et constante avec ou sans saut 
+#Le code vient du cas générique (Cas 9)
+# les variables $type61 et $type62 sont été modifiées pour prendre les valeurs 1 et 2
+
+#Choix du a et de l'axe des x
+$temp6 = random(-1,1,2);
+if ($temp6 == -1) {
+#Prendre un a négatif ou nul
+$a6=random(-5,0);
+$x61=Compute("$a6 - 2");
+$x62=2;}
+else {
+#Prendre un a positif ou nul
+$a6=random(0,5);
+$x61=-1; 
+$x62=Compute("$a6 + 2");}
+
+#Point de continuité possible entre les deux morceaux (si saut est non nul, la fonction fait un saut)
+$k61 = random(2,8);
+$signe61 = random(-1,1,2);
+$saut62 = list_random(0,2,3,-2,-3, 0);
+
+#Première partie 
+#Choix du type de fonction (constante, linéaire ou quadratique)
+$type61 = random(1,2);
+if ($type61 == 1) 
+{#Cas constant
+$f61 = Formula("$signe61*$k61")->reduce;
+$f61a = $f61->eval(x=>$a6);
+$f61max = Compute("$f61a");
+$f61min = Compute("$f61a");}
+elsif ($type61 == 2)
+{#Cas linéaire
+$signe62 = random(-1,1,2);
+$m62 = random(1,2);
+$f61 = Formula("$signe61*$k61 + $signe62*$m62*(x-$a6)")->reduce;
+$f61a = $f61->eval(x=>$a6);
+$f61x1 =$f61->eval(x=>"$a6 - 2"); 
+if ($signe62 > 0) 
+{#La fonction est croissante
+$f61max = Compute("$f61a");
+$f61min = Compute("$f61x1");}
+else
+{#La fonction est décroissante
+$f61max = Compute("$f61x1");
+$f61min = Compute("$f61a");}}
+else
+{#Cas quadratique 
+$signe63 = random(-1,1,2);
+$m63 = 4;
+$f61 = Formula("$signe61*$k61 +  $signe63*$m63*(x-$a6)*(x-$a6 +1 )")->reduce;
+$f61a = $f61->eval(x=>$a6);
+$f61p = $f61->eval(x=>"(2*$a6-1)/2");
+if ($signe63 > 0) 
+{#La parabole est vers le haut
+$f61max = Compute("$f61a");
+$f61min = Compute("$f61p");}
+else
+{#La parabole est vers le bas
+$f61max = Compute("$f61p");
+$f61min = Compute("$f61a");}}
+
+#Deuxième partie
+#Choix du type de fonction (constante, linéaire ou quadratique)
+if ($type61 == 1) 
+{#Choisir linéaire 
+$type62 = 2;}
+else
+{#Choisir constante 
+$type62 = 1;}
+
+if ($type62 == 1) 
+{#Cas constant
+if ($type61 == 1){$saut62 = list_random(2,3,-2,-3);} 
+$f62 = Formula("$signe61*$k61+$saut62")->reduce;
+$f62a = $f62->eval(x=>$a6);
+$f62max = Compute("$f62a +2");
+$f62min = Compute("$f62a - 1");}
+elsif ($type62 == 2)
+{#Cas linéaire
+$signe64 = random(-1,1,2);
+$m64 = random(1,2);
+$f62 = Formula("$signe61*$k61+$saut62 + $signe64*$m64*(x-$a6)")->reduce;
+$f62a = $f62->eval(x=>$a6);
+$f62x2 =$f62->eval(x=>"$a6 + 2"); 
+if ($signe64 > 0) 
+{#La fonction est croissante
+$f62max = Compute("$f62x2");
+$f62min = Compute("$f62a");}
+else
+{#La fonction est décroissante
+$f62max = Compute("$f62a");
+$f62min = Compute("$f62x2");}}
+else
+{#Cas quadratique 
+$signe65 = random(-1,1,2);
+if ($type61 == 3) 
+{#Cas parabole/parabole 
+$m65 = 8;}
+else{$m65 = 4;}
+$f62 = Formula("$signe61*$k61 +$saut62+  $signe65*$m65*(x-$a6)*(x-$a6 -1 )")->reduce;
+$f62a = $f62->eval(x=>$a6);
+$f62p = $f62->eval(x=>"(2*$a6+1)/2");
+if ($signe65 > 0) 
+{#La parabole est vers le haut
+$f62max = Compute("$f62a");
+$f62min = Compute("$f62p");}
+else
+{#La parabole est vers le bas
+$f62max = Compute("$f62p");
+$f62min = Compute("$f62a");}}
+
+#Déterminer le maximum et le minimum de la fonction f6
+if ($f61max > $f62max){$f6max = $f61max;} 
+else
+{$f6max = $f62max;}
+if ($f61min < $f62min){$f6min = $f61min;} 
+else
+{$f6min = $f62min;}
+
+#Déterminer l'intervalle en y
+if ($f6min >= 0) 
+{$y62 = Compute("$f6max + 2");
+$y61 = -1;}
+elsif ($f6max > 0)
+{$y62 = Compute("$f6max + 2");
+$y61 = Compute("$f6min -1");}
+else
+{$y62 = 2;
+$y61 =  Compute("$f6min -1");}
+
+#Calcul du quadrillage et du x
+$gridX6 = $x62 - $x61;
+$gridY6 = $y62 - $y61;
+$AffichageX6 =Compute("$x62 -0.5");
+
+#Calculs des limites
+$RepLimiteG6 = $f61->eval(x=>$a6);
+$RepLimiteD6 = $f62->eval(x=>$a6);
+if ($RepLimiteG6 == $RepLimiteD6) { $RepPopUp6 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else {$RepPopUp6 = PopUp(["Choisir", "Oui", "Non"], "Non");}
+
+#Graphique
+$f61graphique = "$f61 for x in <$x61,$a6> using color:red and weight:2";
+$f62graphique = "$f62 for x in <$a6,$x62> using color:red and weight:2";
+$graphique6 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0],'grid'=>[$gridX6,$gridY6]);
+$graphique6 -> lb('reset');
+$graphique6 -> lb(new Label ( 1,0,'1','black','left','top'));
+$graphique6 -> lb(new Label ( 0,1,'1','black','right','top'));
+$graphique6 -> lb(new Label ( $AffichageX6,0,'x','black','left','top'));
+$graphique6 -> lb(new Label ( 0,$y62,'f(x)','black','right','top'));
+add_functions($graphique6, $f61graphique,$f62graphique);
+#Choisir la valeur de la fonction
+$temp6 = random(0,2);
+if ($temp6 == 0)
+{$pt61 = closed_circle( $a6,$f61->eval(x=>$a6), red);
+$pt62 = open_circle( $a6,$f62->eval(x=>$a6), red);
+$graphique6->stamps($pt61, $pt62);}
+elsif ($temp6 == 1)
+{$pt61 = open_circle( $a6,$f61->eval(x=>$a6), red);
+$pt62 = closed_circle( $a6,$f62->eval(x=>$a6), red);
+$graphique6->stamps($pt61, $pt62); }
+else
+{$pt61 = open_circle( $a6,$f61->eval(x=>$a6), red);
+$pt62 = open_circle( $a6,$f62->eval(x=>$a6), red);
+$f61a = $f61->eval(x=>$a6);
+$f62a = $f62->eval(x=>$a6);
+$pt63ytemp = random(Compute("$f6min"),Compute("$f6max+1"));
+if ($pt63ytemp == $f61a) {$pt63y = Compute("$f6max+1");}
+elsif ($pt63ytemp == $f62a) {$pt63y = Compute("$f6max+1");}
+else {$pt63y = $pt63ytemp;}
+$pt63 = closed_circle( $a6,$pt63y, red);
+$graphique6->stamps($pt61, $pt62,$pt63);}
+$imageG6 = image(insertGraph($graphique6),width =>350,height=>350,tex_size=>350);
+
+$showPartialCorrectAnswers = 1;
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+\{
+ColumnTable("Calculer les limites suivantes en utilisant le graphique ci-contre et répondre à la question.".
+BeginList("OL", type=>"a").
+$ITEM. "\( \displaystyle \lim_{x\rightarrow $a6^{+}} f(x)  = \)". ans_rule(10).
+$ITEMSEP.
+$ITEM. "\( \displaystyle{\lim_{x\rightarrow $a6^{-}} f(x) } = \)". ans_rule(10).
+$ITEMSEP. 
+$ITEM. "La limite en \(x = $a6\) existe-t-elle? ".
+$RepPopUp6->menu().
+$ITEMSEP,
+$BCENTER.
+$imageG6.
+$BR.
+"Cliquer sur le graphique pour faire un agrandissement.".
+$BR.
+$ECENTER,
+indent=>"0", separation=>"50", valign=>"TOP"
+);
+\}
+$PAR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($RepLimiteD6));
+ANS(num_cmp($RepLimiteG6));
+ANS( $RepPopUp6->cmp() );
+
+
+ENDDOCUMENT(); 

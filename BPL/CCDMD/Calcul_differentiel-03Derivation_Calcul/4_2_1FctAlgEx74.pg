@@ -1,0 +1,80 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la somme de fonctions', 'fonction logarithmique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+
+COMMENT("Niveau de difficulté: Moyen. Somme puissance et ln (c*x^n+ ln(ax+b)), avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+
+#Cas 74: Somme puissance et ln
+#Puissance 
+$k741 =random(3,15);
+$m741 =random(2,9); 
+#ln
+$k742 = random(2, 9);
+$k743temp = list_random(-4,-3,-2,2,3,4); 
+$k743 = Compute("$k742*$k743temp");
+
+$poly741 = Formula("$k742*x +$k743") -> reduce;
+$poly741prime = Formula("$k742") -> reduce;
+$gcd741 = gcd($k742,$k743);
+$poly741S = Formula("$k742/$gcd741*x +$k743/$gcd741") -> reduce;
+$poly741primeS = Formula("$k742/$gcd741") -> reduce;
+$f74 = Formula("$k741*x^$m741 + ln($poly741)")-> reduce;
+$f74prime1 = Formula("$k741*$m741*x^($m741-1) + $poly741prime/$poly741")->reduce;
+$f74prime2 = Formula("$k741*$m741*x^($m741-1) + $poly741primeS/$poly741S")->reduce;
+
+$Rep74 = $f74prime2 -> reduce;
+#$f74prime5 = $f74 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f74} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep74->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f74 \) a la forme d'une somme d'une puissance avec un logarithme naturel. Ainsi, 
+$PAR
+\( \displaystyle f'(x) =  $k741\cdot (x^{$m741})' + \frac{($poly741)'} {$poly741} \)  $SPACE (Formule de dérivation)
+$PAR
+\( \displaystyle f'(x) =  $k741\cdot $m741 \cdot x^{$m741-1} + \frac{$poly741prime} {$poly741} \)  $SPACE (Formule de dérivation)
+$PAR
+\( \displaystyle f'(x) =  $f74prime1 \) $SPACE (Simplification) 
+$PAR
+\( \displaystyle f'(x) =  $f74prime2 \) $SPACE (Simplification de la fraction, si possible) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

@@ -1,0 +1,108 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction algébrique', 'fonction rationnelle', 'forme indéterminée', 'inf/inf', 'limite à l\'infini')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+  "PGgraphmacros.pl",
+"PGcourse.pl", "unionLists.pl","unionTables.pl");
+
+
+COMMENT("Niveau de difficulté: Moyen. Limite algébrique de la forme inf/inf. La limite est nulle et a la forme d'un monôme, d'un binôme ou d'un trinôme sur un trinôme ou un binôme.");
+
+TEXT(beginproblem());
+
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+
+# Forme Inf/Inf
+#numérateur
+$temp10 = random(0,1);
+if ($temp10 == 0) 
+{$k101 = random(2,10);}
+else
+{#Le coefficient est 1 parce que l'étudiant l'oublie lorsqu'il fait la mise en évidence simple
+$k101 = 1;}
+$k102 = random(2,10);
+$k103 = random(2,10);
+$k104 = random(11,20);
+$n101 = random(2,4);
+$n102 = Compute("$n101 - 1");
+$n103 = Compute("$n101 - 2");
+#Dénominateur
+$k105 = random(2,10);
+$k106 = random(2,10);
+$k107 = random(2,10);
+$k108 = random(11, 20);
+$d101 = random(1,4);
+$n105 = Compute("$n101 + $d101");
+$n106 = list_random(1, $n101);
+$n107 = 1;
+
+#Forme de la fonction
+$forme10 = random(0,3);
+if ($forme10 == 0)
+{#Monôme sur trinôme
+$f10A =Formula("($k101 x^$n101)/($k105 x^$n105+ $k106 x^$n106 + $k108)") ->reduce;}
+elsif ($forme10 == 1)
+{#Binôme sur trinôme
+$f10A =Formula("($k101 x^$n101+$k102 x^$n102 )/($k105 x^$n105+ $k106 x^$n106 + $k108)") ->reduce;}
+elsif ($forme10 == 2)
+{#Trinôme sur binôme
+$f10A =Formula("($k101 x^$n101+$k102 x^$n102+$k103 x^$n103 )/($k105 x^$n105+ $k106 x^$n106)") ->reduce;}
+else
+{#Trinôme sur trinôme avec coefficient 1
+$f10A =Formula("(x^$n101+$k102 x^$n102 + $k103 x^$n103 )/($k105 x^$n105+ $k106 x^$n106 + $k108)") ->reduce;}
+
+$signe10 = list_random(-1,1);
+if ($signe10 > 0)
+{$a10A = "\infty";}
+else
+{$a10A = "-\infty";}
+
+$Rep10 = Compute("0");
+
+
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+\{
+ColumnTable(
+"Calculer la limite suivante. ".
+$PAR.
+" \( \displaystyle {\lim_{x \rightarrow $a10A} $f10A}  = \)". ans_rule(20),
+$BR.
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["Note:", " Écrire"], align=>LEFT, separation=>0).
+AlignedRow(["$SPACE$SPACE$SPACE  \(\bullet\)","\( \bf inf \), si la limite vaut l'infini positif \( (+\infty) \)."], align=>LEFT, separation=>0).
+AlignedRow(["$SPACE$SPACE$SPACE  \(\bullet\)","\( \bf -inf \), si la limite vaut l'infini négatif \( (-\infty) \)."], align=>LEFT, separation=>0).
+AlignedRow(["$SPACE$SPACE$SPACE  \(\bullet\)","\( \bf nep \), si la limite \( \bf n'e\)xiste \( \bf p\)as."], align=>LEFT, separation=>0).
+EndTable(),
+indent=>"0", separation=>"60", valign=>"TOP"
+);
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep10->cmp);
+
+
+
+
+ENDDOCUMENT(); 

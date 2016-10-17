@@ -1,0 +1,109 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction algébrique', 'fonction rationnelle', 'forme indéfinie c/0', 'limite infinie', 'limite à gauche et à droite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl", "unionLists.pl","unionTables.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Un bloc de 4 limites algébriques avec a non nul dont la forme d'indétermination est k/0. Ordre de présentation aléatoire des deux premières et des deux dernières.");
+
+
+TEXT(beginproblem());
+
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Forme k/0
+
+
+#Cas 1: Numérateur constant + limite à gauche d'un nombre positif
+$a200=random(2,10);
+$a200A = "$a200^{-}";
+$k200=random(2,10);
+$f200A =Formula("$k200/(x- $a200)")->reduce;
+$Rep200 = Compute("-Infinity");
+
+#Cas 2: Numérateur constant + limite à droite d'un nombre positif
+$a201=random(2,10);
+$a201A = "$a201^{+}";
+$k201=random(2,10);
+$f201A =Formula("$k201/(x- $a201)")->reduce;
+$Rep201 = Compute("Infinity");
+
+#Cas 3: Numérateur constant + limite à droite d'un nombre négatif
+$a202= random(-10,-1);
+$k202=random(2,10);
+$a202A = "$a202^{+}";
+$f202A =Formula("$k202/(x- $a202)")->reduce;
+$Rep202 = Compute("Infinity");
+
+#Cas 4: Numérateur constant + limite à gauche d'un nombre négatif
+$a203=random(-10,-1);
+$k203=random(2,10);
+$a203A = "$a203^{-}";
+$f203A =Formula("$k203/(x- $a203)")->reduce;
+$Rep203 = Compute("-Infinity");
+
+
+#affichage aléatoire
+@ListeAffichage000 = ($f200A,$f201A,$f202A,$f203A);
+@ListeAffichage001 = ($a200A,$a201A,$a202A,$a203A);
+@ListeAffichage002 = ("x","x","x","x" );
+@RepAffichage000 = ($Rep200,$Rep201,$Rep202,$Rep203);
+#La fonction shuffle n'a pas été utilisée parce que les premiers doivent être utilisés avant les autres
+$temp200 =random(0,3);
+if ($temp200 == 0) {@R000 = (0, 1, 2, 3);}
+elsif ($temp200 == 1)  {@R000 = (1, 0, 3, 2);}
+elsif ($temp200 == 2)  {@R000 = (1, 0, 2, 3);}
+else{@R000 = (0, 1, 3 ,2);}
+
+Context()->texStrings;
+BEGIN_TEXT
+\{
+ColumnTable(
+"Calculer les limites suivantes: ".
+$PAR.
+BeginList("OL", type=>"a").
+$ITEM. "\( \displaystyle {\lim_{$ListeAffichage002[$R000[0]] \rightarrow $ListeAffichage001[$R000[0]]} $ListeAffichage000[$R000[0]]  }\)  = ". ans_rule(20). 
+$ITEMSEP.
+$ITEM. "\( \displaystyle {\lim_{$ListeAffichage002[$R000[1]] \rightarrow $ListeAffichage001[$R000[1]]}$ListeAffichage000[$R000[1]]  }\)  = ". ans_rule(20). 
+$ITEMSEP.
+$ITEM. "\( \displaystyle {\lim_{$ListeAffichage002[$R000[2]] \rightarrow $ListeAffichage001[$R000[2]]}$ListeAffichage000[$R000[2]]  }\)  = ". ans_rule(20). 
+$ITEMSEP.
+$ITEM. "\( \displaystyle {\lim_{$ListeAffichage002[$R000[3]] \rightarrow $ListeAffichage001[$R000[3]]}$ListeAffichage000[$R000[3]]  }\) = ". ans_rule(20). 
+$ITEMSEP.
+EndList("OL"),
+$BR.
+$BR.
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["Note:", " Écrire"], align=>LEFT, separation=>0).
+AlignedRow(["$SPACE$SPACE$SPACE  \(\bullet\)","\( \bf inf \), si la limite vaut l'infini positif \( (+\infty) \)."], align=>LEFT, separation=>0).
+AlignedRow(["$SPACE$SPACE$SPACE  \(\bullet\)","\( \bf -inf \), si la limite vaut l'infini négatif \( (-\infty) \)."], align=>LEFT, separation=>0).
+AlignedRow(["$SPACE$SPACE$SPACE  \(\bullet\)","\( \bf nep \), si la limite \( \bf n'e\)xiste \( \bf p\)as."], align=>LEFT, separation=>0).
+EndTable(),
+indent=>"0", separation=>"60", valign=>"TOP"
+);
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepAffichage000[$R000[0]]->cmp);
+ANS($RepAffichage000[$R000[1]]->cmp);
+ANS($RepAffichage000[$R000[2]]->cmp);
+ANS($RepAffichage000[$R000[3]]->cmp);
+
+ENDDOCUMENT(); 

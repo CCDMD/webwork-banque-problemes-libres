@@ -1,0 +1,119 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction définie par parties', 'fonction polynomiale', 'graphique', 'limite', 'limite à gauche et à droite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+  "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","parserPopUp.pl","unionLists.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Fonction quadratique avec un trou");
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+
+#Cas3: Fonction quadratique avec un trou 
+#Choix du a et de l'axe des x
+$temp3 = random(-1,1,2);
+if ($temp3 == -1) {
+#Prendre un a négatif ou nul
+$a3=random(-5,0);
+$x31=Compute("$a3 - 2");
+$x32=2;}
+else {
+#Prendre un a positif ou nul
+$a3=random(0,5);
+$x31=-1; 
+$x32=Compute("$a3 + 2");}
+#Définition de la fonction quadratique
+$signe3 = random(-1,1,2);
+$k3 = random(-5,5);
+$m3 =  random(-1,1,2);
+$f3 = Formula("$signe3*(x-$a3-$m3)*(x-$a3)+$k3");
+$f3graphique = "$signe3*(x-$a3-$m3)*(x-$a3)+$k3 for x in <$x31,$x32> using color:red and weight:2";
+#Choix de l'axe des y
+$y3milieu = $f3->eval(x=>"(2*$a3 + $m3)/2");
+$f3a = $f3->eval(x=>$a3);
+if ($signe3 < 0) {
+#La parabole est vers le bas
+if ($y3milieu < 0) 
+{#le maximum est en dessous de l'axe des y
+$y32 = 2;  
+$y31 = Compute("$f3a - 2");}
+else
+{#le maximum est au dessus de l'axe des y
+$y32 = Compute("$f3a + 2");
+$y31 = -1;}}
+else {
+#La parabole est vers le haut
+if ($y3milieu < 0) 
+{#le maximum est en dessous de l'axe des y
+$y32 = 2;  
+$y31 = Compute("$f3a - 1");}
+else
+{#le maximum est au dessus de l'axe des y
+$y32 = Compute("$f3a + 3");
+$y31 = -1;}}
+#Calcul du quadrillage et du x
+$gridX3 = $x32 - $x31;
+$gridY3 = $y32 - $y31;
+$AffichageX3 =Compute("$x32 -0.5");
+#Calcul des réponses
+$RepLimiteG3 = $f3->eval(x=>$a3);
+$RepLimiteD3 = $f3->eval(x=>$a3);
+$RepPopUp3 = PopUp(["Choisir", "Oui", "Non"], "Oui");
+#Graphique
+$graphique3 = init_graph($x31,$y31,$x32,$y32,'axes'=>[0,0],'grid'=>[$gridX3,$gridY3]);
+$graphique3 -> lb('reset');
+$graphique3 -> lb(new Label ( 1,0,'1','black','left','top'));
+$graphique3 -> lb(new Label ( 0,1,'1','black','right','top'));
+$graphique3 -> lb(new Label ( $AffichageX3,0,'x','black','left','top'));
+$graphique3 -> lb(new Label ( 0,$y32,'f(x)','black','right','top'));
+add_functions($graphique3, $f3graphique);
+$pt31 = open_circle( $a3,$f3->eval(x=>$a3), red);
+$graphique3->stamps($pt31); 
+$imageG3 = image(insertGraph($graphique3),width =>350,height=>350,tex_size=>350);
+
+
+BEGIN_TEXT
+\{
+ColumnTable("Calculer les limites suivantes en utilisant le graphique ci-contre et répondre à la question.".
+BeginList("OL", type=>"a").
+$ITEM. "\( \displaystyle \lim_{x\rightarrow $a3^{+}} f(x)  = \)". ans_rule(10).
+$ITEMSEP.
+$ITEM. "\( \displaystyle{\lim_{x\rightarrow $a3^{-}} f(x) } = \)". ans_rule(10).
+$ITEMSEP. 
+$ITEM. "La limite en \(x = $a3\) existe-t-elle? ".
+$RepPopUp3->menu().
+$ITEMSEP,
+$BCENTER.
+$imageG3.
+$BR.
+"Cliquer sur le graphique pour faire un agrandissement.".
+$BR.
+$ECENTER,
+indent=>"0", separation=>"50", valign=>"TOP"
+);
+\}
+
+END_TEXT
+
+
+ANS(num_cmp($RepLimiteD3));
+ANS(num_cmp($RepLimiteG3));
+ANS( $RepPopUp3->cmp() );
+
+
+ENDDOCUMENT(); 

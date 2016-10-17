@@ -1,0 +1,111 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée du quotient de fonctions', 'fonction exponentielle', 'fonction logarithmique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+
+COMMENT("Niveau de difficulté: Moyen. Quotient d'une exponentielle avec un ln, avec notation standard et solution. Attention, la réponse contient plus de 100 caractères.");
+
+
+#Cas 93: Produit exponentielle(binôme) par logarithme(binôme)
+#Exponentielle
+$k861 =random(3,15);
+$m861 =random(5,9); 
+$k862 =random(2,9);
+$m862 =random(2,4); 
+#Ln
+$k863 =random(2,9);
+$m863 =random(5,9); 
+$m864 =random(2,4); 
+$k864temp = list_random(2, 3, 5);
+$k864 =Compute("$k863*$k864temp");
+$gcd862 = gcd($k863,$k864);
+#Facteur à mettre en évidence
+$gcd861temp = gcd($k861*$m861,$k862*$m862);
+$gcd861 = gcd($gcd861temp,$k863/$gcd862);
+
+#Les binômes
+$poly861 = Formula("$k861*x^$m861+$k862*x^$m862")->reduce;
+$poly861prime =Formula("$k861*$m861*x^($m861-1)+ $k862*$m862*x^($m862-1)")->reduce;
+$poly862 = Formula("$k863*x^$m863+$k864*x^$m864")->reduce;
+$poly862S = Formula("$k863/$gcd862*x^($m863-$m864+1)+$k864/$gcd862*x")->reduce;
+$poly862prime =Formula("$k863*$m863*x^($m863-1)+ $k864*$m864*x^($m864-1)")->reduce;
+$poly862primeS =Formula("$k863*$m863/$gcd862*x^($m863-$m864)+ $k864*$m864/$gcd862")->reduce;
+
+#u et v
+$u86 = Formula("e^($poly861)")->reduce;
+$u86prime = Formula("e^($poly861)*$poly861prime")->reduce;
+$v86 = Formula("ln($poly862)")->reduce;
+$v86prime = Formula("$poly862prime/$poly862")->reduce;
+$v86primeS = Formula("$poly862primeS/$poly862S")->reduce;
+
+#La fonction
+$f86 = Formula("e^($poly861)/ln($poly862)")-> reduce;
+#$f86prime1 = Formula("($u86prime)*($v86) +($u86)*($v86prime)")->reduce;
+$f86prime1 = Formula("(e^($poly861)*$poly861prime*ln($poly862) - e^($poly861)*$poly862primeS/$poly862S)/($v86)^2")->reduce;
+#Mise en évidence de l'exponentielle et de $gcd861, Il n'y a pas de gcd
+$f86prime2 = Formula("e^($poly861)(($k861*$m861*x^($m861-1) +$k862*$m862*x^($m862-1))*ln($poly862) - $poly862primeS/$poly862S)/($v86)^2")->reduce;
+
+$f86prime3 = Formula("e^($poly861)*($poly862S*($k861*$m861*x^($m861-1)+ $k862*$m862*x^($m862-1))*ln($poly862) - $k863*$m863/$gcd862*x^($m863-$m864)- $k864*$m864/$gcd862)/($poly862S*($v86)^2)")->reduce;
+$Rep86 = $f86prime3 -> reduce;
+$Rep86->{limits} = [0,1];
+
+#$f86prime5 = $f86 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f86} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep86->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f86 \) a la forme d'un quotient \(\displaystyle \frac{u}{v}\) où
+$PAR
+\(\displaystyle u(x) =  $u86 \)
+$PAR
+\( \displaystyle v(x) =  $v86\) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u86prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v86prime = $v86primeS  \) 
+$PAR
+Appliquons la formule de dérivation d'un quotient.  
+$BR
+\( \displaystyle f'(x) =  $f86prime1 \) 
+$PAR
+Simplifions. 
+$BR
+\( \displaystyle f'(x) =  $f86prime2 \) 
+$BR
+\( \displaystyle f'(x) =  $f86prime3 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

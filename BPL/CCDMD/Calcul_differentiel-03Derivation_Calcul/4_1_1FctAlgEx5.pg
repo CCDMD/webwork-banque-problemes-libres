@@ -1,0 +1,151 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivée', 'dérivée de la fonction puissance', 'fonction algébrique', 'fonction polynomiale', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Forme a*x^n avec notation non standard. La solution n'a pas été programmée");
+
+
+TEXT(beginproblem());
+
+#Choix de la fonction f5 affichage non standard
+#@Bloc2 a été fixé à 0 
+#La question a été changée.
+#Des macros ont été enlevées
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real");
+
+#Puissance de n au numérateur sans coefficient
+$n11 =random(11,25); 
+$f1 = Formula("x^$n11") -> reduce;
+@f1A =("x^{$n11}", "y^{$n11}","t^{$n11}","h^{$n11}","z^{$n11}");
+$f1prime = $f1 ->D('x')-> reduce;
+$Rep1 = $f1prime -> reduce;
+
+#Racine n-ieme au numérateur sans coefficient
+$n21 =list_random(3,5,7,11,17); 
+$f2 = Formula("x^(1/$n21)") -> reduce;
+@f2A =("\sqrt[$n21]{x}","\sqrt[$n21]{y}","\sqrt[$n21]{t}","\sqrt[$n21]{h}","\sqrt[$n21]{z}");
+$f2prime = $f2 ->D('x')-> reduce;
+$e21 = Formula("($n21-1)/$n21");
+$Rep2 = Formula("1/($n21*x^{$e21})");
+
+#Puissance de n au dénominateur sans coefficient
+$n31 =random(11,25); 
+$f3 = Formula("1/(x^$n31)") -> reduce;
+@f3A = ("\frac{1}{x^{$n31}}", "\frac{1}{y^{$n31}}","\frac{1}{t^{$n31}}","\frac{1}{h^{$n31}}","\frac{1}{z^{$n31}}");
+#$f3prime = $f3 ->D('x');
+$f3prime = Formula("-$n31/(x^($n31+1))");
+$Rep3 = $f3prime -> reduce;
+
+#Racine n-ieme au dénominateur sans coefficient
+$n41 =list_random(3,5,7,11,17); 
+$f4 = Formula("1/(x^(1/$n41))") -> reduce;
+@f4A =("\frac{1}{\sqrt[$n41]{x}}","\frac{1}{\sqrt[$n41]{y}}","\frac{1}{\sqrt[$n41]{t}}","\frac{1}{\sqrt[$n41]{h}}","\frac{1}{\sqrt[$n41]{z}}");
+$f4prime = $f4 ->D('x');
+$e41 = Formula("($n41+1)/$n41");
+$Rep4 = Formula("-1/($n41*x^{$e41})");
+
+#Puissance de n au numérateur avec coefficient
+$n51 =random(11,25); 
+$m51 =random(2,9); 
+$f5 = Formula("$m51*x^$n51") -> reduce;
+@f5A =("$m51 x^{$n51}","$m51 y^{$n51}", "$m51 t^{$n51}","$m51 h^{$n51}","$m51 z^{$n51}");
+#$f5prime = $f5 ->D('x')-> reduce;
+$f5prime =  Formula("$m51*$n51*x^($n51-1)") -> reduce;
+$Rep5 = $f5prime -> reduce;
+
+#Racine n-ieme au numérateur avec coefficient
+$n61 =list_random(3,5,7,11,17); 
+$m61 = list_random(2,4,6,8,9,10,12); 
+$f6 = Formula("$m61*x^(1/$n61)") -> reduce;
+@f6A =("$m61 \sqrt[$n61]{x}","$m61 \sqrt[$n61]{y}","$m61 \sqrt[$n61]{t}","$m61 \sqrt[$n61]{h}","$m61 \sqrt[$n61]{z}");
+$f6prime = $f6 ->D('x')-> reduce;
+$e61 = Formula("($n61-1)/$n61");
+$Rep6 = Compute("$m61/($n61*x^{$e61})");
+
+#Puissance de n au dénominateur avec coefficient
+$n71 =random(11,25); 
+$m71 =random(2,9); 
+$f7 = Formula("1/($m71*x^$n71)") -> reduce;
+@f7A =("\frac{1}{$m71 x^{$n71}}","\frac{1}{$m71 y^{$n71}}","\frac{1}{$m71 t^{$n71}}","\frac{1}{$m71 h^{$n71}}","\frac{1}{$m71 z^{$n71}}");
+#$f7prime = $f7 ->D('x');
+$f7prime = Formula("-$n71/($m71*x^($n71+1))");
+$Rep7 = $f7prime -> reduce;
+
+#Racine n-ieme au dénominateur avec coefficient
+$n81 =list_random(3,5,7,11,17); 
+$m81 = list_random(2,4,6,8,9,10,12); 
+$f8 = Formula("1/($m81*x^(1/$n81))") -> reduce;
+@f8A =("\frac{1}{$m81 \sqrt[$n81]{x}}","\frac{1}{$m81 \sqrt[$n81]{y}}","\frac{1}{$m81 \sqrt[$n81]{t}}","\frac{1}{$m81 \sqrt[$n81]{h}}","\frac{1}{$m81 \sqrt[$n81]{z}}");
+$f8prime = $f8 ->D('x');
+$e81 = Formula("($n81+1)/$n81");
+$Rep8 = Compute("-1/($m81*$n81*x^{$e81})");
+
+#Vecteurs d'affichage du symbole de la variable, du symbole de la fonction et du symbole de la dérivée
+@VariableAffichage = ("x","y","t","h","z");
+@FonctionAffichage = ("f(x)","f(y)", "f(t)", "f(h)","f(z)","g(x)","g(y)", "g(t)", "g(h)","g(z)","u(x)","u(y)", "u(t)", "u(h)","u(z)","v(x)","v(y)", "v(t)", "v(h)","v(z)","s(x)","s(y)", "s(t)", "s(h)","s(z)");
+@DeriveeAffichage = ("f'(x)","f'(y)", "f'(t)", "f'(h)","f'(z)","g'(x)","g'(y)", "g'(t)", "g'(h)","g'(z)","u'(x)","u'(y)", "u'(t)", "u'(h)","u'(z)","v'(x)","v'(y)", "v'(t)", "v'(h)","v'(z)","s'(x)","s'(y)", "s'(t)", "s'(h)","s'(z)");
+
+#Bloc1
+#Choix de la Variable à Afficher et du symbole de la Fonction à Afficher du bloc 1
+@CVABloc1 = (random(0,4),random(0,4),random(0,4),random(0,4));
+#Choix du symbole de la Fonction à Afficher du bloc 1
+@CFABloc1 = ($CVABloc1[0] + 5*random(0,4), $CVABloc1[1] + 5*random(0,4),$CVABloc1[2] + 5*random(0,4),$CVABloc1[3] + 5*random(0,4));
+#Vecteur des fonctions du bloc 1 (fct f1 à f4)
+@FctBloc1 =("x^{$n11}", "y^{$n11}","t^{$n11}","h^{$n11}","z^{$n11}","\sqrt[$n21]{x}","\sqrt[$n21]{y}","\sqrt[$n21]{t}","\sqrt[$n21]{h}","\sqrt[$n21]{z}","\frac{1}{x^{$n31}}", "\frac{1}{y^{$n31}}","\frac{1}{t^{$n31}}","\frac{1}{h^{$n31}}","\frac{1}{z^{$n31}}","\frac{1}{\sqrt[$n41]{x}}","\frac{1}{\sqrt[$n41]{y}}","\frac{1}{\sqrt[$n41]{t}}","\frac{1}{\sqrt[$n41]{h}}","\frac{1}{\sqrt[$n41]{z}}");
+#Réponse du bloc 1
+@RepBloc1 = ($Rep1, $Rep2,$Rep3,$Rep4);
+#Choisir l'ordre d'affichage des fonctions f1 à f4
+#Ne pas utiliser la fonction shuffle car, les fonctions f1 et f2 doivent être affichée en premier.
+$tempA1 = random(0,2);
+if ($tempA1 == 0) 
+{@Bloc1 = (0,1,2,3);}
+elsif ($tempA1 == 1)
+{@Bloc1 = (0,2, 1,3);}
+else
+{@Bloc1 = (1,0,2,3);}
+
+#Bloc2
+#Choix de la Variable à Afficher et du symbole de la Fonction à Afficher du bloc 2
+@CVABloc2 = (random(0,4),random(0,4),random(0,4),random(0,4));
+#Choix du symbole de la Fonction à Afficher du bloc 1
+@CFABloc2 = ($CVABloc2[0] + 5*random(0,4), $CVABloc2[1] + 5*random(0,4),$CVABloc2[2] + 5*random(0,4),$CVABloc2[3] + 5*random(0,4));
+#Vecteur des fonctions du bloc 2 (fct f5 à f9)
+@FctBloc2 =
+("$m51 x^{$n51}","$m51 y^{$n51}", "$m51 t^{$n51}","$m51 h^{$n51}","$m51 z^{$n51}","$m61 \sqrt[$n61]{x}","$m61 \sqrt[$n61]{y}","$m61 \sqrt[$n61]{t}","$m61 \sqrt[$n61]{h}","$m61 \sqrt[$n61]{z}","\frac{1}{$m71 x^{$n71}}","\frac{1}{$m71 y^{$n71}}","\frac{1}{$m71 t^{$n71}}","\frac{1}{$m71 h^{$n71}}","\frac{1}{$m71 z^{$n71}}","\frac{1}{$m81 \sqrt[$n81]{x}}","\frac{1}{$m81 \sqrt[$n81]{y}}","\frac{1}{$m81 \sqrt[$n81]{t}}","\frac{1}{$m81 \sqrt[$n81]{h}}","\frac{1}{$m81 \sqrt[$n81]{z}}");
+#Réponse du bloc 2
+@RepBloc2 = ($Rep5, $Rep6,$Rep7,$Rep8);
+@Bloc2 = (0,0,0,0);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer la dérivée de la fonction\( \displaystyle $FonctionAffichage[$CFABloc2[0]] = $FctBloc2[5*$Bloc2[0]+$CVABloc2[0]]  \).
+$PAR
+\( \displaystyle $DeriveeAffichage[$CFABloc2[0]] =  \) \{ans_rule(20)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+$Rep5A = $RepBloc2[$Bloc2[0]]->substitute(x => $VariableAffichage[$CVABloc2[0]]);
+
+ANS($Rep5A->cmp);
+
+ENDDOCUMENT(); 

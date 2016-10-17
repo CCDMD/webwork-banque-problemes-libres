@@ -1,0 +1,115 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée du produit de fonctions', 'fonction exponentielle', 'fonction logarithmique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+
+COMMENT("Niveau de difficulté: Moyen. Produit exponentielle et ln de binômes simples, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+
+#Cas 85: Produit binôme par exponentielle(binôme)
+#Exponentielle
+$k851 =random(2,9);
+$m851 =random(5,9); 
+$k852 =random(2,9);
+$m852 =0; 
+#Ln
+$k853 =random(2,9);
+$k854temp = list_random(2, 3, 5);
+$k854 =Compute("$k853*$k854temp");
+$gcd852 = gcd($k853,$k854);
+#Facteur à mettre en évidence
+$gcd851temp = gcd($k851*$m851,$k852*$m852);
+$gcd851 = gcd($gcd851temp,$k853/$gcd852);
+
+#Les binômes
+$poly851 = Formula("$k851*x^$m851+$k852")->reduce;
+$poly851prime =Formula("$k851*$m851*x^($m851-1)")->reduce;
+$poly852 = Formula("$k853*x +$k854") -> reduce;
+$poly852prime = Formula("$k853") -> reduce;
+$poly852S = Formula("$k853/$gcd852*x +$k854/$gcd852") -> reduce;
+$poly852primeS = Formula("$k853/$gcd852") -> reduce;
+$poly852primeS2 = Formula("$poly852primeS/$gcd851") -> reduce;
+
+#u et v
+$u85 = Formula("e^($poly851)")->reduce;
+$u85prime = Formula("e^($poly851)*$poly851prime")->reduce;
+$v85 = Formula("ln($poly852)")->reduce;
+$v85prime = Formula("$poly852prime/$poly852")->reduce;
+$v85primeS = Formula("$poly852primeS/$poly852S")->reduce;
+
+#La fonction
+$f85 = Formula("e^($poly851)*ln($poly852)")-> reduce;
+#$f85prime1 = Formula("($u85prime)*($v85) +($u85)*($v85prime)")->reduce;
+$f85prime1 = Formula("e^($poly851)*$poly851prime*ln($poly852) + e^($poly851)*$poly852primeS/$poly852S")->reduce;
+#Mise en évidence de l'exponentielle et de $gcd851
+$f85prime2 = Formula("$gcd851*e^($poly851)(($k851*$m851/$gcd851*x^($m851-1)+ $k852*$m852/$gcd851*x^($m852-1))*ln($poly852) + $poly852primeS2/$poly852S)")->reduce;
+
+$f85prime3 = Formula("$gcd851*e^($poly851)/$poly852S*($poly852S*($k851*$m851/$gcd851*x^($m851-1)+ $k852*$m852/$gcd851*x^($m852-1))*ln($poly852) + $poly852primeS2)")->reduce;
+$Rep85 = $f85prime3 -> reduce;
+$Rep85->{limits} = [0,1];
+
+#$f85prime5 = $f85 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f85} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep85->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f85 \) a la forme d'un produit \(u \cdot v\) où
+$PAR
+\(\displaystyle u(x) =  $u85 \)
+$PAR
+\( \displaystyle v(x) =  $v85\) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u85prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v85prime = $v85primeS \) 
+$PAR
+Appliquons la formule de dérivation d'un produit.  
+$BR
+\( \displaystyle f'(x) =  $f85prime1 \) 
+$PAR
+Simplifions. 
+$BR
+\( \displaystyle f'(x) =  $f85prime2 \) 
+$BR
+\( \displaystyle f'(x) =  $f85prime3 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

@@ -1,0 +1,57 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'fonction trigonométrique inverse', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Fonction Arc cosinus(ax^n) avec solution");
+TEXT(beginproblem());
+
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+
+#Cas 4 argument a*x^n
+#Argument 
+$F0n1 = random(2,9);
+do{$F0n2 = random(2,9);} until ($F0n2!=$F0n1);
+$U0 = Formula("$F0n1*x^$F0n2");
+$U0prime = Formula("-1*$F0n1*$F0n2*x^($F0n2-1)")-> reduce;
+$U0carre = Formula("$F0n1^2*x^(2*$F0n2)");
+$F0Reponse = Formula("$U0prime/(sqrt(1- $U0carre))") -> reduce; 
+$F0Reponse->{limits} = [-0.2,0.2];
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = }\) Arc cos\(($U0)\).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(80)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($F0Reponse->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La fonction \( \displaystyle {f(x) = }\) Arc cos\(($U0)\) a la forme Arc cos(\(u\)) où \( \displaystyle u(x) = $U0\). Ainsi,
+$BR
+\( \displaystyle {f'(x) = \frac{-($U0)'}{\sqrt{1- ($U0)^2}} = \frac{-$F0n1 ($F0n2) x^{$F0n2-1}}{\sqrt{1- ($F0n1)^2 (x^{$F0n2})^2}} = \frac{$U0prime}{\sqrt{1- $U0carre}}}\)
+$BR
+END_SOLUTION
+Context()->normalStrings;
+ENDDOCUMENT(); 

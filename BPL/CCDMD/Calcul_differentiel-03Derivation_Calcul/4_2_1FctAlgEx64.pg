@@ -1,0 +1,94 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'fonction logarithmique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Fonction logarithmique de base b, avec notation standard et solution.");
+
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Cas 64:  logarithme simple en base b
+$k641 =random(3,15);
+$m641 =random(6,9); 
+$k642 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k642) == abs($k641)) {$k642 = 11;};
+$m642 =random(2,5);  
+$k643 =list_random(-10,-9,-8,-6,-4,-3,-2,2, 3,4,6,8, 9,10,12,18, 15);
+if (abs($k643) == abs($k641)) {$k643 = 12;};
+$m643 =random(0,1); 
+$base641 = random(2,9); 
+
+if ($m643 == 0)
+{#Problème d'affichage
+$poly641 = Formula("$k641*x^$m641+$k642*x^$m642+ $k643")->reduce;
+$poly641prime =Formula("$k641*$m641*x^($m641-1)+$k642*$m642*x^($m642-1)")-> reduce;
+$gcd641 = gcd($k641*$m641,$k642*$m642);
+$poly641primeS =Formula("$gcd641*x^($m642-1)*($k641*$m641/$gcd641*x^($m641-$m642) + $k642*$m642/$gcd641)")-> reduce;
+}
+else
+{$poly641 = Formula("$k641*x^$m641+$k642*x^$m642+ $k643*x^$m643")->reduce;
+$poly641prime =Formula("$k641*$m641*x^($m641-1)+$k642*$m642*x^($m642-1)+$k643*$m643")-> reduce;
+$gcd641temp = gcd($k641*$m641,$k642*$m642);
+$gcd641 = gcd($gcd641temp, $k643*$m643);
+$poly641primeS =Formula("$gcd641*($k641*$m641/$gcd641*x^($m641-1)+$k642*$m642/$gcd641*x^($m642-1)+$k643*$m643/$gcd641)")-> reduce;
+}
+
+#Fonction à dériver
+#Aucune définition de log en base b
+#$f64 = Formula("log[$base641]($poly641)")-> reduce;
+#Calcul de la dérivée
+$f64prime1 = Formula("$poly641prime /($poly641 * ln($base641))")-> reduce;
+$Rep64 = $f64prime1 -> reduce;
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) =  \log_{$base641}($poly641) } \).
+$PAR
+\( \displaystyle f'(x) =  \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+#$Rep5A = $RepBloc2[$Bloc2[0]]->substitute(x => $VariableAffichage[$CVABloc2[0]]);
+#ANS($Rep5A->cmp);
+
+ANS($Rep64->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) = \log_{$base641}($poly641)  \) a la forme d'un logarithme de base $base641 d'une fonction simple. Ainsi, 
+$PAR
+\( \displaystyle f'(x) =  \frac{($poly641)'}{($poly641) \ln($base641)} \)  $SPACE (Formule de dérivation d'un logarithme de base $base641)
+$PAR
+\( \displaystyle f'(x) =  \frac{$poly641prime}{\ln($base641) ($poly641)} \) $SPACE (Formule de dérivation d'un polynôme) 
+$PAR
+\( \displaystyle f'(x) = \frac{$poly641primeS}{\ln($base641) ($poly641)} \) $SPACE (Mise en évidence simple au numérateur, si possible) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

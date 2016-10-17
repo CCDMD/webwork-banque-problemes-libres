@@ -1,0 +1,169 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la fonction puissance', 'dérivée du quotient de fonctions', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Difficile. Quotient d'un binôme par un binôme, tous les deux affectés d'un exposant entier, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Cas 35: Quotient d'un binôme par un binôme, tous les deux sont affectés d'un exposant entier
+#Premier binôme
+$k351 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+$m351 =random(6,9); 
+$k352 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k351) == abs($k352)) {$k351 = 12;};
+$m352 =random(2,5); 
+#Deuxième binôme
+$k353 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k353) == abs($k351)) {$k353 = 12;};
+$m353 =random(6,9); 
+if ($m353 == $m351) {$m353 = 10};
+$k354 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k354) ==abs( $k353)) {$k354 = 11;};
+$m354 =random(2,5);
+if ($m354 == $m352) {$m354 = 5; $m352 = 4;};
+#Exposant du premier binôme
+$n351 =random(2,5); 
+#Exposant du deuxième binôme
+$n352 =random(2,5); 
+
+$poly351 = Formula("$k351*x^$m351+$k352*x^$m352")->reduce;
+$poly351prime =$poly351 ->D('x')-> reduce;
+
+$poly352 =Formula("$k353*x^$m353+$k354*x^$m354")->reduce;
+$poly352prime =$poly352 ->D('x')-> reduce;
+$u35 = Formula("($poly351)^$n351")->reduce;
+$u35prime = Formula("$n351*($poly351)^($n351-1)*($poly351prime)")->reduce;
+$v35 = Formula("$poly352^$n352")->reduce;
+$v35prime = Formula("$n352*($poly352)^($n352-1)*($poly352prime)")->reduce;
+
+$f35 = Formula("($k351*x^$m351+$k352*x^$m352)^$n351/($k353*x^$m353+$k354*x^$m354)^$n352") -> reduce;
+$f35prime1old = $f35 ->D('x')-> reduce;
+$f35prime1 = Formula("(($u35prime)*($v35) -($u35)*($v35prime))/($poly352^2)")->reduce;
+
+#Mise en évidence de u ou v.
+$f35prime2 = Formula("$poly351^($n351-1)*$poly352^($n352-1)*($n351*$poly351prime*$poly352-$n352*$poly352prime*$poly351)/($poly352^(2*$n352))")-> reduce;
+
+#Simplifier la dérivée en développant
+$exposant351 = Compute("$m353-1+$m351");
+$exposant352 = Compute("$m353-1+$m352");
+$exposant353 = Compute("$m354-1+$m351");
+$exposant354 = Compute("$m354-1+$m352");
+if ($exposant352 == $exposant353) 
+{#2 exposants sont identiques, donc additionner les coefficients
+$coef351 = Compute("$n351*$k351*$m351*$k353 -$n352*$k353*$m353*$k351");
+$coef352temp = Compute("$n351*$k352*$m352*$k353 -$n352*$k353*$m353*$k352");
+$coef353temp = Compute("$n351*$k351*$m351*$k354 -$n352*$k354*$m354*$k351");
+$coef352 = Compute("$coef352temp + $coef353temp");
+$coef353 = Compute("0");
+$coef354 = Compute("$n351*$k352*$m352*$k354 -$n352*$k354*$m354*$k352");}
+else
+{$coef351 = Compute("$n351*$k351*$m351*$k353 -$n352*$k353*$m353*$k351");
+$coef352 = Compute("$n351*$k352*$m352*$k353 -$n352*$k353*$m353*$k352");
+$coef353 = Compute("$n351*$k351*$m351*$k354 -$n352*$k354*$m354*$k351");
+$coef354 = Compute("$n351*$k352*$m352*$k354 -$n352*$k354*$m354*$k352");}
+
+#dérivée développée
+$f35prime3 =Formula("$poly351^($n351-1)*($coef351*x^$exposant351 +$coef352*x^$exposant352 +$coef353*x^$exposant353 +$coef354*x^$exposant354)/($poly352^(2*$n352-$n352 + 1))")-> reduce;
+if ($n352 == 2)
+{$facteur35 = Formula("($poly352)");}
+else
+{$facteur35 = Formula("$poly352^($n352-1)");}
+
+#Voir s'il est possible de faire une mise en évidence simple
+if ((($coef352 == 0) && ($coef353 == 0) && ($coef354 == 0)) || 
+(($coef351 == 0) && ($coef353 == 0) && ($coef354 == 0))||
+ (($coef351 == 0) && ($coef352 == 0) && ($coef354 == 0))||
+ (($coef351 == 0) && ($coef352 == 0) && ($coef353 == 0)))
+{#Un seul coefficient est non nul. Ne pas faire de mise en évidence simple
+$f35prime4 = $f35prime3;
+}
+elsif ($coef354 == 0)
+{$CoefTemp351 = gcd($coef351,$coef352);
+$NouveauCoef353 = gcd($CoefTemp351,$coef353);
+$ExposantTemp351 = min($exposant351,$exposant352);
+$NouveauExposant353 = min($ExposantTemp351,$exposant353);
+$f35prime4 =Formula("$NouveauCoef353*x^$NouveauExposant353*$poly351^($n351-1)*($coef351/$NouveauCoef353*x^($exposant351-$NouveauExposant353) +$coef352/$NouveauCoef353*x^($exposant352-$NouveauExposant353) +$coef353/$NouveauCoef353*x^($exposant353-$NouveauExposant353))/($poly352^(2*$n352-$n352 + 1))")-> reduce;
+}
+else
+{#Faire une mise en évidence simple, si possible
+$CoefTemp351 = gcd($coef351,$coef352);
+$CoefTemp352 = gcd($coef353,$coef354);
+$NouveauCoef353 = gcd($CoefTemp351,$CoefTemp352);
+$ExposantTemp351 = min($exposant351,$exposant352);
+$ExposantTemp352 = min($exposant353,$exposant354);
+$NouveauExposant353 = min($ExposantTemp351,$ExposantTemp352);
+$f35prime4 =Formula("$NouveauCoef353*x^$NouveauExposant353*$poly351^($n351-1)*($coef351/$NouveauCoef353*x^($exposant351-$NouveauExposant353) +$coef352/$NouveauCoef353*x^($exposant352-$NouveauExposant353) +$coef353/$NouveauCoef353*x^($exposant353-$NouveauExposant353) +$coef354/$NouveauCoef353*x^($exposant354-$NouveauExposant353))/($poly352^(2*$n352-$n352 + 1))")-> reduce;
+}
+
+#Réponse simplifiée
+$Rep35 = $f35prime4 -> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f35} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(80)\} 
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep35->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f35 \) a la forme d'un quotient  \(\displaystyle \frac{u}{v}\) où
+$PAR
+\(\displaystyle u(x) =  $u35 \)
+$PAR
+\( \displaystyle v(x) =  $v35\) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u35prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v35prime\) 
+$PAR
+Appliquons la formule de dérivation d'un quotient.  
+$BR
+\( \displaystyle f'(x) =  $f35prime1 \) 
+$PAR
+Faisons une mise en évidence simple.
+$BR
+\( \displaystyle f'(x) =  $f35prime2 \) 
+$PAR
+Concluons en simplifiant le facteur \(\displaystyle $facteur35 \) et en développant ce qui n'a pas été mis en évidence. 
+$BR
+\( \displaystyle f'(x) =  $f35prime3 \) 
+$BR
+ou
+$BR
+\( \displaystyle f'(x) =  $f35prime4 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

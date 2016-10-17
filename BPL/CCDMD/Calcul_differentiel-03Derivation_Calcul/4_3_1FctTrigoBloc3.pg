@@ -1,0 +1,232 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'fonction trigonométrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionLists.pl","unionTables.pl",
+"PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. L'argument est de la forme (a*x + b), avec présentation aléatoire des fonctions (sauf les deux premières) et solution");
+
+TEXT(beginproblem());
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real", A=>"Real", u =>"Real");
+
+#Copier-coller du bloc6
+#avec ajustement des arguments
+
+#Choix de l'argument
+#a*x + b
+$n1 =random(2,9); 
+$k1t =random(2,9); 
+if ($k1t == $n1) {$k1 = 2; $n1 = 7;}
+else
+{$k1 = $k1t;}
+$Choix1 =Formula("$k1*x + $n1 "); 
+
+$n2 =random(2,9); 
+$k2t =random(2,9); 
+if ($k2t == $n2) {$k2 = 3; $n2 = 7;}
+else
+{$k2 = $k2t;}
+$Choix2 =Formula("$k2*x + $n2 "); 
+
+$n3 =random(2,9); 
+$k3t =random(2,9); 
+if ($k3t == $n3) {$k3 = 2; $n3 = 5;}
+else
+{$k3 = $k3t;}
+$Choix3 =Formula("$k3*x + $n3 "); 
+
+$n4 =random(2,9); 
+$k4t =random(2,9); 
+if ($k4t == $n4) {$k4 = 3; $n4 = 5;}
+else
+{$k4 = $k4t;}
+$Choix4 =Formula("$k4*x + $n4 "); 
+
+$n5 =random(2,9); 
+$k5t =random(2,9); 
+if ($k5t == $n5) {$k5 = 2; $n5 = 9;}
+else
+{$k5 = $k5t;}
+$Choix5 =Formula("$k5*x + $n5 "); 
+
+$n6 =random(2,9); 
+$k6t =random(2,9); 
+if ($k6t == $n6) {$k6 = 5; $n6 = 7;}
+else
+{$k6 = $k6t;}
+$Choix6 =Formula("$k6*x + $n6 "); 
+
+
+#Vecteur des fonctions trigonométriques
+@Fonction = (Formula("sin(A)"), Formula("cos(A)"), Formula("tan(A)"), Formula("cot(A)"), Formula("sec(A)"), Formula("csc(A)"));
+#@FonctionPrime = (Formula("cos(A)"), Formula("-sin(A)"), Formula("sec^2(A)"), Formula("-csc^2(A)"), Formula("sec(A)*tan(A)"), Formula("-csc(A)*cot(A)"));
+#Vecteur des arguments
+@Argument = ($Choix1, $Choix2,$Choix3,$Choix4,$Choix5,$Choix6);
+
+#Choix de la fonction trigonométrique
+#Ne pas utiliser shuffle, car il faut afficher les trigonométriques sin, cos, tan en premier. Ce sont les fonctions usuelles.
+@temp2 = shuffle(4);
+$temp1 = random(0,1);
+if ($temp1 == 0) {@CFBloc1 = (0,1,$temp2[0] +2,$temp2[1] +2,$temp2[2] +2,$temp2[3] +2);}
+else  {@CFBloc1 = (1,0,$temp2[0] +2,$temp2[1] +2,$temp2[2] +2,$temp2[3] +2);}
+#@CFBloc1 = shuffle(6);
+#Choix de l'argument de la fonction trigonométrique
+@CABloc1 = shuffle(6);
+
+#Affichage de la fonction composée
+@FonctionBloc1 = ( $Fonction[$CFBloc1[0]] ->substitute(A => $Argument[$CABloc1[0]]), 
+$Fonction[$CFBloc1[1]] ->substitute(A => $Argument[$CABloc1[1]]),
+$Fonction[$CFBloc1[2]] ->substitute(A => $Argument[$CABloc1[2]]),
+$Fonction[$CFBloc1[3]] ->substitute(A => $Argument[$CABloc1[3]]),
+$Fonction[$CFBloc1[4]] ->substitute(A => $Argument[$CABloc1[4]]),
+$Fonction[$CFBloc1[5]] ->substitute(A => $Argument[$CABloc1[5]]));
+
+#Calcul des réponses
+@ReponseBloc1 = ( $FonctionBloc1[0]  ->D('x')-> reduce,
+$FonctionBloc1[1]  ->D('x')-> reduce,
+$FonctionBloc1[2]  ->D('x')-> reduce,
+$FonctionBloc1[3]  ->D('x')-> reduce,
+$FonctionBloc1[4]  ->D('x')-> reduce,
+$FonctionBloc1[5]  ->D('x')-> reduce); 
+
+#Solution
+#Vecteur de la forme des fonctions
+@SolutionBloc1 = ( $Fonction[$CFBloc1[0]] ->substitute(A => Formula("u")), 
+$Fonction[$CFBloc1[1]] ->substitute(A =>  Formula("u")),
+$Fonction[$CFBloc1[2]] ->substitute(A => Formula("u")),
+$Fonction[$CFBloc1[3]] ->substitute(A => Formula("u")),
+$Fonction[$CFBloc1[4]] ->substitute(A => Formula("u")),
+$Fonction[$CFBloc1[5]] ->substitute(A => Formula("u")));
+#Vecteur des dérivées des fonctions trigonométriques
+@SolutionPrimeBloc1 = ($Fonction[$CFBloc1[0]] ->D('A')-> reduce ->substitute(A => $Argument[$CABloc1[0]]),
+$Fonction[$CFBloc1[1]] ->D('A')-> reduce ->substitute(A => $Argument[$CABloc1[1]]),
+$Fonction[$CFBloc1[2]] ->D('A')-> reduce ->substitute(A => $Argument[$CABloc1[2]]),
+$Fonction[$CFBloc1[3]] ->D('A')-> reduce ->substitute(A => $Argument[$CABloc1[3]]),
+$Fonction[$CFBloc1[4]] ->D('A')-> reduce ->substitute(A => $Argument[$CABloc1[4]]),
+$Fonction[$CFBloc1[5]] ->D('A')-> reduce ->substitute(A => $Argument[$CABloc1[5]]));
+#Vecteur des dérivées de l'argument de la fonction trigonométrique
+@SolutionArgumentPrimeBloc1 = ($Argument[$CABloc1[0]]  ->D('x')-> reduce,
+$Argument[$CABloc1[1]]  ->D('x')-> reduce,
+$Argument[$CABloc1[2]]  ->D('x')-> reduce,
+$Argument[$CABloc1[3]]  ->D('x')-> reduce,
+$Argument[$CABloc1[4]]  ->D('x')-> reduce,
+$Argument[$CABloc1[5]]  ->D('x')-> reduce); 
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer la dérivée de chacune des fonctions suivantes.
+$PAR
+\{ BeginList("OL", type=>"a") \}
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[0]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[1]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[2]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[3]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[4]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[5]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+\{ EndList("OL") \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($ReponseBloc1[0]->cmp);
+ANS($ReponseBloc1[1]->cmp);
+ANS($ReponseBloc1[2]->cmp);
+ANS($ReponseBloc1[3]->cmp);
+ANS($ReponseBloc1[4]->cmp);
+ANS($ReponseBloc1[5]->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+\{ BeginList("OL", type=>"a") \}
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[0] \) a la forme  \( \displaystyle f(x) = $SolutionBloc1[0]\) avec \( \displaystyle u(x) = $Argument[$CABloc1[0]]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($FonctionBloc1[0])' \)
+$BR
+\( \displaystyle f'(x) = $SolutionPrimeBloc1[0]($Argument[$CABloc1[0]])'  \)
+$BR
+\( \displaystyle f'(x) = $SolutionPrimeBloc1[0] ($SolutionArgumentPrimeBloc1[0])  \)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[0]  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[1] \) a la forme  \( \displaystyle f(x) = $SolutionBloc1[1]\) avec \( \displaystyle u(x) = $Argument[$CABloc1[1]]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($FonctionBloc1[1])' \)
+$BR
+\( \displaystyle f'(x) = $SolutionPrimeBloc1[1]($Argument[$CABloc1[1]])'  \)
+$BR
+\( \displaystyle f'(x) = $SolutionPrimeBloc1[1] ($SolutionArgumentPrimeBloc1[1])  \)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[1]  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[2] \) a la forme  \( \displaystyle f(x) = $SolutionBloc1[2]\) avec \( \displaystyle u(x) = $Argument[$CABloc1[2]]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($FonctionBloc1[2])' \)
+$BR
+\( \displaystyle f'(x) = $SolutionPrimeBloc1[2]($Argument[$CABloc1[2]])'  \)
+$BR
+\( \displaystyle f'(x) = $SolutionPrimeBloc1[2] ($SolutionArgumentPrimeBloc1[2])  \)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[2]  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[3] \) a la forme  \( \displaystyle f(x) = $SolutionBloc1[3]\) avec \( \displaystyle u(x) = $Argument[$CABloc1[3]]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($FonctionBloc1[3])' \)
+$BR
+\( \displaystyle f'(x) = $SolutionPrimeBloc1[3]($Argument[$CABloc1[3]])'  \)
+$BR
+\( \displaystyle f'(x) = $SolutionPrimeBloc1[3] ($SolutionArgumentPrimeBloc1[3])  \)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[3]  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[4] \) a la forme  \( \displaystyle f(x) = $SolutionBloc1[4]\) avec \( \displaystyle u(x) = $Argument[$CABloc1[4]]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($FonctionBloc1[4])' \)
+$BR
+\( \displaystyle f'(x) = $SolutionPrimeBloc1[4]($Argument[$CABloc1[4]])'  \)
+$BR
+\( \displaystyle f'(x) = $SolutionPrimeBloc1[4] ($SolutionArgumentPrimeBloc1[4])  \)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[4]  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $FonctionBloc1[5] \) a la forme  \( \displaystyle f(x) = $SolutionBloc1[5]\) avec \( \displaystyle u(x) = $Argument[$CABloc1[5]]\). Ainsi
+$BR
+\( \displaystyle f'(x) = ($FonctionBloc1[5])' \)
+$BR
+\( \displaystyle f'(x) = $SolutionPrimeBloc1[5]($Argument[$CABloc1[5]])'  \)
+$BR
+\( \displaystyle f'(x) = $SolutionPrimeBloc1[5] ($SolutionArgumentPrimeBloc1[5])  \)
+$BR
+\( \displaystyle f'(x) = $ReponseBloc1[5]  \)
+$ITEMSEP
+\{ EndList("OL") \}
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

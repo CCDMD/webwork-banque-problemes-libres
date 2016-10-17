@@ -1,0 +1,198 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('continuité en un point', 'discontinuité', 'discontinuité non essentielle', 'fonction définie par parties', 'graphique')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl",
+"PGcourse.pl", "unionLists.pl","unionTables.pl","parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Fonction quadratique avec un trou ou un saut ponctuel");
+
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+
+#Cas 2: Fonction quadratique avec un trou ou saut ponctuel
+
+#Choix du a et de l'axe des x
+$temp2 = random(-1,1,2);
+if ($temp2 == -1) {
+#Prendre un a négatif ou nul
+$a21=random(-5,0);
+$x21=Compute("$a21 - 2");
+$x22=2;}
+else {
+#Prendre un a positif ou nul
+$a21=random(1,5);
+$x21=-1; 
+$x22=Compute("$a21 + 2");}
+
+$a22 = list_random(Compute("$a21 - 1"),Compute("$a21 + 1") );
+
+
+#Définition de la fonction quadratique
+$signe2 = random(-1,1,2);
+$k2 = random(-5,5);
+$m2 =  random(-1,1,2);
+$f2 = Formula("$signe2*(x-$a21-$m2)*(x-$a21)+$k2");
+$f2graphique = "$signe2*(x-$a21-$m2)*(x-$a21)+$k2 for x in <$x21,$x22> using color:red and weight:2";
+#Choix de l'axe des y
+$y2milieu = $f2->eval(x=>"(2*$a21 + $m2)/2");
+$f2a = $f2->eval(x=>$a21);
+$f2a2 = $f2->eval(x=>$a22);
+if ($signe2 < 0) {
+#La parabole est vers le bas
+if ($y2milieu < 0) 
+{#le maximum est en dessous de l'axe des y
+$y22 = 2;  
+$y21temp = min($f2a, $f2a2);
+$y21 = Compute("$y21temp - 2");}
+else
+{#le maximum est au dessus de l'axe des y
+$y22 = Compute("$f2a + 2");
+$y21temp = min($f2a, $f2a2);
+$y21 =min(" -1",$y21temp) ;}}
+else {
+#La parabole est vers le haut
+if ($y2milieu < 0) 
+{#le maximum est en dessous de l'axe des y
+$y22temp = max($f2a, $f2a2);
+$y22 =max(" 2",$y22temp) ;  
+$y21 = Compute("$f2a - 1");}
+else
+{#le maximum est au dessus de l'axe des y
+$y22 = Compute("$f2a + 3");
+$y21 = -1;}}
+
+#Calcul du quadrillage et du x
+$gridX2 = $x22 - $x21;
+$gridY2 = $y22 - $y21;
+$AffichageX2 =Compute("$x22 -0.5");
+#Graphique
+$graphique2 = init_graph($x21,$y21,$x22,$y22,'axes'=>[0,0],'grid'=>[$gridX2,$gridY2]);
+$graphique2 -> lb('reset');
+$graphique2 -> lb(new Label ( 1,0,'1','black','left','top'));
+$graphique2 -> lb(new Label ( 0,1,'1','black','right','top'));
+$graphique2 -> lb(new Label ( $AffichageX2,0,'x','black','left','top'));
+$graphique2 -> lb(new Label ( 0,$y22,'f(x)','black','right','top'));
+add_functions($graphique2, $f2graphique);
+# valeur f(a21)
+$temp20 = random(0,1);
+if ($temp20 == 0) 
+{#La fonction n'est pas définie en x = a21
+#Réponse pour a21
+$RepFA21 = Compute("nep");
+$pt21 = open_circle( $a21,$f2->eval(x=>$a21), red);
+$graphique2->stamps($pt21);}
+else
+{#La fonction fait un saut ponctuel en x = a21
+#Réponse pour a21
+$f2a =$f2 ->eval(x=>$a21);
+$pt21 = open_circle( $a21,$f2a, red);
+#Trouver une valeur entre y21 +1 et y22 -1 qui n'est pas f(a).
+if ($f2a <= Compute("$y21 + 1")) {$pt22y = list_random($y21 + 2,$y22 - 1);}
+elsif ($f2a >= Compute("$y22 - 1")) 
+{$pt22y = list_random($y21 + 2,$y22 - 2);}
+else {
+$temp21 = random(0,1);
+if ($temp21 == 0) {$pt22y = list_random($y21 + 1,$f2a - 1);}
+else{$pt22y = list_random($f2a + 1, $y22 - 1);}}
+$RepFA21 = Compute("$pt22y");
+$pt22 = closed_circle( $a21,$pt22y, red);
+$graphique2->stamps($pt21,$pt22);}
+
+#Graphique
+$imageG2 = image(insertGraph($graphique2),width =>250,height=>250,tex_size=>350);
+
+#Réponses restantes en a21
+$RepLimiteG21 = $f2->eval(x=>$a21);
+$RepLimiteD21 = $f2->eval(x=>$a21);
+$RepPopUp21 = PopUp(["Choisir", "Oui", "Non"], "Non");
+
+#Réponse en a22
+$RepFA22 = $f2->eval(x=>$a22);
+$RepLimiteG22 = $f2->eval(x=>$a22);
+$RepLimiteD22 = $f2->eval(x=>$a22);
+$RepPopUp22 = PopUp(["Choisir", "Oui", "Non"], "Oui");
+
+#Choix des valeurs a21 et a2 à afficher dans l'ordre ou non
+@ValeurCas2 = ($a21,$a22); 
+#Réponse
+@RepCas2 = ($RepFA21,$RepLimiteG21,$RepLimiteD21,$RepPopUp21,
+$RepFA22,$RepLimiteG22,$RepLimiteD22,$RepPopUp22);
+@ChoixCas2 = shuffle(2);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit la fonction dont le graphique est le suivant. 
+$PAR
+$BCENTER
+$imageG2
+$BR
+Cliquer sur le graphique pour faire un agrandissement.
+$ECENTER
+
+$BR
+\{
+ColumnTable(
+"1) Déterminer les valeurs ci-dessous et répondre à la question:".
+$BR.
+BeginList("OL", type=>"a").
+$ITEM. " \( \displaystyle f($ValeurCas2[$ChoixCas2[0]])  \)  = ". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{  \lim_{x \rightarrow $ValeurCas2[$ChoixCas2[0]]^{-}} f(x) = }\)". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{\lim_{x \rightarrow $ValeurCas2[$ChoixCas2[0]]^{+}} f(x) = }\)". ans_rule(20).
+$ITEMSEP.
+$ITEM. "Est-ce que la fonction est continue en \(x = $ValeurCas2[$ChoixCas2[0]]\)? ".
+$RepCas2[4*$ChoixCas2[0]+3]->menu().
+EndList("OL"),
+"2) Déterminer les valeurs ci-dessous et répondre à la question:".
+$BR.
+BeginList("OL", type=>"a").
+$ITEM. " \( \displaystyle f($ValeurCas2[$ChoixCas2[1]])  \)  = ". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{  \lim_{x \rightarrow $ValeurCas2[$ChoixCas2[1]]^{-}} f(x) = }\)". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{\lim_{x \rightarrow $ValeurCas2[$ChoixCas2[1]]^{+}} f(x) = }\)". ans_rule(20).
+$ITEMSEP.
+$ITEM. "Est-ce que la fonction est continue en \(x = $ValeurCas2[$ChoixCas2[1]]\)? ".
+$RepCas2[4*$ChoixCas2[1]+3]->menu().
+EndList("OL"),
+indent=>"0", separation=>"50", valign=>"TOP"
+);
+\}
+$BR
+ \( \bf Note:\) Écrire \( \bf nep \), si la fonction n'est pas définie en une valeur.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepCas2[4*$ChoixCas2[0]]->cmp() );
+ANS(num_cmp($RepCas2[4*$ChoixCas2[0]+1]));
+ANS(num_cmp($RepCas2[4*$ChoixCas2[0]+2]));
+ANS( $RepCas2[4*$ChoixCas2[0]+3]->cmp() );
+
+ANS($RepCas2[4*$ChoixCas2[1]]->cmp() );
+ANS(num_cmp($RepCas2[4*$ChoixCas2[1]+1]));
+ANS(num_cmp($RepCas2[4*$ChoixCas2[1]+2]));
+ANS( $RepCas2[4*$ChoixCas2[1]+3]->cmp() );
+
+
+ENDDOCUMENT();

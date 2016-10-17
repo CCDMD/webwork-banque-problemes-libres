@@ -1,0 +1,180 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction définie par parties', 'graphique', 'limite', 'limite à gauche et à droite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+  "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","parserPopUp.pl","unionLists.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Fonction linéaire par morceaux sans saut (ayant un trou ou un saut ponctuel)");
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+
+
+#Cas 5b: Fonction linéaire et linéaire sans saut
+# La variable $saut52 a été fixée à 0
+#Choix du a et de l'axe des x
+$temp5 = random(-1,1,2);
+if ($temp5 == -1) {
+#Prendre un a négatif ou nul
+$a5=random(-5,0);
+$x51=Compute("$a5 - 2");
+$x52=2;}
+else {
+#Prendre un a positif ou nul
+$a5=random(0,5);
+$x51=-1; 
+$x52=Compute("$a5 + 2");}
+
+#Point de continuité possible entre les deux morceaux (si saut est non nul, la fonction fait un saut)
+$k51 = random(2,8);
+$signe51 = random(-1,1,2);
+#$saut52 = list_random(1,2,3,-2,-3, -1);
+$saut52 = 0;
+
+#Premier morceau
+#Cas linéaire
+$signe52 = random(-1,1,2);
+$m52 = random(1,2);
+$f51 = Formula("$signe51*$k51 + $signe52*$m52*(x-$a5)")->reduce;
+$f51a = $f51->eval(x=>$a5);
+$f51x1 =$f51->eval(x=>"$a5 - 2"); 
+if ($signe52 > 0) 
+{#La fonction est croissante
+$f51max = Compute("$f51a");
+$f51min = Compute("$f51x1");}
+else
+{#La fonction est décroissante
+$f51max = Compute("$f51x1");
+$f51min = Compute("$f51a");}
+
+#Deuxième morceau
+#Cas linéaire
+$signe54 = random(-1,1,2);
+$m54 = random(1,2);
+$f52 = Formula("$signe51*$k51+$saut52 + $signe54*$m54*(x-$a5)")->reduce;
+$f52a = $f52->eval(x=>$a5);
+$f52x2 =$f52->eval(x=>"$a5 + 2"); 
+if ($signe54 > 0) 
+{#La fonction est croissante
+$f52max = Compute("$f52x2");
+$f52min = Compute("$f52a");}
+else
+{#La fonction est décroissante
+$f52max = Compute("$f52a");
+$f52min = Compute("$f52x2");}
+
+#Déterminer le maximum et le minimum de la fonction f5
+if ($f51max > $f52max){$f5max = $f51max;} 
+else
+{$f5max = $f52max;}
+if ($f51min < $f52min){$f5min = $f51min;} 
+else
+{$f5min = $f52min;}
+
+#Déterminer l'intervalle en y
+if ($f5min >= 0) 
+{$y52 = Compute("$f5max + 2");
+$y51 = -1;}
+elsif ($f5max > 0)
+{$y52 = Compute("$f5max + 2");
+$y51 = Compute("$f5min -1");}
+else
+{$y52 = 2;
+$y51 =  Compute("$f5min -1");}
+
+#Calcul du quadrillage et du x
+$gridX5 = $x52 - $x51;
+$gridY5 = $y52 - $y51;
+$AffichageX5 =Compute("$x52 -0.5");
+
+#Calculs des limites
+$RepLimiteG5 = $f51->eval(x=>$a5);
+$RepLimiteD5 = $f52->eval(x=>$a5);
+if ($RepLimiteG5 == $RepLimiteD5) { $RepPopUp5 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else {$RepPopUp5 = PopUp(["Choisir", "Oui", "Non"], "Non");}
+
+#Graphique
+$f51graphique = "$f51 for x in <$x51,$a5> using color:red and weight:2";
+$f52graphique = "$f52 for x in <$a5,$x52> using color:red and weight:2";
+$graphique5 = init_graph($x51,$y51,$x52,$y52,'axes'=>[0,0],'grid'=>[$gridX5,$gridY5]);
+$graphique5 -> lb('reset');
+$graphique5 -> lb(new Label ( 1,0,'1','black','left','top'));
+$graphique5 -> lb(new Label ( 0,1,'1','black','right','top'));
+$graphique5 -> lb(new Label ( $AffichageX5,0,'x','black','left','top'));
+$graphique5 -> lb(new Label ( 0,$y52,'f(x)','black','right','top'));
+add_functions($graphique5, $f51graphique,$f52graphique);
+#Choisir la valeur de la fonction
+$temp5 = random(0,2);
+if ($temp5 == 0)
+{$pt51 = closed_circle( $a5,$f51->eval(x=>$a5), red);
+$pt52 = open_circle( $a5,$f52->eval(x=>$a5), red);
+$graphique5->stamps($pt51, $pt52);}
+elsif ($temp5 == 1)
+{$pt51 = open_circle( $a5,$f51->eval(x=>$a5), red);
+$pt52 = closed_circle( $a5,$f52->eval(x=>$a5), red);
+$graphique5->stamps($pt51, $pt52); }
+else
+{$pt51 = open_circle( $a5,$f51->eval(x=>$a5), red);
+$pt52 = open_circle( $a5,$f52->eval(x=>$a5), red);
+$f51a = $f51->eval(x=>$a5);
+$f52a = $f52->eval(x=>$a5);
+$pt53ytemp = random(Compute("$f5min"),Compute("$f5max+1"));
+if ($pt53ytemp == $f51a) {$pt53y = Compute("$f5max+1");}
+elsif ($pt53ytemp == $f52a) {$pt53y = Compute("$f5max+1");}
+else {$pt53y = $pt53ytemp;}
+$pt53 = closed_circle( $a5,$pt53y, red);
+$graphique5->stamps($pt51, $pt52,$pt53);}
+
+$imageG5 = image(insertGraph($graphique5),width =>350,height=>350,tex_size=>350);
+
+
+$showPartialCorrectAnswers = 1;
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+\{
+ColumnTable("Calculer les limites suivantes en utilisant le graphique ci-contre et répondre à la question.".
+BeginList("OL", type=>"a").
+$ITEM. "\( \displaystyle \lim_{x\rightarrow $a5^{+}} f(x)  = \)". ans_rule(10).
+$ITEMSEP.
+$ITEM. "\( \displaystyle{\lim_{x\rightarrow $a5^{-}} f(x) } = \)". ans_rule(10).
+$ITEMSEP. 
+$ITEM. "La limite en \(x = $a5\) existe-t-elle? ".
+$RepPopUp5->menu().
+$ITEMSEP,
+$BCENTER.
+$imageG5.
+$BR.
+"Cliquer sur le graphique pour faire un agrandissement.".
+$BR.
+$ECENTER,
+indent=>"0", separation=>"50", valign=>"TOP"
+);
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS(num_cmp($RepLimiteD5));
+ANS(num_cmp($RepLimiteG5));
+ANS( $RepPopUp5->cmp() );
+
+
+ENDDOCUMENT(); 

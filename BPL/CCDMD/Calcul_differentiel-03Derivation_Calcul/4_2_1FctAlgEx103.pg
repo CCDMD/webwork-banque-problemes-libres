@@ -1,0 +1,91 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivation logarithmique', 'dérivée', 'dérivée de la fonction puissance', 'fonction logarithmique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Propriétés des logarithmes ln(binôme^n), avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Cas 103: Propriétés des logarithmes ln(binôme^n)
+#Premier binôme
+$k1031 =random(3,15);
+$m1031 =random(5,9); 
+$k1032 =random(2,9);
+$m1032 =random(2,4); 
+$k1032temp = list_random(2, 3, -2,-3);
+$k1032 =Compute("$k1031*$k1032temp");
+$gcd1031 = gcd($k1031,$k1032);
+#Exposant
+$n1031 = random(2,9); 
+#Deuxième binôme
+$k1033 =random(2,9);
+$m1033 =random(5,9); 
+$m1034 =random(2,4); 
+$k1034temp = list_random(2, 3, -2,-3);
+$k1034 =Compute("$k1033*$k1034temp");
+$gcd1032 = gcd($k1033,$k1034);
+ 
+$poly1031 = Formula("$k1031*x^$m1031+$k1032*x^$m1032")->reduce;
+$poly1031S = Formula("$k1031/$gcd1031*x^($m1031-$m1032+1)+$k1032/$gcd1031*x")->reduce;
+$poly1031prime =Formula("$k1031*$m1031*x^($m1031-1)+ $k1032*$m1032*x^($m1032-1)")->reduce;
+$poly1031primeS =Formula("$k1031*$m1031/$gcd1031*x^($m1031-$m1032)+ $k1032*$m1032/$gcd1031")->reduce;
+
+#La fonction
+$f103 = Formula("ln($poly1031^$n1031)")-> reduce;
+$f103S = Formula("$n1031*ln($poly1031)")-> reduce;
+$f103prime1 = Formula("$n1031*$poly1031prime/$poly1031")->reduce;
+$f103prime2 = Formula("$n1031*$poly1031primeS/$poly1031S")->reduce;
+
+$Rep103 = $f103prime2 -> reduce;
+
+#$f103prime5 = $f103 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f103} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep103->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f103 \) a la forme d'un logarithme naturel d'une puissance d'un polynôme. Avant de dériver la fonction, utilisons les propriétés des logarithmes: 
+$PAR
+\(\displaystyle f(x) =  $f103S \)
+$PAR
+Appliquons la formule de dérivation d'un logarithme et simplifions.  
+$BR
+\( \displaystyle f'(x) =  $f103prime1 \) 
+$BR
+\( \displaystyle f'(x) =  $f103prime2 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

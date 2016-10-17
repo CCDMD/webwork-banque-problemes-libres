@@ -1,0 +1,303 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('fonction polynomiale', 'graphique', 'maximum', 'minimum', 'tracé de courbes')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","parserPopUp.pl","PGchoicemacros.pl","contextFraction.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Fonction polynomiale de degré 3: ax^3 + bx^2+cx+d avec a = 1/3 pour que les deux extrémums soient faciles à trouver.");
+
+TEXT(beginproblem());
+
+Context()->noreduce('(-x)-y'); 
+$refreshCachedImages = 1;
+
+#Cas 1: Fonction polynomiale 
+#Les valeurs à remplacer sont 60, 61, 62, 63, 64, 65
+#La variable b100 a été fixée à 1
+
+#Choix du a et de l'axe des x
+$a61_temp=list_random(-8,-7,-6,-5,-4,-3,-2,1,2,3,4,5,6,7, 8);
+$a62_temp=list_random(-8,-7,-6,-5,-4,-3,-2,1,2,3,4,5,6,7, 8);
+#Problème d'affichage lorsque les deux valeurs sont proches. 
+if (abs($a61_temp) == abs($a62_temp)) {$a61 =-5; $a62 = list_random(1,3, 7);}
+elsif( abs($a61_temp -$a62_temp) < 3)  
+{$a61 =-6; $a62 = list_random(-2,2,4);}
+else
+{$a61 =min($a61_temp,$a62_temp) ;
+$a62 =max($a61_temp,$a62_temp);}
+$x61=min(Compute("$a61 - 5"), -2);
+$x62=max(Compute("$a62+5"), 2);
+
+#Fonction f60
+$b600 = 1;
+$b601 = Compute("-1*$b600*($a61+$a62)");
+$b602 = Compute("$b600*$a61*$a62");
+$b603temp = random(-10, 10); 
+#Choix de la constante pour déterminer l'emplacement des zéros
+$f60temp = Formula("$b600/3*x^3+$b601/2*x^2 + $b602*x+$b603temp")-> reduce;
+$f60tempa61 = $f60temp->eval(x=>$a61);
+$f60tempa62 = $f60temp->eval(x=>$a62);
+$f60tempmin = min($f60tempa61, $f60tempa62); 
+$f60tempmax = max($f60tempa61, $f60tempa62); 
+$temp601 = random(0,2);
+if ($temp601 == 0)
+{$b603temp2 = Compute("($f60tempmin + $f60tempmax)/2");
+$b603 = ceil($b603temp2);}
+elsif ($temp601 == 1)
+{$b603temp2 = Compute("(2*$f60tempmin + $f60tempmax)/3");
+$b603 = ceil($b603temp2);}
+else
+{$b603temp2 = Compute("($f60tempmin + 2*$f60tempmax)/3");
+$b603 = ceil($b603temp2);}
+$f60 = Formula("$b600/3*x^3+$b601/2*x^2 + $b602*x-$b603")-> reduce;
+#$f60a = Formula("$b600*x^3/3+$b601*x^2/2 + $b602*x-$b603")-> reduce;
+#Problème d'affichage
+$b600a = Compute("$b600/3");
+$b601a = Compute("$b601/2");
+$b602a = $b602;
+$b603a = Compute("-1*$b603");
+#Les extrémums de f60
+$f60a61 = $f60->eval(x=>$a61);
+$f60a62 = $f60->eval(x=>$a62);
+$f60maxtemp = max(abs($f60a61), abs($f60a62)); 
+
+#La fonction f62
+$f62 = Formula("-1*$b600/3*x^3-$b601/2*x^2 - $b602*x+$b603")-> reduce;
+$f62a61 = $f62->eval(x=>$a61);
+$f62a62 = $f62->eval(x=>$a62);
+$f62max = max(abs($f62a61), abs($f62a62)); 
+
+#La fonction f61
+#Choisir d'autres valeurs de a61 et a62 
+$b610 = $b600;
+$b611 = Compute("-1*$b610*($a61+$a62+2)");
+$b612 = Compute("$b610*($a61+1)*($a62+1)");
+$b613temp = $f60->eval(x=>($a61+1));
+$b613 = Compute("$b613temp - $b610/3*($a61+1)^3-$b611/2*($a61+1)^2 - $b612*($a61+1) ");
+$f61 = Formula("$b610/3*x^3+$b611/2*x^2 + $b612*x +$b613")-> reduce;
+$a611 = Compute("$a61 + 1");
+$a621 = Compute("$a62 + 1");
+$f61a61 = $f61->eval(x=>($a61+1));
+$f61a62 = $f61->eval(x=>($a62+1));
+$f61max = max(abs($f61a61), abs($f61a62)); 
+
+#La fonction f63
+$f63 = Formula("-1*$b610/3*x^3-$b611/2*x^2 - $b612*x -$b613")-> reduce;
+$f63a61 = $f63->eval(x=>($a61+1));
+$f63a62 = $f63->eval(x=>($a62+1));
+$f63max = max(abs($f61a61), abs($f61a62)); 
+
+#Les extrémums de f60
+$maxtemp1 = max($f60maxtemp, $f61max);
+$maxtemp2 = max($f62max, $f63max);
+$f60max = max($maxtemp1, $maxtemp2); 
+$f60min = Compute("-1*$f60max"); 
+
+$IntervalleY60 = $f60max - $f60min; 
+
+#Déterminer l'intervalle en y
+if ($f60min >= 0) 
+{$y62 = Compute("1.1*$f60max");
+$y61 = -0.1*$f60max;}
+elsif ($f60max > 1)
+{$y62 = Compute("$f60max +0.1*$IntervalleY60");
+$y61 = Compute("$f60min -0.1*$IntervalleY60");}
+else
+{$y62 = -0.1*$f60min;
+$y61 =  Compute("1.1*$f60min");}
+
+#Calcul du quadrillage et du x
+$gridX60 = $x62 - $x61;
+$gridY60 = $y62 - $y61;
+$AffichageX60 =Compute("$x62 -0.5");
+
+#Graphique
+$f60graphique = "$f60 for x in <$x61,$x62> using color:red and weight:2";
+#$graphique60 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0],'grid'=>[$gridX60,$gridY60]);
+$graphique60 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique60 -> lb('reset');
+$graphique60 -> lb(new Label ( $a61,0,$a61,'black','left','top'));
+$graphique60 -> lb(new Label ( $a62,0,$a62,'black','left','top'));
+if ($a61 <0)
+{$graphique60 -> lb(new Label ( 0,$f60a61,$f60a61,'black','left','top'));}
+else
+{$graphique60 -> lb(new Label ( 0,$f60a61,$f60a61,'black','right','top'));}
+if ($a62 <0)
+{$graphique60 -> lb(new Label ( 0,$f60a62,$f60a62,'black','left','top'));}
+else
+{$graphique60 -> lb(new Label ( 0,$f60a62,$f60a62,'black','right','top'));}
+
+$graphique60 -> lb(new Label ( $AffichageX60,0,'x','black','left','top'));
+$graphique60 -> lb(new Label ( 0,$y62,'f(x)','black','right','top'));
+$graphique60->moveTo($a61,$f60a61);
+$graphique60->lineTo(0,$f60a61,'red',1,'dashed');
+$graphique60->moveTo($a61,$f60a61);
+$graphique60->lineTo($a61,0,'red',1,'dashed');
+$pt601 = closed_circle( $a61,$f60a61, red);
+$graphique60->moveTo($a62,$f60a62);
+$graphique60->lineTo(0,$f60a62,'red',1,'dashed');
+$graphique60->moveTo($a62,$f60a62);
+$graphique60->lineTo($a62,0,'red',1,'dashed');
+$pt602 = closed_circle( $a62,$f60a62, red);
+$graphique60->stamps($pt601,$pt602);
+add_functions($graphique60, $f60graphique);
+$imageG60 = image(insertGraph($graphique60),width =>300,height=>260,tex_size=>360);
+
+
+#Graphique
+$f61graphique = "$f61 for x in <$x61,$x62> using color:red and weight:2";
+#$graphique61 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0],'grid'=>[$gridX60,$gridY60]);
+$graphique61 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique61 -> lb('reset');
+$graphique61 -> lb(new Label ( $a611,0,$a611,'black','left','top'));
+$graphique61 -> lb(new Label ( $a621,0,$a621,'black','left','top'));
+if ($a611 <0)
+{$graphique61 -> lb(new Label ( 0,$f61a61,$f61a61,'black','left','top'));}
+else
+{$graphique61 -> lb(new Label ( 0,$f61a61,$f61a61,'black','right','top'));}
+if ($a621 <0)
+{$graphique61 -> lb(new Label ( 0,$f61a62,$f61a62,'black','left','top'));}
+else
+{$graphique61 -> lb(new Label ( 0,$f61a62,$f61a62,'black','right','top'));}
+$graphique61 -> lb(new Label ( $AffichageX60,0,'x','black','left','top'));
+$graphique61 -> lb(new Label ( 0,$y62,'f(x)','black','right','top'));
+$graphique61->moveTo($a611,$f61a61);
+$graphique61->lineTo(0,$f61a61,'red',1,'dashed');
+$graphique61->moveTo($a611,$f61a61);
+$graphique61->lineTo($a611,0,'red',1,'dashed');
+$pt611 = closed_circle( $a611,$f61a61, red);
+$graphique61->moveTo($a621,$f61a62);
+$graphique61->lineTo(0,$f61a62,'red',1,'dashed');
+$graphique61->moveTo($a621,$f61a62);
+$graphique61->lineTo($a621,0,'red',1,'dashed');
+$pt612 = closed_circle( $a621,$f61a62, red);
+$graphique61->stamps($pt611,$pt612);
+add_functions($graphique61, $f61graphique);
+$imageG61 = image(insertGraph($graphique61),width =>300,height=>260,tex_size=>360);
+
+
+#Graphique
+$f62graphique = "$f62 for x in <$x61,$x62> using color:red and weight:2";
+#$graphique62 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0],'grid'=>[$gridX60,$gridY60]);
+$graphique62 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique62 -> lb('reset');
+$graphique62 -> lb(new Label ( $a61,0,$a61,'black','left','top'));
+$graphique62 -> lb(new Label ( $a62,0,$a62,'black','left','top'));
+if ($a61 <0)
+{$graphique62 -> lb(new Label ( 0,$f62a61,$f62a61,'black','left','top'));}
+else
+{$graphique62 -> lb(new Label ( 0,$f62a61,$f62a61,'black','right','top'));}
+if ($a62 <0)
+{$graphique62 -> lb(new Label ( 0,$f62a62,$f62a62,'black','left','top'));}
+else
+{$graphique62 -> lb(new Label ( 0,$f62a62,$f62a62,'black','right','top'));}
+
+$graphique62 -> lb(new Label ( $AffichageX60,0,'x','black','left','top'));
+$graphique62 -> lb(new Label ( 0,$y62,'f(x)','black','right','top'));
+$graphique62->moveTo($a61,$f62a61);
+$graphique62->lineTo(0,$f62a61,'red',1,'dashed');
+$graphique62->moveTo($a61,$f62a61);
+$graphique62->lineTo($a61,0,'red',1,'dashed');
+$pt621 = closed_circle( $a61,$f62a61, red);
+$graphique62->moveTo($a62,$f62a62);
+$graphique62->lineTo(0,$f62a62,'red',1,'dashed');
+$graphique62->moveTo($a62,$f62a62);
+$graphique62->lineTo($a62,0,'red',1,'dashed');
+$pt622 = closed_circle( $a62,$f62a62, red);
+$graphique62->stamps($pt621,$pt622);
+add_functions($graphique62, $f62graphique);
+$imageG62 = image(insertGraph($graphique62),width =>300,height=>260,tex_size=>360);
+
+
+
+#Graphique
+$f63graphique = "$f63 for x in <$x61,$x62> using color:red and weight:2";
+#$graphique63 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0],'grid'=>[$gridX60,$gridY60]);
+$graphique63 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique63 -> lb('reset');
+$graphique63 -> lb(new Label ( $a611,0,$a611,'black','left','top'));
+$graphique63 -> lb(new Label ( $a621,0,$a621,'black','left','top'));
+if ($a611 <0)
+{$graphique63 -> lb(new Label ( 0,$f63a61,$f63a61,'black','left','top'));}
+else
+{$graphique63 -> lb(new Label ( 0,$f63a61,$f63a61,'black','right','top'));}
+if ($a621 <0)
+{$graphique63 -> lb(new Label ( 0,$f63a62,$f63a62,'black','left','top'));}
+else
+{$graphique63 -> lb(new Label ( 0,$f63a62,$f63a62,'black','right','top'));}
+$graphique63 -> lb(new Label ( $AffichageX60,0,'x','black','left','top'));
+$graphique63 -> lb(new Label ( 0,$y62,'f(x)','black','right','top'));
+$graphique63->moveTo($a611,$f63a61);
+$graphique63->lineTo(0,$f63a61,'red',1,'dashed');
+$graphique63->moveTo($a611,$f63a61);
+$graphique63->lineTo($a611,0,'red',1,'dashed');
+$pt631 = closed_circle( $a611,$f63a61, red);
+$graphique63->moveTo($a621,$f63a62);
+$graphique63->lineTo(0,$f63a62,'red',1,'dashed');
+$graphique63->moveTo($a621,$f63a62);
+$graphique63->lineTo($a621,0,'red',1,'dashed');
+$pt632 = closed_circle( $a621,$f63a62, red);
+$graphique63->stamps($pt631,$pt632);
+add_functions($graphique63, $f63graphique);
+$imageG63 = image(insertGraph($graphique63),width =>300,height=>260,tex_size=>360);
+
+
+#Vecteur des graphiques
+@ImageGraphique60 = ($imageG60,$imageG61,$imageG62,$imageG63); 
+@Choix = shuffle(4);
+
+if ($Choix[0] == 0)
+{$RepPopUp60 = PopUp(["Choisir", "A", "B", "C", "D"], "A");}
+elsif ($Choix[1] == 0)
+{$RepPopUp60 = PopUp(["Choisir", "A", "B", "C", "D"], "B");}
+elsif ($Choix[2] == 0)
+{$RepPopUp60 = PopUp(["Choisir", "A", "B", "C", "D"], "C");}
+else
+{$RepPopUp60 = PopUp(["Choisir", "A", "B", "C", "D"], "D");}
+
+Context("Fraction-NoDecimals");
+
+$f60a = Formula("x^3/3+$b601/2*x^2 + $b602*x-$b603")-> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Choisir le graphique qui correspond à la fonction \( \displaystyle {f(x) =  $f60a}\).
+$BR
+\{$RepPopUp60->menu()\}
+$BR
+$BR
+
+
+\{BeginTable(border=>1,tex_border=>"1pt", spacing=>2, padding=>2).
+  AlignedRow(["Graphique A","Graphique B"], align => CENTER, separation=>0).
+  AlignedRow(["$ImageGraphique60[$Choix[0]]","$ImageGraphique60[$Choix[1]]"], align => CENTER, separation=>0).
+  AlignedRow(["Graphique C","Graphique D"], align => CENTER, separation=>0).
+  AlignedRow(["$ImageGraphique60[$Choix[2]]","$ImageGraphique60[$Choix[3]]"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$BR 
+Cliquer sur un des graphiques pour faire un agrandissement.
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepPopUp60->cmp() );
+
+
+
+ENDDOCUMENT();

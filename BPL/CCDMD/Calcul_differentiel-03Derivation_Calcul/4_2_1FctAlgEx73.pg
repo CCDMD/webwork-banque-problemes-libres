@@ -1,0 +1,79 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la somme de fonctions', 'fonction logarithmique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+
+COMMENT("Niveau de difficulté: Moyen. Somme ln et puissance ( ln(ax+b) + c*x^n), avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Cas 73: Somme ln et puissance ( ln(ax+b) + c*x^n)
+#Puissance 
+$k731 =random(3,15);
+$m731 =random(2,9); 
+#ln
+$k732 = random(2, 9);
+$k733temp = list_random(-4,-3,-2,2,3,4); 
+$k733 = Compute("$k732*$k733temp");
+
+$poly731 = Formula("$k732*x +$k733") -> reduce;
+$poly731prime = Formula("$k732") -> reduce;
+$gcd731 = gcd($k732,$k733);
+$poly731S = Formula("$k732/$gcd731*x +$k733/$gcd731") -> reduce;
+$poly731primeS = Formula("$k732/$gcd731") -> reduce;
+$f73 = Formula("ln($poly731) + $k731*x^$m731")-> reduce;
+$f73prime1 = Formula("$poly731prime/$poly731 + $k731*$m731*x^($m731-1)")->reduce;
+$f73prime2 = Formula("$poly731primeS/$poly731S + $k731*$m731*x^($m731-1)")->reduce;
+
+$Rep73 = $f73prime2 -> reduce;
+#$f73prime5 = $f73 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f73} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep73->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f73 \) a la forme d'une somme d'une puissance avec un logarithme naturel. Ainsi, 
+$PAR
+\( \displaystyle f'(x) =  \frac{($poly731)'} {$poly731} + $k731\cdot (x^{$m731})' \)  $SPACE (Formule de dérivation)
+$PAR
+\( \displaystyle f'(x) =  \frac{$poly731prime} {$poly731} + $k731\cdot $m731 \cdot x^{$m731-1} \)  $SPACE (Formule de dérivation)
+$PAR
+\( \displaystyle f'(x) =  $f73prime1 \) $SPACE (Simplification) 
+$PAR
+\( \displaystyle f'(x) =  $f73prime2 \) $SPACE (Simplification de la fraction, si possible) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

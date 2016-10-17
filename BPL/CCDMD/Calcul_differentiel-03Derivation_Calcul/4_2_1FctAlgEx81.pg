@@ -1,0 +1,116 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée du produit de fonctions', 'fonction exponentielle', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Produit d'un binôme simple par exponentielle, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+
+
+#Cas 81: Produit binôme par exponentielle(binôme)
+#Binôme
+$k811 =random(3,15);
+$m811 =random(5,9); 
+$k812 =random(2,9);
+$m812 =random(2,4); 
+#Exponentielle
+$k813temp = list_random(2, 3);
+$k813 =Compute("$k812*$k813temp");
+$k814 =list_random(-11,-7,-6,-5,-4,-3, 3,4,5,7,11);
+
+#Les binômes
+$poly811 = Formula("$k811*x^$m811+$k812*x^$m812")->reduce;
+$poly811prime =Formula("$k811*$m811*x^($m811-1)+ $k812*$m812*x^($m812-1)")->reduce;
+$poly812 = Formula("$k813*x +$k814") -> reduce;
+$poly812prime = Formula("$k813") -> reduce;
+#u et v
+$u81 = Formula("$poly811")->reduce;
+$u81prime = Formula("$poly811prime")->reduce;
+$v81 = Formula("e^($poly812)")->reduce;
+$v81prime = Formula("e^($poly812)*$poly812prime")->reduce;
+#La fonction
+$f81 = Formula("($poly811)*e^($poly812)")-> reduce;
+#$f81prime1 = Formula("($u81prime)*($v81) +($u81)*($v81prime)")->reduce;
+$f81prime1 = Formula("$poly811prime*e^($poly812) + $poly811*e^($poly812)*$poly812prime")->reduce;
+#Mise en évidence de l'exponentielle
+$f81prime2 = Formula("e^($poly812)*($k811*$m811*x^($m811-1)+ $k812*$m812*x^($m812-1) + ($k811*x^$m811+$k812*x^$m812)*$poly812prime)")->reduce;
+#Développons
+$f81prime3 = Formula("e^($poly812)*($k811*$m811*x^($m811-1)+ $k812*$m812*x^($m812-1) + $k811*$k813*x^$m811+$k812*$k813*x^$m812)")->reduce;
+#Mise en évidence du facteur et d'une puissance de x
+$gcd811temp1 = gcd($k811*$k813,$k812*$k813);
+$gcd811temp2 = gcd($k811*$m811,$k812*$m812);
+$gcd811 = gcd($gcd811temp1, $gcd811temp2);
+$f81prime4 = Formula("$gcd811*x^($m812-1)*e^($poly812)*( $k811*$k813/$gcd811*x^($m811- $m812+1)+$k811*$m811/$gcd811*x^($m811-$m812)+$k812*$k813/$gcd811*x+$k812*$m812/$gcd811)")->reduce;
+
+$Rep81 = $f81prime4 -> reduce;
+
+#$f81prime5 = $f81 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f81} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep81->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f81 \) a la forme d'un produit \(u \cdot v\) où
+$PAR
+\(\displaystyle u(x) =  $u81 \)
+$PAR
+\( \displaystyle v(x) =  $v81\) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u81prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v81prime\) 
+$PAR
+Appliquons la formule de dérivation d'un produit.  
+$BR
+\( \displaystyle f'(x) =  $f81prime1 \) 
+$PAR
+Faisons une mise en évidence simple de l'exponentielle. 
+$BR
+\( \displaystyle f'(x) =  $f81prime2 \) 
+$PAR
+Développons.
+$BR
+\( \displaystyle f'(x) =  $f81prime3 \) 
+$PAR
+Concluons en faisant, si possible, une mise en évidence simple.
+$BR
+\( \displaystyle f'(x) =  $f81prime4 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

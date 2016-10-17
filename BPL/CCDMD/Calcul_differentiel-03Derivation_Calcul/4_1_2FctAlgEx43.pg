@@ -1,0 +1,137 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la fonction puissance', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Puissance entière négative d'un polynôme, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Cas 43: Puissance entière négative d'un polynôme.
+#Polynôme 
+$k431 =random(3,15);
+$m431 =random(6,9); 
+$k432 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k432) == abs($k431)) {$k432 = 11;};
+$m432 =random(4,5);  
+$k433 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k433) == abs($k431)) {$k433 = 12;};
+$m433 =random(2,3); 
+$k434 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k434) == abs($k433)) {$k434 = 17;};
+$m434 =random(0,1) ; 
+#Exposant du polynôme
+$n431 = random(2,5); 
+#Coefficient du polynôme
+$k435 =random(2,50); 
+
+if ($m434 == 0)
+{#Problème d'affichage
+$poly431 = Formula("$k431*x^$m431+$k432*x^$m432+ $k433*x^$m433+$k434")->reduce;}
+else
+{$poly431 = Formula("$k431*x^$m431+$k432*x^$m432+ $k433*x^$m433+$k434*x^$m434")->reduce;}
+$poly431prime =($poly431)->D('x');
+
+#Fonction à dérivée
+$f43 = Formula("$k435/($poly431)^$n431")-> reduce;
+#Fonction simplifiée pour calcul de la dérivée
+$f43s = Formula("$k435*($poly431)^(-1*$n431)")-> reduce;
+
+#Calcul de la dérivée
+$f43prime1 = $f43s->D('x')->reduce;
+
+#Simplifier la dérivée
+$u43 = $poly431;
+$u43prime = $poly431prime;
+$coef431 = Compute("$k431*$m431");
+$coef432 = Compute("$k432*$m432");
+$coef433 = Compute("$k433*$m433");
+$coef434 = Compute("$k434*$m434");
+if ($m434 == 0)
+{#Le dernier terme est constant
+$u43primeS =  Formula("$coef431*x^($m431-1)+$coef432*x^($m432-1) + $coef433*x^($m433-1)")->reduce;}
+else
+{$u43primeS =  Formula("$coef431*x^($m431-1)+$coef432*x^($m432-1) + $coef433*x^($m433-1)+ $coef434*x^($m434-1)")->reduce;}
+$f43prime2 = Formula("$k435*-1*$n431*$u43primeS/($poly431)^($n431+1)")-> reduce;
+
+#Faire une mise en évidence simple
+if ($m434 == 1)
+{#Le dernier terme est constant
+$CoefTemp431 = gcd($coef431,$coef432);
+$CoefTemp432 = gcd($coef433,$coef434);
+$NouveauCoef433 = gcd($CoefTemp431,$CoefTemp432);
+$f43prime3 = Formula("$k435*(-1)*$n431*$NouveauCoef433*($coef431/$NouveauCoef433*x^($m431-1)+$coef432/$NouveauCoef433*x^($m432-1) + $coef433/$NouveauCoef433*x^($m433-1)+$coef434/$NouveauCoef433)/($poly431)^($n431+1)")-> reduce;}
+else
+{#$m434 est nul.
+#Il y a une puissance de x à mettre en évidence. C'est $m433-1
+$CoefTemp431 = gcd($coef431,$coef432);
+$NouveauCoef433 = gcd($CoefTemp431,$coef433);
+$f43prime3 = Formula("$k435*(-1)*$n431*$NouveauCoef433*x^($m433-1)*($coef431/$NouveauCoef433*x^($m431- $m433)+$coef432/$NouveauCoef433*x^($m432-$m433) + $coef433/$NouveauCoef433)/($poly431)^($n431+1)")-> reduce;}
+
+#C'est la réponse la plus courante
+$Rep43 = $f43prime2 -> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f43} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep43->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+Bien que la fonction \( \displaystyle f(x) =  $f43 \) ait la forme d'un quotient, il est plus simple de la considérer comme une constante multipliée par une puissance négative \(k \cdot u^n\) où 
+$PAR
+\( \displaystyle k =  $k435\) 
+$PAR
+\(\displaystyle u(x) =  $u43 \)
+$PAR
+\( \displaystyle n =  -$n431\) 
+$PAR
+La fonction à dériver devient: 
+$PAR
+\( \displaystyle f(x) =  $f43s \)
+$PAR
+Appliquons la formule de dérivation d'une constante multipliée par une puissance.  
+$BR
+\( \displaystyle f'(x) =  $f43prime1 \) 
+$PAR
+Simplifions 
+$BR
+\( \displaystyle f'(x) =  $f43prime2 \) 
+$BR
+Concluons en faisant, si possible, une mise en évidence simple.
+$BR
+\( \displaystyle f'(x) =  $f43prime3 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

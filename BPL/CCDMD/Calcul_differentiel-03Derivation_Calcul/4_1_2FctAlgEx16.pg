@@ -1,0 +1,77 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS( 'dérivée', 'dérivée de la somme de fonctions', 'fonction algébrique', 'fonction polynomiale', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Somme de puissances entières positives avec des paramètres, notation standard et solution.");
+
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y'); 
+
+#Cas 16: Trinôme avec paramètres 
+$m161 =random(6,9); 
+$m162 =random(1,5);  
+$m163 =random(2,5); 
+
+#Fonction à dériver
+if ($m162 == 1)
+{$f16 = Formula("a*x^$m161+b*x+ 1/(c^$m163)");}
+else
+{$f16 = Formula("a*x^$m161+b*x^$m162+ 1/(c^$m163)");}
+#Calcul de la dérivée
+$f16prime1 = $f16 ->D('x')-> reduce;
+
+#Simplification de la dérivée
+$coef161 = Compute("$m161*a");
+$coef162 = Compute("$m162*b");
+if ($m162 == 1)
+{#Le dernier terme est constant
+$f16prime2 =  Formula("$coef161*x^($m161-1)+$coef162")->reduce;}
+else
+{$f16prime2 =  Formula("$coef161*x^($m161-1)+$coef162*x^($m162-1)")->reduce;}
+
+
+$Rep16 = $f16prime2 -> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \(a, b, c \in \mathbb{R}^*\). Calculer la dérivée, par rapport à \(x\), de la fonction \( \displaystyle {f(x) = $f16} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep16->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f16 \) a la forme d'une somme de fonctions simples. Ainsi, 
+$PAR
+\( \displaystyle f'(x) =  $f16prime2 \). 
+$BR Attention: la dérivée par rapport à \(x\) de \(\displaystyle \frac{1}{c^$m163}\) est nulle,  car \(c\) est un paramètre.
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

@@ -1,0 +1,157 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la fonction puissance', 'dérivée du produit de fonctions', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Difficile. Produit d'un binôme simple par un binôme simple, tous les deux affectés d'un exposant entier, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Cas 24: Produit d'un binôme simple par un binôme simple, tous les deux sont affectés d'un exposant entier
+#Premier binôme
+$k241 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+$m241 =random(6,9); 
+$k242 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k242) == abs($k241)) {$k242 = 11;};
+$m242 =0; 
+#Deuxième binôme
+$k243 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k243) == abs($k241)) {$k243 = 12;};
+$m243 =random(6,9); 
+$k244 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k244) == abs($k243)) {$k244 = 17;};
+$m244 =0; 
+#Exposant du premier binôme
+$n241 =random(2,5); 
+#Exposant du deuxième binôme
+$n242 =random(2,5); 
+
+$poly241 = Formula("$k241*x^$m241+$k242")->reduce;
+$poly241prime =$poly241 ->D('x')-> reduce;
+
+$poly242 =Formula("$k243*x^$m243+$k244")->reduce;
+$poly242prime =$poly242 ->D('x')-> reduce;
+$u24 = Formula("($poly241)^$n241")->reduce;
+$u24prime = Formula("$n241*($poly241)^($n241-1)*($poly241prime)")->reduce;
+$v24 = Formula("$poly242^$n242")->reduce;
+$v24prime = Formula("$n242*($poly242)^($n242-1)*($poly242prime)")->reduce;
+
+$f24 = Formula("($k241*x^$m241+$k242)^$n241*($k243*x^$m243+$k244)^$n242") -> reduce;
+$f24prime1old = $f24 ->D('x')-> reduce;
+$f24prime1 = Formula("($u24prime)*($v24) +($u24)*($v24prime)")->reduce;
+$f24prime2 = Formula("$poly241^($n241-1)*$poly242^($n242-1)*($n241*$poly241prime*$poly242+$n242*$poly242prime*$poly241)")-> reduce;
+
+#Simplifier la dérivée en développant
+$exposant241 = Compute("$m243-1+$m241");
+$exposant242 = Compute("$m243-1+$m242");
+$exposant243 = Compute("$m244-1+$m241");
+#$exposant244 n'existe pas.
+$exposant244 = Compute("$m244-1+$m242");
+
+if ($exposant242 == $exposant243) 
+{#2 exposants sont identiques, donc additionner les coefficients
+$coef241 = Compute("$n241*$k241*$m241*$k243 +$n242*$k243*$m243*$k241");
+$coef242temp = Compute("$n241*$k242*$m242*$k243 +$n242*$k243*$m243*$k242");
+$coef243temp = Compute("$n241*$k241*$m241*$k244 +$n242*$k244*$m244*$k241");
+$coef242 = Compute("$coef242temp + $coef243temp");
+$coef243 = Compute("0");
+$coef244 = Compute("$n241*$k242*$m242*$k244 +$n242*$k244*$m244*$k242");}
+else
+{
+$coef241 = Compute("$n241*$k241*$m241*$k243 +$n242*$k243*$m243*$k241");
+$coef242 = Compute("$n241*$k242*$m242*$k243 +$n242*$k243*$m243*$k242");
+$coef243 = Compute("$n241*$k241*$m241*$k244 +$n242*$k244*$m244*$k241");
+$coef244 = Compute("$n241*$k242*$m242*$k244 +$n242*$k244*$m244*$k242");}
+
+#dérivée développée
+$f24prime3 =Formula("$poly241^($n241-1)*$poly242^($n242-1)*($coef241*x^$exposant241 +$coef242*x^$exposant242+ $coef243*x^$exposant243 +$coef244*x^$exposant244)")-> reduce;
+
+#Voir s'il est possible de faire une mise en évidence simple
+if ((($coef242 == 0) && ($coef243 == 0) && ($coef244 == 0)) || 
+(($coef241 == 0) && ($coef243 == 0) && ($coef244 == 0))||
+ (($coef241 == 0) && ($coef242 == 0) && ($coef244 == 0))||
+ (($coef241 == 0) && ($coef242 == 0) && ($coef243 == 0)))
+{#Un seul coefficient est non nul. Ne pas faire de mise en évidence simple
+$f24prime4 = $f24prime3;
+}
+else
+{#Faire une mise en évidence simple, si possible
+#$exposant244 n'existe pas.
+$CoefTemp241 = gcd($coef241,$coef242);
+$NouveauCoef243 = gcd($CoefTemp241,$coef243);
+$ExposantTemp241 = min($exposant241,$exposant242);
+$NouveauExposant243 = min($ExposantTemp241,$exposant243);
+$f24prime4 =Formula("$NouveauCoef243*x^$NouveauExposant243*$poly241^($n241-1)*$poly242^($n242-1)*($coef241/$NouveauCoef243*x^($exposant241-$NouveauExposant243) +$coef242/$NouveauCoef243*x^($exposant242-$NouveauExposant243) +$coef243/$NouveauCoef243*x^($exposant243-$NouveauExposant243))")-> reduce;
+}
+
+#C'est la réponse la plus courante
+$Rep24 = $f24prime3 -> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f24} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep24->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f24 \) a la forme d'un produit \(u \cdot v\) où
+$PAR
+\(\displaystyle u(x) =  $u24 \)
+$PAR
+\( \displaystyle v(x) =  $v24\) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u24prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v24prime\) 
+$PAR
+Appliquons la formule de dérivation d'un produit.  
+$BR
+\( \displaystyle f'(x) =  $f24prime1 \) 
+$PAR
+Faisons une mise en évidence simple.
+$BR
+\( \displaystyle f'(x) =  $f24prime2 \) 
+$PAR
+Développons ce qui n'a pas été mis en évidence. 
+$BR
+\( \displaystyle f'(x) =  $f24prime3 \) 
+$PAR
+Conclusion en faisant, si possible, une mise en évidence simple. 
+$BR
+\( \displaystyle f'(x) =  $f24prime4 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

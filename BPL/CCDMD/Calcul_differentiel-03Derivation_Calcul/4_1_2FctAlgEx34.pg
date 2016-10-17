@@ -1,0 +1,160 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la fonction puissance', 'dérivée du quotient de fonctions', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Difficile. Quotient d'un binôme simple par un binôme simple, tous les deux affectés d'un exposant entier, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Cas 34: Quotient d'un binôme simple par un binôme simple , tous les deux sont affectés d'un exposant entier
+#Premier binôme
+$k341 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+$m341 =random(6,9); 
+$k342 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k341) == abs($k342)) {$k341 = 12;};
+$m342 =0; 
+#Deuxième binôme
+$k343 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k343) == abs($k341)) {$k343 = 12;};
+$m343 =random(6,9); 
+$k344 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k344) ==abs( $k343)) {$k344 = 11;};
+$m344 =0; 
+#Exposant du premier binôme
+$n341 =random(2,5); 
+#Exposant du deuxième binôme
+$n342 =random(2,5); 
+
+$poly341 = Formula("$k341*x^$m341+$k342")->reduce;
+$poly341prime =$poly341 ->D('x')-> reduce;
+
+$poly342 =Formula("$k343*x^$m343+$k344")->reduce;
+$poly342prime =$poly342 ->D('x')-> reduce;
+$u34 = Formula("($poly341)^$n341")->reduce;
+$u34prime = Formula("$n341*($poly341)^($n341-1)*($poly341prime)")->reduce;
+$v34 = Formula("$poly342^$n342")->reduce;
+$v34prime = Formula("$n342*($poly342)^($n342-1)*($poly342prime)")->reduce;
+
+$f34 = Formula("($k341*x^$m341+$k342)^$n341/($k343*x^$m343+$k344)^$n342") -> reduce;
+$f34prime1old = $f34 ->D('x')-> reduce;
+
+$f34prime1 = Formula("(($u34prime)*($v34) -($u34)*($v34prime))/($poly342^2)")->reduce;
+# Mise en évidence de u ou v.
+$f34prime2 = Formula("$poly341^($n341-1)*$poly342^($n342-1)*($n341*$poly341prime*$poly342-$n342*$poly342prime*$poly341)/($poly342^(2*$n342))")-> reduce;
+
+#Simplifier la dérivée en développant
+if ($m341 == $m343)
+{$exposant341 = Compute("$m343-1+$m341");
+$exposant342 = Compute("$m341-1");
+$exposant343 = Compute("$m343-1");
+$coef341 = Compute("$n341*$k341*$m341*$k343 - $n342*$k343*$m343*$k341");
+$coef342 = Compute("$k344*$n341*$k341*$m341 -1*$n342*$k343*$m343*$k342");
+$coef343 = 0;
+$coef344 = 0;
+}else
+{
+$exposant341 = Compute("$m343-1+$m341");
+$exposant342 = Compute("$m341-1");
+$exposant343 = Compute("$m343-1");
+$coef341 = Compute("$n341*$k341*$m341*$k343 - $n342*$k343*$m343*$k341");
+$coef342 = Compute("$k344*$n341*$k341*$m341");
+$coef343 = Compute("-1*$n342*$k343*$m343*$k342");
+$coef344 = 0;
+}
+
+#dérivée développée
+$f34prime3 =Formula("$poly341^($n341-1)*($coef341*x^$exposant341 +$coef342*x^$exposant342 +$coef343*x^$exposant343)/($poly342^(2*$n342-$n342+1))")-> reduce;
+$facteur34 = Formula("$poly342^($n342-1)");
+
+#Voir s'il est possible de faire une mise en évidence simple
+if ((($coef342 == 0) && ($coef343 == 0) && ($coef344)) || 
+(($coef341 == 0) && ($coef343 == 0) && ($coef344 == 0))||
+ (($coef341 == 0) && ($coef342 == 0) && ($coef344 == 0))||
+ (($coef341 == 0) && ($coef342 == 0) && ($coef343 == 0)))
+{#Un seul coefficient est non nul. Ne pas faire de mise en évidence simple
+$f34prime4 = $f34prime3;
+}
+elsif ($m341 == $m343)
+{$NouveauCoef343 = gcd($coef341,$coef342);
+$NouveauExposant343 = min($exposant341,$exposant342);
+$f34prime4 =Formula("$NouveauCoef343*x^$NouveauExposant343*$poly341^($n341-1)*($coef341/$NouveauCoef343*x^($exposant341-$NouveauExposant343) +$coef342/$NouveauCoef343*x^($exposant342-$NouveauExposant343))/($poly342^(2*$n342-$n342+1))")-> reduce;
+}
+{#Faire une mise en évidence simple, si possible
+$CoefTemp341 = gcd($coef341,$coef342);
+$NouveauCoef343 = gcd($CoefTemp341,$coef343);
+$ExposantTemp341 = min($exposant341,$exposant342);
+$NouveauExposant343 = min($ExposantTemp341,$exposant343);
+$f34prime4 =Formula("$NouveauCoef343*x^$NouveauExposant343*$poly341^($n341-1)*($coef341/$NouveauCoef343*x^($exposant341-$NouveauExposant343) +$coef342/$NouveauCoef343*x^($exposant342-$NouveauExposant343) +$coef343/$NouveauCoef343*x^($exposant343-$NouveauExposant343))/($poly342^(2*$n342-$n342+1))")-> reduce;
+}
+
+#Réponse simplifiée
+$Rep34 = $f34prime4 -> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f34} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(80)\} 
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep34->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f34 \) a la forme d'un quotient  \(\displaystyle \frac{u}{v}\) où
+$PAR
+\(\displaystyle u(x) =  $u34 \)
+$PAR
+\( \displaystyle v(x) =  $v34\) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u34prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v34prime\) 
+$PAR
+Appliquons la formule de dérivation d'un quotient.  
+$BR
+\( \displaystyle f'(x) =  $f34prime1 \) 
+$PAR
+Faisons une mise en évidence simple.
+$BR
+\( \displaystyle f'(x) =  $f34prime2 \) 
+$PAR
+Concluons en simplifiant le facteur \(\displaystyle $facteur34 \) et en développant ce qui n'a pas été mis en évidence. 
+$BR
+\( \displaystyle f'(x) =  $f34prime3 \) 
+$BR
+ou
+$BR
+\( \displaystyle f'(x) =  $f34prime4 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

@@ -1,0 +1,121 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivée', 'dérivée du produit de fonctions', 'fonction algébrique', 'fonction polynomiale', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Produit d'un binôme simple par un binôme simple, sans exposant, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+#COMMENT("Produit binôme par binôme, tous les deux affectés d'un exposant entier");
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Cas 21 Générique: Produit d'un binôme simple par un binôme simple
+#Premier binôme
+$k211 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10); 
+$m211 =random(2,9); 
+$k212 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10); 
+if (abs($k211) == abs($k212)) {$k212 = 11;};
+$m212 =0; 
+#Deuxième binôme
+$k213 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k213) == abs($k211)) {$k213 = 12;};
+$m213 =random(2,9); 
+if ($m213 == $m211) {$m213 = 10;};
+$k214 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k214) == abs($k213)) {$k214 = 17;};
+$m214 =0; 
+$n211 = 1;
+$n212 = 1;
+
+$poly211 = Formula("$k211*x^$m211+$k212")->reduce;
+$poly211prime =Formula("$k211*$m211*x^($m211-1)")->reduce;
+
+$poly212 =Formula("$k213*x^$m213+$k214")->reduce;
+$poly212prime =Formula("$k213*$m213*x^($m213-1)")->reduce;
+$u21 = Formula("$poly211")->reduce;
+$u21prime = Formula("$poly211prime")->reduce;
+$v21 = Formula("$poly212")->reduce;
+$v21prime = Formula("$poly212prime")->reduce;
+
+$f21 = Formula("($k211*x^$m211+$k212)*($k213*x^$m213+$k214)") -> reduce;
+$f21prime1old = $f21 ->D('x')-> reduce;
+$f21prime1 = Formula("($u21prime)*($v21) +($u21)*($v21prime)")->reduce;
+$coef211 = Compute("$n211*$k211*$m211*$k213 +$n212*$k213*$m213*$k211");
+$exposant211 = Compute("$m213-1+$m211");
+$coef212 = Compute("$n211*$k212*$m212*$k213 +$n212*$k213*$m213*$k212");
+$exposant212 = Compute("$m213-1+$m212");
+$coef213 = Compute("$n211*$k211*$m211*$k214 +$n212*$k214*$m214*$k211");
+$exposant213 = Compute("$m214-1+$m211");
+$f21prime3 =Formula("$coef211*x^$exposant211 +$coef212*x^$exposant212 +$coef213*x^$exposant213")-> reduce;
+$CoefTemp211 = gcd($coef211,$coef212);
+$NouveauCoef213 = gcd($CoefTemp211,$coef213);
+$ExposantTemp211 = min($exposant211,$exposant212);
+$NouveauExposant213 = min($ExposantTemp211,$exposant213);
+$f21prime4 =Formula("$NouveauCoef213*x^$NouveauExposant213*($coef211/$NouveauCoef213*x^($exposant211-$NouveauExposant213) +$coef212/$NouveauCoef213*x^($exposant212-$NouveauExposant213) +$coef213/$NouveauCoef213*x^($exposant213-$NouveauExposant213))")-> reduce;
+
+#C'est la réponse la plus courante
+$Rep21 = $f21prime3 -> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f21} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep21->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f21 \) a la forme d'un produit \(u \cdot v\) où
+$PAR
+\(\displaystyle u(x) =  $u21 \)
+$PAR
+\( \displaystyle v(x) =  $v21\) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u21prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v21prime\) 
+$PAR
+Appliquons la formule de dérivation d'un produit.  
+$BR
+\( \displaystyle f'(x) =  $f21prime1 \) 
+$PAR
+Développons. 
+$BR
+\( \displaystyle f'(x) =  $f21prime3 \) 
+$PAR
+Concluons en faisant, si possible, une mise en évidence simple.
+$BR
+\( \displaystyle f'(x) =  $f21prime4 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

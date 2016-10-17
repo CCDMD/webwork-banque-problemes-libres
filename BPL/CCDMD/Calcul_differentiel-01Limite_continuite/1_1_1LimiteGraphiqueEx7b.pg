@@ -1,0 +1,241 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction définie par parties', 'graphique', 'limite', 'limite à gauche et à droite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+  "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","parserPopUp.pl","unionLists.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Fonction définie par morceaux (un morceau est quadratique et l'autre est constant ou linéaire) sans saut (ayant un trou ou un saut ponctuel)");
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+
+#Cas 7b: Fonction quadratique et (linéaire ou constante) sans saut
+#Le code vient du cas générique (Cas 9)
+# les variables $type71 et $type72 sont été modifiées pour prendre les valeurs 3 et ( 1 ou 2)
+#La variable $saut72 a été fixée à 0
+
+#Choix du a et de l'axe des x
+$temp7 = random(-1,1,2);
+if ($temp7 == -1) {
+#Prendre un a négatif ou nul
+$a7=random(-5,0);
+$x71=Compute("$a7 - 2");
+$x72=2;}
+else {
+#Prendre un a positif ou nul
+$a7=random(0,5);
+$x71=-1; 
+$x72=Compute("$a7 + 2");}
+
+#Point de continuité possible entre les deux morceaux (si saut est non nul, la fonction fait un saut)
+$k71 = random(2,8);
+$signe71 = random(-1,1,2);
+#$saut72 = list_random(0,2,3,-2,-3,0);
+$saut72 = 0;
+
+#Première partie 
+#Choix du type de fonction (constante, linéaire ou quadratique)
+$type71 = random(1,3);
+if ($type71 == 1) 
+{#Cas constant
+$f71 = Formula("$signe71*$k71")->reduce;
+$f71a = $f71->eval(x=>$a7);
+$f71max = Compute("$f71a");
+$f71min = Compute("$f71a");}
+elsif ($type71 == 2)
+{#Cas linéaire
+$signe72 = random(-1,1,2);
+$m72 = random(1,2);
+$f71 = Formula("$signe71*$k71 + $signe72*$m72*(x-$a7)")->reduce;
+$f71a = $f71->eval(x=>$a7);
+$f71x1 =$f71->eval(x=>"$a7 - 2"); 
+if ($signe72 > 0) 
+{#La fonction est croissante
+$f71max = Compute("$f71a");
+$f71min = Compute("$f71x1");}
+else
+{#La fonction est décroissante
+$f71max = Compute("$f71x1");
+$f71min = Compute("$f71a");}}
+else
+{#Cas quadratique 
+$signe73 = random(-1,1,2);
+$m73 = 4;
+$f71 = Formula("$signe71*$k71 +  $signe73*$m73*(x-$a7)*(x-$a7 +1 )")->reduce;
+$f71a = $f71->eval(x=>$a7);
+$f71p = $f71->eval(x=>"(2*$a7-1)/2");
+if ($signe73 > 0) 
+{#La parabole est vers le haut
+$f71max = Compute("$f71a");
+$f71min = Compute("$f71p");}
+else
+{#La parabole est vers le bas
+$f71max = Compute("$f71p");
+$f71min = Compute("$f71a");}}
+
+#Deuxième partie
+#Choix du type de fonction (constante, linéaire ou quadratique)
+$type72 = random(1,3);
+if ($type71 == 3) 
+{#Le premier morceau est quadratique 
+$type72 = random(1,2);}
+else
+{$type72 = 3;}
+
+if ($type72 == 1) 
+{#Cas constant
+if ($type71 == 1){$saut72 = list_random(2,3,-2,-3);} 
+$f72 = Formula("$signe71*$k71+$saut72")->reduce;
+$f72a = $f72->eval(x=>$a7);
+$f72max = Compute("$f72a +2");
+$f72min = Compute("$f72a - 1");}
+elsif ($type72 == 2)
+{#Cas linéaire
+$signe74 = random(-1,1,2);
+$m74 = random(1,2);
+$f72 = Formula("$signe71*$k71+$saut72 + $signe74*$m74*(x-$a7)")->reduce;
+$f72a = $f72->eval(x=>$a7);
+$f72x2 =$f72->eval(x=>"$a7 + 2"); 
+if ($signe74 > 0) 
+{#La fonction est croissante
+$f72max = Compute("$f72x2");
+$f72min = Compute("$f72a");}
+else
+{#La fonction est décroissante
+$f72max = Compute("$f72a");
+$f72min = Compute("$f72x2");}}
+else
+{#Cas quadratique 
+$signe75 = random(-1,1,2);
+if ($type71 == 3) 
+{#Cas parabole/parabole 
+$m75 = 8;}
+else{$m75 = 4;}
+$f72 = Formula("$signe71*$k71 +$saut72+  $signe75*$m75*(x-$a7)*(x-$a7 -1 )")->reduce;
+$f72a = $f72->eval(x=>$a7);
+$f72p = $f72->eval(x=>"(2*$a7+1)/2");
+if ($signe75 > 0) 
+{#La parabole est vers le haut
+$f72max = Compute("$f72a");
+$f72min = Compute("$f72p");}
+else
+{#La parabole est vers le bas
+$f72max = Compute("$f72p");
+$f72min = Compute("$f72a");}}
+
+
+#Déterminer le maximum et le minimum de la fonction f7
+if ($f71max > $f72max){$f7max = $f71max;} 
+else
+{$f7max = $f72max;}
+if ($f71min < $f72min){$f7min = $f71min;} 
+else
+{$f7min = $f72min;}
+
+#Déterminer l'intervalle en y
+if ($f7min >= 0) 
+{$y72 = Compute("$f7max + 2");
+$y71 = -1;}
+elsif ($f7max > 0)
+{$y72 = Compute("$f7max + 2");
+$y71 = Compute("$f7min -1");}
+else
+{$y72 = 2;
+$y71 =  Compute("$f7min -1");}
+
+#Calcul du quadrillage et du x
+$gridX7 = $x72 - $x71;
+$gridY7 = $y72 - $y71;
+$AffichageX7 =Compute("$x72 -0.5");
+
+#Calculs des limites
+$RepLimiteG7 = $f71->eval(x=>$a7);
+$RepLimiteD7 = $f72->eval(x=>$a7);
+if ($RepLimiteG7 == $RepLimiteD7) { $RepPopUp7 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else {$RepPopUp7 = PopUp(["Choisir", "Oui", "Non"], "Non");}
+
+#Graphique
+$f71graphique = "$f71 for x in <$x71,$a7> using color:red and weight:2";
+$f72graphique = "$f72 for x in <$a7,$x72> using color:red and weight:2";
+$graphique7 = init_graph($x71,$y71,$x72,$y72,'axes'=>[0,0],'grid'=>[$gridX7,$gridY7]);
+$graphique7 -> lb('reset');
+$graphique7 -> lb(new Label ( 1,0,'1','black','left','top'));
+$graphique7 -> lb(new Label ( 0,1,'1','black','right','top'));
+$graphique7 -> lb(new Label ( $AffichageX7,0,'x','black','left','top'));
+$graphique7 -> lb(new Label ( 0,$y72,'f(x)','black','right','top'));
+add_functions($graphique7, $f71graphique,$f72graphique);
+#Choisir la valeur de la fonction
+$temp7 = random(0,2);
+if ($temp7 == 0)
+{$pt71 = closed_circle( $a7,$f71->eval(x=>$a7), red);
+$pt72 = open_circle( $a7,$f72->eval(x=>$a7), red);
+$graphique7->stamps($pt71, $pt72);}
+elsif ($temp7 == 1)
+{$pt71 = open_circle( $a7,$f71->eval(x=>$a7), red);
+$pt72 = closed_circle( $a7,$f72->eval(x=>$a7), red);
+$graphique7->stamps($pt71, $pt72); }
+else
+{$pt71 = open_circle( $a7,$f71->eval(x=>$a7), red);
+$pt72 = open_circle( $a7,$f72->eval(x=>$a7), red);
+$f71a = $f71->eval(x=>$a7);
+$f72a = $f72->eval(x=>$a7);
+$pt73ytemp = random(Compute("$f7min"),Compute("$f7max+1"));
+if ($pt73ytemp == $f71a) {$pt73y = Compute("$f7max+1");}
+elsif ($pt73ytemp == $f72a) {$pt73y = Compute("$f7max+1");}
+else {$pt73y = $pt73ytemp;}
+$pt73 = closed_circle( $a7,$pt73y, red);
+$graphique7->stamps($pt71, $pt72,$pt73);}
+
+$imageG7 = image(insertGraph($graphique7),width =>350,height=>350,tex_size=>350);
+
+$showPartialCorrectAnswers = 1;
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+\{
+ColumnTable("Calculer les limites suivantes en utilisant le graphique ci-contre et répondre à la question.".
+BeginList("OL", type=>"a").
+$ITEM. "\( \displaystyle \lim_{x\rightarrow $a7^{+}} f(x)  = \)". ans_rule(10).
+$ITEMSEP.
+$ITEM. "\( \displaystyle{\lim_{x\rightarrow $a7^{-}} f(x) } = \)". ans_rule(10).
+$ITEMSEP. 
+$ITEM. "La limite en \(x = $a7\) existe-t-elle? ".
+$RepPopUp7->menu().
+$ITEMSEP,
+$BCENTER.
+$imageG7.
+$BR.
+"Cliquer sur le graphique pour faire un agrandissement.".
+$BR.
+$ECENTER,
+indent=>"0", separation=>"50", valign=>"TOP"
+);
+\}
+$PAR
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($RepLimiteD7));
+ANS(num_cmp($RepLimiteG7));
+ANS( $RepPopUp7->cmp() );
+
+
+ENDDOCUMENT(); 

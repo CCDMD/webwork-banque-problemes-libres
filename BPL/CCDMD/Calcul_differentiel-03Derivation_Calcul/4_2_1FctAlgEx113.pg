@@ -1,0 +1,79 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la fonction puissance', 'fonction exponentielle', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Puissance d'une exponentielle ((exp(binôme simple))^n), avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+Context()->variables->set(x=>{limits=>[-1,1]});
+
+
+#Cas 113: (exp(binôme simple))^n
+#Premier binôme simple
+$k1131 =random(3,15);
+$m1131 =random(5,9); 
+$k1132 =random(2,9);
+$n1131 =random(2,9); 
+$Coef1131 = random(2,9);
+ 
+$poly1131 = Formula("$k1131*x^$m1131+$k1132")->reduce;
+$poly1131prime =Formula("$k1131*$m1131*x^($m1131-1)")->reduce;
+
+#La fonction
+$f113 = Formula("(e^($poly1131))^$n1131")-> reduce;
+$f113S = Formula("e^($n1131*$poly1131)")-> reduce;
+
+$f113prime1 = Formula("e^($n1131*$poly1131)*($n1131*($k1131*($m1131*x^($m1131-1))))")-> reduce;
+$f113prime2 = Formula("$n1131*$k1131*$m1131*x^($m1131-1)*e^($n1131*$poly1131)")-> reduce;
+
+$Rep113 = $f113prime2 -> reduce;
+
+#$f113prime5 = $f113 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f113} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep113->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f113 \) a la forme d'une puissance d'une exponentielle. Avant de calculer la dérivée, il est plus simple d'appliquer les propriétés des exponentielles:\( \displaystyle f(x) =  $f113S \). Dérivons et simplifions.  
+$PAR
+\( \displaystyle f'(x) =  e^{$n1131 ($poly1131)} ($n1131 ($poly1131))'   \) 
+$PAR
+\( \displaystyle f'(x) =  $f113prime1 \) 
+$PAR
+\( \displaystyle f'(x) =  $f113prime2 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

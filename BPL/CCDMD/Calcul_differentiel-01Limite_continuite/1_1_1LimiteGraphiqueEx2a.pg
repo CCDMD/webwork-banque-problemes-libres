@@ -1,0 +1,113 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction définie par parties', 'graphique', 'limite', 'limite à gauche et à droite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+  "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","parserPopUp.pl","unionLists.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Fonction linéaire avec un trou");
+
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+
+#Cas 2: Fonction linéaire avec un trou
+#Choix du a
+$temp2 = random(-1,1,2);
+if ($temp2 == -1) {
+#Prendre un a négatif ou nul
+$a2=random(-5,0);
+$x21=Compute("$a2 - 2");
+$x22=2;}
+else {
+#Prendre un a positif ou nul
+$a2=random(0,5);
+$x21=-1; 
+$x22=Compute("$a2 + 2");}
+#Définition de la fonction linéaire
+$signe2 = random(-1,1,2);
+$k2 = random(-5,5);
+$f2 = Formula("$signe2*(x-$a2)+$k2")->reduce;
+$f2graphique = "$signe2*(x-$a2)+$k2 for x in <$x21,$x22> using color:red and weight:2";
+#Choix de l'axe des y
+if ($signe2 < 0) {
+#La fonction est décroissante
+$y21temp= $f2->eval(x=>$x22);
+$y22temp= $f2->eval(x=>$x21);}
+else {
+#La fonction est croissante
+$y21temp = $f2->eval(x=>$x21);
+$y22temp= $f2->eval(x=>$x22);}
+if ($y22temp <= 1)
+{#On ne voit pas l'axe des x
+$y22 = 2;}
+else {$y22 = $y22temp;}
+if ($y21temp >= -1)
+{#On ne voit pas l'axe des x
+$y21 = -1;}
+else {$y21 = $y21temp;}
+#Calcul du quadrillage et du x
+$gridX2 = $x22 - $x21;
+$gridY2 = $y22 - $y21;
+$AffichageX2 =Compute("$x22 -0.5");
+#Réponses
+$RepLimiteG2 = $f2->eval(x=>$a2);
+$RepLimiteD2 = $f2->eval(x=>$a2);
+$RepPopUp2 = PopUp(["Choisir", "Oui", "Non"], "Oui");
+#Graphique
+$graphique2 = init_graph($x21,$y21,$x22,$y22,'axes'=>[0,0],'grid'=>[$gridX2,$gridY2]);
+$graphique2 -> lb('reset');
+$graphique2 -> lb(new Label ( 1,0,'1','black','left','top'));
+$graphique2 -> lb(new Label ( 0,1,'1','black','right','top'));
+$graphique2 -> lb(new Label ( $AffichageX2,0,'x','black','left','top'));
+$graphique2 -> lb(new Label ( 0,$y22,'f(x)','black','right','top'));
+add_functions($graphique2, $f2graphique);
+$pt21 = open_circle( $a2,$f2->eval(x=>$a2), red);
+$graphique2->stamps($pt21); 
+$imageG2 = image(insertGraph($graphique2),width =>350,height=>350,tex_size=>350);
+
+BEGIN_TEXT
+
+\{
+ColumnTable("Calculer les limites suivantes en utilisant le graphique ci-contre et répondre à la question.".
+BeginList("OL", type=>"a").
+$ITEM. "\( \displaystyle \lim_{x\rightarrow $a2^{+}} f(x)  = \)". ans_rule(10).
+$ITEMSEP.
+$ITEM. "\( \displaystyle{\lim_{x\rightarrow $a2^{-}} f(x) } = \)". ans_rule(10).
+$ITEMSEP. 
+$ITEM. "La limite en \(x = $a2\) existe-t-elle? ".
+$RepPopUp2->menu().
+$ITEMSEP,
+$BCENTER.
+$imageG2.
+$BR.
+"Cliquer sur le graphique pour faire un agrandissement.".
+$BR.
+$ECENTER,
+indent=>"0", separation=>"50", valign=>"TOP"
+);
+\}
+
+END_TEXT
+
+
+
+ANS(num_cmp($RepLimiteD2));
+ANS(num_cmp($RepLimiteG2));
+ANS( $RepPopUp2->cmp() );
+
+ENDDOCUMENT(); 

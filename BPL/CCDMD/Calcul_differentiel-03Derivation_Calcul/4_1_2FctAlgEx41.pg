@@ -1,0 +1,132 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la fonction puissance', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Puissance entière d'un polynôme, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Cas 41: Puissance entière d'un polynôme.
+#Polynôme 
+$k411 =random(3,15);
+$m411 =random(6,9); 
+$k412 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k412) == abs($k411)) {$k412 = 11;};
+$m412 =random(4,5);  
+$k413 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k413) == abs($k411)) {$k413 = 12;};
+$m413 =random(2,3); 
+$k414 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k414) == abs($k413)) {$k414 = 17;};
+$m414 =random(0,1) ; 
+#Exposant du polynôme
+$n411 = random(2,5); 
+#Coefficient du polynôme
+$k415 =random(2,50); 
+
+if ($m414 == 0)
+{#Problème d'affichage
+$poly411 = Formula("$k411*x^$m411+$k412*x^$m412+ $k413*x^$m413+$k414")->reduce;}
+else
+{$poly411 = Formula("$k411*x^$m411+$k412*x^$m412+ $k413*x^$m413+$k414*x^$m414")->reduce;}
+$poly411prime =($poly411)->D('x');
+
+#Fonction à dériver
+$f41 = Formula("$k415*($poly411)^$n411")-> reduce;
+#Calcul de la dérivée
+$f41prime1 = $f41 ->D('x')-> reduce;
+
+#Simplification de la dérivée
+$u41 = $poly411;
+$u41prime = $poly411prime;
+$coef411 = Compute("$k411*$m411");
+$coef412 = Compute("$k412*$m412");
+$coef413 = Compute("$k413*$m413");
+$coef414 = Compute("$k414*$m414");
+if ($m414 == 0)
+{#Le dernier terme est constant
+$u41primeS =  Formula("$coef411*x^($m411-1)+$coef412*x^($m412-1) + $coef413*x^($m413-1)")->reduce;}
+else
+{$u41primeS =  Formula("$coef411*x^($m411-1)+$coef412*x^($m412-1) + $coef413*x^($m413-1)+ $coef414*x^($m414-1)")->reduce;}
+
+$f41prime2 = Formula("$k415*$n411*($poly411)^($n411-1)*$u41primeS")-> reduce;
+
+#Mise en évidence simple
+if ($m414 == 1)
+{#Le dernier terme est constant
+$CoefTemp411 = gcd($coef411,$coef412);
+$CoefTemp412 = gcd($coef413,$coef414);
+$NouveauCoef413 = gcd($CoefTemp411,$CoefTemp412);
+$f41prime3 = Formula("$k415*$n411*$NouveauCoef413*($poly411)^($n411-1)*($coef411/$NouveauCoef413*x^($m411-1)+$coef412/$NouveauCoef413*x^($m412-1) + $coef413/$NouveauCoef413*x^($m413-1)+$coef414/$NouveauCoef413)")-> reduce;}
+else
+{#$m414 est nul.
+$CoefTemp411 = gcd($coef411,$coef412);
+$NouveauCoef413 = gcd($CoefTemp411,$coef413);
+$ExposantTemp411 = min($m411,$m412);
+$NouveauExposant413 = min($ExposantTemp411-1,$m413-1);
+$f41prime3 = Formula("$k415*$n411*$NouveauCoef413*x^($NouveauExposant413)*($poly411)^($n411-1)*($coef411/$NouveauCoef413*x^($m411-1- $NouveauExposant413)+$coef412/$NouveauCoef413*x^($m412-1-$NouveauExposant413) + $coef413/$NouveauCoef413*x^($m413-1-$NouveauExposant413))")-> reduce;}
+
+#La réponse la plus courante
+$Rep41 = $f41prime2 -> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f41} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep41->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f41 \) a la forme d'une constante multipliée par une puissance \(k \cdot u^n\) où
+$PAR
+\( \displaystyle k =  $k415\) 
+$PAR
+\(\displaystyle u(x) =  $u41 \)
+$PAR
+\( \displaystyle n =  $n411\) 
+$PAR
+Appliquons la formule de dérivation d'une constante multipliée par une puissance.  
+$BR
+\( \displaystyle f'(x) =  $f41prime1 \) 
+$PAR
+Simplifions.
+$BR
+\( \displaystyle f'(x) =  $f41prime2 \) 
+$BR
+Concluons en faisant, si possible, une mise en évidence simple.
+$BR
+\( \displaystyle f'(x) =  $f41prime3 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

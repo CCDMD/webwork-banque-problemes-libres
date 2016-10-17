@@ -1,0 +1,53 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivée', 'dérivée de la fonction puissance', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl");
+
+COMMENT("Niveau de difficulté: Facile. Forme 1/(a*x^(1/n)) avec notation standard. La solution n'a pas été programmée");
+
+
+TEXT(beginproblem());
+
+#Choix de la fonction f8 affichage standard
+#La question a été changée.
+#Des macros ont été enlevées
+#Le code a été simplifié
+
+#Racine n-ieme au dénominateur avec coefficient
+$n81 =list_random(3,5,7,11,17); 
+$m81 = list_random(2,4,6,8,9,10,12); 
+$f8 = Formula("1/($m81*x^(1/$n81))") -> reduce;
+@f8A =("\frac{1}{$m81 \sqrt[$n81]{x}}","\frac{1}{$m81 \sqrt[$n81]{y}}","\frac{1}{$m81 \sqrt[$n81]{t}}","\frac{1}{$m81 \sqrt[$n81]{h}}","\frac{1}{$m81 \sqrt[$n81]{z}}");
+$f8prime = $f8 ->D('x');
+$e81 = Formula("($n81+1)/$n81");
+$Rep8 = Compute("-1/($m81*$n81*x^{$e81})");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer la dérivée de la fonction \( \displaystyle f(x) = $f8A[0]  \).
+$PAR
+ \( \displaystyle f'(x)  =  \) \{ans_rule(20)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep8->cmp);
+
+ENDDOCUMENT(); 

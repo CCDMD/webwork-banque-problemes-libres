@@ -1,0 +1,113 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée du produit de fonctions', 'fonction exponentielle', 'fonction logarithmique')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+
+COMMENT("Niveau de difficulté: Moyen. Produit exponentielle et ln, avec notation standard et solution. Attention, la réponse contient plus de 100 caractères.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+
+
+#Cas 87: Produit binôme par binôme (avec exponentielle et logarithme) Aucune simplification
+#Exponentielle
+$k871 =random(3,15);
+$m871 =random(5,9); 
+$k872 =random(2,9);
+$m872 =random(2,4); 
+#Ln
+$k873 =random(2,9);
+$m873 =random(5,9); 
+$m874 =random(2,4); 
+$k874temp = list_random(2, 3, 5);
+$k874 =Compute("$k873*$k874temp");
+$gcd872 = gcd($k873,$k874);
+
+#Les monômes
+$k875 =random(3,15);
+$m875 =random(5,9); 
+$k876 =random(2,9);
+$m876 =random(2,4); 
+
+#Les coefficients de l'exp et du ln
+$Coef871 =random(3,15);
+$Coef872 =random(3,15);
+ 
+$poly871 = Formula("$k871*x^$m871+$k872*x^$m872")->reduce;
+$poly871prime =Formula("$k871*$m871*x^($m871-1)+ $k872*$m872*x^($m872-1)")->reduce;
+$poly872 = Formula("$k873*x^$m873+$k874*x^$m874")->reduce;
+$poly872S = Formula("$k873/$gcd872*x^($m873-$m874+1)+$k874/$gcd872*x")->reduce;
+$poly872prime =Formula("$k873*$m873*x^($m873-1)+ $k874*$m874*x^($m874-1)")->reduce;
+$poly872primeS =Formula("$k873*$m873/$gcd872*x^($m873-$m874)+ $k874*$m874/$gcd872")->reduce;
+
+#u et v
+$u87 = Formula("$k875*x^$m875+$Coef871*e^($poly871)")->reduce;
+$u87prime = Formula("$k875*$m875*x^($m875-1)+$Coef871*e^($poly871)*$poly871prime")->reduce;
+$v87 = Formula("$k876*x^$m876+$Coef872*ln($poly872)")->reduce;
+$v87prime = Formula("$k876*$m876*x^($m876-1)+$Coef872*$poly872prime/$poly872")->reduce;
+$v87primeS = Formula("$k876*$m876*x^($m876-1)+$Coef872*$poly872primeS/$poly872S")->reduce;
+
+#La fonction
+$f87 = Formula("$u87*$v87")-> reduce;
+$f87prime1 = Formula("($u87prime)*($v87) +($u87)*($v87primeS)")->reduce;
+
+$Rep87 = $f87prime1 -> reduce;
+$Rep83->{limits} = [0,1];
+
+#$f87prime5 = $f87 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f87} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep87->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f87 \) a la forme d'un produit \(u \cdot v\) où
+$PAR
+\(\displaystyle u(x) =  $u87 \)
+$PAR
+\( \displaystyle v(x) =  $v87\) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u87prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v87prime = $v87primeS  \) 
+$PAR
+Appliquons la formule de dérivation d'un produit.  
+$BR
+\( \displaystyle f'(x) =  $f87prime1 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

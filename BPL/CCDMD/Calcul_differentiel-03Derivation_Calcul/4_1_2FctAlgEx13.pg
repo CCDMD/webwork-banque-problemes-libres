@@ -1,0 +1,97 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivée', 'dérivée de la fonction puissance', 'dérivée de la somme de fonctions', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl", 
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Somme de puissances entières positives et fractionnaires positives (a1*x^n1 + a2*x^(1/n2)), avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(x => "Real",u=>"Real");
+#Context()->noreduce('(-x)-y','(-x)+y');
+
+#Cas 13: Somme d'une puissance entière positive et rationnelle
+$k131 =random(3,15);
+$m131 =random(3,9); 
+$m132 =random(2,9);  
+#Il ne faut pas pouvoir faire une simplification
+$k132temp =list_random(2, 3,5,7);
+if (abs($k132temp) == $m132) {$k132 = Compute("abs($k132temp) + 1");}
+else
+{$k132 = $k132temp;}
+
+#Fonction à dériver
+$f13 = Formula("$k131 x^{$m131} + $k132 x^(1/$m132)")->reduce;
+#Calcul de la dérivée
+$f13prime1 = Formula("$k131*$m131*x^($m131-1) + $k132*x^(1/$m132 - 1)/$m132" )-> reduce;
+#Simplification
+$Coef131 = Compute("$k131*$m131");
+$Exposant131 = Compute("$m131-1");
+$Exposant132 = Compute("1-$m132");
+$f13prime2 = Formula("$k131*$m131*x^($m131-1)+ $k132*x^((1-$m132)/$m132)/$m132" )-> reduce;
+$Exposant132n = Compute("$m132 - 1");
+#Exposant positif
+#Symbole de la racine n-ième
+
+
+$Rep13 = $f13prime1-> reduce;
+#Restreindre le domaine de la réponse pour les racines paires négatives
+$Rep13->{limits} = [1,5];
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $k131 x^{$m131} + $k132 \sqrt[$m132]{x}} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep13->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $k131 x^{$m131} + $k132 \sqrt[$m132]{x} \) a la forme d'une somme de puissances entières et fractionnaires. 
+$PAR
+Réécrivons la racine n-ième en exposant fractionnaire: \( \displaystyle f(x) =  $k131 x^{$m131} + $k132 x^{1/$m132} \).
+$PAR
+Dérivons.
+$BR
+\( \displaystyle f'(x) =  $k131 \cdot $m131 \cdot x^{$m131-1} + $k132 \cdot \frac{1}{$m132}\cdot x^{1/$m132 - 1} \) 
+$PAR
+Simplifions.
+$BR
+\( \displaystyle f'(x) =  $Coef131 x^{$Exposant131} + \frac{$k132 }{$m132}x^{$Exposant132/$m132} \) 
+$PAR
+Rendons l'exposant positif.
+$BR
+\( \displaystyle f'(x) =  $Coef131 x^{$Exposant131}+ \frac{$k132}{$m132 x^{$Exposant132n/$m132}} \) 
+$PAR
+Concluons en reécrivant la racine n-ième.
+$BR
+\( \displaystyle f'(x) =  $Coef131 x^{$Exposant131} + \frac{$k132}{$m132 \sqrt[$m132]{x^{$Exposant132n}}} \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

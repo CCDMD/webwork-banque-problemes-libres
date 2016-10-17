@@ -1,0 +1,93 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivation logarithmique', 'dérivée', 'fonction logarithmique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Propriétés des logarithmes ln(produit), avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+
+#Cas 101: Propriétés des logarithmes ln(produit)
+#Premier binôme
+$k1011 =random(3,15);
+$m1011 =random(5,9); 
+$k1012 =random(2,9);
+$m1012 =random(2,4); 
+
+$gcd1011 = gcd($k1011,$k1012);
+#Deuxième binôme
+$k1013 =random(2,9);
+$m1013 =random(5,9); 
+$m1014 =random(2,4); 
+$k1014temp = list_random(2, 3, -2,-3);
+$k1014 =Compute("$k1013*$k1014temp");
+$gcd1012 = gcd($k1013,$k1014);
+ 
+$poly1011 = Formula("$k1011*x^$m1011+$k1012*x^$m1012")->reduce;
+$poly1011S = Formula("$k1011/$gcd1011*x^($m1011-$m1012+1)+$k1012/$gcd1011*x")->reduce;
+$poly1011prime =Formula("$k1011*$m1011*x^($m1011-1)+ $k1012*$m1012*x^($m1012-1)")->reduce;
+$poly1011primeS =Formula("$k1011*$m1011/$gcd1011*x^($m1011-$m1012)+ $k1012*$m1012/$gcd1011")->reduce;
+$poly1012 = Formula("$k1013*x^$m1013+$k1014*x^$m1014")->reduce;
+$poly1012S = Formula("$k1013/$gcd1012*x^($m1013-$m1014+1)+$k1014/$gcd1012*x")->reduce;
+$poly1012prime =Formula("$k1013*$m1013*x^($m1013-1)+ $k1014*$m1014*x^($m1014-1)")->reduce;
+$poly1012primeS =Formula("$k1013*$m1013/$gcd1012*x^($m1013-$m1014)+ $k1014*$m1014/$gcd1012")->reduce;
+
+#La fonction
+$f101 = Formula("ln($poly1011*$poly1012)")-> reduce;
+$f101S = Formula("ln($poly1011) + ln($poly1012)")-> reduce;
+$f101prime1 = Formula("$poly1011prime/$poly1011 + $poly1012prime/$poly1012")->reduce;
+$f101prime2 = Formula("$poly1011primeS/$poly1011S + $poly1012primeS/$poly1012S")->reduce;
+
+$Rep101 = $f101prime2 -> reduce;
+
+#$f101prime5 = $f101 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f101} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep101->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f101 \) a la forme d'un logarithme naturel d'un produit. Avant de dériver la fonction, utilisons les propriétés des logarithmes: 
+$PAR
+\(\displaystyle f(x) =  $f101S \)
+$PAR
+Appliquons la formule de dérivation d'un logarithme et simplifions.  
+$BR
+\( \displaystyle f'(x) =  $f101prime1 \) 
+$BR
+\( \displaystyle f'(x) =  $f101prime2 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

@@ -1,0 +1,93 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée du produit de fonctions', 'fonction exponentielle', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Produit d'un monôme par exponentielle, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Cas 82: Produit monôme par exponentielle(monôme) (xe^ax)
+#Exponentielle
+$k821 =random(2,9);
+$k822 =random(10,30);
+
+#Les binômes
+$poly821 = Formula("x")->reduce;
+$poly821prime =Formula("1")->reduce;
+$poly822 = Formula("$k821*x + $k822") -> reduce;
+$poly822prime = Formula("$k821") -> reduce;
+#u et v
+$u82 = Formula("$poly821")->reduce;
+$u82prime = Formula("$poly821prime")->reduce;
+$v82 = Formula("e^($poly822)")->reduce;
+$v82prime = Formula("e^($poly822)*$poly822prime")->reduce;
+#La fonction
+$f82 = Formula("($poly821)*e^($poly822)")-> reduce;
+#$f82prime1 = Formula("($u82prime)*($v82) +($u82)*($v82prime)")->reduce;
+$f82prime1 = Formula("$poly821prime*e^($poly822) + $poly821*e^($poly822)*$poly822prime")->reduce;
+#Mise en évidence de l'exponentielle
+$f82prime2 = Formula("e^($poly822)*(1+ $k821*x)")->reduce;
+
+$Rep82 = $f82prime2 -> reduce;
+
+#$f82prime5 = $f82 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f82} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep82->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f82 \) a la forme d'un produit \(u \cdot v\) où
+$PAR
+\(\displaystyle u(x) =  $u82 \)
+$PAR
+\( \displaystyle v(x) =  $v82\) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u82prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v82prime\) 
+$PAR
+Appliquons la formule de dérivation d'un produit.  
+$BR
+\( \displaystyle f'(x) =  $f82prime1 \) 
+$PAR
+Faisons une mise en évidence simple de l'exponentielle. 
+$BR
+\( \displaystyle f'(x) =  $f82prime2 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

@@ -1,0 +1,96 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivée', 'dérivée de la fonction puissance', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl");
+
+COMMENT("Niveau de difficulté: Facile. Forme 1/(x^n) avec notation non standard. La solution n'a pas été programmée");
+
+
+TEXT(beginproblem());
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real");
+
+#Choix de la fonction f3 affichage non standard
+#La question a été changée.
+#Des macros ont été enlevées
+
+#Puissance de n au numérateur sans coefficient
+$n11 =random(11,25); 
+$f1 = Formula("x^$n11") -> reduce;
+@f1A =("x^{$n11}", "y^{$n11}","t^{$n11}","h^{$n11}","z^{$n11}");
+$f1prime = $f1 ->D('x')-> reduce;
+$Rep1 = $f1prime -> reduce;
+
+#Racine n-ieme au numérateur sans coefficient
+$n21 =list_random(3,5,7,11,17); 
+$f2 = Formula("x^(1/$n21)") -> reduce;
+@f2A =("\sqrt[$n21]{x}","\sqrt[$n21]{y}","\sqrt[$n21]{t}","\sqrt[$n21]{h}","\sqrt[$n21]{z}");
+$f2prime = $f2 ->D('x')-> reduce;
+$e21 = Formula("($n21-1)/$n21");
+$Rep2 = Formula("1/($n21*x^{$e21})");
+
+#Puissance de n au dénominateur sans coefficient
+$n31 =random(11,25); 
+$f3 = Formula("1/(x^$n31)") -> reduce;
+@f3A = ("\frac{1}{x^{$n31}}", "\frac{1}{y^{$n31}}","\frac{1}{t^{$n31}}","\frac{1}{h^{$n31}}","\frac{1}{z^{$n31}}");
+#$f3prime = $f3 ->D('x');
+$f3prime = Formula("-$n31/(x^($n31+1))");
+$Rep3 = $f3prime -> reduce;
+
+#Racine n-ieme au dénominateur sans coefficient
+$n41 =list_random(3,5,7,11,17); 
+$f4 = Formula("1/(x^(1/$n41))") -> reduce;
+@f4A =("\frac{1}{\sqrt[$n41]{x}}","\frac{1}{\sqrt[$n41]{y}}","\frac{1}{\sqrt[$n41]{t}}","\frac{1}{\sqrt[$n41]{h}}","\frac{1}{\sqrt[$n41]{z}}");
+$f4prime = $f4 ->D('x');
+$e41 = Formula("($n41+1)/$n41");
+$Rep4 = Formula("-1/($n41*x^{$e41})");
+
+#Vecteurs d'affichage du symbole de la variable, du symbole de la fonction et du symbole de la dérivée
+@VariableAffichage = ("x","y","t","h","z");
+@FonctionAffichage = ("f(x)","f(y)", "f(t)", "f(h)","f(z)","g(x)","g(y)", "g(t)", "g(h)","g(z)","u(x)","u(y)", "u(t)", "u(h)","u(z)","v(x)","v(y)", "v(t)", "v(h)","v(z)","s(x)","s(y)", "s(t)", "s(h)","s(z)");
+@DeriveeAffichage = ("f'(x)","f'(y)", "f'(t)", "f'(h)","f'(z)","g'(x)","g'(y)", "g'(t)", "g'(h)","g'(z)","u'(x)","u'(y)", "u'(t)", "u'(h)","u'(z)","v'(x)","v'(y)", "v'(t)", "v'(h)","v'(z)","s'(x)","s'(y)", "s'(t)", "s'(h)","s'(z)");
+
+#Bloc1
+#Choix de la Variable à Afficher et du symbole de la Fonction à Afficher du bloc 1
+@CVABloc1 = (random(0,4),random(0,4),random(0,4),random(0,4));
+#Choix du symbole de la Fonction à Afficher du bloc 1
+@CFABloc1 = ($CVABloc1[0] + 5*random(0,4), $CVABloc1[1] + 5*random(0,4),$CVABloc1[2] + 5*random(0,4),$CVABloc1[3] + 5*random(0,4));
+#Vecteur des fonctions du bloc 1 (fct f1 à f4)
+@FctBloc1 =("x^{$n11}", "y^{$n11}","t^{$n11}","h^{$n11}","z^{$n11}","\sqrt[$n21]{x}","\sqrt[$n21]{y}","\sqrt[$n21]{t}","\sqrt[$n21]{h}","\sqrt[$n21]{z}","\frac{1}{x^{$n31}}", "\frac{1}{y^{$n31}}","\frac{1}{t^{$n31}}","\frac{1}{h^{$n31}}","\frac{1}{z^{$n31}}","\frac{1}{\sqrt[$n41]{x}}","\frac{1}{\sqrt[$n41]{y}}","\frac{1}{\sqrt[$n41]{t}}","\frac{1}{\sqrt[$n41]{h}}","\frac{1}{\sqrt[$n41]{z}}");
+#Réponse du bloc 1
+@RepBloc1 = ($Rep1, $Rep2,$Rep3,$Rep4);
+#Choisir l'ordre d'affichage des fonctions f1 à f4
+#Ne pas utiliser la fonction shuffle car, les fonctions f1 et f2 doivent être affichée en premier.
+@Bloc1 = (2,2,2,2);
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer la dérivée de la fonction \( \displaystyle $FonctionAffichage[$CFABloc1[0]] = $FctBloc1[5*$Bloc1[0]+$CVABloc1[0]]  \).
+$PAR
+ \( \displaystyle $DeriveeAffichage[$CFABloc1[0]] =  \) \{ans_rule(20)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+$Rep1A = $RepBloc1[$Bloc1[0]]->substitute(x => $VariableAffichage[$CVABloc1[0]]);
+
+ANS($Rep1A->cmp);
+
+ENDDOCUMENT(); 

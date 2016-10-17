@@ -1,0 +1,101 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('0/0', 'conjugué', 'fonction algébrique', 'fonction racine carrée', 'fonction rationnelle', 'forme indéterminée', 'limite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionLists.pl", "contextFraction.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen et Difficile. Un bloc de 4 limites algébriques d'indétermination 0/0 qui doivent être levée par une mise au même dénominateur ou par la multiplication par le conjugué ou par les deux. Ordre de présentation aléatoire.");
+
+TEXT(beginproblem());
+
+Context("Fraction-NoDecimals");
+Context()->variables->are(h=>"Real",t=>"Real", x => "Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Forme 0/0
+
+#Cas 6: Mise au même dénominateur avec 0 
+$a6=0;
+$m6=random(2,10);
+$f6A =Formula("(1/($m6-h)-1/$m6)/h")->reduce;
+$RepLA6 = Compute("1/($m6^2)");
+
+#Cas 7: Mise au même dénominateur sans 0 
+$a7=random(2,10);
+$m7=random(2,10);
+$m7c = Compute("$a7+$m7");
+$f7A =Formula("(1/($m7c-x)-1/$m7)/(x-$a7)")->reduce;
+$RepLA7 = Compute("1/($m7^2)");
+
+#Cas 8: Multiplication par le conjugué avec un facteur négatif lors de la simplification
+#Pour avoir un facteur positif, il faut permuter le numérateur
+$a8=non_zero_random(-10,10);
+$m8=random(2,10);
+$m8c = Compute("$a8+$m8^2");
+$f8A =Formula("(sqrt($m8c-x)-$m8)/(x-$a8)")->reduce;
+$RepLA8 = Compute("-1/(2*$m8)");
+
+#Cas 9 Mise au même dénominateur et multiplication par le conjugué
+$a9=non_zero_random(-10,10);
+$m9=random(2,10);
+$m9c = Compute("$a9+$m9^2");
+$f9A =Formula("(1/(sqrt($m9c-x))-1/$m9)/(x-$a9)")->reduce;
+$RepLA9 = Compute("1/(2*$m9^3)");
+
+
+#affichage aléatoire
+@ListeAffichage000 = ($f6A,$f7A,$f8A,$f9A);
+@ListeAffichage001 = ("$a6","$a7","$a8","$a9");
+@ListeAffichage002 = ("h","x","x","x" );
+@RepAffichage000 = ($RepLA6,$RepLA7,$RepLA8,$RepLA9);
+#La fonction shuffle n'a pas été utilisée parce que les premiers doivent être utilisés avant les autres
+$temp200 =random(0,3);
+if ($temp200 == 0) {@R000 = (0, 1, 2, 3);}
+elsif ($temp200 == 1)  {@R000 = (1, 0, 3, 2);}
+elsif ($temp200 == 2)  {@R000 = (1, 0, 2, 3);}
+else {@R000 = (0, 1, 3 ,2);}
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer les limites suivantes.$BR
+
+\{ BeginList("OL", type=>"a") \}
+
+$ITEM \( \displaystyle {\lim_{$ListeAffichage002[$R000[0]] \rightarrow $ListeAffichage001[$R000[0]]} $ListeAffichage000[$R000[0]]  }\)  = \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM \( \displaystyle {\lim_{$ListeAffichage002[$R000[1]] \rightarrow $ListeAffichage001[$R000[1]]}$ListeAffichage000[$R000[1]]  }\)  = \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM \( \displaystyle {\lim_{$ListeAffichage002[$R000[2]] \rightarrow $ListeAffichage001[$R000[2]]}$ListeAffichage000[$R000[2]]  }\)  = \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM \( \displaystyle {\lim_{$ListeAffichage002[$R000[3]] \rightarrow $ListeAffichage001[$R000[3]]}$ListeAffichage000[$R000[3]]  }\)  = \{ans_rule(20)\} 
+$ITEMSEP
+
+\{ EndList("OL") \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepAffichage000[$R000[0]]->cmp);
+ANS($RepAffichage000[$R000[1]]->cmp);
+ANS($RepAffichage000[$R000[2]]->cmp);
+ANS($RepAffichage000[$R000[3]]->cmp);
+
+
+
+
+ENDDOCUMENT(); 

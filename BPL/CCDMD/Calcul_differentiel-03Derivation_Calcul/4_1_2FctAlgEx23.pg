@@ -1,0 +1,85 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivée', 'dérivée du produit de fonctions', 'fonction algébrique', 'fonction polynomiale', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Produit d'un monôme par un binôme, sans exposant, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Cas 23: Produit d'un monôme par un binôme
+#Monôme
+$k231 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10); 
+$m231 =random(2,9); 
+$k232 = 0; 
+$m232 =0; 
+#binôme
+$k233 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k233) == abs($k231)) {$k233 = 12;};
+$m233 =random(5,9); 
+$k234 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k234) == abs($k233)) {$k234 = 111;};
+$m234 =random(1,4); 
+$n231 = 1;
+$n232 = 1;
+
+$f23 = Formula("($k231*x^$m231)*($k233*x^$m233+$k234*x^$m234)") -> reduce;
+$f23prime1old = $f23 ->D('x')-> reduce;
+$f23s =Formula("$k231*$k233*x^($m231 + $m233) + $k231*$k234*x^($m234+$m231)") -> reduce; 
+
+#$f23prime1 = $f23s ->D('x')->reduce;
+$coef231 = Compute("($m231 + $m233)*$k231*$k233");
+$coef232 = Compute("$k231*$k234*($m234+$m231)");
+$f23prime1 =Formula("$coef231*x^($m231 + $m233-1) + $coef232*x^($m234+$m231-1)") -> reduce; 
+
+
+$Rep23 = $f23prime1 -> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f23} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+#$Rep5A = $RepBloc2[$Bloc2[0]]->substitute(x => $VariableAffichage[$CVABloc2[0]]);
+#ANS($Rep5A->cmp);
+
+ANS($Rep23->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f23 \) a la forme d'un produit \(u \cdot v\), mais il est plus simple de développer la fonction afin d'obtenir une somme: \( \displaystyle f(x) =  $f23s \).
+$PAR
+Appliquons la formule de dérivation d'une somme.  
+$BR
+\( \displaystyle f'(x) =  $f23prime1 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

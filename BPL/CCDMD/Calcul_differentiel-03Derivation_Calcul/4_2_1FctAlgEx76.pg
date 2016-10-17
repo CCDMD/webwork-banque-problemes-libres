@@ -1,0 +1,86 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la somme de fonctions', 'fonction exponentielle', 'fonction logarithmique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen.  Somme exponentielle, puissance et ln (e^(ax) + b*x^n + c*ln(d*x + e)), avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+
+
+#Cas 76: Somme exponentielle, puissance et ln
+#Puissance 
+$k761 =random(3,15);
+$m761 =random(2,9); 
+#Ln
+$k762 =random(3,15);
+$k763temp = list_random(2, 3, -2, -3);
+$k763 =Compute("$k762*$k763temp");
+#Exponentielle
+$k764 =list_random(-11,-7,-6,-5,-4,-3, 3,4,5,7,11);
+
+$poly761 = Formula("$k764*x") -> reduce;
+$poly761prime = Formula("$k764") -> reduce;
+$poly762 = Formula("$k762*x +$k763") -> reduce;
+$poly762prime = Formula("$k762") -> reduce;
+$gcd762 = gcd($k762,$k763);
+$poly762S = Formula("$k762/$gcd762*x +$k763/$gcd762") -> reduce;
+$poly762primeS = Formula("$k762/$gcd762") -> reduce;
+
+$f76 = Formula("e^($poly761) + $k761*x^$m761 + ln($poly762)")-> reduce;
+$f76prime1 = Formula("e^($poly761)*$poly761prime + $k761*$m761*x^($m761-1) + $poly762prime/$poly762")->reduce;
+$f76prime2 = Formula("$poly761prime*e^($poly761) + $k761*$m761*x^($m761-1) + $poly762prime/$poly762")->reduce;
+$f76prime3 = Formula("$poly761prime*e^($poly761) + $k761*$m761*x^($m761-1) + $poly762primeS/$poly762S")->reduce;
+$Rep76 = $f76prime3 -> reduce;
+
+#$f76prime5 = $f76 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f76} \).
+$PAR
+\( \displaystyle f'(x) =  \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep76->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f76 \) a la forme d'une somme de fonctions. Ainsi, 
+$PAR
+\( \displaystyle f'(x) =  e^{$poly761} ($poly761)' +$k761\cdot (x^{$m761})' + \frac{($poly762)'} {$poly762}\)  $SPACE (Formule de dérivation)
+$PAR
+\( \displaystyle f'(x) =  e^{$poly761} ($poly761prime) +$k761\cdot $m761 \cdot x^{$m761-1} + \frac{$poly762prime} {$poly762} \)  $SPACE (Formule de dérivation)
+$PAR
+\( \displaystyle f'(x) =  $f76prime2 \) $SPACE (Simplification) 
+$PAR
+\( \displaystyle f'(x) =  $f76prime3 \) $SPACE (Simplification de la fraction, si possible) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

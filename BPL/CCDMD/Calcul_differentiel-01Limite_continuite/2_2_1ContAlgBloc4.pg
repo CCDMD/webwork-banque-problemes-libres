@@ -1,0 +1,277 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('continuité en un point', 'discontinuité', 'fonction définie par parties', 'fonction polynomiale')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl", "unionLists.pl","unionTables.pl","contextPiecewiseFunction.pl","parserPopUp.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Bloc de deux fonctions avec une discontinuité ou non. 1) Fonction définie par morceaux (linéaire et linéaire) 2) Fonction définie par 3 morceaux (linéaire, linéaire et quadratique) ");
+
+TEXT(beginproblem());
+
+Context("PiecewiseFunction");
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+Context()->noreduce('(-x)-y'); 
+
+#Cas 2: Fonction linéaire et linéaire
+#Valeur a21
+#ne pas choisir 0, -1,1 car le calcul est trop facile
+$a21 = list_random(-5,-4,-3,-2,2,3,4,5);
+
+#les deux morceaux de la fonction
+$n21 = list_random(-5,-4,-3,-2,2,3,4,5,6,7,8,9);
+$n22 =list_random(-5,-4,-3,-2,2,3,4,5,6,7,8,9);
+#Les pentes ne doivent pas être égales, car le calcul est trop facile
+if (abs($n21) == abs($n22)) {$n22 = 12;}
+$k22 = random(1,9);
+#Si le saut est nul, alors la fonction est continue.
+$saut21 = list_random(0,0,0,0,0,-1,1,-2,2);
+$k22temp = Compute("$n21*$a21-$k22-$n22*$a21+$saut21");
+#Choix de l'affichage du premier morceau
+$temp21 = random(-1,1,2);
+if ($temp21 == 1) {$f21 = Formula("$n21*x-$k22"); $f22 = Formula("$n22*x +$k22temp") ->reduce;}
+else
+{$f22 = Formula("$n21*x-$k22"); $f21 = Formula("$n22*x +$k22temp") ->reduce;}
+
+#Fonction définie par morceaux et réponses
+#Choisir la valeur de la fonction en x = a21
+$temp20 = random(0,2);
+if ($temp20 == 0) 
+{#La fonction n'est pas définie en x = a
+$f20 = PiecewiseFunction("$f21 if  x < $a21 else $f22 if x > $a21 ");
+#Réponse
+$RepFA21 = Compute("nep");
+$RepLimiteG21 = $f21->eval(x=>$a21);
+$RepLimiteD21 = $f22->eval(x=>$a21);
+$RepPopUp21 = PopUp(["Choisir", "Oui", "Non"], "Non");}
+elsif ($temp20 == 1)
+{#La fonction est définie en x = a
+$f20 = PiecewiseFunction("$f21 if  x <= $a21 else $f22 if x > $a21  ");
+$RepFA21 = $f20->eval(x=>$a21);
+$RepLimiteG21 = $f21->eval(x=>$a21);
+$RepLimiteD21 = $f22->eval(x=>$a21);
+if ($RepLimiteG21 == $RepLimiteD21) {$RepPopUp21 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else
+{$RepPopUp21 = PopUp(["Choisir", "Oui", "Non"], "Non");}}
+else
+{#La fonction est définie en x = a
+$f20 = PiecewiseFunction("$f21 if  x < $a21 else $f22 if x >= $a21  ");
+$RepFA21 = $f20->eval(x=>$a21);
+$RepLimiteG21 = $f21->eval(x=>$a21);
+$RepLimiteD21 = $f22->eval(x=>$a21);
+if ($RepLimiteG21 == $RepLimiteD21) {$RepPopUp21 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else
+{$RepPopUp21 = PopUp(["Choisir", "Oui", "Non"], "Non");}}
+
+
+
+#Cas 6: Fonction ayant 3 morceaux: linéaire, linéaire et quadratique
+
+#Valeur a61 et a62 
+#ne pas choisir 0, -1,1 car le calcul est trop facile et a61<a62
+$a61temp = list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8,9,10);
+$a62temp = list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8,9,10);
+if (abs($a61temp) == abs($a62temp)) {$a61 = $a61temp; $a62 = 12;}
+elsif ($a61temp > $a62temp) { $a61 = $a62temp;$a62 = $a61temp;}
+else {$a61 = $a61temp;$a62 = $a62temp;}
+
+#Si le saut est nul, alors la fonction est continue.
+$saut61 = list_random(0,0,0,0,0,-1,1,-2,2);
+$saut62 = list_random(0,0,0,0,0,-1,1,-2,2);
+
+#Les pentes des droites 
+$n61 = random(2,10);
+$n62 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8,9,10);
+if ($n61 == $n62) {$n62 = $n61 + 1;}
+#L'ordonnée à l'origine d'une droite
+$k61 = random(1,9);
+
+#Choix de l'affichage des trois morceaux
+$temp61 = random(0,2);
+if ($temp61 == 0) {
+#linéaire,linéaire, quadratique
+$k62temp1 = Compute("$n61*$a61-$k61-$n62*$a61+$saut61");
+$k63 = Compute("$n62*$a62 +$k62temp1 + ($a62)^2 + $saut62");
+$f61 = Formula("$n61*x -$k61") ->reduce;
+$f62 = Formula("$n62*x+$k62temp1")->reduce; 
+$f63 = Formula("-1*(x)^2 +$k63") ->reduce;}
+elsif ($temp61 == 1)
+{
+#linéaire, quadratique,linéaire
+$k62 = Compute("$n61*$a61 -$k61 + ($a61)^2 + $saut61");
+$k63temp1 = Compute("-1*($a62)^2 + $k62 - $n62*$a62 + $saut62");
+$f61 = Formula("$n61*x -$k61") ->reduce;
+$f62 = Formula("-1*(x)^2 +$k62") ->reduce;
+$f63 = Formula("$n62*x+$k63temp1")->reduce;}
+else
+{
+#quadratique,linéaire,linéaire
+$k61temp = Compute("-1*($a61)^2 + $k61-$n61*$a61 + $saut61");
+$k62 = Compute("$n61*$a62 + $k61temp - $n62*$a62 + $saut62");
+$f61 = Formula("-1*(x)^2 +$k61") ->reduce;
+$f62 = Formula("$n61*x + $k61temp") ->reduce;
+$f63 = Formula("$n62*x+$k62")->reduce; }
+
+
+
+#Fonction définie par morceaux et réponses
+#Choisir la valeur de la fonction en x = a61
+$temp60 = random(0,1);
+if ($temp60 == 0) 
+{#La fonction n'est pas définie en x = a61 ou en a62
+$temp61 = random(0,1);
+if ($temp61 == 0) 
+{#La fonction n'est pas définie en x = a61
+$f60 = PiecewiseFunction("$f61 if  x < $a61 else $f62 if $a61 < x< $a62 else $f63 if x >=$a62 ");
+#Réponse pour a61
+$RepFA61 = Compute("nep");
+$RepLimiteG61 = $f61->eval(x=>$a61);
+$RepLimiteD61 = $f62->eval(x=>$a61);
+$RepPopUp61 = PopUp(["Choisir", "Oui", "Non"], "Non");
+#Réponse pour a62
+$RepFA62 = $f60->eval(x=>$a62);
+$RepLimiteG62 = $f62->eval(x=>$a62);
+$RepLimiteD62 = $f63->eval(x=>$a62);
+if ($RepLimiteG62 == $RepLimiteD62) {$RepPopUp62 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else
+{$RepPopUp62 = PopUp(["Choisir", "Oui", "Non"], "Non");}}
+else
+{#La fonction n'est pas définie en x = a62
+$f60 = PiecewiseFunction("$f61 if  x <= $a61 else $f62 if $a61 < x< $a62 else $f63 if x >$a62 ");
+#Réponse pour a61
+$RepFA61 = $f60->eval(x=>$a61);
+$RepLimiteG61 = $f61->eval(x=>$a61);
+$RepLimiteD61 = $f62->eval(x=>$a61);
+if ($RepLimiteG61 == $RepLimiteD61) {$RepPopUp61 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else
+{$RepPopUp61 = PopUp(["Choisir", "Oui", "Non"], "Non");}
+#Réponse pour a62
+$RepFA62 = Compute("nep");
+$RepLimiteG62 = $f62->eval(x=>$a62);
+$RepLimiteD62 = $f63->eval(x=>$a62);
+$RepPopUp62 = PopUp(["Choisir", "Oui", "Non"], "Non");}}
+else
+{#La fonction est définie en x = a61 et en a62
+$temp62 = random(0,3);
+if ($temp62 == 0)
+{$f60 = PiecewiseFunction("$f61 if  x <= $a61 else $f62 if $a61 < x< $a62 else $f63 if x >=$a62 ");}
+elsif ($temp62 == 1)
+{$f60 = PiecewiseFunction("$f61 if  x < $a61 else $f62 if $a61 <= x< $a62 else $f63 if x >=$a62 ");}
+elsif ($temp62 == 2)
+{$f60 = PiecewiseFunction("$f61 if  x < $a61 else $f62 if $a61 <= x<= $a62 else $f63 if x >$a62 ");}
+else
+{$f60 = PiecewiseFunction("$f61 if  x <= $a61 else $f62 if $a61 < x<= $a62 else $f63 if x >$a62 ");}
+#Réponse pour a61
+$RepFA61 = $f60->eval(x=>$a61);
+$RepLimiteG61 = $f61->eval(x=>$a61);
+$RepLimiteD61 = $f62->eval(x=>$a61);
+if ($RepLimiteG61 == $RepLimiteD61) {$RepPopUp61 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else
+{$RepPopUp61 = PopUp(["Choisir", "Oui", "Non"], "Non");}
+#Réponse pour a62
+$RepFA62 = $f60->eval(x=>$a62);
+$RepLimiteG62 = $f62->eval(x=>$a62);
+$RepLimiteD62 = $f63->eval(x=>$a62);
+if ($RepLimiteG62 == $RepLimiteD62) {$RepPopUp62 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else
+{$RepPopUp62 = PopUp(["Choisir", "Oui", "Non"], "Non");}
+}
+
+#Réponse
+#on peut choisir entre a61 et a62
+$temp62 = random(0,1);
+if ($temp62 == 0) {
+$a60 = $a61;
+$RepFA60 = $RepFA61;
+$RepLimiteG60 = $RepLimiteG61;
+$RepLimiteD60 = $RepLimiteD61;
+$RepPopUp60 = $RepPopUp61; }
+else
+{$a60 = $a62;
+$RepFA60 = $RepFA62;
+$RepLimiteG60 = $RepLimiteG62;
+$RepLimiteD60 = $RepLimiteD62;
+$RepPopUp60 = $RepPopUp62; 
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+\{
+ColumnTable(
+"1) Soit la fonction suivante: ".$BR. 
+"\[f(x)=$f20\]".
+$BR.
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["Note: Écrire \( \bf nep \), si la fonction n'est pas $BR définie en \(x = $a21\)"], align=>LEFT).
+EndTable(),
+"Déterminer les valeurs suivantes et répondre à la question:".
+$BR.
+BeginList("OL", type=>"a").
+$ITEM. " \( \displaystyle f($a21)  \)  = ". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{  \lim_{x \rightarrow $a21^{-}} f(x) = }\)". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{\lim_{x \rightarrow $a21^{+}} f(x) = }\)". ans_rule(20).
+$ITEMSEP.
+$ITEM. "Est-ce que la fonction est continue en \(x = $a21\)? ".
+$RepPopUp21->menu().
+EndList("OL"),
+indent=>"0", separation=>"10", valign=>"TOP"
+);
+\}
+
+\{
+ColumnTable(
+"2) Soit la fonction suivante: ".$BR. 
+"\[f(x)=$f60\]".
+$BR.
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["Note: Écrire \( \bf nep \), si la fonction n'est pas $BR définie en \(x = $a60\)"], align=>LEFT).
+EndTable(),
+"Déterminer les valeurs suivantes et répondre à la question:".
+$BR.
+BeginList("OL", type=>"a").
+$ITEM. " \( \displaystyle f($a60)  \)  = ". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{  \lim_{x \rightarrow $a60^{-}} f(x) = }\)". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{\lim_{x \rightarrow $a60^{+}} f(x) = }\)". ans_rule(20).
+$ITEMSEP.
+$ITEM. "Est-ce que la fonction est continue en \(x = $a60\)? ".
+$RepPopUp60->menu().
+EndList("OL"),
+indent=>"0", separation=>"10", valign=>"TOP"
+);
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($RepFA21->cmp());
+ANS(num_cmp($RepLimiteG21));
+ANS(num_cmp($RepLimiteD21));
+ANS( $RepPopUp21->cmp() );
+
+ANS($RepFA60->cmp());
+ANS(num_cmp($RepLimiteG60));
+ANS(num_cmp($RepLimiteD60));
+ANS( $RepPopUp60->cmp() );
+
+
+ENDDOCUMENT();

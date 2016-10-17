@@ -1,0 +1,96 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'fonction exponentielle', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Fonction exponentielle simple de base b, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Cas 62: Exponentielle de base b 
+$k621 =random(3,15);
+$m621 =random(6,9); 
+$k622 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k622) == abs($k621)) {$k622 = 11;};
+$m622 =random(2,5);  
+$k623 =list_random(-10,-9,-8,-6,-4,-3,-2,2, 3,4,6,8, 9,10,12,18, 15);
+if (abs($k623) == abs($k621)) {$k623 = 12;};
+$m623 =random(0,1); 
+$base621 = random(2,9); 
+
+if ($m623 == 0)
+{#Problème d'affichage, car le ln(b) est calculée
+$poly621 = Formula("$k621*x^$m621+$k622*x^$m622+ $k623")->reduce;
+$poly621prime =Formula("$k621*$m621*x^($m621-1)+$k622*$m622*x^($m622-1)")-> reduce;
+$gcd621 = gcd($k621*$m621,$k622*$m622);
+$poly621primeS =Formula("$gcd621*x^($m622-1)*($k621*$m621/$gcd621*x^($m621-$m622) + $k622*$m622/$gcd621)")-> reduce;
+}
+else
+{$poly621 = Formula("$k621*x^$m621+$k622*x^$m622+ $k623*x^$m623")->reduce;
+$poly621prime =Formula("$k621*$m621*x^($m621-1)+$k622*$m622*x^($m622-1)+$k623*$m623")-> reduce;
+$gcd621temp = gcd($k621*$m621,$k622*$m622);
+$gcd621 = gcd($gcd621temp, $k623*$m623);
+$poly621primeS =Formula("$gcd621*($k621*$m621/$gcd621*x^($m621-1)+$k622*$m622/$gcd621*x^($m622-1)+$k623*$m623/$gcd621)")-> reduce;
+}
+
+#Fonction à dériver
+$f62 = Formula("$base621^($poly621)")-> reduce;
+#Calcul de la dérivée
+$f62prime1 = $f62 ->D('x')-> reduce;
+$f62prime1A = "$base621^{$poly621} $poly621prime ln($base621)";
+$f62prime2A = "$poly621prime $base621^{$poly621} ln($base621)";
+#Vérifier si une mise en évidence simple peut être faite sur les coefficients
+$f62prime3A = "$poly621primeS $base621^{$poly621} ln($base621)";
+
+$Rep62 = $f62prime1 -> reduce;
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f62} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep62->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f62 \) a la forme d'une exponentielle de base $base621 d'une fonction. Ainsi, 
+$PAR
+\( \displaystyle f'(x) =  $f62 ($poly621)' \ln($base621) \)  $SPACE (Formule de dérivation d'une exponentielle de base $base621)
+$PAR
+\( \displaystyle f'(x) =  $base621^{$poly621} ($poly621prime) \ln($base621) \) $SPACE (Formule de dérivation d'un polynôme) 
+$PAR
+\( \displaystyle f'(x) = \ln($base621) ($poly621prime) $base621^{$poly621}  \) $SPACE (Ordre de présentation) 
+$PAR
+\( \displaystyle f'(x) =  \ln($base621)($poly621primeS) $base621^{$poly621} \) $SPACE (Mise en évidence simple, si possible) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

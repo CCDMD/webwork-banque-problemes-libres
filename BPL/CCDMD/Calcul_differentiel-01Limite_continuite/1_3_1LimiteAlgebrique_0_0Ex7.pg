@@ -1,0 +1,53 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('0/0', 'fonction algébrique', 'fonction rationnelle', 'forme indéterminée', 'limite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionLists.pl", "contextFraction.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Limite algébrique d'indétermination 0/0 qui doit être levée par une mise au même dénominateur.");
+
+TEXT(beginproblem());
+
+Context("Fraction-NoDecimals");
+Context()->variables->are(h=>"Real",t=>"Real", x => "Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Forme 0/0
+
+#Cas 7: Mise au même dénominateur sans 0 
+$a7=random(2,10);
+$m7=random(2,10);
+$m7c = Compute("$a7+$m7");
+$f7A =Formula("(1/($m7c-x)-1/$m7)/(x-$a7)")->reduce;
+$RepLA7 = Compute("1/($m7^2)");
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la limite suivante.$BR
+
+ \( \displaystyle {\lim_{x \rightarrow $a7} $f7A}\)  = \{ans_rule(20)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepLA7->cmp);
+
+
+
+
+ENDDOCUMENT(); 

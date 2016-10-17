@@ -1,0 +1,193 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivée', 'dérivée de la fonction puissance', 'dérivée de la somme de fonctions', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl", 
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Somme de puissances entières positives et fractionnaires négatives (a1*x^n1 + a2/x^(1/n2)), avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y'); 
+
+#Cas 14: Somme d'une puissance entière positive et d'une racine au dénominateur
+$k141 =random(3,15);
+$m141 =random(2,9); 
+$m142 =random(2,9);  
+#Il ne faut pas pouvoir faire une simplification
+$k142temp =list_random(-7,-5,-3,-2,2, 3,5,7);
+if (abs($k142temp) == $m142) {$k142 = Compute("abs($k142temp) + 1");}
+else
+{$k142 = $k142temp;}
+
+#Fonction à dériver
+$f14 = Formula("$k141 x^{$m141} + $k142/x^(1/$m142)")->reduce;
+if ($k142 >= 0)
+{#C'est une somme
+if ($m142 == 2) 
+{#Ne pas écrire le 2
+$f14A = "$k141 x^{$m141} + \frac{$k142}{ \sqrt{x}}";}
+else
+{#Écrire la racine n-ième
+$f14A = "$k141 x^{$m141} + \frac{$k142}{ \sqrt[$m142]{x}}";}
+$f14s1 = "$k141 x^{$m141} + \frac{$k142}{x^{1/$m142}}";
+$f14s2 = "$k141 x^{$m141} + $k142 x^{-1/$m142}";}
+else
+{#C'est une différence
+$Coef142temp = abs($k142);
+if ($m142 == 2) 
+{#Ne pas écrire le 2
+$f14A = "$k141 x^{$m141} - \frac{$Coef142temp}{ \sqrt{x}}";}
+else
+{#Écrire la racine n-ième
+$f14A = "$k141 x^{$m141} - \frac{$Coef142temp}{ \sqrt[$m142]{x}}";}
+
+$f14s1 = "$k141 x^{$m141} - \frac{$Coef142temp}{x^{1/$m142}}";
+$f14s2 = "$k141 x^{$m141} - $Coef142temp x^{-1/$m142}";}
+
+#Calcul de la dérivée
+$f14prime1 = Formula("$k141*$m141*x^($m141-1) - $k142*x^(-1/$m142 - 1)/$m142" )-> reduce;
+$f14prime1A = "$k141 \cdot $m141 \cdot x^{$m141-1} + $k142 \cdot \frac{-1}{$m142}\cdot x^{-1/$m142 - 1}";
+
+#Simplification
+if ($k142 >= 0)
+{#La somme devient une différence
+$Coef141 = Compute("$k141*$m141");
+$Exposant141 = Compute("$m141-1");
+$Coef142 = abs($k142);
+$Exposant142 = Compute("-1-$m142");
+if ($Exposant141 == 1)
+{#Ne pas afficher l'exposant 141
+$f14prime2A = "$Coef141 x - \frac{$Coef142}{$m142}x^{$Exposant142/$m142}";
+$Exposant142n = Compute("$m142 + 1");
+#Exposant positif
+$f14prime3A = "$Coef141 x- \frac{$Coef142}{$m142 x^{$Exposant142n/$m142}}";
+#Symbole de la racine n-ième
+$f14prime4A = "$Coef141 x - \frac{$Coef142}{$m142 \sqrt[$m142]{x^{$Exposant142n}}}";}
+else
+{# afficher l'exposant 141
+$f14prime2A = "$Coef141 x^{$Exposant141} - \frac{$Coef142}{$m142}x^{$Exposant142/$m142}";
+$Exposant142n = Compute("$m142 + 1");
+#Exposant positif
+$f14prime3A = "$Coef141 x^{$Exposant141}- \frac{$Coef142}{$m142 x^{$Exposant142n/$m142}}";
+#Symbole de la racine n-ième
+$f14prime4A = "$Coef141 x^{$Exposant141} - \frac{$Coef142}{$m142 \sqrt[$m142]{x^{$Exposant142n}}}";}}
+else
+{#La somme reste une somme
+$Coef141 = Compute("$k141*$m141");
+$Exposant141 = Compute("$m141-1");
+$Coef142 = abs($k142);
+$Exposant142 = Compute("-1-$m142");
+if ($Exposant141 == 1)
+{#Ne pas afficher l'exposant 141
+$f14prime2A = "$Coef141 x + \frac{$Coef142 }{$m142}x^{$Exposant142/$m142}";
+$Exposant142n = Compute("$m142 + 1");
+#Exposant positif
+$f14prime3A = "$Coef141 x+ \frac{$Coef142}{$m142 x^{$Exposant142n/$m142}}";
+#Symbole de la racine n-ième
+$f14prime4A = "$Coef141 x + \frac{$Coef142}{$m142 \sqrt[$m142]{x^{$Exposant142n}}}";}
+else
+{# afficher l'exposant 141
+$f14prime2A = "$Coef141 x^{$Exposant141} + \frac{$Coef142 }{$m142}x^{$Exposant142/$m142}";
+$Exposant142n = Compute("$m142 + 1");
+#Exposant positif
+$f14prime3A = "$Coef141 x^{$Exposant141}+ \frac{$Coef142}{$m142 x^{$Exposant142n/$m142}}";
+#Symbole de la racine n-ième
+$f14prime4A = "$Coef141 x^{$Exposant141} + \frac{$Coef142}{$m142 \sqrt[$m142]{x^{$Exposant142n}}}";}}
+
+
+
+$Rep14 = $f14prime1-> reduce;
+#Restreindre le domaine de la réponse pour les racines paires négatives
+$Rep14->{limits} = [1,5];
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f14A} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep14->cmp);
+
+if ($k142 >= 0)
+{#C'est une somme
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f14A \) a la forme d'une somme de puissances entières et fractionnaires. 
+$PAR
+Réécrivons la racine $m142-ième en exposant fractionnaire: \( \displaystyle f(x) =  $f14s1 \).
+$PAR
+Pour dériver une puissance, il faut qu'elle soit au numérateur: \( \displaystyle f(x) =  $f14s2 \).
+$PAR
+Dérivons.
+$BR
+\( \displaystyle f'(x) =  $f14prime1A \) 
+$PAR
+Simplifions.
+$BR
+\( \displaystyle f'(x) =  $f14prime2A \) 
+$PAR
+Rendons l'exposant positif.
+$BR
+\( \displaystyle f'(x) =  $f14prime3A \) 
+$PAR
+Concluons en reécrivant la racine $m142-ième.
+$BR
+\( \displaystyle f'(x) =  $f14prime4A \) 
+
+END_SOLUTION
+Context()->normalStrings;
+}
+else
+{#C'est une différence
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f14A \) a la forme d'une différence de puissances entières et fractionnaires. 
+$PAR
+Réécrivons la racine $m142-ième en exposant fractionnaire: \( \displaystyle f(x) =  $f14s1 \).
+$PAR
+Pour dériver une puissance, il faut qu'elle soit au numérateur: \( \displaystyle f(x) =  $f14s2 \).
+$PAR
+Dérivons.
+$BR
+\( \displaystyle f'(x) =  $f14prime1A \) 
+$PAR
+Simplifions.
+$BR
+\( \displaystyle f'(x) =  $f14prime2A \) 
+$PAR
+Rendons l'exposant positif.
+$BR
+\( \displaystyle f'(x) =  $f14prime3A \) 
+$PAR
+Concluons en reécrivant la racine $m142-ième.
+$BR
+\( \displaystyle f'(x) =  $f14prime4A \) 
+
+END_SOLUTION
+Context()->normalStrings;}
+
+
+ENDDOCUMENT(); 

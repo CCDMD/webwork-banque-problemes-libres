@@ -1,0 +1,106 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation - définition et interprétation)
+## KEYWORDS('définition', 'dérivée en un point', 'fonction racine carrée')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionLists.pl","unionTables.pl", "PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Difficile. Fonction racine simple en x = a");
+
+TEXT(beginproblem());
+
+Context()->variables->are(h=>"Real",t=>"Real",a=>"Real", x => "Real",p=>"Real",q=>"Real",r=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+
+#
+#Niveau difficile
+#
+
+#Fonction racine simple avec a
+$a8= a;
+$k81 = random(3,8);
+$m81 =random(11,25); 
+$f8 = Formula("sqrt(x-$k81)");
+$f8A ="\sqrt{x-$k81}";
+$f8prime = $f8 ->D('x');
+$f8primea = $f8prime->substitute(x => "a");
+$RepDD8 = Formula("$f8primea") ->reduce;
+$RepDD8->{limits} = [$k81,50];
+
+#Fonction quotient avec un binôme avec a
+$a9= a;
+$k91 = random(3,8);
+$k92 = random(10,22);
+$f9 = Formula("$k91/($k91 x -$k92)");
+$f9A ="\frac{$k91}{$k91 x -$k92}";
+$f9prime = $f9 ->D('x');
+$f9primea = $f9prime->substitute(x => "a");
+$RepDD9 = Formula("$f9primea") ->reduce;
+#$RepDD9 = Formula("-2*$k91/($k91 a -$k92)^3") ->reduce;
+
+#Fonction racine avec coefficient avec a et t
+#Réponse entrée manuellement
+$a10= a;
+$k101 = random(3,8);
+$m101 =random(11,25); 
+$DomaineRacine101 = Compute("$m101/$k101");
+$f10 = Formula("sqrt($k101 x-$m101)");
+$f10A ="\sqrt{$k101 t-$m101}";
+$f10primea = "$k101/(2*(sqrt($k101 a-$m101)))";
+$RepDD10 = Formula("$f10primea") ->reduce;
+$RepDD10->{limits} = [$DomaineRacine101,50];
+
+#Fonction racine au dénominateur avec a
+$a11= a;
+$k111 = random(3,8);
+$m111 =random(11,25); 
+$DomaineRacine111 = Compute("$m111/$k111+1");
+$f11 = Formula("1/sqrt($k111*x-$m111)");
+$f11A ="\frac{1}{\sqrt{$k111 x-$m111}}";
+$f11primeOLD = $f11 ->D('x');
+$f11prime = Formula("-$k111/(2*(sqrt($k111*x-$m111))^3)");
+$f11primea = $f11prime->substitute(x => "a");
+$RepDD11 = Formula("$f11primea") ->reduce;
+$RepDD11->{limits} = [$DomaineRacine111,50];
+
+#Fonction quadratique avec paramètres p, q, r et a
+$a12=a;
+$f12 = Formula("p x^2 + q x + r");
+$f12A ="p x^2 + q x + r";
+$f12prime = $f12 ->D('x');
+$f12primea = $f12prime->substitute(x => "a");
+$RepDD12 = Formula("$f12primea") ->reduce;
+
+#Bloc 3
+@ListeAffichage3A = ("f(x) = $f8A","f(x) = $f9A","h(t) = $f10A","g(x) = $f11A", "f(x) = $f12A, \rm{ avec \ } \it{ p, q, r }\in \mathbb{R}^* ");
+@ListeAffichage3B = ("f'($a8) = ","f'($a9) = ","h'($a10) = ","g'($a11) = ","f'($a12) = " );
+@RepAffichage3 = ($RepDD8,$RepDD9,$RepDD10,$RepDD11,$RepDD12);
+@R3 = (0,0,0,0,0);
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction  \( \displaystyle $ListeAffichage3A[$R3[0]]  \) en la valeur indiquée.
+$PAR $SPACE$SPACE  \( \displaystyle $ListeAffichage3B[$R3[0]]  \) \{ans_rule(20)\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(@RepAffichage3[$R3[0]]->cmp);
+
+ENDDOCUMENT(); 

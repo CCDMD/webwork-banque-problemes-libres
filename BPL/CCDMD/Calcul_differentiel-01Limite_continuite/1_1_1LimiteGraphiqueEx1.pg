@@ -1,0 +1,92 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction définie par parties', 'graphique', 'limite', 'limite à gauche et à droite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+  "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","parserPopUp.pl","unionLists.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Fonction constante positive ou négative");
+
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+
+#Cas 1: Fonction constante positive ou négative
+$a1=random(1,4);
+$temp1 = random(-1,1,2);
+if ($temp1 == -1) {
+$k1 = random(-6,-2);
+#Axe des y
+$y11=-8;
+$y12= 2;
+$fy1 = 2;}
+else
+{$k1 = random(2,7);
+#Axe des y
+$y11=-1;
+$y12= 9;
+$fy1 = 9;}
+#Axe des x
+$x11=-1;
+$x12=5;
+#Fonction et réponses
+$f1 = "$k1 for x in <$x11,$x12> using color:red and weight:2";
+$RepLimiteG1 = $k1;
+$RepLimiteD1 = $k1;
+$RepPopUp1 = PopUp(["Choisir", "Oui", "Non"], "Oui");
+#Graphique
+$graphique1 = init_graph($x11,$y11,$x12,$y12,'axes'=>[0,0],'grid'=>[6,10]);
+$graphique1 -> lb('reset');
+$graphique1 -> lb(new Label ( 1,0,'1','black','left','top'));
+$graphique1 -> lb(new Label ( 0,1,'1','black','right','top'));
+$graphique1 -> lb(new Label ( 4,0,'x','black','left','top'));
+$graphique1 -> lb(new Label ( 0,$fy1,'f(x)','black','right','top'));
+add_functions($graphique1, $f1);
+$imageG1 = image(insertGraph($graphique1),width =>350,height=>350,tex_size=>350);
+
+
+BEGIN_TEXT
+
+\{
+ColumnTable("Calculer les limites suivantes en utilisant le graphique ci-contre et répondre à la question.".
+BeginList("OL", type=>"a").
+$ITEM. "\( \displaystyle \lim_{x\rightarrow $a1^{+}} f(x)  = \)". ans_rule(10).
+$ITEMSEP.
+$ITEM. "\( \displaystyle{\lim_{x\rightarrow $a1^{-}} f(x) } = \)". ans_rule(10).
+$ITEMSEP. 
+$ITEM. "La limite en \(x = $a1\) existe-t-elle? ".
+$RepPopUp1->menu().
+$ITEMSEP,
+$BCENTER.
+$imageG1.
+$BR.
+"Cliquer sur le graphique pour faire un agrandissement.".
+$BR.
+$ECENTER,
+indent=>"0", separation=>"50", valign=>"TOP"
+);
+\}
+
+
+END_TEXT
+
+ANS(num_cmp($RepLimiteD1));
+ANS(num_cmp($RepLimiteG1));
+ANS( $RepPopUp1->cmp() );
+
+
+ENDDOCUMENT(); 

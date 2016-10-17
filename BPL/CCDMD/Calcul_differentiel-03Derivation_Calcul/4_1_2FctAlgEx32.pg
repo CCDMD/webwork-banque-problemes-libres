@@ -1,0 +1,167 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivée', 'dérivée du quotient de fonctions', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Quotient d'un binôme par un binôme, sans exposant, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Cas 32: Quotient d'un binôme par un binôme
+#Premier binôme
+$k321 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10); 
+$m321 =random(6,9); 
+$k322 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10); 
+if (abs($k322) == abs($k321)) {$k322 = 11;};
+$m322 =random(2,5); 
+#Deuxième binôme
+$k323 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k323) == abs($k321)) {$k323 = 12;};
+$m323 =random(6,9); 
+$k324 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k324) == abs($k323)) {$k324 = 17;};
+$m324 =random(2,5); 
+$n321 = 1;
+$n322 = 1;
+
+
+$poly321 = Formula("$k321*x^$m321+$k322*x^$m322")->reduce;
+$poly321prime =$poly321 ->D('x')-> reduce;
+$poly322 =Formula("$k323*x^$m323+$k324*x^$m324")->reduce;
+$poly322prime =$poly322 ->D('x')-> reduce;
+$u32 = Formula("$poly321")->reduce;
+$u32prime = Formula("$poly321prime")->reduce;
+$v32 = Formula("$poly322")->reduce;
+$v32prime = Formula("$poly322prime")->reduce;
+
+$f32 = Formula("($k321*x^$m321+$k322*x^$m322)/($k323*x^$m323+$k324*x^$m324)") -> reduce;
+$f32prime1old = $f32 ->D('x')-> reduce;
+$f32prime1 = Formula("(($u32prime)*($v32) -($u32)*($v32prime))/($poly322^2)")->reduce;
+#Aucune mise en évidence de u ou v n'est possible, car u et v ne sont pas affectés d'exposant.
+
+#Simplifier la dérivée en développant
+$exposant321 = Compute("$m323-1+$m321");
+$exposant322 = Compute("$m323-1+$m322");
+$exposant323 = Compute("$m324-1+$m321");
+$exposant324 = Compute("$m324-1+$m322");
+if ($exposant322 == $exposant323) 
+{#2 exposants sont identiques, donc additionner les coefficients
+$coef321 = Compute("$n321*$k321*$m321*$k323 -$n322*$k323*$m323*$k321");
+$coef322temp = Compute("$n321*$k322*$m322*$k323 -$n322*$k323*$m323*$k322");
+$coef323temp = Compute("$n321*$k321*$m321*$k324 -$n322*$k324*$m324*$k321");
+$coef322 = Compute("$coef322temp + $coef323temp");
+$coef323 = Compute("0");
+$coef324 = Compute("$n321*$k322*$m322*$k324 -$n322*$k324*$m324*$k322");}
+else
+{$coef321 = Compute("$n321*$k321*$m321*$k323 -$n322*$k323*$m323*$k321");
+$coef322 = Compute("$n321*$k322*$m322*$k323 -$n322*$k323*$m323*$k322");
+$coef323 = Compute("$n321*$k321*$m321*$k324 -$n322*$k324*$m324*$k321");
+$coef324 = Compute("$n321*$k322*$m322*$k324 -$n322*$k324*$m324*$k322");}
+
+#dérivée développée
+$f32prime3 =Formula("($coef321*x^$exposant321 +$coef322*x^$exposant322 +$coef323*x^$exposant323 +$coef324*x^$exposant324)/($poly322^2)")-> reduce;
+
+#Voir s'il est possible de faire une mise en évidence simple
+if ((($coef322 == 0) && ($coef323 == 0) && ($coef324 == 0)) || 
+(($coef321 == 0) && ($coef323 == 0) && ($coef324 == 0))||
+ (($coef321 == 0) && ($coef322 == 0) && ($coef324 == 0))||
+ (($coef321 == 0) && ($coef322 == 0) && ($coef323 == 0)))
+{#Un seul coefficient est non nul. Ne pas faire de mise en évidence simple
+$f32prime4 = $f32prime3;
+}
+elsif ($coef323 == 0)
+{#Faire une mise en évidence simple, si possible
+$CoefTemp321 = gcd($coef321,$coef322);
+$NouveauCoef323 = gcd($CoefTemp321,$coef324);
+$ExposantTemp321 = min($exposant321,$exposant322);
+$NouveauExposant323 = min($ExposantTemp321,$exposant324);
+$f32prime4 =Formula("$NouveauCoef323*x^$NouveauExposant323*($coef321/$NouveauCoef323*x^($exposant321-$NouveauExposant323) +$coef322/$NouveauCoef323*x^($exposant322-$NouveauExposant323) +$coef324/$NouveauCoef323*x^($exposant324-$NouveauExposant323))/($poly322^2)")-> reduce;
+}
+elsif ($coef324 == 0)
+{#Faire une mise en évidence simple, si possible
+$CoefTemp321 = gcd($coef321,$coef322);
+$NouveauCoef323 = gcd($CoefTemp321,$coef323);
+$ExposantTemp321 = min($exposant321,$exposant322);
+$NouveauExposant323 = min($ExposantTemp321,$exposant323);
+$f32prime4 =Formula("$NouveauCoef323*x^$NouveauExposant323*($coef321/$NouveauCoef323*x^($exposant321-$NouveauExposant323) +$coef322/$NouveauCoef323*x^($exposant322-$NouveauExposant323)+$coef323/$NouveauCoef323*x^($exposant323-$NouveauExposant323) )/($poly322^2)")-> reduce;
+}
+else
+{#Faire une mise en évidence simple, si possible
+$CoefTemp321 = gcd($coef321,$coef322);
+$CoefTemp322 = gcd($coef323,$coef324);
+$NouveauCoef323 = gcd($CoefTemp321,$CoefTemp322);
+$ExposantTemp321 = min($exposant321,$exposant322);
+$ExposantTemp322 = min($exposant323,$exposant324);
+$NouveauExposant323 = min($ExposantTemp321,$ExposantTemp322);
+$f32prime4 =Formula("$NouveauCoef323*x^$NouveauExposant323*($coef321/$NouveauCoef323*x^($exposant321-$NouveauExposant323)+$coef323/$NouveauCoef323*x^($exposant323-$NouveauExposant323) +$coef322/$NouveauCoef323*x^($exposant322-$NouveauExposant323)  +$coef324/$NouveauCoef323*x^($exposant324-$NouveauExposant323))/($poly322^2)")-> reduce;
+}
+
+#C'est la réponse la plus courante
+$Rep32 = $f32prime3 -> reduce;
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f32} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep32->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f32 \) a la forme d'un quotient \(\displaystyle \frac{u}{v}\) où
+$PAR
+\(\displaystyle u(x) =  $u32 \)
+$PAR
+\( \displaystyle v(x) =  $v32\) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u32prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v32prime\) 
+$PAR
+Appliquons la formule de dérivation d'un quotient.  
+$BR
+\( \displaystyle f'(x) =  $f32prime1 \) 
+$PAR
+Développons le numérateur. 
+$BR
+\( \displaystyle f'(x) =  $f32prime3 \) 
+$PAR
+Concluons en faisant, si possible, une mise en évidence simple au numérateur.
+$BR
+\( \displaystyle f'(x) =  $f32prime4 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

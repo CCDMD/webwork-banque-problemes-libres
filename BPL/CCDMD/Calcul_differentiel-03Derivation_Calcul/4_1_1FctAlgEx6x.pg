@@ -1,0 +1,52 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivée', 'dérivée de la fonction puissance', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl");
+
+COMMENT("Niveau de difficulté: Facile. Forme a*x^(1/n) avec notation standard. La solution n'a pas été programmée");
+
+TEXT(beginproblem());
+
+#Choix de la fonction f6 affichage standard
+#La question a été changée.
+#Des macros ont été enlevées
+#Le code a été simplifié
+
+#Racine n-ieme au numérateur avec coefficient
+$n61 =list_random(3,5,7,11,17); 
+$m61 = list_random(2,4,6,8,9,10,12); 
+$f6 = Formula("$m61*x^(1/$n61)") -> reduce;
+@f6A =("$m61 \sqrt[$n61]{x}","$m61 \sqrt[$n61]{y}","$m61 \sqrt[$n61]{t}","$m61 \sqrt[$n61]{h}","$m61 \sqrt[$n61]{z}");
+$f6prime = $f6 ->D('x')-> reduce;
+$e61 = Formula("($n61-1)/$n61");
+$Rep6 = Compute("$m61/($n61*x^{$e61})");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer la dérivée de la fonction \( \displaystyle f(x) = $f6A[0]  \).
+$PAR
+ \( \displaystyle f'(x)  =  \) \{ans_rule(20)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep6->cmp);
+
+ENDDOCUMENT(); 

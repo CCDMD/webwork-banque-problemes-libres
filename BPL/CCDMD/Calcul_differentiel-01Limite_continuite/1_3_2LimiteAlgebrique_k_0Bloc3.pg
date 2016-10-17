@@ -1,0 +1,181 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('0/0', 'fonction algébrique', 'fonction rationnelle', 'forme indéfinie c/0', 'forme indéterminée', 'limite infinie', 'limite à gauche et à droite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl", "unionLists.pl","unionTables.pl"
+);
+
+COMMENT("Niveau de difficulté: Difficile. Un bloc de 4 limites algébriques avec a non nul dont les formes d'indétermination sont k/0 ou 0/0 dont la simplification produit k/0. Ordre de présentation aléatoire des deux premières et des deux dernières.");
+
+
+
+TEXT(beginproblem());
+
+
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Forme k/0
+
+
+#Cas 9: Limite simple
+$a209=non_zero_random(-10,10);
+$k209=list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8,9,10);
+if ($k209 == $a209) {$k209 = Compute("$k209 +19");}
+$f209A =Formula("$k209/(x- $a209)")->reduce;
+#Déterminer le signe du dénominateur
+$signe209 = list_random(-1,1);
+if ($signe209 < 0) 
+{$a209A = "$a209^{-}";}
+else
+{$a209A = "$a209^{+}";}
+$Rep209_temp = Compute("$signe209*$k209");
+if ($Rep209_temp <0) 
+{$Rep209 = Compute("-Infinity");}
+else
+{$Rep209 = Compute("Infinity");}
+
+#Cas 10: Limite avec un exposant pair
+$a206=non_zero_random(-10,10);
+$n206=random(2,10,2);
+#Il faut éviter de faire une mise en évidence simple, car le numérateur ne doit pas être un multiple du dénominateur.
+$temp10 = random(0,1);
+if ($temp10 == 0) 
+{$k206 = list_random(-9,-7,-5,-3,-3,5, 7, 9); 
+$k2061 =list_random(-8,-4,-2,-1,1,2,4,8);}
+else
+{$k2061 = list_random(-11,-9,-7,-5,-3,-3,5, 7, 9, 11); 
+$k206 =list_random(-8,-4,-2,2,4,8);}
+$f206A =Formula("($k206 x - $k2061)/((x- $a206)^{$n206})")->reduce;
+#Déterminer le signe du dénominateur
+$signe206 = list_random(-1,1);
+if ($signe206 < 0) 
+{$a206A = "$a206^{-}";}
+else
+{$a206A = "$a206^{+}";}
+#Déterminer la réponse
+if ($k206*$a206 - $k2061 > 0) 
+{$Rep206 = Compute("Infinity");}
+else
+{$Rep206 = Compute("-Infinity");}
+
+#Cas 11: Limite avec un exposant impair
+$a207=non_zero_random(-10,10);
+$n207=random(3,11,2);
+#Il faut éviter de faire une mise en évidence simple, car le numérateur ne doit pas être un multiple du dénominateur.
+$temp10 = random(0,1);
+if ($temp10 == 0) 
+{$k207 = list_random(-9,-7,-5,-3,-3,5, 7, 9); 
+$k2071 =list_random(-8,-4,-2,-1,1,2,4,8);}
+else
+{$k2071 = list_random(-11,-9,-7,-5,-3,-3,5, 7, 9, 11); 
+$k207 =list_random(-8,-4,-2,2,4,8);}
+$f207A =Formula("($k207 x - $k2071)/((x- $a207)^{$n207})")->reduce;
+#Déterminer le signe du dénominateur
+$signe207 = list_random(-1,1);
+if ($signe207 < 0) 
+{$a207A = "$a207^{-}";}
+else
+{$a207A = "$a207^{+}";}
+#Déterminer la réponse
+if ((($k207*$a207 - $k2071)*$signe207) > 0) 
+{$Rep207 = Compute("Infinity");}
+else
+{$Rep207 = Compute("-Infinity");}
+
+#Cas 12: Limite avec 0/0 et ensuite k/0
+$a212=non_zero_random(-10,10);
+$m212t=non_zero_random(-10,10);
+#Il ne faut pas que abs(m212) = abs(a212), car la factorisation est trop facile. 
+if (abs($m212t) == abs($a212)){$m212 = Compute("abs($m212t) + 1");}
+else
+{$m212 = $m212t;}
+$b212c = Compute("-1*$a212 - $m212");
+$c212c = Compute("$a212 * $m212");
+$temp212 = random(0, 1);
+if ($temp212 == 0)
+{#L'exposant est pair
+$n212=list_random(2, 4,6, 8);}
+else
+{#L'exposant est impair
+$n212=list_random(3, 5,7, 9);}
+$f212A =Formula("(x^{2}+ $b212c x +  $c212c)/((x- $a212)^{$n212})")->reduce;
+$signe212 = list_random(-1,1);
+if ($signe212 < 0) 
+{$a212A = "$a212^{-}";}
+else
+{$a212A = "$a212^{+}";}
+#Déterminer la réponse
+if ($temp212 == 0)
+{#L'exposant est pair, mais devient impair après simplification
+$Rep212_temp = Compute("$signe212*($a212 - $m212)");}
+else
+{#L'exposant est impair, mais devient pair après simplification
+$Rep212_temp = Compute("($a212 - $m212)");}
+if ($Rep212_temp <0) 
+{$Rep212 = Compute("-Infinity");}
+else
+{$Rep212 = Compute("Infinity");}
+
+
+#affichage aléatoire
+@ListeAffichage000 = ($f209A,$f206A,$f207A,$f212A);
+@ListeAffichage001 = ($a209A,$a206A,$a207A,$a212A);
+@ListeAffichage002 = ("x","x","x","x" );
+@RepAffichage000 = ($Rep209,$Rep206,$Rep207,$Rep212);
+#La fonction shuffle n'a pas été utilisée parce que les premiers doivent être utilisés avant les autres
+$temp200 =random(0,3);
+if ($temp200 == 0) {@R000 = (0, 1, 2, 3);}
+elsif ($temp200 == 1)  {@R000 = (1, 0, 3, 2);}
+elsif ($temp200 == 2)  {@R000 = (1, 0, 2, 3);}
+else{@R000 = (0, 1, 3 ,2);}
+
+Context()->texStrings;
+BEGIN_TEXT
+\{
+ColumnTable(
+"Calculer les limites suivantes: ".
+$PAR.
+BeginList("OL", type=>"a").
+$ITEM. "\( \displaystyle {\lim_{$ListeAffichage002[$R000[0]] \rightarrow $ListeAffichage001[$R000[0]]} $ListeAffichage000[$R000[0]]  }\)  = ". ans_rule(20). 
+$ITEMSEP.
+$ITEM. "\( \displaystyle {\lim_{$ListeAffichage002[$R000[1]] \rightarrow $ListeAffichage001[$R000[1]]}$ListeAffichage000[$R000[1]]  }\)  = ". ans_rule(20). 
+$ITEMSEP.
+$ITEM. "\( \displaystyle {\lim_{$ListeAffichage002[$R000[2]] \rightarrow $ListeAffichage001[$R000[2]]}$ListeAffichage000[$R000[2]]  }\)  = ". ans_rule(20). 
+$ITEMSEP.
+$ITEM. "\( \displaystyle {\lim_{$ListeAffichage002[$R000[3]] \rightarrow $ListeAffichage001[$R000[3]]}$ListeAffichage000[$R000[3]]  }\) = ". ans_rule(20). 
+$ITEMSEP.
+EndList("OL"),
+$BR.
+$BR.
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["Note:", " Écrire"], align=>LEFT, separation=>0).
+AlignedRow(["$SPACE$SPACE$SPACE  \(\bullet\)","\( \bf inf \), si la limite vaut l'infini positif \( (+\infty) \)."], align=>LEFT, separation=>0).
+AlignedRow(["$SPACE$SPACE$SPACE  \(\bullet\)","\( \bf -inf \), si la limite vaut l'infini négatif \( (-\infty) \)."], align=>LEFT, separation=>0).
+AlignedRow(["$SPACE$SPACE$SPACE  \(\bullet\)","\( \bf nep \), si la limite \( \bf n'e\)xiste \( \bf p\)as."], align=>LEFT, separation=>0).
+EndTable(),
+indent=>"0", separation=>"40", valign=>"TOP"
+);
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepAffichage000[$R000[0]]->cmp);
+ANS($RepAffichage000[$R000[1]]->cmp);
+ANS($RepAffichage000[$R000[2]]->cmp);
+ANS($RepAffichage000[$R000[3]]->cmp);
+
+ENDDOCUMENT(); 

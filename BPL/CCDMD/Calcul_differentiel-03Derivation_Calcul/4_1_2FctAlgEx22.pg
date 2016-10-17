@@ -1,0 +1,157 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivée', 'dérivée du produit de fonctions', 'fonction algébrique', 'fonction polynomiale', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Produit d'un binôme par un binôme, sans exposant, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Cas 22: Produit d'un binôme par un binôme sans exposant.
+#Premier binôme
+$k221 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+$m221 =random(6,9); 
+$k222 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k222) == abs($k221)) {$k222 = 11;};
+$m222 =random(2,5);  
+#Deuxième binôme
+$k223 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k223) == abs($k221)) {$k223 = 12;};
+$m223 =random(6,9); 
+$k224 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k224) == abs($k223)) {$k224 = 17;};
+$m224 =random(2,5) ; 
+#Exposant du premier binôme
+$n221 = 1; 
+#Exposant du deuxième binôme
+$n222 =1; 
+
+
+$poly221 = Formula("$k221*x^$m221+$k222*x^$m222")->reduce;
+$poly221prime =$poly221 ->D('x')-> reduce;
+
+$poly222 =Formula("$k223*x^$m223+$k224*x^$m224")->reduce;
+$poly222prime =$poly222 ->D('x')-> reduce;
+$u22 = Formula("($poly221)^$n221")->reduce;
+$u22prime = Formula("$n221*($poly221)^($n221-1)*($poly221prime)")->reduce;
+$v22 = Formula("$poly222^$n222")->reduce;
+$v22prime = Formula("$n222*($poly222)^($n222-1)*($poly222prime)")->reduce;
+
+$f22 = Formula("($k221*x^$m221+$k222*x^$m222)^$n221*($k223*x^$m223+$k224*x^$m224)^$n222") -> reduce;
+$f22prime1old = $f22 ->D('x')-> reduce;
+$f22prime1 = Formula("($u22prime)*($v22) +($u22)*($v22prime)")->reduce;
+$f22prime2 = Formula("$poly221^($n221-1)*$poly222^($n222-1)*($n221*$poly221prime*$poly222+$n222*$poly222prime*$poly221)")-> reduce;
+
+#Simplifier la dérivée en développant
+$exposant221 = Compute("$m223-1+$m221");
+$exposant222 = Compute("$m223-1+$m222");
+$exposant223 = Compute("$m224-1+$m221");
+$exposant224 = Compute("$m224-1+$m222");
+
+if ($exposant222 == $exposant223) 
+{#2 exposants sont identiques, donc additionner les coefficients
+$coef221 = Compute("$n221*$k221*$m221*$k223 +$n222*$k223*$m223*$k221");
+$coef222temp = Compute("$n221*$k222*$m222*$k223 +$n222*$k223*$m223*$k222");
+$coef223temp = Compute("$n221*$k221*$m221*$k224 +$n222*$k224*$m224*$k221");
+$coef222 = Compute("$coef222temp + $coef223temp");
+$coef223 = Compute("0");
+$coef224 = Compute("$n221*$k222*$m222*$k224 +$n222*$k224*$m224*$k222");}
+else
+{#aucun exposant n'est identique.
+$coef221 = Compute("$n221*$k221*$m221*$k223 +$n222*$k223*$m223*$k221");
+$coef222 = Compute("$n221*$k222*$m222*$k223 +$n222*$k223*$m223*$k222");
+$coef223 = Compute("$n221*$k221*$m221*$k224 +$n222*$k224*$m224*$k221");
+$coef224 = Compute("$n221*$k222*$m222*$k224 +$n222*$k224*$m224*$k222");}
+
+#dérivée développée
+$f22prime3 =Formula("$poly221^($n221-1)*$poly222^($n222-1)*($coef221*x^$exposant221 +$coef222*x^$exposant222+ $coef223*x^$exposant223 +$coef224*x^$exposant224)")-> reduce;
+
+#Voir s'il est possible de faire une mise en évidence simple
+if ((($coef222 == 0) && ($coef223 == 0) && ($coef224 == 0)) || 
+(($coef221 == 0) && ($coef223 == 0) && ($coef224 == 0))||
+ (($coef221 == 0) && ($coef222 == 0) && ($coef224 == 0))||
+ (($coef221 == 0) && ($coef222 == 0) && ($coef223 == 0)))
+{#Un seul coefficient est non nul. Ne pas faire de mise en évidence simple
+$f22prime4 = $f22prime3;
+}
+else
+{#Faire une mise en évidence simple, si possible
+#$exposant224 n'existe pas.
+$CoefTemp221 = gcd($coef221,$coef222);
+$CoefTemp222 = gcd($coef223,$coef224);
+$NouveauCoef223 = gcd($CoefTemp221,$CoefTemp222);
+$ExposantTemp221 = min($exposant221,$exposant222);
+$ExposantTemp222 = min($exposant223,$exposant224);
+$NouveauExposant223 = min($ExposantTemp221,$ExposantTemp222);
+$f22prime4 =Formula("$NouveauCoef223*x^$NouveauExposant223*$poly221^($n221-1)*$poly222^($n222-1)*($coef221/$NouveauCoef223*x^($exposant221-$NouveauExposant223) +$coef222/$NouveauCoef223*x^($exposant222-$NouveauExposant223) +$coef223/$NouveauCoef223*x^($exposant223-$NouveauExposant223)
++$coef224/$NouveauCoef223*x^($exposant224-$NouveauExposant223))")-> reduce;
+}
+
+#C'est la réponse la plus courante
+$Rep22 = $f22prime3 -> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f22} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep22->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f22 \) a la forme d'un produit \(u \cdot v\) où
+$PAR
+\(\displaystyle u(x) =  $u22 \)
+$PAR
+\( \displaystyle v(x) =  $v22\) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u22prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v22prime\) 
+$PAR
+Appliquons la formule de dérivation d'un produit.  
+$BR
+\( \displaystyle f'(x) =  $f22prime1 \) 
+$PAR
+$PAR
+Développons. 
+$BR
+\( \displaystyle f'(x) =  $f22prime3 \) 
+$BR
+Concluons en faisant, si possible, une mise en évidence simple.
+$BR
+\( \displaystyle f'(x) =  $f22prime4 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

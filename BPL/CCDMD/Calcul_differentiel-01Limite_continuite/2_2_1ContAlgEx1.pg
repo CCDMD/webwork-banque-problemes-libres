@@ -1,0 +1,116 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('continuité en un point', 'discontinuité', 'fonction définie par parties', 'fonction polynomiale')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl", "unionLists.pl","unionTables.pl","contextPiecewiseFunction.pl","parserPopUp.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Fonction définie par morceaux (constant et linéaire) avec une discontinuité ou non.");
+
+TEXT(beginproblem());
+
+Context("PiecewiseFunction");
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+Context()->noreduce('(-x)-y'); 
+
+
+#Cas 1: Fonction constante et linéaire continue ou non
+#Valeur a11 et a12 
+#ne pas choisir 0, -1,1 car le calcul est trop facile
+$a11 = list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8,9,10);
+#Deuxième morceau de la fonction
+$n12 =non_zero_random(-9,9);
+$k12 = random(1,9);
+#Premier morceau de la fonction
+#Si le saut est nul, alors la fonction est continue.
+$saut11 = list_random(0,0,0,0,0,-1,1,-2,2);
+$k11 = Compute("$n12*$a11+$k12 + $saut11");
+#Fonction définie par morceaux
+#Choix de l'affichage du premier morceau
+$temp11 = random(-1,1,2);
+if ($temp11 == 1) {$f11 = Formula("$k11"); $f12 = Formula("$n12*x+$k12") ->reduce;}
+else
+{$f12 = Formula("$k11"); 
+$f11 = Formula("$n12*x+$k12")->reduce;}
+$f10 = PiecewiseFunction("$f11 if  x <= $a11 else $f12");
+
+#Fonction définie par morceaux et réponses
+#Choisir la valeur de la fonction en x = a11
+$temp10 = random(0,2);
+if ($temp10 == 0) 
+{#La fonction n'est pas définie en x = a
+$f10 = PiecewiseFunction("$f11 if  x < $a11 else $f12 if x > $a11 ");
+#Réponse
+$RepFA11 = Compute("nep");
+$RepLimiteG11 = $f11->eval(x=>$a11);
+$RepLimiteD11 = $f12->eval(x=>$a11);
+$RepPopUp11 = PopUp(["Choisir", "Oui", "Non"], "Non");}
+elsif ($temp10 == 1)
+{#La fonction est définie en x = a
+$f10 = PiecewiseFunction("$f11 if  x <= $a11 else $f12 if x > $a11  ");
+$RepFA11 = $f10->eval(x=>$a11);
+$RepLimiteG11 = $f11->eval(x=>$a11);
+$RepLimiteD11 = $f12->eval(x=>$a11);
+if ($RepLimiteG11 == $RepLimiteD11) {$RepPopUp11 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else
+{$RepPopUp11 = PopUp(["Choisir", "Oui", "Non"], "Non");}}
+else
+{#La fonction est définie en x = a
+$f10 = PiecewiseFunction("$f11 if  x < $a11 else $f12 if x >= $a11  ");
+$RepFA11 = $f10->eval(x=>$a11);
+$RepLimiteG11 = $f11->eval(x=>$a11);
+$RepLimiteD11 = $f12->eval(x=>$a11);
+if ($RepLimiteG11 == $RepLimiteD11) {$RepPopUp11 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else
+{$RepPopUp11 = PopUp(["Choisir", "Oui", "Non"], "Non");}}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+\{
+ColumnTable(
+"Soit la fonction suivante: ".$BR. 
+"\[f(x)=$f10\]".
+$BR.
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["Note: Écrire \( \bf nep \), si la fonction n'est pas $BR définie en \(x = $a11\)"], align=>LEFT).
+EndTable(),
+"Déterminer les valeurs suivantes et répondre à la question:".
+$BR.
+BeginList("OL", type=>"a").
+$ITEM. " \( \displaystyle f($a11)  \)  = ". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{  \lim_{x \rightarrow $a11^{-}} f(x) = }\)". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{\lim_{x \rightarrow $a11^{+}} f(x) = }\)". ans_rule(20).
+$ITEMSEP.
+$ITEM. "Est-ce que la fonction est continue en \(x = $a11\)? ".
+$RepPopUp11->menu().
+EndList("OL"),
+indent=>"0", separation=>"10", valign=>"TOP"
+);
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepFA11->cmp());
+ANS(num_cmp($RepLimiteG11));
+ANS(num_cmp($RepLimiteD11));
+ANS( $RepPopUp11->cmp() );
+
+
+ENDDOCUMENT();

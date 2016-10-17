@@ -1,0 +1,91 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivation logarithmique', 'dérivée', 'dérivée du quotient de fonctions', 'fonction logarithmique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Propriétés des logarithmes ln(quotient), avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Cas 102: Propriétés des logarithmes ln(quotient)
+#Premier binôme
+$k1021 =random(3,15);
+$m1021 =random(5,9); 
+$k1022 =random(2,9);
+$m1022 =0; 
+$gcd1021 = gcd($k1021,$k1022);
+#Deuxième binôme
+$k1023 =random(2,9);
+$m1023 =random(5,9); 
+$m1024 =random(2,4); 
+$k1024temp = list_random(2, 3, -2,-3);
+$k1024 =Compute("$k1023*$k1024temp");
+$gcd1022 = gcd($k1023,$k1024);
+ 
+$poly1021 = Formula("$k1021*x^$m1021+$k1022")->reduce;
+$poly1021S = Formula("$k1021/$gcd1021*x^($m1021)+$k1022/$gcd1021")->reduce;
+$poly1021prime =Formula("$k1021*$m1021*x^($m1021-1)")->reduce;
+$poly1021primeS =Formula("$k1021*$m1021/$gcd1021*x^($m1021-1)")->reduce;
+$poly1022 = Formula("$k1023*x^$m1023+$k1024*x^$m1024")->reduce;
+$poly1022S = Formula("$k1023/$gcd1022*x^($m1023-$m1024+1)+$k1024/$gcd1022*x")->reduce;
+$poly1022prime =Formula("$k1023*$m1023*x^($m1023-1)+ $k1024*$m1024*x^($m1024-1)")->reduce;
+$poly1022primeS =Formula("$k1023*$m1023/$gcd1022*x^($m1023-$m1024)+ $k1024*$m1024/$gcd1022")->reduce;
+
+#La fonction
+$f102 = Formula("ln($poly1021/$poly1022)")-> reduce;
+$f102S = Formula("ln($poly1021) - ln($poly1022)")-> reduce;
+$f102prime1 = Formula("$poly1021prime/$poly1021 - $poly1022prime/$poly1022")->reduce;
+$f102prime2 = Formula("$poly1021primeS/$poly1021S - $poly1022primeS/$poly1022S")->reduce;
+
+$Rep102 = $f102prime2 -> reduce;
+
+#$f102prime5 = $f102 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f102} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep102->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f102 \) a la forme d'un logarithme naturel d'un quotient. Avant de dériver la fonction, utilisons les propriétés des logarithmes: 
+$PAR
+\(\displaystyle f(x) =  $f102S \)
+$PAR
+Appliquons la formule de dérivation d'un logarithme et simplifions.  
+$BR
+\( \displaystyle f'(x) =  $f102prime1 \) 
+$BR
+\( \displaystyle f'(x) =  $f102prime2 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

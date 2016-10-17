@@ -1,0 +1,90 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'fonction logarithmique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Fonction logarithme simple, avec notation standard et solution.");
+
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Cas 63: ln 
+$k631 =random(3,15);
+$m631 =random(6,9); 
+$k632 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k632) == abs($k631)) {$k632 = 11;};
+$m632 =random(2,5);  
+$k633 =list_random(-10,-9,-8,-6,-4,-3,-2,2, 3,4,6,8, 9,10,12,18, 15);
+if (abs($k633) == abs($k631)) {$k633 = 12;};
+$m633 =random(0,1); 
+
+if ($m633 == 0)
+{#Problème d'affichage
+$poly631 = Formula("$k631*x^$m631+$k632*x^$m632+ $k633")->reduce;
+$poly631prime =Formula("$k631*$m631*x^($m631-1)+$k632*$m632*x^($m632-1)")-> reduce;
+$gcd631 = gcd($k631*$m631,$k632*$m632);
+$poly631primeS =Formula("$gcd631*x^($m632-1)*($k631*$m631/$gcd631*x^($m631-$m632) + $k632*$m632/$gcd631)")-> reduce;
+}
+else
+{$poly631 = Formula("$k631*x^$m631+$k632*x^$m632+ $k633*x^$m633")->reduce;
+$poly631prime =Formula("$k631*$m631*x^($m631-1)+$k632*$m632*x^($m632-1)+$k633*$m633")-> reduce;
+$gcd631temp = gcd($k631*$m631,$k632*$m632);
+$gcd631 = gcd($gcd631temp, $k633*$m633);
+$poly631primeS =Formula("$gcd631*($k631*$m631/$gcd631*x^($m631-1)+$k632*$m632/$gcd631*x^($m632-1)+$k633*$m633/$gcd631)")-> reduce;
+}
+
+#Fonction à dériver
+$f63 = Formula("ln($poly631)")-> reduce;
+#Calcul de la dérivée
+$f63prime1 = $f63 ->D('x')-> reduce;
+
+$Rep63 = $f63prime1 -> reduce;
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f63} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep63->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f63 \) a la forme d'un logarithme naturel d'une fonction. Ainsi, 
+$PAR
+\( \displaystyle f'(x) =  \frac{($poly631)'}{$poly631} \)  $SPACE (Formule de dérivation d'un logarithme naturel)
+$PAR
+\( \displaystyle f'(x) =  \frac{$poly631prime}{$poly631} \) $SPACE (Formule de dérivation d'un polynôme) 
+$PAR
+\( \displaystyle f'(x) = \frac{$poly631primeS}{$poly631} \) $SPACE (Mise en évidence simple au numérateur, si possible) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

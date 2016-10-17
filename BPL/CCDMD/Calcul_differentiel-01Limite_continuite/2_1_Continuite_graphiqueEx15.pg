@@ -1,0 +1,419 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('continuité en un point', 'discontinuité', 'discontinuité non essentielle', 'discontinuité par saut', 'fonction définie par parties', 'graphique')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl",
+"PGcourse.pl", "unionLists.pl","unionTables.pl","contextPiecewiseFunction.pl","parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Cas générique d'une fonction définie par 3 morceaux (linéaire ou quadratique) avec une discontinuité non essentielle, par saut ou aucune discontinuité");
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+
+Context("PiecewiseFunction");
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+#Context()->noreduce('(-x)-y'); 
+
+#Cas générique: Fonction définie par 3 morceaux (linéaire ou quadratique)
+#Les valeurs à remplacer sont 60, 61, 62, 63, 64, 65
+
+#Choix du a et de l'axe des x
+$temp60 = random(-1,1,2);
+if ($temp60 == -1) {
+#Prendre un a négatif ou nul
+$a61=random(-5, -3);
+$a62=random(-2, 0);
+$x61=Compute("-7");
+$x62=2;}
+else {
+#Prendre un a positif ou nul
+$a61=random(1, 2);
+$a62=random(3, 5);
+$x61=-1; 
+$x62=Compute("7");}
+
+#Définition de la fonction par morceaux
+#Si le saut est nul, alors la fonction est continue.
+$saut61 = list_random(0,0,0,0,0,-1,1,-2,2);
+#Ne pas choisir deux sauts non nuls, car c'est trop facile.
+if ($saut61 == 0)
+{$saut62 = list_random(0,0,0,0,0,-1,1,-2,2);}
+else
+{$saut62 = 0;}
+
+#Choix de l'affichage des trois morceaux
+$temp61 = random(0,3);
+if ($temp61 == 0) 
+{#linéaire,linéaire, linéaire
+#Les pentes des droites
+#Les signes doivent alterner pour avoir des pics 
+$n61 =list_random(-2,-1, 1, 2);
+if ($n61 > 0) {
+$n62 = random(-2,-1); $n63 = random(1,2)}
+else
+{$n62 = random(1,2); $n63 = random(-2,-1)}
+#L'ordonnée à l'origine d'une droite
+$k61 = random(-3,3);
+#Choix des points de contact
+$k62temp1 = Compute("$n61*$a61-$k61-$n62*$a61+$saut61");
+$k63temp1 = Compute("$n62*$a62+$k62temp1 -$n63*$a62 + $saut62");
+#Fonction linéaire1
+$f61 = Formula("$n61*x -$k61") ->reduce;
+$f61a = $f61->eval(x=>$a61);
+$f61x1 =$f61->eval(x=>"$a61 - 2"); 
+$f61min = min($f61a,$f61x1);
+$f61max = max($f61a,$f61x1);
+#Fonction linéaire 2
+$f62 = Formula("$n62*x+$k62temp1")->reduce; 
+$f62a = $f62->eval(x=>$a61);
+$f62x2 =$f62->eval(x=>"$a62"); 
+$f62min = min($f62a,$f62x2);
+$f62max = max($f62a,$f62x2);
+#Fonction linéaire 3
+$f63 = Formula("$n63*x+$k63temp1")->reduce; 
+$f63a = $f63->eval(x=>$a62);
+$f63x2 = $f63->eval(x=>"($a62+2)");
+$f63min = min($f63a,$f63x2);
+$f63max = max($f63a,$f63x2);}
+elsif ($temp61 == 1)
+{#linéaire,linéaire, quadratique
+#Les pentes des droites 
+$n61 =list_random(-2,-1, 1, 2);
+if ($n61 > 0) {
+#La 2e droite et la parabole doivent avoir le même signe pour avoir un pic
+$n62 = random(-2,-1); $n63 = random(-2,-1)}
+else
+{$n62 = random(1,2); $n63 = random(1,2)}
+#L'ordonnée à l'origine d'une droite
+$k61 = random(-3,3);
+#Choix des points de contact
+$k62temp1 = Compute("$n61*$a61-$k61-$n62*$a61+$saut61");
+$k63 = Compute("$n62*$a62 +$k62temp1 + $saut62");
+#Fonction linéaire1
+$f61 = Formula("$n61*x -$k61") ->reduce;
+$f61a = $f61->eval(x=>$a61);
+$f61x1 =$f61->eval(x=>"$a61 - 2"); 
+$f61min = min($f61a,$f61x1);
+$f61max = max($f61a,$f61x1);
+#Fonction linéaire 2
+$f62 = Formula("$n62*x+$k62temp1")->reduce; 
+$f62a = $f62->eval(x=>$a61);
+$f62x2 =$f62->eval(x=>$a62); 
+$f62min = min($f62a,$f62x2);
+$f62max = max($f62a,$f62x2);
+#Fonction quadratique 3
+$f63 = Formula("$n63*(x-$a62)*(x-$a62 -1 ) +$k63") ->reduce;
+$f63a = $f63->eval(x=>$a62);
+$f63p = $f63->eval(x=>"(2*$a62+1)/2");
+$f63min = min($f63a,$f63p);
+$f63max = max($f63a,$f63p);}
+
+elsif ($temp61 == 2)
+{#linéaire, quadratique,linéaire
+#Les pentes des droites 
+$n62 =list_random(-2,-1, 1, 2);
+if ($n62 > 0) {
+#La 1e droite et la parabole doivent avoir le même signe pour avoir un pic
+$n61 = random(-2,-1); $n63 = random(-2,-1)}
+else
+{$n61 = random(1,2); $n63 = random(1,2)}
+#L'ordonnée à l'origine d'une droite
+$k61 = random(-3,3);
+#Choix des points de contact
+$k62 = Compute("$n61*$a61 -$k61 + $saut61");
+$k63temp1 = Compute("$n63*($a62-$a61)*($a62-$a62 -1 ) + $k62 - $n62*$a62 + $saut62");
+#Fonction linéaire
+$f61 = Formula("$n61*x -$k61") ->reduce;
+$f61a = $f61->eval(x=>$a61);
+$f61x1 =$f61->eval(x=>"$a61 - 2"); 
+$f61min = min($f61a,$f61x1);
+$f61max = max($f61a,$f61x1);
+#Fonction quadratique 
+$f62 = Formula("$n63*(x-$a61)*(x-$a62 -1 ) +$k62") ->reduce;
+$f62a1 = $f62->eval(x=>$a61);
+$f62a2 = $f62->eval(x=>$a62);
+$f62p =$f62->eval(x=>"($a61 + $a62+1)/2"); 
+$f62mintemp = min($f62a1,$f62p);
+$f62min = min($f62mintemp,$f62a2);
+$f62maxtemp = max($f62a1,$f62p);
+$f62max = max($f62maxtemp,$f62a2);
+#Fonction linéaire 2
+$f63 = Formula("$n62*x+$k63temp1")->reduce; 
+$f63a = $f63->eval(x=>$a62);
+$f63x2 = $f63->eval(x=>"($a62+2)");
+$f63min = min($f63a,$f63x2);
+$f63max = max($f63a,$f63x2);}
+else
+{#quadratique,linéaire,linéaire
+#Les pentes des droites 
+$n62 =list_random(-2,-1, 1, 2);
+if ($n62 > 0) {
+#La 1e droite et la parabole doivent avoir un signe différent pour avoir un pic
+$n61 = random(-2,-1); $n63 = random(1,2)}
+else
+{$n61 = random(1,2); $n63 = random(-2,-1)}
+#Valeur de la parabole en a61
+$k61 = random(-3,3);
+#Choix des points de contact
+$k61temp = Compute(" $k61 -($n61*$a61) + $saut61");
+$k62 = Compute("$n61*$a62 + $k61temp - $n62*$a62 + $saut62");
+$f61 = Formula("-1*(x)^2 +$k61") ->reduce;
+#Fonction quadratique 
+$f61 = Formula("$n63*(x-$a61)*(x-$a61 +1 ) +$k61 + $saut61") ->reduce;
+$f61a = $f61->eval(x=>$a61);
+$f61p = $f61->eval(x=>"(2*$a61-1)/2");
+$f61min = min($f61a,$f61p);
+$f61max = max($f61a,$f61p);
+#Fonction linéaire 1
+$f62 = Formula("$n61*x + $k61temp") ->reduce;
+$f62a = $f62->eval(x=>$a61);
+$f62x2 = $f62->eval(x=>$a62);
+$f62min = min($f62a,$f62x2);
+$f62max = max($f62a,$f62x2);
+#Fonction linéaire 2
+$f63 = Formula("$n62*x+$k62")->reduce; 
+$f63a = $f63->eval(x=>$a62);
+$f63x2 = $f63->eval(x=>"($a62+2)");
+$f63min = min($f63a,$f63x2);
+$f63max = max($f63a,$f63x2);}
+
+
+#Déterminer le maximum et le minimum de la fonction f60
+$f60maxtemp1 = max($f61max,$f62max);
+$f60maxtemp2 = max($f60maxtemp1,$f63max);
+$f60max = ceil($f60maxtemp2);
+$f60mintemp1 = min($f61min,$f62min);
+$f60mintemp2 = min($f60mintemp1,$f63min);
+$f60min = floor($f60mintemp2);
+
+#Déterminer l'intervalle en y
+if ($f60min >= 0) 
+{$y62 = Compute("$f60max + 2");
+$y61 = -1;}
+elsif ($f60max > 0)
+{$y62 = Compute("$f60max + 2");
+$y61 = Compute("$f60min -1");}
+else
+{$y62 = 2;
+$y61 =  Compute("$f60min -1");}
+
+#Calcul du quadrillage et du x
+$gridX60 = $x62 - $x61;
+$gridY60 = $y62 - $y61;
+$AffichageX60 =Compute("$x62 -0.5");
+
+#Graphique
+$f61graphique = "$f61 for x in <$x61,$a61> using color:red and weight:2";
+$f62graphique = "$f62 for x in <$a61,$a62> using color:red and weight:2";
+$f63graphique = "$f63 for x in <$a62,$x62> using color:red and weight:2";
+$graphique60 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0],'grid'=>[$gridX60,$gridY60]);
+$graphique60 -> lb('reset');
+$graphique60 -> lb(new Label ( 1,0,'1','black','left','top'));
+$graphique60 -> lb(new Label ( 0,1,'1','black','right','top'));
+$graphique60 -> lb(new Label ( $AffichageX60,0,'x','black','left','top'));
+$graphique60 -> lb(new Label ( 0,$y62,'f(x)','black','right','top'));
+add_functions($graphique60, $f61graphique,$f62graphique,$f63graphique);
+
+#Calcul des limites en a61
+$RepLimiteG61 = $f61->eval(x=>$a61);
+$RepLimiteD61 = $f62->eval(x=>$a61);
+
+#Choisir la valeur de la fonction en a61
+$temp60 = random(0,2);
+if ($temp60 == 0) 
+{#La fonction n'est pas définie en a61
+$RepFA61 = Compute("nep");
+$RepPopUp61 = PopUp(["Choisir", "Oui", "Non"], "Non");
+$pt61 = open_circle( $a61,$f61->eval(x=>$a61), red);
+$pt62 = open_circle( $a61,$f62->eval(x=>$a61), red);
+$graphique60->stamps($pt61,$pt62);}
+elsif ($temp60 == 1) 
+{#La fonction est définie en a61 et continue ou non
+if ($saut61 == 0)
+{#La fonction est définie en a61 et continue
+$f61a =$f61 ->eval(x=>$a61);
+$RepFA61 = Compute("$f61a");
+$RepPopUp61 = PopUp(["Choisir", "Oui", "Non"], "Oui");
+$pt61 = closed_circle( $a61,$f61->eval(x=>$a61), red);
+$graphique60->stamps($pt61);}
+else
+{#La fonction est définie en a61 et fait un saut
+#Choisir f62(a61) comme valeur
+$f61a =$f62 ->eval(x=>$a61);
+$RepFA61 = Compute("$f61a");
+$RepPopUp61 = PopUp(["Choisir", "Oui", "Non"], "Non");
+$pt61 = closed_circle( $a61,$f62->eval(x=>$a61), red);
+$pt62 = open_circle( $a61,$f61->eval(x=>$a61), red);
+$graphique60->stamps($pt61,$pt62);}}
+else
+{#La fonction est définie en a61 et n'est pas continue
+if ($saut61 == 0)
+{#La fonction fait un saut ponctuel
+$f61a =$f61 ->eval(x=>$a61);
+#Trouver une valeur entre y61 +1 et y62 -1 qui n'est pas f(a61).
+if ($f61a <= Compute("$y61 + 1")) {$pt62y = random($y61 + 2,$y62 - 1);}
+elsif ($f61a >= Compute("$y62 - 1")) 
+{$pt62y = random($y61 + 2,$y62 - 2);}
+else {
+$temp61 = random(0,1);
+if ($temp61 == 0) {$pt62y = random($y61 + 1,$f61a - 1);}
+else{$pt62y = random($f61a + 1, $y62 - 1);}}
+$RepFA61 = Compute("$pt62y");
+$RepPopUp61 = PopUp(["Choisir", "Oui", "Non"], "Non");
+$pt61 = open_circle( $a61,$f61->eval(x=>$a61), red);
+$pt62 = closed_circle( $a61,$pt62y, red);
+$graphique60->stamps($pt61,$pt62);}
+else
+{#La fonction est définie en a61 et fait un saut
+#Ce n'est ps nécessaire que f(a61) soit différent des limites
+#Choisir une valeur entre $y61 + 1 et $y62 - 1 
+$f61a =random($y61 + 1,$y62 - 1);
+$RepFA61 = Compute("$f61a");
+$RepPopUp61 = PopUp(["Choisir", "Oui", "Non"], "Non");
+$pt61 = open_circle( $a61,$f61->eval(x=>$a61), red);
+$pt62 = open_circle( $a61,$f62->eval(x=>$a61), red);
+$pt63 = closed_circle( $a61,$f61a, red);
+$graphique60->stamps($pt61,$pt62,$pt63);}}
+
+#Calcul des limites en a62
+$RepLimiteG62 = $f62->eval(x=>$a62);
+$RepLimiteD62 = $f63->eval(x=>$a62);
+
+#Choisir la valeur de la fonction en a62
+$temp60 = random(0,2);
+if ($temp60 == 0) 
+{#La fonction n'est pas définie en a62
+$RepFA62 = Compute("nep");
+$RepPopUp62 = PopUp(["Choisir", "Oui", "Non"], "Non");
+$ptB61 = open_circle( $a62,$f62->eval(x=>$a62), red);
+$ptB62 = open_circle( $a62,$f63->eval(x=>$a62), red);
+$graphique60->stamps($ptB61,$ptB62);}
+elsif ($temp60 == 1) 
+{#La fonction est définie en a62 et continue ou non
+if ($saut62 == 0)
+{#La fonction est définie en a62 et continue
+$f62a =$f62 ->eval(x=>$a62);
+$RepFA62 = Compute("$f62a");
+$RepPopUp62 = PopUp(["Choisir", "Oui", "Non"], "Oui");
+$ptB61 = closed_circle( $a62,$f62->eval(x=>$a62), red);
+$graphique60->stamps($ptB61);}
+else
+{#La fonction est définie en a62 et fait un saut
+#Choisir f63(a62) comme valeur
+$f62a =$f63 ->eval(x=>$a62);
+$RepFA62 = Compute("$f62a");
+$RepPopUp62 = PopUp(["Choisir", "Oui", "Non"], "Non");
+$ptB61 = closed_circle( $a62,$f63->eval(x=>$a62), red);
+$ptB62 = open_circle( $a62,$f62->eval(x=>$a62), red);
+$graphique60->stamps($ptB61,$ptB62);}}
+else
+{#La fonction est définie en a62 et n'est pas continue
+if ($saut62 == 0)
+{#La fonction fait un saut ponctuel
+$f62a =$f62 ->eval(x=>$a62);
+#Trouver une valeur entre y61 +1 et y62 -1 qui n'est pas f(a62).
+if ($f62a <= Compute("$y61 + 1")) {$ptB62y = random($y61 + 2,$y62 - 1);}
+elsif ($f62a >= Compute("$y62 - 1")) 
+{$ptB62y = random($y61 + 2,$y62 - 2);}
+else {
+$temp61 = random(0,1);
+if ($temp61 == 0) {$ptB62y = random($y61 + 1,$f62a - 1);}
+else{$ptB62y = random($f62a + 1, $y62 - 1);}}
+$RepFA62 = Compute("$ptB62y");
+$RepPopUp62 = PopUp(["Choisir", "Oui", "Non"], "Non");
+$ptB61 = open_circle( $a62,$f62->eval(x=>$a62), red);
+$ptB62 = closed_circle( $a62,$ptB62y, red);
+$graphique60->stamps($ptB61,$ptB62);}
+else
+{#La fonction est définie en a62 et fait un saut
+#Ce n'est ps nécessaire que f(a62) soit différent des limites
+#Choisir une valeur entre $y61 + 1 et $y62 - 1 
+$f62a =random($y61 + 1,$y62 - 1);
+$RepFA62 = Compute("$f62a");
+$RepPopUp62 = PopUp(["Choisir", "Oui", "Non"], "Non");
+$ptB61 = open_circle( $a62,$f62->eval(x=>$a62), red);
+$ptB62 = open_circle( $a62,$f63->eval(x=>$a62), red);
+$ptB63 = closed_circle( $a62,$f62a, red);
+$graphique60->stamps($ptB61,$ptB62,$ptB63);}}
+
+#Graphique
+$imageG60 = image(insertGraph($graphique60),width =>360,height=>260,tex_size=>360);
+
+#Choix des valeurs a61 et a2 à afficher dans l'ordre ou non
+@Valeur = ($a61,$a62); 
+#Réponse
+@Rep = ($RepFA61,$RepLimiteG61,$RepLimiteD61,$RepPopUp61,
+$RepFA62,$RepLimiteG62,$RepLimiteD62,$RepPopUp62);
+@Choix = shuffle(2);
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la fonction dont le graphique est le suivant. 
+$PAR
+$BCENTER
+$imageG60
+$BR
+Cliquer sur le graphique pour faire un agrandissement.
+$ECENTER
+
+$BR
+\{
+ColumnTable(
+"1) Déterminer les valeurs ci-dessous et répondre à la question:".
+$BR.
+BeginList("OL", type=>"a").
+$ITEM. " \( \displaystyle f($Valeur[$Choix[0]])  \)  = ". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{  \lim_{x \rightarrow $Valeur[$Choix[0]]^{-}} f(x) = }\)". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{\lim_{x \rightarrow $Valeur[$Choix[0]]^{+}} f(x) = }\)". ans_rule(20).
+$ITEMSEP.
+$ITEM. "Est-ce que la fonction est continue en \(x = $Valeur[$Choix[0]]\)? ".
+$Rep[4*$Choix[0]+3]->menu().
+EndList("OL"),
+"2) Déterminer les valeurs ci-dessous et répondre à la question:".
+$BR.
+BeginList("OL", type=>"a").
+$ITEM. " \( \displaystyle f($Valeur[$Choix[1]])  \)  = ". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{  \lim_{x \rightarrow $Valeur[$Choix[1]]^{-}} f(x) = }\)". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{\lim_{x \rightarrow $Valeur[$Choix[1]]^{+}} f(x) = }\)". ans_rule(20).
+$ITEMSEP.
+$ITEM. "Est-ce que la fonction est continue en \(x = $Valeur[$Choix[1]]\)? ".
+$Rep[4*$Choix[1]+3]->menu().
+EndList("OL"),
+indent=>"0", separation=>"60", valign=>"TOP"
+);
+\}
+$BR
+ \( \bf Note:\) Écrire \( \bf nep \), si la fonction n'est pas définie en une valeur.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep[4*$Choix[0]]->cmp() );
+ANS(num_cmp($Rep[4*$Choix[0]+1]));
+ANS(num_cmp($Rep[4*$Choix[0]+2]));
+ANS( $Rep[4*$Choix[0]+3]->cmp() );
+
+ANS($Rep[4*$Choix[1]]->cmp() );
+ANS(num_cmp($Rep[4*$Choix[1]+1]));
+ANS(num_cmp($Rep[4*$Choix[1]+2]));
+ANS( $Rep[4*$Choix[1]+3]->cmp() );
+
+
+ENDDOCUMENT();

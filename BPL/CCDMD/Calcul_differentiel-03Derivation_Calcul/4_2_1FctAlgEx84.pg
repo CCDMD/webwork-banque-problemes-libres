@@ -1,0 +1,88 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée du produit de fonctions', 'fonction logarithmique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+
+COMMENT("Niveau de difficulté: Moyen. Produit d'un monôme par un ln, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+
+#Cas 84: Produit binôme par ln(binôme)
+#ln
+$k843 = random(2, 9);
+
+#u et v
+$u84 = Formula("x")->reduce;
+$u84prime = Formula("1")->reduce;
+$v84 = Formula("ln($k843*x)")->reduce;
+$v84prime = Formula("$k843/(x*$k843)")->reduce;
+$v84primeS = Formula("1/x")->reduce;
+#La fonction
+$f84 = Formula("x*ln(x*$k843)")-> reduce;
+#$f84prime1 = Formula("($u84prime)*($v84) +($u84)*($v84prime)")->reduce;
+$f84prime1 = Formula("1*ln(x*$k843) + x*1/x");
+$f84prime2 = Formula("ln(x*$k843) + 1")->reduce;
+
+$Rep84 = $f84prime2 -> reduce;
+$Rep84->{limits} = [1,3];
+
+#$f84prime5 = $f84 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f84} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep84->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f84 \) a la forme d'un produit \(u \cdot v\) où
+$PAR
+\(\displaystyle u(x) =  $u84 \)
+$PAR
+\( \displaystyle v(x) =  $v84 \) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u84prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v84prime = $v84primeS\) 
+$PAR
+Appliquons la formule de dérivation d'un produit et simplifions
+$BR
+\( \displaystyle f'(x) =  1\cdot \ln(x $k843) + x\cdot \frac{1}{x} \) 
+$BR
+\( \displaystyle f'(x) =  $f84prime2 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

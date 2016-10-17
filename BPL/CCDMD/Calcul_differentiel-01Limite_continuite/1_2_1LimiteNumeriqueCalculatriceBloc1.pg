@@ -1,0 +1,98 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('estimation', 'fonction algébrique', 'fonction polynomiale', 'fonction rationnelle', 'limite à gauche et à droite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionLists.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Un bloc de 4 limites numériques présentées selon un ordre aléatoire. L'étudiant doit utiliser sa calculatrice pour calculer ces limites");
+
+TEXT(beginproblem());
+
+#Calcul numérique d'une limite avec la calculatrice
+#Bloc 1: 4 limites numériques
+
+#Cas 1: Fonction quadratique (priorité des opérations)
+$a1=random(2,8);
+$k1 = random(3,8);
+$m1 =random(11,25); 
+$f1 = Formula("$k1 x^2-$m1");
+$RepLimite1 = $f1->eval(x=>$a1);
+
+#Cas 2: Fonction quotient
+$a2=random(-8,-2, 1);
+$k2 = random(3,8, 1);
+$m2 =random(11,25, 1); 
+$f2 = Formula("($a2*-2*$m2)/(x+$a2)")->reduce;
+$RepLimite2 = $f2->eval(x=>$a2);
+
+#Cas 3: Fonction quadratique avec un négatif devant le carré
+$a3=random(2,8, 1);
+$k3 = random(3,8, 1);
+if ($a3 == $k3) {$k3 = 10};
+$f3 = Formula("-x^2+$k3");
+$RepLimite3 = $f3->eval(x=>$a3);
+
+#Cas 4: Fonction quadratique avec un négatif devant le carré
+$a4=random(-8,-2, 1);
+$k4 = random(3,8, 1);
+if ($a2 == $a4) {$a4 = -10};
+if ($k2 == $k4) {$k4 = 15};
+$f4 = Formula("$k4-x^2");
+$RepLimite4 = $f4->eval(x=>$a4);
+
+#Séparer le texte en Latex et les fonctions définies comme formules
+@ListeAffichageLN2 = ("\lim_{x\rightarrow $a1^{+}}","\lim_{x\rightarrow $a2^{-}}","\lim_{x\rightarrow $a3^{-}} ","\lim_{x\rightarrow $a4^{+}} ");
+@ListeAffichageLN2f = ($f1,$f2,$f3, $f4);
+@RepAffichageLN2 = ($RepLimite1,$RepLimite2,$RepLimite3,$RepLimite4);
+
+#Aucun ordre particulier d'affichage
+@RLN2= shuffle(4);
+
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+Calculer les limites suivantes en utilisant des valeurs numériques. 
+
+
+\{ BeginList("OL", type=>"a") \}
+$ITEM 
+\(\displaystyle {$ListeAffichageLN2[$RLN2[0]] \left($ListeAffichageLN2f[$RLN2[0]]\right) =  }\) \{ans_rule(10)\}
+$ITEMSEP
+$ITEM
+\(\displaystyle {$ListeAffichageLN2[$RLN2[1]] \left($ListeAffichageLN2f[$RLN2[1]]\right) =  }\) \{ans_rule(10)\}
+$ITEMSEP
+$ITEM
+\(\displaystyle {$ListeAffichageLN2[$RLN2[2]] \left($ListeAffichageLN2f[$RLN2[2]]\right) =  }\) \{ans_rule(10)\}
+$ITEMSEP
+$ITEM
+\(\displaystyle {$ListeAffichageLN2[$RLN2[3]] \left($ListeAffichageLN2f[$RLN2[3]]\right) =  }\) \{ans_rule(10)\}
+$ITEMSEP
+\{ EndList("OL") \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($RepAffichageLN2[$RLN2[0]]));
+ANS(num_cmp($RepAffichageLN2[$RLN2[1]]));
+ANS(num_cmp($RepAffichageLN2[$RLN2[2]]));
+ANS(num_cmp($RepAffichageLN2[$RLN2[3]]));
+
+
+ENDDOCUMENT(); 

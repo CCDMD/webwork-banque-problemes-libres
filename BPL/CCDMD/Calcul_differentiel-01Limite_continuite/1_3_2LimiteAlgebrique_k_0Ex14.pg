@@ -1,0 +1,86 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction algébrique', 'fonction rationnelle', 'forme indéfinie c/0', 'limite infinie', 'limite à gauche et à droite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Limite algébrique d'indétermination k/0 de la forme k/(x-a)^n avec a entre -10 et 10 (excluant 0)");
+
+
+TEXT(beginproblem());
+
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Forme k/0
+
+#Cas 14: Forme k/(x-a)^n avec a entre -10 et 10 (excluant 0)
+$a10=non_zero_random(-10,10);
+$k10=list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8,9,10);
+$temp10 = random(0, 1);
+if ($temp10 == 0)
+{#L'exposant est pair
+$n10=list_random(2, 4,6, 8);}
+else
+{#L'exposant est impair
+$n10=list_random(3, 5,7, 9);}
+$f10A =Formula("$k10/(x- $a10)^{$n10}")->reduce;
+#Déterminer le signe du dénominateur
+$signe10 = list_random(-1,1);
+if ($signe10 < 0) 
+{$a10A = "$a10^{-}";}
+else
+{$a10A = "$a10^{+}";}
+#Déterminer la réponse
+if ($temp10 == 0)
+{#L'exposant est pair
+$Rep10_temp = Compute("$k10");}
+else
+{#L'exposant est impair
+$Rep10_temp = Compute("$signe10*$k10");}
+
+if ($Rep10_temp <0) 
+{$Rep10 = Compute("-Infinity");}
+else
+{$Rep10 = Compute("Infinity");}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+\{
+ColumnTable(
+"Calculer la limite suivante. ".
+$PAR.
+" \( \displaystyle {\lim_{x \rightarrow $a10A} $f10A}  = \)". ans_rule(20),
+$BR.
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["Note:", " Écrire"], align=>LEFT, separation=>0).
+AlignedRow(["$SPACE$SPACE$SPACE  \(\bullet\)","\( \bf inf \), si la limite vaut l'infini positif \( (+\infty) \)."], align=>LEFT, separation=>0).
+AlignedRow(["$SPACE$SPACE$SPACE  \(\bullet\)","\( \bf -inf \), si la limite vaut l'infini négatif \( (-\infty) \)."], align=>LEFT, separation=>0).
+AlignedRow(["$SPACE$SPACE$SPACE  \(\bullet\)","\( \bf nep \), si la limite \( \bf n'e\)xiste \( \bf p\)as."], align=>LEFT, separation=>0).
+EndTable(),
+indent=>"0", separation=>"60", valign=>"TOP"
+);
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep10->cmp);
+
+
+
+ENDDOCUMENT(); 

@@ -1,0 +1,135 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction définie par parties', 'graphique', 'limite', 'limite à gauche et à droite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+  "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","parserPopUp.pl","unionLists.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Fonction constante par morceaux");
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+
+#Cas 4: Fonction constante par morceaux
+#Choix du a et de l'axe des x
+$temp4 = random(-1,1,2);
+if ($temp4 == -1) {
+#Prendre un a négatif ou nul
+$a4=random(-5,0);
+$x41=Compute("$a4 - 2");
+$x42=2;}
+else {
+#Prendre un a positif ou nul
+$a4=random(0,5);
+$x41=-1; 
+$x42=Compute("$a4 + 2");}
+#Définition de la fonction constante par morceaux
+$k41 = random(2,8);
+$signe41 = random(-1,1,2);
+$k42 = random(2,5);
+$signe42 = random(-1,1,2);
+$f41 = Compute("$signe41*$k41");
+$f41graphique = "$f41 for x in <$x41,$a4> using color:red and weight:2";
+$f42 = Compute("$signe41*$k41+$signe42*$k42");
+$f42graphique = "$f42 for x in <$a4,$x42> using color:red and weight:2";
+
+#Déterminer le maximum et le minimum de la fonction f4
+if ($f41 > $f42) {$f4max = $f41; $f4min = $f42;}
+else
+{$f4max = $f42; $f4min = $f41;}
+
+#Déterminer l'intervalle en y
+if ($f4min >= 0) 
+{$y42 = Compute("$f4max+2");
+$y41 = -1;}
+elsif ($f4max > 1)
+{$y42 = Compute("$f4max+2");;
+$y41 = Compute("$f4min-1");}
+else
+{$y42 = 2;
+$y41 = Compute("$f4min-1");}
+
+#Calcul du quadrillage et du x
+$gridX4 = $x42 - $x41;
+$gridY4 = $y42 - $y41;
+$AffichageX4 =Compute("$x42 -0.5");
+#Calcul des réponses
+$RepLimiteG4 = Compute("$signe41*$k41");
+$RepLimiteD4 = Compute("$signe41*$k41+$signe42*$k42");;
+$RepPopUp4 = PopUp(["Choisir", "Oui", "Non"], "Non");
+#Graphique
+$graphique4 = init_graph($x41,$y41,$x42,$y42,'axes'=>[0,0],'grid'=>[$gridX4,$gridY4]);
+$graphique4 -> lb('reset');
+$graphique4 -> lb(new Label ( 1,0,'1','black','left','top'));
+$graphique4 -> lb(new Label ( 0,1,'1','black','right','top'));
+$graphique4 -> lb(new Label ( $AffichageX4,0,'x','black','left','top'));
+$graphique4 -> lb(new Label ( 0,$y42,'f(x)','black','right','top'));
+add_functions($graphique4, $f41graphique,$f42graphique);
+$temp4 = random(0,2);
+if ($temp4 == 0)
+{$pt41 = closed_circle( $a4,$f41->eval(x=>$a4), red);
+$pt42 = open_circle( $a4,$f42->eval(x=>$a4), red);
+$graphique4->stamps($pt41, $pt42);}
+elsif ($temp4 == 1)
+{$pt41 = open_circle( $a4,$f41->eval(x=>$a4), red);
+$pt42 = closed_circle( $a4,$f42->eval(x=>$a4), red);
+$graphique4->stamps($pt41, $pt42); }
+else 
+{$pt41 = open_circle( $a4,$f41->eval(x=>$a4), red);
+$pt42 = open_circle( $a4,$f42->eval(x=>$a4), red);
+$f41a = $f41->eval(x=>$a4);
+$f42a = $f42->eval(x=>$a4);
+$pt43ytemp = random(Compute("$f4min"),Compute("$f4max+1"));
+if ($pt43ytemp == $f41a) {$pt43y = Compute("$f4max+1");}
+elsif ($pt43ytemp == $f42a) {$pt43y = Compute("$f4max+1");}
+else {$pt43y = $pt43ytemp;}
+$pt43 = closed_circle( $a4,$pt43y, red);
+$graphique4->stamps($pt41, $pt42,$pt43); }
+$imageG4 = image(insertGraph($graphique4),width =>350,height=>350,tex_size=>350);
+
+
+BEGIN_TEXT
+
+\{
+ColumnTable("Calculer les limites suivantes en utilisant le graphique ci-contre et répondre à la question.".
+BeginList("OL", type=>"a").
+$ITEM. "\( \displaystyle \lim_{x\rightarrow $a4^{+}} f(x)  = \)". ans_rule(10).
+$ITEMSEP.
+$ITEM. "\( \displaystyle{\lim_{x\rightarrow $a4^{-}} f(x) } = \)". ans_rule(10).
+$ITEMSEP. 
+$ITEM. "La limite en \(x = $a4\) existe-t-elle? ".
+$RepPopUp4->menu().
+$ITEMSEP,
+$BCENTER.
+$imageG4.
+$BR.
+"Cliquer sur le graphique pour faire un agrandissement.".
+$BR.
+$ECENTER,
+indent=>"0", separation=>"50", valign=>"TOP"
+);
+\}
+
+END_TEXT
+
+
+ANS(num_cmp($RepLimiteD4));
+ANS(num_cmp($RepLimiteG4));
+ANS( $RepPopUp4->cmp() );
+
+
+ENDDOCUMENT(); 

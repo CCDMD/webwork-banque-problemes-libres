@@ -1,0 +1,247 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction définie par parties', 'graphique', 'limite', 'limite à gauche et à droite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+  "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","parserPopUp.pl","unionLists.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Fonction définie par morceaux (les deux morceaux sont quadratiques) avec un saut");
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+
+#Cas 8: Fonction quadratique et quadratique avec saut
+#Le code vient du cas générique (Cas 9)
+# les variables $type81 et $type82 sont été modifiées pour prendre la valeur 3
+#Si $saut82 est nul, alors les paraboles sont de même signe
+# La variable $saut82  a été modifiée pour être non nulle.
+
+#Choix du a et de l'axe des x
+$temp8 = random(-1,1,2);
+if ($temp8 == -1) {
+#Prendre un a négatif ou nul
+$a8=random(-5,0);
+$x81=Compute("$a8 - 2");
+$x82=2;}
+else {
+#Prendre un a positif ou nul
+$a8=random(0,5);
+$x81=-1; 
+$x82=Compute("$a8 + 2");}
+
+#Point de continuité possible entre les deux morceaux (si saut est non nul, la fonction fait un saut)
+$k81 = random(2,8);
+$signe81 = random(-1,1,2);
+$saut82 = list_random(1,2,3,-2,-3, -1);
+
+#Première partie 
+#Choix du type de fonction (constante, linéaire ou quadratique)
+#$type81 = random(1,3);
+$type81 = 3;
+
+if ($type81 == 1) 
+{#Cas constant
+$f81 = Formula("$signe81*$k81")->reduce;
+$f81a = $f81->eval(x=>$a8);
+$f81max = Compute("$f81a");
+$f81min = Compute("$f81a");}
+elsif ($type81 == 2)
+{#Cas linéaire
+$signe82 = random(-1,1,2);
+$m82 = random(1,2);
+$f81 = Formula("$signe81*$k81 + $signe82*$m82*(x-$a8)")->reduce;
+$f81a = $f81->eval(x=>$a8);
+$f81x1 =$f81->eval(x=>"$a8 - 2"); 
+if ($signe82 > 0) 
+{#La fonction est croissante
+$f81max = Compute("$f81a");
+$f81min = Compute("$f81x1");}
+else
+{#La fonction est décroissante
+$f81max = Compute("$f81x1");
+$f81min = Compute("$f81a");}}
+else
+{#Cas quadratique 
+$signe83 = random(-1,1,2);
+$m83 = 4;
+$f81 = Formula("$signe81*$k81 +  $signe83*$m83*(x-$a8)*(x-$a8 +1 )")->reduce;
+$f81a = $f81->eval(x=>$a8);
+$f81p = $f81->eval(x=>"(2*$a8-1)/2");
+if ($signe83 > 0) 
+{#La parabole est vers le haut
+$f81max = Compute("$f81a");
+$f81min = Compute("$f81p");}
+else
+{#La parabole est vers le bas
+$f81max = Compute("$f81p");
+$f81min = Compute("$f81a");}}
+
+#Deuxième partie
+#Choix du type de fonction (constante, linéaire ou quadratique)
+#$type82 = random(1,3);
+$type82 = 3;
+
+if ($type82 == 1) 
+{#Cas constant
+if ($type81 == 1){$saut82 = list_random(2,3,-2,-3);} 
+$f82 = Formula("$signe81*$k81+$saut82")->reduce;
+$f82a = $f82->eval(x=>$a8);
+$f82max = Compute("$f82a +2");
+$f82min = Compute("$f82a - 1");}
+elsif ($type82 == 2)
+{#Cas linéaire
+$signe84 = random(-1,1,2);
+$m84 = random(1,2);
+$f82 = Formula("$signe81*$k81+$saut82 + $signe84*$m84*(x-$a8)")->reduce;
+$f82a = $f82->eval(x=>$a8);
+$f82x2 =$f82->eval(x=>"$a8 + 2"); 
+if ($signe84 > 0) 
+{#La fonction est croissante
+$f82max = Compute("$f82x2");
+$f82min = Compute("$f82a");}
+else
+{#La fonction est décroissante
+$f82max = Compute("$f82a");
+$f82min = Compute("$f82x2");}}
+else
+{#Cas quadratique 
+if ($type81 == 3) 
+{#Cas parabole/parabole 
+$m85 = 8;
+if ($saut82 == 0) 
+{#Il n'y a pas de saut et la parabole doit faire un pic
+$signe85 = $signe83;
+}
+else
+{#Il y a un saut et aucune contrainte sur la parabole
+$signe85 = random(-1,1,2);}}
+else
+{$m85 = 4;
+$signe85 = random(-1,1,2);}
+$f82 = Formula("$signe81*$k81 +$saut82+  $signe85*$m85*(x-$a8)*(x-$a8 -1 )")->reduce;
+$f82a = $f82->eval(x=>$a8);
+$f82p = $f82->eval(x=>"(2*$a8+1)/2");
+if ($signe85 > 0) 
+{#La parabole est vers le haut
+$f82max = Compute("$f82a");
+$f82min = Compute("$f82p");}
+else
+{#La parabole est vers le bas
+$f82max = Compute("$f82p");
+$f82min = Compute("$f82a");}}
+
+
+#Déterminer le maximum et le minimum de la fonction f8
+if ($f81max > $f82max){$f8max = $f81max;} 
+else
+{$f8max = $f82max;}
+if ($f81min < $f82min){$f8min = $f81min;} 
+else
+{$f8min = $f82min;}
+
+#Déterminer l'intervalle en y
+if ($f8min >= 0) 
+{$y82 = Compute("$f8max + 2");
+$y81 = -1;}
+elsif ($f8max > 0)
+{$y82 = Compute("$f8max + 2");
+$y81 = Compute("$f8min -1");}
+else
+{$y82 = 2;
+$y81 =  Compute("$f8min -1");}
+
+#Calcul du quadrillage et du x
+$gridX8 = $x82 - $x81;
+$gridY8 = $y82 - $y81;
+$AffichageX8 =Compute("$x82 -0.5");
+
+#Calculs des limites
+$RepLimiteG8 = $f81->eval(x=>$a8);
+$RepLimiteD8 = $f82->eval(x=>$a8);
+if ($RepLimiteG8 == $RepLimiteD8) { $RepPopUp8 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else {$RepPopUp8 = PopUp(["Choisir", "Oui", "Non"], "Non");}
+
+#Graphique
+$f81graphique = "$f81 for x in <$x81,$a8> using color:red and weight:2";
+$f82graphique = "$f82 for x in <$a8,$x82> using color:red and weight:2";
+$graphique8 = init_graph($x81,$y81,$x82,$y82,'axes'=>[0,0],'grid'=>[$gridX8,$gridY8]);
+$graphique8 -> lb('reset');
+$graphique8 -> lb(new Label ( 1,0,'1','black','left','top'));
+$graphique8 -> lb(new Label ( 0,1,'1','black','right','top'));
+$graphique8 -> lb(new Label ( $AffichageX8,0,'x','black','left','top'));
+$graphique8 -> lb(new Label ( 0,$y82,'f(x)','black','right','top'));
+add_functions($graphique8, $f81graphique,$f82graphique);
+#Choisir la valeur de la fonction
+$temp8 = random(0,2);
+if ($temp8 == 0)
+{$pt81 = closed_circle( $a8,$f81->eval(x=>$a8), red);
+$pt82 = open_circle( $a8,$f82->eval(x=>$a8), red);
+$graphique8->stamps($pt81, $pt82);}
+elsif ($temp8 == 1)
+{$pt81 = open_circle( $a8,$f81->eval(x=>$a8), red);
+$pt82 = closed_circle( $a8,$f82->eval(x=>$a8), red);
+$graphique8->stamps($pt81, $pt82); }
+else
+{$pt81 = open_circle( $a8,$f81->eval(x=>$a8), red);
+$pt82 = open_circle( $a8,$f82->eval(x=>$a8), red);
+$f81a = $f81->eval(x=>$a8);
+$f82a = $f82->eval(x=>$a8);
+$pt83ytemp = random(Compute("$f8min"),Compute("$f8max+1"));
+if ($pt83ytemp == $f81a) {$pt83y = Compute("$f8max+1");}
+elsif ($pt83ytemp == $f82a) {$pt83y = Compute("$f8max+1");}
+else {$pt83y = $pt83ytemp;}
+$pt83 = closed_circle( $a8,$pt83y, red);
+$graphique8->stamps($pt81, $pt82,$pt83);}
+
+$imageG8 = image(insertGraph($graphique8),width =>350,height=>350,tex_size=>350);
+
+$showPartialCorrectAnswers = 1;
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+\{
+ColumnTable("Calculer les limites suivantes en utilisant le graphique ci-contre et répondre à la question.".
+BeginList("OL", type=>"a").
+$ITEM. "\( \displaystyle \lim_{x\rightarrow $a8^{+}} f(x)  = \)". ans_rule(10).
+$ITEMSEP.
+$ITEM. "\( \displaystyle{\lim_{x\rightarrow $a8^{-}} f(x) } = \)". ans_rule(10).
+$ITEMSEP. 
+$ITEM. "La limite en \(x = $a8\) existe-t-elle? ".
+$RepPopUp8->menu().
+$ITEMSEP,
+$BCENTER.
+$imageG8.
+$BR.
+"Cliquer sur le graphique pour faire un agrandissement.".
+$BR.
+$ECENTER,
+indent=>"0", separation=>"50", valign=>"TOP"
+);
+\}
+$PAR
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($RepLimiteD8));
+ANS(num_cmp($RepLimiteG8));
+ANS( $RepPopUp8->cmp() );
+
+
+ENDDOCUMENT(); 

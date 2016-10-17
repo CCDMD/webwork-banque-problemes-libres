@@ -1,0 +1,100 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivation logarithmique', 'dérivée', 'dérivée de la fonction puissance', 'dérivée du produit de fonctions', 'fonction logarithmique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Propriétés des logarithmes ln(binôme^n*binôme^m), avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+
+#Cas 104: Propriétés des logarithmes ln(binôme^n*binôme^m)
+#Premier binôme
+$k1041 =random(3,15);
+$m1041 =random(5,9); 
+$k1042 =random(2,9);
+$m1042 =random(2,4); 
+$gcd1041 = gcd($k1041,$k1042);
+#Exposant
+$n1041 =random(2,9); 
+
+#Deuxième binôme
+$k1043 =random(2,9);
+$m1043 =random(5,9); 
+$m1044 =random(2,4); 
+$k1044temp = list_random(2, 3, -2,-3);
+$k1044 =Compute("$k1043*$k1044temp");
+$gcd1042 = gcd($k1043,$k1044);
+#Exposant
+$n1042 =random(2,9); 
+ 
+$poly1041 = Formula("$k1041*x^$m1041+$k1042*x^$m1042")->reduce;
+$poly1041S = Formula("$k1041/$gcd1041*x^($m1041-$m1042+1)+$k1042/$gcd1041*x")->reduce;
+$poly1041prime =Formula("$k1041*$m1041*x^($m1041-1)+ $k1042*$m1042*x^($m1042-1)")->reduce;
+$poly1041primeS =Formula("$k1041*$m1041/$gcd1041*x^($m1041-$m1042)+ $k1042*$m1042/$gcd1041")->reduce;
+$poly1042 = Formula("$k1043*x^$m1043+$k1044*x^$m1044")->reduce;
+$poly1042S = Formula("$k1043/$gcd1042*x^($m1043-$m1044+1)+$k1044/$gcd1042*x")->reduce;
+$poly1042prime =Formula("$k1043*$m1043*x^($m1043-1)+ $k1044*$m1044*x^($m1044-1)")->reduce;
+$poly1042primeS =Formula("$k1043*$m1043/$gcd1042*x^($m1043-$m1044)+ $k1044*$m1044/$gcd1042")->reduce;
+
+#La fonction
+$f104 = Formula("ln($poly1041^$n1041*$poly1042^$n1042)")-> reduce;
+$f104S = Formula("ln($poly1041^$n1041) + ln($poly1042^$n1042)")-> reduce;
+$f104S2 = Formula("$n1041*ln($poly1041) + $n1042*ln($poly1042)")-> reduce;
+$f104prime1 = Formula("$n1041*$poly1041prime/$poly1041 + $n1042*$poly1042prime/$poly1042")->reduce;
+$f104prime2 = Formula("$n1041*$poly1041primeS/$poly1041S + $n1042*$poly1042primeS/$poly1042S")->reduce;
+
+$Rep104 = $f104prime2 -> reduce;
+
+#$f104prime5 = $f104 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f104} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep104->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f104 \) a la forme d'un logarithme naturel d'un produit. Avant de dériver la fonction, utilisons les propriétés des logarithmes: 
+$PAR
+\(\displaystyle f(x) =  $f104S \)
+$PAR
+\(\displaystyle f(x) =  $f104S2 \)
+$PAR
+Appliquons la formule de dérivation d'un logarithme et simplifions.  
+$BR
+\( \displaystyle f'(x) =  $f104prime1 \) 
+$BR
+\( \displaystyle f'(x) =  $f104prime2 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

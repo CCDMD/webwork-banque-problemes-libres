@@ -1,0 +1,54 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('0/0', 'conjugué', 'fonction algébrique', 'fonction racine carrée', 'fonction rationnelle', 'forme indéterminée', 'limite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionLists.pl", "contextFraction.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Limite algébrique d'indétermination 0/0 qui doit être levée par la multiplication par le conjugué avec un facteur négatif lors de la simplification.");
+
+TEXT(beginproblem());
+
+Context("Fraction-NoDecimals");
+Context()->variables->are(h=>"Real",t=>"Real", x => "Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Forme 0/0
+
+#Cas 8: Multiplication par le conjugué avec un facteur négatif lors de la simplification
+#Pour avoir un facteur positif, il faut permuter le numérateur
+$a8=non_zero_random(-10,10);
+$m8=random(2,10);
+$m8c = Compute("$a8+$m8^2");
+$f8A =Formula("(sqrt($m8c-x)-$m8)/(x-$a8)")->reduce;
+$RepLA8 = Compute("-1/(2*$m8)");
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la limite suivante.$BR
+
+ \( \displaystyle {\lim_{x \rightarrow $a8} $f8A}\)  = \{ans_rule(20)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepLA8->cmp);
+
+
+
+
+ENDDOCUMENT(); 

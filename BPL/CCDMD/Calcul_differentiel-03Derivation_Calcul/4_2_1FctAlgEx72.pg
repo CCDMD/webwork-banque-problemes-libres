@@ -1,0 +1,80 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la somme de fonctions', 'fonction exponentielle', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Somme puissance et exponentielle (c*x^n+ e^(ax+b)), avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+
+#Cas 72: Somme exponentielle et puissance
+#Puissance 
+$k721 =random(3,15);
+$m721 =random(2,9); 
+#Exponentielle
+$k722temp = list_random(2, 3);
+$k722 =Compute("$m721*$k722temp");
+$k723 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8,9);
+if (abs($k723) == abs($k722)) {$k723 = $k722 + 1};
+
+$poly721 = Formula("$k722*x +$k723") -> reduce;
+$poly721prime = Formula("$k722") -> reduce;
+$f72 = Formula("$k721*x^$m721 + e^($poly721)")-> reduce;
+$f72prime1 = Formula("$k721*$m721*x^($m721-1) + e^($poly721)*$poly721prime")->reduce;
+$f72prime2 = Formula("$k721*$m721*x^($m721-1) + $poly721prime*e^($poly721)")->reduce;
+$gcd721 = gcd($k722,$k721*$m721);
+$f72prime3 = Formula("$gcd721*($k721*$m721/$gcd721*x^($m721-1) + $poly721prime/$gcd721*e^($poly721))")->reduce;
+
+$Rep72 = $f72prime3 -> reduce;
+
+#$f72prime5 = $f72 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f72} \).
+$PAR
+\( \displaystyle f'(x) =  \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep72->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f72 \) a la forme d'une somme d'une puissance avec une exponentielle. Ainsi, 
+$PAR
+\( \displaystyle f'(x) =  $k721\cdot (x^{$m721})' + e^{$poly721} ($poly721)' \)  $SPACE (Formule de dérivation)
+$PAR
+\( \displaystyle f'(x) =  $k721\cdot $m721 \cdot x^{$m721-1} + e^{$poly721} ($poly721prime) \)  $SPACE (Formule de dérivation)
+$PAR
+\( \displaystyle f'(x) =  $f72prime2 \) $SPACE (Simplification) 
+$PAR
+\( \displaystyle f'(x) =  $f72prime3 \) $SPACE (Mise en évidence simple, si possible) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

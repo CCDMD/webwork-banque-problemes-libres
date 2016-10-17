@@ -1,0 +1,78 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la fonction puissance', 'fonction exponentielle', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Exponentielle d'une puissance (exp(binôme simple^n)), avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+Context()->variables->set(x=>{limits=>[-1,1]});
+
+
+#Cas 112: exp(binôme simple^n)
+#Premier binôme simple
+$k1121 =random(3,15);
+$m1121 =random(5,9); 
+$k1122 =random(2,9);
+$n1121 =random(2,9); 
+$Coef1121 = random(2,9);
+ 
+$poly1121 = Formula("$k1121*x^$m1121+$k1122")->reduce;
+$poly1121prime =Formula("$k1121*($m1121*x^($m1121-1))")->reduce;
+
+#La fonction
+$f112 = Formula("$Coef1121*e^(($poly1121)^($n1121))")-> reduce;
+$f112prime1 = Formula("$Coef1121*e^(($poly1121)^($n1121))*($n1121*($poly1121)^($n1121-1)*($k1121*($m1121*x^($m1121-1))))")-> reduce;
+$f112prime2 = Formula("$Coef1121*$n1121*$k1121*$m1121*x^($m1121-1)*($poly1121)^($n1121-1)*e^(($poly1121)^($n1121))")-> reduce;
+
+$Rep112 = $f112prime2 -> reduce;
+
+#$f112prime5 = $f112 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f112} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep112->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f112 \) a la forme d'une constante multipliée par une exponentielle.
+Appliquons la formule de dérivation d'une exponentielle et simplifions.  
+$PAR
+\( \displaystyle f'(x) =  $Coef1121 e^{($poly1121)^$n1121} (($poly1121)^$n1121)'   \) 
+$PAR
+\( \displaystyle f'(x) =  $f112prime1 \) 
+$PAR
+\( \displaystyle f'(x) =  $f112prime2 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

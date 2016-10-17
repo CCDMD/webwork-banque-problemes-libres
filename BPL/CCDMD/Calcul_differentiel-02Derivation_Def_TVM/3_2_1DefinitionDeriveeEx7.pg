@@ -1,0 +1,95 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation - définition et interprétation)
+## KEYWORDS('définition', 'dérivée en un point', 'fonction rationnelle')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionLists.pl","unionTables.pl", "PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Fonction quotient 1/(kt) en t = a");
+
+TEXT(beginproblem());
+
+Context()->variables->are(h=>"Real",t=>"Real",a=>"Real", x => "Real",p=>"Real",q=>"Real",r=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#
+#Niveau moyen
+#
+
+#Fonction quotient simple avec a
+$a4= a;
+$k41 = random(3,8);
+$k42 =random(11,25); 
+$f4 = Formula("$k41/($k42 -x)");
+$f4A ="\frac{$k41}{$k42 -x}";
+$f4prime = $f4 ->D('x');
+$f4primea = $f4prime->substitute(x => "a");
+$RepDD4 = Formula("$f4primea") ->reduce;
+
+#Fonction quadratique simple avec a
+$a5= a;
+$k51 = random(3,8);
+$m51 =random(11,24); 
+$f5 = Formula("x^2+$m51");
+$f5A ="x^2-$m51";
+$f5prime = $f5 ->D('x');
+$f5primea = $f5prime->substitute(x => "a");
+$RepDD5 = Formula("$f5primea") ->reduce;
+
+#Fonction quadratique développée avec a
+$a6=a;
+$k61 = random(3,8);
+$m61 =random(11,25); 
+$k62 = random(3,8);
+$m62 =random(11,25); 
+$f6 = Formula("($k61 x-$m61) ($k62 x-$m62)");
+$f6A ="($k61 x-$m61) ($k62 x-$m62)";
+$f6primeOLD = $f6 ->D('x');
+$f6prime_temp = Compute("-$k61*$m62-$k62*$m61");
+$f6prime = Formula("2*$k61*$k62*x +$f6prime_temp")->reduce;
+$f6primea = $f6prime->substitute(x => "a")->reduce;
+$RepDD6 = Formula("$f6primea") ->reduce;
+
+#Fonction quotient plus simple avec a et t
+$a7= a;
+$k71 = random(3,8);
+$f7 = Formula("1/($k71 t)");
+$f7A ="\frac{1}{$k71 t}";
+$f7prime = $f7 ->D('t');
+$f7primea = $f7prime->substitute(t => "a");
+$RepDD7old = Formula("$f7primea") ->reduce;
+$RepDD7 =Formula("-1/($k71*a^2)");
+
+#Bloc 2
+@ListeAffichage2A = ("f(x) = $f4A","g(x) = $f5A","h(x) = $f6A","g(t) = $f7A");
+@ListeAffichage2B = ("f'($a4) = ","g'($a5) = ","h'($a6) = ","g'($a7) = " );
+@RepAffichage2 = ($RepDD4,$RepDD5,$RepDD6,$RepDD7);
+@R2 = (3,3,3,3);
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction  \( \displaystyle $ListeAffichage2A[$R2[0]]  \) en la valeur indiquée.
+$PAR $SPACE$SPACE  \( \displaystyle $ListeAffichage2B[$R2[0]]  \) \{ans_rule(20)\} 
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS(@RepAffichage2[$R2[0]]->cmp);
+
+ENDDOCUMENT(); 

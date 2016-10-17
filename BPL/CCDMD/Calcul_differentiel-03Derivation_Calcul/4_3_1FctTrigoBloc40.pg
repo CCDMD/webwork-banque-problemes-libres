@@ -1,0 +1,301 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la fonction puissance', 'dérivée du quotient de fonctions', 'fonction trigonométrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionLists.pl","unionTables.pl",
+"PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Quotients de fonctions trigonométriques (sauf un cas) avec notation standard et solution");
+
+TEXT(beginproblem());
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real", A=>"Real", u =>"Real",v =>"Real");
+
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Vecteur des fonctions trigonométriques
+@Fonction = (Formula("sin(A)"), Formula("cos(A)"), Formula("tan(A)"), Formula("cot(A)"), Formula("sec(A)"), Formula("csc(A)"));
+@FonctionPrime = (Formula("cos(A)"), Formula("-sin(A)"), Formula("sec^2(A)"), Formula("-csc^2(A)"), Formula("sec(A)*tan(A)"), Formula("-csc(A)*cot(A)"));
+
+#Cas 40 trigo(nx)/trigo(mx)
+#Fonction u(x)
+$U0n = random(2,9);
+$U0temp = random(0,5); 
+$U0 =$Fonction[$U0temp] ->substitute(A => Formula("$U0n*x")); 
+$U0Etape1Prime = $FonctionPrime[$U0temp] ->substitute(A => Formula("$U0n*x")); 
+$U0Etape2 =  Formula("$U0n*x");
+$U0Etape2Prime =  Formula("$U0n");
+$U0Prime = $U0 ->D('x')-> reduce;
+#Fonction v(x)
+$V0n = random(2,9);
+if ($V0n == $U0n) {$V0n = Compute("$U0n + 1")};
+$V0temp = random(0,5); 
+$V0 =$Fonction[$V0temp] ->substitute(A => Formula("$V0n*x")); 
+$V0Etape1Prime = $FonctionPrime[$V0temp] ->substitute(A => Formula("$V0n*x")); 
+$V0Etape2 =  Formula("$V0n*x");
+$V0Etape2Prime =  Formula("$V0n");
+$V0Prime = $V0 ->D('x')-> reduce;
+$F0 = Formula("$U0/$V0");
+$F0Reponse = $F0 ->D('x')-> reduce;
+
+#Cas 41 binôme/trigo(binôme)
+#Fonction u(x)
+$U1n1 = random(2,9);
+$U1n2 = random(2,9);
+if ($U1n2 == $U1n1) {$U1n1 = Compute("5"); $U1n2 = Compute("3"); }
+$U1 =Formula("$U1n1*x + $U1n2"); 
+$U1Etape1Prime =  Formula("$U1n1");
+$U1Prime = $U1 ->D('x')-> reduce;
+#Fonction v(x)
+$V1n1 = random(2,9);
+if ($V1n1 == $U1n1) {$V1n1 =Compute("$U1n1 + 1");}
+$V1n2 = random(2,9);
+if ($V1n2 == $V1n1) {$V1n1 = Compute("5"); $V1n2 = Compute("3"); }
+$V1temp = random(0,5); 
+$V1 =$Fonction[$V1temp] ->substitute(A => Formula("$V1n1*x + $V1n2")); 
+$V1Etape1Prime = $FonctionPrime[$V1temp] ->substitute(A => Formula("$V1n1*x + $V1n2")); 
+$V1Etape2 =  Formula("$V1n1*x + $V1n2");
+$V1Etape2Prime =  Formula("$V1n1");
+$V1Prime = $V1 ->D('x')-> reduce;
+$F1 = Formula("$U1/$V1");
+$F1Reponse = $F1 ->D('x')-> reduce;
+
+#Cas 42 trigo(binôme)/trigo(binôme)
+#Fonction u(x)
+$U2n1 = random(2,9);
+$U2n2 = random(2,9);
+if ($U2n2 == $U2n1) {$U2n1 = Compute("5"); $U2n2 = Compute("3"); }
+$U2temp = random(0,5); 
+$U2 =$Fonction[$U2temp] ->substitute(A => Formula("$U2n1*x + $U2n2")); 
+$U2Etape1Prime = $FonctionPrime[$U2temp] ->substitute(A => Formula("$U2n1*x + $U2n2")); 
+$U2Etape2 =  Formula("$U2n1*x + $U2n2");
+$U2Etape2Prime =  Formula("$U2n1");
+$U2Prime = $U2 ->D('x')-> reduce;
+#Fonction v(x)
+$V2n1 = random(2,9);
+if ($V2n1 == $U2n1) {$V2n1 =Compute("$U2n1 + 1");}
+$V2n2 = random(2,9);
+if ($V2n2 == $V2n1) {$V2n1 = Compute("5"); $V2n2 = Compute("3"); }
+$V2temp = random(0,5); 
+$V2 =$Fonction[$V2temp] ->substitute(A => Formula("$V2n1*x + $V2n2")); 
+$V2Etape1Prime = $FonctionPrime[$V2temp] ->substitute(A => Formula("$V2n1*x + $V2n2")); 
+$V2Etape2 =  Formula("$V2n1*x + $V2n2");
+$V2Etape2Prime =  Formula("$V2n1");
+$V2Prime = $V2 ->D('x')-> reduce;
+$F2 = Formula("$U2/$V2");
+$F2Reponse = $F2 ->D('x')-> reduce;
+
+#Cas 43 trigo(quotient)
+#Fonction u(x)
+$U3n1 = random(2,9);
+$U3n2 = random(2,9);
+if ($U3n2 == $U3n1) {$U3n1 = Compute("5"); $U3n2 = Compute("3"); }
+$U3 =  Formula("$U3n1*x + $U3n2");
+$U3Prime = $U3 ->D('x')-> reduce;
+#Fonction v(x)
+$V3n1 = random(2,9);
+if ($V3n1 == $U3n1) {$V3n1 =Compute("$U3n1 + 1");}
+$V3n2 = random(2,9);
+if ($V3n2 == $V3n1) {$V3n1 = Compute("5"); $V3n2 = Compute("3"); }
+$V3 =  Formula("$V3n1*x + $V3n2");
+$V3Prime = $V3 ->D('x')-> reduce;
+$F3temp = random(0,5); 
+$F3 =$Fonction[$F3temp] ->substitute(A => Formula("$U3/$V3")); 
+$F3Etape1Prime =$FonctionPrime[$F3temp] ->substitute(A => Formula("$U3/$V3")); 
+$F3Reponse = $F3 ->D('x')-> reduce;
+$F3Forme =$Fonction[$F3temp] ->substitute(A => Formula("u/v")); 
+
+#Cas 44 x/trigo(n*x)
+#U et V ont été permuté
+$U4 = Formula("x"); 
+$U4Prime = $U4 ->D('x')-> reduce;
+#Fonction v(x)
+$V4n = random(2,9);
+$V4temp = random(0,5); 
+$V4 =$Fonction[$V4temp] ->substitute(A => Formula("$V4n*x")); 
+$V4Etape1Prime = $FonctionPrime[$V4temp] ->substitute(A => Formula("$V4n*x")); 
+$V4Etape2 =  Formula("$V4n*x");
+$V4Etape2Prime =  Formula("$V4n");
+$V4Prime = $V4 ->D('x')-> reduce;
+$F4 = Formula("$V4/$U4");
+$F4Reponse = $F4 ->D('x')-> reduce;
+
+#Cas 45 trigo^m(nx)/x
+#U et V ont été permuté
+$U5 = Formula("x"); 
+$U5Prime = $U5 ->D('x')-> reduce;
+#Fonction v(x)
+$V5n = random(2,9);
+$V5m = random(2,9);
+$V5temp1 = random(0,5); 
+$V5temp2 =$Fonction[$V5temp1] ->substitute(A => Formula("$V5n*x")); 
+$V5 = Formula("($V5temp2)^$V5m");
+$V5Etape1Prime = Formula("$V5m*($V5temp2)^($V5m-1)");
+$V5Etape2 =  Formula("$V5temp2");
+$V5Etape2PrimeTemp =  $FonctionPrime[$V5temp1] ->substitute(A => Formula("$V5n*x")); 
+$V5Etape2Prime =  Formula("($V5Etape2PrimeTemp)*$V5n");
+$V5Prime = $V5 ->D('x')-> reduce;
+$F5 = Formula("$V5/$U5");
+$F5Reponse = $F5 ->D('x')-> reduce;
+
+
+#Affichage de la fonction f 
+@FonctionBloc1 =($F0, $F1, $F2, $F3,$F4, $F5);
+
+#Calcul des réponses
+
+@ReponseBloc1 = ( $FonctionBloc1[0]  ->D('x')-> reduce,
+$FonctionBloc1[1]  ->D('x')-> reduce,
+$FonctionBloc1[2]  ->D('x')-> reduce,
+$FonctionBloc1[3]  ->D('x')-> reduce,
+$FonctionBloc1[4]  ->D('x')-> reduce,
+$FonctionBloc1[5]  ->D('x')-> reduce);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer la dérivée de chacune des fonctions suivantes.
+$PAR
+\{ BeginList("OL", type=>"a") \}
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[0]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[1]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[2]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[3]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[4]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle f(x) = $FonctionBloc1[5]  \), alors  \( \displaystyle f'(x) =  \) \{ans_rule(50)\} 
+$ITEMSEP
+\{ EndList("OL") \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($ReponseBloc1[0]->cmp);
+ANS($ReponseBloc1[1]->cmp);
+ANS($ReponseBloc1[2]->cmp);
+ANS($ReponseBloc1[3]->cmp);
+ANS($ReponseBloc1[4]->cmp);
+ANS($ReponseBloc1[5]->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+\{ BeginList("OL", type=>"a") \}
+$ITEM La fonction \( \displaystyle f(x) = $F0 \) a la forme d'un quotient \( \displaystyle \frac{u}{v}\) où 
+$BR 
+\( \displaystyle u(x) = $U0\).
+$BR 
+\( \displaystyle v(x) = $V0\).
+$BR
+Ainsi, 
+$BR 
+\( \displaystyle u'(x) = ($U0)' = ($U0Etape1Prime) ($U0Etape2)' = ($U0Etape1Prime) ($U0Etape2Prime) = $U0Prime \).
+$BR 
+\( \displaystyle v'(x) = ($V0)' = ($V0Etape1Prime) ($V0Etape2)' = ($V0Etape1Prime) ($V0Etape2Prime) = $V0Prime \).
+$BR
+Appliquons la formule de dérivation d'un quotient.
+$BR
+\( \displaystyle f'(x) = \left($F0\right)' \)
+$BR
+\( \displaystyle f'(x) = \frac{($U0)'($V0) - ($U0) ($V0)'}{($V0)^2} \)
+$BR
+\( \displaystyle f'(x) = $F0Reponse  \)
+$ITEMSEP
+
+$ITEM La fonction \( \displaystyle f(x) = $F1 \) a la forme d'un quotient \( \displaystyle \frac{u}{v}\) où 
+$BR 
+\( \displaystyle u(x) = $U1\).
+$BR 
+\( \displaystyle v(x) = $V1\).
+$BR
+Ainsi, 
+$BR 
+\( \displaystyle u'(x) = ($U1)' = $U1Prime \).
+$BR 
+\( \displaystyle v'(x) = ($V1)' = ($V1Etape1Prime) ($V1Etape2)' = ($V1Etape1Prime) ($V1Etape2Prime) = $V1Prime \).
+$BR
+Appliquons la formule de dérivation d'un quotient.
+$BR
+\( \displaystyle f'(x) = \left($F1\right)' \)
+$BR
+\( \displaystyle f'(x) = \frac{($U1)'($V1) - ($U1) ($V1)'}{($V1)^2} \)
+$BR
+\( \displaystyle f'(x) = $F1Reponse  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $F3 \) a la forme \( \displaystyle f(x) = $F3Forme \).
+Ainsi, 
+$BR
+\( \displaystyle f'(x) = \left($F3\right)' \)
+$BR
+\( \displaystyle f'(x) = \left($F3Etape1Prime\right)\left(\frac{$U3}{$V3}\right)' \)
+$BR
+\( \displaystyle f'(x) = \left($F3Etape1Prime\right)\left(\frac{($U3)'($V3) - ($U3) ($V3)'}{$V3^2}\right) \)
+$BR
+\( \displaystyle f'(x) = \left($F3Etape1Prime\right)\left(\frac{($U3Prime)($V3) - ($U3) ($V3Prime)}{($V3)^2}\right) \)
+$BR
+\( \displaystyle f'(x) = $F3Reponse  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $F4 \) a la forme d'un quotient \( \displaystyle \frac{u}{v}\) où 
+$BR 
+\( \displaystyle u(x) = $V4\).
+$BR 
+\( \displaystyle v(x) = $U4\).
+$BR
+Ainsi, 
+$BR 
+\( \displaystyle u'(x) = ($V4)' = ($V4Etape1Prime) ($V4Etape2)' = ($V4Etape1Prime) ($V4Etape2Prime) = $V4Prime  \).
+$BR 
+\( \displaystyle v'(x) = ($U4)' =  $U4Prime\).
+$BR
+Appliquons la formule de dérivation d'un quotient.
+$BR
+\( \displaystyle f'(x) = \left($F4\right)' \)
+$BR
+\( \displaystyle f'(x) = \frac{($V4)'($U4) - ($V4) ($U4)'}{($U4)^2} \)
+$BR
+\( \displaystyle f'(x) = $F4Reponse  \)
+$ITEMSEP
+$ITEM La fonction \( \displaystyle f(x) = $F5 \) a la forme d'un quotient \( \displaystyle \frac{u}{v}\) où 
+$BR 
+\( \displaystyle u(x) = $V5\).
+$BR 
+\( \displaystyle v(x) = $U5\).
+$BR
+Ainsi, 
+$BR 
+\( \displaystyle u'(x) = ($V5)' = ($V5Etape1Prime) ($V5Etape2)' = ($V5Etape1Prime) ($V5Etape2Prime) = $V5Prime  \).
+$BR 
+\( \displaystyle v'(x) = ($U5)' =  $U5Prime\).
+$BR
+Appliquons la formule de dérivation d'un quotient.
+$BR
+\( \displaystyle f'(x) = \left($F5\right)' \)
+$BR
+\( \displaystyle f'(x) = \frac{($V5)'($U5) - ($V5) ($U5)'}{($U5)^2} \)
+$BR
+\( \displaystyle f'(x) = $F5Reponse  \)
+$ITEMSEP
+
+
+\{ EndList("OL") \}
+END_SOLUTION
+Context()->normalStrings;
+ENDDOCUMENT(); 

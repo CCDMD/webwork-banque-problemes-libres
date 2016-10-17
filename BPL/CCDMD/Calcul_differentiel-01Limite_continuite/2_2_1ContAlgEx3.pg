@@ -1,0 +1,119 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('continuité en un point', 'discontinuité', 'fonction définie par parties', 'fonction polynomiale')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl", "unionLists.pl","unionTables.pl","contextPiecewiseFunction.pl","parserPopUp.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Fonction définie par morceaux (quadratique et linéaire) avec une discontinuité ou non.");
+
+TEXT(beginproblem());
+
+Context("PiecewiseFunction");
+Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+Context()->noreduce('(-x)-y'); 
+
+#Cas 3: Fonction quadratique et linéaire 
+#Valeur a31 et a32 
+#ne pas choisir 0, -1,1 car le calcul est trop facile
+$a31 = list_random(-5,-4,-3,-2,2,3,4,5);
+$a32 = list_random(-5,-4,-3,-2,2,3,4,5);
+if ($a31 == $a32) {$a32 = $a31 + 1;}
+#les deux morceaux de la fonction
+$n31 = list_random(-5,-4,-3,-2,2,3,4,5,6,7,8,9);
+$n32 =list_random(-5,-4,-3,-2,2,3,4,5,6,7,8,9);
+$k31 = random(1,9);
+#Si le saut est nul, alors la fonction est continue.
+$saut31 = list_random(0,0,0,0,0,-1,1,-2,2);
+$k32temp = Compute("$n31*$a31-$k31+($a31)^2+$saut31");
+#Choix de l'affichage du premier morceau
+$temp31 = random(-1,1,2);
+if ($temp31 == 1) {$f31 = Formula("$n31*x-$k31"); $f32 = Formula("-x^2 +$k32temp") ->reduce;}
+else
+{$f32 = Formula("$n31*x-$k31"); $f31 = Formula("-x^2 +$k32temp") ->reduce;}
+
+
+#Fonction définie par morceaux et réponses
+#Choisir la valeur de la fonction en x = a31
+$temp30 = random(0,2);
+if ($temp30 == 0) 
+{#La fonction n'est pas définie en x = a
+$f30 = PiecewiseFunction("$f31 if  x < $a31 else $f32 if x > $a31 ");
+#Réponse
+$RepFA31 = Compute("nep");
+$RepLimiteG31 = $f31->eval(x=>$a31);
+$RepLimiteD31 = $f32->eval(x=>$a31);
+$RepPopUp31 = PopUp(["Choisir", "Oui", "Non"], "Non");}
+elsif ($temp30 == 1)
+{#La fonction est définie en x = a
+$f30 = PiecewiseFunction("$f31 if  x <= $a31 else $f32 if x > $a31  ");
+$RepFA31 = $f30->eval(x=>$a31);
+$RepLimiteG31 = $f31->eval(x=>$a31);
+$RepLimiteD31 = $f32->eval(x=>$a31);
+if ($RepLimiteG31 == $RepLimiteD31) {$RepPopUp31 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else
+{$RepPopUp31 = PopUp(["Choisir", "Oui", "Non"], "Non");}}
+else
+{#La fonction est définie en x = a
+$f30 = PiecewiseFunction("$f31 if  x < $a31 else $f32 if x >= $a31  ");
+$RepFA31 = $f30->eval(x=>$a31);
+$RepLimiteG31 = $f31->eval(x=>$a31);
+$RepLimiteD31 = $f32->eval(x=>$a31);
+if ($RepLimiteG31 == $RepLimiteD31) {$RepPopUp31 = PopUp(["Choisir", "Oui", "Non"], "Oui");}
+else
+{$RepPopUp31 = PopUp(["Choisir", "Oui", "Non"], "Non");}}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+
+\{
+ColumnTable(
+"Soit la fonction suivante: ".$BR. 
+"\[f(x)=$f30\]".
+$BR.
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["Note: Écrire \( \bf nep \), si la fonction n'est pas $BR définie en \(x = $a31\)"], align=>LEFT).
+EndTable(),
+"Déterminer les valeurs suivantes et répondre à la question:".
+$BR.
+BeginList("OL", type=>"a").
+$ITEM. " \( \displaystyle f($a31)  \)  = ". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{  \lim_{x \rightarrow $a31^{-}} f(x) = }\)". ans_rule(20). 
+$ITEMSEP.
+$ITEM." \( \displaystyle{\lim_{x \rightarrow $a31^{+}} f(x) = }\)". ans_rule(20).
+$ITEMSEP.
+$ITEM. "Est-ce que la fonction est continue en \(x = $a31\)? ".
+$RepPopUp31->menu().
+EndList("OL"),
+indent=>"0", separation=>"10", valign=>"TOP"
+);
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($RepFA31->cmp());
+ANS(num_cmp($RepLimiteG31));
+ANS(num_cmp($RepLimiteD31));
+ANS( $RepPopUp31->cmp() );
+
+
+ENDDOCUMENT();

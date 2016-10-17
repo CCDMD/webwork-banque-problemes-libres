@@ -1,0 +1,90 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'fonction logarithmique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+
+COMMENT("Niveau de difficulté: Facile. Fonction logarithmique (ln(ax) ou a*lnx), avec notation standard et solution.");
+
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Cas 66: ln(ax) ou a*lnx 
+$k661 =random(3,15);
+$temp661 = random(0,1);
+
+#Fonction à dériver
+if ($temp661 == 0)
+{$f66 = Formula("ln($k661*x)")-> reduce;
+$f66prime1 = Formula("1/x")-> reduce;
+}
+else
+{$f66 = Formula("$k661*ln(x)")-> reduce;
+$f66prime1 = Formula("$k661/x")-> reduce;
+}
+
+#Calcul de la dérivée
+$Rep66 = $f66prime1 -> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f66} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep66->cmp);
+
+if ($temp661 == 0)
+{#Cas ln(ax) 
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f66 \) a la forme d'un logarithme naturel d'une fonction. Ainsi, 
+$PAR
+\( \displaystyle f'(x) =  \frac{($k661 x)'}{$k661 x} \)  $SPACE (Formule de dérivation d'un logarithme naturel)
+$PAR
+\( \displaystyle f'(x) =  \frac{$k661}{$k661 x}\) $SPACE (Formule de dérivation d'un monôme) 
+$PAR
+\( \displaystyle f'(x) =  \frac{1}{x} \) $SPACE (Simplification) 
+END_SOLUTION
+Context()->normalStrings;
+}
+else
+{
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f66 \) a la forme d'une constante multipliée par un logarithme naturel. Ainsi, 
+$PAR
+\( \displaystyle f'(x) =  $k661 \cdot \frac{(x)'}{x} \)  $SPACE (Formule de dérivation d'un logarithme naturel)
+$PAR
+\( \displaystyle f'(x) =  $k661 \cdot \frac{1}{x}  \) $SPACE (Formule de dérivation de la fonction identité) 
+$PAR
+\( \displaystyle f'(x) =   \frac{$k661}{x} \) $SPACE (Simplification) 
+END_SOLUTION
+Context()->normalStrings;
+}
+
+ENDDOCUMENT(); 

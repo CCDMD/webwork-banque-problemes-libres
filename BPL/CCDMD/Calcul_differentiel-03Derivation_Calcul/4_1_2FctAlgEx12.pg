@@ -1,0 +1,97 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS( 'dérivée', 'dérivée de la somme de fonctions', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl", 
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Somme de puissances entières positives et négatives (a1*x^n1 + 1/(a2*x^n2)), avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Cas 12: Somme de puissances entières positives et négatives
+$k121 =random(3,15);
+$m121 =random(2,9); 
+$m122 =random(2,9);  
+#Il faut pouvoir faire une simplification
+$k122temp =list_random(-3,-2,2, 3);
+$k122 = Compute("$k122temp*$m122");
+
+#Fonction à dériver
+$f12 = Formula("$k121*x^$m121+1/($k122*x^($m122))")->reduce;
+$f12s = Formula("$k121*x^$m121+x^(-1*$m122)/$k122" )-> reduce;
+#Calcul de la dérivée
+$f12prime1 = Formula("$k121*$m121*x^($m121-1)- $m122*x^(-1*$m122-1)/$k122" )-> reduce;
+#$f12prime1 = $f12 ->D('x')-> reduce;
+#$f12prime2 = $f12s ->D('x')-> reduce;
+$f12prime2 = Formula("$k121*$m121*x^($m121-1)- $m122/(x^($m122+1)*$k122)" )-> reduce;
+
+#Simplifier si possible
+$gcd122 = gcd($m122,$k122);
+if ($gcd122 == 1)
+{#Il ne faut pas simplifier
+$f12prime3 = $f12prime2}
+else
+{#Il faut simplifier
+$k122n = Compute("$k122/$gcd122");
+$m122n = Compute("$m122/$gcd122");
+$f12prime3 = Formula("$k121*$m121*x^($m121-1)- $m122n/(x^($m122+1)*$k122n)" )-> reduce;}
+
+$Rep12 = $f12prime3 -> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f12} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep12->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f12 \) a la forme d'une somme de fonctions simples. 
+$BR
+Attention: pour dériver une puissance, il faut que cette puissance soit au numérateur. Ainsi 
+$BR 
+\( \displaystyle f(x) =  $f12s \).
+$PAR
+Dérivons.
+$BR
+\( \displaystyle f'(x) =  $f12prime1 \) 
+$PAR
+Rendons l'exposant positif.
+$BR
+\( \displaystyle f'(x) =  $f12prime2 \) 
+$PAR
+Concluons en simplifiant.
+$BR
+\( \displaystyle f'(x) =  $f12prime3 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

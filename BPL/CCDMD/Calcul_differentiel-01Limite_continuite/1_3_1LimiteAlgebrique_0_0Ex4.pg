@@ -1,0 +1,55 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('0/0', 'factorisation', 'fonction algébrique', 'fonction rationnelle', 'forme indéterminée', 'limite')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Limite algébrique d'indétermination 0/0 et de la forme d'un trinôme au dénominateur");
+
+
+TEXT(beginproblem());
+
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Forme 0/0
+
+#Cas 4: Trinôme au dénominateur
+#Variable x. Adaptation du cas 2. 
+$a4t=non_zero_random(-10,10);
+$m4t=non_zero_random(-10,10);
+if ($a4t = $m4t) {$a4 = random(2,10); $m4 =  Compute("$a4+2");}
+else {$a4 = $a4t; $m4 = $m4t;}
+$b4c = Compute("-1*$a4 - $m4");
+$c4c = Compute("$a4 * $m4");
+$f4A =Formula("(x-$a4)/(x^2+$b4c x +$c4c)")->reduce;
+$RepLA4temp = Compute("$a4 - $m4");
+$RepLA4 = Compute("1/$RepLA4temp");
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la limite suivante.$BR
+
+ \( \displaystyle {\lim_{x \rightarrow $a4} $f4A}\)  = \{ans_rule(20)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepLA4->cmp);
+
+
+
+ENDDOCUMENT(); 

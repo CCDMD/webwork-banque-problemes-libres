@@ -1,0 +1,160 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée de la fonction puissance', 'dérivée du produit de fonctions', 'fonction algébrique', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+COMMENT("Niveau de difficulté: Difficile. Produit d'un monôme par un binôme affecté d'un exposant entier, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(h=>"Real",t=>"Real",y=>"Real", x => "Real",z=>"Real",a=>"Real", b => "Real",c=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Code de la mise en évidence a été modifié, car il y a un terme manquant.
+
+#Cas 26: Produit de x par un binôme avec exposant.
+#Premier binôme
+$k261 = 1;
+$m261 =1; 
+$k262 = 0;
+$m262 =0;  
+#Deuxième binôme
+$k263 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+$m263 =random(6,9); 
+$k264 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k264) == abs($k263)) {$k264 = 17;};
+$m264 =random(2,5) ; 
+#Exposant du premier binôme
+$n261 = 1; 
+#Exposant du deuxième binôme
+$n262 =random(2,9) ;
+
+$poly261 = Formula("$k261*x^$m261+$k262*x^$m262")->reduce;
+$poly261prime =$poly261 ->D('x')-> reduce;
+
+$poly262 =Formula("$k263*x^$m263+$k264*x^$m264")->reduce;
+$poly262prime =$poly262 ->D('x')-> reduce;
+$u26 = Formula("($poly261)^$n261")->reduce;
+$u26prime = Formula("$n261*($poly261)^($n261-1)*($poly261prime)")->reduce;
+$v26 = Formula("$poly262^$n262")->reduce;
+$v26prime = Formula("$n262*($poly262)^($n262-1)*($poly262prime)")->reduce;
+
+$f26 = Formula("($k261*x^$m261+$k262*x^$m262)^$n261*($k263*x^$m263+$k264*x^$m264)^$n262") -> reduce;
+$f26prime1old = $f26 ->D('x')-> reduce;
+$f26prime1 = Formula("($u26prime)*($v26) +($u26)*($v26prime)")->reduce;
+$f26prime2 = Formula("$poly261^($n261-1)*$poly262^($n262-1)*($n261*$poly261prime*$poly262+$n262*$poly262prime*$poly261)")-> reduce;
+
+#Simplifier la dérivée en développant
+$exposant261 = Compute("$m263-1+$m261");
+$exposant262 = Compute("$m263-1+$m262");
+$exposant263 = Compute("$m264-1+$m261");
+$exposant264 = Compute("$m264-1+$m262");
+
+if ($exposant262 == $exposant263) 
+{#2 exposants sont identiques, donc additionner les coefficients
+$coef261 = Compute("$n261*$k261*$m261*$k263 +$n262*$k263*$m263*$k261");
+$coef262temp = Compute("$n261*$k262*$m262*$k263 +$n262*$k263*$m263*$k262");
+$coef263temp = Compute("$n261*$k261*$m261*$k264 +$n262*$k264*$m264*$k261");
+$coef262 = Compute("$coef262temp + $coef263temp");
+$coef263 = Compute("0");
+$coef264 = Compute("$n261*$k262*$m262*$k264 +$n262*$k264*$m264*$k262");}
+else
+{#aucun exposant n'est identique.
+$coef261 = Compute("$n261*$k261*$m261*$k263 +$n262*$k263*$m263*$k261");
+$coef262 = Compute("$n261*$k262*$m262*$k263 +$n262*$k263*$m263*$k262");
+$coef263 = Compute("$n261*$k261*$m261*$k264 +$n262*$k264*$m264*$k261");
+$coef264 = Compute("$n261*$k262*$m262*$k264 +$n262*$k264*$m264*$k262");}
+
+#dérivée développée
+$f26prime3 =Formula("$poly261^($n261-1)*$poly262^($n262-1)*($coef261*x^$exposant261 +$coef262*x^$exposant262+ $coef263*x^$exposant263 +$coef264*x^$exposant264)")-> reduce;
+
+#Voir s'il est possible de faire une mise en évidence simple
+if ((($coef262 == 0) && ($coef263 == 0) && ($coef264 == 0)) || 
+(($coef261 == 0) && ($coef263 == 0) && ($coef264 == 0))||
+ (($coef261 == 0) && ($coef262 == 0) && ($coef264 == 0))||
+ (($coef261 == 0) && ($coef262 == 0) && ($coef263 == 0)))
+{#Un seul coefficient est non nul. Ne pas faire de mise en évidence simple
+$f26prime4 = $f26prime3;
+}
+else
+{#Faire une mise en évidence simple, si possible
+#$exposant264 n'existe pas.
+$CoefTemp261 = gcd($coef261,$coef262);
+$CoefTemp262 = gcd($coef263,$coef264);
+$NouveauCoef263 = gcd($CoefTemp261,$CoefTemp262);
+$ExposantTemp261 = min($exposant261,$exposant262);
+$ExposantTemp262 = min($exposant263,$exposant264);
+$NouveauExposant263temp = min($ExposantTemp261,$ExposantTemp262);
+$NouveauExposant263 = Compute("$NouveauExposant263temp + 1");
+$f26prime4 =Formula("$NouveauCoef263*x^$NouveauExposant263*$poly261^($n261-1)*$poly262^($n262-1)*($coef261/$NouveauCoef263*x^($exposant261-$NouveauExposant263) +$coef262/$NouveauCoef263*x^($exposant262-$NouveauExposant263) +$coef263/$NouveauCoef263*x^($exposant263-$NouveauExposant263)
++$coef264/$NouveauCoef263*x^($exposant264-$NouveauExposant263))")-> reduce;
+}
+
+#C'est la réponse la plus courante
+$Rep26 = $f26prime3 -> reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f26} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep26->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f26 \) a la forme d'un produit \(u \cdot v\) où
+$PAR
+\(\displaystyle u(x) =  $u26 \)
+$PAR
+\( \displaystyle v(x) =  $v26\) 
+$PAR
+Calculons d'abord  \(u'(x)\) et \( v'(x) \).
+$BR
+\( \displaystyle u'(x) =  $u26prime \) 
+$PAR
+\( \displaystyle v'(x) =  $v26prime\) 
+$PAR
+Appliquons la formule de dérivation d'un produit.  
+$BR
+\( \displaystyle f'(x) =  $f26prime1 \) 
+$PAR
+Faisons une mise en évidence simple.
+$BR
+\( \displaystyle f'(x) =  $f26prime2 \) 
+$PAR
+Développons ce qui n'a pas été mis en évidence. 
+$BR
+\( \displaystyle f'(x) =  $f26prime3 \) 
+$PAR
+Conclusion en faisant, si possible, une mise en évidence simple. 
+$BR
+\( \displaystyle f'(x) =  $f26prime4 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

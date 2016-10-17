@@ -1,0 +1,242 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation - définition et interprétation)
+## KEYWORDS('définition', 'dérivée en un point', 'fonction polynomiale', 'fonction racine carrée', 'fonction rationnelle')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionLists.pl","unionTables.pl", "PGchoicemacros.pl"
+);
+
+COMMENT("3 fonctions du niveau facile, 4 fonctions du niveau moyen, 5 fonctions du niveau difficile. Ordre de présentation aléatoire pour un niveau de difficulté.");
+
+
+TEXT(beginproblem());
+
+Context()->variables->are(h=>"Real",t=>"Real",a=>"Real", x => "Real",p=>"Real",q=>"Real",r=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+# Bloc 1: Niveau facile, 3 fonctions
+# Bloc 2: Niveau moyen, 4 fonctions
+# Bloc 3: Niveau difficile, 5 fonctions
+# La dérivée d'une racine au dénominateur est calculée manuellement. 
+# car il y a un problème de simplification dans l'affichage de la réponse.
+
+#
+#Niveau facile
+#
+
+#Fonction linéaire en une valeur particulière de x
+$a1=random(2,8);
+$k11 = random(3,8);
+$m11 =random(11,25); 
+$f1 = Formula("$k11 x-$m11");
+$f1A ="$k11 x-$m11";
+$RepDD1 = $k11;
+
+#Fonction quadratique simple en une valeur particulière de x
+$a2=random(2,8);
+$k21 = random(3,8);
+$m21 =random(11,25); 
+$f2 = Formula("($k21 x-$m21)^2");
+$f2A ="($k21 x-$m21)^2";
+$f2prime = $f2 ->D('x');
+$f2primea = $f2prime->eval(x=>"$a2");
+$RepDD2 = $f2primea;
+
+#Fonction quadratique développée avec t en une valeur particulière de t
+$a3=random(2,8);
+$k31 = random(3,8);
+$k32 =random(11,25); 
+$k33 =random(11,25); 
+$f3 = Formula("$k31 t^2-$k32 t +$k33");
+$f3A ="$k31 t^2-$k32 t +$k33";
+$f3prime = $f3 ->D('t');
+$f3primea = $f3prime->eval(t=>"$a3");
+$RepDD3 = $f3primea;
+
+#
+#Niveau moyen
+#
+
+#Fonction quotient simple avec a
+$a4= a;
+$k41 = random(3,8);
+$k42 =random(11,25); 
+$f4 = Formula("$k41/($k42 -x)");
+$f4A ="\frac{$k41}{$k42 -x}";
+$f4prime = $f4 ->D('x');
+$f4primea = $f4prime->substitute(x => "a");
+$RepDD4 = Formula("$f4primea") ->reduce;
+
+#Fonction quadratique simple avec a
+$a5= a;
+$k51 = random(3,8);
+$m51 =random(11,24); 
+$f5 = Formula("x^2+$m51");
+$f5A ="x^2-$m51";
+$f5prime = $f5 ->D('x');
+$f5primea = $f5prime->substitute(x => "a");
+$RepDD5 = Formula("$f5primea") ->reduce;
+
+#Fonction quadratique développée avec a
+$a6=a;
+$k61 = random(3,8);
+$m61 =random(11,25); 
+$k62 = random(3,8);
+$m62 =random(11,25); 
+$f6 = Formula("($k61 x-$m61) ($k62 x-$m62)");
+$f6A ="($k61 x-$m61) ($k62 x-$m62)";
+$f6primeOLD = $f6 ->D('x');
+$f6prime_temp = Compute("-$k61*$m62-$k62*$m61");
+$f6prime = Formula("2*$k61*$k62*x +$f6prime_temp")->reduce;
+$f6primea = $f6prime->substitute(x => "a")->reduce;
+$RepDD6 = Formula("$f6primea") ->reduce;
+
+#Fonction quotient plus simple avec a et t
+$a7= a;
+$k71 = random(3,8);
+$f7 = Formula("1/($k71 t)");
+$f7A ="\frac{1}{$k71 t}";
+$f7prime = $f7 ->D('t');
+$f7primea = $f7prime->substitute(t => "a");
+$RepDD7old = Formula("$f7primea") ->reduce;
+$RepDD7 =Formula("-1/($k71*a^2)");
+
+#
+#Niveau difficile
+#
+
+#Fonction racine simple avec a
+$a8= a;
+$k81 = random(3,8);
+$m81 =random(11,25); 
+$f8 = Formula("sqrt(x-$k81)");
+$f8A ="\sqrt{x-$k81}";
+$f8prime = $f8 ->D('x');
+$f8primea = $f8prime->substitute(x => "a");
+$RepDD8 = Formula("$f8primea") ->reduce;
+$RepDD8->{limits} = [$k81,50];
+
+#Fonction quotient avec un binôme avec a
+$a9= a;
+$k91 = random(3,8);
+$k92 = random(10,22);
+$f9 = Formula("$k91/($k91 x -$k92)");
+$f9A ="\frac{$k91}{$k91 x -$k92}";
+$f9prime = $f9 ->D('x');
+$f9primea = $f9prime->substitute(x => "a");
+$RepDD9 = Formula("$f9primea") ->reduce;
+#$RepDD9 = Formula("-2*$k91/($k91 a -$k92)^3") ->reduce;
+
+#Fonction racine avec coefficient avec a et t
+#Réponse entrée manuellement
+$a10= a;
+$k101 = random(3,8);
+$m101 =random(11,25); 
+$DomaineRacine101 = Compute("$m101/$k101");
+$f10 = Formula("sqrt($k101 x-$m101)");
+$f10A ="\sqrt{$k101 t-$m101}";
+$f10primea = "$k101/(2*(sqrt($k101 a-$m101)))";
+$RepDD10 = Formula("$f10primea") ->reduce;
+$RepDD10->{limits} = [$DomaineRacine101,50];
+
+#Fonction racine au dénominateur avec a
+$a11= a;
+$k111 = random(3,8);
+$m111 =random(11,25); 
+$DomaineRacine111 = Compute("$m111/$k111+1");
+$f11 = Formula("1/sqrt($k111*x-$m111)");
+$f11A ="\frac{1}{\sqrt{$k111 x-$m111}}";
+$f11primeOLD = $f11 ->D('x');
+$f11prime = Formula("-$k111/(2*(sqrt($k111*x-$m111))^3)");
+$f11primea = $f11prime->substitute(x => "a");
+$RepDD11 = Formula("$f11primea") ->reduce;
+$RepDD11->{limits} = [$DomaineRacine111,50];
+
+#Fonction quadratique avec paramètres p, q, r et a
+$a12=a;
+$f12 = Formula("p x^2 + q x + r");
+$f12A ="p x^2 + q x + r";
+$f12prime = $f12 ->D('x');
+$f12primea = $f12prime->substitute(x => "a");
+$RepDD12 = Formula("$f12primea") ->reduce;
+
+#Bloc 1
+@ListeAffichage1A = ("f(x) = $f1A","f(x) = $f2A","f(t) = $f3A" );
+@ListeAffichage1B = ("f'($a1) = ","f'($a2) = ","f'($a3) = " );
+@RepAffichage1 = ($RepDD1,$RepDD2,$RepDD3);
+@R1 = shuffle(3);
+
+#Bloc 2
+@ListeAffichage2A = ("f(x) = $f4A","g(x) = $f5A","h(x) = $f6A","g(t) = $f7A");
+@ListeAffichage2B = ("f'($a4) = ","g'($a5) = ","h'($a6) = ","g'($a7) = " );
+@RepAffichage2 = ($RepDD4,$RepDD5,$RepDD6,$RepDD7);
+@R2 = shuffle(4);
+
+#Bloc 3
+@ListeAffichage3A = ("f(x) = $f8A","f(x) = $f9A","h(t) = $f10A","g(x) = $f11A", "f(x) = $f12A, \rm{ avec \ } \it{ p, q, r }\in \mathbb{R}^* ");
+@ListeAffichage3B = ("f'($a8) = ","f'($a9) = ","h'($a10) = ","g'($a11) = ","f'($a12) = " );
+@RepAffichage3 = ($RepDD8,$RepDD9,$RepDD10,$RepDD11,$RepDD12);
+@R3 = shuffle(5);
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de chacune des fonctions suivantes en la valeur indiquée.
+$PAR
+\{ BeginList("OL", type=>"a") \}
+$ITEM Si \( \displaystyle $ListeAffichage1A[$R1[0]]  \), alors  \( \displaystyle $ListeAffichage1B[$R1[0]]  \) \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle $ListeAffichage1A[$R1[1]]  \), alors  \( \displaystyle $ListeAffichage1B[$R1[1]]  \) \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle $ListeAffichage1A[$R1[2]]  \), alors  \( \displaystyle $ListeAffichage1B[$R1[2]]  \) \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle $ListeAffichage2A[$R2[0]]  \), alors  \( \displaystyle $ListeAffichage2B[$R2[0]]  \) \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle $ListeAffichage2A[$R2[1]]  \), alors  \( \displaystyle $ListeAffichage2B[$R2[1]]  \) \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle $ListeAffichage2A[$R2[2]]  \), alors  \( \displaystyle $ListeAffichage2B[$R2[2]]  \) \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle $ListeAffichage2A[$R2[3]]  \), alors  \( \displaystyle $ListeAffichage2B[$R2[3]]  \) \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle $ListeAffichage3A[$R3[0]]  \), alors  \( \displaystyle $ListeAffichage3B[$R3[0]]  \) \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle $ListeAffichage3A[$R3[1]]  \), alors  \( \displaystyle $ListeAffichage3B[$R3[1]]  \) \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle $ListeAffichage3A[$R3[2]]  \), alors  \( \displaystyle $ListeAffichage3B[$R3[2]]  \) \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle $ListeAffichage3A[$R3[3]]  \), alors  \( \displaystyle $ListeAffichage3B[$R3[3]]  \) \{ans_rule(20)\} 
+$ITEMSEP
+$ITEM Si \( \displaystyle $ListeAffichage3A[$R3[4]]  \), alors  \( \displaystyle $ListeAffichage3B[$R3[4]]  \) \{ans_rule(20)\} 
+$ITEMSEP
+\{ EndList("OL") \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($RepAffichage1[$R1[0]]));
+ANS(num_cmp($RepAffichage1[$R1[1]]));
+ANS(num_cmp($RepAffichage1[$R1[2]]));
+ANS(@RepAffichage2[$R2[0]]->cmp);
+ANS(@RepAffichage2[$R2[1]]->cmp);
+ANS(@RepAffichage2[$R2[2]]->cmp);
+ANS(@RepAffichage2[$R2[3]]->cmp);
+ANS(@RepAffichage3[$R3[0]]->cmp);
+ANS(@RepAffichage3[$R3[1]]->cmp);
+ANS(@RepAffichage3[$R3[2]]->cmp);
+ANS(@RepAffichage3[$R3[3]]->cmp);
+ANS(@RepAffichage3[$R3[4]]->cmp);
+
+
+ENDDOCUMENT(); 

@@ -1,0 +1,92 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'fonction exponentielle', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Fonction exponentielle (e^(ax) ou a*e^x), avec notation standard et solution.");
+
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Cas 65: e^(ax) ou a*e^x 
+$k651 =random(3,15);
+$temp651 = random(0,1);
+
+#Fonction à dériver
+if ($temp651 == 0)
+{$f65 = Formula("e^($k651*x)")-> reduce;
+$f65prime1 = Formula("$k651*e^($k651*x)")-> reduce;
+}
+else
+{$f65 = Formula("$k651*e^x")-> reduce;
+$f65prime1 = Formula("$k651*e^(x)")-> reduce;
+}
+
+
+#Calcul de la dérivée
+ $Rep65 = $f65prime1 -> reduce;
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f65} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep65->cmp);
+
+if ($temp651 == 0)
+{
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f65 \) a la forme d'une exponentielle d'une fonction. Ainsi, 
+$PAR
+\( \displaystyle f'(x) =  $f65 ($k651 x)' \)  $SPACE (Formule de dérivation d'une exponentielle)
+$PAR
+\( \displaystyle f'(x) =  $f65 ($k651)\) $SPACE (Formule de dérivation d'un monôme) 
+$PAR
+\( \displaystyle f'(x) =  $k651 $f65 \) $SPACE (Ordre de présentation) 
+END_SOLUTION
+Context()->normalStrings;
+}
+else
+{
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f65 \) a la forme d'une constante multipliée par une exponentielle. Ainsi, 
+$PAR
+\( \displaystyle f'(x) =  $f65 (x)' \)  $SPACE (Formule de dérivation d'une exponentielle)
+$PAR
+\( \displaystyle f'(x) =  $f65 (1) \) $SPACE (Formule de dérivation de la fonction identité) 
+$PAR
+\( \displaystyle f'(x) =   $f65 \) $SPACE (Simplification) 
+END_SOLUTION
+Context()->normalStrings;
+}
+
+ENDDOCUMENT(); 

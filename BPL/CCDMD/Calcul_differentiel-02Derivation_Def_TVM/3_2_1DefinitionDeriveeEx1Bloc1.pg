@@ -1,0 +1,87 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation - définition et interprétation)
+## KEYWORDS('définition', 'dérivée en un point', 'fonction polynomiale')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"unionLists.pl","unionTables.pl", "PGchoicemacros.pl"
+);
+
+COMMENT("1 fonction du niveau facile choisie parmi 3");
+
+TEXT(beginproblem());
+
+Context()->variables->are(h=>"Real",t=>"Real",a=>"Real", x => "Real",p=>"Real",q=>"Real",r=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y', '(-x)/y', 'x/(-y)');
+
+#Choisir 1 du bloc 1
+# Bloc 1: Niveau facile, 3 fonctions
+# Bloc 2: Niveau moyen, 4 fonctions
+# Bloc 3: Niveau difficile, 5 fonctions
+# La dérivée d'une racine au dénominateur est calculée manuellement. 
+# Il y a un problème de simplification dans l'affichage de la réponse.
+
+#
+#Niveau facile
+#
+
+#Fonction linéaire en une valeur particulière de x
+$a1=random(2,8);
+$k11 = random(3,8);
+$m11 =random(11,25); 
+$f1 = Formula("$k11 x-$m11");
+$f1A ="$k11 x-$m11";
+$RepDD1 = $k11;
+
+#Fonction quadratique simple en une valeur particulière de x
+$a2=random(2,8);
+$k21 = random(3,8);
+$m21 =random(11,25); 
+$f2 = Formula("($k21 x-$m21)^2");
+$f2A ="($k21 x-$m21)^2";
+$f2prime = $f2 ->D('x');
+$f2primea = $f2prime->eval(x=>"$a2");
+$RepDD2 = $f2primea;
+
+#Fonction quadratique développée avec t en une valeur particulière de t
+$a3=random(2,8);
+$k31 = random(3,8);
+$k32 =random(11,25); 
+$k33 =random(11,25); 
+$f3 = Formula("$k31 t^2-$k32 t +$k33");
+$f3A ="$k31 t^2-$k32 t +$k33";
+$f3prime = $f3 ->D('t');
+$f3primea = $f3prime->eval(t=>"$a3");
+$RepDD3 = $f3primea;
+
+#Bloc 1
+@ListeAffichage1A = ("f(x) = $f1A","f(x) = $f2A","f(t) = $f3A" );
+@ListeAffichage1B = ("f'($a1) = ","f'($a2) = ","f'($a3) = " );
+@RepAffichage1 = ($RepDD1,$RepDD2,$RepDD3);
+@R1 = shuffle(3);
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction  \( \displaystyle $ListeAffichage1A[$R1[0]]  \) en la valeur indiquée.
+$PAR $SPACE$SPACE  \( \displaystyle $ListeAffichage1B[$R1[0]]  \) \{ans_rule(20)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS(num_cmp($RepAffichage1[$R1[0]]));
+
+
+ENDDOCUMENT(); 

@@ -1,0 +1,79 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'dérivée du quotient de fonctions', 'fonction exponentielle', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(3)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Moyen. Quotient d'une constant par une exponentielle, avec notation standard et solution. La solution est donnée comme une constante multipliée par une exponentielle.");
+
+TEXT(beginproblem());
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Cas 111: cte/exp(binôme)
+#Premier binôme simple
+$k1111 =random(3,15);
+$m1111 =random(5,9); 
+$k1112 =random(2,9);
+$Coef1111 = random(2,9);
+ 
+$poly1111 = Formula("$k1111*x^$m1111+$k1112")->reduce;
+$poly1111prime =Formula("$k1111*$m1111*x^($m1111-1)")->reduce;
+
+#La fonction
+$f111 = Formula("$Coef1111/(e^$poly1111)")-> reduce;
+$f111S = Formula("$Coef1111*e^(-1*$poly1111)")-> reduce;
+$f111prime1 = Formula("-1*$Coef1111*e^(-1*$poly1111)*($k1111*$m1111*x^($m1111-1))")-> reduce;
+$f111prime2 = Formula("-1*$Coef1111*$k1111*$m1111*x^($m1111-1)/e^($poly1111)")-> reduce;
+
+$Rep111 = $f111prime2 -> reduce;
+
+#$f111prime5 = $f111 ->D('x')-> reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f111} \).
+$PAR
+\( \displaystyle f'(x) = \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Rep111->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f111 \) a la forme d'un quotient. Étant donnée que le numérateur est une constante, il est plus facile de transformer la fonction en une constante multipliée par une exponentielle: 
+$PAR
+\(\displaystyle f(x) =  $f111S \)
+$PAR
+Appliquons la formule de dérivation d'une exponentielle et simplifions.  
+$PAR
+\( \displaystyle f'(x) =  $Coef1111 e^{-($poly1111)} (-$k1111 x^{$m1111}-$k1112)'   \) 
+$PAR
+\( \displaystyle f'(x) =  $f111prime1 \) 
+$PAR
+\( \displaystyle f'(x) =  $f111prime2 \) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

@@ -1,0 +1,96 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée', 'fonction exponentielle', 'formules de dérivation')
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Niveau de difficulté: Facile. Fonction exponentielle simple, avec notation standard et solution.");
+
+TEXT(beginproblem());
+
+
+Context()->variables->are(x => "Real",u=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+#Cas 61: Exponentielle simple 
+$k611 =random(3,15);
+$m611 =random(6,9); 
+$k612 =list_random(-10,-9,-8,-7,-6,-5,-4,-3,-2,2, 3,4,5,6,7,8, 9,10);
+if (abs($k612) == abs($k611)) {$k612 = 11;};
+$m612 =random(2,5);  
+$k613 =list_random(-10,-9,-8,-6,-4,-3,-2,2, 3,4,6,8, 9,10,12,18, 15);
+if (abs($k613) == abs($k611)) {$k613 = 12;};
+$m613 =random(0,1); 
+
+if ($m613 == 0)
+{#Problème d'affichage
+$poly611 = Formula("$k611*x^$m611+$k612*x^$m612+ $k613")->reduce;
+$poly611prime =Formula("$k611*$m611*x^($m611-1)+$k612*$m612*x^($m612-1)");
+$gcd611 = gcd($k611*$m611,$k612*$m612);
+$poly611primeS =Formula("$gcd611*x^($m612-1)*($k611*$m611/$gcd611*x^($m611-$m612) + $k612*$m612/$gcd611)");
+}
+else
+{$poly611 = Formula("$k611*x^$m611+$k612*x^$m612+ $k613*x^$m613")->reduce;
+$poly611prime =Formula("$k611*$m611*x^($m611-1)+$k612*$m612*x^($m612-1)+$k613*$m613");
+$gcd611temp = gcd($k611*$m611,$k612*$m612);
+$gcd611 = gcd($gcd611temp, $k613*$m613);
+$poly611primeS =Formula("$gcd611*($k611*$m611/$gcd611*x^($m611-1)+$k612*$m612/$gcd611*x^($m612-1)+$k613*$m613/$gcd611)");
+}
+
+#Fonction à dériver
+$f61 = Formula("e^($poly611)")-> reduce;
+#Calcul de la dérivée
+#$f61prime1 = $f61 ->D('x')-> reduce;
+$f61prime1 = Formula("e^($poly611)*$poly611prime")->reduce;
+$f61prime2 = Formula("$poly611prime*e^($poly611)")->reduce;
+#Vérifier si une mise en évidence simple peut être faite sur les coefficients
+$f61prime3 = Formula("$poly611primeS*e^($poly611)")->reduce;
+
+$Rep61 = $f61prime3 -> reduce;
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la dérivée de la fonction \( \displaystyle {f(x) = $f61} \).
+$PAR
+\( \displaystyle f'(x) =   \) \{ans_rule(70)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Rep61->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR
+La fonction \( \displaystyle f(x) =  $f61 \) a la forme d'une exponentielle d'une fonction. Ainsi, 
+$PAR
+\( \displaystyle f'(x) =  $f61 ($poly611)' \)  $SPACE (Formule de dérivation d'une exponentielle)
+$PAR
+\( \displaystyle f'(x) =  $f61prime1 \) $SPACE (Formule de dérivation d'un polynôme) 
+$PAR
+\( \displaystyle f'(x) =  $f61prime2 \) $SPACE (Ordre de présentation) 
+$PAR
+\( \displaystyle f'(x) =  $f61prime3 \) $SPACE (Mise en évidence simple, si possible) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 
