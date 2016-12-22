@@ -1,0 +1,114 @@
+## DESCRIPTION
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('disques troués', 'formule d\'intégration de base', 'méthode des tranches', 'solide de révolution', 'volume')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+###############Source###############
+## Source : Library/Rochester/setIntegrals20Volume/S06.02.VolumesByWashers.PTP20a.pg
+## ZDate(07/02/2008)
+## ZInstitution(University of Rochester)
+## ZAuthor(Paul Pearson)
+## MLT(duplicateA)
+## MLTleader(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('6.2')
+## Problem1('')
+## TitleText2('Calculus')
+## AuthorText2('Ellis and Gullick')
+## EditionText2('')
+## Section2('8.1')
+## Problem2('')
+###############Source###############
+
+## ENDDESCRIPTION
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"parserPopUp.pl",
+"MathObjects.pl",
+"weightedGrader.pl",
+"PGcourse.pl",
+);
+
+COMMENT('Les points sont répartis de la façon suivante : 50% pour la première réponse, 2% pour la deuxième, 4% 
+pour la troisième et la quatrième et 40% pour la dernière réponse. Par contre, si un étudiant répond correctement à dernière réponse, le volume, en
+ laissant vide les précédentes, il obtiendra 100% des points.');
+ 
+install_weighted_grader();
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem());
+
+# Begin stuff to be modified =======================
+
+Context()->variables->add(y=>"Real");
+
+# problem set up
+$b=random(2,6,1);
+$bb = $b**2;
+$region = "y = x^2, \ y = $b x,"; # already displaymath mode
+$lineofrotation = "la droite \(y = 0 \)"; 
+
+# answers 
+$integrand = Compute("pi*(($b*x)^2 - (x^2)^2)");
+$differential = PopUp(["", "dx", "dy"], "dx");
+$lowerlimit = Real(0);
+$upperlimit = Real($b);
+$volume = Compute("2*pi*($b^5/15)");
+
+# answer weights for integrand, differential, lowerlimit, upperlimit, and volume
+@weights=(50,2,4,4,40);
+
+# answer evaluators
+@ans_eval=(
+$integrand->cmp,
+$differential->cmp,
+$lowerlimit->cmp,
+$upperlimit->cmp,
+$volume->cmp
+);
+
+# End stuff to be modified ==========================
+BEGIN_TEXT
+Le volume du solide de révolution engendré par la rotation de la région délimitée par
+\[
+$region
+\] 
+autour de $lineofrotation peut se calculer, selon la méthode du disque, au moyen de l'intégrale définie :
+$BR
+$BCENTER
+\( \displaystyle V = \int_a^b \) 
+\{NAMED_ANS_RULE('optional1',30)\}  
+\{NAMED_POP_UP_LIST('optional2',['','dx','dy'])\}
+$ECENTER
+$BR
+dont les bornes d'intégration sont
+\( a = \) \{NAMED_ANS_RULE('optional3',10)\} et 
+\( b = \) \{NAMED_ANS_RULE('optional4',10)\}.
+$BR
+$BR
+Le volume \( V = \) \{ans_rule(30)\} unités cubes.
+
+$PAR
+${BITALIC}Note : Pour obtenir tous les points, la dernière réponse doit être exacte et les réponses aux questions précédentes doivent être exactes ou laissées en blanc. ${EITALIC}
+
+END_TEXT
+
+NAMED_WEIGHTED_ANS('optional1', @ans_eval[0], @weights[0]);
+NAMED_WEIGHTED_ANS('optional2', @ans_eval[1], @weights[1]);
+NAMED_WEIGHTED_ANS('optional3', @ans_eval[2], @weights[2]);
+NAMED_WEIGHTED_ANS('optional4', @ans_eval[3], @weights[3]);
+CREDIT_ANS(@ans_eval[4],['optional1','optional2','optional3','optional4'],@weights[4]);
+
+ENDDOCUMENT();

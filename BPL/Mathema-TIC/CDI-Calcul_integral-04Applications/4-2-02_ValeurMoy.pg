@@ -1,0 +1,82 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('formule d\'intégration de base', 'valeur moyenne d\'une fonction')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/Rochester/setIntegrals22Average/csuf_in_22_1.pg
+## ZInstitution(Rochester)
+## MLT(AI-AV-simple)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('6.2')
+## Problem1('41')
+###############Source###############
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+COMMENT('Valeur moyenne de la fonction b/x^n + ax, dans l intervalle [1,c], où  a,b,c sont positifs, a est pair et n prends des valeurs de 3 à 6.');
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+# la fonction b/x^n + ax où a est pair
+$a = random(2,8,2);
+$b = random(3,9,1);
+$n = random(3,6,1);
+# bornes [1,c], 
+$c = random(2,8,1);
+
+BEGIN_TEXT
+Calculer la valeur moyenne de \( \displaystyle f(x) =  \frac{$b}{x^$n} + $a x\) 
+définie sur \( [1, $c ] \). $BR
+$BR
+Réponse : \{ans_rule(55)\}$BR
+$BR
+
+END_TEXT
+
+$c1 = $c - 1;
+$n1 = $n - 1;
+$a2 = $a/2;
+$cc = $c*$c;
+
+
+$answer = Compute("1/$c1*(-$b/$n1*1/$c^$n1 + $a2*$cc + $b/$n1 - $a2)"); 
+ANS($answer->cmp);
+
+$m1 = $n1*$c**$n1;
+$m2 = $a2*$cc;
+
+($ansnum,$ansden) = reduce(-$b+$m2*$m1+$b*$c**$n1-$a2*$m1,$m1);
+
+
+BEGIN_SOLUTION
+\[\begin{aligned} 
+\text{ Valeur moyenne } &= 
+\frac{1}{$c-1} \int_1^{$c} \left(\frac{$b}{x^$n} + $a x\right) dx \\
+&= \frac{1}{$c1} \int_1^{$c} \left( $b x^{- $n} + $a x \right) dx\\
+&= \frac{1}{$c1}\left. \left( $b \frac{x^{- $n1}}{- $n1} + \frac{$a x^2}{2}\right) \right\vert_1^{$c}\\ 
+&= \frac{1}{$c1} \left. \left( - \frac{$b}{$n1 x^{$n1}} + $a2 x^2 \right) \right\vert_1^{$c} \\
+&= \frac{1}{$c1} \left[ \left( -\frac{$b}{$n1\cdot $c^{$n1}} + $a2\cdot $c^2\right)-\left( -\frac{$b}{$n1} + $a2 \right) \right] \\
+&= \frac{1}{$c1} \left( -\frac{$b}{$m1} + $m2 +\frac{$b}{$n1} - $a2 \right) \\
+&= \frac{1}{$c1}\left( \frac{$ansnum}{$ansden} \right)
+\end{aligned}
+\]
+END_SOLUTION
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

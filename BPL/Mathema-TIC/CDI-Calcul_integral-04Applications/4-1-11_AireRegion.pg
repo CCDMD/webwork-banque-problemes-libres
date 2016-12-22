@@ -1,0 +1,111 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('aire entre deux courbes', 'formule d\'intégration de base')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+###############Source###############
+## source : Library/UVA-Stew5e/setUVA-Stew5e-C06S01-AreaBetCurves/6-1-09.pg
+## ZDate(6/5/2005)
+## ZInstitution(UCSB)
+## ZAuthor(Jeff Holt)
+## MLT(AI-A-one-noTrig)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('6.1')
+## Problem1('9')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Stewart')
+## EditionText2('6')
+## Section2('6.1')
+## Problem2('')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT('Aire entre les fonctions y=1/x, y=1/x^2 et la droite x=a. L aire est égale à l intégrale de
+1/x-1/x^2, entre [1,a].');
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+Context()->flags->set(useBaseTenLog => 1);
+
+$a=random(2, 7);
+$soln = Compute("ln($a)+1/$a-1");
+
+BEGIN_TEXT
+Esquisser le graphique de la région délimitée par les courbes données.
+Choisir d'intégrer selon \(x\) ou \(y\).
+Calculer ensuite l'aire de la région.
+\[ y=\frac{1}{ x}, \quad  y=\frac{1}{ x^2},\quad  x=$a \]
+Aire =  \{ans_rule( 25) \}
+END_TEXT
+
+ANS($soln->cmp());
+
+### solution
+$refreshCachedImages = 1;
+$max = $a+1;
+$gr = init_graph(-1,-1,$max,1.5,'axes'=>[0,0],'ticks'=>[$a+2,5],'size'=>[400,400]);
+$gr->lb('reset');
+
+# région bornée
+$gr->new_color("lightblue", 214,230,244);
+$f1 = Formula("1/x");
+$f2 = Formula("1/x^2");
+
+$p1 = FEQ("$f1 for x in <0.01,$max> using color:blue weight:2");
+$p2 = FEQ("$f2 for x in <0.01,$max> using color:red weight:2");
+$gr->moveTo($a,0);
+$gr->lineTo($a,1/$a,'blue',1);
+
+plot_functions($gr,$p1,$p2);
+
+# colorer la région
+$xm = $max/2;
+$ym = ($a+3)/($max**2);
+$gr->fillRegion([$xm,$ym,'lightblue']);
+
+
+$gr->lb(new Label(-0.3,1,1,'black','center','middle'));
+$gr->lb(new Label(1,-0.1,1,'black','center','middle'));
+$gr->stamps(closed_circle(1, 1,'black'));
+$gr->lb(new Label($a,-0.1,$a,'black','center','middle'));
+
+
+BEGIN_SOLUTION
+Les fonctions \( y=\frac{1}{ x}\) et \(y=\frac{1}{ x^2}\) se coupent lorsque
+\[ \frac{1}{x} = \frac{1}{x^2}\]
+c'est-à-dire à \(x = 1\).  La région est donc bornée entre les abscisses \(x=1\) et 
+\(x=$a\) (Voir la figure ci-dessous.)
+$PAR
+$BCENTER
+\{ image( insertGraph( $gr ), width=>350,height=>350,tex_size=>500 ) \}
+$BR
+${BITALIC}(Cliquer sur le graphique pour agrandir l'image.)$EITALIC
+$ECENTER
+$PAR
+
+La fonction \(y=\frac{1}{x}\) (courbe bleue) est plus grande que la fonction \(y=\frac{1}{x^2}\) (courbe rouge) dans l'intervalle
+\([1,$a]\), alors
+\[ \hbox{Aire } = \int_{0}^{$a}\left(\frac{1}{x}-\frac{1}{x^2}\right) \, dx =
+   \left( \ln(x) + \frac{1}{x} \right)\bigg|_{1}^{$a},
+\]
+donc 
+\[ \hbox{Aire } = \ln($a)+\frac{1}{$a}-1 \]
+END_SOLUTION
+ENDDOCUMENT();        # This should be the last executable line in the problem.

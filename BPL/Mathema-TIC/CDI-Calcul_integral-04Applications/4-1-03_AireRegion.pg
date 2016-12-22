@@ -1,0 +1,112 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('aire entre deux courbes', 'aire sous la courbe', 'formule d\'intégration de base', 'graphique')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : novembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_5_3_50.pg
+## ZDate(02/22/2011)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('5.3')
+## Problem1('50')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+  "PGcourse.pl",
+);
+
+COMMENT('Aire entre la droite y=1 et la fonction racine f(x)=(x)^(1/a) où a prend des valeurs entre [3,6]. Les bornes de l intégrale sont toujours 0 et 1. Il 
+faut trouver l expression à intégrer en fonction de y.');
+
+#####################################################################
+
+$showPartialCorrectAnswers = 1;
+$refreshCachedImages = 1;
+TEXT(beginproblem());
+
+#####################################################################
+
+Context("Numeric");
+Context()->variables->add(y=>"Real");
+Context()->variables->set(x=>{limits=>[0,1]});
+
+$w = 400;  # graph size
+$tw = 500; # graph size in TeX
+
+$a = random(3,6,1);
+
+#####################################################################
+# Le graphique
+$graph1 = init_graph(-0.25,-0.25,1.25,1.25,'axes'=>[0,0],'ticks'=>[6,6],'grid'=>[6,6],'size'=>[$w,$w]);
+$graph1->new_color("lightblue", 214,230,244);
+
+$f1 = Formula("x^(1/$a)");
+$p1 = FEQ("$f1 for x in <0.5,1.5> using color:blue weight:2");
+$p2 = FEQ("$f1 for x in [0,0.5> using color:blue weight:2");
+
+# les côtés de la région: y=1 et x=0
+$graph1->moveTo(0,0);
+$graph1->lineTo(0,1,'blue',1);
+
+$graph1->moveTo(0,1);
+$graph1->lineTo(1,1,'blue',1);
+
+plot_functions($graph1,$p1,$p2);
+
+# colorer la région
+$graph1->fillRegion([0.1,0.9,'lightblue']);
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+La région ombrée ci-dessous est délimitée par l'axe des  \(y\), la droite \(y=1\) et la courbe  \(y=\sqrt[$a]{x}\).
+$PAR
+$BCENTER
+\{image(insertGraph($graph1),width=>$w,height=>$w,tex_size=>$tw)\}
+$ECENTER
+$BR
+$HR
+$BR
+a) Compléter l'intégrale suivante calculant l'aire de la région ombrée en exprimant \(x\) en fonction de \(y\).
+\[ \text{Aire} = \int_{a}^{b} f(y)dy \]
+$BR
+où \(a =\) \{ans_rule(5) \}, \(b =\) \{ans_rule(5) \} $BR
+et \(f(y) =\) \{ans_rule(15) \}
+$PAR
+
+b) Calculer l'aire de cette région en intégrant en fonction de \(y\).
+$PAR
+Aire = \{ans_rule(15) \}
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+
+$ans1 = Formula("y^($a)");
+$ans2 = Compute("1/($a+1)");
+
+ANS( Real(0)->cmp() );
+ANS( Real(1)->cmp() );
+ANS( $ans1->cmp() );
+ANS( $ans2->cmp() );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

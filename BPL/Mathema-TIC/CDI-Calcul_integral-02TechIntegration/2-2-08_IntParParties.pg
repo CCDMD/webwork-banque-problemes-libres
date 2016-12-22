@@ -1,0 +1,100 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction exponentielle', 'intégrale indéfinie', 'par parties')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+
+###############Source###############
+## source : Library/Utah/AP_Calculus_I/set9_Basic_Methods_of_Integration/1220s13p2.pg
+## ZInstitution(Univeristy of Utah)
+## ZAuthor(Utah ww group)
+## MLT(notrig_01)
+## TitleText1('Calculus II')
+## AuthorText1('Jerrold Marsden and Alan Weinstein')
+## EditionText1('2')
+## Section1('.')
+## Problem1('')
+###############Source###############
+
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+	"PGstandard.pl",
+	"MathObjects.pl",
+	"parserFormulaUpToConstant.pl",
+	"answerHints.pl",
+	"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+
+# paramètres
+$a = non_zero_random(-10,10);
+$b = non_zero_random(-10,10);
+$c = random(2,8);
+
+# fonction
+$g = Formula("$c*x+$b")->reduce;
+$f = Formula("(x+$a)*e^($g)")->reduce;
+
+
+# montrer un indice
+$showHint = 2;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer l'intégrale en utilisant l'intégration par parties :
+$PAR
+\( \displaystyle\int $f \,dx = \)   \{ans_rule(30)\}.
+END_TEXT
+Context()->normalStrings;
+
+
+Context()->flags->set(reduceConstants => 0);
+
+$ans = FormulaUpToConstant("1/$c * e^($g) * ( x + $a - 1/$c)");
+
+
+
+ANS($ans->cmp);
+
+Context()->texStrings;
+BEGIN_HINT
+$PAR
+Utiliser la substitution
+$BR
+\[ u = x+$a \quad\text{et}\quad dv = e^{$g}\,dx \]
+END_HINT
+
+BEGIN_SOLUTION
+On pose 
+\[ u = x+$a \quad\text{et}\quad dv = e^{$g}\, dx \]
+
+Alors   
+\[du = dx  \quad\text{et}\quad v = \frac{e^{$g}}{$c} \]
+
+$BR	
+En intégrant par parties, on obtient :
+\[
+\begin{align}
+\int $f \,dx 	&=  (x+$a)\frac{e^{$g}}{$c}  - \frac{1}{$c} \int e^{$g}\,dx  \\
+				&=  (x+$a)\frac{e^{$g}}{$c}  - \frac{1}{$c} \cdot \frac{e^{$g}}{$c} + C \\
+				&=  \frac{e^{$g}}{$c} \left( x+ $a - \frac{1}{$c}\right) + C
+\end{align}
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Fonction de la forme (x+a)*e^(bx+c) où c>=2');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

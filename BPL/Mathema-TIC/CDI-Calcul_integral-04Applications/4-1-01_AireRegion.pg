@@ -1,0 +1,88 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('aire entre deux courbes', 'formule d\'intégration de base', 'graphique')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : novembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_6_1/Stewart5_6_1_1/Stewart5_6_1_1.pg
+## ZInstitution(UCSB)
+## ZMLT(AI-A-one-graph)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('6.1')
+## Problem1('1')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGgraphmacros.pl",
+"PGcourse.pl",
+);
+
+COMMENT('Aire entre les courbes f(x)=(a+1)x-x^2 et y=x, donc sur [0,a]. Les valeurs de a sont entre [2,9].');
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$refreshCachedImages = 1;
+
+#points d'intersection entre f(x) et y=x : x=0 et x=a 
+$a=random(2,9,1);
+
+#aire entre les courbes f(x)= a1x-x^2 et y=x
+$a1 = $a+1;
+$f = Formula("$a1*x - x^2")->reduce;
+
+#contruction du graphique
+$ymax = floor($a1**2/3); 
+$graph = init_graph(-1,-1,11,$ymax,'axes'=>[0,0],'size'=>[400,400]);
+
+$graph->new_color("lightblue", 214,230,244);
+
+$y2 = FEQ("$f for x in <-1,11> using color:blue weight:2");
+$y1 = FEQ("x for x in <-1,11> using color:black weight:2");
+
+$xmin = $a1/2;
+$ymin = ($a1)**2/4;
+$graph->fillRegion([$xmin,$ymin-0.5,'lightblue']);
+
+
+$fa = $f->eval(x=>"$a");
+$graph->lb( new Label( $a+0.2,$fa,"($a,$fa)",'black','left','top'));
+$graph->stamps(closed_circle($a, $fa,'black'));
+$graph->lb( new Label( $xmin,$ymin+0.2,"y = f(x)",'blue','center','bottom'));
+$graph->lb( new Label( $xmin,$xmin-0.5,"y = x",'black','center','top'));
+
+plot_functions($graph,$y1,$y2);
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer l'aire de la région ombragée, comprise entre les fonctions \(f(x)=$f\) et \(y=x\).
+$PAR
+$BCENTER
+\{image(insertGraph($graph),width=>350,height=>350,tex_size=>500)\}
+$ECENTER
+$BR
+Aire = \{ans_rule(20)\}
+$HR
+$BBOLD Note : $EBOLD $BITALIC Cliquer sur le graphique pour agrandir l'image.$EITALIC
+$HR
+END_TEXT
+Context()->normalStrings;
+
+# réponse : int de ax - x^2 entre [0,a]
+$ans = Compute("($a)^3/6");
+
+ANS($ans->cmp);
+
+ENDDOCUMENT();

@@ -1,0 +1,70 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('fonction logarithmique', 'méthode des tubes', 'solide de révolution', 'volume')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/UCSB/Stewart5_6_3/Stewart5_6_3_21.pg
+## ZInstitution(UCSB)
+## ZMLT(volume_shells_mc)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('6.3')
+## Problem1('21')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"parserRadioButtons.pl",
+"PGcourse.pl",
+);
+
+COMMENT('Les six choix sont affichés aléatoirement de sorte que la réponse diffère pour chaque étudiant. Suggestion : restreindre le nombre de tentatives pour réussir le problème.');
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+# intégral de 1 à a
+$a=random(2,10,1);
+
+# rayon : r = x 
+# hauteur: h = ln(x)
+# Les 6 choix
+@choix = ( "\( \displaystyle \int_{1}^{\,$a} {2 \pi x \ln(x)}\,dx \)",
+        "\( \displaystyle \int_{1}^{\,$a} {2 \pi \ln(x)}\,dx \)",
+        "\( \displaystyle \int_{1}^{\,$a} {2 \pi (x-$a) \ln(x)}\,dx \)",
+        "\( \displaystyle \int_{0}^{\,$a} {2 \pi x \ln(x)}\,dx \)",
+        "\( \displaystyle \int_{0}^{\,$a} {2 \pi \ln(x)}\,dx \)",
+        "\( \displaystyle \int_{0}^{\,$a} {2 \pi (x-$a) \ln(x)}\,dx \)",
+        );
+
+# ordre des choix choisi de façon aléatoire
+@randomchoix = @choix[NchooseK(6,6)];
+$cmc = RadioButtons(
+       [ @randomchoix ],
+        "\( \displaystyle \int_{1}^{\,$a} {2 \pi x \ln(x)}\,dx \)", # la bonne réponse
+        labels => "ABC"
+ );
+ 
+
+BEGIN_TEXT
+Laquelle des intégrales suivantes représente le volume du solide de révolution engendré par la rotation de la région délimitée par les courbes \(y=\ln(x),\) \(y=0\) et \(x=$a\) autour de l'axe des \(y?\)
+$PAR
+\{$cmc -> buttons() \}
+$PAR
+END_TEXT
+
+ANS($cmc->cmp());
+
+ENDDOCUMENT();

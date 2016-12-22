@@ -1,0 +1,57 @@
+##DESCRIPTION
+## Evaluate an indefinite integral
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('complétion de carré', 'intégrale indéfinie', 'substitution trigonométrique')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+
+###############Source###############
+## source : Library/ma123DB/set2/s7_3_23.pg
+## ZDate(6/3/2002)
+## ZMLT(Trig_simplify)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('7.3')
+## Problem1('23')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+COMMENT('Fonction sqrt(2ax-x^2) par substitution trigonométrique de type sin avec complétion du carré');
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+Context()->flags->set(reduceConstants=>0);
+
+$a = random(1,15,1);
+$a2 = 2*$a;
+$aa = $a*$a;
+
+$funct = Formula("1/2*($aa*asin((x-$a)/$a) + (x-$a)*sqrt($a2*x-x^2))");
+$funct->{limits} = [-$a2,$a2];
+
+BEGIN_TEXT
+Évaluer l'intégrale indéfinie.
+ \[ \int \sqrt{$a2 x-x^2} dx \]
+ 
+Réponse : \{ans_rule( 45) \} \(+\) \(C\)
+END_TEXT
+
+ANS($funct->cmp(upToConstant=>1));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

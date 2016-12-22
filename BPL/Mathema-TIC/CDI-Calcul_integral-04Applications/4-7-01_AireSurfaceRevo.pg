@@ -1,0 +1,93 @@
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('changement de variable', 'surface de révolution')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/Rochester/setIntegrals27SurfaceArea/ur_in_27_3.pg
+## Date(6/3/2002)
+## ZInstitution(UCSB)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('8.2')
+## Problem1('16')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Rogawski')
+## EditionText2('1')
+## Section2('8.1')
+## Problem2('33')
+## TitleText3('Calculus: Early Transcendentals')
+## AuthorText3('Stewart')
+## EditionText3('5')
+## Section3('8.2')
+## Problem3('14')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,6,1);
+$b = random(1,9,1);
+
+BEGIN_TEXT
+Calculer l'aire de la surface de révolution engendrée par la rotation de la courbe
+\[ y= 1+$a x^2 \]
+entre \(x=0\) et \(x = $b \) autour de l'axe des \(y\).
+$PAR
+Aire de la surface = \{ ans_rule(40) \}
+
+END_TEXT
+
+$ans = Compute("pi/(6*$a*$a)*((1+4*$a*$a*$b*$b)**1.5 - 1)");
+ANS($ans->cmp);
+
+$a2 = $a*$a*4;
+$a22 = $a2*2;
+$a23 = $a2*3;
+$upper = 1+$a2*$b*$b;
+
+
+BEGIN_SOLUTION
+\[S = \int_0^{$b} 2\pi x \sqrt{1+(y')^2} \; dx 
+= \int_0^{$b} 2\pi x \sqrt{1+$a2 x^2} \; dx\]
+$BR
+Si on pose \(u=1+$a2 x^2\), alors \(du = $a22 x\,dx\) et 
+\(\displaystyle \frac{du}{$a2} = 2x\,dx\). 
+$PAR
+On change les bornes d'intégration : 
+$BR 
+La borne inférieure devient \(1+$a2\cdot 0^2=1\), 
+$BR 
+et la borne supérieure devient \(1+$a2\cdot $b^2= $upper\). 
+$PAR
+On obtient ainsi
+\[ \begin{align}
+S &= \frac{\pi}{$a2} \int_1^{$upper} \sqrt{u}\,du \\
+&= \frac{\pi}{$a2} \left. \frac{2 u^{3/2}}{3} \right|_1^{$upper} \\
+&=  \frac{2\pi\cdot $upper^{3/2}}{$a23} - \frac{2\pi}{$a23} \\
+&= $ans \, .
+\end{align} \]
+END_SOLUTION
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

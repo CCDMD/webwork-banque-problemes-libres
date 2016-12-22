@@ -1,0 +1,79 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('disques', 'formule d\'intégration de base', 'méthode des tranches', 'solide de révolution', 'volume')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+###############Source###############
+## source : Library/UCSB/Stewart5_6_2/Stewart5_6_2_4.pg
+## ZInstitution(UCSB)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('6.2')
+## Problem1('4')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$a=random(1,5);
+$a1 = $a+1;
+$b= $a1 + random(1,5);
+
+
+BEGIN_TEXT
+En utilisant la méthode du disque, calculer le volume du solide de révolution engendré par la rotation de la région délimitée par  \(y=\sqrt{x-$a},\) \(y=0,\) \(x=$a1\) et \(x=$b\) autour de l'axe des \(x\).
+
+$PAR
+Volume = \{ans_rule(30)\}
+
+END_TEXT
+
+# affichage de la réponse
+$num = ($b-$a)**2 - 1;
+($rnum,$rden) = reduce($num,2);
+$ans = ($rden==1)? Compute("$rnum*pi") : Compute("$rnum/$rden*pi");
+
+ANS($ans->cmp);
+
+### valeurs pour afficher la solution
+$c1 = $b**2 - $a1**2;
+$c2 = -$a*$b + $a1*$a;
+$texans = ($rden==1)? "$rnum \pi" : "\frac{$rnum}{$rden} \pi";
+
+BEGIN_SOLUTION
+$PAR
+Chaque section perpendiculaire à l'axe des \(x\) est un disque d'épaisseur 
+\(\Delta x\) et de rayon  \(R = f(x) = \sqrt{x-$a} \).
+Alors, 
+\[
+\hbox{Volume d'un disque }\approx
+\pi \left(\sqrt{x-$a}\right)^2\Delta x = \pi(x-$a)\;\Delta x
+\]
+Par conséquent, le volume \(V\) du solide de révolution est 
+\[
+\begin{align}
+V &= \pi\int_{$a1}^{$b}(x - $a)\;dx \\
+&=\pi\left.\left(\frac{x^2}{2} - $a x\right)\right|_{$a1}^{$b}\\
+&=\pi\left(  \left(\frac{$b^2}{2} - $a($b)\right) - \left( \frac{$a1^2}{2} - $a($a1)\right) \right)\\
+&= \pi\left( \frac{$c1}{2} + $c2 \right) \\
+&= $texans
+\end{align}
+\]
+END_SOLUTION
+
+ENDDOCUMENT();

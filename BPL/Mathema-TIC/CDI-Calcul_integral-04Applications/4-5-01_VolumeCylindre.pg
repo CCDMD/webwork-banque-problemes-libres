@@ -1,0 +1,113 @@
+## DESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('formule d\'intégration de base', 'méthode des tubes', 'solide de révolution', 'volume')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+###############Source###############
+## source : Library/Rochester/setIntegrals20Volume/S06.03.VolumesByShells.PTP04a.pg
+## ZDate(07/02/2008)
+## ZInstitution(University of Rochester)
+## ZAuthor(Paul Pearson)
+## MLT(volume_shells_multi_V)
+## MLTleader(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('6.3')
+## Problem1('')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"parserPopUp.pl",
+"MathObjects.pl",
+"weightedGrader.pl",
+"PGcourse.pl",
+);
+
+COMMENT('Les points sont répartis de la façon suivante : 50% pour la première réponse, 2% pour la deuxième, 4% 
+pour la troisième et la quatrième et 40% pour la dernière réponse. Par contre, si un étudiant répond correctement à dernière réponse, le volume, en
+ laissant vide les précédentes, il obtiendra 100% des points.');
+
+install_weighted_grader();
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem());
+
+
+# Begin stuff to be modified =======================
+Context()->variables->add(y=>"Real");
+
+# problem set up
+$a = random(2,8,1);
+$b = random(3,9,1);
+$c = $a * $b;
+$region = "y = $c x - $a x^2, \quad y = 0"; # already displaymath mode
+$lineofrotation = "l'axe des \(y\)"; 
+
+# answers 
+$integrand = Formula("2*pi*x*($c*x - $a*x^2)");
+$differential = PopUp(["", "dx", "dy"], "dx");
+$lowerlimit = 0;
+$upperlimit = $b;
+$volume = Compute("pi*$a*$b^4/6");
+
+# answer weights for integrand, differential, lowerlimit, upperlimit, and volume
+@weights=(50,2,4,4,40);
+
+# answer evaluators
+@ans_eval=(
+$integrand,
+$differential,
+Real($lowerlimit),
+Real($upperlimit),
+$volume
+);
+
+# End stuff to be modified ==========================
+
+
+
+BEGIN_TEXT
+
+Le volume du solide de révolution engendré par la rotation de la région délimitée par
+\[
+$region
+\] 
+autour de $lineofrotation peut se calculer, selon la méthode des tubes (ou des coquilles cylindriques), au moyen de l'intégrale définie
+$BR
+$BCENTER
+\( \displaystyle V = \int_a^b \) 
+\{NAMED_ANS_RULE('optional1',30)\}  
+\{NAMED_POP_UP_LIST('optional2',['','dx','dy'])\}
+$ECENTER
+$BR
+dont les bornes d'intégration sont 
+\( a = \) \{NAMED_ANS_RULE('optional3',10)\} et 
+\( b = \) \{NAMED_ANS_RULE('optional4',10)\}.
+$BR
+$BR
+Le volume \( V = \) \{ans_rule(30)\} unités cubes.
+
+$PAR
+${BITALIC}Note : Pour obtenir tous les points, la dernière réponse doit être exacte et les réponses aux questions précédentes doivent être exactes ou laissées en blanc. ${EITALIC}
+
+END_TEXT
+
+NAMED_WEIGHTED_ANS('optional1', @ans_eval[0]->cmp, @weights[0]);
+NAMED_WEIGHTED_ANS('optional2', @ans_eval[1]->cmp, @weights[1]);
+NAMED_WEIGHTED_ANS('optional3', @ans_eval[2]->cmp, @weights[2]);
+NAMED_WEIGHTED_ANS('optional4', @ans_eval[3]->cmp, @weights[3]);
+CREDIT_ANS(@ans_eval[4]->cmp,['optional1','optional2','optional3','optional4'],@weights[4]);
+
+ENDDOCUMENT();

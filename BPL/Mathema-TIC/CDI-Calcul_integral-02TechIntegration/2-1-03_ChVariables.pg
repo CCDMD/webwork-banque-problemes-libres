@@ -1,0 +1,78 @@
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('changement de variable', 'fonction trigonométrique', 'intégrale indéfinie')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : septembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/Rochester/setIntegrals5Trig/ur_in_5_6.pg
+## ZInstitution(Rochester)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('7.3')
+## Problem1('19')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGML.pl",
+  "PGcourse.pl", 
+);
+
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,7,1);
+$b = random(2,15,1);
+
+$a1 = $a - 1;
+$c = $a*$b;
+
+## choix de la fct trigo
+$i = random(0,3);
+@trig = (
+Formula("sin(x^($a))"),
+Formula("cos(x^($a))"),
+Formula("sec^2(x^($a))"),
+Formula("sec(x^($a))*tan(x^($a))")
+);
+
+$f = Formula("$c*x^($a1)*$trig[$i]")->reduce;
+
+## Réponses
+@ans = (
+Formula("-$b cos(x^$a)"),
+Formula("$b sin(x^$a)"),
+Formula("$b tan(x^$a)"),
+Formula("$b sec(x^$a)")
+);
+
+TEXT(beginproblem());
+
+BEGIN_PGML
+Évaluer l'intégrale indéfinie.
+
+>>[`` \int [$f] \, dx ``]<<
+
+Réponse : [______________________________________] [` \ + \ C`]
+END_PGML
+
+
+ANS($ans[$i]->cmp(upToConstant=>1));
+
+COMMENT("Choisi aléatoirement parmi les fonctions sin(u), cos(u), sec^2(u) et sec(u)tan(u)");
+ENDDOCUMENT();
+

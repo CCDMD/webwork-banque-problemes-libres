@@ -1,0 +1,61 @@
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('astuce d\'intégration', 'changement de variable', 'constante d\'intégration', 'fonction algébrique', 'intégrale indéfinie')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : septembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "parserFormulaUpToConstant.pl"
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+# paramètre
+$b=non_zero_random(-9,9);
+
+# exposants de x
+$n = random(2,4);
+$m= 2*$n-1;
+$e= random(5,10);
+
+
+# fonction
+$u = Compute("x^($n) + $b")->reduce;
+$f = Formula("x^($m) * ($u)^($e)")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$PAR
+Évaluer l'intégrale indéfinie
+\[\int $f \, dx\]
+
+
+$PAR
+Réponse : \{ans_rule(40)\} + \(C\)
+
+END_TEXT
+Context()->normalStrings;
+
+$ep1 = $e+1;
+$ep2 = $e+2;
+$ans= Formula("1/$n * ($u)^($ep1) * ( $u/($ep2) - $b/($ep1) )")->reduce;
+
+ANS($ans->cmp(upToConstant=>1));
+
+ENDDOCUMENT();

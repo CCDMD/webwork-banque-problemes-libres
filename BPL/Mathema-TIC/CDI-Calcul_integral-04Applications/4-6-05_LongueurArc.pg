@@ -1,0 +1,107 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('formule d\'intégration de base', 'longueur d\'arc')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+###############Source###############
+## source : Library/UCSB/Stewart5_8_1/Stewart5_8_1_4.pg
+## ZInstitution(UCSB)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('8.1')
+## Problem1('4')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+TEXT(&beginproblem);
+
+
+$showPartialCorrectAnswers = 1;
+
+# exposant
+$n = random(2,6);
+$np1 = $n+1;
+$nm1 = $n-1;
+$a= 2*$np1;
+$b= 2*$nm1;
+
+# fonction y x^(n+1)/a + 1/(bx^(n-1))
+# on aura 1+(f'(x))^2 égal à (carré parfait)/ 4x^(2n)
+# 1+(f'(x))^2 = ( x^2n + 1 )^2 / 4x^(2n)
+$f = Formula(" x^($np1)/$a + 1/($b*x^($nm1))")->reduce;
+
+# Intervalle d'intégration : de 1 à c
+$c = random(2,8);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer la longueur exacte de la courbe
+\[y = $f, \quad  1 \le x \le $c.\]
+
+$PAR
+Longueur = \{ans_rule(30)\}
+END_TEXT
+Context()->normalStrings;
+
+$ans = Compute("$c^($np1)/$a - 1/($b*$c^($nm1)) - 1/$a + 1/$b");
+ANS($ans->cmp);
+
+Context()->noreduce('x^(-1)');
+$p = Formula("x^(-$nm1)/$b")->reduce;
+$prim = Formula(" x^($np1)/$a - 1/($b*x^($nm1))")->reduce;
+$n2 = 2*$n;
+$n4 = 4*$n;
+if($nm1==1) {$e="";} else{ $e=$nm1;}
+
+($m1,$m2) = reduce($c**($np1),$a);
+if($m2==1) {$frac = $m1;} else {$frac = "\frac{$m1}{$m2}";}
+$m3 = $b*$c**($nm1);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La dérivée de la fonction \(\displaystyle y= $f\) est 
+\[\begin{align}
+ y' &= \left( \frac{x^{$np1}}{$a} + $p \right)' \\
+ &= \frac{ x^{$n} }{2} - \frac{ x^{-$n}}{2} \\
+ &= \frac{1}{2}\left( x^{$n} - \frac{1}{x^{$n}} \right)\,.
+\end{align}
+\]
+$PAR
+Par conséquent, la longueur de la courbe est donnée par
+\[
+\begin{align}
+L &= \int_1^{\,$c} \sqrt{1+\left(f'(x)\right)^2}\, dx \\
+&= \int_1^{\,$c} \sqrt{1+\left( \frac{1}{2}\left( x^{$n} - \frac{1}{x^{$n}} \right) \right)^2}\, dx \\
+&= \int_1^{\,$c} \sqrt{1+ \frac{1}{4}\left( x^{$n2} - 2 \cancel{x^{$n}}\cdot\frac{1}{\cancel{x^{$n}}} + \frac{1}{x^{$n2}} \right)}\, dx \\
+&= \int_1^{\,$c} \sqrt{ \frac{4}{4} +  \frac{1}{4}\left( x^{$n2} - 2 + \frac{1}{x^{$n2}} \right)}\, dx \\
+&= \int_1^{\,$c} \sqrt{ \frac{4 x^{$n2} + x^{$n4} - 2 x^{$n2} + 1}{4 x^{$n2}} }\, dx \\
+&= \int_1^{\,$c} \sqrt{ \frac{x^{$n4} +2 x^{$n2} + 1}{4 x^{$n2}} }\, dx \\
+&= \int_1^{\,$c} \sqrt{ \frac{\left(x^{$n2} + 1\right)^2}{4 x^{$n2}} }  \, dx \\ 
+&= \int_1^{\,$c} \left(\frac{x^{$n2} + 1}{2 x^{$n}}\right)  \, dx \\ 
+&= \int_1^{\,$c} \left( \frac{x^{$n}}{2} + \frac{1}{2 x^{$n}} \right) \, dx \\
+&= \left. \left(\frac{x^{$np1}}{$a} - \frac{x^{-$nm1}}{$b} \right)\right|_1^{$c} \\
+&= \left. \left( $prim \right)\right|_1^{$c} \\
+&=  \left(\frac{$c^{$np1}}{$a} - \frac{1}{$b\cdot $c^{$e}} \right) - \left( \frac{1}{$a} - \frac{1}{$b} \right)\\
+&=  $frac - \frac{1}{$m3} -  \frac{1}{$a} + \frac{1}{$b} \\
+\end{align}
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

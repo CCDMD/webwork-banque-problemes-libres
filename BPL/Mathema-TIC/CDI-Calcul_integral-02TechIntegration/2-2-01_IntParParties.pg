@@ -1,0 +1,122 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction exponentielle', 'fonction trigonométrique', 'intégrale indéfinie', 'par parties')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : septembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : Library/Michigan/Chap7Sec2/Q03.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZMLT(parts_02)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('7.2')
+## Problem1('3')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('7.2')
+## Problem2('4')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('7.2')
+## Problem3('4')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+	"PGstandard.pl",
+	"MathObjects.pl",
+	"parserFormulaUpToConstant.pl",
+	"PGcourse.pl",
+);
+
+Context("Numeric");
+Context()->variables->are(t=>"Real");
+
+$whichf = list_random(1,3);    # pour mon devoir, j'ai enlevé le 3e choix
+$a = random(2,8,1);
+$twoa = 2*$a;
+if ( $whichf == 1 ) {
+    $f = '\sin(t)';
+    $afunc = FormulaUpToConstant("$a*(-t^2*cos(t) + 2*t*sin(t) + " .
+				 "2*cos(t))");
+    $sgn = '+';  $sgn2 = '+';  $sgn3 = '-';  $sgn4 = '+';
+    $s = '-';  $s2 = '';
+    $g = '\cos(t)';
+
+} elsif ( $whichf == 2 ) {
+    $f = '\cos(t)';
+    $afunc = FormulaUpToConstant("$a*(t^2*sin(t) + 2*t*cos(t) - " .
+				 "2*sin(t))");
+    $sgn = '-';  $sgn2 = '+';  $sgn3 = '-';  $sgn4 = '-';
+    $s = '';  $s2 = '-';
+    $g = '\sin(t)';
+
+} elsif ( $whichf == 3 ) {
+    $f = 'e^{t}';
+    $afunc = FormulaUpToConstant("$a*(t^2*e^(t) - 2*t*e^(t) + 2*e^(t))");
+    $sgn = '-';  $sgn2 = '-';  $sgn3 = '+';  $sgn4 = '+';
+    $s = '';
+    $g = 'e^{t}';
+
+}
+
+Context("Numeric");
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer l'intégrale
+
+$PAR
+\(\int\,$a t^2\,$f\,dt = \) \{ ans_rule(35) \}
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($afunc->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+On utilise l'intégration par parties 
+\( \int\,u\,dv = u\cdot v - \int v\,du  \)
+$PAR
+en posant \(u = t^2\) et \(dv = $f\,dt\). $BR
+Alors  \(du = 2t\,dt\) et \(v = $s $g\), de sorte que
+
+\[
+  \int\,$a t^2\,$f\,dt = $s$a t^2 $g $sgn \int $twoa t $g\,dt,
+\]
+et on peut calculer la deuxième intégrale en appliquant l'intégration par parties encore une fois.
+$PAR
+Ici, on pose \(u = t\) et \(dv = $g\,dt\), de sorte que \(du = 1\,dt\) et \(v = $s2 $f\), et alors
+\begin{align}
+  \int\,$a t^2\,$f\,dt	&= $s$a t^2 $g $sgn $twoa \left( $s2 t $f - \int\,$s2 $f\,dt  \right) \\
+						&= $s$a t^2 $g $sgn2 $twoa t $f $sgn3 $twoa\int\,$f\,dt \\
+						&= $s$a t^2 $g $sgn2 $twoa t $f $sgn4 $twoa $g + C.
+\end{align}
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('Intégrale de la forme a*t^2 f(t) où f(t) est choisie aléatoirement parmi sin(t), cos(t) et e^t.');
+ENDDOCUMENT();

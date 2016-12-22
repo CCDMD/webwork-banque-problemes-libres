@@ -1,0 +1,63 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('changement de variable', 'constante d\'intégration', 'fonction racine carrée', 'fonction trigonométrique', 'intégrale indéfinie')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : septembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_5_5/Stewart5_5_5_33.pg
+## ZInstitution(UCSB)
+## ZMLT(sqrtpowertrig)
+## ZMLTleader(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('5.5')
+## Problem1('33')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "parserFormulaUpToConstant.pl"
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+$a=random(2,10)*random(-1,1,2);
+
+# choix de la fonction
+$trig = list_random(Formula("tan(x)"),Formula("cot(x)"),Formula("sec(x)"),Formula("csc(x)") );
+
+
+$Dtrig = $trig->D('x')->reduce;
+$f = Formula("$a*sqrt($trig) * $Dtrig")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$PAR
+Évaluer l'intégrale indéfinie
+\[\int $f\, dx\]
+
+$PAR
+Réponse : \{ans_rule(30)\}
+
+END_TEXT
+Context()->normalStrings;
+
+$ans = FormulaUpToConstant("2/3 * $a* ($trig)^(3/2)")->reduce;
+
+ANS($ans->cmp);
+
+COMMENT('Choisi aléatoirement parmi tan(x), sec(x), cot(x) et csc(x)');
+ENDDOCUMENT();

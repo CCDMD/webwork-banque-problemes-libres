@@ -1,0 +1,102 @@
+##DESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('intégrale indéfinie', 'substitution trigonométrique')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+
+###############Source###############
+## source : Library/CSUOhio/calculus/trigonometric_substitution/trigSub29.pg
+## ZDate(8/13/13)
+## ZInstitution(Cleveland State University)
+## ZAuthor(Barbara Margolius)
+## MLT(trigSub-secant)
+## TitleText1('')
+## AuthorText1('')
+## EditionText1('2010')
+## Section1('.')
+## Problem1('29')
+###############Source###############
+
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  #"AppletObjects.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGcourse.pl",
+);
+
+COMMENT('Fonction 1/(x^2*sqrt(x^2-a^2)) de substitution trigonométrique de type sec. Sans applet Flash.');
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,9,1);
+
+$a2 = $a*$a;
+$a3 = $a2*$a;
+$a4 = $a2*$a2;
+$a4_3 = 3*$a4;
+$a2_5 = 5*$a2;
+
+
+BEGIN_TEXT
+Évaluer l'intégrale indéfinie où \(x>$a\).
+\[ \int \frac{ dx}{x^2\sqrt{ x^2-$a2}} \]
+Réponse : \{ans_rule( 45) \}
+
+END_TEXT
+
+$ans = FormulaUpToConstant("sqrt(x^2-{$a2})/x/{$a2}")->with(limits => [$a+1,$a+2]);
+ANS( $ans->cmp());
+
+Context()->texStrings;
+BEGIN_SOLUTION
+On utilise une substitution trigonométrique.  On choisit une fonction sécante. 
+\[x = {$a}\sec\theta\]
+$BR
+Penser à un triangle rectangle tel que la sécante \(\left(\frac{hyp}{adj}\right)\) est égale à \(\frac{x}{$a}\).  Le côté adjacent est égal à \($a\) et l'hypoténuse est égale à \(x\), de sorte que le côté opposé est égal à \(\sqrt{x^2-$a2}\).
+
+$PAR
+On fait la substitution
+\[
+\begin{align}
+x &= {$a}\sec\theta \\
+dx &= {$a}\sec\theta\tan\theta \; d\theta \\
+\sqrt{x^2-{$a2}} &=\sqrt{{$a2}\sec^2\theta-{$a2}} = {$a}\tan\theta &&\small\text{; pour } x>{$a},\text{ où }0\le \theta<\pi/2 \\
+\sqrt{x^2-{$a2}} &=\sqrt{{$a2}\sec^2\theta-{$a2}} = -{$a}\tan\theta &&\small\text{; pour } x<{$a},\text{ où }\pi/2\le \theta<\pi
+\end{align}
+\]
+
+Et on obtient :
+\[
+\begin{aligned}
+\int \frac{ dx}{x^2\sqrt{ x^2-$a2}}
+&=
+\int \frac{{$a}\sec\theta\tan\theta}{{$a2}\sec^2\theta \cdot $a\tan\theta} \; d\theta &&;\small\text{ pour }x>$a\\
+&= \int \frac{1}{{$a2}\sec\theta} \; d\theta\\
+&=\frac{1}{$a2}\int \cos\theta \; d\theta \\
+&=\frac{1}{$a2} \sin\theta+C
+\end{aligned}
+\]
+
+En réécrivant en termes de \(x\), c'est-à-dire en remplaçant la fonction en \(\theta\) par sa valeur \(\left(\sin\theta = \frac{opp}{hyp}\right)\), on obtient :
+\[\int \frac{ dx}{x^2\sqrt{ x^2-$a2}}=
+\frac{\sqrt{x^2-$a2}}{{$a2}x} +C\]
+
+END_SOLUTION
+Context()->normalStrings;
+##################################
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,121 @@
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction trigonométrique', 'identité trigonométrique', 'intégrale indéfinie', 'puissance des fonctions trigonométriques')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : Library/Indiana/Indiana_setIntegrals5Trig/sc5_5_100.pg
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## MLT(sin_cos_square)
+## MLTleader(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('7.3')
+## Problem1('21')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Stewart')
+## EditionText2('6')
+## Section2('7.2')
+## Problem2('4 6 7 8 9 10 16 47')
+###############Source###############
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,20,1);
+$b = random(2,20,1);
+
+
+
+# choix de sin ou cos
+
+$s = random(-1,1,2);
+if ($s == -1) {
+$trig = Compute("sin($b*x)");
+} else {
+$trig = Compute("cos($b*x)");
+}
+
+$f = Formula("$a*($trig)^2")->reduce;
+$funct = FormulaUpToConstant("$a*x/2 + $s*$a*sin(2*$b*x)/(4*$b)")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer l'intégrale indéfinie.
+$BR \[ \int $f\,dx \]
+$BR 
+Réponse : \{ans_rule( 45) \}
+$BR
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($funct->cmp);
+
+$soln_2b = 2*$b;
+$soln_4b = 4*$b;
+
+($num_coef1,$den_coef1) = reduce($a,2);
+if ($den_coef1 == 1 && $num_coef1==1) { $soln_coef1 = " "; }
+elsif ($den_coef1 == 1) { $soln_coef1 = $num_coef1; }
+else {$soln_coef1 = "\frac{$num_coef1}{$den_coef1}"; }
+
+
+($num_coef2,$den_coef2) = reduce($a,$soln_4b);
+if ($den_coef2 == 1&& $num_coef2==1) { $soln_coef2 = " "; }
+elsif ($den_coef2 == 1 ) { $soln_coef2 = $num_coef2; }
+else {$soln_coef2 = "\frac{$num_coef2}{$den_coef2}"; }
+
+$id = Compute("1+$s*cos($soln_2b*x)")->reduce;
+
+if($s==-1){$sign = '-';}
+else {$sign = '+';}
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+On utilise une identité trigonométrique :
+
+\[
+\begin{aligned}
+\int $f dx
+&=      $a \int \frac{1}{2}\left($id\right) dx        \\\\
+&=      $soln_coef1 \left( \int dx
+              $sign  \int \cos($soln_2b x) dx \right) \\\\
+&=      $soln_coef1 \left( x $sign \frac{\sin($soln_2b x)}{$soln_2b} \right) + C \\\\
+&=      $soln_coef1 x $sign $soln_coef2 \sin($soln_2b x) + C
+\end{aligned}
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Fonction de la forme a*sin^2(bx) ou a*cos^2(bx) où a et b sont > 1');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

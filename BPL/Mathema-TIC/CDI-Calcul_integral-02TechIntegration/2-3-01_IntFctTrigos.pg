@@ -1,0 +1,131 @@
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction trigonométrique', 'identité trigonométrique', 'intégrale définie', 'puissance des fonctions trigonométriques')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : Library/Indiana/Indiana_setIntegrals5Trig/sc5_5_97.pg
+## ZDate(6/3/2002)
+## ZInstitution(Indiana)
+## MLT(sin_cos_square)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('7.3')
+## Problem1('3')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Stewart')
+## EditionText2('6')
+## Section2('7.2')
+## Problem2('13 14 48')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+	"PGstandard.pl",
+	"MathObjects.pl",
+	"PGML.pl",
+	"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$c = random(2,9,1);
+
+$a = random(0,8,1);
+$len = random(3,10,1);
+$b = $a + $len;
+
+$ans = Compute("$len/8 - (sin(4*$b*$c) - sin(4*$a*$c))/(32*$c)")->reduce;
+
+BEGIN_PGML
+Évaluer l'intégrale définie.
+
+>> [`` \int_{[$a]}^{[$b]} \sin^2([$c]x ) \cos^2([$c]x) \,dx ``]<<
+
+Réponse : [_______________________________________________________]{$ans}
+END_PGML
+
+
+$soln_2c = 2*$c;
+$soln_4c = 4*$c;
+$soln_4cb = $soln_4c * $b;
+$soln_4ca = $soln_4c * $a;
+
+BEGIN_PGML_SOLUTION
+On utilise les identités trigonométriques :
+
+>>[``
+\begin{aligned}
+\int_{[$a]}^{[$b]} \sin^2([$c] x)\cos^2([$c] x)dx
+&=	\int_{[$a]}^{[$b]}
+		\left( \frac{1}{2} \left( 1-\cos([$soln_2c] x) \right) \right)
+		\left( \frac{1}{2} \left( 1+\cos([$soln_2c] x) \right) \right)
+		dx	\\\\
+&=	\frac{1}{4} \int_{[$a]}^{[$b]}
+		\left( 1 - \cos([$soln_2c] x) \right)
+		\left( 1 + \cos([$soln_2c] x) \right) dx	\\\\
+&=	\frac{1}{4} \int_{[$a]}^{[$b]}
+		\left( 1 - \cos^2([$soln_2c] x) \right) dx	\\\\
+&=	\frac{1}{4} \int_{[$a]}^{[$b]} dx
+		- \frac{1}{4} \int_{[$a]}^{[$b]} \cos^2([$soln_2c] x) dx	\\\\
+&=	\frac{1}{4} \int_{[$a]}^{[$b]} dx
+		- \frac{1}{4} \int_{[$a]}^{[$b]}
+		    \frac{1}{2} \left( 1 + \cos([$soln_4c] x) \right) dx	\\\\
+&=	\frac{1}{4} \int_{[$a]}^{[$b]} dx
+		- \frac{1}{8} \int_{[$a]}^{[$b]} dx
+		- \frac{1}{8} \int_{[$a]}^{[$b]} \cos([$soln_4c] x) dx	\\\\
+&=	\frac{1}{8} \left( \int_{[$a]}^{[$b]} dx
+		- \int_{[$a]}^{[$b]} \cos([$soln_4c] x) dx \right)	\\\\
+&=	\frac{1}{8} \left( \left( \left. x \right|_{[$a]}^{[$b]} \right)
+		- \left( \left. \frac{\sin([$soln_4c] x)}{[$soln_4c]}
+			\right|_{[$a]}^{[$b]} \right) \right)	\\\\
+&=	\frac{1}{8} \left( [$b] - [$a] - \frac{\sin([$soln_4cb])-\sin([$soln_4ca])}
+		{[$soln_4c]} \right)	\\\\
+&=	[$ans]
+\end{aligned}
+``]<<
+
+END_PGML_SOLUTION
+
+BEGIN_PGML_SOLUTION
+On utilise les identités trigonométriques :
+
+>>[``
+\begin{aligned}
+\int_{[$a]}^{[$b]} \sin^2([$c] x)\cos^2([$c] x)dx
+&=	\int_{[$a]}^{[$b]}
+		\big( \sin([$c] x)\cos([$c]x) \big)^2	dx	\\\\
+&=	\int_{[$a]}^{[$b]}
+		\left( \frac{1}{2}\sin([$soln_2c] x) \right)^2    dx	\\\\
+&=	\frac{1}{4} \int_{[$a]}^{[$b]}
+		\sin^2([$soln_2c] x) dx	\\\\
+&=	\frac{1}{8} \int_{[$a]}^{[$b]}
+		\left(1-\cos([$soln_4c] x)\right) dx	\\\\
+&=	\frac{1}{8} \left(\int_{[$a]}^{[$b]} dx
+		-  \int_{[$a]}^{[$b]} \cos([$soln_4c] x) dx	 \right) \\\\
+&=	\frac{1}{8} \left( \left( \left. x \right|_{[$a]}^{[$b]} \right)
+		- \left( \left. \frac{\sin([$soln_4c] x)}{[$soln_4c]}
+			\right|_{[$a]}^{[$b]} \right) \right)	\\\\
+&=	\frac{1}{8} \left( [$b] - [$a] - \frac{\sin([$soln_4cb])-\sin([$soln_4ca])}
+		{[$soln_4c]} \right)	\\\\
+&=	[$ans]
+\end{aligned}
+``]<<
+
+END_PGML_SOLUTION
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

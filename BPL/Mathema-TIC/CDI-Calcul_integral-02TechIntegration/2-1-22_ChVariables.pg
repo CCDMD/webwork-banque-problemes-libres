@@ -1,0 +1,89 @@
+#DESCRIPTION
+##  Calculus: Substitution rule
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('changement de variable', 'constante d\'intégration', 'fonction racine carrée', 'fonction trigonométrique', 'intégrale indéfinie')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : septembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_5_5_16.pg
+## Date(03/08/2011)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('5.5')
+## Problem1('16')
+###############Source###############
+
+
+### Modifier pour ajouter   Int( f(sqrt(x))/sqrt(x) dx  où f(x)=cos, sec^2, sectan,e, a^, cot, csccot
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGML.pl",
+  "PGcourse.pl", 
+);
+
+#####################################################################
+
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem());
+
+#####################################################################
+
+Context("Numeric");
+Context()->variables->set(x=>{limits=>[0,4]});
+
+$a = random(0,5,1);
+
+@f = (
+Compute("sin(x)"),
+Compute("cos(x)"),
+Compute("sec^2(x)"),
+Compute("sec(x)*tan(x)"),
+Compute("csc^2(x)"),
+Compute("csc(x)*cot(x)")
+);
+
+$fu = $f[$a]->substitute(x=>"sqrt(x)");
+
+@Intf = (
+Compute("-cos(sqrt(x))"),
+Compute("sin(sqrt(x))"),
+Compute("tan(sqrt(x))"),
+Compute("sec(sqrt(x))"),
+Compute("-cot(sqrt(x))"),
+Compute("-csc(sqrt(x))")
+);
+
+$ans = FormulaUpToConstant("2*$Intf[$a]")->reduce;
+
+
+#####################################################################
+
+BEGIN_PGML
+Évaluer l'intégrale indéfinie
+
+>>[`` \int \frac{[$fu]}{\sqrt{x}}  \, dx. ``]<<
+
+Réponse : [______________________________]{$ans}
+END_PGML
+
+COMMENT('Choisi aléatoirement parmi les formules de base des 6 fonctions trigonométiques');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

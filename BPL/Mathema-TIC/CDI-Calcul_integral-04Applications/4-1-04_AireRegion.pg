@@ -1,0 +1,90 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('aire entre deux courbes', 'aire sous la courbe', 'formule d\'intégration de base', 'graphique')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : novembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/UCSB/Stewart5_5_4/Stewart5_5_4_43/Stewart5_5_4_43.pg
+## ZInstitution(UCSB)
+## MLT(AI-A-one-graph)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('5.4')
+## Problem1('43')
+###############Source###############
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGgraphmacros.pl",
+"PGcourse.pl",
+);
+
+COMMENT('Aire entre l axe des y et la parabole f(y)=-y^2+ay où a prend des valeurs entre [2,8]. Les bornes de l intégrale sont toujours 0 et a.');
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$refreshCachedImages = 1;
+
+Context()->variables->add(y=>"Real");
+
+#points d'intersection entre f(y) et l'axe y : y=0 et y=a 
+$a=random(2,8,1);
+
+#aire entre f(y)= -y^2 + ay et x=0
+$aire = Compute("($a)^3/6");
+
+#construction du graphique
+$s = ($a**2)/4;
+$xmax = int($s*3/2)+1;
+$ymax = int($a*3/2);
+$graph1 = init_graph(-1,-1,$xmax,$ymax,'axes'=>[0,0],'size'=>[400,400]);
+$graph1-> lb('reset');
+
+$f1 = Compute("sqrt($s-x) + $a/2");
+$f2 = Compute("-sqrt($s-x) + $a/2");
+
+add_functions($graph1,
+"$f1 for x in <-1,$s] using color:blue weight:2",
+"$f2 for x in <-1,$s> using color:blue weight:2");
+
+$graph1->lb( new Label($s/2,$a,"x = f(y)",'blue','left','middle'));
+$graph1->lb( new Label(-0.1,$a+0.1,"$a",'blue','right','bottom'));
+$graph1->stamps(closed_circle(0, $a,'black'));
+$graph1->lb( new Label(-0.1,-0.1,"0",'blue','right','top'));
+$graph1->stamps(closed_circle(0,0,'black'));
+
+$ymin = $a/2;
+$graph1->lb( new Label($s+.15,$ymin,"($s,$ymin)",'blue','left','middle'));
+
+$graph1->new_color("lightblue", 214,230,244);
+
+$graph1->moveTo(0,0);
+$graph1->lineTo(0,$a,'blue',1);
+
+
+$graph1->fillRegion([0.1,$ymin,'lightblue']);
+
+Context()->texStrings;
+BEGIN_TEXT
+L'aire de la région délimitée à droite par l'axe des \(y\) et à gauche par la parabole \(f(y)=$a y - y^2\) (région ombrée sur la figure) est donnée par l'intégrale
+\[\int_{0}^{\,$a} {\left($a y - y^2\right)}\,dy.\]
+En inclinant la tête vers la droite, on peut visualiser la région ombrée comme la région située sous la courbe \(x=$a y - y^2\) entre \(y = 0\) et \(y = $a\). Calculer l'aire de cette région.  
+$PAR 
+\{image(insertGraph($graph1),width=>350,height=>350,tex_size=>500)\}
+$PAR
+Aire = \{ans_rule(30)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($aire->cmp());
+
+ENDDOCUMENT();

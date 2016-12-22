@@ -1,0 +1,84 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('changement de variable', 'constante d\'intégration', 'fonction trigonométrique inverse', 'intégrale indéfinie')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : septembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_5_5/Stewart5_5_5_42.pg
+## ZDate(03/08/2011)
+## ZInstitution(ASU)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(rational)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('5.5')
+## Problem1('42')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Stewart')
+## EditionText2('6')
+## Section2('5.5')
+## Problem2('42')
+## TitleText3('Calculus: Concepts and Contexts')
+## AuthorText3('Stewart')
+## EditionText3('4 Custom UMTYMP Ed.')
+## Section3('5.5')
+## Problem3('36')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "parserFormulaUpToConstant.pl"
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+Context()->flags->set(reduceConstants => 0);
+Context()->variables->set(x=>{limits=>[-1,1]});
+
+# paramètre
+$a= random(3,10,1)*random(-1,1,2);
+
+# Choix de la fonction
+$i = random(0,1);
+
+# fonction et réponse
+
+if ($i==0){
+$f = Formula("$a*x/(1+x^4)");
+$ans = FormulaUpToConstant("$a/2 * arctan(x^2)");
+} else {
+$f = Formula("$a*x/sqrt(1-x^4)");
+$ans = FormulaUpToConstant("$a/2 * arcsin(x^2)");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$PAR
+Évaluer l'intégrale indéfinie
+\[\int $f\, dx\]
+
+$PAR
+Réponse : \{ans_rule(30)\}
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($ans->cmp);
+
+COMMENT('Choisi aléatoirement parmi les primitives arcsin(u) et arctan(u)');
+
+ENDDOCUMENT();

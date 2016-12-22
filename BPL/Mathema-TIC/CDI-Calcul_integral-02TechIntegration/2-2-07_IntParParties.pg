@@ -1,0 +1,89 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction exponentielle', 'intégrale indéfinie', 'par parties')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+
+###############Source###############
+## source : Library/Utah/AP_Calculus_I/set9_Basic_Methods_of_Integration/1220s13p1.pg
+## ZInstitution(Univeristy of Utah)
+## ZAuthor(Utah ww group)
+## MLT(notrig_01)
+## TitleText1('Calculus II')
+## AuthorText1('Jerrold Marsden and Alan Weinstein')
+## EditionText1('2')
+## Section1('.')
+## Problem1('')
+###############Source###############
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGML.pl",
+  "parserFormulaUpToConstant.pl",
+  "answerHints.pl",
+  "PGcourse.pl", 
+);
+
+TEXT(beginproblem());
+
+## choix du coefficient
+$a = random(2,12);
+
+
+$showHint = 2;
+
+BEGIN_PGML
+Calculer l'intégrale suivante en utilisant l'intégration par parties :
+
+[`` \int x e^{[$a]x} \,dx = ``] [_________________________________________] [` +\,C `]. 
+
+END_PGML
+
+BEGIN_PGML_HINT
+Utiliser la substitution 
+
+>>[` u = x `] et [` dv = e^{[$a]x}\,dx `].<<
+END_PGML_HINT
+
+$aa = $a*$a;
+$ans = Formula("exp($a*x) * (x/$a - 1/$aa)")->reduce;
+$ans->{limits} = [1,3];
+ANS($ans->cmp(upToConstant=>1));
+
+BEGIN_PGML_SOLUTION
+On pose
+
+>>[` u = x `] et [` dv = e^{[$a]x}\,dx `]<<
+
+Alors
+
+>>[` du = dx `] et [`` v = \frac{e^{[$a]x}}{[$a]}  ``]<<
+
+
+On peut ensuite intégrer par parties :
+
+>>[`` 
+\begin{aligned}
+I &= \int x e^{[$a] x}\,dx \\
+&=   x\frac{e^{[$a]x}}{[$a]}  - \frac{1}{[$a]}\int e^{[$a]x} \,dx \\
+&=   \frac{x e^{[$a]x}}{[$a]}  - \frac{1}{[$a]}\cdot\frac{e^{[$a]x}}{[$a]} + C \\
+&=   \frac{e^{[$a]x}}{[$a]}\left( x - \frac{1}{[$a]}\right) + C
+\end{aligned}
+``]
+<<
+
+END_PGML_SOLUTION
+
+
+COMMENT('Fonction de la forme x*e^(ax) où a >=2');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

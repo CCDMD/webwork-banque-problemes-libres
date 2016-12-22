@@ -1,0 +1,66 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('disques', 'fonction trigonométrique', 'méthode des tranches', 'solide de révolution', 'volume')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(5)  
+## Language(fr)
+###############Source###############
+## source : Library/UCSB/Stewart5_6_2/Stewart5_6_2_31.pg
+## ZInstitution(UCSB)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('6.2')
+## Problem1('31')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"parserRadioButtons.pl",
+"PGcourse.pl",
+);
+
+COMMENT('Les six choix sont affichés aléatoirement de sorte que la réponse diffère pour chaque étudiant. Suggestion : restreindre le nombre de tentatives pour réussir le problème.');
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+$a=random(3,6,1);
+$b= $a+2;
+
+# Les 6 choix
+@choix = ( "\( \displaystyle \pi \int_{0}^{\,\pi/4} {\left(1-\tan^{$a}(x)\right)^2}\,dx \)",
+         "\( \displaystyle \pi \int_{0}^{\,\pi/4} {\left(\tan^{$a}(x)\right)^2}\,dx \)",
+        "\( \displaystyle \pi \int_{0}^{\,\pi/4} {\tan^{$b}(x)}\,dx \)",
+        "\( \displaystyle \pi \int_{0}^{\,1} {\left(1-\tan^{$a}(x)\right)^2}\,dx \)",
+        "\( \displaystyle \pi \int_{0}^{\,1} {\left(\tan^{$a}(x)\right)^2}\,dx \)",
+        "\( \displaystyle \pi \int_{0}^{\,1} {\tan^{$b}(x)}\,dx \)" );
+
+# ordre des choix choisi de façon aléatoire
+@randomchoix = @choix[NchooseK(6,6)];
+$cmc = RadioButtons(
+       [ @randomchoix ],
+         "\( \displaystyle \pi \int_{0}^{\,\pi/4} {\left(1-\tan^{$a}(x)\right)^2}\,dx \)", # la bonne réponse
+        labels => "ABC"
+ );
+
+
+BEGIN_TEXT
+Laquelle des intégrales suivantes représente le volume du solide de révolution engendré par la rotation de la région délimitée par les courbes \(y=\tan^{$a}(x),\) \(y=1\) et \(x=0\) autour de la droite \(y=1?\)
+$PAR
+\{$cmc -> buttons() \}
+$PAR
+END_TEXT
+
+ANS($cmc->cmp());
+
+ENDDOCUMENT();

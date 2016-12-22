@@ -1,0 +1,77 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('méthode des tubes', 'solide de révolution', 'volume')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/UCSB/Stewart5_6_3/Stewart5_6_3_22.pg
+## ZInstitution(UCSB)
+## ZMLT(volume_shells_mc)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('6.3')
+## Problem1('22')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"parserRadioButtons.pl",
+"PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+COMMENT('Les six choix sont affichés aléatoirement de sorte que la réponse diffère pour chaque étudiant. Suggestion : restreindre le nombre de tentatives pour réussir le problème.');
+
+# région délimitée par y=ax-x^2 et y=x
+# rotation autour de x=b où b > a
+# borne sup. = a-1
+$a = random(3,7,1);
+$b= $a + random(2,5,1);
+$am1 = $a-1;
+
+Context()->texStrings;
+# rayon : r = b-x 
+# hauteur: h = (a-1)x - x^2
+$h = Formula("$am1*x - x^2")->reduce;
+# Les 6 choix
+@choix = (  "\( \displaystyle \int_{0}^{\,$am1} {2 \pi ($b-x) \left[$h\right]}\,dx \)",
+         "\( \displaystyle \int_{0}^{\,$am1} {2 \pi (x-$b) \left[$h\right]}\,dx \)",
+        "\( \displaystyle \int_{0}^{\,$am1} {2 \pi x \left[$h\right]}\,dx \)",
+        "\( \displaystyle \int_{0}^{\,$a} {2 \pi ($b-x) \left[$h\right]}\,dx \)",
+        "\( \displaystyle \int_{0}^{\,$a} {2 \pi (x-$b) \left[$h\right]}\,dx \)",
+        "\( \displaystyle \int_{0}^{\,$a} {2 \pi x \left[$a x - x^2\right]}\,dx \)",
+        );
+
+# ordre des choix choisi de façon aléatoire
+@randomchoix = @choix[NchooseK(6,6)];
+$cmc = RadioButtons(
+       [ @randomchoix ],
+         "\( \displaystyle \int_{0}^{\,$am1} {2 \pi ($b-x) \left[$h\right]}\,dx \)", # la bonne réponse
+        labels => "ABC"
+ );
+ 
+
+BEGIN_TEXT
+Laquelle des intégrales suivantes représente le volume du solide de révolution engendré par la rotation de la région délimitée par les courbes \(y=x\) et \(y= $a x - x^2\) autour de la droite \(x=$b\,?\)
+$PAR
+\{$cmc -> buttons() \}
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+ANS($cmc->cmp());
+
+ENDDOCUMENT();

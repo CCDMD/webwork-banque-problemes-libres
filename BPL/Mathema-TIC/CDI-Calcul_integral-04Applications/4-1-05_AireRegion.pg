@@ -1,0 +1,123 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('aire entre deux courbes', 'aire sous la courbe', 'formule d\'intégration de base')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : novembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/Michigan/Chap6Sec2/Q73.pg
+## Institution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZMLT(AI-A-Riemann-exact)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('6.2')
+## Problem1('73')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('6.2')
+## Problem2('65')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('6.')
+## Problem3('56')
+###############Source###############
+
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGgraphmacros.pl",
+"PGcourse.pl",
+);
+ 
+COMMENT('Aire entre l axe des x et la parabole f(y)=(x-a)(x-b) où b>a. Les bornes de l intégrale sont toujours a et b.');
+Context("Numeric");
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+# use the parabola (x-a)(x-b) = x^2 - c x + d
+$a = random(1,5,1);
+$b = $a + random(1,4,1);
+$c = $a + $b;
+$d = $a*$b;
+
+# then the area is 
+$area = Compute("-1*((1/3)*($b^3 - $a^3) - ($c/2)*($b^2 - $a^2) + $d*($b - $a))")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer l'aire de la région délimitée par l'axe des \( x \) et la courbe
+\( y = $d - $c x + x^2 \).
+$PAR
+Aire = \{ ans_rule(35) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS($area->cmp(tolerance=>0.00001) );
+
+$xmin = ($a + $b)/2;
+$xmax = $b+1;
+$ymin = ($xmin - $a)*($xmin - $b);
+$xgr = $b + 2;
+$ygr = 2-$ymin+1;
+$gr = init_graph(-1,($ymin-1),$xmax,2,axes=>[0,0],grid=>[$xgr,$ygr]);
+add_functions( $gr, "$d - $c*x + x*x for x in <-1,$xmax> using color:blue " .
+	       "and weight:2" );
+
+$c2 = ( $c/2 == int($c/2) ) ? $c/2 : "{$c\over2}";
+$db = $d*$b;
+$da = $d*$a;
+$aread = "-\left(\frac{$b^3}{3} - {$c2}\cdot $b^2 + $db\right) + " .
+	 "\left(\frac{$a^3}{3} - {$c2}\cdot $a^2 + $da\right)";
+# simplify the final answer
+$num = ($b-$a)**3;
+($rnum,$rden) = reduce($num,6);
+
+if ( $rden == 1 ) {
+    $areaans = $rnum;
+} else {
+    $areaans = "\frac{$rnum}{$rden}";
+}
+
+$refreshCachedImages = 1;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Le graphique coupe l'axe des \(x\) lorsque
+\[ $d - $c x + x^2 = 0 \;\hbox{ ou }\; (x - $a)(x - $b) = 0,\]
+c'est-à-dire à \(x = $a\) et \(x = $b\).  (Voir la figure ci-dessous.)
+$PAR
+$BCENTER
+\{ image( insertGraph( $gr ), width=>350,height=>350,tex_size=>500 ) \}
+$BR
+${BITALIC}(Cliquer sur le graphique pour agrandir l'image.)$EITALIC
+$ECENTER
+$PAR
+
+La parabole est ouverte vers le haut et la région est située sous l'axe des \(x\), alors
+\[ \hbox{Aire } = -\int_{$a}^{$b} ($d - $c x + x^2)\, dx =
+   -\left($d x - $c2 x^2 + \frac{x^3}{3}\right)\bigg|_{$a}^{$b},
+\]
+donc 
+\[ \hbox{Aire } = $aread = $areaans \]
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

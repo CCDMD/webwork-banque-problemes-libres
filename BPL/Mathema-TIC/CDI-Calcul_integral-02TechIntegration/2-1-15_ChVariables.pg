@@ -1,0 +1,67 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('changement de variable', 'constante d\'intégration', 'fonction racine carrée', 'intégrale indéfinie')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : septembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_5_5/Stewart5_5_5_46.pg
+## ZInstitution(UCSB)
+## ZMLT(Sub_indirect)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('5.5')
+## Problem1('46')
+###############Source###############
+
+
+### forme : Int(  ax^(n-1)/sqrt(x^n+c) dx )
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGML.pl",
+  "PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+# coefficient et constante
+$a=random(2,10,1);
+$c = random(1,10);
+
+
+## l'exposant
+$n = random(2,6);
+$nm1 = $n-1;
+
+## fonction
+Context()->variables->set(x=>{limits=>[0,2]});
+$f = Formula("$a*x^($nm1)/sqrt(x^($n)+$c)")->reduce;
+
+## réponse
+
+$ans = FormulaUpToConstant("2*$a/$n*sqrt(x^($n)+$c)")->reduce;
+
+
+BEGIN_PGML
+Évaluer l'intégrale indéfinie
+
+>>[`` \int [$f]\, dx ``]<<
+
+Réponse : [___________________________________]
+
+END_PGML
+
+ANS($ans->cmp);
+
+ENDDOCUMENT();

@@ -1,0 +1,154 @@
+##DESCRIPTION
+## Determine arc length.
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('changement de variable', 'longueur d\'arc')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+###############Source###############
+## source : Library/ma123DB/set5/s8_1_16.pg
+## ZDate(6/3/2002)
+## ZInstitution(UCSB)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('8.1')
+## Problem1('16')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Rogawski')
+## EditionText2('1')
+## Section2('8.1')
+## Problem2('17')
+## TitleText3('Calculus: Early Transcendentals')
+## AuthorText3('Stewart')
+## EditionText3('5')
+## Section3('8.1')
+## Problem3('30')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,12);
+$a2 = $a*$a;
+
+BEGIN_TEXT
+Calculer la longueur de l'arc de courbe  \(x^2 = $a y^3 \) 
+formé entre le point \(A\) et le point \(B\), où \( A = (0,0) \) et
+ \( B = ($a2, $a) \).
+$BR$BR
+Longueur = \{ans_rule(30)\}
+END_TEXT
+
+$ans = Compute("1/(27*$a)*( (9*$a2+4)^(3/2) - 8 )");
+ANS($ans->cmp);
+
+
+$c1 = 9*$a2 + 4;
+
+if($a == 8 ) {
+$araccube = "2";
+$texderivee = "\frac{1}{3 x^{1/3}}";
+$texderivee2 = "\frac{1}{9 x^{2/3}}";
+$texnum = "9 x^{2/3} + 1";
+$texden = "x";
+$texdu = "$texden^{-1/3}";
+$a6 = 6;
+$a18 = 18;
+$a27 = 27;
+$texsup1 = "9 ($a2)^{2/3}  + 1";
+$texinf1 = "(1)^{3/2}";
+$texsup2 = "9\cdot 16  + 1";
+$texinf2 = "1";
+$texans =  "( 145 )^{3/2} - 1";
+} else {
+$araccube = "$a^{1/3}";
+$texderivee = "\frac{2}{3 ($a x)^{1/3}}";
+$texderivee2 = "\frac{4}{9 ($a x)^{2/3}}";
+$texnum = "9 ($a x)^{2/3}  + 4";
+$texden = "($a x)";
+$texdu = "$texden^{-1/3}\cdot $a";
+$a6 = 6*$a;
+$a18 = 18*$a;
+$a27 = 27*$a;
+$texsup1 = "9 ($a\cdot $a2)^{2/3}  + 4";
+$texinf1 = "(4)^{3/2}";
+$texsup2 = "9\cdot $a2  + 4";
+$texinf2 = "8";
+$texans =  "( $c1 )^{3/2} - 8";
+}
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pour calculer la longueur de l'arc de courbe \(x^2 = $a y^3\), il faut d'abord trouver la valeur de la dérivée \(y'\).
+ En isolant la variable \(y\) dans l'équation, on obtient
+\[
+y = \left(\frac{x^2}{$a}\right)^{1/3}= \frac{1}{$araccube}\cdot x^{2/3},
+\]
+par conséquent, la dérivée \(y'\) est 
+\[
+y' = \frac{1}{$araccube}\cdot \frac{2}{3}\,x^{-1/3} = $texderivee \,.
+\]
+$PAR
+La longueur de l'arc de courbe \(x^2 = $a y^3 \) 
+formé entre le point \(A\) et le point \(B\), où \( A = (0,0) \) et
+ \( B = ($a2, $a) \) est obtenue par l'intégrale
+\[
+\begin{align}
+L &= \int_0^{\,$a2} \sqrt{1 + (y')^2}\, dx \\
+&= \int_0^{\,$a2} \sqrt{1 + \left( $texderivee \right)^2}\, dx \\
+& = \int_0^{\,$a2} \sqrt{1 +  $texderivee2 }\, dx \\
+& = \int_0^{\,$a2} \sqrt{ \frac{$texnum}{9 $texden^{2/3} } }\, dx \\
+& = \int_0^{\,$a2} \frac{\sqrt{$texnum}}{ 3 $texden^{1/3}} \, dx 
+\end{align}
+\]
+$PAR
+On peut trouver la primitive de cette intégrale à l'aide du changement de variable \(u = $texnum\) où la différentielle \(du\) est
+\[
+\begin{align}
+du &= 9\cdot \frac{2}{3} $texdu \, dx \\
+du &= \frac{$a6}{$texden^{1/3}}\, dx \\
+\frac{1}{$a6}\,du &= \frac{1}{$texden^{1/3}}\, dx \\
+\frac{1}{$a6\cdot 3}\,du &= \frac{1}{3 $texden^{1/3}}\, dx \\
+\frac{1}{$a18}\,du &= \frac{1}{3 $texden^{1/3}}\, dx\,.
+\end{align}
+\]
+Ainsi, en appliquant ce changement de variable, on trouve la primitive de l'intégrale de la façon suivante.
+\[
+\begin{align}
+\int  \frac{\sqrt{$texnum}}{3 $texden^{1/3}}\, dx &= \int \sqrt{u}\,\frac{1}{$a18}\,du \\
+&= \frac{1}{$a18}\int u^{1/2}\, du \\
+&= \frac{1}{$a18}\cdot \frac{2}{3}\, u^{3/2} + C \\
+&= \frac{1}{$a27} \left($texnum\right)^{3/2} + C
+\end{align}
+\]
+$PAR
+Finalement, on peut appliquer le théorème fondamental du calcul à cette primitive pour calculer la longueur de l'arc de courbe.
+\[
+\begin{align}
+L & = \left. \frac{1}{$a27} \left($texnum\right)^{3/2}\right|_0^{$a2} \\
+&= \frac{1}{$a27} \left( \left($texsup1 \right)^{3/2} - $texinf1 \right) \\
+&= \frac{1}{$a27} \left( \left($texsup2 \right)^{3/2} - $texinf2  \right) \\
+&= \frac{1}{$a27} \left( $texans \right)
+\end{align}
+\]
+END_SOLUTION
+Context()->normalStrings;
+ENDDOCUMENT();        # This should be the last executable line in the problem.

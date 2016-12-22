@@ -1,0 +1,96 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction rationnelle', 'fractions partielles', 'intégrale indéfinie')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+
+###############Source###############
+## source : Library/UMN/calculusStewartET/s_7_4_prob01.pg
+## ZDate(09/21/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## MLT(PartFracTemplate)
+## Level(2)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('7.4')
+## Problem1('')
+###############Source###############
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "weightedGrader.pl",
+  "PGcourse.pl",
+);
+
+COMMENT('Décomposition en fractions partielles qui donnera la forme A/(t+4) + B/(t-1)+ C/(t-2) où A,B et C sont non nuls. Les points sont répartis de la façon suivante : 50% pour les réponses A, B et C et 50% pour la primitive.');
+
+
+#####################################################################
+
+install_weighted_grader();
+
+$showPartialCorrectAnswers = 1;
+TEXT(beginproblem());
+
+#####################################################################
+
+Context("Numeric");
+Context()->variables->are(t=>"Real");
+Context()->noreduce('(-x)-y','(-x)+y');
+
+# coefficients
+$A = non_zero_random(-5,5,1);
+$B = non_zero_random(-5,5,1);
+$C = non_zero_random(-5,5,1);
+
+# numérateur
+$d = Compute("2*$A-8*$B-4*$C");
+$e = Compute("2*$B+3*$C-3*$A");
+$f = Compute("$A+$B+$C");
+$g = Compute("$f*t^2+$e*t+$d")->reduce;
+
+# Réponses
+$ans1 = Real("$A");
+$ans2 = Real("$B");
+$ans3 = Real("$C");
+$ans4 = Formula("$A*ln(abs(t+4))+$B*ln(abs(t-1))+$C*ln(abs(t-2))")->reduce;
+## Vérifie si l'étudiant a écrit les valeurs absolues dans la fonction ln
+Context()->variables->set(t=>{limits=>[-1,1]});
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Décomposer la fonction rationnelle suivante en somme de fractions partielles.
+\[
+\frac{$g}{(t+4)(t-1)(t-2)}=\frac{A}{t+4}+\frac{B}{t-1}+\frac{C}{t-2}
+\] $PAR
+Réponse : \(A = \) \{ans_rule(7)\} \(B = \) \{ans_rule(7)\} \(C = \) \{ans_rule(7)\} $PAR
+
+À partir de la décomposition en fractions partielles, évaluer l'intégrale
+\[
+\int \frac{$g}{(t+4)(t-1)(t-2)} \,dt.
+\]
+Réponse : \{ans_rule(45)\} \(+C\)
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+WEIGHTED_ANS(($ans1)->cmp(), 17);
+WEIGHTED_ANS(($ans2)->cmp(), 17);
+WEIGHTED_ANS(($ans3)->cmp(), 16);
+WEIGHTED_ANS(($ans4)->cmp(upToConstant=>1), 50);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

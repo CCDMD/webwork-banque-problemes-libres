@@ -1,0 +1,133 @@
+## DESCRIPTION
+##   Evaluate a Trig Integral
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('changement de variable', 'fonction trigonométrique', 'identité trigonométrique', 'intégrale indéfinie', 'puissance des fonctions trigonométriques')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : Library/Union/setIntTrigonometric/an8_3_05.pg
+## ZDate(8/23/07)
+## ZInstitution(Union)
+## ZAuthor(K. Lesh)
+## MLT(odd_sin_power)
+## TitleText1('Calculus')
+## AuthorText1('Anton')
+## EditionText1('7')
+## Section1('8.3')
+## Problem1('05')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Rogawski')
+## EditionText2('1')
+## Section2('7.3')
+## Problem2('45')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+COMMENT('Intégrale de la forme sin^5(ax) ou cos^5(ax) où a est entre 2 et 10');
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+## coefficient de ax
+$a = random(2,10,1);
+
+## choix de la fonction trigo
+$i = random(0,1);
+@trig = (Compute("sin($a*x)"), Compute("cos($a*x)"));
+
+
+$integrand=Formula("$trig[$i]^5")->reduce;
+
+###################################
+# Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer l'intégrale indéfinie.
+$PAR
+\( \displaystyle\int $integrand \, dx = \)
+             \{ans_rule(40)\} \( + C\).
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answers
+
+$showPartialCorrectAnswers = 1;
+Context()->flags->set(reduceConstants=>0);
+
+## signe dans la réponse
+@signe = (-1,1);
+
+## fonction trigo dans la réponse
+$j = ($i+1)%2;
+
+$antideriv = Formula("($signe[$i]/$a)*($trig[$j] - (2/3)*$trig[$j]^3+(1/5)*$trig[$j]^5)");
+
+ANS($antideriv->cmp(upToConstant=>1));
+
+###################################
+
+
+
+
+#########################
+# Solution
+
+$trigo1 = Compute("$trig[$i]^4");
+$trigo2 = Compute("$trig[$i]^2");
+$trigo3 = Compute("$trig[$j]^2");
+$sa = $signe[$i]*$a;
+
+$trigo4 = Compute("$trig[$j]^3");
+$trigo5 = Compute("$trig[$j]^5");
+
+Context()->texStrings;
+BEGIN_SOLUTION
+L'évaluation de cette intégrale se fait par un changement de variable. Il faut tout d'abord réécrire l'intégrale de la façon suivante en utilisant l'identité trigonométrique \(\sin^2(x)+\cos^2(x)=1\).
+
+\[
+\begin{aligned}
+\int $integrand \, dx &= \int $trigo1\cdot $trig[$i]\,dx \\
+&= \int \big($trigo2\big)^2\,$trig[$i]\, dx \\
+&= \int \big(1-$trigo3\big)^2\,$trig[$i]\, dx
+\end{aligned}
+\]
+
+On pose \(u = $trig[$j]\), alors \(du = $sa $trig[$i]\,dx \) ou \( \frac{$signe[$i]}{$a}\,du = $trig[$i]\,dx \).
+$PAR
+Ainsi, l'intégrale devient
+
+\[
+\begin{aligned}
+\int $integrand \, dx
+&= \int \big(1-$trigo3\big)^2\,$trig[$i]\, dx \\
+&= \frac{$signe[$i]}{$a} \int \big(1-u^2\big)^2\,du \\
+&= \frac{$signe[$i]}{$a} \int (1 - 2u^2 + u^4)\,du \\
+&= \frac{$signe[$i]}{$a} \left( u - \frac{2 u^3}{3} +  \frac{u^5}{5} \right) + C\\
+&= \frac{$signe[$i]}{$a} \left( $trig[$j] - \frac{2}{3} $trigo4  +  \frac{1}{5} $trigo5 \right) + C 
+\end{aligned}
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

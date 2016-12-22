@@ -1,0 +1,79 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction exponentielle', 'intégrale définie', 'par parties')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level()  
+## Language(fr)
+
+
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGML.pl",
+  "PGcourse.pl", 
+);
+
+TEXT(beginproblem());
+
+## choix du coefficient
+$a = random(5,10);
+
+## borne supérieure
+
+$c = random(1,5);
+
+BEGIN_PGML
+Calculer l'intégrale définie [`` \int_{0}^{[$c]} x e^{[$a]x} \,dx ``].
+
+Réponse : [____________________________________]
+
+END_PGML
+
+
+$aa = $a*$a;
+$fct = Formula("exp($a*x) * (x/$a - 1/$aa)")->reduce;
+$ans = $fct->eval(x=>$c) - $fct->eval(x=>"0");
+ANS($ans->cmp);
+
+
+$ac = $a*$c;
+
+if($c==1) {$cte = " ";}
+else {$cte = $c;}
+
+BEGIN_PGML_SOLUTION
+On pose
+
+>>[` u = x `] et [` dv = e^{[$a]x}\,dx `]<<
+
+alors
+
+>>[` du = dx `] et [`` v = \frac{e^{[$a]x}}{[$a]} . ``]<<
+
+
+En intégrant par parties, on obtient
+
+>>[`` 
+\begin{aligned}
+\int_{0}^{[$c]} x e^{[$a] x}\,dx &= \left. x\cdot\frac{e^{[$a]x}}{[$a]}\right\vert_{0}^{[$c]}  - \frac{1}{[$a]}\int_{0}^{[$c]} e^{[$a]x} \,dx \\
+&=   \left.\left( \frac{x e^{[$a]x}}{[$a]} - \frac{e^{[$a]x}}{[$aa]} \right)\right\vert_{0}^{[$c]} \\
+&= \left( \frac{[$c]\cdot e^{[$a]\cdot[$c]}}{[$a]} - \frac{e^{[$a]\cdot[$c]}}{[$aa]} \right) - \left( 0 - \frac{e^{0}}{[$aa]} \right) \\
+&= \frac{[$cte]e^{[$ac]}}{[$a]} - \frac{e^{[$ac]}}{[$aa]} + \frac{1}{[$aa]}
+\end{aligned}
+``]
+<<
+
+END_PGML_SOLUTION
+
+
+ENDDOCUMENT();
+
+

@@ -1,0 +1,99 @@
+#DESCRIPTION
+##  Calculus: Volumes by cylindrical shells
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('formule d\'intégration de base', 'graphique', 'méthode des tubes', 'solide de révolution', 'volume')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_6_3_6.pg
+## ZDate(03/03/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('6.3')
+## Problem1('6')
+###############Source###############
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "PGgraphmacros.pl",
+  "PGcourse.pl", 
+);
+
+#####################################################################
+
+$showPartialCorrectAnswers = 1;
+TEXT(beginproblem());
+
+
+Context("Numeric");
+
+$a = random(2,8,1);
+
+$b = Compute("$a-1")->reduce; 
+$f = Compute("$a+$b x-x^2")->reduce;
+
+$ans = Compute("($a^4/6)*pi")->reduce;
+
+#####################################################################
+
+$refreshCachedImages = 1;
+
+$w = 400;  # graph size
+$tw = 500; # graph size in TeX
+
+$h = Compute("$w");
+
+$sommet = (($a+1)**2)/4;
+if($sommet > 8) { $sommet=$sommet*1.3; }
+else {$sommet = 8;}
+$ymax = int($sommet);
+$graph1 = init_graph(-1,-1,10,$ymax,'axes'=>[0,0],'ticks'=>[11,$ymax+1],'grid'=>[11,$ymax+1],'size'=>[500,500]);
+$graph1 -> lb('reset');
+
+$graph1->new_color("lightblue", 214,230,244);
+$p1 = FEQ("$a+$b*x-x^2 for x in [0,$a] using color:blue weight:2");
+$p2 = FEQ("$a-x for x in <0,$a> using color:blue weight:2");
+$graph1->fillRegion([1,$a-0.5,'lightblue']);
+
+$graph1 -> lb(new Label ( $a,-0.3, $a,'black','center','top'));
+$graph1 -> lb(new Label ( -0.2,$a, $a,'black','right','middle'));
+
+
+plot_functions($graph1,$p1,$p2);
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+En utilisant la méthode des tubes (ou des coquilles cylindriques), calculer le volume du solide de révolution engendré par la rotation de la région délimitée par les courbes  \(y = $f\) et \(y+x=$a\) autour de l'axe des \(y\).  Le graphique de la région délimitée est présenté ci-dessous.$PAR
+$BCENTER
+\{image(insertGraph($graph1),width=>$w,height=>$h,tex_size=>$tw)\}
+$ECENTER $PAR
+Volume = \{ans_rule(20) \}
+$HR
+$BBOLD Note : $EBOLD $BITALIC Cliquer sur le graphique pour agrandir l'image.$EITALIC
+$HR
+END_TEXT
+
+#####################################################################
+
+ANS(($ans)->cmp());
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

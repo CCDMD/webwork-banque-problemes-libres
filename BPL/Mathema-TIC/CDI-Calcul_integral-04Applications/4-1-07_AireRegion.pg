@@ -1,0 +1,111 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('aire entre deux courbes', 'formule d\'intégration de base')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+###############Source###############
+## source : Library/Rochester/setIntegrals19Area/osu_in_19_14.pg
+## ZDate(6/3/2002)
+## ZInstitution(Rochester)
+## ZAuthor(Zig Fiedorowicz)
+## MLT(AI-A-complete)
+## MLTleader(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('6.1')
+## Problem1('')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Stewart')
+## EditionText2('6')
+## Section2('6.1')
+## Problem2('')
+## TitleText3('Calculus: Early Transcendentals')
+## AuthorText3('Rogawski')
+## EditionText3('1')
+## Section3('6.1')
+## Problem3('49')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT('Aire entre la parabole f(y)=y^2-a et la droite g(y)=c-by. Les abcisses des points d intersection des deux courbes sont des entiers choisis aléatoirement,
+u et v, où u est positif et v est négatif, mais |v|>u. L aire peut être calculée par une seule intégrale en fonction de y dont les bornes sont
+v et u');
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->variables->add(y=>"Real");
+
+$u = random(2, 5);
+$v = - random($u+1, 8);
+$a = random(4, 9);
+$b = - $u - $v;
+$c = - $u*$v - $a;
+$x1 = - $a;
+$x2 = $c - $b*$u;
+$x3 = $c - $b*$v;
+
+$courb1 = Compute("x+$b*y")->reduce;
+$f = Formula("2*sqrt(x+$a)")->with(limits=>[0,2]);
+$g = Formula(" ($c - x)/$b + sqrt(x+$a)")->with(limits=>[0,2]);
+$h = Formula("$c - $b*y - y**2 + $a")->reduce;
+
+$inth = Formula(" -y^3/3 -$b*y^2/2 - $u*$v*y ");
+
+$ans1 = $inth->eval(y=>"$v");
+$ans2 = $inth->eval(y=>"$u");
+$answ = $ans2 - $ans1;
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer l'aire entre les deux courbes \($courb1 = $c\) et
+\(x + $a = y^2\). Cette aire peut se calculer de deux manières à l'aide d'intégrales définies. $BR$BR
+On peut calculer la somme de deux intégrales 
+\[\int_a^b f(x)\,dx + \int_b^c g(x)\,dx\]
+$BR
+où \(a =\) \{ans_rule(5)\}, \(b =\) \{ans_rule(5)\}, \(c =\) \{ans_rule(5)\}
+et
+$BR
+\(f(x) =\) \{ans_rule(45)\}
+$BR
+\(g(x) =\) \{ans_rule(45)\}
+$BR
+$BR
+On peut également calculer une seule intégrale définie \[\int_{\alpha}^{\beta} h(y)\,dy\]
+où \(\alpha =\) \{ans_rule(5)\}, \(\beta =\) \{ans_rule(5)\}
+et
+$BR
+\(h(y) =\) \{ans_rule(45)\}
+$PAR
+Quelle que soit la manière choisie,$BR
+on obtient une aire égale à  \{ans_rule(20)\}.
+END_TEXT
+Context()->normalStrings;
+
+ANS(Real($x1)->cmp());
+ANS(Real($x2)->cmp());
+ANS(Real($x3)->cmp());
+ANS($f->cmp());
+ANS($g->cmp());
+ANS(Real($v)->cmp);
+ANS(Real($u)->cmp);
+ANS($h->cmp());
+ANS($answ->cmp());
+
+
+ENDDOCUMENT();

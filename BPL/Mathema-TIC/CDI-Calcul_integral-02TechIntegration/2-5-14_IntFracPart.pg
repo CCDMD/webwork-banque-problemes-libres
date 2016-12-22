@@ -1,0 +1,120 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction rationnelle', 'fractions partielles', 'intégrale indéfinie')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+
+###############Source###############
+## source : Library/Michigan/Chap7Sec4/Q35.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZMLT(PartFracProperSimpleIndef)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('7.4')
+## Problem1('35')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('7.4')
+## Problem2('38')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('7.4')
+## Problem3('42')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserFormulaUpToConstant.pl",
+"PGcourse.pl",
+);
+
+COMMENT('Intégrale de la forme bx/(x-a1)(x-a2) par décomposition en fractions partielles où a2 = a1+1 et b>0. Ainsi, les coefficients A et B à trouver sont des entiers. Les étudiants ne doivent pas oublier la constante d intégration et les valeurs absolues.');
+
+Context("Numeric");
+
+# les facteurs (x-a1) et (x-a2) où a2 =a1+1
+$a1 = random(1,8,1);
+$a2 = $a1 + 1;
+
+# fontion rationnelle de la forme  bx/(x-a1)(x-a2)
+$b = random(1,7,1);
+$a1pa2 = $a1 + $a2;
+$a1a2 = $a1*$a2;
+$num = Compute("$b*x")->reduce;
+$den = Compute("x^2 - $a1pa2 x + $a1a2")->reduce;
+$func = Formula("$num/$den")->reduce();
+
+
+# Réponse 
+$a1b = $a1*$b;
+#$a2ma1 = $a2 - $a1;
+$a2b = $a2*$b;
+$afunc = FormulaUpToConstant("-$a1b ln(abs(x-$a1)) + $a2b ln(abs(x-$a2))")->reduce;
+$afunc->{limits} = [-$a1,$a2];
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer l'intégrale :
+$PAR
+\( 
+\displaystyle\int\, $func\, dx = 
+ \)
+\{ ans_rule(45) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($afunc->cmp() );
+
+
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Le dénominateur \($den\) se décompose en facteurs : 
+\((x-$a1)(x-$a2)\).
+En décomposant la fonction à intégrer en somme de fractions partielles avec les dénominateurs
+\((x-$a1)\) et \((x-$a2)\), on obtient
+\[
+$func = \frac{$num}{(x-$a1)(x-$a2)} = \frac{A}{x-$a1}+\frac{B}{x-$a2}.
+\]
+En transformation l'expression de droite sur le dénominateur \((x-$a1)(x-$a2)\), on obtient l'identité
+\[
+$num = A(x-$a2)+B(x-$a1)
+\]
+ou
+\[
+$num + 0 =(A+B)x - $a2 A - $a1 B.
+\]
+Puisque l'équation est vraie pour toute valeur de \(x\), les termes constants des deux membres de l'équation doivent être les mêmes. Donc, le coefficient de \(x\) est égal à la même valeur dans chaque membre. Ainsi
+\[ \begin{align} -$a2 A - $a1 B &= 0\\
+A+B &= $b \end{align}
+\]
+On résout les équations et on obtient  \(A= -$a1b\) et \(B= $a2b \) et alors l'intégrale devient
+\[ \begin{align}
+\int $func\,dx &=
+ -$a1b \int \frac{1}{x-$a1} dx + $a2b \int \frac{1}{x-$a2} dx \\
+ &= $afunc
+ \end{align}
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

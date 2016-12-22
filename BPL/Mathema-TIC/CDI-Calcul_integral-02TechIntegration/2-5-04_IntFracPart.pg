@@ -1,0 +1,79 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction rationnelle', 'fractions partielles')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_7_4/Stewart5_7_4_1b.pg
+## ZInstitution(UCSB)
+## ZMLT(PartFracMultChoicePureAlg)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('7.4')
+## Problem1('1')
+###############Source###############
+
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "PGchoicemacros.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+COMMENT('Les cinq choix dont affichés aléatoirement de sorte que la réponse diffère pour chaque étudiant. Suggestion : restreindre le nombre de tentatives pour réussir le problème.');
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+
+# fonction rationnelle de la forme 1/x(x-a)^2
+$a=non_zero_random(-10,10,1);
+
+$aa = $a*$a;
+$den = Compute("x^3 - 2*$a*x^2 + $aa*x")->reduce;
+
+# Créer un objet de choix multiple contenu dans $cmc
+$cmc = new_checkbox_multiple_choice();
+# $cmc now "contains" the checkbox multiple choice object. 
+
+Context()->texStrings;
+# Ajouter la question et les choix de réponse
+$cmc -> qa (
+	"Laquelle des expressions suivantes est la forme correcte de décomposition en fractions partielles de  \(\displaystyle \frac{1}{$den}?\)",  
+        "\(\displaystyle \frac{A}{x}+\frac{B}{x-$a}+\frac{C}{(x-$a)^2}\)",
+        );
+
+# D'autres choix de réponse erronés
+$cmc -> extra(
+	"\(\displaystyle \frac{A}{x}+\frac{B}{x-$a}+\frac{Cx+D}{(x-$a)^2}\)",
+        "\(\displaystyle \frac{A}{x}+\frac{Bx+C}{x-$a}+\frac{Dx+E}{(x-$a)^2}\)",
+        "\(\displaystyle \frac{A}{x}+\frac{B}{(x-$a)^2}\)",
+		"\(\displaystyle \frac{A}{x}+\frac{Bx+C}{(x-$a)^2}\)",
+        );
+
+# On affiche la question en utilisant $mc->print_q
+# On affiche la liste des choix de réponses avec la commande $mc->print_a
+
+BEGIN_TEXT
+\{$cmc -> print_q \}
+$PAR
+\{$cmc -> print_a \}
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( checkbox_cmp( $cmc->correct_ans )   ) ;
+
+ENDDOCUMENT();

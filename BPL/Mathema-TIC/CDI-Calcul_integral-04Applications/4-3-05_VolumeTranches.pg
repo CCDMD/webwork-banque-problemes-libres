@@ -1,0 +1,91 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('formule d\'intégration de base', 'méthode des tranches', 'sections connues', 'volume')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(5)  
+## Language(fr)
+
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/6_Applications_of_the_Integral/6.2_Setting_Up_Integrals-_Volume_Density_Average_Value/6.2.9.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Justask)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('6.2')
+## Problem1('9')
+## KEYWORDS('calculus', 'integrals', 'integration', 'volume')
+###############Source###############
+
+
+
+DOCUMENT();
+
+# Load whatever macros you need for the problem
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+);
+
+$showPartialCorrectAnswers = 1;
+TEXT(beginproblem());
+
+$r=random(3,9,1);
+$z=random(2,9,1);
+while($z>$r) {$z=random(2,9,1)}
+$z=$z-1;
+
+$rr = $r**2;
+
+BEGIN_TEXT
+La base d'un solide est le cercle \(x^2+y^2=$rr\) et les sections perpendiculaires à l'axe des \(x\) sont des triangles dont la base et la hauteur sont égales.
+$PAR
+Calculer l’aire \(A\) de la section verticale en \(x=$z\).
+$PAR
+Calculer le volume \(V\) du solide. 
+$PAR
+
+\(A =\)\{ans_rule(20)\} $BR
+\(V =\)\{ans_rule(20)\}
+
+END_TEXT
+
+$zz = $z**2;
+$A= Compute("2*($rr - $zz)")->reduce;
+$V= Compute("8*$r^3/3");
+
+ANS($A->cmp);
+ANS($V->cmp);
+
+$rsol= 8*$r**3;
+
+
+BEGIN_SOLUTION
+Pour chaque valeur de \(x\), le côté du triangle qui s'appuie sur la base du solide s'étend de la partie supérieure du cercle \(y = \sqrt{$rr - x^2}\) jusqu'à la partie inférieure
+\(y = -\sqrt{$rr - x^2}\). Par conséquent, la base et la hauteur du triangle sont égales à  \(2\sqrt{$rr - x^2}\)
+et l'aire du triangle est 
+\[\begin{align}
+A &= \frac{b\cdot h}{2} = \frac{2\sqrt{$rr - x^2}\cdot 2\sqrt{$rr - x^2}}{2} \\
+&= 2($rr-x^2\;.
+\end{align}\]
+
+Plus particulièrement, l'aire \(A\) de la section verticale en \(x=$z\) est 
+\[A= 2($rr - $z^2)=$A\;. \] 
+$PAR
+Le volume \(V\) du solide est
+\[
+\begin{align}
+V &= \int_{-$r}^{$r}2($rr-x^2)dx \\
+&= 2 \left.\left($rr x-\frac{x^3}{3}\right)\right|_{-$r}^{$r}\\
+&= 2\left(  \left($r^3 - \frac{$r^3}{3}\right) - \left(-$r^3 +\frac{$r^3}{3}\right)  \right)\\
+&= \frac{$rsol}{3}\;.
+\end{align}
+\]
+END_SOLUTION
+
+ENDDOCUMENT();

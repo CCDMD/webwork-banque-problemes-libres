@@ -1,0 +1,171 @@
+##DESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('intégrale indéfinie', 'substitution trigonométrique')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+
+###############Source###############
+## source : Library/CSUOhio/calculus/trigonometric_substitution/trigSub15.pg
+## ZDate(8/13/13)
+## ZInstitution(Cleveland State University)
+## ZAuthor(Barbara Margolius)
+## MLT(trigSub-sine)
+## TitleText1('')
+## AuthorText1('')
+## EditionText1('')
+## Section1('.')
+## Problem1('15')
+###############Source###############
+
+
+
+############################################################################
+## development of this problem is supported in part by the National Science#
+## Foundation under the grant DUE-0941388.                                 #
+############################################################################
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "AppletObjects.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+);
+
+COMMENT('Fonction x^2/sqrt(a^2-x^2) de substitution trigonométrique de type sin. Utilise un applet Flash dans la partie indice.');
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,9,1);
+
+$a2 = $a*$a;
+$a3 = $a2*$a;
+$a4 = $a2*$a2;
+
+###################################
+# Create  link to applet 
+###################################
+    $appletName = "trigSubWW";
+    $applet =  FlashApplet(
+       codebase              => findAppletCodebase("$appletName.swf"),
+       appletName            => $appletName,
+       appletId              => $appletName,
+       setStateAlias         => 'setXML',
+       getStateAlias         => 'getXML',
+       setConfigAlias        => 'setConfig',
+       maxInitializationAttempts => 10,   # number of attempts to initialize applet
+       #answerBoxAlias        => 'answerBox',
+       height                => '550',
+       width                 => '595',
+       bgcolor               => '#e8e8e8',
+       debugMode             =>  0,
+     );
+
+###################################
+# Configure applet
+###################################
+ 
+    $applet->configuration(qq{<xml><trigString>sin</trigString></xml>});
+    $applet->initialState(qq{<xml><trigString>sin</trigString></xml>});
+
+##################################
+# Setup Flash applet -- this does not need to be changed
+###################################
+
+TEXT(MODES(TeX=>"", HTML=><<'END_TEXT'));
+<script>
+if (navigator.appVersion.indexOf("MSIE") > 0) {
+	document.write("<div width='3in' align='center' style='background:yellow'>You seem to be using Internet Explorer.<br/>It is recommended that another browser be used to view this page.</div>");
+}
+</script>
+END_TEXT
+
+BEGIN_TEXT
+Évaluer l'intégrale indéfinie.
+\[ \int \frac{x^2 dx}{\sqrt{$a2 - x^2}} \]
+
+Réponse : \{ans_rule( 45) \}
+END_TEXT
+
+$ans = FormulaUpToConstant("($a2)/2*asin(x/($a))-x*sqrt($a2-x^2)/2");
+$ans->{limits} = [-$a,$a];
+ANS( $ans->cmp());
+
+##################################
+Context()->texStrings;
+## 	Indice
+###################################
+
+$showHint=5;
+TEXT($PAR, $BBOLD, $BITALIC, "Bonjour $studentName, si vous ne trouvez pas la solution après $showHint essais, un applet s'affichera pour vous fournir des indices.", $EITALIC, $EBOLD, $PAR);
+
+$im = image( "trigsub.png", 
+width=>486, height=>306, tex_size=>900 );
+
+
+Context()->normalStrings;
+TEXT(hint(
+  "Répondre à chacune des questions posées qui fournira des indices pour résoudre ce problème étape par étape.", $PAR, MODES(TeX=>'object code', HTML=>$applet->insertAll(
+   debug =>0, reinitialize_button => 0, includeAnswerBox=>0,
+ ), TeX=>$im)
+));
+
+##################################
+Context()->texStrings;
+BEGIN_SOLUTION
+On utilise une substitution trigonométrique.  On choisit une fonction sinus.
+
+\[x = {$a}\sin(\theta)\]
+
+$BR
+On observe que  \(\sin\theta=\dfrac{x}{$a}\) et  \(\cos\theta=\dfrac{\sqrt{$a2-x^2}}{$a}\).  Penser à un triangle rectangle tel que le sinus  \(\left(\frac{opp}{hyp}\right)\) est égal à \(\frac{x}{$a}\).  Le côté opposé est égal à \(x\) et l'hypoténuse est égale à  \($a\), de sorte que le côté adjacent est égal à \(\sqrt{$a2-x^2}\).
+
+$PAR
+On pose 
+\[x = {$a}\sin\theta\]
+\[dx = {$a}\cos\theta \; d\theta\]
+
+Et on obtient :
+\[
+\begin{aligned}
+\int \frac{x^2 dx}{\sqrt{$a2 - x^2}} 
+&= \int \frac{ {$a2}\sin^2\theta\cdot $a\cos\theta \; d\theta}{\sqrt{$a2 - {$a2}\sin^2\theta}} \\
+&= \int \frac{ {$a3}\sin^2\theta\cos\theta \; d\theta}{$a\sqrt{1 - \sin^2\theta}} \\
+&= \int \frac{ {$a3}\sin^2\theta\cos\theta \; d\theta}{$a\sqrt{\cos^2\theta}} \\ 
+&= \int \frac{ {$a3}\sin^2\theta\cos\theta \; d\theta}{$a\cos\theta} \\
+&= \int {$a2}\sin^2\theta \; d\theta \\
+&= \frac{$a2}{2}\int (1-\cos(2\theta)) \; d\theta &&;\;\small\sin^2\theta=\frac{1-\cos(2\theta)}{2} \\
+&= \frac{$a2\theta}{2}-\frac{$a2\sin(2\theta)}{4} +C \\
+&= \frac{$a2\theta}{2}-\frac{$a2\sin\theta\cos\theta}{2} +C &&;\;\small\frac{\sin(2\theta)}{2}=\sin\theta\cos\theta 
+\end{aligned}
+\]
+
+En remplaçant la fonction en \(\theta\) par sa valeur \(\left(\sin\theta = \frac{x}{$a}\text{ et }\cos\theta = \frac{\sqrt{$a2-x^2}}{$a}\right)\), on obtient :
+\[
+\begin{aligned}
+\frac{$a2\theta}{2}-\frac{$a2\sin\theta\cos\theta}{2} +C
+&=\frac{$a2}{2}\text{arcsin}\left(\frac{x}{$a}\right)-
+\frac{$a2}{2}\frac{x}{$a}\frac{\sqrt{$a2-x^2}}{$a}+C \\
+&=\frac{$a2}{2}\text{arcsin}\left(\frac{x}{$a}\right)-
+\frac{x\sqrt{$a2-x^2}}{2}+C
+\end{aligned}
+\]
+
+et donc 
+\[  \int \frac{x^2 dx}{\sqrt{$a2 - x^2}} 
+=\frac{$a2}{2}\text{arcsin}\left(\frac{x}{$a}\right)-
+\frac{x\sqrt{$a2-x^2}}{2}+C\]
+END_SOLUTION
+Context()->normalStrings;
+##################################
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

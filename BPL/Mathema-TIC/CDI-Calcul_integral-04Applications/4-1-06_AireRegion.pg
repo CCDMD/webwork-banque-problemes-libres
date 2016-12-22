@@ -1,0 +1,169 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('aire entre deux courbes', 'aire sous la courbe', 'formule d\'intégration de base')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/Michigan/Chap5Sec2/Q23.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('5.2')
+## Problem1('23')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('5.2')
+## Problem2('27')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('5.2')
+## Problem3('33')
+## TitleText4('Applied Calculus')
+## AuthorText4('Hughes-Hallett')
+## EditionText4('4')
+## Section4('5.3')
+## Problem4('20')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"PGgraphmacros.pl",
+"PGcourse.pl",
+);
+
+COMMENT('Aire entre l axe des x et la fonction f(x)=x(x+a)(x-b) ou f(x)=x(x+a)(b-x). 
+L aire est la somme des aires de deux régions bornées, la première entre [-a,0] et la deuxième entre [0,b].');
+
+Context("Numeric");
+$showPartialCorrectAnswers = 1;
+
+## we use the function x(x+a)(x-b) or x(x+a)(b-x)
+$b = random(1,3,1);
+$a = $b + list_random(1,2);
+$whichSign = list_random(0,1);
+
+$area1 = Compute("$a^4/12 + $a^3*$b/6");
+$area2 = Compute("$a*$b^3/6 + $b^4/12");
+$area = $area1 + $area2;
+
+if ( $whichSign ) {
+    $func = Compute("x(x+$a)(x-$b)");
+    $s1 = '';
+    $s2 = '-';
+    $sg2 = '-';
+    $int = "\(0<x<$b\)";
+    $which = "deuxième";
+} else {
+    $func = Compute("x(x+$a)($b-x)");
+    $s1 = '-';
+    $s2 = '';
+    $sg2 = '+';
+    $int = "\(-$a<x<0\)";
+    $which = "première";
+}
+
+Context("Numeric");
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+Tracer le graphique de  \( f(x) = $func \).  Calculer ensuite l'aire totale de la région délimitée par la courbe et l'axe des \(x\), entre \(x=-$a\) et \(x=$b\).
+$PAR
+Aire = \{ ans_rule(35) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS( $area->cmp() );
+
+$refreshCachedImages = 1;
+
+## figure out what the domain is.  the maximum occurs at
+##    x = (-a + b - sqrt(a^2 + ab + b^2))/3 if whichSign,
+## and
+##    x = (-a + b + sqrt(a^2 + ab + b^2))/3 otherwise.
+## the minimum is similarly at
+##    x = (-a + b + sqrt(a^2 + ab + b^2))/3 otherwise.
+## or
+##    x = (-a + b - sqrt(a^2 + ab + b^2))/3
+$x1 = Compute("(-$a + $b - sqrt($a^2 + $a*$b + $b^2))/3");
+$x2 = Compute("(-$a + $b + sqrt($a^2 + $a*$b + $b^2))/3");
+
+if ( $whichSign ) {
+    $ymax = $func->eval(x=>$x1);
+    $ymin = $func->eval(x=>$x2);
+} else {
+    $ymax = $func->eval(x=>$x2);
+    $ymin = $func->eval(x=>$x1);
+}
+## so set the max/min bounds for the graph to
+$ygr_min = int($ymin) - 2;
+$ygr_max = int($ymax) + 2;
+$xgr_min = -$a - 1;
+$xgr_max = $b + 1;
+$ticks = [$a+$b+2, 1];
+$gr = init_graph($xgr_min, $ygr_min, $xgr_max, $ygr_max,
+		 axes=>[0,0], ticks=>$ticks,size=>[350,250]);
+$gr-> lb('reset');
+
+$gr->lb( new Label($b,$ymax,"y = f(x)",'blue','center','middle'));
+
+## Colorer la région
+$gr->new_color("lightblue", 214,230,244);
+$yg1 = Real("$s1 0.1");
+$yg2 = Real("$s2 0.1");
+$gr->moveTo(-$a,0);
+$gr->lineTo($b,0,'blue',1);
+$gr->fillRegion([-$a/2,$yg1,'lightblue']);
+$gr->fillRegion([$b/2,$yg2,'lightblue']);
+
+# écrire les zéros
+$gr->lb( new Label(-$a,-0.3,"-$a",'black','right','top'));
+$gr->lb( new Label($b,-0.3,"$b",'black','left','top'));
+$gr->stamps(closed_circle(-$a,0,'blue'));
+$gr->stamps(closed_circle($b,0,'blue'));
+add_functions( $gr, "$func for x in <$xgr_min,$xgr_max> using " .
+	       "color:blue and weight:2" );
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Voici le graphique de \(f(x)=$func\) : 
+$PAR
+$BCENTER
+\{ image( insertGraph( $gr ), tex_size=>300, height=>350, width=>250,
+	  extra_html_tags=>'alt="graph de la fonction f(x)"' ) \}
+$ECENTER
+$PAR
+
+Les deux aires à calculer sont
+
+\[ \hbox{A}_1 = $s1 \int_{-$a}^0\,f(x)\, dx = $area1\]
+\[ \hbox{A}_2 = $s2 \int_{0}^{$b}\,f(x)\, dx = $area2\]
+$PAR
+Puisque la courbe se situe sous l'axe des \(x\) pour $int, on ajoute un signe négatif devant la $which intégrale.  Ainsi, l'aire totale cherchée est égale à 
+\[\hbox{A} = \hbox{A}_1 + \hbox{A}_2 = $area.\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

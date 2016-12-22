@@ -1,0 +1,113 @@
+#### Description #############
+## Intégrale des fonctions de la forme sin(ax)sin(bx), cos(ax)cos(bx) ou sin(ax)cos(bx) où a != b
+##############################
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction trigonométrique', 'identité trigonométrique', 'intégrale indéfinie')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+## choix des coefficients
+$b = random(1,9,1);
+$a = $b + random(1,9,1);   # a > b
+
+
+
+## choix des fonctions trigos
+$i = random(1,3);
+
+$amb = $a - $b;
+$apb = $a + $b;
+
+if($i==1){
+($f1,$f2) = (Compute("sin($a*x)"),Compute("sin($b*x)"));
+$id = "\sin(a)\sin(b)=\frac{1}{2}\left(\cos(a-b)-\cos(a+b)\right)";
+$trig1 = Compute("cos($amb*x)")->reduce;
+$int_trig1 = Compute("sin($amb*x)")->reduce;
+$sign = "-";
+$trig2 = Compute("cos($apb*x)")->reduce;
+$int_trig2 = Compute("sin($apb*x)")->reduce;
+} elsif($i==2) {
+($f1,$f2) = (Compute("cos($a*x)"),Compute("cos($b*x)"));
+$id = "\cos(a)\cos(b)=\frac{1}{2}\left(\cos(a-b)+\cos(a+b)\right)";
+$trig1 = Compute("cos($amb*x)")->reduce;
+$int_trig1 = Compute("sin($amb*x)")->reduce;
+$sign = "+";
+$trig2 = Compute("cos($apb*x)")->reduce;
+$int_trig2 = Compute("sin($apb*x)")->reduce;
+} else { ## i==3
+($f1,$f2) = (Compute("sin($a*x)"),Compute("cos($b*x)"));
+$id = "\sin(a)\cos(b)=\frac{1}{2}\left(\sin(a-b)+\sin(a+b)\right)";
+$trig1 = Compute("sin($amb*x)")->reduce;
+$int_trig1 = Compute("-cos($amb*x)")->reduce;
+$sign = "+";
+$trig2 = Compute("sin($apb*x)")->reduce;
+$int_trig2 = Compute("-cos($apb*x)")->reduce;
+}
+
+
+$funct = Compute("1/2*($int_trig1/$amb $sign $int_trig2/$apb)");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer l'intégrale indéfinie.
+$BR \[ \int $f1 $f2\ dx \]
+$BR
+Réponse : \{ans_rule( 30) \} \(+\,C\)
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($funct->cmp(upToConstant=>1));
+
+
+# Pour la solution
+
+if($i==1 || $i==2) {
+$sol_trig = "\cos";
+} else {
+$sol_trig = "\sin";
+}
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+On utilise l'identité trigonométrique suivante :
+\[$id\]
+
+\[
+\begin{aligned}
+\int $f1 $f2 dx
+&=	\int \frac{1}{2} \left($sol_trig($a x-$b x) $sign $sol_trig($a x+$b x)\right)dx \\\\
+&= \frac{1}{2}\left( \int $sol_trig($amb x) \,dx $sign \int $sol_trig($apb x)\,dx \right) \\\\
+&= \frac{1}{2}\left( \frac{$int_trig1}{$amb} $sign \frac{$int_trig2}{$apb} \right) + C \\\\
+\end{aligned}
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

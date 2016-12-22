@@ -1,0 +1,104 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('complétion de carré', 'intégrale indéfinie', 'substitution trigonométrique')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/7_Techniques_of_Integration/7.3_Trigonometric_Substitution/7.3.37.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Christopher Sira)
+## ZMLT(Trig_simplify)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('7.3')
+## Problem1('37')
+###############Source###############
+
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGcourse.pl",
+);
+
+COMMENT('Fonction 1/sqrt(x^2 + 2ax + c) par substitution trigonométrique de type tan avec complétion du carré, c = a^2 + b^2');
+
+
+$a = random(2, 6);
+do{$b = random(1,8);} until($a!=$b);
+
+## créer le polynôme de forme (x+a)^2 + b^2
+$a2 = 2*$a;
+$aa = $a*$a;
+$bb = $b*$b;
+
+$c = $aa + $bb;
+
+$poly = Compute("x^2 + $a2*x + $c")->reduce;
+
+$ans = FormulaUpToConstant("ln(abs(sqrt($poly) + x + $a))")->reduce();
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer l'intégrale \( \displaystyle\int \frac{dx}{\sqrt{$poly}} \) en utilisant la complétion du carré et une substitution trigonométrique.
+$PAR
+Réponse : \{ans_rule(45)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($ans->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+D'abord, on complète le carré :
+\[$poly = x^2 + $a2 x + $aa + $bb = (x + $a)^2 + $bb \]
+
+Soit \( u = x + $a \).  Alors, \( du = dx \) et
+
+\[ \int \frac{dx}{\sqrt{$poly}} = \int \frac{dx}{\sqrt{(x+$a)^2+$bb}} = \int \frac{du}{\sqrt{u^2 + $bb}} \]
+
+On fait ensuite la substitution trigonométrique.
+
+\[ u = $b \tan\theta \]
+\[ du = $b \sec^2\theta \, d\theta \]
+\[\begin{align}
+\sqrt{u^2 + $bb} &= \sqrt{$bb \tan^2\theta + $bb}\\
+&= $b\sqrt{\tan^2\theta + 1} \\
+&= $b \sqrt{\sec^2\theta} \\
+&= $b \sec\theta
+\end{align}\]
+$PAR
+Par conséquent,
+\[ \begin{align} 
+\int \frac{du}{\sqrt{u^2 + $bb}} 
+&= \int \frac{$b \sec^2\theta \, d\theta}{$b \sec\theta} \\
+&= \int \sec\theta \, d\theta \\
+&= \ln{\left| \sec\theta + \tan\theta \right|} + C 
+\end{align}\]
+$PAR
+Puisque \( u = $b \tan\theta \), on construit un triangle rectangle où \( \tan\theta = \frac{u}{$b} \). Ainsi, le côté opposé est égal à \(u\) et le côté adjacent est égal à \($b\), de sorte que l'hypoténuse est égale à \(\sqrt{u^2+$bb}\).
+$PAR
+Dans ce triangle, selon le théorème de Pythagore et la définition de la sécante \(\left(\frac{hyp}{adj}\right)\) dans un triangle rectangle, on voit que 
+\[\sec\theta = \frac{\sqrt{u^2 + $bb}}{$b} \]
+Et donc
+$PAR
+\[\ln{\left| \sec\theta + \tan\theta \right|} + C  = \ln{\left|\frac{\sqrt{u^2 + $bb}}{$b} + \frac{u}{$b}\right|} + C = \ln{\left|\sqrt{u^2 + $bb} + u\right|} - \ln($b) + C \]
+$PAR
+En posant \(C'= -\ln(3)+C\), on obtient
+
+\[ \int \frac{dx}{\sqrt{$poly}} = \ln{\left|\sqrt{u^2 + $bb} + u\right|} + C' = \ln{\left|\sqrt{$poly} + x + $a\right|} + C' \]
+$PAR
+END_SOLUTION
+
+ENDDOCUMENT();
+
+

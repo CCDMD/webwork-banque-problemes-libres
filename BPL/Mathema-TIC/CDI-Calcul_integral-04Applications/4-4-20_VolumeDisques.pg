@@ -1,0 +1,69 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('disques troués', 'fonction trigonométrique', 'méthode des tranches', 'solide de révolution', 'volume')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(5)  
+## Language(fr)
+###############Source###############
+## source : Library/UCSB/Stewart5_6_2/Stewart5_6_2_33.pg
+## ZInstitution(UCSB)
+## MLT(likeThis3)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('6.2')
+## Problem1('33')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"parserRadioButtons.pl",
+"PGcourse.pl",
+);
+
+COMMENT('Les six choix sont affichés aléatoirement de sorte que la réponse diffère pour chaque étudiant. Suggestion : restreindre le nombre de tentatives pour réussir le problème.');
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+
+# rayon externe : R = 1 
+# rayon interne : r = 1 - sin(x)
+# Les 6 choix
+@choix = ( "\( \displaystyle \pi \int_{0}^{\,\pi} {\left[1^2-(1-\sin(x))^2\right]}\,dx \)",
+        "\( \displaystyle \pi \int_{0}^{\,\pi} {\left[1-\sin^2(x)\right]}\,dx \)",
+        "\( \displaystyle \pi \int_{0}^{\,\pi} {\left[\sin^2(x)\right]}\,dx \)",
+        "\( \displaystyle \pi \int_{0}^{\,1} {\left[1^2-(1-\sin(x))^2\right]}\,dx \)",
+        "\( \displaystyle \pi \int_{0}^{\,1} {\left[1-\sin^2(x)\right]}\,dx \)",
+        "\( \displaystyle \pi \int_{0}^{\,1} {\left[\sin^2(x)\right]}\,dx \)"
+        );
+
+# ordre des choix choisi de façon aléatoire
+@randomchoix = @choix[NchooseK(6,6)];
+$cmc = RadioButtons(
+       [ @randomchoix ],
+        "\( \displaystyle \pi \int_{0}^{\,\pi} {\left[1^2-(1-\sin(x))^2\right]}\,dx \)", # la bonne réponse
+        labels => "ABC"
+ );
+ 
+
+BEGIN_TEXT
+Laquelle des intégrales suivantes représente le volume du solide de révolution engendré par la rotation de la région délimitée par les courbes  \(y=\sin(x)\) et \(y=0,\) où \(0 \le x \le \pi\), autour de la droite \(y=1?\)
+$PAR
+\{$cmc -> buttons() \}
+$PAR
+END_TEXT
+
+ANS($cmc->cmp());
+
+ENDDOCUMENT();

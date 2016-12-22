@@ -1,0 +1,105 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('aire entre deux courbes', 'formule d\'intégration de base')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+###############Source###############
+## source : Library/Union/setIntArea/osu_in_19_15.pg
+## ZDate(6/3/2002)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## MLT(AI-A-two-noTrig)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('6.1')
+## Problem1('19')
+## TitleText2('Calculus: Concepts and Contexts')
+## AuthorText2('Stewart')
+## EditionText2('4 Custom UMTYMP Ed.')
+## Section2('6.1')
+## Problem2('')
+## TitleText3('Calculus: Early Transcendentals')
+## AuthorText3('Stewart')
+## EditionText3('6')
+## Section3('6.1')
+## Problem3('14')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGgraphmacros.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+COMMENT('Aire entre les courbes y1=c2x^2 - x^3 + x et y2=x2 + c1x. Les abcisses des points d intersection 
+sont x=0, x=a et x=c, où c>a et a,c sont des entiers positifs. Dans l intervalle [0,a], la courbe y2 est au-dessus de la courbe y1 et vice-versa dans l intervalle [a,c].');
+
+TEXT(beginproblem());
+
+###################################
+# Setup
+
+$a = random(1,5,1);
+$c = $a + random(1,3,1);
+$lin =  -$a*$c;
+$quadr = $a+$c;
+$c2 = $quadr +1;
+$c1 = -$lin + 1;
+
+$curve1=Formula("$c2 x^2 - x^3 + x");
+$curve2=Formula("x^2 + $c1 x");
+
+# Set-up so that these two curves intersect at x=0,a,c
+# In (0,a), curve 2 > curve 1 and vice versa in (a,c)
+
+###################################
+# Main text
+$showHint = 1; 
+Context()->texStrings;
+BEGIN_TEXT
+Calculer l'aire de la région délimitée par les courbes  \(y = $curve1 \)
+et  \(y =$curve2\).
+$PAR
+Aire = \{ans_rule(50)\}.
+$PAR
+$HR
+${BBOLD}Note : un indice sera donné après $showHint tentative non réussie.$EBOLD
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answers
+$showPartialCorrectAnswers = 1;
+
+$ans = Compute("$c^4/12 + $a^3*$c/3-$a^4/6 -$a*$c^3/6");
+ANS($ans->cmp);
+
+###################################
+
+Context()->texStrings;
+BEGIN_HINT
+Pour trouver les points d'intersection entre les courbes \(y=$curve1\) et \(y=$curve2\), il faut résoudre l'équation
+\[ $curve1=$curve2\]
+On obtient
+\[\begin{aligned}
+ x^2+ $c1 x - $c2 x^2 + x^3 - x &=0 \\
+x^3 - $quadr x^2 - $lin x &=0\\
+ x(x^2 - $quadr x^2 - $lin) &=0\\
+ x(x-$a)(x-$c) &=0
+\end{aligned}\]
+Les abcisses des points d'intersection sont \(x=0\), \(x=$a\) et \(x=$c\).
+END_HINT
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

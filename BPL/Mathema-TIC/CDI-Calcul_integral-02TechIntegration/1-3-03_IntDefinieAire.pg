@@ -1,0 +1,106 @@
+#DESCRIPTION
+##  Calculus: Evaluating integrals using area
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('aire', 'graphique', 'intégrale définie')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : septembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+### source : Library/UMN/calculusStewartCCC/s_5_2_31.pg
+## ZDate(02/08/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('5.2')
+## Problem1('31')
+###############Source###############
+
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+   "PGML.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+  "PGgraphmacros.pl",
+);
+
+#####################################################################
+
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem());
+
+#####################################################################
+$refreshCachedImages = 1;
+Context("Numeric");
+
+$w = 440;  # graph size
+$h = 400;
+$tw = 500; # graph size in TeX
+
+$a = random(2,3,1);
+$b = random(-1,1,1);
+
+$an1 = Compute("2+($a+$b-2)*2");
+$an2 = Compute("2+($a+$b-2)*2+$a+$b+$a+2*$b");
+$an3 = Compute("2*$b-$a");
+$an4 = Compute("2+($a+$b-2)*2+$a+$b+$a+2*$b+2*$b-$a+2*$b-2*$a+1");
+
+$ans1 = Compute("$an1");
+$ans2 = Compute("$an2");
+$ans3 = Compute("$an3");
+$ans4 = Compute("$an4");
+
+#####################################################################
+
+$graph1 = init_graph(-1,-5,10,5,'axes'=>[0,0],'ticks'=>[11,10],'grid'=>[11,10],'size'=>[550,500]);
+
+$p1 = FEQ("x-2+$a+$b for x in [0,2> using color:blue weight:2");
+$p2 = FEQ("$a+$b for x in <2,3> using color:blue weight:2");
+$p3 = FEQ("(5/2)*$a-($a/2)*x+$b for x in <3,7> using color:blue weight:2");
+$p4 = FEQ("(1/2)*(x-7)-$a+$b for x in <7,9] using color:blue weight:2");
+
+plot_functions($graph1,$p1,$p2,$p3,$p4);
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_PGML
+Soit la fonction [`f`] représentée dans le graphique ci-dessous.  Évaluer chaque intégrale définie en calculant l'aire correspondante sous la courbe.
+
+>>[@ image(insertGraph($graph1),width=>$w,height=>$h,tex_size=>$tw) @]* <<
+
+-----
+1. [``\int_0^2 \! f(x) \, dx = ``] [_______________________] 
+
+2. [``\displaystyle \int_0^5 \! f(x) \, dx = ``] [_______________________] 
+
+3. [``\int_5^7 \! f(x) \, dx = ``] [_______________________] 
+
+4. [``\int_0^9 \! f(x) \, dx = ``] [_______________________] 
+
+*Note* : *_Cliquer sur le graphique pour agrandir l'image_*.
+
+END_PGML
+
+#####################################################################
+
+ANS($ans1->cmp(tolType=>'absolute', tolerance=>0.1));
+ANS($ans2->cmp(tolType=>'absolute', tolerance=>0.1));
+ANS($ans3->cmp(tolType=>'absolute', tolerance=>0.1));
+ANS($ans4->cmp(tolType=>'absolute', tolerance=>0.1));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

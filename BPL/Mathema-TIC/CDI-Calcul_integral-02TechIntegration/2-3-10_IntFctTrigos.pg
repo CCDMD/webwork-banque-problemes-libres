@@ -1,0 +1,65 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction trigonométrique', 'identité trigonométrique', 'intégrale indéfinie')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_7_2/Stewart5_7_2_46.pg
+## Institution(UCSB)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('7.2')
+## Problem1('46')
+###############Source###############
+
+
+
+DOCUMENT();
+
+
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGML.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+COMMENT('Intégrale de la forme a/(cos(x)-1) ou a/(sin(x)-1) où a est un entier entre -10 et 10');
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+## coefficient
+$a=non_zero_random(-10,10,1);
+
+## choix du dénominateur
+$i = random(0,1);
+@trig = (Compute("cos(x)-1"),Compute("sin(x)-1"));
+$den = $trig[$i];
+
+BEGIN_PGML
+Calculer l'intégrale 
+
+>>[`` \int {\frac{[$a]}{[$den]}}\, dx ``]<<
+
+Réponse : [_________________________________________]
+END_PGML
+
+@ans = (
+FormulaUpToConstant("$a*csc(x) + $a*cot(x)"),
+FormulaUpToConstant("-$a*sec(x) - $a*tan(x)")
+);
+
+ANS($ans[$i]->cmp);
+
+
+
+ENDDOCUMENT();

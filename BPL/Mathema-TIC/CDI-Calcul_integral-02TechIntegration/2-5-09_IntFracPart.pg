@@ -1,0 +1,82 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction rationnelle', 'fractions partielles')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : Library/ma123DB/set3/s7_4_1.pg
+## ZDate(6/3/2002)
+## ZMLT(ParFracMissingDenomSimple)
+## ZMLTleader(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('7.4')
+## Problem1('1 2')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+COMMENT('Décomposition en fractions partielles qui donnera la forme a/(x-c) + b/(x+d) où a<0 et b>0. De plus d>c+1, donc le coefficient de x du polynôme quadratique au dénominateur est > 1');
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->noreduce("(-x)-y","(-x)+y");
+
+## décomposition en fractions partielles de la forme
+## a/(x-c) + b/(x+d)
+## = ((a+b)x+(ad-bc))/(x^2 + (d-c)x -cd)
+
+# coefficents
+$a = random(-15,-1,1);
+do {$b = random(1,15,1);} until(abs($a + $b) > 1);
+
+# facteurs (x-c) et (x+d)
+$c = random(1,6,1);
+do {$d = random(3,11,1);} until ($d > $c+1);
+
+# Fonction rationnelle à décomposer
+#$coef1 = $a+$b;
+$coef2 = $a*$d - $b*$c;
+#$coef3 = $d-$c;
+#$coef4 = $c*$d;
+$f = Compute("(($a+$b)x + $coef2)/(x^2 + ($d-$c)x - $c*$d)")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Écrire la fonction à intégrer sous la forme décomposée en somme de fractions partielles :
+\[ \int  $f \, dx \]
+Déterminer les coefficients numériques  \(A\) et \(B\) tels que \(A < B\) et 
+
+\[$f  =  \frac{A}{\text{dénominateur 1}} + \frac{B}{\text{dénominateur 2}},\]
+
+et donner les dénominateurs associés à ces coefficients.
+$PAR
+\(A = \) \{ans_rule(20)\}
+\(B = \) \{ans_rule(20)\}
+$PAR
+${BBOLD}dénominateur 1 ${EBOLD} \(=\)  \{ans_rule(20)\} $BR
+${BBOLD}dénominateur 2 ${EBOLD} \(=\)  \{ans_rule(20)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(Real($a)->cmp);
+ANS(Real($b)->cmp);
+
+ANS(Compute("x-$c")->cmp); 
+ANS(Compute("x+$d")->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,127 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction logarithmique', 'intégrale indéfinie', 'par parties')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : septembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : Library/Michigan/Chap7Sec2/Q23.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZMLT(parts_04)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('7.2')
+## Problem1('23')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('7.2')
+## Problem2('24')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('7.2')
+## Problem3('26')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+	"PGstandard.pl",
+	"MathObjects.pl",
+	"parserFormulaUpToConstant.pl",
+	"PGcourse.pl",
+);
+
+Context("Numeric");
+Context()->variables->add(w=>"Real");
+
+$a = random(2,6,1);
+$asq = $a*$a;
+$twoa = 2*$a;
+$afrd = "\frac{1}{$a}";
+
+Context()->variables->set(w=>{limits=>[0,1/$asq]});
+Context()->flags->set(reduceConstants => 0);
+
+$whichf = random(1,3);  
+
+if ( $whichf == 1 ) {
+    $f = "\arcsin($a w)";
+    $afunc = FormulaUpToConstant("w*arcsin($a*w) + (1/$a)*sqrt(1 - $asq*w^2) + C");
+
+    $du = "{\frac{$a}{\sqrt{1 - $asq w^2}}}";
+    $duv = "{$a \frac{w}{\sqrt{1 - $asq w^2}}}";
+    $secint = "+ $afrd\,\sqrt{1 - $asq w^2}";
+    $pm = '-';
+
+} elsif ( $whichf == 2 ) {
+    $f = "\arccos($a w)";
+    $afunc = FormulaUpToConstant("w*arccos($a*w) - (1/$a)*sqrt(1 - $asq*w^2) + C");
+
+    $du = "-{\frac{$a}{\sqrt{1 - $asq w^2}}}";
+    $duv = "-{$a \frac{w}{\sqrt{1 - $asq w^2}}}";
+    $secint = "- $afrd\,\sqrt{1 - $asq w^2}";
+    $pm = '-';
+
+} elsif ( $whichf == 3 ) {
+    $f = "\arctan($a w)";
+    $afunc = FormulaUpToConstant("w*arctan($a*w) - (1/$twoa)*ln(1 + " .
+				 "$asq*w^2) + C");
+
+    $du = "{\frac{$a}{1 + $asq w^2}}";
+    $duv = "{$a \frac{w}{1 + $asq w^2}}";
+    $secint = "- {\frac{1}{$twoa}}\,\ln(1 + $asq w^2)";
+    $pm = '+';
+}
+
+Context("Numeric");
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+Calculer l'intégrale
+
+$PAR
+\(\int\,$f\,dw = \) \{ ans_rule(35) \}
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($afunc->cmp() );
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+
+On utilise l'intégration par parties
+\( \int\,u\,dv  = u\cdot v - \int\,v\,du \) $PAR
+
+en posant \(u = $f\) et \(dv = 1\,dw\). $BR
+Alors     \( \displaystyle du = $du\,dw\) et \(v = w\), de sorte que
+
+\[\begin{align}
+  
+  \int\,$f\,dw 	&= w\cdot $f - \int\,$duv\,dw \\
+				&= w\cdot $f $secint + C.
+\end{align} \]
+La deuxième intégrale se calcule à l'aide du changement de variable  \(u = 1 $pm $asq w^2\).
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

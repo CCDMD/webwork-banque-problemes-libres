@@ -1,0 +1,120 @@
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('changement de variable', 'fonction puissance', 'fonction trigonométrique', 'intégrale indéfinie')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : septembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/Rochester/setIntegrals14Substitution/osu_in_14_1.pg
+## ZDate(1/17/2000)
+## ZInstitution(OSU)
+## ZAuthor(Zig Fiedorowicz)
+## ZMLT(walkthru)
+## ZMLTleader(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('5.6')
+## Problem1('59')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Stewart')
+## EditionText2('5')
+## Section2('5.5')
+## Problem2('')
+## TitleText3('Calculus: Early Transcendentals')
+## AuthorText3('Stewart')
+## EditionText3('6')
+## Section3('5.5')
+## Problem3('')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGcourse.pl", 
+"PGgraders.pl"
+);
+
+##Note this uses Mike Gage's custom full_partial_grader
+##contained in file PGgraders.pl
+install_problem_grader(~~&full_partial_grader);
+
+$showPartialCorrectAnswers = 1;
+
+Context()->variables->are(t=>"Real",u=>"Real");
+
+
+
+$a = random(3,7,1);
+$m = random(8,15,1);
+$b = $a*($m+1);
+$c = $m+1;
+
+## choix de la fonction sin ou cos
+$i = random(0,1);
+@u = (Formula("cos($a*t)"),Formula("sin($a*t)"));
+@dt = (Formula("-$a * sin($a*t)"),Formula("$a * cos($a*t)"));
+
+@signe = (-1,1);
+$gu = Formula("$signe[$i]*u**($m)/$a");
+$intu = Formula("$signe[$i]*u**($c)/$b");
+$intt = Formula("$signe[$i]*$u[$i]**($c)/$b");
+
+
+$j = ($i+1)%2;
+$fct = Formula("$u[$i]^($m)*$u[$j]")->reduce;
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note :$EBOLD Pour obtenir tous les points, il suffit que la dernière réponse soit exacte . Les premières questions servent d'indice vers la solution et les réponses à ces questions permettent d'obtenir une partie des points.
+$PAR
+Soit l'intégrale indéfinie \( \displaystyle \int $fct\, dt\)
+$BR
+Alors, le meilleur changement de variable dans ce cas est de poser
+$BR
+\(u\) =  \{ ans_rule()\}
+$PAR
+Alors \(dt = f(t)\,du\) où
+$PAR
+\(f(t)\) =  \{ ans_rule()\}
+$PAR
+Après le changement de variable, on obtient l'intégrale \( \displaystyle \int g(u)\,du\) où
+$BR
+\(g(u)\) =  \{ ans_rule()\}
+$PAR
+La dernière intégrale est égale à :
+  \{ ans_rule()\} \(+ C\)
+$PAR
+En remplaçant \(u\) par sa valeur, on obtient la solution de la forme :
+$BR
+  \{ ans_rule()\} \(+ C\)
+$BR
+END_TEXT
+Context()->normalStrings;
+
+
+
+ANS($u[$i]->cmp);
+ANS($dt[$i]->cmp);
+ANS($gu->cmp);
+ANS($intu->cmp(upToConstant=>1));
+ANS($intt->cmp(upToConstant=>1));
+
+COMMENT('Choisi aléatoirement parmi les fonctions sin^n(u)cos(u) ou cos^n(u)sin(u).');
+
+ENDDOCUMENT();

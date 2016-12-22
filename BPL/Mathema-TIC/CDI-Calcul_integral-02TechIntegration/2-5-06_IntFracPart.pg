@@ -1,0 +1,91 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction rationnelle', 'fractions partielles')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_7_4/Stewart5_7_4_4a.pg
+## ZInstitution(UCSB)
+## ZMLT(PartFracMultChoicePureAlg)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('7.4')
+## Problem1('4')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "PGchoicemacros.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+COMMENT('Les six choix dont affichés aléatoirement de sorte que la réponse diffère pour chaque étudiant. Suggestion : restreindre le nombre de tentatives pour réussir le problème.');
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+
+## fonction de la forme x^3/((x+a)(x+b)) où |a|!=|b|
+$a=non_zero_random(-10,10,1);
+do{$b=non_zero_random(-10,10,1);} until(abs($a)!=abs($b));
+
+
+## dénominateur x^2+(a+b)x+ab
+$apb = $a+$b;
+$ab = $a*$b;
+
+$den = Compute("x^2+$apb*x+$ab")->reduce;
+
+## facteurs et quotient de la forme x-(a+b)
+$fac1 = Compute("x+$a")->reduce;
+$fac2 = Compute("x+$b")->reduce;
+$quot = Compute("x-$apb")->reduce;
+
+## mauvais facteurs et quotient
+$nfac1 = Compute("x-$a")->reduce;
+$nfac2 = Compute("x-$b")->reduce;
+$nquot = Compute("x+$apb")->reduce;
+
+# Créer un objet de choix multiple contenu dans $cmc
+$cmc = new_checkbox_multiple_choice();
+
+Context()->texStrings;
+# Ajouter la question et les choix de réponse
+$cmc -> qa (
+	"Laquelle des expressions suivantes est la forme correcte de décomposition en fractions partielles de \(\displaystyle \frac{x^3}{$den}?\)",  
+        "\(\displaystyle $quot+\frac{A}{$fac1}+\frac{B}{$fac2}\)",
+        );
+
+# D'autres choix de réponse erronés
+$cmc -> extra(
+        "\(\displaystyle $nquot+\frac{A}{$fac1}+\frac{B}{$fac2}\)",
+		"\(\displaystyle $quot+\frac{A}{$nfac1}+\frac{B}{$nfac2}\)",
+        "\(\displaystyle $nquot+\frac{A}{$nfac1}+\frac{B}{$nfac2}\)",
+		"\(\displaystyle \frac{A}{$fac1}+\frac{B}{$fac2}\)",
+	    "\(\displaystyle \frac{A}{$nfac1}+\frac{B}{$nfac2}\)",
+        );
+
+# On affiche la question en utilisant $mc->print_q
+# On affiche la liste des choix de réponses avec la commande $mc->print_a
+
+BEGIN_TEXT
+\{$cmc -> print_q \}
+$PAR
+\{$cmc -> print_a \}
+END_TEXT
+Context()->normalStrings;
+
+ANS( checkbox_cmp( $cmc->correct_ans )   ) ;
+
+ENDDOCUMENT();

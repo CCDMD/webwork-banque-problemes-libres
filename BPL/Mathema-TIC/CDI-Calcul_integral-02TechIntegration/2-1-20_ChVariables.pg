@@ -1,0 +1,75 @@
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('changement de variable', 'constante d\'intégration', 'fonction logarithmique', 'fonction trigonométrique', 'intégrale indéfinie')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : septembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_7_5/Stewart5_7_5_27.pg
+## ZDate(6/3/2002)
+## ZInstitution(UCSB)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('7.5')
+## Problem1('27')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Stewart')
+## EditionText2('6')
+## Section2('7.5')
+## Problem2('25')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGML.pl",
+  "PGcourse.pl",
+);
+
+
+### Int a*ln(g(x))*g'(x)/g(x)  où g(x)=sin(x) ou cos(x)
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+Context()->variables->set(x=>{limits=>[0.1,1.56]});
+
+$a=random(2,10,1)*random(-1,1,2);
+
+# choix de la fonction
+$i = random(0,1);
+
+@g = (
+Compute("sin(x)"),
+Compute("cos(x)")
+);
+
+@h = (
+Compute("cot(x)"),
+Compute("-tan(x)")
+);
+
+$f = Formula("$a*$h[$i]*ln($g[$i])")->reduce;
+
+$ans = FormulaUpToConstant("$a/2*(ln($g[$i]))^2")->reduce;
+
+BEGIN_PGML
+Évaluer l'intégrale 
+>>[`` \int [$f] \, dx``]<<
+
+Réponse : [________________________________]{$ans}
+END_PGML
+
+COMMENT('Choisi aléatoirement parmi les fonctions ln(sin(x)) et ln(cos(x))');
+
+ENDDOCUMENT();

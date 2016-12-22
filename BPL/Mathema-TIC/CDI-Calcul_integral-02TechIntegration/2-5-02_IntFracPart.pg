@@ -1,0 +1,88 @@
+##DESCRIPTION
+## Partial fraction decomposition
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction rationnelle', 'fractions partielles')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+
+###############Source###############
+## source : Library/Rochester/setIntegrals25RationalFunctions/S07.04.PartialFractions.PTP17.pg
+## Date(07/02/2008)
+## Institution(University of Rochester)
+## Author(Paul Pearson)
+## MLT(PartFracMultChoice)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('7.4')
+## Problem1('')
+###############Source###############
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "PGchoicemacros.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+COMMENT('Les huit choix sont affichés aléatoirement de sorte que la réponse diffère pour chaque étudiant. Suggestion : restreindre le nombre de tentatives pour réussir le problème.');
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$c = random(2,9,1);
+do{$a=random(1,9);} until($a != $c);
+
+$b = random(2,17,1);
+$n = random(4,8,2);
+
+
+# Make a new multiple choice object.
+$mc = new_checkbox_multiple_choice();
+# $mc now "contains" the multiple choice object.
+
+# Insert some  questions and matching answers in the q/a list
+$mc -> qa (# 
+# Notice that the first string is the question
+"Quelle est la décomposition en fractions partielles qu'il faut utiliser pour calculer l'intégrale suivante? \[ \int \frac{$b (x^{$n} + $a)}{(x - $c)(x^2 - 1)^2 (x^2 + $c)^2} \, dx\] ",
+# The second string is the  correct answer
+"\(\displaystyle \int \left( \frac{A}{x - $c} + \frac{B}{x+1} + \frac{C}{(x+1)^2} + \frac{D}{x-1} + \frac{E}{(x-1)^2} + \frac{Fx+G}{x^2 + $c} + \frac{Hx+I}{(x^2 + $c)^2} \right)\, dx \)",                   
+);
+$mc ->extra(       
+"\(\displaystyle \int \left( \frac{A}{x - $c} + \frac{Bx+C}{x^2-1} + \frac{Cx+D}{(x^2-1)^2} + \frac{Ex+F}{x^2 + $c} + \frac{Gx+H}{(x^2 + $c)^2} \right)\, dx \)",             
+"\(\displaystyle \int \left( \frac{A}{x - $c} + \frac{Bx+C}{(x^2-1)^2} + \frac{Dx+E}{(x^2 + $c)^2} \right)\, dx \)",       
+"\(\displaystyle \int \left( \frac{A}{x - $c} + \frac{B}{(x^2-1)^2} + \frac{C}{(x^2 + $c)^2} \right)\, dx \)",
+"\(\displaystyle \int \left( \frac{A}{x - $c} + \frac{B}{x+1} + \frac{C}{(x+1)^2} + \frac{D}{x-1} + \frac{E}{(x-1)^2} + \frac{Fx+G}{(x^2 + $c)^2} \right)\, dx \)",
+"Il n'y a pas de décomposition en fractions partielles, car il faut d'abord effectuer la division.",
+"\(\displaystyle \int \left( \frac{A}{x - $c} + \frac{B}{x^2-1} + \frac{C}{(x^2-1)^2} + \frac{D}{x^2 + $c} + \frac{E}{(x^2 + $c)^2} \right)\, dx \)",
+"Il n'y a pas de décomposition en fractions partielles, car certains termes s'annulent."
+      
+);
+
+# Print the question using $mc->print_q
+# Use $mc->print_a to print the list of possible answers.
+# These need to be done inside BEGIN_TEXT/END_TEXT to make sure that the 
+# equations inside the questions and answers are processed properly.
+
+BEGIN_TEXT
+
+\{$mc -> print_q \}
+$PAR
+\{$mc -> print_a\}
+END_TEXT
+
+
+# Enter the correct answers to be checked against the answers to the students.
+ANS(checkbox_cmp( $mc->correct_ans ) ) ;
+
+ENDDOCUMENT(); 

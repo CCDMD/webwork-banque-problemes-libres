@@ -1,0 +1,74 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('fonction trigonométrique', 'longueur d\'arc')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/UCSB/Stewart5_8_1/Stewart5_8_1_17.pg
+## ZInstitution(UCSB)
+## MLT(AI-AL-setup_match)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('8.1')
+## Problem1('17')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"parserRadioButtons.pl",
+"PGcourse.pl",
+);
+
+COMMENT('Les six choix sont affichés aléatoirement de sorte que la réponse diffère pour chaque étudiant. Suggestion : restreindre le nombre de tentatives pour réussir le problème.');
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+$i = random(0,1);
+$j = ($i+1)%2;
+@f = ( Compute("sin(x)"), Compute("cos(x)") );
+@Df = ( Compute("cos(x)"), Compute("-sin(x)") );
+@Df2 = ( Compute("cos^2(x)"), Compute("sin^2(x)") );
+
+Context()->texStrings;
+# Les 6 choix
+@choix = ( "\( \displaystyle \int_{0}^{\,2\pi} {\sqrt{1+$Df2[$i]}}\,dx \)",
+        "\( \displaystyle \int_{0}^{\,2\pi} {\sqrt{1+$Df2[$j]}}\,dx \)",
+        "\( \displaystyle \int_{0}^{\,2\pi} {\sqrt{1-$Df2[$i]}}\,dx \)",
+        "\( \displaystyle \int_{0}^{\,2\pi} {\sqrt{1-$Df2[$j]}}\,dx \)",
+        "\( \displaystyle \int_{0}^{\,2\pi} {\sqrt{1+$Df[$i]}}\,dx \)",
+        "\( \displaystyle \int_{0}^{\,2\pi} {\sqrt{1+$f[$i]}}\,dx \)",
+        );
+
+# ordre des choix choisi de façon aléatoire
+@randomchoix = @choix[NchooseK(6,6)];
+$cmc = RadioButtons(
+       [ @randomchoix ],
+        "\( \displaystyle \int_{0}^{\,2\pi} {\sqrt{1+$Df2[$i]}}\,dx \)", # la bonne réponse
+        labels => "ABC"
+ );
+
+
+BEGIN_TEXT
+Laquelle des intégrales suivantes représente la longueur de la courbe \(y= $f[$i],\;\;0 \le x \le 2\pi?\)
+$PAR
+\{$cmc -> buttons() \}
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+ANS($cmc->cmp());
+
+ENDDOCUMENT();

@@ -1,0 +1,117 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('disques', 'formule d\'intégration de base', 'méthode des tranches', 'solide de révolution', 'volume')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/6_Applications_of_the_Integral/6.3_Volumes_of_Revolution/6.3.42.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Justask)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('6.3')
+## Problem1('42')
+###############Source###############
+
+
+
+DOCUMENT();
+
+# Load whatever macros you need for the problem
+loadMacros(
+    "PGstandard.pl",
+    "MathObjects.pl",
+    "PGgraphmacros.pl",
+    "PGcourse.pl",
+          );
+
+$showPartialCorrectAnswers = 1;
+
+$a=random(1,9,1);
+$b=3*$a;
+
+TEXT(beginproblem());
+
+BEGIN_TEXT
+Calculer le volume du solide de révolution engendré par la rotation de la région délimitée par \(y=$b-x\), \(y=3x-$a\) et \(x=0\) autour de l'axe des \(y\).
+$PAR
+\(V = \) \{ans_rule(25)\}
+END_TEXT
+
+$v= Compute("4*pi*($a^3)/3");
+ANS($v->cmp);
+
+
+$refreshCachedImages = 1;
+$ftop=Formula("3*$a-x")->reduce;
+$fbot=Formula("3x-$a")->reduce;
+$xmin=-$a;
+$xmax=2*$a;
+$ymin=-2*$a;
+$ymax=4*$a;
+$xrange=($xmax-$xmin)/$a;
+$yrange=($ymax-$ymin)/$a;
+$xsize=300;
+$ysize=300;
+$graph = init_graph(
+    $xmin, $ymin,
+    $xmax, $ymax,
+    grid => [$xrange/0.2,$yrange],
+    axes => [0,0],
+    size => [$xsize,$ysize],
+);
+
+$graph->lb('reset');
+$n=2*$a;
+$graph->lb(new Label(-0.2,$n,"$n",'black','right','middle'));
+$graph->lb(new Label(-0.2,-$a,"-$a",'black','right','middle'));
+$graph->lb(new Label(-0.2,$b,"$b",'black','right','middle'));
+
+
+## colorer les régions
+$graph->new_color("lightblue", 214,230,244); # RGB
+$graph->new_color("lightred",  245,234,229); # light red-purple
+$graph->moveTo(0,$n);
+$graph->lineTo($a,$n,"black",1);  #entre les deux régions
+$graph->moveTo(0,-$a);  
+$graph->lineTo(0,$b,"black",1);  # axe des y
+$graph->fillRegion([0.1,$n+0.1,"lightblue"]);
+$graph->fillRegion([0.2,$n-0.2,"lightred"]);
+
+plot_functions($graph,
+    "$ftop for x in [0,$a] using color:blue and weight:2",
+    "$fbot for x in [0,$a> using color:red and weight:2",
+);
+
+
+
+BEGIN_SOLUTION
+La rotation de la région délimitée par \(y=$b-x\) (la droite bleue sur la figure ci-dessous), \(y=3x-$a\) (la droite rouge) et l'axe des \(y \) autour de l'axe des \(y\) engendre un solide comportant deux types de sections différentes. 
+$PAR
+Pour tout \(y \in [-$a, $n]\), la section est un disque de rayon
+\(R = \frac13(y +$a)\); pour tout
+\(y \in [$n, $b]\), la section est un disque de rayon \(R = $b - y\). Le volume \(V\) du solide de révolution est égal à
+\[
+\begin{align}
+V= & \pi\int_{-$a}^{$n}\left(\frac{y+ $a}3\right)^2dy 
++\pi\int_{$n}^{$b}($b-y)^2dy \\
+&=\frac{\pi}{9}\int_{-$a}^{$n}(y+$a)^2dy
++\pi\int_{$n}^{$b}($b-y)^2dy \\
+&=\frac{\pi}9\left.\frac{(y + $a)^3}{3}\right|_{-$a}^{$n}
+-\pi\left.\frac{($b - y)^3}{3}\right|_{$n}^{$b} \\
+&=\frac{\pi}9\left(\frac{$b^3}{3}\right)
++\pi\left(\frac{$a^3}{3}\right)\\
+&=\pi\left($a^3\right)
++\pi\left(\frac{$a^3}{3}\right)\\
+&=\frac{4\pi}{3}\left($a^3\right) 
+\end{align}\]
+\{image(insertGraph($graph), height=>$xsize, width=>$ysize )\}
+END_SOLUTION
+
+ENDDOCUMENT();

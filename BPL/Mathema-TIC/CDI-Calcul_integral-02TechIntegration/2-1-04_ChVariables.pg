@@ -1,0 +1,129 @@
+##DESCRIPTION
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('changement de bornes', 'changement de variable', 'fonction puissance', 'intégrale définie')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : septembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)    #Voir le fichier sur les levels
+## Language(fr)
+
+###############Source###############
+## source : Library/Rochester/setIntegrals14Substitution/S05.05.Substitution.PTP01a.pg
+## ZDate(1/31/2009)
+## ZInstitution(University of Rochester)
+## ZAuthor(Paul Pearson)
+## ZMLT(Sub_blanks)
+## ZMLTleader(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('5.5')
+## Problem1('')
+###############Source###############
+
+
+DOCUMENT();  
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+"weightedGrader.pl"
+);
+
+install_weighted_grader();
+
+$showPartialCorrectAnswers = 1;
+
+
+Context()->variables->add(u=>"Real");
+
+# begin stuff to be edited =========================
+
+# some randomly generated paramters
+$c1 = random(2,6,1);
+$c2 = random(1,8,1);
+$c3 = random(2,5,1);
+
+# the set up of the integral
+$a = random(1,3,1); # lower limit of integration
+$b = random(4,5,1); # upper limit of integration
+$fx = Formula("($c1*x - $c2)^($c3)")->reduce; 
+
+# answers 
+$ux = Formula("$c1*x - $c2"); # substitution u = u(x)
+$du = Compute("$c1"); # differential du
+$ua = $ux->eval(x=>$a); # new lower limit u(a)
+$ub = Real("$c1*$b - $c2"); # new upper limit u(b) 
+$fu = Formula("u^($c3)/$c1")->reduce; # new integrand f(u)
+$integral_value = Formula("($ub^($c3 + 1) - $ua^($c3 + 1))/($c1*($c3+1))")->reduce; # value of the integral  
+
+# answer evaluators
+@ans_eval=(
+$ux->cmp,
+$du->cmp,
+$ua->cmp,
+$ub->cmp,
+$fu->cmp,
+$integral_value->cmp
+);
+
+# pondération des réponses
+@weights=(25,10,10,10,20,25);
+
+# end stuff to be edited ==========================
+
+
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+BEGIN_TEXT
+À l'aide d'un changement de variable \(u\),
+$BR$BR 
+\( \displaystyle 
+\int_{$a}^{$b} $fx \, dx = \int_{a}^{b} f(u) \, du 
+\)
+$BR$BR
+où 
+$BR$BR
+\(u =\) \{ NAMED_ANS_RULE('optional0',30) \} (entrer une fonction de \(x\))
+$BR
+\(du =\) \{ NAMED_ANS_RULE('optional1',30) \} \(dx\)  (entrer une fonction de \(x\))   
+$BR
+\(a =\) \{ NAMED_ANS_RULE('optional2',30) \} (entrer un nombre)
+$BR
+\(b =\) \{ NAMED_ANS_RULE('optional3',30) \} (entrer un nombre)
+$BR
+\(f(u) =\) \{ NAMED_ANS_RULE('optional4',30) \} (entrer une fonction de  \(u\)).
+$BR
+$BR
+La valeur de l'intégrale est  \{ ans_rule(30) \}.
+
+$PAR
+${BITALIC}${BBOLD}Note :${EBOLD} Pour obtenir tous les points, la dernière réponse doit être exacte et les réponses aux questions précédentes doivent être exactes ou laissées en blanc.${EITALIC}
+
+END_TEXT
+Context()->normalStrings;
+
+
+
+
+
+NAMED_WEIGHTED_ANS('optional0', $ans_eval[0], $weights[0]);
+NAMED_WEIGHTED_ANS('optional1', $ans_eval[1], $weights[1]);
+NAMED_WEIGHTED_ANS('optional2', $ans_eval[2], $weights[2]);
+NAMED_WEIGHTED_ANS('optional3', $ans_eval[3], $weights[3]);
+NAMED_WEIGHTED_ANS('optional4', $ans_eval[4], $weights[4]);
+CREDIT_ANS($ans_eval[5],['optional0','optional1','optional2','optional3','optional4'],$weights[5]);
+
+
+
+COMMENT('Attribue des points partiels pour les 5 premières réponses (25%,10%,10%,10%,20%) ou 100% des points si un étudiant répond correctement uniquement à la dernière question.');
+
+
+ENDDOCUMENT();

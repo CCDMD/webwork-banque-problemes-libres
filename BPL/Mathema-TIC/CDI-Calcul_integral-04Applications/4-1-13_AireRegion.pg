@@ -1,0 +1,122 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('aire entre deux courbes', 'fonction trigonométrique', 'formule d\'intégration de base')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+###############Source###############
+## source : Library/UVA-Stew5e/setUVA-Stew5e-C06S01-AreaBetCurves/6-1-21.pg
+## ZInstitution(UVA)
+## ZAuthor(Jeff Holt)
+## MLT(AI-A-one-Trig)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('6.1')
+## Problem1('21')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Stewart')
+## EditionText2('6')
+## Section2('6.1')
+## Problem2('')
+## TitleText3('Calculus: Early Transcendentals')
+## AuthorText3('Rogawski')
+## EditionText3('1')
+## Section3('6.1')
+## Problem3('31')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+  "PGcourse.pl",
+);
+
+COMMENT('Aire entre les courbes y=a*cos(x), y=b*sin(2x) et l axe des x, où a est pair entre [4,16] et b est tel que a/2b<1 et b!=a.');
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a=random(4, 16,2);
+do{$b=random($a/2+1,10,1);} until($b!=$a);  #on veut a/2b <1 et a/2b!=1/2
+$soln = Compute("$a**2/(4*$b)");
+
+$showHint = 2; 
+BEGIN_TEXT
+Esquisser le graphique de la région située dans le premier quadrant et délimitée par les trois courbes données.
+Choisir d'intégrer selon \(x\) ou \(y\).
+Calculer ensuite l'aire de la région.
+$BR \[ y = $a \cos(x), \quad  y = $b \sin(2 x), \quad   x = 0.  \]
+Aire =  \{ans_rule( 25) \}
+$PAR
+$HR
+${BBOLD}Note : un indice sera donné après $showHint tentatives non réussies.$EBOLD
+END_TEXT
+
+
+## réduire la fraction a/2b
+$b2 = 2*$b;
+($ra,$rb2) = reduce($a,$b2);
+
+#graphique de la région colorée
+$refreshCachedImages = 1;
+$max = Real(pi/2+0.3);
+$ymax = max($a,$b);
+$gr = init_graph(-0.5,-1,$max,$a+1,'axes'=>[0,0],'size'=>[400,400]);
+$gr->lb('reset');
+
+# région bornée
+$gr->new_color("lightblue", 214,230,244);
+$f1 = Formula("$a*cos(x)");
+$f2 = Formula("$b*sin(2*x)");
+
+$p1 = FEQ("$f1 for x in <0,$max> using color:blue weight:2");
+$p2 = FEQ("$f2 for x in <0,$max> using color:red weight:2");
+$gr->moveTo(0,0);
+$gr->lineTo(0,$a,'blue',1);
+
+plot_functions($gr,$p1,$p2);
+
+# colorer la région
+$gr->fillRegion([0.01,$a/2,'lightblue']);
+
+
+$xint = Real(asin($a/$b2));
+$yint = Real($a*sqrt(4*$b**2-$a**2)/$b2);
+$gr->lb(new Label(-0.1,$a,"$a",'black','center','middle'));
+$gr->lb(new Label($max-0.3,-0.5,1,'black','center','middle'));
+$gr->stamps(closed_circle($xint,$yint,'black'));
+
+
+BEGIN_HINT
+Pour trouver le point d'intersection entre les courbes \($a \cos(x)\) et \($b\sin(2x)\), il faut résoudre l'équation
+\[ $a\cos(x)=$b\sin(2x)\]
+On obtient
+\[\begin{aligned}
+$a\cos(x)&=$b\sin(2x) \\
+$a\cos(x) &= $b\cdot 2\sin(x)\cos(x)&&\text{; identité trigo} \\
+$a\cos(x) - $b2 \sin(x)\cos(x) &=0 \\
+\cos(x)($a - $b2\sin(x)) &= 0 \\
+\text{si } \cos(x)=0 \quad &\text{ou}\quad \sin(x)=\frac{$a}{$b2}=\frac{$ra}{$rb2}
+\end{aligned}\]
+Il faut calculer l'aire de la région colorée ci-dessous bornée par la courbe bleue est la fonction \($a \cos(x)\), 
+la courbe rouge est la fonction \($b\sin(2x)\) et l'axe des \(x\).
+$PAR
+$BCENTER
+\{ image( insertGraph( $gr ), width=>300,height=>300,tex_size=>500 ) \}
+$BR
+${BITALIC}(Cliquer sur le graphique pour agrandir l'image.)$EITALIC
+$ECENTER
+END_HINT
+
+ANS($soln->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

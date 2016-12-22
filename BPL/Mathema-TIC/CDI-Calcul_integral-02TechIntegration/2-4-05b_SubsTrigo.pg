@@ -1,0 +1,103 @@
+##DESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('intégrale indéfinie', 'substitution trigonométrique')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+
+###############Source###############
+## source : Library/CSUOhio/calculus/trigonometric_substitution/trigSub13.pg
+## ZDate(8/13/13)
+## ZInstitution(Cleveland State University)
+## ZAuthor(Barbara Margolius)
+## ZMLT(trigSub-sine)
+## TitleText1('')
+## AuthorText1('')
+## EditionText1('')
+## Section1('.')
+## Problem1('13')
+###############Source###############
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+ # "AppletObjects.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGcourse.pl",
+);
+
+COMMENT('Fonction 1/(x*sqrt(a^2-x^2)) de substitution trigonométrique de type sin. Sans applet Flash.');
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,9,1);
+
+$a2 = $a*$a;
+$a3 = $a2*$a;
+$a4 = $a2*$a2;
+
+
+BEGIN_TEXT
+Évaluer l'intégrale indéfinie.
+ \[ \int \frac{ dx}{x\sqrt{$a2 - x^2}} \]
+Réponse : \{ans_rule(45) \}   
+END_TEXT
+
+$ans = FormulaUpToConstant("1/($a)*ln(abs($a/x -sqrt($a2-x^2)/x))");
+$ans->{limits} = [-$a,$a];
+
+ANS( $ans->cmp() );
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+On utilise une substitution trigonométrique.  On choisit une fonction sinus.
+\[x = {$a}\sin(\theta)\]
+
+$BR
+On observe que \(\sin\theta=\dfrac{x}{$a}\) et \(\cos\theta=\dfrac{\sqrt{$a2-x^2}}{$a}\).  Penser à un triangle rectangle tel que le sinus \(\left(\frac{opp}{hyp}\right)\) est égal à \(\frac{x}{$a}\).  Le côté opposé est égal à \(x\) et l'hypoténuse est égale à \($a\), de sorte que le côté adjacent est égal à \(\sqrt{$a2-x^2}\).
+
+$PAR
+À partir de la substitution 
+\[x = {$a}\sin\theta\]
+\[dx = {$a}\cos\theta \; d\theta\]
+
+On obtient :
+\[
+\begin{aligned}
+\int \frac{ dx}{x\sqrt{$a2 - x^2}} &=
+\int \frac{ {$a}\cos\theta \; d\theta}{{$a}\sin\theta\sqrt{$a2 - {$a2}\sin^2\theta}} \\
+&= \int \frac{ {$a}\cos\theta \; d\theta}{{$a}\sin\theta \cdot $a\sqrt{1 - \sin^2\theta}} \\
+&= \int \frac{ {$a}\cos\theta \; d\theta}{{$a}\sin\theta \cdot $a\sqrt{\cos^2\theta}} \\
+&= \int \frac{ {$a}\cos\theta \; d\theta}{{$a2}\sin\theta\cos\theta} \\
+&= \int\frac{ d\theta}{{$a}\sin\theta} \\
+&= \frac{1}{$a}\int \csc\theta \;d\theta \\
+&= \frac{1}{$a}\ln|\csc\theta-\cot\theta|+C
+\end{aligned}
+\]
+
+En remplaçant la fonction en \(\theta\) par sa valeur à l'aide du triangle de substitution  \( \left( \csc\theta = \frac{hyp}{opp} \text{ et } \cot\theta = \frac{adj}{opp} \right) \), on obtient :
+\[
+\frac{1}{$a}\ln|\csc\theta-\cot\theta|+C =
+\frac{1}{$a}\ln\left|\frac{$a}{x}-\frac{\sqrt{$a2-x^2}}{x}\right|+C\]
+
+et donc
+
+\[ \int \frac{ dx}{x\sqrt{$a2 - x^2}}
+=\frac{1}{$a}\ln\left|\frac{$a - \sqrt{$a2-x^2}}{x}\right|+C \]
+
+END_SOLUTION
+Context()->normalStrings;
+##################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

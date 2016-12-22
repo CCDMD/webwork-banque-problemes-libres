@@ -1,0 +1,77 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('disques troués', 'méthode des tranches', 'solide de révolution', 'volume')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(5)  
+## Language(fr)
+###############Source###############
+## source : Library/UCSB/Stewart5_6_2/Stewart5_6_2_35.pg
+## ZInstitution(UCSB)
+## MLT(likeThis3)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('6.2')
+## Problem1('35')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"parserRadioButtons.pl",
+"PGcourse.pl",
+);
+
+COMMENT('Les six choix sont affichés aléatoirement de sorte que la réponse diffère pour chaque étudiant. Suggestion : restreindre le nombre de tentatives pour réussir le problème.');
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+# courbe x^2-y^2=1 et x=a où a>1
+$a=random(2,5,1);
+# bornes en y : ±sqrt(a^2-1)
+$ay = $a**2 - 1;
+
+#axe de rotation x = -b où b>1
+$b=random(2,6,1);
+$apb = $a+$b;
+
+
+# rayon externe : R = a+b 
+# rayon interne : r = sqrt(1+y^2)+b
+# Les 6 choix
+@choix = ( "\( \displaystyle \pi \int_{-\sqrt{$ay}}^{\,\sqrt{$ay}} {\Big($apb^2-\left(\sqrt{1+y^2}+$b\right)^2\Big)}\,dy \)",
+        "\( \displaystyle \pi \int_{-\sqrt{$ay}}^{\,\sqrt{$ay}} {\Big(\left(\sqrt{1+y^2}+$b\right)^2-$apb^2\Big)}\,dy \)",
+        "\( \displaystyle \pi \int_{-\sqrt{$ay}}^{\,\sqrt{$ay}} {\Big($a^2 -(1+y^2)\Big)}\,dy \)",
+        "\( \displaystyle \pi \int_{1}^{\,$a} {\Big($apb^2-\left(\sqrt{1+y^2}+$b\right)^2\Big)}\,dy \)",
+        "\( \displaystyle \pi \int_{1}^{\,$a} {\Big(\left(\sqrt{1+y^2}+$b\right)^2-$apb^2\Big)}\,dy \)",
+        "\( \displaystyle \pi \int_{1}^{\,$a} {\Big($a^2-(x^2-1)\Big)}\,dx \)",
+        );
+
+# ordre des choix choisi de façon aléatoire
+@randomchoix = @choix[NchooseK(6,6)];
+$cmc = RadioButtons(
+       [ @randomchoix ],
+        "\( \displaystyle \pi \int_{-\sqrt{$ay}}^{\,\sqrt{$ay}} {\Big($apb^2-\left(\sqrt{1+y^2}+$b\right)^2\Big)}\,dy \)", # la bonne réponse
+        labels => "ABC"
+ );
+
+
+BEGIN_TEXT
+Laquelle des intégrales suivantes représente le volume du solide de révolution engendré par la rotation de la région délimitée par les courbes \(x^2-y^2=1\) et \(x=$a\) autour de la droite \(x=-$b?\)
+$PAR
+\{$cmc -> buttons() \}
+$PAR
+END_TEXT
+
+ANS($cmc->cmp());
+
+ENDDOCUMENT();

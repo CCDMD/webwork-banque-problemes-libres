@@ -1,0 +1,94 @@
+#DESCRIPTION
+##  Calculus: Volumes by cylindrical shells
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('fonction exponentielle', 'fonction logarithmique', 'intégration par parties', 'méthode des tubes', 'solide de révolution', 'volume')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : décembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_6_3_prob02.pg
+## ZDate(04/21/2011)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## MLT(volume_shells_multi_V)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('6.3')
+## Problem1('')
+###############Source###############
+
+
+#####################################################################
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "weightedGrader.pl",
+  "PGcourse.pl"
+);
+#####################################################################
+
+COMMENT('Les points sont répartis de la façon suivante : 25% pour la première réponse, 5% pour la deuxième, 10% 
+pour la troisième et la quatrième et 50% pour la dernière réponse.');
+ 
+install_weighted_grader();
+
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem());
+
+#####################################################################
+
+Context("Numeric");
+Context()->variables->add(y=>'Real');
+Context()->variables->set(x=>{limits=>[1,5]});
+
+$b = random(2,8,1);
+
+$popup1 = PopUp(['','dx','dy'],'dx');
+$ans1 = Compute("2*pi*x*(e^x-ln(x))");
+$ans2 = Real(1);
+$ans3 = Real($b);
+
+$c1 = 4*($b-1);
+$c2 = 2*$b**2;
+$c3 = $b**2 -1;
+$ans4 = Compute("pi/2*($c1*exp($b)-$c2*ln($b)+$c3)");
+
+#####################################################################
+
+BEGIN_TEXT
+Le volume du solide de révolution engendré par la rotation de la région délimitée par \(y = e^x,\) \(y = \ln(x),\) \(x = 1\) et \(x = $b\) autour de l'axe des \(y\) peut se calculer à l'aide de la méthode des tubes (ou des coquilles cylindriques). Répondre aux question suivantes.
+$PAR
+En utilisant la méthode des tubes (ou des coquilles cylindriques),  déterminer l'intégrale. $PAR
+$BCENTER
+\( \displaystyle 
+V = \int_a^b \) \{ans_rule(30) \}  \{$popup1->menu\}
+$ECENTER
+$BR
+où \(a =\) \{ans_rule(5)\} et \(b =\) \{ans_rule(5)\} 
+$PAR
+Calculer le volume.$PAR
+Volume = \{ans_rule(30)\}
+END_TEXT
+
+#####################################################################
+
+WEIGHTED_ANS($ans1->cmp(), 25);
+WEIGHTED_ANS($popup1->cmp(), 5);
+WEIGHTED_ANS($ans2->cmp(), 10);
+WEIGHTED_ANS($ans3->cmp(), 10);
+WEIGHTED_ANS($ans4->cmp(), 50);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

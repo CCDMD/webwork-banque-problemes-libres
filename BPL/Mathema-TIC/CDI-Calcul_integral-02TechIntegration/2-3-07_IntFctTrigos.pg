@@ -1,0 +1,83 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction trigonométrique', 'formule de réduction', 'intégrale indéfinie', 'puissance des fonctions trigonométriques')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+
+###############Source###############
+## source : Library/UCSB/Stewart5_7_1/Stewart5_7_1_42.pg
+## ZInstitution(UCSB)
+## MLT(reduc_form)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('7.1')
+## Problem1('42')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+Context()->variables->set(x=>{limits=>[0,1.5]});
+Context()->flags->set(reduceConstants => 0);
+
+## choisir entre cos et sin
+$i = random(0,1);
+
+if($i==0) {
+$tlatex = "\cos";
+$trig = Compute("cos(x)");
+$trig2 = Compute("sin(x)");
+$sign = " ";
+} else {
+$tlatex = "\sin";
+$trig = Compute("sin(x)");
+$trig2 = Compute("cos(x)");
+$sign = "-";
+}
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+a) Utiliser la formule de réduction
+\[ \int {$tlatex^{n}(x)}\, dx = $sign\frac{1}{n} $trig2 $tlatex^{n-1}(x)+\frac{n-1}{n}\int {$tlatex^{n-2}(x)}\, dx \]
+pour calculer l'intégrale
+\[\int {$tlatex^2(x)}\, dx.\]
+
+$PAR
+Réponse : \{ans_rule(45)\}
+
+$PAR
+b)  Utiliser la formule de réduction  et la réponse obtenue en a) pour calculer l'intégrale
+\[\int {$tlatex^4(x)}\, dx.\]
+
+$PAR
+Réponse : \{ans_rule(45)\}
+
+END_TEXT
+Context()->normalStrings;
+
+$ans1 = FormulaUpToConstant("$sign 1/2*$trig*$trig2+1/2*x");
+$ans2 = FormulaUpToConstant("$sign 1/4*$trig^3*$trig2 + $sign 3/8*$trig*$trig2+3/8*x");
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+
+COMMENT('Choisit entre sin^4(x) et cos^4(x)');
+
+ENDDOCUMENT();
