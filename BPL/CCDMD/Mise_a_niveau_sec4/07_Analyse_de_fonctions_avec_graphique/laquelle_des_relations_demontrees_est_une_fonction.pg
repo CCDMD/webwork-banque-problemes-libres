@@ -18,6 +18,7 @@ loadMacros(
   "PGstandard.pl",
 "parserRadioButtons.pl",
   "PGchoicemacros.pl",
+  "unionTables.pl",
 );
 
 
@@ -26,45 +27,32 @@ TEXT(beginproblem());
 @graph=("fonction_1.jpg","fonction_2.jpg","fonction_3.jpg");
 @num=(0,1,2);
 @shuffle = &shuffle(scalar(@num)); 
-@graphshuffle = ($graph[$shuffle[0]],$graph[$shuffle[1]],$graph[$shuffle[02]]);
-
+@graphshuffle = @graph[@shuffle];
  
 # déterminer lequel des graphiques permutés représente le graphique réponse
-if ($graphshuffle[0] == "fonction_3.jpg") { $rep = "graphique 1";}
-if ($graphshuffle[1] == "fonction_3.jpg") { $rep = "graphique 2";}
-if ($graphshuffle[2] == "fonction_3.jpg") { $rep = "graphique 3";}
+if ($graphshuffle[0] eq "fonction_2.jpg") { $rep = "graphique 1";}
+if ($graphshuffle[1] eq "fonction_2.jpg") { $rep = "graphique 2";}
+if ($graphshuffle[2] eq "fonction_2.jpg") { $rep = "graphique 3";}
 
 
 # afficher la bonne réponse, ainsi que les autres réponses possibles
-$radio = RadioButtons(["graphique 1","graphique 2","graphique 3"],"$rep", order=>["graphique 1","graphique 2","graphique 3"],);
+$radio = RadioButtons(["graphique 1","graphique 2","graphique 3"], $rep );
 
 BEGIN_TEXT
-<table cellpadding="10px" width="850px">
-  <tr><td>
-
-<h1>Question : </h1>
-<br/>
-Laquelle des relations ci-dessous est une fonction ?
-<br/><br/>
-
-<table border=0>
-  <tr>
-    <td align=center valign=center>\{ image($graphshuffle[0], width=>225, height=>200) \} &nbsp; </td>
-    <td align=center valign=center> &nbsp; &nbsp;&nbsp; \{ image($graphshuffle[1], width=>225, height=>200) \}</td>
-    <td align=center valign=center> &nbsp; &nbsp;&nbsp; \{ image($graphshuffle[2], width=>225, height=>200) \}</td>
-  </tr>
-  <tr>
-    <td align=center>graphique 1</td>
-    <td align=center>graphique 2</td>
-    <td align=center>graphique 3</td>
-  </tr>
-</table>
-<br/><br/>
-
+$BR
+Laquelle des relations ci-dessous n'est pas une fonction ?
+$PAR
+\{
+BeginTable().
+  AlignedRow([image($graphshuffle[0], width=>225, height=>200),
+  image($graphshuffle[1], width=>225, height=>200),image($graphshuffle[2], width=>225, height=>200)]).
+  TableSpace(5,0).
+  AlignedRow(["graphique 1","graphique 2","graphique 3"]).
+EndTable()
+\}
+$PAR
 \{ $radio->buttons() \}
-
-  </td></tr>
-</table>
+$BR
 END_TEXT
 
 
