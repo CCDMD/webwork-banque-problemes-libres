@@ -14,7 +14,7 @@
 
 ## Author(Julie Tremblay)
 ## Institution(Collège de Bois-de-Boulogne)
-## Date(nov 2014)
+## Modifié par Julie Tremblay, collège BdeB, février 2017
 ## Level(4)    
 ## Language(fr)
 
@@ -26,25 +26,20 @@ loadMacros(
 "MathObjects.pl",
 "PGauxiliaryFunctions.pl",
 "PGgraphmacros.pl",
-"compoundProblemFr.pl",
+"scaffold.pl",
+"PGML.pl",
 #"PGcourse.pl",
 );
+
+COMMENT("Ce problème comporte 9 parties dont la partie suivante est affichée seulement si l\'étudiant a réussi la partie précédente. Vous devez autoriser un minimum de 9 essais pour réussir ce problème car l\'étudiant doit soumettre ses réponses pour chacune des parties.");
 
 $refreshCachedImages=1;
 
 Context("Interval");
-Context()->strings->add(aucune=>{},aucun=>{}, aucun => {alias => "aucune"});
-
-$cp = new compoundProblem( parts=>9, 
-                           totalAnswers => 17,
-						   nextStyle=>'Button',
-						   nextLabel => "Passer à la prochaine partie",
-						   );
-
+Context()->strings->add(aucune=>{},aucun=>{}, aucun => {alias => "aucune"},nep=>{}, nep => {alias => "aucune"}, ok=>{});
 
 # make $a and $b distinct
 $a = random(1,9);
-
 
 $f = Formula("e^x/($a-x)")->reduce;
 
@@ -61,10 +56,7 @@ $limInfPos = Compute("-inf");
 $AVlimleft = Compute("inf");
 $AVlimright = Compute("-inf");
 
-
 # first derivative, critical numbers, increasing, decreasing, maxima, minima
-
-
 $c1 = $a+1;
 $fp = Formula("e^x*($c1-x)/($a-x)^2")->reduce;
 $vc = List("$c1");
@@ -74,10 +66,7 @@ $dec = Compute("($c1,inf)");
 $max = List("$c1");
 $min = List("aucune");
 
-
-
 # second derivative, concave up, concave down, inflection points
-
 $b1 = -2*$c1;
 $b0 = $a*$a + 2*$a + 2;
 $fpp = Formula("e^x*(x^2+$b1*x+$b0)/($a-x)^3")->reduce;
@@ -88,191 +77,131 @@ $PI = List("aucune");
 
 $showPartialCorrectAnswers = 1;
 
-
-Context()->texStrings;
-BEGIN_TEXT
+# En-tête du problème avant d'afficher les huits parties
+BEGIN_PGML
 Faire l'étude de courbe de la fonction 
-\[ f(x) = $f.  \]
-$PAR
-Ce problème comporte cinq questions de a) à e) et est divisé en plusieurs parties. Vous devez répondre correctement aux questions pour passer aux parties suivantes. 
-Cliquer sur le bouton ${BBOLD}Passer à la prochaine partie${EBOLD} lorsque ce sera le cas.$BR
-$PAR
+>>[`` f(x) = [$f].  ``]<<
 
-${BITALIC}Consignes : ${EITALIC} Si la réponse doit être une fonction, entrer une fonction. S'il faut déterminer des valeurs \(x\) ou \(y\), répondre par un nombre, une liste de nombres séparés par des virgules ou le mot ${BBOLD}aucune${EBOLD}, 
-s'il n'y a pas de solution.  Respecter la notation d'intervalles pour entrer un intervalle ou l'union de plusieurs intervalles, et entrer { } si l'intervalle est vide.
-$BR
-$BR
+Ce problème comporte six questions et est divisé en plusieurs parties. Vous devez répondre correctement aux questions pour passer aux parties suivantes. 
 
-a) Déterminer le domaine de \(f\). 
-$PAR
-dom\(f =\) \{ans_rule(20)\}
-$PAR
-END_TEXT
-Context()->normalStrings;
+_Consignes_ : Si la réponse doit être une fonction, entrer une fonction. S'il faut déterminer des valeurs [` x `] ou [` y `], répondre par un nombre, une liste de nombres séparés par des virgules ou le mot *aucune*, s'il n'y a pas de solution. Respecter la notation d'intervalles pour entrer un intervalle ou l'union de plusieurs intervalles, et entrer { } si l'intervalle est vide.
 
-ANS($dom->cmp);
+END_PGML
 
-if( $cp->part > 1) {
-Context()->texStrings;
-BEGIN_TEXT
+## Début du problème par parties
+Scaffold::Begin();
+    
+Section::Begin("Partie 1");
+BEGIN_PGML
+Déterminer le domaine de [` f `]. 
 
-b) Trouver les limites à l'infini suivantes afin de déterminer les asymptotes horizontales possibles de \(f\).
-$PAR
-$BCENTER
-\( \displaystyle \lim_{x \rightarrow -\infty} $f = \) \{ans_rule(20)\}
-$PAR
-\( \displaystyle \lim_{x \rightarrow \infty} $f = \) \{ans_rule(20)\}
-$ECENTER
-$PAR
-Asymptotes horizontales :  \(y = \) \{ans_rule(40)\}
-$PAR
-END_TEXT
-Context()->normalStrings;
+dom [` f = `][__________________________]{$dom}
+END_PGML
+Section::End();
+    
+Section::Begin("Partie 2");
+BEGIN_PGML
+Trouver les limites à l'infini suivantes afin de déterminer les asymptotes horizontales possibles de [` f `].
 
+>>[`` \lim_{x \rightarrow -\infty} [$f] = ``][_____________________]{$limInfNeg}<<
 
-ANS($limInfNeg->cmp);
-ANS($limInfPos->cmp);
-ANS($AH->cmp);
+>>[`` \lim_{x \rightarrow \infty} [$f] = ``][_____________________]{$limInfPos}<<
 
+Asymptotes horizontales :  [` y = `][_____________]{$AH}
+END_PGML
 
-} ### end part > 1
+Section::End();
 
+Section::Begin("Partie 3a");
+BEGIN_PGML
+Déterminer la ou les asymptotes verticales possibles de [` f `]. 
 
-if( $cp->part > 2) {
-Context()->texStrings;
-BEGIN_TEXT
-c) Déterminer la ou les asymptotes verticales possibles de \(f\). 
-$PAR
-Asymptotes verticales :  \(x = \) \{ans_rule(40)\}
-$PAR
-END_TEXT
-Context()->normalStrings;
+Asymptotes verticales : [` x = `][______________]{$AV}
+END_PGML
 
-ANS($AV->cmp);
+Section::End();
 
+Section::Begin("Partie 3b");
+BEGIN_PGML
+Déterminer la limite à gauche et la limite à droite de l'asymptote verticale [` x=[$AV] `]. 
 
-} ### end part >2
+>>[`` \lim_{x \rightarrow [$a]^{-}} [$f] = ``][____________________]{$AVlimleft}<<
 
-if( $cp->part > 3) {
-Context()->texStrings;
-BEGIN_TEXT
-Déterminer la limite à gauche et la limite à droite de l'asymptote verticale \(x=$AV\). 
-$PAR
-$BCENTER
-\( \displaystyle \lim_{x \rightarrow $a^{-}} $f = \) \{ans_rule(20)\}
-$PAR
-\( \displaystyle \lim_{x \rightarrow $a^{+}} $f = \) \{ans_rule(20)\}
-$ECENTER
-$PAR
+>>[`` \lim_{x \rightarrow [$a]^{+}} [$f] = ``][____________________]{$AVlimright}<<
+END_PGML
 
-END_TEXT
-Context()->normalStrings;
+Section::End();
 
-ANS($AVlimleft->cmp);
-ANS($AVlimright->cmp);
+Section::Begin("Partie 4a");
+BEGIN_PGML
+Déterminer la dérivée première de [` f `]. 
 
-} ### end part >3
+[` f'(x) = `][________________________________________________]{$fp}
+END_PGML
 
-if( $cp->part > 4) {
+Section::End();
 
-Context()->texStrings;
-BEGIN_TEXT
-c) Déterminer la dérivée première de \( f \). 
-$PAR
-\( f'(x) = \) \{ans_rule(40)\}
-$PAR
+Section::Begin("Partie 4b");
+BEGIN_PGML
+Identifier les valeurs critiques de [`` f'(x) = [$fp] ``], ses intervalles ouverts de croissance et de décroissance et ses extrémums relatifs.
 
-END_TEXT
-Context()->normalStrings;
+Valeurs critiques : [` x = `][_______________]{$vc}
 
-ANS($fp->cmp);
+Croissante sur l'intervalle : [_________________________]{$crois}
 
-} ### end part >4
+Décroissante sur l'intervalle : [_______________________]{$dec}
 
+Maximum relatif en [` x = `][_______________]{$max}
 
-if( $cp->part > 5) {
+Minimum relatif en [` x = `][_______________]{$min}
+END_PGML
 
-Context()->texStrings;
-BEGIN_TEXT
+Section::End();
 
-Identifier les valeurs critiques de \( f'(x) = $fp\), ses intervalles ouverts de croissance et de décroissance et ses extrémums relatifs.
-$PAR
+Section::Begin("Partie 5a");
+BEGIN_PGML
+Déterminer la dérivée seconde de [` f `]. 
 
-Valeurs critiques : \( x = \) \{ans_rule(40)\} 
-$BR
-Croissante sur l'intervalle  \{ans_rule(40)\} 
-$BR
-Décroissante sur l'intervalle  \{ans_rule(40)\}
-$BR
-Maximum relatif en \(x = \) \{ans_rule(40)\}
-$BR
-Minimum relatif en \(x = \) \{ans_rule(40)\}
-$PAR
-END_TEXT
-Context()->normalStrings;
+[` f''(x) = `][_______________________________________________]{$fpp}
+END_PGML
 
-ANS($vc->cmp);
-ANS($crois->cmp);
-ANS($dec->cmp);
-ANS($max->cmp);
-ANS($min->cmp);
+Section::End();
 
-} ### end part > 5
+Section::Begin("Partie 5b");
+BEGIN_PGML
+Sachant que [`` f''(x)=[$fpp] ``], indiquer les intervalles ouverts où [` f `] est concave vers le haut ou vers le bas et identifier les points d'inflexion.
 
-if( $cp->part > 6) {
+Concave vers le haut dans l'intervalle : [_________________________]{$CH}
 
-Context()->texStrings;
-BEGIN_TEXT
-d) Déterminer la dérivée seconde de \( f \). 
-$PAR
-\( f''(x) = \) \{ans_rule(40)\}
-$PAR
-END_TEXT
-Context()->normalStrings;
+Concave vers le bas dans l'intervalle : [__________________________]{$CB}
 
-ANS($fpp->cmp);
+Points d'inflexion : [` x = `][____________________________________]{$PI}
 
-} ### end part 6
+END_PGML
 
-if( $cp->part > 7) {
+Section::End();
 
-Context()->texStrings;
-BEGIN_TEXT
-Sachant que \(f''(x)=$fpp\), indiquer les intervalles ouverts où \(f\) est concave vers le haut ou vers le bas et identifier les points d'inflexion.
-$PAR
-Concave vers le haut dans l'intervalle : \{ans_rule(40)\} 
-$BR
-Concave vers le bas dans l'intervalle : \{ans_rule(40)\}
-$BR
-Points d'inflexion : \(x = \) \{ans_rule(40)\}
-$PAR
-END_TEXT
-Context()->normalStrings;
+Section::Begin("Partie 6");
+BEGIN_PGML
+Esquisser le graphique de [` f `] sans utiliser la calculatrice à affichage graphique.  
 
+Identifier les points d'intersection avec l'axe des [` y `] et l'axe des [` x `], si 
+possible.  
 
-ANS($CH->cmp);
-ANS($CB->cmp);
-ANS($PI->cmp);
-
-} ### end part 7
-
-if( $cp->part > 8) {
-
-Context()->texStrings;
-BEGIN_TEXT
-e) Esquisser le graphique de \( f \) sans utiliser la calculatrice à affichage graphique.  
-Identifier les points d'intersection avec l'axe des \(y\) et l'axe des \(x\), si possible.  
 Tracer les asymptotes horizontales et verticales à l'aide de lignes pointillées.  
-Tracer les points de \( f \) qui représentent des maximums relatifs, des minimums relatifs ou des points d'inflexion.  
-Utiliser l'information obtenue en c) et d) pour compléter le tracé de la courbe de \( f \).  
-Servez-vous de la symétrie déterminée en e), s'il y a lieu.  
+
+Tracer les points de [`  f  `] qui représentent des maximums relatifs, des minimums relatifs ou des points d'inflexion.  
+Utiliser l'information obtenue dans les parties 4 et 5 pour compléter le tracé de la courbe de [`  f  `].  
+
 L'esquisse d'une courbe est une compétence essentielle qui s'acquiert avec la pratique.
 
-END_TEXT
-Context()->normalStrings;
+Entrez « ok » lorsque vous avez terminé de tracer votre graphique : [____________]{"ok"}
+END_PGML
 
-} ### end part > 8
+Section::End();
 
+Scaffold::End();
+## Fin du problème
 
 
 ### Traçage de la courbe pour la solution
@@ -310,14 +239,15 @@ $gr->stamps( closed_circle($c1,$yc1,'blue') );
 $gr->moveTo($a,-$ye);
 $gr->lineTo($a,$ye,'black',1,'dashed');
 
-Context()->texStrings;
-BEGIN_SOLUTION
-Voici le graphique de \(f(x) = $f\).
-$PAR
-$BCENTER
-\{ image( insertGraph($gr), width=>300,height=>300,tex_size=>800 ) \}
-$ECENTER
-END_SOLUTION
-Context()->normalStrings;
+
+BEGIN_PGML_SOLUTION
+
+Voici le graphique de [`` f(x) = [$f] ``].
+
+>> [@ image(insertGraph($gr), width=>300,height=>300,tex_size=>800) @]* <<
+
+>>Cliquer sur le graphique pour l'agrandir<<
+END_PGML_SOLUTION
+
 
 ENDDOCUMENT();

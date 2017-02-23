@@ -9,21 +9,10 @@
 
 ## Author(Julie Tremblay)
 ## Institution(Collège de Bois-de-Boulogne) 
-## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
-## Date : juin 2016
+## Date : février 2017
 ## Traduction française : Sylvie Charbonneau
 ## Level(2)    #Voir le fichier sur les levels
 ## Language(fr)
-
-###############Source###############
-## source : Library/FortLewis/Calc1/05-04-Integral-theorems/HGM5-05-04-Integral-theorems-13.pg
-## ZDBsubject(Calculus - single variable)
-## ZDBchapter(Integrals)
-## ZDBsection(Fundamental theorem of calculus)
-## ZInstitution(Fort Lewis College)
-## ZAuthor(Paul Pearson)
-## ZLevel(2)
-###############Source###############
 
 
 DOCUMENT();
@@ -31,26 +20,24 @@ DOCUMENT();
 loadMacros(
 "PGstandard.pl",
 "MathObjects.pl",
-"compoundProblemFr.pl",
+#"compoundProblemFr.pl",
+"scaffold.pl",
+"PGML.pl",
 "answerHints.pl",
 );
+
+COMMENT("Ce problème comporte deux parties dont la partie suivante est affichée seulement si l\'étudiant a réussi la partie précédente. Vous devez autoriser un minimum de deux essais pour réussir ce problème car l\'étudiant doit soumettre ses réponses pour chacune des parties.");
 
 TEXT(beginproblem());
 
 $showPartialCorrectAnswers = 1;
 
-
-###################################
-#  Setup
-
-$cp = new compoundProblem( parts=>2, 
-                           totalAnswers => 2,
-						#   nextVisible => 'Always',
-						   nextStyle=>'Button',
-						   nextLabel => "Passer à la prochaine partie",
-						   );
-
 Context("Numeric")->variables->are(t=>"Real");
+Context()->flags->set(
+  tolerance => 0.0001,
+  tolType => "absolute",
+);
+
 
 $a = random(1,4,1);
 $b = $a + random(2,4,1);
@@ -62,54 +49,42 @@ $F = Formula("$k * t^2 + $j * t")->reduce;
 
 $f = Formula("$k2*t + $j")->reduce;
 
-
-
 $answer1 = $f;
 $answer2 = ($F->eval(t=>$b))-($F->eval(t=>$a));
 
+# En-tête du problème avant d'afficher les deux parties
+BEGIN_PGML
+Ce problème comporte deux parties.  
 
-###################################
-#  Main text part 1
+Soit [`F(t) = [$F] `].
 
-Context()->texStrings;
-BEGIN_TEXT
-${BBOLD}Première partie :${EBOLD}
-$BR
-Ce problème comporte deux parties.  Si \( F(t) = $F \), déterminer  \( F^{\prime}(t) \).
-$BR
-$BR
-\( F^{\prime}(t) = \) \{ ans_rule(20) \}
-END_TEXT
-Context()->normalStrings;
+END_PGML
 
 
-######################################
-#  Begin do not edit
+## Début du problème par parties
+Scaffold::Begin();
+    
+Section::Begin("Première partie");
+BEGIN_PGML
+Déterminer [` F^{\prime}(t) `].
 
-ANS($answer1->cmp());
-
-if( $cp->part > 1) {
-Context()->texStrings;
-BEGIN_TEXT
-$PAR
-$HR
-${BBOLD}Deuxième partie :${EBOLD} 
-$BR
+[` F^{\prime}(t) = `][_________________________]{$answer1}
+END_PGML
+Section::End();
+    
+Section::Begin("Deuxième partie");
+BEGIN_PGML
 Utiliser le théorème fondamental du calcul pour évaluer l'intégrale définie suivante.
-$BR
-$BR
-\( \displaystyle \int_{$a}^{$b} \left($f \right) dt  = \)
-\{ ans_rule(20) \}
-END_TEXT
-Context()->normalStrings;
+
+[` \displaystyle \int_{[$a]}^{[$b]} \left( [$f] \right) \, dt  =`] [_____________________________]
+END_PGML
 
 ANS($answer2->cmp()->withPostFilter(AnswerHints( 
   Compute("-$answer2") => "Vous avez peut-être évalué F($a) - F($b).",
   )));
+Section::End();
+  
+Scaffold::End();
+## Fin du problème
 
-} ## fin de la partie 2
-
-COMMENT("This is a multi-part problem in which the next part is revealed only after the previous part is correct.");
-
-COMMENT('MathObject version');
 ENDDOCUMENT();

@@ -37,84 +37,69 @@ DOCUMENT();
 loadMacros(
 "PGstandard.pl",
 "MathObjects.pl",
-"compoundProblemFr.pl",
+#"compoundProblemFr.pl",
+"scaffold.pl",
+"PGML.pl",
 "answerHints.pl",
 );
+
+COMMENT("Ce problème comporte deux parties dont la partie suivante est affichée seulement si l\'étudiant a réussi la partie précédente. Vous devez autoriser un minimum de deux essais pour réussir ce problème car l\'étudiant doit soumettre ses réponses pour chacune des parties.");
 
 TEXT(beginproblem());
 
 $showPartialCorrectAnswers = 1;
 
-$cp = new compoundProblem( parts=>2, 
-                           totalAnswers => 2,
-					#	   nextVisible => 'Always',   
-						   nextStyle=>'Button',
-						   nextLabel => "Passer à la prochaine partie",
-						   );
-
-###################################
-#  Setup
-
 Context("Numeric")->variables->are(t=>"Real");
+Context()->flags->set(
+  tolerance => 0.0001,
+  tolType => "absolute",
+);
 
 $k = random(3,9,2);
 
 $a = 0;
 $b = "\pi/3";
 
-
 $F = list_random(Formula("sin($k * t)")->reduce,Formula("cos($k * t)")->reduce);
-
-
 $f = $F->D('t')->reduce;
-
 
 $answer1 = $f;
 $answer2 = ($F->eval(t=>pi/3))-($F->eval(t=>$a));
 
+# En-tête du problème avant d'afficher les deux parties
+BEGIN_PGML
+Ce problème comporte deux parties.  
+
+Soit [`F(t) = [$F] `].
+
+END_PGML
 
 
-###################################
-#  Main text part 1
-Context()->texStrings;
-BEGIN_TEXT
-${BBOLD}Première partie :${EBOLD}
-$BR
-Ce problème comporte deux parties.  Si \( F(t) = $F \), déterminer \( F^{\prime}(t) \).
-$BR
-$BR
-\( F^{\prime}(t) = \) \{ ans_rule(20) \}
-END_TEXT
-Context()->normalStrings;
+## Début du problème par parties
+Scaffold::Begin();
+    
+Section::Begin("Première partie");
+BEGIN_PGML
+Déterminer [` F^{\prime}(t) `].
 
-
-######################################
-#  Begin do not edit
-
-ANS($answer1->cmp());
-
-if( $cp->part > 1) {
-Context()->texStrings;
-BEGIN_TEXT
-$PAR
-$HR
-${BBOLD}Deuxième partie :${EBOLD} 
-$BR
+[` F^{\prime}(t) = `][_________________________]{$answer1}
+END_PGML
+Section::End();
+    
+Section::Begin("Deuxième partie");
+BEGIN_PGML
 Utiliser le théorème fondamental du calcul pour évaluer l'intégrale définie suivante.
-$BR
-$BR
-\( \displaystyle \int_{$a}^{$b} $f \, dt  = \)
-\{ ans_rule(20) \}
-END_TEXT
-Context()->normalStrings;
+
+[` \displaystyle \int_{[$a]}^{[$b]} [$f] \, dt  =`] [_____________________________]
+END_PGML
 
 ANS($answer2->cmp()->withPostFilter(AnswerHints( 
   Compute("-$answer2") => "Vous avez peut-être évalué F($a) - F(pi/3).",
   )));
 
-} ## fin de la partie 2
+Section::End();
+  
+Scaffold::End();
+## Fin du problème
 
-COMMENT("This is a multi-part problem in which the next part is revealed only after the previous part is correct.");
-
-COMMENT('MathObject version');
 ENDDOCUMENT();

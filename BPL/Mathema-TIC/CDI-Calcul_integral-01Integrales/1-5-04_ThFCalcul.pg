@@ -9,28 +9,10 @@
 
 ## Author(Julie Tremblay)
 ## Institution(Collège de Bois-de-Boulogne) 
-## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
-## Date : juin 2016
+## Date : février 2017
 ## Traduction française : Sylvie Charbonneau
 ## Level(2)    #Voir le fichier sur les levels
 ## Language(fr)
-
-###############Source###############
-## source : Library/FortLewis/Calc1/05-04-Integral-theorems/HGM5-05-04-Integral-theorems-19.pg
-## ZDBsubject(Calculus - single variable)
-## ZDBchapter(Integrals)
-## ZDBsection(Fundamental theorem of calculus)
-## ZInstitution(Fort Lewis College)
-## ZAuthor(Paul Pearson)
-## ZLevel(2)
-## TitleText1('Calculus')
-## AuthorText1('Hughes-Hallett')
-## EditionText1('5')
-## Section1('5.4')
-## Problem1('19')
-###############Source###############
-
-
 
 
 DOCUMENT();
@@ -38,34 +20,31 @@ DOCUMENT();
 loadMacros(
 "PGstandard.pl",
 "MathObjects.pl",
-"compoundProblemFr.pl",
+#"compoundProblemFr.pl",
+"scaffold.pl",
+"PGML.pl",
 "answerHints.pl",
 );
+
+COMMENT("Ce problème comporte deux parties dont la partie suivante est affichée seulement si l\'étudiant a réussi la partie précédente. Vous devez autoriser un minimum de deux essais pour réussir ce problème car l\'étudiant doit soumettre ses réponses pour chacune des parties.");
 
 TEXT(beginproblem());
 
 $showPartialCorrectAnswers = 1;
 
-$cp = new compoundProblem( parts=>2, 
-                           totalAnswers => 2,
-						#   nextVisible => 'Always',   
-						   nextStyle=>'Button',
-						   nextLabel => "Passer à la prochaine partie",
-						   );
-
-
-###################################
-#  Setup
 
 Context("Numeric")->variables->are(x=>"Real");
 Context()->variables->set(x=>{limits=>[0,1]});
+Context()->flags->set(
+  tolerance => 0.0001,
+  tolType => "absolute",
+);
+
 
 
 $a = 0;
-$b = random(1,4,1);
-
+$b = random(2,5,1);
 $c = random(2,8);
-
 
 $F = Formula("e^(x^($c))")->reduce;
 $Fexp = Formula("exp(x^($c))")->reduce;
@@ -73,57 +52,43 @@ $Fexp = Formula("exp(x^($c))")->reduce;
 $c1 = $c-1;
 $f = Formula("$c*x^($c1)*e^(x^($c))")->reduce;
 
-
 $answer1 = $f;
 $answer2 = Compute("e^(($b)^($c))-e^(($a)^($c))");
 
-###################################
-#  Main text part 1
 
-Context()->texStrings;
-BEGIN_TEXT
-${BBOLD}Première partie :${EBOLD}
-$BR
-Ce problème comporte deux parties.  Si \( F(x) = $F \), déterminer \( F^{\prime}(x) \).
-$BR
-$BR
-\( F^{\prime}(x) = \) \{ ans_rule(20) \}
-END_TEXT
-Context()->normalStrings;
+# En-tête du problème avant d'afficher les deux parties
+BEGIN_PGML
+Ce problème comporte deux parties.  
+
+Soit [`F(x) = [$F] `].
+
+END_PGML
 
 
+## Début du problème par parties
+Scaffold::Begin();
+    
+Section::Begin("Première partie");
+BEGIN_PGML
+Déterminer [` F^{\prime}(x) `].
 
-######################################
-#  Begin do not edit
-
-ANS($answer1->cmp());
-
-
-#  End do not edit
-#######################################
-
-if( $cp->part > 1) {
-Context()->texStrings;
-BEGIN_TEXT
-$PAR
-$HR
-${BBOLD}Deuxième partie :${EBOLD} 
-$BR
+[` F^{\prime}(x) = `][_________________________]{$answer1}
+END_PGML
+Section::End();
+    
+Section::Begin("Deuxième partie");
+BEGIN_PGML
 Utiliser le théorème fondamental du calcul pour évaluer l'intégrale définie suivante.
-$BR
-$BR
-\( \displaystyle \int_{$a}^{$b} $f \, dx  = \)
-\{ ans_rule(20) \}
-END_TEXT
-Context()->normalStrings;
+
+[` \displaystyle \int_{[$a]}^{[$b]} [$f] \, dx  =`] [_____________________________]
+END_PGML
 
 ANS($answer2->cmp()->withPostFilter(AnswerHints( 
   Compute("-$answer2") => "Vous avez peut-être évalué F($a) - F($b).",
   )));
+Section::End();
+  
+Scaffold::End();
+## Fin du problème
 
-}
-
-COMMENT("This is a multi-part problem in which the next part is revealed only after the previous part is correct.");
-
-COMMENT('MathObject version');
 ENDDOCUMENT();

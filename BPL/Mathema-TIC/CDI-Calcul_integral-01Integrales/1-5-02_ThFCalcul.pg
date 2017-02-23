@@ -37,25 +37,23 @@ DOCUMENT();
 loadMacros(
 "PGstandard.pl",
 "MathObjects.pl",
-"compoundProblemFr.pl",
-"answerHints.pl",
+#"compoundProblemFr.pl",
+"scaffold.pl",
+"PGML.pl",
+#"answerHints.pl",
 );
+
+COMMENT("Ce problème comporte deux parties dont la partie suivante est affichée seulement si l\'étudiant a réussi la partie précédente. Vous devez autoriser un minimum de deux essais pour réussir ce problème car l\'étudiant doit soumettre ses réponses pour chacune des parties.");
 
 TEXT(beginproblem());
 
 $showPartialCorrectAnswers = 1;
 
-$cp = new compoundProblem( parts=>2, 
-                           totalAnswers => 2,
-						   nextStyle=>'Button',
-						   nextLabel => "Passer à la prochaine partie",
-						   );
-
-
-###################################
-#  Setup
-
 Context("Numeric")->variables->are(t=>"Real");
+Context()->flags->set(
+  tolerance => 0.0001,
+  tolType => "absolute",
+);
 
 $a = 1; 
 $b = $a + random(2,20,1);
@@ -64,51 +62,40 @@ $F = Formula("ln(t)")->reduce;
 
 $ftex = "\displaystyle \frac{1}{t}";
 
-
-
 $answer1 = $F->D('t');
 $answer2 = Compute("ln($b)");
 
+# En-tête du problème avant d'afficher les deux parties
+BEGIN_PGML
+Ce problème comporte deux parties.  
 
-###################################
-#  Main text part 1
+Soit [`F(t) = [$F] `].
 
-Context()->texStrings;
-BEGIN_TEXT
-${BBOLD}Première partie :${EBOLD}
-$BR
-Ce problème comporte deux parties. Si \( F(t) = $F \), déterminer  \( F^{\prime}(t) \).
-$BR
-$BR
-\( F^{\prime}(t) = \) \{ ans_rule(20) \}
-END_TEXT
-Context()->normalStrings;
+END_PGML
 
 
+## Début du problème par parties
+Scaffold::Begin();
+    
+Section::Begin("Première partie");
+BEGIN_PGML
+Déterminer [` F^{\prime}(t) `].
 
-######################################
-#  Begin do not edit
-
-ANS($answer1->cmp());
-
-if( $cp->part > 1) {
-BEGIN_TEXT
-$PAR
-$HR
-${BBOLD}Deuxième partie :${EBOLD} 
-$BR
+[` F^{\prime}(t) = `][_________________________]{$answer1}
+END_PGML
+Section::End();
+    
+Section::Begin("Deuxième partie");
+BEGIN_PGML
 Utiliser le théorème fondamental du calcul pour évaluer l'intégrale définie suivante.
-$BR
-$BR
-\( \displaystyle \int_{$a}^{$b} $ftex \, dt  = \)
-\{ ans_rule(20) \}
-END_TEXT
 
-ANS($answer2->cmp());
+[` \displaystyle \int_{[$a]}^{[$b]} [$ftex] \, dt  =`] [_____________________________]{$answer2}
+END_PGML
 
-}  ## fin de la partie 2
+Section::End();
+  
+Scaffold::End();
+## Fin du problème
 
-COMMENT("This is a multi-part problem in which the next part is revealed only after the previous part is correct.");
 
-COMMENT('MathObject version');
 ENDDOCUMENT();
