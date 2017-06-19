@@ -15,7 +15,7 @@
 
 ## Level(2)    #Voir le fichier sur les levels
 ## Language(fr)
-## Modifié par Julie Tremblay, collège BdeB, juin 2014
+## Modifié par Julie Tremblay, collège BdeB, février 2017
 ## Author(Julie Tremblay)
 ## Institution(Collège de Bois-de-Boulogne)
 ## Traduction française : Sylvie Charbonneau
@@ -38,14 +38,18 @@ DOCUMENT();
 
 loadMacros(
   "PGstandard.pl",
-  "compoundProblemFr.pl",
+  "scaffold.pl",
+  "PGML.pl",
   "MathObjects.pl",
  # "PGcourse.pl",           # Customization file for the course
 );
 
+COMMENT("Ce problème comporte deux parties dont la partie suivante est affichée seulement si l\'étudiant a réussi la partie précédente. Vous devez autoriser un minimum de deux essais pour réussir ce problème car l\'étudiant doit soumettre ses réponses pour chacune des parties.");
+
+
 TEXT(beginproblem());
 
-#$showPartialCorrectAnswers = 1;
+$showPartialCorrectAnswers = 1;
 
 $sign = random(-1,1,2);
 $a = $sign*random(2,7,1);
@@ -55,60 +59,11 @@ $bs = $b**2;
 
 Context()->strings->add(aucune=>{}, nep=>{} );
 
-
 # la fonction 
 $ftex = "\frac{$a x^2}{x^2 - $bs }";
-#$fp = "- $twiceabsq * x / ((x**2 - $bs)**2)";
 
-$cp = new compoundProblem( parts=>2, 
-                           totalAnswers => 5,
-                           nextStyle=>'Button',
-						   nextLabel=>"Cliquer pour passer à la prochaine partie");
-
-
-BEGIN_TEXT
-Ce problème comprend deux parties.  La seconde partie sera affichée une fois vous aurez répondu correctement à la première. $BR
-$BR
-a) Quelles sont les asymptotes verticales de \( \displaystyle f(x) = $ftex \)? 
-Répondre par un nombre, une liste de nombres séparés par des virgules, ou ${BBOLD}aucune${EBOLD}.
-$BR
-$BR 
-Asymptote(s) verticale(s) en \( x = \) \{ ans_rule(25) \}
-$PAR
-
-END_TEXT
-
-$ans1 = List("-$b,$b");
-ANS($ans1->cmp);
-
-
-if ( $cp->part > 1 ) {
-
-BEGIN_TEXT
-$HR
-$BR
-b) Déterminer les limites à gauche et à droite de l'asymptote verticale \( x = -$b \).   
-Entrer $BBOLD inf $EBOLD pour \(\infty\), $BBOLD -inf $EBOLD pour \(-\infty\) et $BBOLD nep $EBOLD si la limite n'existe pas.
-$BR
-$BR
-$BCENTER
-\( \displaystyle \lim_{x \rightarrow -$b^{-}} $ftex = \) \{ ans_rule(10) \} 
-$SPACE $SPACE $SPACE $SPACE $SPACE
-\( \displaystyle \lim_{x \rightarrow -$b^{+}} $ftex = \) \{ ans_rule(10) \}
-$ECENTER
-$PAR
-
-Déterminer les limites à gauche et à droite de l'asymptote verticale \( x = $b \).
-$BR
-$BR
-$BCENTER
-\( \displaystyle \lim_{x \rightarrow $b^{-}} $ftex = \) \{ ans_rule(10) \} 
-$SPACE $SPACE $SPACE $SPACE $SPACE
-\( \displaystyle \lim_{x \rightarrow $b^{+}} $ftex = \) \{ ans_rule(10) \} 
-$ECENTER
-$BR
-
-END_TEXT
+# Réponses
+$ans1 = Compute("-$b,$b");
 
 if ($sign == 1) {
 
@@ -125,12 +80,38 @@ $ans4 = Compute("inf");
 $ans5 = Compute("-inf"); 
 }
 
-ANS($ans2->cmp);
-ANS($ans3->cmp);
-ANS($ans4->cmp);
-ANS($ans5->cmp);
+# En-tête du problème avant d'afficher les deux parties
+BEGIN_PGML
+Ce problème comprend deux parties.  La seconde partie sera affichée une fois vous aurez répondu correctement à la première. 
 
-}  ### end if ( $cp->part > 1 )
+END_PGML
+
+
+## Début du problème par parties
+Scaffold::Begin();
+    
+Section::Begin("Première partie");
+BEGIN_PGML
+Quelles sont les asymptotes verticales de [`` f(x) = [$ftex] ``]? Répondre par un nombre, une liste de nombres séparés par des virgules, ou *aucune*.
+
+Asymptote(s) verticale(s) en [` x = `][___________________________]{$ans1}
+END_PGML
+Section::End();
+    
+Section::Begin("Deuxième partie");
+BEGIN_PGML
+Déterminer les limites à gauche et à droite de l'asymptote verticale [` x = -[$b] `]. Entrer *inf* pour [` \infty `], *-inf* pour [` -\infty `] et *nep* si la limite n'existe pas.
+
+>>[`` \lim_{x \rightarrow -[$b]^{-}} [$ftex] = ``][___________________]{$ans2}           [`` \lim_{x \rightarrow -[$b]^{+}} [$ftex] = ``][___________________]{$ans3}<<
+
+Déterminer les limites à gauche et à droite de l'asymptote verticale [` x = [$b] `].
+
+>>[`` \lim_{x \rightarrow [$b]^{-}} [$ftex] = ``][___________________]{$ans4}            [`` \lim_{x \rightarrow [$b]^{+}} [$ftex] = ``][___________________]{$ans5}<<
+END_PGML
+
+Section::End();
+  
+Scaffold::End();
+## Fin du problème
 
 ENDDOCUMENT();
-
