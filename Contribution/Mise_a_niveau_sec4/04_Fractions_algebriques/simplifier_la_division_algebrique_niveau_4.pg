@@ -1,0 +1,140 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section fractions algébriques
+#     type de question - Division algébrique de la forme (ax/x+b)  / (ax^2 +abx)
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 4')
+## DBchapter('Fractions algébriques')
+## DBsection('Simplification')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'polynôme', 'simplification', 'algèbre','variable', 'exposant','fraction','division')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs des coefficients, avec celui du dénominateur qui est un multiple de celui du numérateur
+
+$c= random(1,4);
+$cx=random(2,5);
+$ccx=$cx*$c;
+
+# déterminer le signe dans l'équation
+$choix=random(0,1);
+if ($choix==0) { $signe="+";}
+else { $signe="-";}
+
+
+# déclarer la lettre qui seront la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real");
+$x="x";
+
+# créer la réponse
+$reponse=Formula("((1)/(($x $signe $c)^2))");        
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Effectuer l'opération suivante, en précisant la valeur de <i>c</i> et de l'exposant dans la réponse: 
+<br/><br/>
+
+\(   \dfrac{  \dfrac{$cx$x}{$x $signe $c}  }{ $cx $x^2 $signe $ccx$x}  =  \dfrac{1}{($x $signe c)^{exposant}} \)
+<br/><br/>
+
+valeur de <i>c</i> =  \{ans_rule(5)\}<br/> 
+valeur de l'exposant =  \{ans_rule(5)\} 
+<br/><br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Afin de diviser une fraction par un terme ou une autre fraction, il faut inverser ce terme ou autre fraction et ensuite multiplier les numérateurs entre eux pour former le numérateur final, ainsi que les dénominateurs entre eux afin de former le dénominateur final.";
+break;
+case '2':text="Il est important de factoriser au numérateur et au dénominateur avant d'effectuer des simplifications.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS(strict_num_cmp($c, .0));
+ANS(strict_num_cmp(2, .0));
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Effectuer l'opération suivante, en précisant la valeur de <i>c</i> et de l'exposant dans la réponse: 
+<br/><br/>
+
+\(   \dfrac{  \dfrac{$cx$x}{$x $signe $c}  }{ $cx $x^2 $signe $ccx$x}  =  \dfrac{1}{($x $signe c)^{exposant}} \)
+<br/><br/>
+
+valeur de <i>c</i> = ____<br/> 
+valeur de l'exposant = ____
+<br/><br/>
+
+
+Afin de diviser une fraction par un autre terme ou une autre fraction, il faut inverser ce terme ou cette seconde fraction, et multiplier le tout: <br/><br/>
+
+\( \dfrac{  \dfrac{$cx$x}{$x $signe $c}  }{ \dfrac{$cx $x^2 $signe $ccx$x}{1} }  =  \dfrac{$cx$x}{$x $signe $c} \cdot \left( \dfrac{1}{$cx $x^2 $signe $ccx$x} \right) \)
+<br/><br/>
+
+Étant donné que le second dénominateur présent peut être factorisé, et que ce facteur se simplifie avec le premier numérateur, la multiplication qui en résulte est plus facile à effectuer après cette factorisation:
+<br/><br/>
+\( \dfrac{($cx$x)}{$x $signe $c} \cdot \dfrac{1}{($cx$x)($x $signe $c)}   =  \dfrac{1}{$x $signe $c} \cdot \dfrac{1}{($x $signe $c)} =  \dfrac{1}{($x $signe $c)^2}  = \dfrac{1}{($x $signe c)^{exposant}}  \)
+
+<br/><br/>
+
+Par conséquent:<br/>
+la valeur de <i>c</i> est =  <strong>$c</strong><br/> 
+la valeur de l'exposant est = <strong>2</strong>
+<br/><br/>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

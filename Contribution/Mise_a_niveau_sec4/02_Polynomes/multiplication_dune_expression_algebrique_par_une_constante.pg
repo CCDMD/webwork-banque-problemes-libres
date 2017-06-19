@@ -1,0 +1,136 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Polynômes
+#     type de question - Multiplication d'une expression algébrique par une constante
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 4')
+## DBchapter('Polynômes')
+## DBsection('Simplification')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'polynôme', 'simplification', 'algèbre','variable', 'multiplication')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs des coefficients et des constantes
+
+$a= random(2,8);
+$b=random(2,5);
+$c=random(2,9);
+
+# créer les signes à mettre dans la parenthèse de la question
+
+$choixa= random(0,1);
+
+if ($choixa==0) {$signec="+"; }
+else {$signec="-";}
+
+# créer les réponses intermédiaires
+$ab=$a*$b;
+$ac= $a*$c;
+if ($choixa==1) {$cs=(-1*$c); }
+else {$cs=$c;}
+$cpos = abs($c);
+
+# déclarer les lettres qui seront les variables non-définies (variables réelles)
+Context()->variables->are(x=>"Real");
+
+# écrire la lettre x sous forme de variable afin de pouvoir l'accoler à ses coefficients dans l'affichage des expressions algébriques 
+$x="x";
+
+# créer la réponse 
+$reponse=Formula("($ab$x $signec $ac)");
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Effectuer la multiplication suivante :
+<br/><br/>
+$a ($b$x $signec $c) = 
+<br/><br/>
+
+\{ans_rule(10)\}
+  </td></tr>
+
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Lorsqu'une constante est placée devant une parenthèse renfermant plusieurs termes, multiplier cette constante avec chacun des termes dans la parenthèse, et retirer les parenthèses.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS($reponse->cmp);
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Effectuer la multiplication suivante <br/>
+
+$a ($b$x $signec $c) = 
+<br/><br/>
+
+
+Multiplier le terme présent devant la parenthèse (soit $a) avec chacun des termes présents dans la parenthèse (soient $b$x et $c):<br/><br/>
+<table>
+  <tr>
+    <td>$a<strong>($b$x $signec $c)</strong> =  ($a)<strong>($b$x)</strong> + ($a)<strong>($cs)</strong></td>
+  <tr>
+    <td><ul><li> $a($b$x) = $ab$x </li>
+                   <li>$a($cs) = $signec $ac</li></td>
+  </tr>
+</table>
+<br/>
+
+Réunir les termes trouvés pour produire la réponse:<br/><br/>
+
+<strong>$ab$x $signec $ac</strong> 
+<br/>
+END_SOLUTION
+
+ENDDOCUMENT();

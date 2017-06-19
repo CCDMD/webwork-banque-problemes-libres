@@ -1,0 +1,145 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions de valeur absolue et définies par partie
+#     type de question - Évaluer f(a) avec une fonction définie par partie
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 5')
+## DBchapter('Fonctions par partie')
+## DBsection('analyse de fonction')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'secondaire 5', 'fonction', 'algèbre', 'par partie')
+
+############################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+# définir les valeurs des coefficients et constantes de l'équation 
+$a = random(2,6);
+$b= random(1,7);
+$c=random(2,8);
+$d=random(-10,-1);
+
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# déterminer les autres valeurs requises pour la réponse et pour la solution
+$intvalabs= $d-$b;
+$valabs=abs($intvalabs);
+$avalabs=$a * $valabs;
+
+# déterminer les réponses
+$rep = $avalabs + $c;
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Évaluer la fonction suivante pour <i>f($d)</i>:
+<br/><br/>
+<i> f($lettre) = $a |$lettre - $b| + $c</i>
+<br/><br/>
+
+f($d) = &nbsp;&nbsp; \{ans_rule(10)\} 
+<br/><br/>
+
+  </td></tr>
+</table>
+END_TEXT
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Pour trouver la valeur de f($d), il faut remplacer x par $d dans f(x). ";
+break;
+case '2':text="La valeur absolue d'un nombre est la distance qui sépare ce nombre de 0 sur la droite des réels. Puisque c'est une distance, la valeur absolue d'un nombre est toujours positive.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($rep, .0));
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u></p>
+<br/>Évaluer la fonction suivante pour <i>f($d)</i>:
+<br/><br/>
+<i> f($lettre) = $a |$lettre - $b| + $c</i>
+<br/><br/>
+
+f($d) = __________
+<br/><br/>
+
+<table>
+  <tr>
+    <td align=right><i>f(x) = </i> </td>
+    <td> <i>$a |$lettre - $b| + $c</i></td>
+  </tr>
+  <tr>
+    <td align=right><i>f($d) = </i> </td>
+    <td> <i>$a |($d) - $b| + $c</i></td>
+  </tr>
+  <tr>
+    <td align=right> = </td>
+    <td> <i>$a |$intvalabs| + $c</i></td>
+  </tr>
+  <tr>
+    <td align=right> = </td>
+    <td> <i>$a ($valabs) + $c</i></td>
+  </tr>
+  <tr>
+    <td align=right> = </td>
+    <td> <i>$avalabs + $c</i></td>
+  </tr>
+  <tr>
+    <td align=right> = </td>
+    <td> <i>$rep</i></td>
+  </tr>
+</table>
+<br/><br/>
+D'où <i>f($d) = <strong>$rep</strong></i> 
+
+END_SOLUTION
+
+ENDDOCUMENT();

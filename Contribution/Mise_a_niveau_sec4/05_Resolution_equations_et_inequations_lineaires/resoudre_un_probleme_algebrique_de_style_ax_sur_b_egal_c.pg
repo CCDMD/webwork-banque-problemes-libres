@@ -1,0 +1,139 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Résolution d'équations et inéquations linéaires
+#     type de question - Résoudre un problème algébrique de style ax/b = c
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 4')
+## DBchapter('Résoudre des équations et inéquations linéaires')
+## DBsection('Équation linéaire')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'polynôme', 'résolution', 'algèbre','variable', 'exposant')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs des variables
+
+$b= random(2,8);
+$a=$b*(random(2,5));
+$reponse=random(2,8);
+
+# déclarer la lettre qui seront la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real",y=>"Real");
+$choixlettre=(0,1);
+if ($choixlettre==0) {$lettre="x";}
+else {$lettre="y";}
+
+# créer les valeurs intermédiaires, ainsi que la réponse
+$c = ($a*$reponse)/$b;
+$cfoisb=$c*$b;
+$afoisrep=$a*$reponse;
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Résoudre  \(  \dfrac{$a$lettre}{$b}  = $c \)
+<br/><br/>
+
+$lettre =  \{ans_rule(5)\}<br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Les termes multipliés d'un côté du signe égal peuvent être déplacés de l'autre côté de ce signe sous forme de division, et vice-versa.";
+break;
+case '2':text="Valider la réponse trouvée en remplaçant les variables de l'équation initiale par cette réponse et en validant l'équation mathématique résultante.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS(strict_num_cmp($reponse, .0));
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Résoudre  \(  \dfrac{$a$lettre}{$b}  = $c \)
+<br/><br/>
+
+$lettre = _____<br/>
+<br/><br/>
+
+Multiplier le tout par la valeur du dénominateur (soit $b) afin de faire disparaître ce dénominateur; ainsi, le terme $b multipliera $y de l'autre côté du signe égal. <br/>
+
+<ul>
+   <li>$a$lettre / <strong>$b</strong> = $c</li>
+   <li>$a$lettre = $c (<strong>$b</strong>)</li>   
+   <li>$a$lettre = $cfoisb;</li>
+</ul>
+<br/>
+
+Isoler ensuite la variable $lettre et en trouver la valeur équivalente:<br/>
+
+<ul>
+   <li><strong>$a</strong>$lettre = $cfoisb</li>
+   <li>$lettre= $cfoisb / <strong>$a</strong></li>   
+   <li>$lettre = <strong>$reponse</strong></li>
+</ul>
+<br/><br/>
+
+Il est possible de valider cette réponse obtenue en l'insérant dans la variable de l'équation intiale et en constatant si l'équivalence a été respectée:
+<br/>
+Résoudre $a$lettre / <strong>$b</strong> = $c ,  avec $lettre = <strong>$reponse</strong>
+<br/>
+<ul>
+   <li>$a(<strong>$reponse</strong>)/$b = $c</li>
+   <li>$afoisrep / $b = $c</li>   
+   <li><strong>$c</strong> = $c  ,  vrai !</li>
+</ul>
+<br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

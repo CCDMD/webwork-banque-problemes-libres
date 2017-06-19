@@ -1,0 +1,101 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de Base - Ensembles et intervalles
+#     type de question - ensemble des nombres rationnels
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 4')
+## DBchapter('Notions de base')
+## DBsection('Ensembles et intervalles')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'nombres rationnels')
+
+###########################################################################
+
+
+DOCUMENT();  
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+);
+
+TEXT(beginproblem());
+
+# création de la variable qui présentera tous les choix de réponses (bonnes et mauvaises) sous forme de choix multiple
+$mc = new_checkbox_multiple_choice();
+
+
+$choix= random (0,4);
+
+# cas où le nombre est un entier naturel (un chiffre positif entre 2 et 9)
+if ($choix==0) {
+   $nombre= random(2,9);
+   $mc -> qa (" ","Nombres naturels", "Nombres entiers", "Nombres rationnels","Nombres r&#233;els",);
+   $mc -> extra("Nombres irrationnels",);
+   $ensembles= "Ensemble des nombres naturels, des nombres entiers, des nombres rationnels et des nombres réels.";
+}
+
+# cas où le nombre est un entier négatif (un chiffre entre -2 et -9)
+elsif ($choix==1) {
+   $nombre= random(-2,-9);
+   $mc -> qa (" ","Nombres rationnels","Nombres r&#233;els","Nombres entiers",);
+   $mc -> extra("Nombres irrationnels", "Nombres naturels",);
+   $ensembles= "Ensemble des nombres entiers, des nombres rationnels et des nombres réels.";
+}
+
+# cas où le nombre est un nombre décimal 
+elsif ($choix==2) {
+   $nombre= random(2,9) + ((random(2,9))/10);
+   $mc -> qa (" ","Nombres rationnels","Nombres r&#233;els",);
+   $mc -> extra("Nombres irrationnels", "Nombres naturels","Nombres entiers",);
+   $ensembles= "Ensemble des nombres rationnels et des nombres réels.";
+}
+
+# cas où le nombre est un pourcentage 
+elsif ($choix==3) {
+   $n =  random(2,9);
+   $nombre="$n"."%";
+   $mc -> qa (" ","Nombres rationnels","Nombres r&#233;els",);
+   $mc -> extra("Nombres irrationnels", "Nombres naturels","Nombres entiers");
+   $ensembles= "Ensemble des nombres rationnels et des nombres réels.";
+}
+
+# cas où le nombre est une valeur de pi
+else {
+   $n =  random(2,9);
+   $nombre="$n"."&#960;";
+   $mc -> qa (" ","Nombres irrationnels","Nombres r&#233;els",);
+   $mc -> extra("Nombres rationnels", "Nombres naturels","Nombres entiers",);
+   $ensembles= "Ensemble des nombres irrationnels et des nombres réels.";
+}
+
+BEGIN_TEXT
+<br/>Le nombre <b> $nombre</b> appartient à l'ensemble suivant <br/>
+(vous pouvez sélectionner plusieurs cases):<br/>
+
+\{ $mc -> print_a() \}
+
+END_TEXT
+
+
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+ANS( checkbox_cmp( $mc->correct_ans() ) );
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+
+<p>&nbsp;<u>Solution</u></p>
+
+<br/>Le nombre <b> $nombre</b> appartient aux ensembles suivants:
+<b>$ensembles</b><br/><br/>
+
+Pour mieux comprendre la réponse, voici les ensembles de nombres: <br/>
+\{ image( 'nombres_reels.jpg', width=>550, height=>300) \}<br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

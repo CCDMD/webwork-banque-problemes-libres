@@ -1,0 +1,174 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de base - Priorit&eacute; des op&eacute;rations
+#     type de question - Priorite des exposants avec entiers (moyen)
+##ENDDESCRIPTION
+
+## DBsubject('Notions de base')
+## DBchapter('Priorité des opérations')
+## DBsection('Priorit&eacute; des fractions et exposants')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'notions', 'priorit&eacute;', 'priorité des opérations','exposants','fraction',)
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs de l'opération, selon certaines conditions
+$a= random(2,9);
+
+do {   
+        $b=random($a+1,9);   
+        $c=random($a+1,9);
+      }  
+until ($b != $c);
+
+do {
+        $entier1=random(2,7);
+        $entier2=random(2,7);
+        $mult1=gcd($entier1,$entier2);
+      }
+until (($entier1 != $entier2) && ($mult1==1));
+
+$entier1exp=$a-$c;
+$entier1exppos=$entier1exp*(-1);
+$entier2exp=$b-$a;
+
+# créer la réponse
+$rep=Formula("($entier2^($entier2exp))/($entier1^($entier1exppos))");
+
+#créer les réponses intermédiaires
+$repnum=Formula("($entier2^($entier2exp))");
+$repden=Formula("($entier1^($entier1exppos))");
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+
+Simplifier l'expression suivante:  <br/><br/>
+
+<table>
+  <tr>
+    <td> \( \left( \dfrac{$entier1}{$entier2} \right)^{$a}  \)   &#8729;   \(  \dfrac{$entier2^{$b}}{$entier1^{$c}}  \)</td>
+    <td> &nbsp; = &nbsp;</td>
+    <td> \{ans_rule(10)\} <br/>___________<br/>\{ans_rule(10)\}</td>
+  </tr>
+</table>
+<br/>
+Note: Chaque réponse doit être donnée sous forme exponentielle où chaque exposant doit être positif (ex.: 2^3)
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Lorsqu'une variable est munie d'un exposant, et que le tout est muni d'un autre exposant,  multiplier alors les deux exposants. Ce produit formera le nouvel exposant de la variable.  Donc, (a<sup>m</sup>)<sup>n</sup> = a <sup>mn</sup>.";
+break;
+case '2':text="Lorsque deux variables (ou constantes) identiques munies d'exposants sont divisées, leurs exposants sont alors soustraits et cette différence est appliquée sous forme d'exposant à la variable dans la réponse. Donc, a<sup>m</sup> / a<sup>n</sup> =  a<sup>m-n</sup>.  Si cette différence donne un exposant négatif, changer la variable de place au sein de la fraction (si elle est au numérateur, la mettre au dénominateur, et vice-versa) et lui attribuer la valeur positive de l'exposant (soit sa valeur absolue). ";
+break;
+case '3':text="Lorsque deux variables (ou constantes) identiques munies d'exposants sont multipliées, leurs exposants sont alors additionnés et cette somme est appliquée sous forme d'exposant à la variable dans la réponse. Donc, a<sup>m</sup>  a<sup>n</sup> =  a<sup>m+n</sup>.  Si cette différence donne un exposant négatif, changer la variable de place au sein de la fraction (si elle est au numérateur, la mettre au dénominateur, et vice-versa) et lui attribuer la valeur positive de l'exposant (soit sa valeur absolue). ";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($repnum->cmp);
+ANS($repden->cmp);
+
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+Simplifier l'expression suivante:  <br/><br/>
+
+<table>
+  <tr>
+    <td> \( \left( \dfrac{$entier1}{$entier2} \right)^{$a}  \) </td>
+    <td> &#8729; </td>
+    <td> \(  \dfrac{$entier2^{$b}}{$entier1^{$c}}  \)</td>
+  </tr>
+</table>
+<br/>
+Note: Chaque réponse doit être donnée sous forme exponentielle où chaque exposant doit être positif (ex.: 2^3)
+ 
+
+<br/><br/>
+
+<table>
+  <tr valign=top>
+    <td> \( \left( \dfrac{$entier1}{$entier2} \right)^{$a}  \)   &#8729;   \(  \dfrac{$entier2^{$b}}{$entier1^{$c}}  \)</td>
+    <td> &nbsp; = &nbsp;</td>
+    <td>\(  \dfrac{$entier1^{$a}}{$entier2^{$a}}  \)   &#8729;   \(  \dfrac{$entier2^{$b}}{$entier1^{$c}}  \)  &nbsp; &nbsp;</td>
+    <td>en utilisant la propriété  \( ( \dfrac{a}{b} )^{n} \) =  \( \dfrac{a^{n}}{b^{n}} \)  si b &#8800;  0 </td>
+  </tr>
+  <tr>
+    <td> </td>
+    <td>&nbsp; =  &nbsp;</td>
+    <td>\( $entier1^{($a-$c)} \)  &#8729;  \(  $entier2^{($b-$a)}  \)</td>
+    <td>en effectuant les divisions (soustraire les exposants correspondants)</td>
+  </tr>
+  <tr>
+    <td> </td>
+    <td>&nbsp; =  &nbsp;</td>
+    <td>\( $entier1^{$entier1exp} \)  &#8729;   \(  $entier2^{$entier2exp}  \)</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> </td>
+    <td>&nbsp; =  &nbsp;</td>
+    <td>\( \dfrac{$entier2^{$entier2exp}}{$entier1^{$entier1exppos}}  \)</td>
+    <td>en rendant les exposants positifs</td>
+  </tr>
+</table>
+
+<br/>
+
+<br/> 
+donc la réponse à inscrire est: <strong> $entier2^$entier2exp / $entier1^$entier1exppos </strong>
+
+END_SOLUTION
+
+ENDDOCUMENT();

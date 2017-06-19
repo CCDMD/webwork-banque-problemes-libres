@@ -1,0 +1,174 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions quadratiques
+#     type de question - trouver la règle quadratique (sous forme canonique) avec le sommet et un point fournis
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 5')
+## DBchapter('Fonctions quadratiques')
+## DBsection('règle générale')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'secondaire 5', 'fonction', 'algèbre', 'quadratique')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+
+TEXT(beginproblem());
+
+# déterminer la valeur des valeurs h et k de la forme canonique de l'équation quadratique 
+# ainsi que la valeur des coordonnées du point (x1, y1) passant par cette équation. 
+
+do {
+  $h = random(2,9);
+  $k = random(2,9);
+  $x1=random(2,9);
+  $y1=random(2,9);
+}  until  (($h != $x1) &($k != $y1)) ;
+
+# déterminer les autres valeurs requises dans la solution
+$y1k = $y1-$k;
+$x1h = $x1-$h;
+$x1hcarre= $x1h*$x1h;
+$mult= gcd($y1k, $x1hcarre);
+$anumsimp=$y1k/$mult;
+$adenumsimp=$x1hcarre/$mult;
+$anumabs=abs($anumsimp);
+
+if ($anumabs==1) {$anumabsaff="";}
+else { $anumabs= $anumabs;}
+
+#créer  les signes à insérer devant le coefficient a
+if ($anumsimp>=0) {$asigneaffiche=""; $s = 1;}
+else { $asigneaffiche="-"; $s = -1;}
+
+# déclarer la lettre qui seront la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# déterminer comment afficher la réponse, selon qu'il s'agisse d'une fraction ou non
+$afracgen= "$anumabs/$adenumsimp";
+if ($adenumsimp==1) {$afrac=$anumabsaff;}
+else {$afrac=$afracgen;}
+
+
+# créer la réponse
+$reponse=Formula("( $asigneaffiche $afrac ($lettre - $h)^2 + $k )");        
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Déterminer la règle (sous la forme canonique) de la fonction quadratique qui a les caractéristiques suivantes:<br/>    
+<ul>
+  <li> les coordonnées du sommet sont: ($h, $k)</li>
+  <li> la fonction passe par le point ($x1, $y1)
+</ul><br/>
+
+<i> f ($lettre) = </i>   \{ans_rule(20)\} 
+
+<br/><br/>
+Nota: Donner votre réponse sous la forme canonique. S'il y a des fractions, les donner sous une forme simplifiée et utiliser la barre oblique / pour en séparer le numérateur du dénominateur. Écrire les exposants sous la forme x^2 (pour indiquer x<sup>2</sup>).
+
+<br/><br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="La forme canonique d'une équation quadratique est la suivante: <i>f(x) = a(x - h)<sup>2</sup> + k</i> où les valeurs de h et k sont les coordonnées du sommet S(h,k).";
+break;
+case '2':text="Remplacer les valeurs connues (coordonnées du sommet (h,k) et coordonnées du point (x1,y1)) dans l'équation sous la forme canonique pour trouver la valeur de la constante a.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($reponse->cmp);
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Déterminer la règle (sous la forme canonique) de la fonction quadratique qui a les caractéristiques suivantes:<br/>    
+<ul>
+  <li> les coordonnées du sommet sont: ($h, $k)</li>
+  <li> la fonction passe par le point ($x1, $y1)
+</ul><br/>
+
+<i> f ($lettre) = </i>   ________________
+
+<br/><br/>
+Nota: Donner votre réponse sous la forme canonique. S'il y a des fractions, les donner sous une forme simplifiée et utiliser la barre oblique / pour en séparer le numérateur du dénominateur. Écrire les exposants sous la forme x^2 (pour indiquer x<sup>2</sup>).
+<br/><br/>
+
+
+Nous cherchons la règle (forme canonique demandée) d'une fonction quadratique qui a les caractéristiques suivantes:<br/>
+<ul>
+  <li> les coordonnées du sommet sont: ($h, $k)</li>
+  <li> la fonction passe par le point ($x1, $y1)
+</ul><br/>
+
+Avec la forme canonique, nous obtenons:<br/><br/>
+
+<i> f($lettre) = a($lettre - h)<sup>2</sup> + k</i>   où (h,k) sont les coordonnées du sommet<br/>
+<i> f($lettre) = a($lettre - $h)<sup>2</sup> + $k</i>  car S(h,k) = ($h,$k)<br/>
+<i> $y1 = a($x1 - $h)<sup>2</sup> + $k</i>  car P(x,y) = ($x1, $y1)<br/>
+<i> $y1- $k = a($x1h)<sup>2</sup></i><br/>
+<i> $y1k = a($x1hcarre)</i> <br/>
+<i> $y1k / $x1hcarre  =  a</i> <br/>
+
+D'où a = <strong> $afrac </strong> 
+<br/><br/>
+
+
+En remplaçant la valeur de a par $afrac et les coordonnées du sommet par ($h,$k), nous obtenons la forme canonique:  <br/><br/>
+<i>f($lettre) =  <strong>$asigneaffiche $afrac ($lettre - $h)<sup>2</sup> + $k </strong></i>
+<br/><br/>
+
+
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

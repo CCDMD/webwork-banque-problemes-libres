@@ -1,0 +1,152 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de base - Priorit&eacute; des op&eacute;rations
+#     type de question - Priorite des exposants avec variable (moyen)
+##ENDDESCRIPTION
+
+## DBsubject('Notions de base')
+## DBchapter('Priorité des opérations')
+## DBsection('Priorit&eacute; des fractions et exposants')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'notions', 'priorit&eacute;', 'priorité des opérations','exposants','variables','algèbre','fraction')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les les trois exposants, en s'assurant que celles assignées aux variables a du numérateur et du dénominateur soient différents
+$a=random(2,7);
+$b=random(-7,-1);
+
+do {    $c=random(-7,-1);  }  
+until ($a != $c);
+
+#créer les réponses intermédiaires utilisées dans la solution
+$xp=$a-$c;
+$yp=$b*(-1);
+
+
+# déclarer les lettres qui seront les variables non-définies (variables réelles)
+Context()->variables->are(a=>"Real",b=>"Real",c=>"Real");
+
+#préciser les expressions qui devront être entrées au numérateur ainsi qu'au dénominateur de la réponse
+$repnum=Formula("(a^{$xp})");
+$repden=Formula("(b^{$yp})");
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+
+Simplifier l'expression suivante:  <br/><br/>
+
+<table>
+  <tr>
+     <td align=center valign=bottom>a<sup>$a</sup>b<sup>$b</sup></td>
+     <td> &nbsp;</td>
+     <td>  \{ans_rule(10)\}  </td>
+  </tr>
+  <tr>
+     <td valign=top>____</td>
+     <td> &nbsp; = &nbsp;</td>
+     <td valign=top>___________</td>
+  </tr>
+  <tr>
+     <td align=center valign=top>a<sup>$c</sup></td>
+     <td> &nbsp;</td>
+     <td>  \{ans_rule(10)\}   </td>
+ </tr>
+</table>
+<br/>
+ Note: Dans chacune de vos réponses, les exposants doivent être positifs (ex.: a^3)
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Lorsque deux variables identiques munies d'exposants sont divisées, leurs exposants sont alors soustraits et cette différence est appliquée sous forme d'exposant à la variable dans la réponse.  Si cette différence donne un exposant négatif, changer la variable de place au sein de la fraction (si elle est au numérateur, la mettre au dénominateur, et vice-versa) et lui attribuer la valeur positive de l'exposant (soit sa valeur absolue) .";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+# s'assurer que toutes les r&eacute;ponses sont bonnes pour avoir le point (pas de points partiels)
+$showPartialCorrectAnswers = 0;
+ANS($repnum->cmp);
+ANS($repden->cmp);
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+Simplifier l'expression suivante:  <br/><br/>
+
+<table>
+  <tr>
+     <td>\( \frac{a^{$a} b^{$b}}{a^{$c}} \)</td>
+ </tr>
+</table><br/>
+Note: Dans chacune de vos réponses, les exposants doivent être positifs  (ex.: a^3)<br/><br/>
+
+
+<table>
+           <tr>
+             <td> \( \frac{a^{$a} b^{$b}}{a^{$c}} \) </td> 
+             <td> = &nbsp;</td>
+             <td>a<sup>($a - ($c))</sup> &#8729; b<sup>$b</sup> &nbsp;</td>
+             <td> en effectuant la division des deux facteurs ayant "a" comme variable (soustraire les exposants)<br/> &nbsp;</td>
+           </tr>
+           <tr>
+              <td> </td>
+              <td> = &nbsp;</td>
+              <td> \( \frac{a^{$xp}}{b^{$yp}} \) </td> 
+              <td> en rendant positif l'exposant de la variable b</td>     
+           </tr>
+         </table>
+
+<br/><br/>
+Donc le numérateur de la réponse est :  a^$xp <br/>
+et le dénominateur de la réponse est:   &nbsp;  b^$yp <br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

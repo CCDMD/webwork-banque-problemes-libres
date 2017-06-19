@@ -1,0 +1,242 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions quadratiques
+#     type de question - trouver la règle quadratique avec l'ordonnée à l'origine et deux points fournis
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 5')
+## DBchapter('Fonctions quadratiques')
+## DBsection('règle quadratique')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'secondaire 5', 'fonction', 'algèbre', 'quadratique')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+
+TEXT(beginproblem());
+
+# déterminer la valeur des deux n de l'équation quadratique ainsi que la valeur 
+# des coefficients a et b et de la constante c pour l'équation quadratique
+
+do {
+  $n1=non_zero_random(-8,8);
+  $n2=non_zero_random(-8,8);
+   $a = random(2,5);
+   $b = ($n1 + $n2)*$a;
+   $c=($n1*$n2)*$a;
+}  until  (($n1 != $n2) &($c > 0) && ($b != 0) ) ;
+
+
+#créer  les signes à insérer dans la question et dans la réponse
+if ($b<0) {$signe="-"; $s = -1;}
+else { $signe="+"; $s = 1;}
+
+# déclarer la lettre qui seront la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+
+# déterminer les autres valeurs requises dans la solution
+$babs = abs($b);
+$bdiva = $babs/$a;
+$cdiva= $c/$a;
+
+$zero1= $n1*(-1);
+$zero2=$n2*(-1);
+
+# déterminer les deux points qui appartiennent à l'équation quadratique, à fournir dans la question
+do { $x1 = random(2,5);} until (($x1 != $zero1) & ($x1 != $zero2));
+$y1 = $a*$x1*$x1 + $s*$babs*$x1 + $c; 
+
+do {$x2 = non_zero_random(-5,5);} until ( ($x1 != $x2) & ($x2 != 1) & ($x2 != -1) );
+$y2 = $a*$x2*$x2 + $s*$babs*$x2 + $c; 
+
+
+# déterminer d'autres valeurs aussi requises dans la solution
+$x1carre= $x1*$x1;
+$x2carre=$x2*$x2;
+$x1abs= abs($x1);
+$x2abs= abs($x2);
+
+if ($x1<0) {$signex1 = "-"; $sx1 = -1;}
+  else {$signex1 = "+"; $sx1 = 1;}
+
+if ($x2<0) {$signex2 = "-"; $sx2 = -1;}
+  else {$signex2 = "+"; $sx2 = 1;}
+
+$y1c = $y1 - $c;
+$y2c = $y2 - $c;
+
+$x1zero1 = $x1-$zero1;
+$x1zero2= $x1-$zero2;
+$x1zero1zero2 = $x1zero1*$x1zero2;
+$n1abs= abs($n1);
+$n2abs=abs($n2);
+
+if ($n1<0) { $n1s= "-";}  else {$n1s="+";}
+if ($n2<0) { $n2s= "-";}  else {$n2s="+";}
+
+$y1cdivx1	=$y1c/$x1;
+$valequ2	= $x2*$y1cdivx1;
+
+if ($valequ2 < 0) {$signevalequ2 = "-"; $invsignevalequ2 = "+"; }  else {$signevalequ2 = "+"; $invsignevalequ2 = "-";}
+$valequ2abs =	 abs($valequ2);
+
+$x1x2 = -1*$x1*$x2;
+if ($x1x2<0) {$signex1x2="-";}  else {$signex1x2="+";}
+
+$x1x2abs	= abs($x1x2);
+$x2carrex1x2 = $x2carre+$x1x2;
+$y2cvalequ2 = $y2c-$valequ2;
+
+# créer la réponse
+$reponse=Formula("( $a$lettre^2 $signe $babs$lettre + $c)");        
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Déterminer la règle sous forme générale de la fonction quadratique qui a les caractéristiques suivantes:<br/>    
+<ul>
+  <li>  l'ordonnée à l'origine est: $c</li>
+  <li> la fonction passe par les points ($x1, $y1) et ($x2, $y2)
+</ul><br/>
+
+<i> f ($lettre) = </i>   \{ans_rule(20)\} 
+
+<br/><br/>
+Nota: Donner votre réponse sous la forme générale simplifiée. S'il y a des fractions, les donner sous une forme simplifiée et utiliser la barre oblique / pour en séparer le numérateur du dénominateur. Écrire les exposants sous la forme x^2 (pour indiquer x<sup>2</sup>).
+
+<br/><br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Puisque l'ordonnée à l'origine est donnée (c), il faut en remplacer la valeur dans la forme générale     f(x) = ax<sup>2</sup> + bx + c .";
+break;
+case '2':text="Créer un système d'équations en remplaçant successivement les coordonnées des deux points connus et résoudre le système.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($reponse->cmp);
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Déterminer la règle sous forme générale de la fonction quadratique qui a les caractéristiques suivantes:<br/>    
+<ul>
+  <li>  l'ordonnée à l'origine est: $c</li>
+  <li> la fonction passe par les points ($x1, $y1) et ($x2, $y2)
+</ul><br/>
+
+<i> f ($lettre) = </i>  _____________________
+
+<br/><br/>
+Nota: Donner votre réponse sous la forme générale simplifiée. S'il y a des fractions, les donner sous une forme simplifiée et utiliser la barre oblique / pour en séparer le numérateur du dénominateur. Écrire les exposants sous la forme x^2 (pour indiquer x<sup>2</sup>).
+<br/><br/><br/>
+
+
+Déterminons la règle de la fonction quadratique dont l'ordonnée à l'origine est $c et qui passe par les points ($x1,$y1) et ($x2,$y2). Puisque nous avons l'ordonnée à l'origine, utilisons la forme générale:<br/><br/>
+
+<i> f($lettre) = a$lettre<sup>2</sup> + bx + c  =  a$lettre<sup>2</sup> + bx + $c</i> en remplaçant <i>c</i> par $c (ordonnée à l'origine)<br/><br/><br/>
+
+Il reste à déterminer les valeurs de a et de b. Puisque la parabole passe par le point ($x1,$y1), nous obtenons:<br/><br/>
+
+<i> f($lettre) =  a$lettre<sup>2</sup> + bx + $c</i><br/>
+<i> $y1 =  a($x1)<sup>2</sup> + b($x1) + $c</i>  en remplaçant $lettre et f($lettre) par les valeurs données pour le premier point, soit ($x1, $y1)<br/>
+<i>$y1 - $c =  a($x1carre) $signex1 $x1abs b<br/>
+D'où la première équation:  <strong> <i>$x1carre a $signex1 $x1abs b = $y1c </i></strong> 
+<br/><br/>
+
+
+De plus, la parabole passe par le point ($x2,$y2). Par conséquent, nous obtenons: <br/><br/>
+<i> f($lettre) =  a$lettre<sup>2</sup> + bx + $c</i><br/>
+<i> $y2 =  a($x2)<sup>2</sup> + b($x2) + $c</i>  en remplaçant $lettre et f($lettre) par les valeurs données pour le second point, soit ($x2, $y2)<br/>
+<i>$y2 - $c =  a($x2carre) $signex2 $x2abs b<br/>
+D'où la seconde équation:  <strong> <i>$x2carre a $signex2 $x2abs b = $y2c </i></strong> 
+<br/><br/>
+
+Nous obtenons le système d'équations suivant:<br/>
+<ul>
+  <li><i>$x1carre a $signex1 $x1abs b = $y1c </i> </li>
+  <li><i>$x2carre a $signex2 $x2abs b = $y2c </i> </li>
+</ul><br/>
+
+
+Isolons <i>b</i> dans la première équation:<br/><br/>
+
+<i>$x1carre a $signex1 $x1abs b = $y1c </i><br/>
+<i>$x1 b = $y1c - $x1carre a </i><br/>
+<i>b = ( $y1c - $x1carre a ) / $x1 </i><br/>
+D'où:  b = $y1cdivx1 - $x1 a <br/><br/>
+
+Remplaçons maintenant cette valeur de <i>b</i> dans la seconde équation:<br/><br/>
+<i>$x2carre a $signex2 $x2abs b = $y2c </i> <br/>
+<i>$x2carre a $signex2 $x2abs ( $y1cdivx1 - $x1 a) = $y2c </i>  en remplaçant <i>b</i> par <i>b = $y1cdivx1 - $x1 a </i><br/>
+<i>$x2carre a $signevalequ2 $valequ2abs $signex1x2 $x1x2abs a = $y2c </i>  <br/>
+<i>$x2carre a  $signex1x2 $x1x2abs a = $y2c $invsignevalequ2 $valequ2abs </i>  <br/>
+<i>$x2carrex1x2 a  = $y2cvalequ2 </i>  <br/>
+D'où a = <strong>$a</strong><br/>
+
+
+<br/><br/><br/>
+Déterminons maintenant la valeur de <i>b</i>:<br/><br/>
+<i>b = $y1cdivx1 - $x1 a </i><br/>
+<i>b = $y1cdivx1 - $x1 ($a) </i> avec <i>a</i> = $a<br/><br/>
+<i> b = $b</i><br/><br/><br/>
+ 
+Nous avons maintenant toutes les valeurs nécessaires pour présenter la réponse sous la forme générale :<br/>
+a = $a <br/>
+b= $b<br/>
+c= $c<br/><br/>
+
+Par conséquent, la règle de la fonction quadratique est :  <strong> <i>f($lettre) = $a$lettre<sup>2</sup> $signe $babs$lettre + $c</i></strong>
+
+END_SOLUTION
+
+ENDDOCUMENT();

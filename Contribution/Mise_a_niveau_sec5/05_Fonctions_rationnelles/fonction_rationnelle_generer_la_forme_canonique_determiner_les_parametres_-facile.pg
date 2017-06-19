@@ -1,0 +1,207 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions rationnelles
+#     type de question - Fonction rationnelle - générer la forme canonique (paramètres a, h et k demandées) - facile 
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 5')
+## DBchapter('Fonction rationnelle')
+## DBsection('analyse')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'secondaire 5', 'fonction', 'algèbre', 'rationnelle','analyse')
+
+############################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs des paramètres de l'équation
+$a = 1;
+$b=random(1,9);
+$c= 1;
+$d=0;
+
+# déterminer les signes dans l'équation
+$choixsignerep=non_zero_random(-1,1);
+if($choixsignerep==1) 
+{
+  $signerep="+";
+  $signerepaff="";
+  $signerepinv="-";
+}
+else
+{
+  $signerep="-";
+  $signerepaff="-";
+  $signerepinv="+";
+}
+
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# déterminer les autres valeurs requises pour la solution
+$dabs=abs($d);
+$represte=$b;
+$repcte=1;
+
+if($d<0) {$signenum= "-"; $signed=-1;}
+else {$signenum= "+"; $signed=1;}
+
+$num="$lettre";
+$denum="$lettre $signerepinv $b";
+$repdiv="$repcte $signerep $represte / ($lettre $signeinv $b)";
+
+# déterminer les réponses
+$repa=$choixsignerep*$represte;
+$reph=$repa;
+$repk=$repcte;
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+Déterminer les paramètres a, h et k de la fonction suivante:  <br/><br/>
+\( \dfrac{$num}{$denum} \) 
+<br/>
+en utilisant la forme canonique \( f($lettre) = \dfrac{a}{$lettre-h} + k \) 
+<br/><br/>
+
+a = \{ans_rule(10)\}<br/>
+h = \{ans_rule(10)\}<br/>
+k = \{ans_rule(10)\}<br/><br/>
+
+Note: Si la réponse n'est pas un entier, inscrire la fraction en séparant son numérateur de son dénominateur avec la barre oblique / .
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Effectuer d'abord la division de polynômes.";
+break;
+case '2':text="Retrouver la forme canonique <i>f($lettre) = a/($lettre-h) + k </i>  pour identifier les valeurs des paramètres a, h et k.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS(strict_num_cmp($repa, .0));
+ANS(strict_num_cmp($reph, .0));
+ANS(strict_num_cmp($repk, .0));
+
+
+BEGIN_SOLUTION
+Déterminer les paramètres a, h et k de la fonction suivante:  <br/><br/>
+\( \dfrac{$num}{$denum} \) 
+<br/>
+en utilisant la forme canonique \( f($lettre) = \dfrac{a}{$lettre-h} + k \) 
+<br/><br/>
+
+a = __________<br/>
+h = __________<br/>
+k = __________<br/><br/>
+
+Note: Si la réponse n'est pas un entier, inscrire la fraction en séparant son numérateur de son dénominateur avec la barre oblique / .
+<br/><br/><br/>
+
+<u>Solution</u>
+<br/><br/>
+Effectuons d'abord une division de polynômes afin de pouvoir retrouver la forme canonique  \( f($lettre) = \dfrac{a}{$lettre-h} + k \)   à partir de l'équation \( \dfrac{$num}{$denum} \) :<br/><br/>
+
+Étape 1: <br/> 
+Combien de fois <strong>$lettre</strong> (premier terme du diviseur) est-il contenu dans <strong>$lettre</strong> (1er terme du dividende)? La réponse est : <strong>$repcte</strong>.<br/>
+Par conséquent, effectuons la multiplication de <strong>$repcte</strong> par le diviseur ($denum):<br/>
+<table>
+  <tr>
+    <td>&nbsp; <strong>$num</strong> &nbsp; &nbsp;</td>
+    <td>|<u><strong>$denum</strong> &nbsp</u></td> 
+  </tr>
+  <tr>
+    <td>&nbsp; $lettre $signerepinv $b</td>
+    <td align=center>$repcte </td> 
+  </tr>
+</table>
+<br/>
+
+
+Étape 2: <br/> 
+Calculons le reste en soustrayant le polynôme obtenu du dividende: <br/>
+<table>
+  <tr>
+    <td>&nbsp; <strong>$num</strong> &nbsp; &nbsp;</td>
+    <td>|<u><strong>$denum</strong> &nbsp</u></td> 
+  </tr>
+  <tr>
+    <td>-<u>($lettre $signerepinv $b)</u><br/> &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp;$signerepaff$represte</td>
+    <td align=center>$repcte <br/> &nbsp;</td> 
+  </tr>
+</table>
+<br/>
+
+Étape 3: <br/> 
+Présentons la réponse de la division: <br/>
+<table>
+  <tr>
+    <td>&nbsp; <strong>$num</strong> &nbsp; &nbsp;</td>
+    <td>|<u><strong>$denum</strong> &nbsp</u></td> 
+  </tr>
+  <tr>
+    <td>-<u>($lettre $signerepinv $b</u><br/> &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp;$signerepaff$represte</td>
+    <td>$repcte <strong>  $signerep$represte/ ($lettre $signerepinv $b)</strong><br/> &nbsp;</td> 
+  </tr>
+</table>
+<br/>
+D'où: <br/>
+\( f($lettre) =$repcte $signerep \dfrac{$represte}{$lettre $signerepinv $b} \) <br/><br/>
+\( f($lettre) =$signerepaff \dfrac{$represte}{$lettre $signerepinv $b} + $repcte \) 
+<br/><br/><br/>
+
+Grâce à la forme canonique de base  \( f($lettre) = \dfrac{a}{$lettre-h} + k \) , nous trouvons que:<br/><br/>
+a = <strong>$repa</strong><br/>
+h = <strong>$reph</strong><br/>
+k = <strong>$repk</strong><br/>
+<br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

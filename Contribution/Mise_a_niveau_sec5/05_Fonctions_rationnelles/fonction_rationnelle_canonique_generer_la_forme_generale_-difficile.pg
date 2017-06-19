@@ -1,0 +1,153 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions rationnelles
+#     type de question - Fonction rationnelle sous forme canonique - générer la forme générale (difficile)
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 5')
+## DBchapter('Fonction rationnelle')
+## DBsection('forme générale')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'secondaire 5', 'fonction', 'algèbre', 'rationnelle','canonique')
+
+############################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs des paramètres de l'équation
+
+do 
+{
+  $a= random(2,7);
+  $b=random(2,7);
+} until ($a != $b);
+
+$c=random(4,7);
+$un = 1;
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# déterminer les signes dans l'équation
+
+$choixsigne=non_zero_random(-1,1);
+if ($choixsigne==1) { $signe= "+";  $signeaff="";}
+else { $signe= "-";  $signeaff="-";}
+
+$choixsignea=non_zero_random(-1,1);
+if ($choixsignea==1) { $signea= "+";  $signeaaff="";}
+else { $signea= "-";  $signeaaff="-";}
+
+
+# déterminer les autres valeurs requises pour la solution
+$bc = $b * $c;
+$ac=$a*$c;
+$bc=$b*$c;
+$abcaff="$signeaaff 1 $signe $bc";
+$abc=$choixsignea + $choixsigne*$bc;
+$abcabs=abs($abc);
+
+if ($abc<0) {$signeabc="-"; $signeabcaff="-";}
+else  {$signeabc="+"; $signeabcaff="";}
+
+$terme2="$b/$a";
+
+# déterminer la réponse
+$rep=Formula("(  ($signe $b$lettre $signeabc $abcabs)/($a$lettre + $ac) )");
+$repaff=" ($signeaff $b$lettre $signeabc $abcabs)/($a$lettre + $ac)";
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+<br/>
+Exprimer la fonction rationnelle ci-dessous sous la forme générale  \( f($lettre) = \dfrac{Ax+B}{Cx+D} \) <br/><br/>
+\( f($lettre) = $signeaaff \dfrac{ \frac{$un}{$a} } {($lettre + $c)} $signe \dfrac{$b}{$a} \) 
+<br/><br/>
+
+<i>f($lettre)</i> = \{ans_rule(25)\}<br/>
+
+
+Note: Inscrire la fraction en séparant son numérateur de son dénominateur avec la barre oblique / .
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Mettre la fonction sur le même dénominateur.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($rep->cmp);
+
+
+BEGIN_SOLUTION
+Exprimer la fonction rationnelle ci-dessous sous la forme générale  \( f($lettre) = \dfrac{Ax+B}{Cx+D} \) <br/><br/>
+\( f($lettre) = $signeaaff \dfrac{ \frac{$un}{$a} } {($lettre + $c)} $signe \dfrac{$b}{$a} \) 
+<br/><br/>
+
+<i>f($lettre)</i> = ___________________<br/>
+
+Note: Inscrire la fraction en séparant son numérateur de son dénominateur avec la barre oblique / .
+<br/><br/><br/>
+
+
+<u>Solution</u>
+<br/><br/>
+
+Exprimons \( f($lettre) = $signeaaff \dfrac{ \frac{$un}{$a} } {($lettre + $c)} $signe \dfrac{$b}{$a} \)  sous la forme générale \( f($lettre) = \dfrac{Ax+B}{Cx+D} \) :
+<br/><br/>
+ \( f($lettre) = $signeaaff \dfrac{ \frac{$un}{$a} } {($lettre + $c)} $signe \dfrac{$b}{$a} \) <br/><br/>
+ \( f($lettre) = \dfrac{$signeaaff$un}{$a($lettre + $c)} $signe \dfrac{$b}{$a} \) <br/><br/>
+ \( f($lettre) = \dfrac{$signeaaff$un}{$a($lettre + $c)} $signe \dfrac{$b($lettre + $c)}{$a($lettre + $c)} \) <br/><br/>
+ \( f($lettre) = \dfrac{$signeaaff$un $signe $b($lettre + $c)}{$a($lettre + $c)} \) <br/><br/>
+ \( f($lettre) = \dfrac{$signeaaff$un $signe $b$lettre $signe $bc}{($a)$lettre + ($a)$c} \) <br/><br/>
+ \( f($lettre) = \dfrac{$signeaff$b$lettre $signeabc $abcabs}{$a$lettre + $ac} \) <br/><br/>
+D'où la réponse:  \( \dfrac{$signeaff$b$lettre $signeabc $abcabs}{$a$lettre + $ac} \) <br/><br/>
+entrée comme suit: <strong>$repaff</strong>
+
+<br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

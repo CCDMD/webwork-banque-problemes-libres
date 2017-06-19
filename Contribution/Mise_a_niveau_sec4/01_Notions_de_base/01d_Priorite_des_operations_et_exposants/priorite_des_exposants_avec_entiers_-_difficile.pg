@@ -1,0 +1,147 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de base - Priorit&eacute; des op&eacute;rations
+#     type de question - Priorite des exposants avec entiers (difficile)    
+##ENDDESCRIPTION
+
+## DBsubject('Notions de base')
+## DBchapter('Priorité des opérations')
+## DBsection('Priorit&eacute; des exposants')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'notions', 'priorit&eacute;', 'priorité des opérations','exposants')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+
+TEXT(beginproblem());
+
+
+# créer  la base commune (entier) ainsi que les différents exposants
+$entier=random(2,8);
+
+do
+{ 
+   $a=random(2,7);
+   $b=random(2,5);
+   $c=random(2,7);
+   $d=random(-7,-1);
+ }
+until (($a != $c) && ($b != $d));
+
+do
+{
+   $e=random(2,7);
+   $f=random(-7,-1);
+}
+until ( (($a*$b)+($c*$d)-($e*$f)) > 0);
+
+#créer les réponses intermédiaires
+$ab = $a*$b;
+$cd= $c*$d;
+$ef= $e*$f;
+$abpluscd= $ab + $cd;
+$xp= $abpluscd - $ef;
+
+# créer la réponse
+$reponse=$xp;
+$rep=Formula ("$entier^$xp");
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+
+L'expression suivante est identique à quelle puissance de $entier ?  <br/><br/>
+\( \dfrac{ { ({$entier^{$a}})^{$b}} \cdot ({$entier^{$c}})^{$d} }{ ({$entier^{$e}})^{$f} } = { $entier^{ ? } } \) 
+<br/><br/>
+= &nbsp $entier élevé à la puissance : \{ans_rule(3)\} 
+
+<br/><br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text=" Lorsqu'une variable est munie d'un exposant, et que le tout est muni d'un autre exposant,  multiplier alors les deux exposants. Ce produit formera le nouvel exposant de la variable.  Donc, (a<sup>m</sup>)<sup>n</sup> = a<sup>mn</sup>.";
+break;
+case '2':text=" Lorsque deux variables identiques munies d'exposants sont multipliées, leurs exposants sont alors additionnés et cette somme est appliquée sous forme d'exposant à la variable dans la réponse. Donc, a<sup>m</sup> a<sup>n</sup> =  a<sup>m+n</sup>.  Si cette somme donne un exposant négatif, changer la variable de place au sein de la fraction (si elle est au numérateur, la mettre au dénominateur, et vice-versa) et lui attribuer la valeur positive de l'exposant (soit sa valeur absolue).";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(strict_num_cmp($reponse, .0));
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+L'expression suivante est identique à quelle puissance de $entier ?  <br/><br/>
+\( \dfrac{ { ({$entier^{$a}})^{$b}} \cdot ({$entier^{$c}})^{$d} }{ ({$entier^{$e}})^{$f} } = { $entier^{ ?} }\) 
+
+<br/><br/>
+
+<table width=800>
+  <tr>
+    <td align=right>\( \dfrac{ { ({$entier^{$a}})^{$b}} \cdot ({$entier^{$c}})^{$d} }{ ({$entier^{$e}})^{$f} } \)  </td>
+    <td>&nbsp; =  &nbsp; \( \dfrac{ {$entier^{$ab}} \cdot {$entier^{$cd}} }{ $entier^{$ef}} \) </td>
+    <td> en utilisant la propriété  \( { ({a^m})^n} \) =   \( a^{mn} \)<br/></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp; =  &nbsp; \( \dfrac{ $entier^{$abpluscd}}{ $entier^{$ef} } \) </td>
+    <td> en utilisant au numérateur la propriété  \( { {a^m} {a}^n} \) =   \( a^{m+n} \) <br/></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp; =  &nbsp; \(  {$entier^{$reponse}}\) </td>
+    <td>en effectuant la division (soustraire les exposants) <br/></td>
+  </tr>
+</table>
+
+<br/><br/>
+
+Donc l'expression est identique à $entier élevé à la puissance <strong>$reponse</strong><br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

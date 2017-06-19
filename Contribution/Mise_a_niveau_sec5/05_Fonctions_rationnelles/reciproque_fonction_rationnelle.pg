@@ -1,0 +1,153 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions rationnelles
+#     type de question - Trouver la réciproque d'une fonction rationnelle
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 5')
+## DBchapter('Fonction rationnelle')
+## DBsection('Réciproque')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'secondaire 5', 'fonction', 'algèbre', 'rationnelle','réciproque')
+
+############################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs du coefficient et des constantes
+
+$a=random(2,8);
+$b=random(2,8);
+$c=random(1,8);
+
+#créer  le signe à insérer dans la question 
+
+$choixsigne=non_zero_random(-1,1);
+if ($choixsigne==1)
+{
+   $signe="+";
+   $signeinv="-";
+   $signeinvaff="-";
+   $textec="soustrayant";
+}
+else
+{
+   $signe="-";
+   $signeinv="+";
+   $signeinvaff="";
+   $textec="additionnant";
+}
+
+
+# déclarer la lettre qui seront la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real", y=>"Real");
+$lettrex="x";
+$lettrey="y";
+
+# créer la réponse
+$reponse=Formula("($a / ($lettrex $signeinv $c) - $b )");      
+$repaff= "$a / ($lettrex $signeinv $c) - $b ";
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Déterminer la réciproque de la fonction suivante: 
+<br/><br/>
+\( f($lettrex) = \dfrac{$a}{$lettrex + $b}  $signe $c \)
+<br/><br/>
+
+<i> f <sup> -1</sup> ($lettrex) = </i>   \{ans_rule(20)\} 
+
+<br/><br/>
+Nota: Utiliser la barre oblique / pour séparer le numérateur du dénominateur d'une fraction. 
+
+<br/><br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Pour trouver la fonction réciproque, il faut d'abord intervertir x et y dans l'équation de départ. Par la suite, isoler y dans l'équation obtenue.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($reponse->cmp);
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Déterminer la réciproque de la fonction suivante: 
+<br/><br/>
+\( f($lettrex) = \dfrac{$a}{$lettrex + $b}  $signe $c \)
+<br/><br/>
+
+<i> f <sup> -1</sup> ($lettrex) = </i>  _________________
+
+<br/><br/>
+Nota: Utiliser la barre oblique / pour séparer le numérateur du dénominateur d'une fraction. 
+<br/><br/>
+
+Pour trouver la fonction réciproque <i>  f <sup> -1</sup> ($lettrex) </i>, il faut:<br/>
+<br/>
+1. intervertir <i>x</i> et <i>y</i> dans l'équation précédente, comme suit:
+   \( $lettrex = \dfrac{$a}{$lettrey + $b}  $signe $c \) <br/><br/>
+
+2. isoler <i>y</i> dans l'équation obtenue en 1:
+<br/><br/>
+
+   \( $lettrex = \dfrac{$a}{$lettrey + $b}  $signe $c \)   <br/><br/>
+   \( $lettrex $signeinv $c = \dfrac{$a}{$lettrey + $b} \)  <br/><br/>
+   \( ($lettrex $signeinv $c)($lettrey + $b) = $a \)  <br/><br/>
+   \( ($lettrey + $b) = \dfrac{$a}{($lettrex $signeinv $c)} \)  <br/><br/>
+   \( $lettrey  = \dfrac{$a}{($lettrex $signeinv $c)} - $b \)  <br/><br/>
+
+D'où la fonction réciproque:  \( f^{-1} ($lettrex)  =  \dfrac{$a}{($lettrex $signeinv $c)} - $b \)  <br/>écrit comme suit: <strong>$repaff</strong><br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

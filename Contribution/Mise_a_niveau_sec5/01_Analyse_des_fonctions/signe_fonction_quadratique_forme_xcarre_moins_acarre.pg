@@ -1,0 +1,246 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Fonctions quadratiques
+#     type de question - Signe d'une fonction quadratique de forme y = x^2 - a^2
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 4')
+## DBchapter('Fonctions quadratiques')
+## DBsection('Analyse d'une fonction')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'polynôme', 'résolution', 'algèbre','variable', 'quadratique','analyse')
+
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+# définir les valeurs des deux x et de la constante c
+$x1 = random(2,9);
+$a = $x1*$x1;
+
+# déterminer les zéros de la fonction
+$zero1 = -$x1;
+$zero2 = $x1;
+
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+
+# déterminer les intervalles où la fonction est nulle
+$negatif= "("."$zero1".","."$zero2".")";
+$positif= "("."-infini".","."$zero1".") U ("."$zero2".","."infini".")";
+
+# référer les images à utiliser dans la solution
+$image1="parabole_deux_zeros.jpg";
+$image2="parabole_un_zero.jpg";
+$image3="parabole_aucun_zero.jpg";
+
+
+#créer le graphique de cette fonction, afin de pouvoir l'afficher dans la solution 
+$ymin= -$x1*$x1;
+$largeur=$x1;
+
+$gxneg=-$x1 - $largeur;
+$gxpos=$x1 + $largeur;
+$gyneg=$ymin - $x1;
+$gypos=$x1*2;
+
+$graphique=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique, "x^2 - $a for x in <$gxneg,$gxpos> using color:blue and weight:2 ");
+
+
+$gx=2; 
+$gy=5;
+
+for ($i = 0; $i <= int( ($gxpos /2) +1); $i++)
+  {
+     $graphique->lb(new       Label($gx*$i+$gx+0.2,-0.15,$gx*$i+$gx,'black','center','top'));
+     $graphique->moveTo($gx*$i+$gx+0.2,-0.15); 
+   }
+for ($i = 0; $i <= int( ($gxpos /2) +1); $i++)
+  {
+     $graphique->lb(new Label(-$gx*$i-$gx-0.2,-0.15,-$gx*$i-$gx,'black','center','top'));
+     $graphique->moveTo(-$gx*$i-$gx-0.2,-0.15); 
+   }
+for ($i = 0; $i <= 1; $i++)
+  {
+     $graphique->lb(new Label(-0.5,$gy*$i+$gy,$gy*$i+$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, $gy*$i+$gy); 
+   }
+for ($i = 0; $i <= int( 1+(-$gyneg/5)); $i++)
+  {
+     $graphique->lb(new Label(-0.5,-$gy*$i-$gy+0.4,-$gy*$i-$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, -$gy*$i-$gy+0.4); 
+   }
+
+$graphique->stamps( closed_circle($zero1,0,'blue') );
+$graphique->stamps( closed_circle($zero2,0,'blue') );
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Pour la fonction suivante:  &nbsp; &nbsp; <b> f($lettre) = $lettre<sup>2</sup> - $a</b>
+<br/><br/>
+
+
+a) Donner toutes les valeurs de x pour lesquelles la fonction est nulle (les zéros de cette fonction). <br/>
+  &nbsp;&nbsp&nbsp;&nbsp; \{ans_rule(10)\} 
+<br/><br>
+
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+<br/><br/>
+
+
+b) La fonction ci-dessus est négative sur l'intervalle &nbsp;&nbsp  \{ans_rule(20)\} 
+
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp La fonction ci-dessus est positive sur l'intervalle  &nbsp;&nbsp  \{ans_rule(20)\} 
+
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est excluse et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels entier, entrer: (-infini, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: aucun <br/>
+
+  </td></tr>
+</table>
+END_TEXT
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Le zéro d'une fonction représente la valeur de x lorsque f(x) est égal à zéro. Il faut donc remplacer f(x) par zéro et isoler x pour en trouver la valeur résultante. Dans le cas d'une équation quadratique, il peut être plus facile de factoriser en deux parenthèses, et de poser l'égalité de chaque facteur à zéro pour résoudre et trouver chaque zéro. ";
+break;
+case '2':text="Une fonction est positive lorsque son graphique est situé au-dessus de l'axe des x. Une fonction est négative lorsque son graphique est situé sous l'axe des x. On utilise les zéros de la fonction pour donner les intervalles, puisqu'ils représentent les endroits où il y a des changements au niveau du signe de la fonction.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+$showPartialCorrectAnswers = 0;
+
+ANS(List($zero1,$zero2)->cmp);
+
+ANS(str_cmp($negatif,'remove_whitespace'));
+
+ANS(str_cmp($positif,'remove_whitespace'));
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u></p>
+<h1>Question : </h1>
+<br/>Pour la fonction suivante:  &nbsp; &nbsp; <b> f($lettre) = $lettre<sup>2</sup> - $a</b>
+<br/><br/>
+
+
+a) Donner toutes les valeurs de x pour lesquelles la fonction est nulle (les zéros de cette fonction). <br/>
+  &nbsp;&nbsp&nbsp;&nbsp; ______________
+<br/><br>
+
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+<br/><br/>
+
+
+b) La fonction ci-dessus est négative sur l'intervalle:   ______________
+
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbspLa fonction ci-dessus est positive sur l'intervalle:   ______________
+
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est excluse et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels entier, entrer: (-infini, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: aucun <br/><br/>
+
+
+
+a) Nous cherchons ici les zéros de la fonction.  Le zéro d'une fonction est la valeur de <strong>$lettre</strong> lorsque <strong>f($lettre)</strong> est égal à zéro.  Pour une fonction quadratique, factoriser tout d'abord la fonction, et égaliser chaque contenu entre parenthèse à zéro afin d'en trouver facilement les zéros.<br/>
+Donc:<br/><br/>
+  &nbsp; &nbsp; 0 =  $lettre<sup>2</sup> - $a <br/>
+  &nbsp; &nbsp; 0 = ($lettre - $x1)($lettre + $x1)<br/>
+  &nbsp; &nbsp; 0 = $lettre - $x1   &nbsp;&nbsp; ou &nbsp;&nbsp; 0 = $lettre + $x1  <br/>
+  &nbsp; &nbsp; $lettre = $zero2 &nbsp;&nbsp; ou &nbsp;&nbsp; $lettre = $zero1<br/>
+  &nbsp; &nbsp; Donc les zéros de cette fonction sont = <strong>$zero2 , $zero1</strong><br/><br/>
+
+
+b) Puisque le coefficient de $lettre<sup>2</sup> est positif (soit 1) la parabole est tournée vers le haut. La fonction f($lettre) sera donc négative pour toute valeur de x qui est située entre les deux zéros de l'équation. Si la fonction a moins de deux zéros, elle n'aura pas de valeur négative possible:<br/><br/>
+
+<table width = 800 cellpadding=5>
+  <tr>
+    <td align=center>\{ image( $image1, width=>200, height=>250) \} </td>
+    <td align=center>\{ image( $image2, width=>200, height=>250) \}</td>
+    <td align=center>\{ image( $image3, width=>200, height=>250) \} </td>
+  </tr>
+  <tr>
+    <td>Lorsque la fonction quadratique a deux zéros, seuls les valeurs de x entre ces deux zéros donnent une fonction négative.</td>
+    <td>Lorsque la fonction quadratique a un seul zéro (à l'endroit où elle touche l,axe des x), aucune valeur de x donne une fonction négative. </td>
+    <td>Lorsque la fonction quadratique n'a pas de zéros (car elle ne touche pas l'axe des x), aucune valeur de x donne une fonction négative. </td>
+  </tr>
+</table>
+
+<br/><br/>
+
+Donc pour la fonction quadratique f($lettre) = $lettre<sup>2</sup> - $a :<br/>
+  <ul> 
+      <li>La fonction ci-dessus est négative sur l'intervalle  <strong>($zero1,$zero2)</strong> .</li>
+
+      <li>La fonction ci-dessus est positive sur l'intervalle  <strong>(-infini,$zero1)U($zero2,infini)</strong> .</li>
+  </ul>
+<br/><br/>
+
+\{ image(insertGraph($graphique), width=>250, height=>250, tex_size=>500) \}
+
+END_SOLUTION
+
+ENDDOCUMENT();
