@@ -19,9 +19,7 @@ DOCUMENT();
 loadMacros(
 "PGstandard.pl",
 "MathObjects.pl",
-"parserMultiAnswer.pl",
-#"contextPolynomialFactors.pl",
-"contextLimitedPowers.pl",
+"unorderedAnswer.pl",
 "PGcourse.pl",
 );
 
@@ -67,37 +65,8 @@ $fac2red = Compute("$a1 x + $a0")->reduce;
 
 $expression = Compute("$c*x^{$n+1}*($fac)^{$m} + $d*x^{$n} ($fac)^{$m+1}")->reduce();
 
-
 $fac1 = Formula("$pgcd2 * x^{$n}*($fac)^{$m}")->reduce;
 $fac2 = Formula("($fac2red)")->reduce;
-
-$multians = MultiAnswer($fac1, $fac2)->with(
-  singleResult => 0,
-  allowBlankAnswers => 1,
-  checker => sub {
-      my ( $correct, $student, $ansHash) = @_;
-      my ( $f1stu, $f2stu ) = @{$student};
-      my ( $f1, $f2 ) = @{$correct};
-	  if ( $f1*$f2 == $f1stu*$f2stu) {
-		if ( ($f1 == $f1stu && $f2 == $f2stu) ||
-           ($f1 == -$f1stu && $f2 == -$f2stu) ) {
-			return [1,1];
-		} else {
-			$ansHash->setMessage(1,"Vous devez factoriser le plus possible.");
-			$ansHash->setMessage(2,"Vous devez factoriser le plus possible. Est-ce que votre polynôme est de degré 1?");
-			return [0,0];
-		}
-      } elsif ($f1 == $f1stu || $f1 == -$f1stu) {
-				$ansHash->setMessage(2,"Vous avez une erreur de signe.") if ($f2 == $f2stu || $f2 == -$f2stu);
-				return [1,0];
-	  } elsif ($f2 == $f2stu || $f2 == -$f2stu) {
-				return [0,1];
-	  } else {
-				return [0,0];
-	}
-  }
-);
-
 
 
 ################################################
@@ -108,13 +77,12 @@ Context()->texStrings;
 BEGIN_TEXT
 
 Factoriser l'expression \($expression\) sous la forme \(A\cdot B\), où \(A\) est un produit de facteurs et \(B\) est un polynôme de degré 1 de la forme \(ax+b\) où \(a\) et \(b\) n'ont aucun facteur commun.
-$BR
-$BR
-\( \big( \)\{$multians->ans_rule(15)\}
-\( \big) \big( \) 
-\{$multians->ans_rule(10)\}
+$PAR
+\( \big( \)
+\{ ans_rule(20) \}
+\( \big) \big( \)
+\{ ans_rule(20) \}
 \( \big) \)
-
 END_TEXT
 Context()->normalStrings;
 
@@ -124,8 +92,7 @@ Context()->normalStrings;
 
 $showPartialCorrectAnswers = 1;
 
-
-ANS( $multians->cmp() );
+UNORDERED_ANS($fac1->cmp(),$fac2->cmp());
 
 $facteur = Compute("$pgcd*x^($n)")->reduce;
 $e1 = Compute("$Dc*x")->reduce;
@@ -140,8 +107,7 @@ BEGIN_SOLUTION
 
 Le polynôme \($expression\) se factorise par une mise en évidence simple. Les facteurs communs aux deux termes sont : $BR $BR
 \[   $facteur  \text{ et } ($fac)^{$m} \]
-$BR
-$BR
+
 Ainsi, la factorisation se fait de la façon suivante : $BR $BR
 \{ if($div == 1) {
 $BCENTER.
@@ -158,11 +124,7 @@ $BCENTER.
 $ECENTER
 }
 \}
-$BR $BR
 END_SOLUTION
 Context()->normalStrings;
 
-
-
-COMMENT('MathObject version');
 ENDDOCUMENT();

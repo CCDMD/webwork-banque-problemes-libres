@@ -20,7 +20,7 @@ DOCUMENT();
 loadMacros(
 "PGstandard.pl",
 "MathObjects.pl",
-"parserMultiAnswer.pl",
+"unorderedAnswer.pl",
 "PGcourse.pl",
 );
 
@@ -49,40 +49,6 @@ $fac1 = Compute("(x^2 + $a)");
 $fac2 = Compute("(x-$b)");
 $fac3 = Compute("(x+$b)");
 
-$multians = MultiAnswer($fac1, $fac2, $fac3)->with(
-  singleResult => 0,
-  allowBlankAnswers => 1,
-  checker => sub {
-      my ( $correct, $student, $self ) = @_;
-      my ( $f1stu, $f2stu, $f3stu ) = @{$student};
-      my ( $f1, $f2, $f3 ) = @{$correct};
-      $expstudent = Compute("$f1stu*$f2stu*$f3stu");
-      $diffcarre = Compute("$fac2*$fac3");
-      
-      if ( $expression == $expstudent)  {
-           if ( ($f1==$f1stu && $f2==$f2stu && $f3==$f3stu) 
-           ||($f1==$f1stu && $f2==$f3stu && $f3==$f2stu) 
-           ||($f1==$f2stu && $f2==$f1stu && $f3==$f3stu) 
-           ||($f1==$f2stu && $f2==$f3stu && $f3==$f1stu)
-           ||($f1==$f3stu && $f2==$f1stu && $f3==$f2stu)
-           ||($f1==$f3stu && $f2==$f2stu && $f3==$f1stu) 
-           ) {
-          return [1,1,1];
-            } elsif ($f1stu == $diffcarre || $f2stu == $diffcarre || 
-                   $f3stu == $diffcarre) 
-            {
-              return [0,0,0];
-            } else {
-        
-          return [1,1,1];
-         } 
-      } else {
-          return [0,0,0];
-      }
-  }
-);
-
-
 
 ################################################
 #  Main text
@@ -90,16 +56,16 @@ $multians = MultiAnswer($fac1, $fac2, $fac3)->with(
 
 Context()->texStrings;
 BEGIN_TEXT
-
 Factoriser l'expression \($expression\).
 $BR
 $BR
+$PAR
 \( \big( \)
-\{ $multians->ans_rule(10) \}
+\{ ans_rule(20) \}
 \( \big) \big( \)
-\{ $multians->ans_rule(10) \}
+\{ ans_rule(20) \}
 \( \big) \big( \)
-\{ $multians->ans_rule(10) \}
+\{ ans_rule(20) \}
 \( \big) \)
 END_TEXT
 Context()->normalStrings;
@@ -110,7 +76,7 @@ Context()->normalStrings;
 
 $showPartialCorrectAnswers = 1;
 
-ANS($multians->cmp());
+UNORDERED_ANS($fac1->cmp(),$fac2->cmp(),$fac3->cmp());
 
 
 $cd = $c*$d;
@@ -119,8 +85,6 @@ Context()->texStrings;
 BEGIN_SOLUTION
 
 Le polynôme \($expression\) se factorise tout d'abord par une mise en évidence double.
-$BR
-$BR
 \[
 \begin{array}{rl}  $expression &=\underbrace{x^4 - $b2 x^2} + \underbrace{$a x^2 - $ab2} \\[0.5em] &=  x^2(x^2 - $b2) + $a (x^2 -$b2)   \\[0.5em]  &= (x^2 + $a)(x^2 - $b2)  \end{array}
 \]
@@ -131,9 +95,8 @@ $BR $BR
 \begin{array}{rl}  $expression  &= (x^2 + $a)(x^2 - $b2) \\[0.5em]
 &= ($fac1)($fac2)($fac3) \end{array}
 \]
-$BR $BR
 END_SOLUTION
 Context()->normalStrings;
 
-COMMENT('MathObject version');
+#COMMENT('MathObject version');
 ENDDOCUMENT();
