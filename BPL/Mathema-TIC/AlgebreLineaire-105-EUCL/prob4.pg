@@ -1,0 +1,104 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Vecteurs et espace euclidien)
+## KEYWORDS('R^3', 'arithmétique vectorielle', 'produit scalaire', 'produit vectoriel', 'projection orthogonale', 'vecteur')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##Level(3)
+##Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+Context("Vector");
+
+$C = non_zero_vector3D();
+$B = non_zero_vector3D();
+$A = non_zero_vector3D();
+
+
+
+
+$a = $A.$B;
+$b = $B.$B;
+
+$ab = ($a/$b)*$B;
+
+$rep1=$ab.$C;
+
+$D=$A x $B;
+
+$Da=$D.$C;
+$Db=$C.$C;
+$Dc=$D.$D;
+
+
+$rep2=($Da/$Db)*$C;
+
+$rep3=($Da/$Dc)*$D;
+
+$rep4=$A.($Da/$Dc)*$D;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soient \(\vec a = $A\),  \(\vec b = $B\) et \(\vec c = $C\) .
+$PAR
+Effectuer les opérations suivantes:  
+
+$PAR
+
+A)  \( \vec{a}_{\vec{b}} \cdot \vec c = \) \{ans_rule(15)\}.
+ $PAR
+ B)  \(   (\vec{a} \times  \vec{b})_\vec{c} =\) \{ans_rule(15)\}.
+  $PAR
+ C)  \(   \vec{c}_{\vec{a} \times  \vec{b}} =\) \{ans_rule(15)\}.
+    $PAR
+ D)   \(   \vec{a}\cdot (\vec{c}_{\vec{a} \times  \vec{b}}) =\) \{ans_rule(15)\}.
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($rep1->cmp);
+ANS($rep2->cmp);
+ANS($rep3->cmp);
+ANS($rep4->cmp);
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+${PAR}SOLUTION:${PAR}
+La projection orthogonale de \( \vec a \) sur \( \vec b\) est donnée par \( \vec a_{\vec b}=\frac{\vec a \cdot \vec b}{\vec b \cdot \vec b}\vec b\). 
+Dans cet exercice, nous obtenons \( \vec a_{\vec b}=$ab \), il suffit alors d'éffectuer le produit scalaire \( \vec{a}_{\vec{b}} \cdot \vec c =$ab \cdot $C=$rep1  \)
+$BR 
+$BR
+ Nous devons, par la suite, calculer  \(   (\vec{a} \times  \vec{b})_\vec{c} \). Nous débutons par le produit vectoriel \(\vec{a} \times  \vec{b}=$D\),  pour ensuite 
+ projeter ce nouveau vecteur sur le vecteur \( \vec c\). Ainsi, \(   (\vec{a} \times  \vec{b})_\vec{c} =\frac{$D \cdot $C}{$C \cdot $C}\cdot $C=$rep2 \).
+
+$BR
+$BR
+À l'aide des calculs faits en B, nous pouvons projeter \( \vec c\) sur le vecteur \( \vec{a} \times  \vec{b}=$D\), 
+et ainsi obtenir: \(   \vec{c}_{(\vec{a} \times  \vec{b})} =\frac{$C \cdot $D}{$D \cdot $D}\cdot $C=$rep3 \).
+
+$BR
+$BR
+Pour terminer, il ne reste qu'à effectuer le produit scalaire du vecteur \( \vec{a}\) avec le résultat trouvé en C pour obtenir \( \vec a \cdot   \vec{c}_{(\vec{a} \times  \vec{b})} =$A\cdot $rep3=$rep4 \). Nous aurions aussi 
+pu observer que le vecteur \(   \vec{c}_{(\vec{a} \times  \vec{b})} \) est dans la même direction que le vecteur \(   \vec{a} \times  \vec{b} \), il est donc perpendiculaire à \( \vec{a}\).
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

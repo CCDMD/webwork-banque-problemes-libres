@@ -1,0 +1,104 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Transformation linéaire)
+## KEYWORDS('endomorphisme', 'homothétie', 'image', 'matrice de transformation', 'projection', 'rotation', 'réflexion')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##Level(4)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"unionTables.pl",
+"PGcourse.pl",
+);
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 0;
+
+Context('Matrix');
+Context()->variables->add(t=>"Real");
+
+$a=random(2,7);
+$b=random(2,7);
+
+$M[0] = Matrix([[$a, 0,0],[0, $a,0], [0,0, $a]]);
+$M[1] = Matrix([[1, 0,0], [0,1,0],[0, 0, 1]]);
+$M[2] = Matrix([[1/$b, 0,0],[0,1/$b,0], [0, 0, 1/$b]]);
+$M[3] = Matrix([[1, 0, 0],[0,0,0], [0, 0,0]]);
+$M[4] = Matrix([[0, 0, 0],[0,0,0], [0,0, 1]]);
+$M[5] = Matrix([[-1, 0,0], [0,1,0],[0, 0, 1]]);
+$M[6] = Matrix([[1, 0,0], [0,-1,0],[0, 0, 1]]);
+$M[7] = Matrix([[-1, 0,0], [0,-1,0],[0, 0, -1]]);
+$M[8] = Matrix([[0, 1,0], [1, 0,0],[0,0,1]]);
+$M[9] = Matrix([[1, 0,0], [0, 0,1],[0,1,0]]);
+$M[10] = Matrix([[0, 0, 1], [0, 1,0],[1,0,0]]);
+$M[11] = Matrix([[0, 1,0], [-1, 0,0],[0,0,1]]);
+$M[12] = Matrix([[0, -1,0], [1, 0,0],[0,0,1]]);
+$M[13] = Matrix([[sqrt(2)/2,sqrt(2)/2,0], [-sqrt(2)/2, sqrt(2)/2,0],[0,0,1]]);
+$M[14] = Matrix([[sqrt(2)/2,-sqrt(2)/2,0], [sqrt(2)/2, sqrt(2)/2,0],[0,0,1]]);
+$M[15] = Matrix([["cos(t)","-sin(t)",0], ["sin(t)","cos(t)",0],[0,0,1]]);
+$M[16] = Matrix([[0, 0, 1],[0,1,0], [-1, 0,0]]);
+$M[17] = Matrix([[0, 0,-1], [0,1,0],[1, 0,0]]);
+$M[18] = Matrix([[sqrt(2)/2,0, sqrt(2)/2], [0,1,0], [-sqrt(2)/2, 0, sqrt(2)/2]]);
+$M[19] = Matrix([[sqrt(2)/2,0, -sqrt(2)/2], [0,1,0],[sqrt(2)/2, 0, sqrt(2)/2]]);
+$M[20] = Matrix([["cos(t)",0, "-sin(t)"], [0,1,0],["sin(t)",0, "cos(t)"]]);
+
+
+$ml = new_match_list();
+
+Context()->texStrings;
+$ml -> qa (
+"\(A=$M[0]\) $BR", "\( T\) est une dilatation d'un facteur \($a\) $BR",
+"\(A=$M[1]\) $BR", "\( T\) est l'identité $BR",
+"\(A=$M[2]\) $BR", "\( T\) est une contraction d'un facteur \($b\) $BR",
+"\(A=$M[3]\) $BR", "\( T\) est la projection sur l'axe des \(x\)$BR",
+"\(A=$M[4]\) $BR", "\( T\) est la projection sur l'axe des \(z\) $BR",
+"\(A=$M[5]\) $BR", "\( T\) est la réflexion rapport au  plan \(x=0\) $BR",
+"\(A=$M[6]\) $BR", "\( T\) est la réflexion rapport au  plan  \(y=0\) $BR",
+"\(A=$M[7]\) $BR", "\( T\) est la réflexion par rapport à l'origine $BR",
+"\(A=$M[8]\) $BR", "\( T\) est la réflexion par rapport au plan \(y=x\) $BR",
+"\(A=$M[9]\) $BR", "\( T\) est la réflexion par rapport au plan \(y=z\) $BR",
+"\(A=$M[10]\) $BR", "\( T\) est la réflexion par rapport au plan \(x=z\) $BR",
+"\(A=$M[11]\) $BR", "\( T\) est la rotation d'un angle de \( 90^\circ \) autour de l'axe des \(z\) de l'axe des \(y\) vers l'axe des \(x\) $BR", 
+"\(A=$M[12]\) $BR", "\( T\) est la rotation d'un angle de \( 90^\circ \) autour de l'axe des \(z\) de l'axe des \(x\) vers l'axe des \(y\) $BR",
+"\(A=$M[13]\) $BR", "\( T\) est la rotation d'un angle de \( 45^\circ \) autour de l'axe des \(z\) de l'axe des \(y\) vers l'axe des \(x\) $BR",
+"\(A=$M[14]\) $BR", "\( T\) est la rotation d'un angle de \( 45^\circ \) autour de l'axe des \(z\) de l'axe des \(x\) vers l'axe des \(y\)$BR",
+"\(A=$M[15]\) $BR", "\( T\) est la rotation d'un angle de \( t^\circ \) autour de l'axe des \(z\) de l'axe des \(x\) vers l'axe des \(y\) $BR",
+"\(A=$M[16]\) $BR", "\( T\) est la rotation d'un angle de \( 90^\circ \) autour de l'axe des \( y\) de l'axe des \(z\) vers l'axe des \(x\) $BR", 
+"\(A=$M[17]\) $BR", "\( T\) est la rotation d'un angle de \( 90^\circ \) autour de l'axe des \( y\) de l'axe des \(x\) vers l'axe des \(z\) $BR",
+"\(A=$M[18]\) $BR", "\( T\) est la rotation d'un angle de \( 45^\circ \) autour de l'axe des \( y\) de l'axe des \(z\) vers l'axe des \(x\) $BR",
+"\(A=$M[19]\) $BR", "\( T\) est la rotation d'un angle de \( 45^\circ \) autour de l'axe des \( y\) de l'axe des \(x\) vers l'axe des \(z\)  $BR",
+"\(A=$M[20]\) $BR", "\( T\) est la rotation d'un angle de \( t^\circ \) autour de l'axe des \( y\) de l'axe des \(x\) vers l'axe des \(z\)  $BR"
+);
+Context()->normalStrings;
+
+# use pop-up-lists
+$ml->rf_print_q(~~&pop_up_list_print_q);
+# you may need to add more letters D=>"D", etc. 
+$ml->ra_pop_up_list([No_answer=>"?","A"=>"A",'B'=>"B",'C'=>"C",'D'=>'D','E'=>'E','F'=>'F']);
+
+$ml -> choose(6);
+
+Context()->texStrings;
+BEGIN_TEXT
+Associer à chaque matrice \(A\) la transformation linéaire  \( T: {\mathbb R}^3 \rightarrow {\mathbb R}^3 \) qui lui est associée. 
+\{
+ColumnTable(
+$PAR.$ml->print_q.$PAR,
+$ml->print_a,
+indent => 0, separation => 30, valign => "TOP"
+);
+\}
+END_TEXT
+Context()->normalStrings;
+
+install_problem_grader(~~&std_problem_grader);
+$showPartialCorrectAnswers = 0;
+
+ANS(str_cmp($ml->ra_correct_ans )) ;
+;
+ENDDOCUMENT();
+
+

@@ -1,0 +1,46 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Espace vectoriel)
+## KEYWORDS('base', 'ensemble générateur', 'espace euclidien', 'indépendance')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(1)   
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros("PGstandard.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "PGcourse.pl");
+
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Vector");
+
+
+$a=non_zero_vector3D(1,10);
+($a1,$a2,$a3) = $a->value;
+$b=Vector($a3,0,-$a1);
+$c=$a x $b;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Soit \( \vec{a}  = $a\) et \(\vec{b}=$b \)  deux vecteurs orthogonaux. Trouver un vecteur \( \vec{c} \) de sorte que \( \mathbf{B}= \lbrace \ \vec{a}, \ \vec{b}, \ \vec{c} \ \rbrace \) soit une base orthogonale de \(\mathbb{R}^3 \).
+
+ $PAR
+ \( \vec{c} \)=\{ans_rule(30)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($c->cmp( checker=>sub {
+    my ($correct, $student, $ansHash) = @_;
+    return $correct->isParallel($student);
+  } ) );
+
+ENDDOCUMENT();		# This should be the last executable line in the problem.
+

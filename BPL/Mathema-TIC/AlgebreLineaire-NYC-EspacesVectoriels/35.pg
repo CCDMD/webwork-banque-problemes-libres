@@ -1,0 +1,333 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Espace vectoriel)
+## KEYWORDS('base', 'dimension', 'ensemble générateur', 'indépendance', 'polynôme', 'sous-espace vectoriel')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##Level(3)
+##Language(fr)
+###############Source###############
+## Date(July 2013)
+## Institution(Hope College)
+## Author(Paul Pearson)
+###############Source###############
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"MatrixUnits.pl",
+"MatrixReduce.pl",
+"MatrixCheckers.pl",
+"parserPopUp.pl",
+"unionLists.pl",
+"PGcourse.pl",
+);
+install_problem_grader(~~&std_problem_grader);
+$showPartialCorrectAnswers = 0;
+
+
+
+TEXT(beginproblem()); 
+$refreshCachedImages = 1;
+Context('Numeric');
+Context()->noreduce('(-x)-y','(-x)+y');      
+
+
+$choix=random(1,2);
+
+if ($choix==1)
+{
+
+do {
+
+$U = GL3Z();
+$V = GL3Z();
+
+$A = Matrix([
+[1,1,-3],
+[2,1,-2],
+[-1,0,-1],
+[3,1,-4], 
+]);
+$A = $A*$U*$V;
+
+
+foreach my $i (1..4) {
+  foreach my $j (1..3) {
+    $a[$i][$j] = $A->element($i,$j);
+  }
+}
+
+$p1 = Formula("$a[1][1] * x^3 + $a[2][1] * x^2 + $a[3][1]*x+$a[4][1]")->reduce;
+$p2 = Formula("$a[1][2] * x^3 + $a[2][2] * x^2 + $a[3][2]*x+$a[4][2]")->reduce;
+$p3 = Formula("$a[1][3] * x^3 + $a[2][3] * x^2 + $a[3][3]*x+$a[4][3]")->reduce;
+
+
+} until (
+  (($A->element(4,1) != 0) or ($A->element(4,3) != 0))
+);
+
+
+$Adim = Real(2);
+$Abasis = PopUp(['choisir',"oui","non"],"non");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \( {P}_3 \) l'espace vectoriel des polynômes de degré au plus \(3\) et soit \( H \) l'espace engendré par toutes les combinaisons linéaires des trois polynômes suivants \( p_1(x)=$p1, \ p_2(x)=$p2 \) et \( p_3(x)=$p3 \).
+$BR
+$BR
+\{ BeginList('OL',type=>'a') \}
+
+$ITEM Est-ce que  \( \lbrace $p1, $p2, $p3 \rbrace \) est une base de \( {P}_3 \)? \{ $Abasis->menu \} 
+$ITEMSEP
+
+$ITEM La dimension de l'espace vectoriel  \( H \)  est \{ ans_rule(10) \}.
+$ITEMSEP
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Abasis->cmp);
+ANS($Adim->cmp);
+
+########################################
+
+$Abasisvects = List($p1,$p3);
+
+Context()->texStrings;
+BEGIN_TEXT
+$ITEM Une base de l'espace vectoriel \( H \) peut être donnée par 
+\( \big\lbrace \) 
+\{ ans_rule(40) \} 
+\( \big\rbrace \).
+Entrer un polynôme ou une liste de polynômes séparés par une virgule.
+\{ EndList('OL') \}
+END_TEXT
+Context()->normalStrings;
+
+sub mycheck {
+
+	my ($correct, $student, $ansHash, $value) = @_;
+	my @c = @{$correct};  
+	my @s = @{$student};
+	my $nc = scalar(@c);
+	my $ns = scalar(@s);
+	my $score = 0;
+	my @errors = ();
+
+	return ($score,@errors) if $nc != $ns;
+
+		# Most of the answer checking is done on integers 
+		# or on decimals like 0.24381729, so we will set the
+		# tolerance accordingly in a local context.
+		#Pourquoi ne pas utiliser =>0 et ainsi obtenir les coefficients des polynomes par a_i=f^(i)(0)/i!?
+		my $context = Context()->copy;
+		$context->flags->set(
+			tolerance => 0.001,
+			tolType => "absolute",
+		);
+
+		# put the correct vectors into the columns of a matrix $C
+        my $C = Matrix([
+        [$c[0]->eval(x=>pi),$c[1]->eval(x=>pi)],
+        [$c[0]->D('x')->eval(x=>pi),$c[1]->D('x')->eval(x=>pi)],
+        [$c[0]->D('x','x')->eval(x=>pi),$c[1]->D('x','x')->eval(x=>pi)],
+		 [$c[0]->D('x','x','x')->eval(x=>pi),$c[1]->D('x','x','x')->eval(x=>pi)],
+        ]);
+#warn $C;
+
+		# put the student vectors into the columns of a matrix $S
+        my $S = Matrix([
+        [$s[0]->eval(x=>pi),$s[1]->eval(x=>pi)],
+        [$s[0]->D('x')->eval(x=>pi),$s[1]->D('x')->eval(x=>pi)],
+        [$s[0]->D('x','x')->eval(x=>pi),$s[1]->D('x','x')->eval(x=>pi)],
+		 [$s[0]->D('x','x','x')->eval(x=>pi),$s[1]->D('x','x','x')->eval(x=>pi)],
+        ]);
+#warn $S;
+
+
+		# Put $C and $S into the local context so that
+		# all of the computations that follow will also be in
+		# the local context.
+		$C = Matrix($context,$C);
+		$S = Matrix($context,$S);
+
+		#  Theorem: A^T A is invertible if and only if A has linearly independent columns.
+
+		#  Check that the professor's vectors are, in fact, linearly independent.
+		$CTC = ($C->transpose) * $C;
+		warn "Correct answer is a linearly dependent set." if ($CTC->det == 0);
+
+		#  Check that the student's vectors are linearly independent
+		if ( (($S->transpose) * $S)->det == 0) {
+			Value->Error("Les polynômes sont linéairement dépendants");
+			return 0;
+		}
+
+		# S = student, C = correct, X = change of basis matrix
+		# Solve S = CX for X using (C^T C)^{-1} C^T S = X.
+		$X = ($CTC->inverse) * (($C->transpose) * $S);
+		if ( $S == $C * $X ) { $score = $nc; };
+    
+		return ($score,@errors);
+
+
+
+}
+
+
+
+ANS($Abasisvects->cmp(list_checker=>~~&mycheck) );
+}
+else
+
+{
+
+do {
+$U = GL3Z();
+$V = GL3Z();
+
+$A = Matrix([
+[1,0,0],
+[0,1,0],
+[0,0,1], 
+[1,0,1],
+]);
+$A =$A *$U * $V;
+
+
+foreach my $i (1..4) {
+  foreach my $j (1..3) {
+    $a[$i][$j] = $A->element($i,$j);
+  }
+}
+
+$p1 = Formula("$a[1][1] * x^3 + $a[2][1] * x^2 + $a[3][1]*x+$a[4][1]")->reduce;
+$p2 = Formula("$a[1][2] * x^3 + $a[2][2] * x^2 + $a[3][2]*x+$a[4][2]")->reduce;
+$p3 = Formula("$a[1][3] * x^3 + $a[2][3] * x^2 + $a[3][3]*x+$a[4][3]")->reduce;
+
+
+} until (
+  (($A->element(4,1) != 0) or ($A->element(4,3) != 0))
+);
+
+$Adim = Real(3);
+$Abasis = PopUp(['choisir',"oui","non"],"non");
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \( {P}_3 \) l'espace vectoriel des polynômes de degré au plus \(3\) et soit \( H \) l'espace engendré par toutes les combinaisons linéaires des trois polynômes suivants \( p_1(x)=$p1, \ p_2(x)=$p2 \) et \( p_3(x)=$p3 \).
+$BR
+$BR
+\{ BeginList('OL',type=>'a') \}
+
+$ITEM Est-ce que  \( \lbrace $p1, $p2, $p3 \rbrace \) est une base de \( {P}_3 \)? \{ $Abasis->menu \} 
+$ITEMSEP
+
+$ITEM La dimension de l'espace vectoriel  \( H \)  est \{ ans_rule(10) \}.
+$ITEMSEP
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($Abasis->cmp);
+ANS($Adim->cmp);
+
+########################################
+
+$Abasisvects = List($p1,$p2,$p3);
+
+Context()->texStrings;
+BEGIN_TEXT
+$ITEM Une base de l'espace vectoriel \( H \) peut être donnée par 
+\( \big\lbrace \) 
+\{ ans_rule(40) \} 
+\( \big\rbrace \).
+Entrer un polynôme ou une liste de polynômes séparés par une virgule.
+\{ EndList('OL') \}
+END_TEXT
+Context()->normalStrings;
+
+
+
+sub mycheck2 {
+
+	my ($correct, $student, $ansHash, $value) = @_;
+	my @d = @{$correct};  
+	my @s = @{$student};
+	my $nc = scalar(@d);
+	my $ns = scalar(@s);
+	my $score = 0;
+	my @errors = ();
+
+	return ($score,@errors) if $nc != $ns;
+
+		# Most of the answer checking is done on integers 
+		# or on decimals like 0.24381729, so we will set the
+		# tolerance accordingly in a local context.
+		#Pourquoi ne pas utiliser =>0 et ainsi obtenir les coefficients des polynomes par a_i=f^(i)(0)/i!?
+		my $context = Context()->copy;
+		$context->flags->set(
+			tolerance => 0.001,
+			tolType => "absolute",
+		);
+
+		# put the correct vectors into the columns of a matrix $C
+        my $D = Matrix([
+        [$d[0]->eval(x=>pi),$d[1]->eval(x=>pi),$d[2]->eval(x=>pi)],
+        [$d[0]->D('x')->eval(x=>pi),$d[1]->D('x')->eval(x=>pi),$d[2]->D('x')->eval(x=>pi)],
+        [$d[0]->D('x','x')->eval(x=>pi),$d[1]->D('x','x')->eval(x=>pi),$d[2]->D('x','x')->eval(x=>pi)],
+		[$d[0]->D('x','x','x')->eval(x=>pi),$d[1]->D('x','x','x')->eval(x=>pi),$d[2]->D('x','x','x')->eval(x=>pi)],
+        ]);
+#warn $D;
+
+		# put the student vectors into the columns of a matrix $S
+        my $SS = Matrix([
+        [$s[0]->eval(x=>pi),$s[1]->eval(x=>pi),$s[2]->eval(x=>pi)],
+        [$s[0]->D('x')->eval(x=>pi),$s[1]->D('x')->eval(x=>pi),$s[2]->D('x')->eval(x=>pi)],
+        [$s[0]->D('x','x')->eval(x=>pi),$s[1]->D('x','x')->eval(x=>pi),$s[2]->D('x','x')->eval(x=>pi)],
+		[$s[0]->D('x','x','x')->eval(x=>pi),$s[1]->D('x','x','x')->eval(x=>pi),$s[2]->D('x','x','x')->eval(x=>pi)],
+        ]);
+#warn $S;
+
+
+		# Put $C and $S into the local context so that
+		# all of the computations that follow will also be in
+		# the local context.
+		$D = Matrix($context,$D);
+		$SS = Matrix($context,$SS);
+
+		#  Theorem: A^T A is invertible if and only if A has linearly independent columns.
+
+		#  Check that the professor's vectors are, in fact, linearly independent.
+		$DTD = ($D->transpose) * $D;
+		warn "Correct answer is a linearly dependent set." if ($DTD->det == 0);
+
+		#  Check that the student's vectors are linearly independent
+		if ( (($SS->transpose) * $SS)->det == 0) {
+			Value->Error("Les polynômes sont linéairement dépendants");
+			return 0;
+		}
+
+		# SS = student, D = correct, X = change of basis matrix
+		# Solve S = CX for X using (C^T C)^{-1} C^T S = X.
+		$X = ($DTD->inverse) * (($D->transpose) * $SS);
+		if ( $SS == $D * $X ) { $score = $nc; };
+    
+		return ($score,@errors);
+	}
+ANS($Abasisvects->cmp(list_checker=>~~&mycheck2) );
+
+
+
+
+}
+ENDDOCUMENT();

@@ -1,0 +1,106 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Espace vectoriel)
+## KEYWORDS('inverse additif', 'opération externe', 'opération interne', 'opération non usuelle', 'élément neutre')
+## Adaptation(Mélisande Fortin Boisvert-Collège de Maisonneuve)
+
+###############Source###############
+## Institution(NAU)
+## Author(Nandor Sieben)
+## MO(1)
+## date 10/3/2013
+###############Source###############
+##Level(3)
+##Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl"
+);
+
+
+Context("Numeric");
+Context()->variables->add(a=>'Real');
+Context()->variables->add(u=>'Real');
+
+
+$c=non_zero_random(-3,3,1);
+{
+$u=random(-9,9,1);
+$v=random(-9,9,1);
+$a=random(-9,9,1);
+redo if ($u==$c or $v==$c or $a==$c);
+}
+
+$zero = Compute("$c");
+$inverse = Formula("2*$c-u")->reduce;
+
+$sum = Formula("$u+$v-$c")->reduce;
+$product = Formula("$a*$u-$a*$c+$c")->reduce;
+
+$ca= Formula("$c*a")->reduce;
+$cc= Formula("$c*2")->reduce;
+TEXT(beginproblem());
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \( V={\mathbb R}\). Pour \( u,v \in V\) et \(a\in{\mathbb R}\) , nous pouvons définir l'opération interne (addition) par \[ u \ \oplus \  v := u+v-$c\] 
+et l'opération externe (multiplication par un scalaire) par  \[ a \odot u := au-$ca+$c.\] 
+Il est possible de montrer que \( (V, \ \oplus,\ \odot) \) est un espace vectoriel sur les réels \(\mathbb R \).
+$BR
+$BR
+Déterminer:
+$PAR
+$PAR
+\( $u \ \oplus $v =\)\{ ans_rule(35) \}
+$PAR
+$PAR
+$PAR
+\( $a \ \odot  $u =\)\{ ans_rule(35) \}
+$PAR
+L'élément neutre de \(\oplus\):
+$PAR 
+\( N =\)\{ ans_rule(35) \}
+$PAR
+L'inverse de \( u\in V \), noté  \( -u \), relatif à \(  \oplus \):
+$PAR
+\( - u= \)\{ ans_rule(35) \}
+$PAR
+${BBOLD} Remarque ${EBOLD}: l'inverse de \( u \),  relatif à \(  \oplus \), est noté  \( -u \) mais n'est pas nécessairement l'élément \( u \) auquel nous assignons une valeur négative.
+
+
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $sum->cmp() );
+ANS( $product->cmp() );
+ANS( $zero->cmp() );
+ANS( $inverse->cmp() );
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+${PAR}SOLUTION:${PAR}
+Selon la définition de l'opération interne de cet espace vectoriel:   \( u \oplus v =$u \ \oplus $v = $u+$v-$c=$sum\).
+$BR 
+$BR
+Selon la définition de l'opération externe de cet espace vectoriel :  \( a\ \odot u= $a \ \odot $u = $a \cdot $u+$c \cdot $a+$c=$product\).
+$BR
+$BR
+Le neutre de \(\oplus\) est l'élément \( N \) qui satisfait \( N \oplus u=u\) peu importe \( u \). Or \( N \oplus u= N+u-$c\), nous avons donc à isoler \( N \) dans l'équation
+ \( N+u-$c=u\), nous obtenons ainsi \( N=$c \).
+$BR
+$BR
+Pour éviter toute confusions, nous noterons  \( v \), l'élément inverse de \(u \).
+L'élément inverse de \( u \) est donc l'élément \( v \) qui satisfait \( u \oplus v=N=$c\). Or \( u \oplus v= u+v-$c\), et cette expression doit égaler \($c\). Il nous reste donc qu'à isoler \( v \) dans l'équation
+\(  u+v-$c=$c\), nous obtenons ainsi \( v=-u+$cc \).
+ 
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

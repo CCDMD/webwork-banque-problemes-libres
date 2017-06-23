@@ -1,0 +1,90 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Espace vectoriel)
+## KEYWORDS('matrice', 'sous-espace vectoriel')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##########################################SOURCE################
+## Tagged by cmd6a 5/3/06
+## MLT(TrueFalseB)
+## MLTleader(1)
+## Level(4)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('7.1')
+###############Source###############
+## Level(2)   
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"PGcourse.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+$rank = random(1,2,1);
+@row = ('première', 'deuxième', 'troisième');
+$tag_r = random(0,2,1);
+
+$n= random(3,5,1);
+
+@yes1 = ('Les matrices diagonales \( $n\times $n \) ',
+         'Les matrices  \( $n\times $n \) dont la trace est \( 0 \) ',  
+	 'Les matrices \( $n\times $n \) dont la $row[$tag_r] ligne est nulle',
+	 'Les matrices \( $n\times $n \) symétriques' );
+
+
+@yes2 = ('Les matrices  \( $n\times $n \) triangulaires supérieures', 
+	 'Les matrices \( $n\times $n \) triangulaires inférieures');
+ 
+$tag1 = random(0,1,1);
+
+@y = ($yes1[0], $yes1[1], $yes1[2], $yes1[3], $yes2[$tag1]);
+
+@slice1 = NchooseK(4,4);
+@sy = @y[@slice1];
+
+@no1 = ('Les matrices \( $n\times $n \) inversibles',
+      'Les matrices \( $n\times $n \) dont les éléments sont tous supérieurs à \(0\)',
+      'Les matrices \( $n\times $n \) dont les éléments sont des entiers',
+      'Les matrices \( $n\times $n \) sous forme échelon réduite', 
+      'Les matrices \(  $n\times $n \) de rang \($rank\)');	
+
+@no2 = ('Les matrices \( $n\times $n \) non inversibles',
+	'Les matrices \( $n\times $n \) dont le déterminant est \(0\)');
+
+$tag2 = random(0,1,1);
+
+@n = ($no1[0], $no1[1], $no1[2], $no1[3], $no1[4], $no2[$tag2]);
+
+@slice2 = NchooseK(6,6);
+@sn = @n[@slice2];
+
+$cmc = new_checkbox_multiple_choice();
+
+$cmc -> qa ("Quels sous-ensembles de \(  \mathbf{M}_{$n\times $n} \) sont des sous-espaces vectoriels de
+             \( \mathbf{M}_{$n\times $n} \)?", 
+            $sy[0], $sy[1], $sy[2]);
+    
+
+$cmc-> extra ($sn[0], $sn[1], $sn[2]);
+
+BEGIN_TEXT
+
+\{ $cmc -> print_q \}
+$BR
+\{ $cmc -> print_a \}
+
+END_TEXT
+
+ANS(checkbox_cmp( $cmc->correct_ans )   ) ;
+               
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

@@ -1,0 +1,78 @@
+#Canevas pour questions choisies dans une banque
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"PGcourse.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+Context("Numeric");
+Context()->variables->add(a=>'Real');
+
+
+
+
+$a= random(3,5,1);
+$b=random(2,7,1);
+
+
+
+#Les  bonnes questions
+@yes1 = (' Les polynômes de la forme  \(p(t)= at^{$a} \), où \(a\) appartient à \( {\mathbb R}\)',
+         'Les polynômes de la forme  \(p(t)= at^{$a}+at\), où \(a\) appartient à \( {\mathbb R}\) ',  
+	 'Les polynômes de la forme  \(p(t)= at^2 \), où \(a\) appartient à \( {\mathbb R}\)  ',
+	 'Les polynômes de la forme  \(p(t)= at^{$a} +at^2\), où \(a\) appartient à \( {\mathbb R}\)' );
+
+
+
+ 
+$tag1 = random(0,1,1);
+#Les bonne réponses sont introduites dans une liste
+@y = ($yes1[0], $yes1[1], $yes1[2], $yes1[3]);
+
+#Les choix sont réordonnés
+@slice1 = NchooseK(3,3);
+@sy = @y[@slice1];
+
+
+#Les mauvaises questions
+@no1 = ('Les polynômes de la forme  \(p(t)= t^{$a}+at\), où \(a\) appartient à \( {\mathbb R}\) ',
+      'Les polynômes de la forme  \(p(t)= at^{$a}+$b t\), où \(a\) appartient à \( {\mathbb R}\)',
+      'Les polynômes de la forme  \(p(t)= t^{$a}+$b t\), où \(a\) appartient à \( {\mathbb R}\)',
+      'Les polynômes de la forme  \(p(t)= t^{$a}+$b t+1 \), où \(a\) appartient à \( {\mathbb R}\)');	
+
+
+
+#Mauvaises questions dans une liste
+@n = ($no1[0], $no1[1], $no1[2], $no1[3]);
+
+#Mauvaises questions réordonnées
+@slice2 = NchooseK(3,3);
+@sn = @n[@slice2];
+
+$cmc = new_checkbox_multiple_choice();
+
+$cmc -> qa ("Parmi les ensembles suivants, lesquels sont des sous-espaces vectoriels de  \( {\mathbf P}_{$a}\) ?", 
+            $sy[0], $sy[1]);
+    
+
+$cmc-> extra ($sn[0], $sn[1]);
+
+BEGIN_TEXT
+Soit  \( {\mathbf P}_{$a}\), l'ensemble des polynômes de degré au plus \($a\).
+$PAR
+\{ $cmc -> print_q \}
+$BR
+\{ $cmc -> print_a \}
+
+END_TEXT
+
+ANS(checkbox_cmp( $cmc->correct_ans )   ) ;
+               
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

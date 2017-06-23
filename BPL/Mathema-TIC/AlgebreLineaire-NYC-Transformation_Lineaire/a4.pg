@@ -1,0 +1,93 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Transformation linéaire)
+## KEYWORDS( 'propriétés', 'évaluer une transformation linéaire')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+#########################SOURCE####################
+## Date(July 2013)
+## Institution(Hope College)
+## Author(Paul Pearson)
+## TitleText1('Multivariable Mathematics')
+#############################SOURCE##################
+##Level(3)
+##Language(fr)
+
+DOCUMENT(); 
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGcourse.pl",
+);
+TEXT(beginproblem());
+install_problem_grader(~~&std_problem_grader);
+$showPartialCorrectAnswers = 0;
+$refreshCachedImages = 1;
+
+foreach my $i ( 1..5 ) {
+	$b[$i] = random(1,8);
+		$a[$i]=random(1,8);
+	}
+$c=random(2,6);
+
+
+$pp=Formula("$a[4]* x^3+$a[3]* x^2 + $a[2]* x + $a[1]")->reduce;
+$qq=Formula("$b[4]* x^3+$b[3]* x^2 + $b[2]* x + $b[1]")->reduce;
+
+
+$rep1=Formula("($pp+$qq)")->D('x');
+$rep2=Formula("($pp)")->D('x');
+$rep3=Formula("($qq)")->D('x');
+$rep4=Formula("$c*$pp")->D('x');
+
+$popup = PopUp(["choisir","f est une transformation linéaire","f n'est pas une transformation linéaire "],"f est une transformation linéaire");
+$popup_add = PopUp(["choisir","Oui, ils sont égaux","Non, ils ne sont pas égaux"],"Oui, ils sont égaux");
+$popup_mult = PopUp(["choisir","Oui, ils sont égaux","Non, ils ne sont pas égaux"],"Oui, ils sont égaux");
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \( \mathbf{P}_n \) l'espace vectoriel des polynômes de degré au plus \( n \).
+Soit \( D : \mathbf{P}_3 \to \mathbf{P}_2 \) défini par \( D(p(x)) = p'(x) \) pour tous les polynômes \( p(x) \in \mathbf{P}_3 \).  
+Est-ce que \( D \) est une transformation linéaire?
+$BR
+$BR
+Soit \( p(x) = $pp \) and \( q(x) = $qq \) deux polynômes de \( \mathbf{P}_2 \) et \( c=$c \in \mathbb{R} \).
+$BR
+$BR
+
+Évaluez séparément les deux expressions suivantes:
+$BR
+\( D(p(x)+q(x)) = \) \{ ans_rule(15) \} 
+$BR
+$BR
+\( D(p(x)) + D(q(x)) = \) \{ ans_rule(15) \}  \( + \) \{ ans_rule(15) \} 
+$BR
+À la lumière de cet example, est-ce que vous pouvez généraliser que \( D(p(x)+q(x)) = D(p(x)) + D(q(x)) \) pour tout \( p(x), q(x) \in \mathbf{P}_3 \)? \{ $popup_add->menu \}
+$PAR
+Évaluez séparément les deux expressions suivantes:
+$BR
+\( D($c \cdot p(x)) = \) \{ ans_rule(15) \} 
+$BR
+$BR
+\( $c \cdot (D(p(x))) = \)   \($c \cdot \)\{ ans_rule(15) \}
+$BR
+À la lumière de cet example, est-ce que vous pouvez généraliser que \( D(c p(x)) = c(D(p(x)))\) pour tout \( c \in \mathbb{R} \) et tout \( p(x) \in \mathbf{P}_3 \)? \{ $popup_mult->menu \}
+$PAR
+
+Conséquement, est-ce que \( D \) est une transformation linéaire? \{ $popup->menu \}
+
+END_TEXT
+Context()->normalStrings;
+ANS($rep1->cmp);
+ANS($rep2->cmp);
+ANS($rep3->cmp);
+ANS($popup_add->cmp);
+
+ANS($rep4->cmp);
+ANS($rep2->cmp);
+ANS($popup_mult->cmp);
+
+ANS($popup->cmp);
+
+ENDDOCUMENT();

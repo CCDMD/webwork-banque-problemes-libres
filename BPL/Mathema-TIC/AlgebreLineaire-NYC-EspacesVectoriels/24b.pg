@@ -1,0 +1,141 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Espace vectoriel)
+## KEYWORDS('base', 'ensemble générateur', 'indépendance')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##Level(3)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserMultiAnswer.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+Context()->variables->add(a=>"Real",b=>"Real",c=>"Real");
+   
+
+
+
+@A=(0,0,0,0);
+@AA=(0,0,0,0);
+$i=random(0,1);
+$j=random(2,3);
+
+
+$A[$i]=a;
+$A[$j]=b;
+$AA[$i]=1;
+$AA[$j]=1;
+
+
+
+$gen=Formula("$A[0] x^4+$A[1] x^3+$A[2] x^2 +$A[3] x+ c")->reduce;
+$rep1= Vector(Formula(" $AA[0] x^4+$AA[1] x^3"),Formula(" $AA[2] x^2+$AA[3] x"),Formula(" 1")); 
+
+
+($r1,$r2,$r3) = $rep1->value;
+
+
+
+$reponseliste = List($r1,$r2,$r3);
+
+sub mycheck {
+
+	my ($correct, $student, $ansHash, $value) = @_;
+	my @c = @{$correct};  
+	my @s = @{$student};
+	my $nc = scalar(@c);
+	my $ns = scalar(@s);
+	my $score = 0;
+	my @errors = ();
+
+	return ($score,@errors) if $nc != $ns;
+
+		# Most of the answer checking is done on integers 
+		# or on decimals like 0.24381729, so we will set the
+		# tolerance accordingly in a local context.
+		#Pourquoi ne pas utiliser =>0 et ainsi obtenir les coefficients des polynomes par a_i=f^(i)(0)/i!?
+		my $context = Context()->copy;
+		$context->flags->set(
+			tolerance => 0.001,
+			tolType => "absolute",
+		);
+
+		# put the correct vectors into the columns of a matrix $C
+        my $C = Matrix([
+        [$c[0]->eval(x=>pi),$c[1]->eval(x=>pi),$c[2]->eval(x=>pi)],
+        [$c[0]->D('x')->eval(x=>pi),$c[1]->D('x')->eval(x=>pi),$c[2]->D('x')->eval(x=>pi)],
+        [$c[0]->D('x','x')->eval(x=>pi),$c[1]->D('x','x')->eval(x=>pi),$c[2]->D('x','x')->eval(x=>pi)],
+		[$c[0]->D('x','x','x')->eval(x=>pi),$c[1]->D('x','x','x')->eval(x=>pi),$c[2]->D('x','x','x')->eval(x=>pi)],
+		[$c[0]->D('x','x','x','x')->eval(x=>pi),$c[1]->D('x','x','x','x')->eval(x=>pi),$c[2]->D('x','x','x','x')->eval(x=>pi)],
+        ]);
+#warn $C;
+
+		# put the student vectors into the columns of a matrix $S
+        my $S = Matrix([
+        [$s[0]->eval(x=>pi),$s[1]->eval(x=>pi),$s[2]->eval(x=>pi)],
+        [$s[0]->D('x')->eval(x=>pi),$s[1]->D('x')->eval(x=>pi),$s[2]->D('x')->eval(x=>pi)],
+        [$s[0]->D('x','x')->eval(x=>pi),$s[1]->D('x','x')->eval(x=>pi),$s[2]->D('x','x')->eval(x=>pi)],
+		 [$s[0]->D('x','x','x')->eval(x=>pi),$s[1]->D('x','x','x')->eval(x=>pi),$s[2]->D('x','x','x')->eval(x=>pi)],
+		  [$s[0]->D('x','x','x','x')->eval(x=>pi),$s[1]->D('x','x','x','x')->eval(x=>pi),$s[2]->D('x','x','x','x')->eval(x=>pi)],
+        ]);
+#warn $S;
+
+
+		# Put $C and $S into the local context so that
+		# all of the computations that follow will also be in
+		# the local context.
+		$C = Matrix($context,$C);
+		$S = Matrix($context,$S);
+
+		#  Theorem: A^T A is invertible if and only if A has linearly independent columns.
+
+		#  Check that the professor's vectors are, in fact, linearly independent.
+		$CTC = ($C->transpose) * $C;
+		warn "Correct answer is a linearly dependent set." if ($CTC->det == 0);
+
+		#  Check that the student's vectors are linearly independent
+		if ( (($S->transpose) * $S)->det == 0) {
+			Value->Error("Les polynômes sont linéairement dépendants");
+			return 0;
+		}
+
+		# S = student, C = correct, X = change of basis matrix
+		# Solve S = CX for X using (C^T C)^{-1} C^T S = X.
+		$X = ($CTC->inverse) * (($C->transpose) * $S);
+		if ( $S == $C * $X ) { $score = $nc; };
+    
+		return ($score,@errors);
+
+
+
+}
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Trouver une base \(  B\) de l'espace vectoriel formé des polynômes de la forme  \( p(x)=$gen   \) où \( a \) ,  \( b \) et \( c \) sont des réels.
+$BR
+$BR
+\(B= \big\lbrace \) 
+\{ ans_rule(40) \} 
+\( \big\rbrace \). Entrer un polynôme ou une liste de polynômes séparés par une virgule.
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($reponseliste->cmp(list_checker=>~~&mycheck) );
+
+;
+
+ENDDOCUMENT();

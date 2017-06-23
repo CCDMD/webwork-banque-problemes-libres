@@ -1,0 +1,90 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Vecteurs et espace euclidien)
+## KEYWORDS('R^3', 'base', 'dépendance', 'espace engendré', 'indépendance', 'système générateur')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##Level(3)
+##Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl",
+  "PGchoicemacros.pl",
+"PGgraders.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+Context("Vector");
+
+$a=random(2,5);
+$b=random(2,5);
+
+
+$B = non_zero_vector3D();
+$A = non_zero_vector3D();
+while (areParallel $A $B) { $B = non_zero_vector3D(); }
+$C = $A x $B;
+$D=$a*$A+$b*$B;
+$E=$a*$A;
+
+
+
+$tf = new_select_list();
+$tf->rf_print_q(~~&pop_up_list_print_q);
+
+
+
+$tf->ra_pop_up_list(["?"=>"Choisir la meilleure réponse",
+ "Engendrent" => "Les vecteurs engendrent l'espace vectoriel",
+ "Indépendants" => "Les vecteurs sont linéairement indépendants",
+ "Base" => "Les vecteurs forment une base de l'espace vectoriel",
+  "Rien" => "Les vecteurs sont linéairement dépendants et n'engendrent pas l'espace vectoriel",
+ ]);
+ 
+
+
+ 
+ 
+# Les questions qui auront comme choix de réponse la liste ci haut et la bonne réponse suit la question
+
+$tf -> qa (
+"\(   \left\lbrace \vec{a} ,\vec{b}, \vec{c}  \right\rbrace \)", "Base",
+"\(  \left\lbrace \vec{a}, \vec{b}, \vec{d}  \right\rbrace \)", "Rien",
+"\(  \left\lbrace \vec{a}, \vec{b}, \vec{c}, \vec{d}  \right\rbrace \)", "Engendrent",
+"\(  \left\lbrace \vec{a}, \vec{d}  \right\rbrace \)", "Indépendants",
+"\(  \left\lbrace \vec{a}, \vec{e}  \right\rbrace \)", "Rien",
+"\(  \left\lbrace \vec{a}, \vec{b}, \vec{e}  \right\rbrace \)", "Rien",
+);
+
+#Nombre de questions à choisir
+$tf->choose(3);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soient \(\vec a = $A\),  \(\vec b = $B\), \(\vec c = $C\), \(\vec d = $D\) et \(\vec e = $E\)  des vecteurs de l'espace vectoriel \( \mathbb{R}^3 \).
+
+$PAR
+Quelle affirmation décrit \(  \mathbf{le\   mieux} \) les ensembles suivants:
+
+  \{$tf->print_q() \}
+
+END_TEXT
+Context()->normalStrings;
+
+
+install_problem_grader(~~&std_problem_grader);
+
+ANS( str_cmp( $tf->ra_correct_ans() ) );
+
+ENDDOCUMENT();

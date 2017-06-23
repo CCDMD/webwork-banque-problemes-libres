@@ -1,0 +1,143 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Espace vectoriel)
+## KEYWORDS('base', 'ensemble générateur', 'indépendance')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##Level(3)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserMultiAnswer.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Vector');
+
+
+$rep1= Vector(1,0,0);
+$rep2= Vector(0,1,0);
+$rep3= Vector(0,0,1);
+$a1=non_zero_random(-3,3);
+$a2=non_zero_random(-3,3);
+$a3=non_zero_random(-3,3);
+$a = Vector($a1,$a2,$a3);
+$b = Vector(-$a2,$a1,0);
+$c=$a x $b;
+
+   
+
+
+#Un bonne réponse
+#C contiendra cette bonne réponse
+#S contiendra la réponse de l'étudiant
+
+
+$image_multians = MultiAnswer($rep1, $rep2,$rep3)->with(
+  singleResult => 1,
+  separator => ',',
+  tex_separator => ',',
+
+  checker => sub {
+      my ( $correct, $student, $self ) = @_;
+      my @c = @{$correct};
+      my @s = @{$student};
+
+      return 0 if scalar(@s) < scalar(@c);  # Valide s'il manque des entrées
+
+     
+	  $C=Matrix($rep1 ,$rep2,$rep3
+          )->transpose;
+
+    
+  
+      $S = Matrix( $s[0] , $s[1] ,$s[2]
+      )->transpose;
+
+	  
+	  #Les réponses de l'étudiant sont les colonnes de la matrice $S
+      # A^T A est inversible ssi les colonnes sont linéairement idépendantes
+
+
+	  
+	#Validation: un des vecteurs est le vecteur a
+      if ( $s[0]!=$a && $s[1]!=$a && $s[2]!=$a) {
+        Value->Error("La base doit contenir le vecteur \(\vec{a}\)");
+        return 0;
+      }
+     
+
+      #Validation: les vecteurs sont linéairement indépendantes
+	  #  Check that the student's vectors are linearly independent
+      if ( (($S->transpose) * $S)->det == 0) {
+        Value->Error("Les vecteurs sont linéairement dépendants");
+        return 0;
+      }
+
+	  
+	   #Validation: les vecteurs sont orthogonaux
+      if ( $s[0].$s[1] != 0 || $s[0].$s[2]!=0 || $s[1].$s[2]!=0) {
+        Value->Error("Les vecteurs ne sont pas orthogonaux");
+        return 0;
+      }
+	  
+	  
+	  
+     	  #Validation: les vecteurs engentrent le bon espace vectoriel
+		  #  C et S engendrent le même espace s'il existe un changement de base X 
+		  #  S = CX et  X est donné par (C^T C)^{-1} C^T S = X.
+	      $CTC = ($C->transpose) * $C;
+          $X = ($CTC->inverse) * (($C->transpose) * $S);
+      return $S == $C * $X;
+
+
+  }
+);
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Trouver une base \(B\)  orthogonale de \( \mathbb{R}^3   \) contenant le vecteur \(\vec{a}=$a\).
+$BR
+$BR
+\(B\)  = \(\Bigg\lbrace\) 
+\{ $image_multians->ans_array() \}, 
+\{ $image_multians->ans_array() \},
+\{ $image_multians->ans_array() \}
+\(\Bigg\rbrace\)
+END_TEXT
+Context()->normalStrings;
+
+ANS( $image_multians->cmp() );
+
+
+;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+${PAR}SOLUTION:${PAR}
+Une base orthogonale de \( \mathbb{R}^3   \) est un ensemble de 3 vecteurs perpendiculaires entre eux. Il nous suffit de trouver deux vecteurs de \( \mathbb{R}^3   \)  perpendiculaires à \(\vec{a}=$a\), qui sont perpendiculaires entre eux. Il y a une infinité de 
+réponses.
+$PAR
+Un premier vecteur perpendiculaire à \(\vec{a}\) se trouve facilement, il nous faut trouver un vecteur qui satisfait \( \vec a \cdot \vec b=0 \). Nous pourrions prendre par exemple 
+\(\vec{b}=$b\).
+$PAR
+Le deuxième vecteur peut être donné à l'aide du produit vectoriel \(\vec c= \vec{a} \times \vec b\). Effectivement, le vecteur obtenu sera perpendiculaire à \(\vec{a}\) et à \(\vec{b}\). Ainsi
+\(\vec c= $a \times $b=$c\) est un troisième vecteur qui complète notre base orthogonale. 
+$PAR
+Une base orthonormale de \( \mathbb{R}^3   \) contenant le vecteur \(\vec{a}=$a\) peut donc être donnée par:
+\[B = \Bigg\lbrace$a, $b, $c \Bigg\rbrace .\]
+ 
+ 
+ 
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

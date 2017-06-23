@@ -1,0 +1,61 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Transformation linéaire)
+## KEYWORDS('image', 'matrice de transformation', 'propriétés')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+#########################SOURCE####################
+## Date(July 2013)
+## Institution(Rochester and Hope College)
+## Author(Paul Pearson)
+## MO(1)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('3.1')
+#############################SOURCE##################
+##Level(3)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix')->variables->are(
+'x1'=>'Real',
+'x2'=>'Real',
+);
+Context()->noreduce('(-x)-y','(-x)+y');  
+
+$a = random(2,9,1) * random(-1,1,2);
+$b = random(2,9,1) * random(-1,1,2);
+$c = random(2,9,1) * random(-1,1,2);
+$d = random(-1,1,2);
+if ($d==1) {$y2 = Formula("$c x1 + x2")->reduce;} else {$y2 = Formula("$c x1 - x2")->reduce;} 
+
+$T = Matrix([[Formula("$a x1 + $b x2")->reduce], [$y2]]);
+
+$x = Matrix([['x1'], ['x2']]);
+
+$M = Matrix([[$a,$b],[$c,$d]]);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit \( T: {\mathbb R}^2 \rightarrow {\mathbb R}^2 \) la transformation linéaire donnée par 
+\[ T\left($x\right) = $T . \]
+$BR
+Trouver \(A\), la matrice associée à la transformation linéaire \(T\).
+$BR
+$BR
+\( A=\) \{ $M->ans_array \}
+END_TEXT
+Context()->normalStrings;
+
+ANS( $M->cmp );
+;
+ENDDOCUMENT();

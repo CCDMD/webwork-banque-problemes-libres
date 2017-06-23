@@ -1,0 +1,83 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Transformation linéaire)
+## KEYWORDS('image', 'matrice de transformation', 'propriétés')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+#########################SOURCE####################
+## Date(July 2013)
+## Institution(Rochester and Hope College)
+## Author(Paul Pearson)
+## MO(1)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('3.1')
+#############################SOURCE##################
+##Level(3)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix')->variables->are(
+'x1'=>'Real',
+'x2'=>'Real',
+'x3'=>'Real',
+);
+Context()->noreduce('(-x)-y','(-x)+y');      
+
+
+
+$a = random(2,9,1) * random(-1,1,2);
+$b = random(-1,1,2);
+$c = random(2,9,1) * random(-1,1,2);
+if ($b==1) {$y1 = Formula("$a x1 + x2 + $c x3")->reduce;} else {$y1 = Formula("$a x1 - x2 + $c x3")->reduce;} 
+
+$d = random(2,9,1) * random(-1,1,2);
+$e = random(2,9,1) * random(-1,1,2);
+$f = random(2,9,1) * random(-1,1,2);
+$case = random(1,3,1);
+if ($case == 1) {
+	$d = 0;
+	$y2 = Formula("$e x2 + $f x3")->reduce;	
+}
+if ($case == 2) {
+        $e = 0; 
+        $y2 = Formula("$d x1 + $f x3")->reduce;
+}
+if ($case == 3) {
+        $f = 0; 
+        $y2 = Formula("$d x1 + $e x2")->reduce;
+}
+
+$x = Matrix([['x1'], ['x2'], ['x3']]);
+
+$Tx = Matrix([[$y1], [$y2]]);
+
+$M = Matrix([
+[$a,$b,$c],
+[$d,$e,$f],
+]);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit \( T: {\mathbb R}^3 \rightarrow {\mathbb R}^2 \) la transformation linéaire donnée par 
+\[ T\left($x\right) = $Tx.\]
+$BR
+Trouver \(A\), la matrice associée à la transformation linéaire \(T\).
+$BR
+$BR
+\( A=\) \{ $M->ans_array \}
+END_TEXT
+Context()->normalStrings;
+
+ANS( $M->cmp );
+;
+ENDDOCUMENT();

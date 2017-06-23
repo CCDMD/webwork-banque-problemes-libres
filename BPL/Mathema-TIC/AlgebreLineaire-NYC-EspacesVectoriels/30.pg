@@ -1,0 +1,89 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Espace vectoriel)
+## KEYWORDS('dimension', 'polynôme', 'sous-espace vectoriel')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##Level(4)
+##Language(fr)
+
+
+DOCUMENT();      
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGchoicemacros.pl"
+);
+
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+@a = NchooseK(9,9);
+@c = NchooseK(6,6);
+foreach $i (0..6) { 
+	$c[$i] = $c[$i]+2;
+}
+
+
+$tag = random(1,2,1);
+$pair=2*$tag;
+
+
+@q = ("L'espace vectoriel des polynômes de degré au plus  \($c[1] \)", 
+      " L'espace vectoriel des polynômes de degré au plus  \($c[2] \) tels que \( p($a[0])=0 \)", 
+	 " L'espace vectoriel des polynômes de degré au plus  \($c[4] \) dont le terme constant est nul",
+      "L'espace vectoriel des polynômes de degré au plus  \($c[5] \)  tels que \(p'($a[1])=p($a[3])\) ", 	
+      "L'espace vectoriel des polynômes de degré au plus  \($c[6] \) tels que \(\int_0^{$a[4]} p(t)dt = 0 \) ",
+      "L'espace vectoriel des polynômes de degré au plus  \($c[1] \) tels que \( p'(t) \) est une constante",
+      "L'espace vectoriel des polynômes de degré au plus  \( $pair\) tels que \( p(t)=p(-t) \)",
+	  "L'espace vectoriel des polynômes de degré au plus  \( $pair\)  tels que \( p(t)=-p(-t) \)",
+);
+
+@a = ($c[1]+1, 
+      $c[2],
+	  $c[4],
+      $c[5],  
+      $c[6], 
+      2,
+      $tag+1,
+	  $tag
+	  
+);
+
+@slice = NchooseK(8,8);
+
+@sq = @q[@slice];
+@sa = @a[@slice];
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Donner la dimension des espaces vectoriels suivants: 
+$PAR
+(a) $sq[0] \{ans_rule(5)\}
+$BR
+(b) $sq[1] \{ans_rule(5)\}
+$BR
+(c) $sq[2] \{ans_rule(5)\}
+$BR
+(d) $sq[3] \{ans_rule(5)\}
+$BR
+(e) $sq[4] \{ans_rule(5)\}
+
+
+
+END_TEXT
+Context()->normalStrings;
+ANS(num_cmp($sa[0]));
+ANS(num_cmp($sa[1]));
+ANS(num_cmp($sa[2]));
+ANS(num_cmp($sa[3]));
+ANS(num_cmp($sa[4]));
+
+
+ENDDOCUMENT(); 
+

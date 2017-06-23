@@ -1,0 +1,72 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Vecteurs et espace euclidien)
+## KEYWORDS('R^n', 'dimension', 'espace colonne', 'espace engendré', 'espace ligne')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##Level(3)
+##Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+
+Context("Matrix");
+
+ $rows = random(3,4);
+ $columns = random(4,5);
+ $rank = random(2,3);
+
+$SageCode1=<<END;
+print random_matrix(QQ,$rows,$columns,algorithm='echelonizable',rank=$rank).rows()
+END
+
+
+$sageReply1 = AskSage($SageCode1,{accepted_tos=>true,seed=>$problemSeed});
+$M = Matrix($sageReply1);
+
+$rep1=Compute("$rows");
+$rep2=Compute("$rank");
+$rep3=Compute("$columns");
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \(M= $M \) une matrice.
+$PAR
+L'espace colonne de \(M\) est un sous-espace vectoriel de \(\mathbb{R}^n\) où \(n= \)\{ ans_rule(5) \}.
+$BR
+La dimension de l'espace colonne de \(M\) est \{ ans_rule(5) \}.
+$PAR
+L'espace ligne de \(M\) est un sous-espace vectoriel de \(\mathbb{R}^n\) où \(n= \)\{ ans_rule(5) \}.
+$BR
+La dimension de l'espace ligne de \(M\) est \{ ans_rule(5) \}.
+
+
+END_TEXT
+Context()->normalStrings;
+ANS($rep1->cmp());
+ANS($rep2->cmp());
+ANS($rep3->cmp());
+ANS($rep2->cmp());
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+${PAR}SOLUTION:${PAR}
+Les éléments de l'espace colonne ont  \( $rows\) composantes. L'espace colonne est donc un sous-espace vectoriel de \(\mathbb{R}^$rows \).
+$BR
+$BR
+Les éléments de l'espace ligne ont  \( $columns\) composantes. L'espace ligne est donc un sous-espace vectoriel de \( \mathbb{R}^{$columns} \).
+$BR
+$BR
+Après avoir transformé la matrice  \( M \) sous forme échelon, la matrice obtenue possède \( $rank \) pivots. La matrice \( M \) est donc de rang  \( $rank \) , ce qui correspond à la dimension de l'espace ligne et de l'espace colonne.
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();

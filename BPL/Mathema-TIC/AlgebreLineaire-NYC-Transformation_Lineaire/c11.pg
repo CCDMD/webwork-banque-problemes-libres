@@ -1,0 +1,178 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Transformation linéaire)
+## KEYWORDS('image', 'injectivité', 'matrice de transformation', 'propriétés', 'surjectivité', 'évaluer une transformation linéaire')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+#########################SOURCE####################
+## Date(July 2013)
+## Institution(Hope College)
+## Author(Paul Pearson)
+#############################SOURCE##################
+##Level(3)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserRadioButtons.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+
+$a1 = non_zero_random(-4,4,1);
+$a2 = non_zero_random(-4,4,1);
+$a3 = non_zero_random(-4,4,1);
+
+$s = random(-1,1,2) * random(2,5,1);
+$t = random(-1,1,2) * random(2,5,1);
+$r = random(1,2);
+
+
+$a[1][1] = $s * $a1;
+$a[2][1] = $s * $a2;
+$a[3][1] = $s * $a3;
+
+
+if ( $r==1 ) {
+$a[1][2] = $t * $a1;
+$a[2][2] = $t * $a2;
+$a[3][2] = $t * $a3;
+} else {
+$a[1][2] = $t * $a1;
+$a[2][2] = 1 * $a2;
+$a[3][2] = $t * $a3;
+}
+
+
+
+
+$A = Matrix([
+[ $a[1][1], $a[1][2] ],
+[ $a[2][1], $a[2][2] ],
+[ $a[3][1], $a[3][2] ],
+]);
+
+($m,$n) = $A->dimensions;
+
+$Ai= Matrix([
+[ $a[1][1] ],
+[ $a[2][1] ],
+[ $a[3][1] ],
+]);
+
+
+$Aj = Matrix([
+[  $a[1][2] ],
+[  $a[2][2] ],
+[  $a[3][2] ],
+]);
+
+$x = non_zero_random(-4,4,1);
+$y = non_zero_random(-4,4,1);
+$xx = Formula("x")->reduce;
+$yy = Formula("y")->reduce;
+
+
+$X = Matrix([
+[$x],
+[$y]
+]);
+
+
+$XX = Matrix([
+[$xx],
+[$yy]
+]);
+
+$AX = $A * $X;
+
+
+if ( $r==1 ) {
+
+	$mc = RadioButtons(
+    [ "injective", "surjective", "bijective", "aucune de ces réponces" ],
+    "aucune de ces réponces",
+    last =>     [ "injective", "surjective", "bijective", "aucune de ces réponces" ],
+	);
+} else {
+
+	$mc = RadioButtons(
+    [ "injective", "surjective", "bijective", "aucune de ces réponces" ],
+    "injective",
+    last =>     [ "injective", "surjective", "bijective", "aucune de ces réponces" ],
+	);
+}
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \( T : \mathbb{R}^{$n} \to \mathbb{R}^{$m} \) une transformation linéaire telle que
+
+\[
+T(\vec{e}_1)
+=
+$Ai
+\ \ \ \ \
+T(\vec{e}_2)
+=
+$Aj.
+\]
+
+$BR
+$BR
+
+
+Alors  
+\( \displaystyle
+T
+\left( 
+$X
+\right)
+
+ =
+\) 
+\{ $AX->ans_array(5) \}.
+$BR
+$BR
+Donner \( A\), la matrice associée à la transformation linéaire \( T\):
+
+$BR
+$BR
+\( \displaystyle
+T
+\left( 
+$XX
+\right)
+ = \)
+\{ $A->ans_array(5) \}
+\( \displaystyle 
+\left\lbrack
+\begin{array}{c}
+x \\ y
+\end{array}
+\right\rbrack.
+\)
+
+$BR
+$BR
+La transformation linéaire \( T \) est 
+$BR
+\{ $mc->buttons() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $AX->cmp() );
+
+ANS( $A->cmp() );
+
+ANS( $mc->cmp() );
+
+
+ENDDOCUMENT();

@@ -1,0 +1,95 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Transformation linéaire)
+## KEYWORDS('image', 'matrice de transformation', 'propriétés', 'évaluer une transformation linéaire')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+#########################SOURCE####################
+## Date(July 2013)
+## Institution(TCNJ and Hope College)
+## Author(Paul Pearson)
+## Level(3)
+## MO(1)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('3.1')
+#############################SOURCE##################
+##Level(2)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix')->variables->are('a'=>'Real','b'=>'Real','c'=>'Real');
+
+$a11 = non_zero_random(-9,9,1);
+$a12 = 0;
+$a13 = 0;
+
+$a21 = 0;
+$a22 = non_zero_random(-9,9,1);
+$a23 = 0;
+
+$a31 = 0;
+$a32 = 0;
+$a33 = non_zero_random(-9,9,1);
+
+$u1 = non_zero_random(-5,5,1);
+$u2 = non_zero_random(-5,5,1);
+$u3 = non_zero_random(-5,5,1);
+
+$A = Matrix([
+[$a11, $a12, $a13], 
+[$a21, $a22, $a23],
+[$a31, $a32, $a33],
+]);
+
+$u = Matrix([[$u1], [$u2],[$u3]]);
+
+$Au = $A * $u;
+
+$v = Matrix([["a"],["b"],["c"]]);
+
+$x = Formula("(a*$a11+$a12*b+$a13*c)")->reduce;
+$y = Formula("(a*$a21+$a22*b+$a23*c)")->reduce;
+$z = Formula("(a*$a31+$a32*b+$a33*c)")->reduce;
+
+$Av = Matrix([[$x],[$y],[$z]]);
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \( T: {\mathbb R}^3 \rightarrow {\mathbb R}^3\) la transformation linéaire définie par \(T(\vec{x}) = A\vec{x}\) où \(A=$A\).
+$BR
+Si   \(\vec{u}  = $u \) et \(\vec{v} =$v\) , évaluer les images suivantes:  
+$BR
+$BR
+\( T(\vec{u}) = \) \{ $Au->ans_array \} 
+$BR
+$BR
+\( T(\vec{v}) = \) \{ $Av->ans_array \} 
+END_TEXT
+Context()->normalStrings;
+
+ANS($Au->cmp);
+ANS($Av->cmp);
+
+;
+Context()->texStrings;
+BEGIN_SOLUTION
+${PAR}SOLUTION:${PAR}
+
+Selon la définition de la transformation linéaire \(T\), pour évaluer l'image de \( \vec{u}\), il nous suffit
+d'évaluer le produit matriciel  suivant: \(T(\vec{u})=A \vec u=$A  $u=$Au \).
+$PAR
+De manière similaire, l'image du vecteur \( \vec{v} \), est donnée par \(T(\vec{v})=A \vec v=$A  $v=$Av \).
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

@@ -1,0 +1,84 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Transformation linéaire)
+## KEYWORDS( 'propriétés')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+#########################SOURCE####################
+## Institution(TCNJ)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('3.1')
+#############################SOURCE##################
+##Level(2)
+##Language(fr)
+
+DOCUMENT(); 
+
+
+loadMacros(
+"PGchoicemacros.pl",
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 0;
+$showHint =0;
+
+foreach my $i ( 1..5 ) {
+	$b[$i] = random(2,8);
+
+	}
+
+
+@yes = (
+"L'application  \(T\) donnée par \(T(x_1, x_2, x_3 ) =(x_1, x_2, -x_3)\)",
+"L'application  \(T\) donnée par \(T(x_1, x_2, x_3 ) =(x_1, 0 , x_3)\)",
+"L'application  \(T\) donnée par \(T(x_1, x_2, x_3 ) =(x_3, x_2 , x_1)\)",
+"L'application  \(T\) donnée par \(T(x_1, x_2 ) =(x_1, 0 , x_2)\)",
+"L'application  \(T\) donnée par \(T(x_1, x_2 ) =($b[1]x_1,$b[1]x_2)\)",
+);
+
+
+$yes_number = 5;
+
+@slice_yes = NchooseK($yes_number,$yes_number);
+
+@no = (
+"L'application  \(T\) donnée par \( T(x_1, x_2 ) = ($b[1]x_1- $b[2]x_2, 3 |x_2|) \)",
+"L'application  \(T\) donnée par \( T(x_1, x_2 ) = (2x_1-$b[3]x_2, x_1+$b[2], 5x_2) \)",
+"L'application  \(T\) donnée par \(T(x_1, x_2, x_3 ) =($b[2], x_2, x_3)\)",
+"L'application  \(T\) donnée par \(T(x_1, x_2, x_3 ) =($b[5], 0, 0)\)",
+"L'application  \(T\) donnée par \( T(x_1, x_2 ) = (x_1, x_2+$b[3]) \)",
+);
+
+## no_number is the number of lin. dep. choices to pick from
+$no_number= 5;
+
+@slice_no = NchooseK($no_number,$no_number);
+
+
+## creates a new multiple choice set of problems
+$cmc = new_checkbox_multiple_choice();
+
+$cmc -> qa ("Parmi les applications suivantes, lesquelles sont des transformations linéaires?  Il peut y avoir plus d'une réponse.", $yes[$slice_yes[0]], $yes[$slice_yes[1]]);
+
+$cmc-> extra ($no[$slice_no[0]], $no[$slice_no[1]], $no[$slice_no[2]]);
+
+BEGIN_TEXT
+
+\{ $cmc -> print_q \}
+$BR
+\{ $cmc -> print_a \}
+
+
+
+
+END_TEXT
+
+
+ANS(checkbox_cmp( $cmc->correct_ans )   ) ;
+               
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

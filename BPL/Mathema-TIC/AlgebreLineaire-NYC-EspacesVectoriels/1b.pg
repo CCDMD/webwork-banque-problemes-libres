@@ -1,0 +1,111 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Espace vectoriel)
+## KEYWORDS('inverse additif', 'opération externe', 'opération interne', 'opération non usuelle', 'élément neutre')
+## Adaptation : Mélisande Fortin Boisvert-Collège de Maisonneuve
+
+###############Source###############
+## Institution(NAU)
+## Author(Nandor Sieben)
+## MO(1)
+## date 10/4/2013
+###############Source###############
+##Level(3)
+##Language(fr)
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl"
+);
+
+
+Context("Vector");
+Context()->variables->add(a=>'Real');
+
+{
+$c1=non_zero_random(-3,3,1);
+$c2=non_zero_random(-3,3,1);
+redo if ($c1==$c2);
+}
+{
+$u1=random(-9,9,1);
+$v1=random(-9,9,1);
+$a=random(-9,9,1);
+redo if ($u1==$c1 or $v1==$c1 or $a==$c1);
+}
+{
+$u2=random(-9,9,1);
+$v2=random(-9,9,1);
+$a=random(-9,9,1);
+redo if ($u2==$c2 or $v2==$c2);
+}
+
+
+$U=Vector($u1,$u2);
+$V=Vector($v1,$v2);
+
+
+$sum1 = Formula("$u1+$v1-$c1")->reduce;
+$sum2 = Formula("$u2+$v2-$c2")->reduce;
+$S=Vector($sum1,$sum2);
+
+$product1 = Formula("$a*$u1-$a*$c1+$c1")->reduce;
+$product2 = Formula("$a*$u2-$a*$c2+$c2")->reduce;
+$P=Vector($product1,$product2);
+
+$zero1 = Compute("$c1");
+$zero2 = Compute("$c2");
+$Z=Vector($c1,$c2);
+
+$inverse1 = Formula("2*$c1-x")->reduce;
+$inverse2 = Formula("2*$c2-y")->reduce;
+$inv=Vector($inverse1,$inverse2);
+
+
+$ca1= Formula("$c1*a")->reduce;
+$ca2= Formula("$c2*a")->reduce;
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+BEGIN_TEXT
+
+
+Soit \( V={\mathbb R}^2\). Pour \( \vec u, \vec v \in V\) et \(a\in{\mathbb R}\), 
+nous pouvons définir l'opération interne par  \[\vec u \oplus \vec v=<u_1,u_2> \oplus <v_1,v_2> = <u_1+v_1-$c1,u_2+v_2-$c2>\] et l'opération externe  
+par \[ a \odot \vec u=a \odot <u_1,u_2> = <au_1-$ca1+$c1,au_2-$ca2+$c2>.\] 
+Il est possible de montrer que \( (V,\oplus,\odot) \) est un espace vectoriel sur les réels \(\mathbb R \).
+$BR
+$BR
+Déterminer:
+$PAR
+
+$PAR
+\($U \oplus $V =\)\{ans_rule(10)\}
+
+$PAR
+$PAR
+\( $a\odot $U =\)\{ans_rule(10)\}
+$PAR
+L'élément neutre de \(\oplus\):
+$PAR 
+\( N =\)\{ans_rule(10)\}
+$PAR
+L'inverse de \( < x,y> \in V\), noté \(  -<x,y> \), relatif à \(  \oplus \):
+$PAR
+\(   -<x,y>= \)\{ans_rule(20)\}
+$PAR
+${BBOLD} Remarque ${EBOLD}: l'inverse de \( < x,y> \) est noté  \(  -<x,y> \), mais n'est pas nécessairement l'élément \( <x,y> \) auquel nous assignons une valeur négative à chacune des composantes.
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $S->cmp() );
+ANS( $P->cmp() );
+ANS( $Z->cmp() );
+ANS( $inv->cmp() );
+
+
+ENDDOCUMENT();
