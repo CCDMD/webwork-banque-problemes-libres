@@ -1,0 +1,74 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'somme', 'série', 'série géométrique')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mai 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.2_Summing_an_Infinite_Series/10.2.30.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Keith Thompson)
+## MLT(NonZeroOneStart)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.2')
+## Problem1('30')
+###############Source###############
+
+
+DOCUMENT();
+loadMacros(  
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+  );
+
+Context("Numeric");
+Context()->strings->add(Divergente=>{},DIV=>{alias=>'Divergente'});
+
+
+$base=random(3,7,2);
+$mult=random(2,6,2);
+
+# mettre un maximum dans la valeur pour que la réponse ne
+# soit pas trop petite, donc doit satisfaire la tolerance
+$max = int($base+15)/$mult;
+$n0 = random(2,$max,1);
+
+#le premier terme est exp(netb)
+#la raison est r=1/exp(mult)
+$netb=$base-$n0*$mult;
+$p=$netb+$mult;
+
+
+$ans1= Compute("exp($netb)*exp($mult)/(exp($mult)-1)");
+
+Context()->texStrings;
+BEGIN_TEXT
+À l'aide de la formule de la somme d'une série géométrique, calculer la somme de la série suivante ou indiquer si la série diverge (entrer ${BBOLD}DIV$EBOLD si la série diverge).
+
+\[\sum_{n=$n0}^\infty e^{$base-$mult n}\]
+
+\(S=\) \{ans_rule()\} 
+END_TEXT
+
+Context()->normalStrings;
+
+ANS($ans1->cmp). 
+
+Context()->texStrings;
+BEGIN_SOLUTION
+On récrit la série sous la forme
+\[\sum_{n=$n0}^\infty e^{$base}e^{-$mult n}=\sum_{n=$n0}^\infty e^{$base}\left(\frac{1}{e^{$mult}}\right)^n\] 
+
+et on reconnaît une série géométrique où le premier terme est \(a=e^{$base}\left(\frac{1}{e^{$mult}}\right)^{$n0}=e^{$netb}\) et la raison \(|r|=\frac{1}{e^{$mult}}<1\). Par conséquent,
+ 
+\[\sum_{n=$n0}^\infty e^{$base-$mult n}=\frac{e^{$netb}}{1-\frac{1}{e^{$mult}}}=\frac{e^{$netb}e^{$mult}}{e^{$mult}-1}=\frac{e^{$p}}{e^{$mult}-1}.\]
+END_SOLUTION
+ENDDOCUMENT();

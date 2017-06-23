@@ -1,0 +1,69 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('série', 'série géométrique', 'série à termes positifs', 'terme général')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mai 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)
+## Language(fr)
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.2_Summing_an_Infinite_Series/10.2.1.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Keith Thompson)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.2')
+## Problem1('1')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+#$showPartialCorrectAnswers=1;
+# Ajouter une variable n qui sera évaluée seulement pour des entiers
+# Le flag resolution spécifie la distance entre des test_points possibles
+Context()->variables->add(n => ['Real', limits=>[2,20], resolution=>1]);
+
+$power=random(2,4);
+
+$e = random(0,1);
+
+
+if($e==0) {$p1= "1";}
+else {$p1 = "\frac{1}{$power}"; }
+
+$p2=$power ** (1+$e);
+$p3=$power ** (2+$e);
+$p4=$power ** (3+$e);
+
+$em1 = $e-1;
+$ans=Formula("1/($power ** (n + $em1))")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer le terme général \(a_n\) pour la série ci-dessous, de la forme \(\displaystyle \sum_{n=1}^{\infty}a_n.\)
+\[$p1+\frac{1}{$p2}+\frac{1}{$p3}+\frac{1}{$p4}+\cdots\]
+$PAR
+\(a_n =\) \{ans_rule()\} 
+END_TEXT
+
+Context()->normalStrings;
+
+ANS($ans->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Les dénominateurs sont des puissances de $power, en commençant par la puissance $e. Par conséquent, le terme général est \(\displaystyle a_n= $ans\).
+END_SOLUTION
+
+ENDDOCUMENT();

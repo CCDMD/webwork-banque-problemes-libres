@@ -1,0 +1,66 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'somme', 'sommes partielles', 'série', 'série géométrique')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mai 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.2_Summing_an_Infinite_Series/10.2.25.pg
+## Institution(W.H.Freeman)
+## Author(Keith Thompson)
+## MLT(NonZeroOneStart)
+## MLTleader(1)
+## Level(3)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.2')
+## Problem1('25')
+###############Source###############
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+Context("Numeric");
+Context()->strings->add(Divergente=>{},DIV=>{alias=>'Divergente'});
+
+$num=random(3,7,2); #force odd
+$den=random(10,14,2); #force even
+$n0 = random(2,6,1);
+$den_num = $den-$num;
+
+$a0 = Compute("($num**$n0)/($den**$n0)");
+$ans1= Compute("$a0*($den/($den-$num))");
+
+Context()->texStrings;
+BEGIN_TEXT
+À l'aide de la formule de la somme d'une série géométrique, calculer la somme de la série suivante ou indiquer si la série diverge (entrer ${BBOLD}DIV$EBOLD si la série diverge).
+
+\[\sum_{n=$n0}^\infty \frac{$num^n}{$den^n}\]
+
+$PAR \(S=\) \{ans_rule()\} 
+END_TEXT
+
+Context()->normalStrings;
+
+ANS($ans1->cmp); 
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Il s'agit d'une série géométrique où le premier terme \(a=\left(\frac{$num}{$den}\right)^{$n0}\) et \(r=\frac{$num}{$den}<1\). Par conséquent, la série converge vers la somme \(S=\frac{a}{1-r}\), soit
+\[\begin{align} \sum_{n=$n0}^\infty \frac{$num^n}{$den^n} &=
+\sum_{n=0}^\infty \left(\frac{$num}{$den}\right)^{$n0}\left( \frac{$num}{$den}\right)^n \\
+&= \frac{\left(\frac{$num}{$den}\right)^{$n0}}{1-\frac{$num}{$den}} \\
+&=\left(\frac{$num}{$den}\right)^{$n0}\left(\frac{$den}{$den_num}\right).\end{align}\]
+END_SOLUTION
+ENDDOCUMENT();

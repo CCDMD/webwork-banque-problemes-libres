@@ -1,0 +1,77 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('critère de d\'Alembert généralisé', 'intervalle de convergence', 'rayon de convergence', 'série de puissances')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_11_8_18.pg
+## ZDate(04/14/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('11.8')
+## Problem1('18')
+###############Source###############
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+#####################################################################
+#install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem());
+#####################################################################
+
+Context("Interval");
+# Let students type "EmptySet" instead of "NONE"
+#Context()->constants->add(EmptySet => Set());
+#Context()->flags->set(noneWord=>"EmptySet");
+
+$a = random(2,6,1);
+$b = random(1,9,1);
+
+$an2a = Compute("-$b-1/$a");
+$an2b = Compute("-$b+1/$a");
+
+$ans1 = Compute("1/$a");
+$ans2 = Interval("($an2a,$an2b]");
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la série de puissances
+\[
+\sum_{n=1}^{\infty} \frac{(-$a)^n}{\sqrt{n}}(x+$b)^n.
+\] 
+
+Déterminer le rayon de convergence \(R.\) $BR
+Réponse : \(R =\) \{ans_rule(20)\}$BR
+$PAR
+Quel est l'intervalle de convergence?$BR
+Réponse (sous forme d'intervalle) : \{ans_rule(20)\}
+END_TEXT
+
+#####################################################################
+
+ANS(($ans1)->cmp());
+ANS(($ans2)->cmp(showEndpointHints=>0,showEndTypeHints=>0));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

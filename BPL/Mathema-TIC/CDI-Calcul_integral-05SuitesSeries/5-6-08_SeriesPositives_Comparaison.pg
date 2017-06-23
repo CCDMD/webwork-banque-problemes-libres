@@ -1,0 +1,105 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de comparaison', 'série', 'série p de Riemann', 'série à termes positifs')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.3_Convergence_of_Series_with_Positive_Terms/10.3.21.pg'
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Christopher Sira)
+## ZMLT(Simple_comparison_to_p-series)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.3')
+## Problem1('21')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGgraders.pl",
+"PGcourse.pl",
+);
+
+COMMENT("L\'étudiant recevra 10% des points s\'il a 1 bonne réponse et 50% s'il a 3 bonnes réponses. Il aura donc 100% avec 4 bonnes réponses seulement.");
+
+Context()->variables->add(n=>'Real');
+
+
+$a = Real(random(4, 9, 1));
+$d = Real(random(2, 7, 1));
+
+$ch = random(0,1,1); ##0 diverge, 1 converge! LAD
+
+if ($ch >0) {#converge
+    $popup1 = PopUp(["?","converge","diverge"],"converge");
+    $start = 1;
+    $func = "\frac{n^{\frac{1}{$a}}}{n^{$d} + n}";
+    $bn = "\frac{n^{\frac{1}{$a}}}{n^{$d}}";
+    $b = $a * $d - 1;
+    $p = Compute("$b/$a");
+    $popup2 = PopUp(["?","plus petit ou égal","plus grand ou égal"],"plus petit ou égal");
+    $bounds = "\le";
+    $compare = ">";
+    
+}else{
+    $popup1 = PopUp(["?","converge","diverge"],"diverge");
+    $start = 2;
+    $c = $a*($d-1)+1;
+    $func = "\frac{n^{\frac{$c}{$a}}}{n^{$d} - n}";
+    $bn = "\frac{n^{\frac{$c}{$a}}}{n^{$d}}";
+    $b = $a * $d - $c;
+    $p = Compute("$b/$a");
+    $popup2 = PopUp(["?","plus petit ou égal","plus grand ou égal"],"plus grand ou égal");
+    $bounds = "\ge";
+    $compare = "<";
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Utiliser le critère de comparaison pour déterminer si la série est convergente.
+\[ \sum_{n=$start}^{\infty} $func \]
+
+Suivant le critère de comparaison, la série \( \displaystyle \sum_{n=$start}^{\infty} $func \) \{ $popup1->menu() \},
+$BR car \( \displaystyle $func \) est \{ $popup2->menu() \} que \(\dfrac{1}{n^p}\) où \(p = \) \{ ans_rule(5)\} $BR
+$BR et la série \( \displaystyle \sum_{n=$start}^{\infty} \frac{1}{n^p}\) \{ $popup1->menu() \}.
+END_TEXT
+Context()->normalStrings;
+
+install_problem_grader(~~&custom_problem_grader_fluid);
+$ENV{'grader_numright'} = [1,3,4];
+$ENV{'grader_scores'} = [0.1,0.5,1];
+$ENV{'grader_message'} = "Vous pouvez obtenir " .
+"10% des points pour 1 bonne réponse et 50% des points pour 3 bonnes réponses.";
+
+ANS($popup1->cmp);
+ANS($popup2->cmp);
+ANS($p->cmp);
+ANS($popup1->cmp);
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pour \( n \ge $start \),
+
+\[ $func $bounds $bn = \frac{1}{n^{\frac{$b}{$a}}} .\]
+
+La série \( \displaystyle \sum_{n=$start}^{\infty} \frac{1}{n^{\frac{$b}{$a}}} \) est une série-\(p\) où  \( p = \frac{$b}{$a} $compare 1 \), alors elle \{$popup1->correct_ans()\}.  Selon le critère de comparaison, on peut donc conclure que la série \(\displaystyle \sum_{n=$start}^{\infty} $func\) \{$popup1->correct_ans()\} aussi.
+END_SOLUTION
+
+ENDDOCUMENT();
+
+

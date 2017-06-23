@@ -1,0 +1,87 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'limite d\'une suite', 'suite')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mai 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/Utah/Calculus_II/set7_Infinite_Series/set7_pr9.pg
+## ZInstitution(Univeristy of Utah)
+## ZAuthor(Utah ww group)
+## ZMLT(Terms2Limit)
+## TitleText1('Calculus')
+## AuthorText1('Dale Varberg, Edwin J. Purcell, and Steve E. Rigdon')
+## EditionText1('9')
+## Section1('.')
+## Problem1('')
+###############Source###############
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->strings->add(Divergente=>{},DIV=>{alias=>'Divergente'});
+Context()->variables->add(n=>"Real");
+  Context()->flags->set(
+     reduceConstants => 0,
+     reduceConstantFunctions => 0,
+  );
+
+
+$a = random(2,8);
+# aucune division par zéro à des entiers positifs.
+do{$b = non_zero_random(-6,6);} until(-$b%$a!=0);
+$an = Formula("(n*cos(n*pi))/($a*n+$b)")->reduce;
+
+## les cinq premiers termes
+foreach $i (1..5) {
+$a[$i] = $an->substitute(n => $i);  
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la suite
+
+\[ a_{n} = $an. \]
+
+Énumérer les cinq premiers termes de la suite \(\lbrace a_{n}\rbrace\), et évaluer la limite de \( a_{n}\) afin de déterminer si la suite est convergente ou divergente. Si la limite n'existe pas, entrer $BBOLD DIV$EBOLD dans la case réponse de la limite.
+
+$PAR
+
+a)  Cinq premiers termes : \{ans_rule(15)\},\{ans_rule(15)\},\{ans_rule(15)\},\{ans_rule(15)\},\{ans_rule(15)\}.
+
+$PAR
+
+b)  \(\displaystyle\lim_{n\to\infty}a_{n} = \) \{ans_rule(40)\}.
+
+END_TEXT
+Context()->normalStrings;
+
+$ans6 = Compute("divergente");
+
+ANS($a[1]->cmp);
+ANS($a[2]->cmp);
+ANS($a[3]->cmp);
+ANS($a[4]->cmp);
+ANS($a[5]->cmp);
+
+ANS($ans6->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

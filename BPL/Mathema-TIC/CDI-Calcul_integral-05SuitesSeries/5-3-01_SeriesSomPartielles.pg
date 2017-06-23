@@ -1,0 +1,75 @@
+#DESCRIPTION
+##  Calculus: Alternating series
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('série', 'série alternée', 'terme général')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mai 2017
+## Traduction française : Sylvie Charbonneau
+## Language(fr)
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_11_5_prob01.pg
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('11.5')
+## Problem1('')
+###############Source###############
+
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+#####################################################################
+
+$showPartialCorrectAnswers = 1;
+TEXT(beginproblem());
+
+Context("Numeric");
+# Ajouter une variable n qui sera évaluée seulement pour des entiers
+# Le flag resolution spécifie la distance entre des test_points possibles
+Context()->variables->are(n => ['Real', limits=>[2,20], resolution=>1]);
+
+Context()->operators->undefine(",");
+Context()->strings->remove("NONE");
+
+$a = random(2,10,1);
+$b = random(2,10,1);
+
+$c = Compute("$b+1");
+$d = Compute("$b+2");
+$e = Compute("$b+3");
+
+$ans = Compute("(-1)^(n-1)$a/($b-1+n)")->reduce;
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer le terme général \(a_n\) pour la série alternée ci-dessous, de la forme  \(\displaystyle \sum_{n=1}^{\infty}a_n.\)
+\[
+\frac{$a}{$b}-\frac{$a}{$c}+\frac{$a}{$d}-\frac{$a}{$e}+\cdots
+\]
+$PAR
+\(a_n =\) \{ans_rule(20)\} $PAR
+END_TEXT
+
+#####################################################################
+
+ANS(($ans)->cmp());
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

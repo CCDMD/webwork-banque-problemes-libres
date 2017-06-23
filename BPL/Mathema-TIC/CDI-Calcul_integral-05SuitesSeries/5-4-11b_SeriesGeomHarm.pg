@@ -1,0 +1,61 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('nombre périodique', 'somme', 'série géométrique')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+###############Source###############
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "contextFraction.pl"
+);
+
+#####################################################################
+
+$showPartialCorrectAnswers = 1;
+TEXT(beginproblem());
+
+
+Context("Numeric");
+# Nombre périodique : a,bbbbbbb...
+$a = random(1,8);
+do{$b = random(1,9);} until($b!=$a);
+
+$exp = 9*$a+$b;
+($n,$d) = reduce($exp,9);
+
+Context("LimitedFraction");
+
+$ans = Compute("$n/$d");
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Exprimer le nombre décimal périodique en fraction.
+\[
+$a,\overline{$b} = $a,$b $b $b $b $b $b $b $b \ldots
+\]
+$PAR
+Réponse (fraction réduite) : \{ans_rule(20)\}
+$BR
+${BBOLD}Note : ${EBOLD} ${BITALIC} Utiliser uniquement l'opération de division (/) et le signe négatif (-) si nécessaire.${EITALIC}
+$PAR
+END_TEXT
+
+#####################################################################
+
+ANS(($ans)->cmp(showMixedNumbers=>0));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

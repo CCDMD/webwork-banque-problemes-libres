@@ -1,0 +1,78 @@
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('résolution d\'une équation', 'ordre 1', 'solution générale', 'à variables séparables', 'équation différentielle')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : Library/MiamiUOhio/DiffEq/Definitions_and_Terminology/Problem41.pg
+## ZDate(06/08/2012)
+## ZInstitution(Miami Univ. Ohio and Hope College)
+## ZAuthor(Anna Ghazaryan, Fuli Zhang, Paul Pearson)
+## ZMLT(Seperable_General_Sol)
+## TitleText1('Differential equations Theory Technique and Practice')
+## AuthorText1('George F. Simmons')
+## EditionText1('')
+## Section1('1.2')
+## Problem1('2')
+###############Source###############
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserFormulaUpToConstant.pl",
+"PGcourse.pl",
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Numeric");
+
+$a = random(2,9,1);
+$n = random(2,5);
+$n1 = $n - 1;
+$fdroit = Formula("$a*x^($n1)")->reduce;
+$fgauche = Formula("1 + x^($n)")->reduce;
+
+$ans = FormulaUpToConstant("$a/$n ln|$fgauche| + C");
+# vérifier que l'étudiant a ajouté des valeurs absolue si nécessaire
+$ans->{test_at} = [[-2]];
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer la solution générale de l'équation différentielle
+\[ ($fgauche) y'= $fdroit . \]
+$BR
+\( y = \) \{ ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+
+##############################################################
+#
+#  Answers
+#
+#
+ANS( $ans->cmp() );
+
+ENDDOCUMENT();    

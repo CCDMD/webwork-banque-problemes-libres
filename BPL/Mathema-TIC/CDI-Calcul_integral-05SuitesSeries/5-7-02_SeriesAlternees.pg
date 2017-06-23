@@ -1,0 +1,74 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de Leibniz', 'critère du terme général', 'série alternée')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/ma123DB/set11/s11_5_9.pg
+## ZDate(6/3/2002)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('11.5')
+## Problem1('9')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT('Suggestion : restreindre le nombre de tentatives pour réussir le problème.');
+
+TEXT(beginproblem());
+
+# Afin d'obtenir 100 % pour ce problème, toutes les réponses doivent être correctes.
+# install_problem_grader(~~&std_problem_grader);
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,9,1);
+$b = random(2,9,1);
+$c = random(2,9,1);
+
+$den = "$a n^{$b}+$c";
+
+$lim = Real(0);
+$applique = PopUp(['?','Oui', 'Non'],'Oui');
+$popup1 = PopUp(['?','croissante', 'décroissante'],'décroissante');
+$popup2 = PopUp(['?','Convergente par le critère des séries alternées', 'Divergente par le critère du terme général', 'Sans conclusion'],'Convergente par le critère des séries alternées');
+
+
+BEGIN_TEXT
+Soit la série
+\[\sum_{n=1}^\infty\frac{ (-1)^{n-1} }{ $den }\]
+
+a) Vérifier si le critère des séries alternées (critère de Leibniz) s'applique à cette série.
+$BR
+\(\displaystyle \lim_{n\to\infty} \frac{1}{$den} = \) \{ans_rule(20)\}
+$PAR
+et pour tout \(n\ge 1\), la suite \(\left\lbrace \frac{1}{$den} \right\rbrace\) est  \{$popup1->menu\}.
+$PAR
+Est-ce que le critère des séries alternées s'applique à cette série? \{$applique->menu\}.
+$PAR
+b) Déterminer si la série est convergente par le critère des séries alternées, divergente par le critère 
+du terme général ou on ne peut tirer aucune conclusion. \{$popup2->menu\}
+END_TEXT
+
+ANS($lim->cmp);
+ANS($popup1->cmp);
+ANS($applique->cmp);
+ANS($popup2->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

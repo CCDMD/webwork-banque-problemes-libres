@@ -1,0 +1,147 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('série de Taylor')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/FortLewis/Calc2/10-2-Taylor-series/Taylor-series-01.pg
+## ZInstitution(University of Michigan and Fort Lewis College)
+## ZAuthor(Gavin LaRose and Paul Pearson)
+## ZMLT(TaylorSeries_02)
+## ZMLTleader(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('10.2')
+## Problem1('13')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('10.2')
+## Problem2('14')
+###############Source###############
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+#"unorderedAnswer.pl",
+"PGcourse.pl",
+);
+
+#COMMENT("Les réponses peuvent être entrées dans n'importe quel ordre");
+
+Context("Numeric");
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+sub reduced_frac {
+    my ($num,$den) = @_;
+
+    if( $num/$den == int($num/$den)) {
+        return $num/$den;
+    } else {
+        my ($num2,$den2) = reduce($num,$den);
+        if ($den2 < 0) {
+            $den2 = -$den2;
+            $num2 = -$num2;
+        }
+        if ($den2 == 1) {
+            return $num2;
+        } else {
+            return( "\frac{$num2}{$den2}" );
+        }
+    }
+}
+
+$c = random(1,5,1);
+#$cd = ( $c == 1 ) ? '' : $c;
+$twoc = 2*$c;
+$sixc = 6*$c;
+
+    $func = "\displaystyle \frac{$c}{x}";
+    @derivs = ( "-{$c\over x^2}", "{$twoc\over x^3}", "-{$sixc\over x^4}" );
+    $a = non_zero_random(-2,4,1);
+    @terms = ( "$c/($a)", "-$c*(x-($a))/(($a)^2)", "$c*(x-($a))^2/(($a)^3)",
+	       "-$c*(x-($a))^3/(($a)^4)" );
+
+    
+    $coa = reduced_frac( $c, $a );
+    $coa2 = reduced_frac( $c, ($a*$a) );
+    $coa3 = reduced_frac( $c, ($a**3) );
+    $coa4 = reduced_frac( $c, ($a**4) );
+    @tterm = ( "{$coa}", "-{$coa2}(x - $a)", "{$coa3}(x - $a)^2", 
+		"-{$coa4}(x - $a)^3" );
+        
+    $der0 = reduced_frac( $c, $a );
+    $der2 = reduced_frac( $c, ($a*$a) );
+    $der3 = reduced_frac( $twoc, ($a**3) );
+    $der4 = reduced_frac( $sixc, ($a**4) );
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer les quatre premiers termes de la série de Taylor centrée en \(a = $a\) qui représente la fonction
+\( $func \).
+$PAR
+\( $func = \)
+\{ ans_rule(15) \} \(+\)
+\{ ans_rule(15) \} \(+\)
+\{ ans_rule(15) \} \(+\)
+\{ ans_rule(15) \} \(+ \cdots\) 
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( Formula("$terms[0]")->cmp());
+ANS( Compute("$terms[1]")->cmp());
+ANS( Compute("$terms[2]")->cmp());
+ANS( Compute("$terms[3]")->cmp());
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La fonction \($func\) et ses trois premières dérivées sont $BR
+\[ \begin{align}
+f(x) &= $func \\
+f'(x) &= $derivs[0]\\
+f''(x) &= $derivs[1] \\
+f'''(x) &= $derivs[2]
+\end{align}\]
+
+En évaluant au point \(x = $a\), on obtient 
+\[ \begin{align}
+f($a) &= $der0 \\
+f'($a) &= \frac{-$c}{($a)^2} = -$der2 \\
+f''($a) &= \frac{$twoc}{($a)^3} = $der3 \\
+f'''($a) &= \frac{-$sixc}{($a)^4} = -$der4
+\end{align}\]
+$PAR
+Par conséquent, les termes de la forme \(\displaystyle f^{(n)}(a)\frac{(x-a)^n}{n!}\) sont
+\[ \begin{align}
+\text{terme 0} &= $tterm[0]\\
+\text{terme 1} &= $tterm[1]\\
+\text{terme 2} &=  $der3\frac{(x-$a)^2}{2} = $tterm[2] \\
+\text{terme 3} &= -$der4\frac{(x-$a)^3}{6} = $tterm[3]
+\end{align}.\]
+
+$BR
+La série est donc 
+\[ $func = $tterm[0] + $tterm[1] + $tterm[2] + $tterm[3] + \cdots \]
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

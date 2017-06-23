@@ -1,0 +1,101 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('résolution d\'une équation', 'ordre 1', 'solution générale', 'à variables séparables', 'équation différentielle')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+
+###############Source###############
+## source : Library/Michigan/Chap11Sec4/Q37.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('11.4')
+## Problem1('37')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('11.4')
+## Problem2('37')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('11.4')
+## Problem3('42')
+###############Source###############
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+ 
+Context("Numeric");
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->variables->are(a=>"Real", C=>"Real", x=>"Real");
+
+$k = random(2,5);
+$ksq = $k*$k;
+
+$ans = Compute("$k*tan($k*(a*x + C))");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Résoudre l'équation différentielle
+\[ {dR\over dx} = a ( R^2 + $ksq ). \]
+Supposer que \(a\) est une constante réelle non nulle et utiliser \(C\) pour toute constante d'intégration dans la réponse.
+
+$PAR
+\( R = \) \{ ans_rule(35) \}
+
+END_TEXT
+Context()->normalStrings;
+
+sub dechecker {
+    my ( $correct, $student, $ansHash ) = @_;
+
+    ## we check manually that the differential equation
+    ##    is satisfied
+    return ($student->D("x") == a*($student*$student + $ksq));
+}
+
+ANS($ans->cmp( checker=>~~&dechecker ) );
+
+$ook = "{1\over $k}";
+
+$arg = "$k(a x + C)"; 
+
+Context()->texStrings;
+BEGIN_SOLUTION
+En isolant les variables et en intégrant, on obtient
+\[ \int {{1} \over {R^2 + $ksq}} dR = \int a\,dx \]
+ou
+\[ $ook \arctan\left(\frac{R}{$k}\right) = a x + C, \]
+\[ \arctan\left(\frac{R}{$k}\right) = $arg, \]
+et donc 
+\[ R = $k \tan($arg). \]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

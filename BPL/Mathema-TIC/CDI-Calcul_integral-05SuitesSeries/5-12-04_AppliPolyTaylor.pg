@@ -1,0 +1,111 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('dérivation d\'une série', 'estimation', 'polynôme de MacLaurin', 'polynôme de Taylor')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/Michigan/Chap10Sec2/Q43.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZMLT(ExponentialFunctions)
+## ZMLTleader(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('10.2')
+## Problem1('43')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('10.2')
+## Problem2('31')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('10.2')
+## Problem3('33')
+###############Source###############
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+ "PGcourse.pl",
+);
+ 
+Context("Numeric");
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$r = random(2,5,1);
+$q = random(2,3,1);
+
+$rpq = $r + $q;
+$rp2q = $rpq + $q;
+$rp3q = $rp2q + $q;
+$rp4q = $rp3q + $q;
+
+$n = $rp2q;
+
+$ans1 = Real(0);
+$ans2 = Compute("$rp2q!/2");
+
+Context()->texStrings;
+BEGIN_TEXT
+Supposer que le développement en série de Taylor de la fonction
+\( f(x)=x^{$r}e^{x^{$q}} \) centrée en \( 0 \) est donné par
+
+\[
+x^{$r}+x^{$rpq}+\frac{x^{$rp2q}}{2!}+\frac{x^{$rp3q}}{3!}+\frac{x^{$rp4q}}{4!}
++\cdots.
+\]
+Déterminer les dérivées suivantes :
+$PAR
+\( \frac{d}{dx}\left( x^{$r}e^{x^{$q}}\right)\bigg|_{x=0} = \)
+\{ ans_rule(15) \}
+$PAR
+\( \frac{d^{$n}}{dx^{$n}}\left( x^{$r}e^{x^{$q}}\right)\bigg|_{x=0} = \)
+\{ ans_rule(15) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+
+$r1 = $r - 1;
+$rpq1 = $r + $q - 1;
+$rp2q1 = $rp2q - 1;
+if( $rp2q%2==0){$c3=$rp2q/2;}
+else { $c3 = "\frac{$rp2q}{2}";}
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Selon la série de Taylor, on a que
+\[ {d\over dx} (x^{$r} e^{x^{$q}})  = $r x^{$r1} + $rpq x^{$rpq1} + $c3 x^{$rp2q1} + 
+  \cdots. \]
+En \(x = 0\), la dérivée est égale à zéro.
+$PAR
+De la même manière, on calcule que la ${n}-ième
+dérivée, évaluée à zéro, est égale à 
+\[ \frac{$rp2q!}{2!} = $ans2 .\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

@@ -1,0 +1,131 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence absolue et conditionnelle', 'convergence et divergence', 'critères de convergence', 'série alternée')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_11_5_prob02.pg
+## ZDate(04/12/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(AC_CC_D_list)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('11.5')
+## Problem1('')
+###############Source###############
+
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGchoicemacros.pl",
+  "PGcourse.pl", 
+);
+#####################################################################
+
+COMMENT("Suggestion : restreindre le nombre de tentatives pour réussir le problème.");
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+#####################################################################
+
+Context("Numeric");
+Context()->variables->add(n =>'Real');
+
+###############################################################
+
+
+
+$a = random(1,2,1);
+
+$c1 = random(2,6);
+$d1 = random(1,9);
+if ($a==1) { #terme de la forme f^(n-1)/g
+$f = Formula("-1");
+$g = Formula("sqrt($c1 n)");
+$start1 = 1;
+$popup1 = PopUp(['?','Absolument convergente', 'Conditionnellement convergente', 'Divergente'],'Conditionnellement convergente');
+}
+else{
+$f = Formula("-1");
+$g = Formula("$c1 n- $d1");
+$zero = $d1/$c1;
+if($zero == int($zero)) {$start1 = $zero + 1;}
+else {$start1 = 1;}
+$popup1 = PopUp(['?','Absolument convergente', 'Conditionnellement convergente', 'Divergente'],'Conditionnellement convergente');
+}
+###############################################################
+$b = random(1,2,1);
+$c2 = random(2,6);
+$d2 = random(2,8);
+$e2 = random(1,9);
+$f2 = random(1,9);
+$start2 = 1;
+if ($b==1) { # forme an = h/i
+$h = Formula("$c2 n - $e2");
+$i = Formula("$d2 n + $f2");
+$popup2 = PopUp(['?','Absolument convergente', 'Conditionnellement convergente', 'Divergente'],'Divergente');
+}
+else{
+$h = Formula("$c2 n");
+$i = Formula("$d2 n^2+ $e2");
+$popup2 = PopUp(['?','Absolument convergente', 'Conditionnellement convergente', 'Divergente'],'Conditionnellement convergente');
+}
+###############################################################
+$c = random(1,2,1);
+$c3 = random(2,8);
+$d3 = random(2,9);
+$e3 = random(1,9);
+if ($c==1) { #forme an = j/k
+$j = Formula("sqrt(n-1)");
+$k = Formula("n^2-$d3");
+if($d3 == 4 || $d3==9) 
+{ $start3 = sqrt($d3) + 1;
+} else {$start3 = 1;}
+$popup3 = PopUp(['?','Absolument convergente', 'Conditionnellement convergente', 'Divergente'],'Absolument convergente');
+}
+else{
+$j = Formula("$e3- $d3 n");
+$k = Formula("n^3+ $d3");
+$start3 = 1;
+$popup3 = PopUp(['?','Absolument convergente', 'Conditionnellement convergente', 'Divergente'],'Absolument convergente');
+}
+
+
+###############################################################
+Context()->texStrings;
+
+BEGIN_TEXT
+Déterminer si chaque série alternée suivante est absolument convergente, conditionnellement convergente ou divergente. $BR
+$PAR
+\{$popup1->menu\} $BBOLD 1. $EBOLD  \(\displaystyle \sum_{n=$start1}^{\infty}\frac{($f)^{n-1}}{$g} \)
+$PAR
+\{$popup2->menu\} $BBOLD 2. $EBOLD  \(\displaystyle \sum_{n=$start2}^{\infty}(-1)^n\frac{$h}{$i} \)
+$PAR
+\{$popup3->menu\} $BBOLD 3. $EBOLD   \(\displaystyle \sum_{n=$start3}^{\infty}(-1)^{n+1}\frac{$j}{$k}\)
+END_TEXT
+
+Context()->normalStrings;
+
+#####################################################################
+
+ANS($popup1->cmp);
+ANS($popup2->cmp);
+ANS($popup3->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

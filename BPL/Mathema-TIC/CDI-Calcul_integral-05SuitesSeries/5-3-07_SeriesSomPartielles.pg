@@ -1,0 +1,95 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'somme', 'somme télescopique', 'sommes partielles', 'série')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mai 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_11_2_8.pg
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(cOVERnTIMESnpl2)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('11.2')
+## Problem1('8')
+###############Source###############
+
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "weightedGrader.pl",
+  "PGcourse.pl", 
+);
+
+#####################################################################
+
+
+COMMENT("Les cinq premières réponses valent chacune pour 10% de la note et la dernière réponse compte pour 50%.");
+install_weighted_grader();
+
+$showPartialCorrectAnswers = 1;
+TEXT(beginproblem());
+
+
+Context("Numeric");
+Context()->strings->add(Divergente=>{},DIV=>{alias=>'Divergente'});
+
+$a = random(2,6,1);
+$b = random(1,4,1);
+$cte = 2*$b;
+
+$a2 = Compute("$a+1");
+$a3 = Compute("$a+2");
+$a4 = Compute("$a+3");
+$a5 = Compute("$a+4");
+
+$ans1 = Compute("($b/$a)-($b/($a+2))")->reduce;
+$ans2 = Compute("($b/$a)-($b/($a+2))+($b/($a+1))-($b/($a+3))")->reduce;
+$ans3 = Compute("($b/$a)+($b/($a+1))-($b/($a+3))-($b/($a+4))")->reduce;
+$ans4 = Compute("($b/$a)+($b/($a+1))-($b/($a+4))-($b/($a+5))")->reduce;
+$ans5 = Compute("($b/$a)+($b/($a+1))-($b/($a+5))-($b/($a+6))")->reduce;
+
+$ans6 = Compute("($b/$a)+($b/($a+1))")->reduce;
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer les cinq premières sommes partielles de la série. Puis, calculer la somme si la série est convergente.  Si elle est divergente, entrer ${BBOLD}DIV$EBOLD. 
+\[
+\sum_{n=$a}^{\infty} \frac{$cte}{n(n+2)}
+\]
+$BR
+\(S_{$a} =\) \{ans_rule(25)\}, $BR
+\(S_{$a2} =\) \{ans_rule(25)\}, $BR
+\(S_{$a3} =\) \{ans_rule(25)\}, $BR
+\(S_{$a4} =\) \{ans_rule(25)\}$BR
+et  \(S_{$a5} =\) \{ans_rule(25)\}
+$PAR
+Somme = \{ans_rule(20)\}
+
+END_TEXT
+
+#####################################################################
+
+WEIGHTED_ANS( ($ans1)->cmp(), 10 );
+WEIGHTED_ANS( ($ans2)->cmp(), 10 );
+WEIGHTED_ANS( ($ans3)->cmp(), 10 );
+WEIGHTED_ANS( ($ans4)->cmp(), 10 );
+WEIGHTED_ANS( ($ans5)->cmp(), 10 );
+
+WEIGHTED_ANS( ($ans6)->cmp(), 50 );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

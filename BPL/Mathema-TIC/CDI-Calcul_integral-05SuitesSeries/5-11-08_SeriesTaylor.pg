@@ -1,0 +1,166 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('critère de d\'Alembert généralisé', 'intervalle de convergence', 'rayon de convergence', 'série de Taylor', 'série de puissances')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/FortLewis/Calc2/10-2-Taylor-series/Taylor-series-04.pg
+## ZInstitution(Rochester and Fort Lewis College)
+## ZAuthor(Anonymous and Paul Pearson)
+## ZMLT(TaylorSeries_05)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('10.7')
+## Problem1('37')
+###############Source###############
+
+
+##########################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"unorderedAnswer.pl",
+"scaffold.pl",
+"PGcourse.pl", 
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+#  Setup
+
+Context("Numeric");
+Context()->flags->set(useBaseTenLog=>1);
+Context()->variables->set(x => {limits => [1,10]});
+
+# ajouter la variable évaluer pour des entiers seulement (resolution = 1)
+Context()->variables->add(n => ['Real', limits=>[1,20], 
+    resolution=>1]);
+
+$f = Compute("ln(x)");
+
+$a = random(2,10,1);
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la fonction 
+\[ f(x) = $f \]
+END_TEXT
+Context()->normalStrings;
+
+## Début du problème par parties
+Scaffold::Begin(
+      can_open => "when_previous_correct",
+      is_open  => "correct_or_first_incorrect"
+);
+
+
+Section::Begin("Partie 1");
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer les cinq premiers termes de la série de Taylor centrée en \( a = $a \) qui représente la fonction \( f(x)\). 
+Supposer que la série converge vers la fonction sur l'intervalle de convergence.
+$PAR
+\( $f = \)
+\{ans_rule(15)\} \(+\)
+\{ans_rule(15)\} \(+\)
+\{ans_rule(15)\} \(+\)
+\{ans_rule(15)\} \(+\)
+\{ans_rule(15)\} \(+ \cdots\) 
+END_TEXT
+Context()->normalStrings;
+
+$ans[0] = Formula("ln($a)");
+$ans[1] = Formula("1/$a (x-$a)");
+$ans[2] = Formula("-(1/$a)^2 / 2 (x-$a)^2");
+$ans[3] = Formula(" (1/$a)^3 / 3 (x-$a)^3");
+$ans[4] = Formula("-(1/$a)^4 / 4 (x-$a)^4");
+
+UNORDERED_ANS(
+ $ans[0]->cmp(),
+ $ans[1]->cmp(),
+ $ans[2]->cmp(),
+ $ans[3]->cmp(),
+ $ans[4]->cmp()
+);
+
+Section::End();
+
+Section::Begin("Partie 2");
+Context()->texStrings;
+BEGIN_TEXT
+Compléter la série suivante en trouvant l'expression du terme général de la série de puissances.
+$PAR
+\( \displaystyle $f = \ln($a) + \frac{1}{$a}(x-$a) - \frac{1}{$a^2}\frac{(x-$a)^2}{2} + \frac{1}{$a^3}\frac{(x-$a)^3}{3} - \frac{1}{$a^4}\frac{(x-$a)^4}{4}+\cdots \)
+$BR
+\($f = \ln($a) + \displaystyle\sum_{n=1}^{\infty} \) \{ans_rule(35)\}
+END_TEXT
+Context()->normalStrings;
+
+$serie = Formula("(-1)^{n+1}(x-$a)^n/(n*($a)^n)");
+ANS($serie->cmp);
+
+
+Section::End();
+
+Section::Begin("Partie 3");
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer le rayon de convergence \(R\) de cette série de puissances
+\[\sum_{n=1}^{\infty} $serie .\]
+$PAR
+\(R = \) \{ans_rule(10)\}
+END_TEXT
+
+$R = Compute("$a");
+ANS($R->cmp);
+Section::End();
+
+Section::Begin("Partie 4");
+
+$a2 = $a*2;
+
+Context()->texStrings;
+BEGIN_TEXT
+Comme la série est centrée en \($a\), cette série converge pour \(|x-$a| < $R\), soit 
+pour \(   0 < x < $a2 \), et diverge pour \(x > $a2\) et pour \(x<0\).
+$PAR
+Que se passe-t-il lorsque \(x=0\) et \(x=$a2\)?
+$PAR
+L'intervalle de convergence de la série de Taylor, centrée en \(a = $a\), de la fonction \(f(x) = $f\) 
+est \{ans_rule(10)\}.
+END_TEXT
+Context()->normalStrings;
+
+Context("Interval");
+
+$int = Interval("(0,$a2]");
+
+ANS($int->cmp(showEndpointHints=>0,showEndTypeHints=>0) );
+
+Section::End();
+
+Scaffold::End();
+## Fin du problème
+
+
+
+
+
+
+#COMMENT('MathObject version.  Answers can be entered in any order.  Uses log = log10.');
+
+ENDDOCUMENT();

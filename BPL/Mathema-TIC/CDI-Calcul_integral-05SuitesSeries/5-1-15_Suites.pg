@@ -1,0 +1,70 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'limite d\'une suite', 'suite')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : avril 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.1_Sequences/10.1.43.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Keith Thompson)
+## MLT(RationalFunctions)
+## MLTleader(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.1')
+## Problem1('43')
+###############Source###############
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGML.pl",
+  "PGcourse.pl", 
+);
+
+$showPartialCorrectAnswers=1;
+Context()->strings->add(DIV=>{});
+
+$num=random(2,9);
+$den=random(2,13);
+$ans= Compute("$num/$den");
+
+
+BEGIN_PGML
+Évaluer la limite de la suite [` \left\lbrace a_n \right\rbrace `] afin de déterminer si la suite est convergente ou divergente. Si la limite n'existe pas, entrer *DIV* comme réponse.
+
+>>[`` a_n=\frac{[$num] n^2+n+2}{[$den] n^2-3} ``]<<
+
+[`` \lim_{n\to\infty}a_n = ``][________________________]{$ans}
+END_PGML
+
+
+# coefficients après la règle de l'Hospital
+$num2 = 2*$num;
+$den2 = 2*$den;
+
+
+## Pour afficher la réponse en fraction dans la solution
+($n,$d) = reduce($num,$den);
+if($d==1) { $rep = $ans; }
+else{
+$rep = "\frac{$n}{$d}";
+}
+
+BEGIN_PGML_SOLUTION
+On a [`a_n=f(n) `], où [`` f(x)=\frac{[$num] x^2+x+2}{[$den] x^2-3} ``]. Par conséquent,
+
+>>[`` \lim_{n\to \infty} \frac{[$num] n^2+n+2}{[$den] n^2-3} = \lim_{x\to \infty} \frac{[$num] x^2+x+2}{[$den] x^2-3} \overset{H}{=} \lim_{x\to\infty}\frac{[$num2] x+1}{[$den2] x} \overset{H}{=}  [$rep] ``]<<
+END_PGML_SOLUTION
+
+
+ENDDOCUMENT();

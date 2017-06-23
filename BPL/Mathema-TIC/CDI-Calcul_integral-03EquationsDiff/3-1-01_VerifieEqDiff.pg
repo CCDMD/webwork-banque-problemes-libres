@@ -1,0 +1,101 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('coefficients constants', 'ordre 2', 'vérification', 'équation différentielle', 'équation homogène', 'équation linéaire')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mars 2017
+## Traduction française : Sylvie Charbonneau
+## Language(fr)
+
+###############Source###############
+## Fichier : Library/Michigan/Chap11Sec10/Q01.pg
+## ZDBsubject(Differential equations)
+## ZDBchapter(Introductory concepts)
+## ZDBsection(Verification of solutions)
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+
+COMMENT("Vérifier que l\'équation y=acos(rt)+bsin(rt) est une solution de l\'équation y\'\'+ r^2 y = 0.");
+
+Context("Numeric");
+Context()->variables->are( t=>'Real', y=>'Real' );
+# Pour enlever la règle de réduction des signes dans une opération
+Context()->noreduce('(-x)-y','(-x)+y');    
+
+$showPartialCorrectAnswers = 1;
+
+$r = random(2,7,1);
+$a = random(2,5,1);
+$b = random(3,6,1);
+$rr = $r*$r;
+
+# la solution
+$y = Compute("$a*cos($r*t) + $b*sin($r*t)")->reduce;
+
+# une partie de l'équation y'' + $rr y = 0
+$eq = Compute("$rr*y")->reduce;
+$rry = Compute("$rr*$y")->reduce;
+
+# les dérivées
+$ra = $r*$a;
+$rb = $r*$b;
+$rra = $r*$ra;
+$rrb = $r*$rb;
+$Dy = Compute("-$ra*sin($r*t) + $rb*cos($r*t)")->reduce;
+$DDy = Compute("-$rra*cos($r*t) - $rrb*sin($r*t)")->reduce;
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+À l'aide des formule de dérivation, vérifier que \( y= $y \)
+est une solution de l'équation
+\( y''+ $eq =0 \) :
+
+$PAR
+\( y' = \) \{ ans_rule(35) \}  $BR
+\( y'' = \) \{ ans_rule(35) \}  $BR
+\( $eq = \) \{ ans_rule(35) \} $PAR
+Alors \( y''+ $eq = \) \{ ans_rule(15) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS($Dy->cmp() );
+ANS($DDy->cmp() );
+ANS($rry->cmp() );
+ANS(Compute(0)->cmp() );
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Si \( y = $y \), alors
+$PAR
+\( y' = $Dy \) et
+$PAR
+\( y'' = $DDy = -$rry = -$eq\).
+$PAR
+Par conséquent, \( y'' + $eq = 0 \).
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

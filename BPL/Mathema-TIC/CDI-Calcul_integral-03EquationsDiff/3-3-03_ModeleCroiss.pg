@@ -1,0 +1,141 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('résolution d\'une équation', 'condition initiale', 'croissance / décroissance', 'modélisation', 'ordre 1', 'à variables séparables', 'équation différentielle')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(5)  
+## Language(fr)
+
+###############Source###############
+## source : Library/Michigan/Chap11Sec5/Q19.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('11.5')
+## Problem1('19')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('11.5')
+## Problem2('22')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('11.5')
+## Problem3('23')
+## TitleText4('Applied Calculus')
+## AuthorText4('Hughes-Hallett')
+## EditionText4('4')
+## Section4('10.4')
+## Problem4('14')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+Context("Numeric");
+$showPartialCorrectAnswers = 1;
+
+$k = random(1,5,1);
+$k1 = $k*1000000;
+$k2 = $k1/2;
+$k3 = $k1*0.6;
+$k4 = $k2/10;
+
+if ( $k == 1 ) {
+    $k2d = "500 000";
+    $k3d = "600 000";
+    $k4d = "50 000";
+} else {
+    $k2d = ($k/2 == int($k/2)) ? (($k/2) . " 000 000") : 
+	(int($k/2) . " 500 000");
+    $k3d = int($k*0.6) . " " . (10*($k*0.6 - int($k*0.6))) . "00 000";
+    $k4d = 50*$k . " " . "000";
+}
+
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+On pompe du pétrole dans un puits, où le débit à la pompe est proportionnel 
+à la quantité de pétrole qui reste dans le puits.  Au départ, il y avait $k millions
+de barils de pétrole dans le puits;  six ans plus tard, il reste $k2d barils.
+$PAR
+${BBOLD}a)$EBOLD
+À quel taux la quantité de pétrole diminuait-elle lorsqu'il restait  $k3d barils?
+$BR
+Taux = \{ ans_rule(25) \} barils / année
+
+$PAR
+${BBOLD}b)$EBOLD
+À quel moment restera-t-il  $k4d barils?
+$BR
+Après \{ ans_rule(15) \} ans.
+
+END_TEXT
+Context()->normalStrings;
+
+$r1 = Compute("(1/6)*ln(2)*$k3");
+ANS($r1->cmp() );
+$ansb = Compute("6*ln(20)/ln(2)");
+ANS($ansb->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Soit \(Q(t)\) la quantité de pétrole dans le puits au temps \(t\). On sait que le pétrole dans le puits diminue à un taux proportionnel à  \(Q(t)\), alors
+\[\frac{d Q}{d t}=-kQ.\]
+En intégrant, et sachant qu'initialement \(Q=Q_0=$k1\), on a
+\[ Q=Q_0 e^{-kt}=$k1 e^{-kt}.\]
+En six ans, \(Q=$k2\), alors
+\[ $k2 = $k1 e^{-k\cdot6}\]
+donc
+\[ \frac{1}{2} = e^{-6k},\quad\hbox{et}\quad
+   k = -\frac{\ln(1/2)}{6} = \frac{\ln(2)}{6}.\]
+Quand \( Q=$k3\), le taux de diminution du pétrole est
+\[
+  \bigg|\frac{d Q}{dt}\bigg| = kQ =
+  \frac{\ln(2)}{6}($k3)=$r1 \hbox{ barils/année}.\]
+
+$PAR
+${BBOLD}b)$EBOLD
+La solution de l'équation différentielle peut se simplifier de la façon suivante :
+\[\begin{align}
+Q &= $k1\,e^{\frac{-\ln(2)}{6}\,t} \\
+ &=  $k1 \left(e^{\ln(2)}\right)^{-t/6}\\
+ &=  $k1\cdot 2^{-t/6}
+\end{align}\]
+On peut maintenant résoudre l'équation
+\($k4 = $k1\cdot 2^{-t/6}\):
+\[ \begin{align}
+\frac{1}{20} &= 2^{-t/6} \\
+\ln\left(\frac{1}{20}\right) &= \frac{-t}{6}\ln(2) \\
+\frac{\ln(20)}{\ln(2)} &= \frac{-t}{6}
+\end{align}\]
+alors
+  \[t = \frac{6\ln(20)}{\ln(2)} = $ansb \hbox{ ans}.\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

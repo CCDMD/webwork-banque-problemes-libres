@@ -1,0 +1,80 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de l\'intégrale', 'série', 'série à termes positifs')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_11_3_19.pg
+## ZDate(04/07/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## MLT(xsqe)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('11.3')
+## Problem1('19')
+###############Source###############
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT("Afin d'obtenir 100% pour ce problème, toutes les réponses doivent être correctes.");
+
+# L'étudiant doit répondre correctement à toutes les questions pour avoir 100%
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem());
+#####################################################################
+
+Context("Numeric");
+Context()->strings->add(nep=>{});
+
+$a = list_random(2,9);
+$b = random(3,5,1);
+
+$c = Compute("$b-1");
+
+$ans = Compute("$a/($b*e)");
+$popup = PopUp(['?','Convergente', 'Divergente'],'Convergente');
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer l'intégrale impropre, c'est-à-dire donner la valeur si elle est convergente. Si elle est divergente,
+ entrer $BBOLD inf $EBOLD pour \(\infty\), $BBOLD -inf $EBOLD pour \(-\infty\),
+et $BBOLD nep $EBOLD si la limite n'existe pas.
+\[
+\int_1^{\infty} $a x^{$c} e^{-x^{$b}}\,dx
+\]
+Réponse : \{ans_rule(20)\} $PAR
+À l'aide de l'intégrale impropre ci-dessus et du critère de l'intégrale, déterminer si la série est $BITALIC convergente $EITALIC ou $BITALIC divergente. $EITALIC  Choisir ${BBOLD}Convergente$EBOLD ou ${BBOLD}Divergente$EBOLD.$BR
+\[
+\sum_{n=1}^{\infty} $a n^{$c} e^{-n^{$b}}
+\]
+Réponse : \{$popup->menu\}
+END_TEXT
+
+#####################################################################
+
+ANS(($ans)->cmp());
+ANS($popup->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

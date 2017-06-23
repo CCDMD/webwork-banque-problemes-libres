@@ -1,0 +1,83 @@
+#DESCRIPTION
+##  Algebra: Geometric sequence
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('notation', 'suite', 'suite géométrique', 'terme général')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : avril 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : UMN/algebraKaufmannSchwitters/ks_14_2_12.pg
+## ZDate(04/01/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## MLT(GenTerm)
+## TitleText1('Algebra for College Students')
+## AuthorText1('Kaufmann, Schwitters')
+## EditionText1('8')
+## Section1('14.2')
+## Problem1('12')
+###############Source###############
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+#####################################################################
+
+$showPartialCorrectAnswers = 1;
+TEXT(beginproblem());
+
+Context("Numeric");
+# Ajouter une variable n qui sera évaluée seulement pour des entiers
+# Le flag resolution spécifie la distance entre des test_points possibles
+Context()->variables->add(n => ['Real', limits=>[2,20], resolution=>1]);
+
+Context()->operators->undefine(",");
+#Context()->strings->remove("NONE");
+
+$a = random($b+1,6,1);
+$b = random(2,3,1);
+$s = random(-1,1,2);
+
+$a[1] = Compute("-$s*$a");
+
+foreach $i (2..4) {
+$a[$i] = -$a[$i-1]*$b;
+}
+
+$ans = Compute("$s*(-1)^n*$a*($b)^(n-1)")->reduce;
+
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer le terme général  \(a_n\) de la suite géométrique suivante (commençant par \(a_1\)) :
+\[
+\lbrace $a[1], $a[2], $a[3], $a[4], \ldots\rbrace.
+\]
+$PAR
+\(a_n =\) \{ans_rule(20)\} $PAR
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+ANS(($ans)->cmp());
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

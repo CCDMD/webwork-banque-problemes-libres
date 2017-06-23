@@ -1,0 +1,102 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'limite d\'une suite', 'suite')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mai 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.1_Sequences/10.1.23.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Danny Glin)
+## MLT(RationalFunctions)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.1')
+## Problem1('23')
+###############Source###############
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+Context()->texStrings;
+Context()->variables->add(n=>'Real');
+Context()->strings->add(DIV=>{});
+
+$p=random(1,9,1);
+$q=random(1,9,1);
+$qq=$q**2;
+$r=random(1,9,1);
+
+##for variation in answer, if $pn is 2 nonzero, if $pn is 3, zero
+$pn = random(2,3,1); 
+
+$an=Formula("($p n)/sqrt($qq n^($pn)+$r)")->reduce;
+if($pn==3){
+  $ans= Compute("0");
+  Context()->flags->set(reduceConstants=>0);
+  $an1=Formula("($p n)/(sqrt( n^3 ($qq +$r/(n^3))))")->reduce;
+  $an2=Formula("($p n)/( sqrt(n^3) sqrt($qq+$r/n^3))")->reduce; 
+  $an3 = Formula(" $p / ( sqrt(n) sqrt($qq+$r/n^3)) ");
+  $solText = "
+On a
+\[ \begin{align}
+\lim_{n\to\infty}$an &= \lim_{n\to\infty}$an1 \\
+&= \lim_{n\to\infty}$an2 \\
+&= \lim_{n\to\infty}$an3 \\
+& \overset{\left(\frac{$p}{\infty}\right)}{=} $ans.
+\end{align}
+\]
+"
+
+
+}
+else{
+  $ans = Compute("$p/$q");
+  $an1=Formula("($p n)/(sqrt( n^2 ($qq +$r/(n^2))))")->reduce;
+  $an2=Formula("($p n)/( n sqrt($qq+$r/n^2))")->reduce; 
+  $an3 = Formula(" $p / ( sqrt($qq+$r/n^2)) ");
+  $solText = "
+On a
+\[ \begin{align}
+\lim_{n\to\infty}$an &= \lim_{n\to\infty}$an1 \\
+&= \lim_{n\to\infty}$an2 \\
+&= \lim_{n\to\infty}$an3 \\
+&= \frac{$p}{\sqrt{$qq + 0}} \\
+&= \frac{$p}{$q} = $ans.
+\end{align}
+\]
+";
+
+}
+
+BEGIN_TEXT
+Évaluer la limite de la suite \(\left\lbrace a_n \right\rbrace\) afin de déterminer si la suite est convergente ou divergente. Si la limite n'existe pas, entrer $BBOLD DIV$EBOLD comme réponse.
+$BR
+\[a_n = $an\]
+$PAR
+\(\displaystyle \lim_{n\to\infty}a_n = \)  \{ans_rule()\}$BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($ans->cmp);
+
+Context()->texStrings;
+Context()->flags->set(reduceConstants=>0);
+
+
+BEGIN_SOLUTION
+$solText
+END_SOLUTION
+
+ENDDOCUMENT();

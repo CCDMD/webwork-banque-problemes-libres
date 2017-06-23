@@ -1,0 +1,96 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction logarithmique', 'intégrale indéfinie', 'par parties')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : septembre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserFormulaUpToConstant.pl",
+"PGcourse.pl",
+);
+
+Context("Numeric");
+Context()->variables->set(x=>{limits=>[0.5,2]});
+Context()->variables->add(dx=>"Real");
+
+$n = random(2,8,1);
+$n1 = $n+1;  $n1sq = $n1*$n1;
+$func = Compute("x^($n) ln(x)");
+
+
+$u = Compute("ln(x)");
+$dv = Compute("x^($n)*dx")->reduce;
+$du = Compute("1/x*dx")->reduce;
+$v = Compute("x^($n1)/$n1")->reduce;
+
+$uv = Compute("$u*$v")->reduce;
+$vdu = Compute("$v*$du")->reduce;
+
+$afunc = Compute("(1/$n1)*x^{$n1}*ln(x) - (1/$n1sq)*x^{$n1}");
+
+Context("Numeric");
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+Utiliser l'intégration par parties pour évaluer l'intégrale indéfinie suivante.
+\[\int\, $func \,dx \]
+$BR
+En posant
+\(u = \) \{ ans_rule(10) \}  et \(dv = \) \{ ans_rule(10) \}, $PAR
+alors \(du = \) \{ ans_rule(10) \} et \(v =\) \{ ans_rule(10) \}. $PAR
+$BR
+De sorte que
+$PAR
+\(\displaystyle\int\, $func \,dx = \) \{ ans_rule(10) \} \(-\displaystyle\int\)\{ ans_rule(10) \}.
+$PAR
+\(\displaystyle\int\, $func \,dx = \) \{ ans_rule(30) \} \(+\;C\)
+END_TEXT
+Context()->normalStrings;
+
+ANS($u->cmp() );
+ANS($dv->cmp() );
+ANS($du->cmp() );
+ANS($v->cmp() );
+
+ANS($uv->cmp() );
+ANS($vdu->cmp() );
+ANS($afunc->cmp(upToConstant=>1) );
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+On utilise l'intégration par parties
+\(\int\,u\,dv = u v - \int v\,du\) $PAR
+
+en posant \(u = \ln(x)\) et \(dv = x^{$n} dx\).
+$PAR
+Alors  \(du = \frac{1}{x}\, dx\) et \(v = \frac{1}{$n1}\,x^{$n1}\), de sorte que
+\[ \begin{aligned}
+  \int\,x^{$n}\,\ln(x)\,dx &= \frac{1}{$n1}x^{$n1} \ln(x) - 
+    \int\,\frac{1}{$n1} x^{$n1} \cdot \frac{1}{x}\,dx \\
+&=  \frac{1}{$n1}x^{$n1} \ln(x) - 
+    \int\,\frac{1}{$n1} x^{$n}\,dx \\
+&=	\frac{1}{$n1}x^{$n1} \ln(x) - \frac{1}{$n1sq} x^{$n1} + C.
+   \end{aligned}
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

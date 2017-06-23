@@ -1,0 +1,122 @@
+##DESCRIPTION
+## Use integration by parts to evaluate an integral
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('fonction exponentielle', 'fonction trigonométrique', 'intégrale indéfinie', 'par parties')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+	"PGstandard.pl",
+	"MathObjects.pl",
+	"parserFormulaUpToConstant.pl",
+	"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+Context("Numeric");
+Context()->flags->set(reduceConstants => 0);
+Context()->variables->add(dx=>"Real");
+
+# paramètres
+$a=random(2, 7);
+do{$b=random(2, 7);} until($a!=$b);
+
+$f=Formula("e^($a*x)*cos($b x)");
+
+# première substitution
+$u1 = Compute("cos($b*x)");
+$du1 = Compute("-$b*sin($b*x)*dx");
+$dv = Compute("e^($a*x)*dx");
+$v = Compute("e^($a*x)/$a");
+
+# formule uv - int( vdu)
+$uv1 = Compute("$u1*$v");
+$vdu1 = Compute("$v*$du1");
+
+#constante devant la 2e intégrale
+$c2 = Compute("$b/$a");
+$int2 = Compute("e^($a*x)*sin($b*x)*dx");
+
+# deuxième substitution
+# dv et v sont les mêmes qu'en haut
+$u2 = Compute("sin($b*x)");
+$du2 = Compute("$b*cos($b*x)*dx");
+
+
+# formule uv - int( vdu)
+$uv2 = Compute("$u2*$v");
+$vdu2 = Compute("$v*$du2");
+
+# coefficient de I et expression à droite
+$aa = $a*$a;
+$d = $a*$a + $b*$b;
+$cI = Compute("$d/$aa");
+$expres = Compute("$uv1 + $c2*$uv2");
+
+$ans = Compute("e^($a*x)/$d * ($a*cos($b*x) + $b * sin($b*x))");
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer l'intégrale suivante à l'aide de l'intégration par parties.
+\[ \int $f\,dx \]
+
+En posant \(u = $u1\), on obtient
+$PAR
+\(u = \cos($b x) \quad\quad\quad\quad\quad\quad\quad\)   \(dv = \)\{ans_rule(15)\} $BR
+\(du = \)\{ans_rule(15)\}       \(v = \) \{ans_rule(15)\}
+$PAR
+Par conséquent, en posant \( I = \displaystyle  \int $f\,dx\), on obtient
+$PAR
+\( I = \) \{ans_rule(20)\} \(- \displaystyle  \int \)\{ans_rule(20)\}
+$PAR
+\( I = \) \{ans_rule(20)\} \(+\) \{ans_rule(5)\}\(\displaystyle  \int \)\{ans_rule(20)\}
+$PAR
+Cette deuxième intégrale se calcule en effectuant à nouveau un intégration par parties en posant
+$PAR
+\(u = \)\{ans_rule(15)\}     \(\quad dv = \)\{ans_rule(15)\} $BR
+\(du = \)\{ans_rule(15)\}     \(\quad v = \) \{ans_rule(15)\}
+$PAR
+Par conséquent,
+$PAR
+\( I = \) \{ans_rule(20)\} \(+\)\{ans_rule(5)\}\(\Big(\)\{ans_rule(20)\} \(-\displaystyle  \int \)\{ans_rule(20)\}\(\Big)\)
+$PAR
+\{ans_rule(5)\}\( I = \) \{ans_rule(45)\}
+$PAR
+\( I = \) \{ans_rule(45)\} \(+\,C\)
+END_TEXT
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS($dv->cmp() );
+ANS($du1->cmp() );
+ANS($v->cmp() );
+ANS($uv1->cmp() );
+ANS($vdu1->cmp() );
+ANS($uv1->cmp() );
+ANS($c2->cmp() );
+ANS($int2->cmp() );
+ANS($u2->cmp() );
+ANS($dv->cmp() );
+ANS($du2->cmp() );
+ANS($v->cmp() );
+ANS($uv1->cmp() );
+ANS($c2->cmp() );
+ANS($uv2->cmp() );
+ANS($vdu2->cmp() );
+ANS($cI->cmp() );
+ANS($expres->cmp() );
+ANS($ans->cmp() );
+
+COMMENT('Fonction de la forme e^(ax)cos(bx) où a>2 et b>2');
+ENDDOCUMENT();

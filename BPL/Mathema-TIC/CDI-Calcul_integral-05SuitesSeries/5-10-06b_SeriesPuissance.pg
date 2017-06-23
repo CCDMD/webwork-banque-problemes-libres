@@ -1,0 +1,133 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('critère de d\'Alembert généralisé', 'intervalle de convergence', 'rayon de convergence', 'série de puissances')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/Michigan/Chap9Sec5/Q25.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZMLT(IntervalCnonzeroMpoly)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('9.5')
+## Problem1('25')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('9.5')
+## Problem2('25')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('9.5')
+## Problem3('28')
+###############Source###############
+
+# Le problème original choisissait entre deux séries différentes que j'ai séparé entre les 
+# problèmes 5-10-06_SeriesPuissance.pg et 5-10-06b_SeriesPuissance.pg
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+Context("Interval");
+$showPartialCorrectAnswers = 1;
+
+$a = random(1,7,1);
+$b = random(2,5,1);
+$bsq = $b*$b;
+
+$ser = "\frac{(x-$a)^n}{$b n}";
+$lend = $a - 1;
+$rend = $a + 1;
+$int = Interval("[$lend,$rend)");
+
+
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+Déterminer l'intervalle de convergence de la série de puissances
+\[ \sum_{n=2}^{\infty} $ser \]
+$PAR
+Intervalle de convergence (sous forme d'intervalle) = \{ ans_rule(15) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS($int->cmp(showEndpointHints=>0,showEndTypeHints=>0) );
+
+## solution variables
+$ratio = "\frac{(x-$a)^{n+1}}{$b(n+1)}\cdot\frac{$b n}{(x-$a)^n}";
+$ratio_simp = "\frac{n}{n+1}";
+$rlim = 1;
+$limres = "";
+
+$radius = 1;
+$lser = "\frac{($lend - $a)^n}{$b n}";
+$lser_simp = "\frac{(-1)^n}{$b n}";
+$lwhatser = "une série harmonique alternée, qui converge";
+
+$rser = "\frac{($rend - $a)^n}{$b n}";
+$rser_simp = "\frac{1}{$b n}";
+$rwhatser = "une série harmonique, qui diverge";
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+On applique d'abord le critère de d'Alembert généralisé à la série \(\displaystyle\sum_{n=2}^{\infty} $ser \) pour déterminer le rayon de convergence :
+\[
+  \left|{a_{n+1} \over {a_n}}\right| =
+    \left|$ratio\right| =
+    $ratio_simp \cdot |x-$a|.
+\]
+Puisque \(\displaystyle \lim_{n\to\infty}$ratio_simp = $rlim\),
+on a 
+\[
+\lim_{n\rightarrow \infty}\left|{{a_{n+1}} \over {a_n}}\right|=$limres |x-$a|.
+\]
+La série converge si \($limres |x-$a| < 1\).
+Le rayon de convergence est \($radius\) et la série converge si \($lend < x < $rend\).
+
+$PAR
+On vérifie les bornes de l'intervalle.  Si \(x = $lend\), on obtient
+\[
+\sum_{n=2}^{\infty} $ser = \sum_{n=2}^{\infty} $lser
+  = \sum_{n=2}^{\infty} $lser_simp.
+\]
+Cette série est $lwhatser.
+
+$PAR
+Si \(x = $rend\), on obtient
+\[
+\sum_{n=2}^{\infty} $ser = \sum_{n=2}^{\infty} $rser
+  = \sum_{n=2}^{\infty} $rser_simp.
+\]
+Cette série est $rwhatser.
+$PAR
+
+L'intervalle de convergence est donc donné par  \( $int\) (c'est-à-dire
+\($lend \le x < $rend\)).
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

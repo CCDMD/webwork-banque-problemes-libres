@@ -1,0 +1,150 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('critère de d\'Alembert généralisé', 'rayon de convergence', 'série de puissances')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : /Library/Michigan/Chap9Sec5/Q15.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZMLT(UseRatioToFindRadius)
+## ZMLTleader(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('9.5')
+## Problem1('15')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('9.')
+## Problem2('52')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('9.')
+## Problem3('60')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+#"PGchoicemacros.pl",
+"PGcourse.pl",
+);
+
+Context("Numeric");
+$showPartialCorrectAnswers = 1;
+Context()->variables->add(n =>'Real');
+
+$a = random(1,5,1);
+
+$which = random(0,2);
+if ( $which == 0 ) {
+    $c1 = $a;
+    $c2 = 4*$a;
+    $c3 = 9*$a;
+    $c4 = 16*$a;
+    $c5 = 25*$a;
+    $ser = Formula("$c1*x + $c2*x^2 + $c3 x^3 + $c4*x^4 + $c5* x^5")->reduce;
+    $r = Compute("1");
+} elsif ( $which == 1 ) {
+    if($a==1) { $a = random(2,5);}
+    $c1 = $a;
+    $c2 = $a*$a;
+    $c3 = $a**3;
+    $c4 = $a**4;
+    $c5 = $a**5;
+    $ser = Formula("$c1*x + $c2*x^2 + $c3 x^3 + $c4*x^4 + $c5* x^5")->reduce;
+    $r = Compute("1/$a");
+} elsif ( $which == 2 ) {
+    if($a==1) { $a = random(2,5);}
+    $c1 = $a;
+    $c2 = $a*$a;
+    $c3 = $a**3;
+    $c4 = $a**4;
+    $c5 = $a**5;
+    $ser = Formula("x/$c1 + x^2/$c2 + x^3/$c3 + x^4/$c4 + x^5/$c5")->reduce;
+    $r = Compute("$a");
+}
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+Appliquer le critère de d'Alembert généralisé pour déterminer le rayon de convergence de la série de puissances (série entière) suivante :
+\[ $ser + \cdots \]
+
+\( R = \) \{ ans_rule(15) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS($r->cmp() );
+
+if($a == 1) {$ad = "";}
+else {$ad = $a;}
+
+Context()->texStrings;
+if ( $which == 0 ) {
+    $soln ="
+Le terme général de la série de puissances est donné par 
+\[ $ser = \sum_{n=1}^{\infty} $ad n^2 x^n\]
+Pour déterminer \(R\), on évalue la limite suivante.
+\[ \begin{align}
+\lim_{n \to \infty} \left|\frac{a_{n+1}}{a_{n}}\right|
+  &=\lim_{n\to\infty}\left|\frac{$ad (n+1)^2 x^{n+1}}{$ad n^2 x^n}\right| \\
+  &=\lim_{n \to \infty}|x|\frac{n^2+2n+1}{n^2} \\
+  &= |x|\lim_{n \to\infty}\left(\frac{1+{2/n}+{1/n^2}}{1}\right) \\
+  &= |x|.
+  \end{align}
+\]
+Par conséquent, le rayon de convergence est \(R= $r\).
+"
+} elsif ( $which == 1 ) {
+    $soln ="
+    Le terme général de la série de puissances est donné par 
+\[ $ser = \sum_{n=1}^{\infty} $a^n x^n\]
+Pour déterminer \(R\), on évalue la limite suivante.
+\[ \begin{align}
+\lim_{n \to \infty} \left|\frac{a_{n+1}}{a_{n}}\right|
+  &=\lim_{n\to\infty}\left|\frac{$a^{n+1} x^{n+1}}{$a^n x^n}\right| \\
+  &=\lim_{n \to \infty}|x| $a\\
+  &= $a |x|.
+\end{align} \]
+Cette valeur doit être inférieure à 1, donc \(|x| < \frac{1}{$a}\), et le rayon de convergence
+est \(R=\frac{1}{$a}\).
+"
+} elsif ( $which == 2 ) {
+    $soln ="
+    Le terme général de la série de puissances est donné par 
+\[ $ser = \sum_{n=1}^{\infty} \frac{x^n}{$a^n}\]
+Pour déterminer \(R\), on évalue la limite suivante.
+\[ \begin{align}
+\lim_{n \to \infty} \left|\frac{a_{n+1}}{a_{n}}\right|
+  &=\lim_{n\to\infty}\left|\frac{x^{n+1}}{$a^{n+1}}\cdot\frac{$a^n}{x^n}\right| \\
+  &=\lim_{n \to \infty} \frac{|x|}{$a} \\
+  &= \frac{|x|}{$a}.
+\end{align}\]
+Cette valeur doit être inférieure à 1, donc \(|x| < $a\), et le rayon de convergence
+est \(R= $r\).
+"
+}
+
+
+BEGIN_SOLUTION
+
+$soln
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

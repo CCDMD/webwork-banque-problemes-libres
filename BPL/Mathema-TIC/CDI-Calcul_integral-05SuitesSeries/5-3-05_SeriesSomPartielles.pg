@@ -1,0 +1,91 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('somme', 'somme télescopique', 'sommes partielles', 'série')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mai 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.2_Summing_an_Infinite_Series/10.2.5.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Keith Thompson)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.2')
+## Problem1('5')
+###############Source###############
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+Context("Numeric");
+# Ajouter une variable n qui sera évaluée seulement pour des entiers
+# Le flag resolution spécifie la distance entre des test_points possibles
+Context()->variables->add(n => ['Real', limits=>[1,20], resolution=>1]);
+
+
+
+$c = random(2,9,1);
+
+$Sn = Formula("$c*n/(n+1)");
+$i = random(4,6);
+
+$ans1= $Sn->eval(n=>"2");
+$ans2= $Sn->eval(n=>"$i");
+
+## la somme est $c
+$somme = Real($c);
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer les sommes partielles \(S_2\), \(S_{$i}\) et \(S_n\), puis calculer la somme \(S\) de la série ci-dessous.
+\[\frac{$c}{1\cdot2}+\frac{$c}{2\cdot3}+\frac{$c}{3\cdot4}+\cdots\]
+
+ \(S_2\) =  \{ans_rule()\} 
+$PAR \(S_{$i}\) =  \{ans_rule()\} 
+$PAR \(S_n\) =  \{ans_rule()\} 
+$PAR \(S\) =  \{ans_rule()\} 
+END_TEXT
+
+Context()->normalStrings;
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($Sn->cmp);
+ANS($somme->cmp);
+
+$ip1 = $i+1;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+\(S_1= \frac{$c}{2} \)
+$PAR
+\(S_2=\frac{$c}{1\cdot2}+\frac{$c}{2\cdot3}=$c\left(\frac{1}{2}+\frac{1}{6}\right)=$c\left(\frac{4}{6}\right)=$c\left(\frac{2}{3}\right)\);
+$PAR
+\(S_3= S_2 + a_3 = $c\left(\frac{2}{3} + \frac{1}{12} \right)= $c\left(\frac{9}{12}\right) = $c\left(\frac{3}{4}\right)\);
+$PAR
+\(S_4= S_3 + a_4 = $c\left(\frac{3}{4} + \frac{1}{20} \right)= $c\left(\frac{16}{20}\right) = $c\left(\frac{4}{5}\right)\);
+$PAR
+\(S_5= S_4 + a_5 = $c\left(\frac{4}{5} + \frac{1}{30} \right)= $c\left(\frac{5}{6}\right)\);
+$PAR
+\(S_6= $c\left(\frac{6}{7}\right)\);
+$PAR
+\(S_n= $c\left(\frac{n}{n+1}\right)\);
+$PAR
+Par conséquent, la somme \(S\) est déterminée par 
+$PAR
+\(\displaystyle S= \lim_{n\to\infty}\frac{$c n}{n+1} = $c\).
+
+END_SOLUTION
+
+ENDDOCUMENT();

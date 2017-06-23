@@ -1,0 +1,115 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence absolue et conditionnelle', 'convergence et divergence', 'critère de d\'Alembert généralisé', 'série alternée')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/Rochester/setSeries7AbsolutelyConvergent/benny_ratio1.pg
+## ZInstitution(OSU)
+## ZMLT(App_misapp_of_the_ratio_test)
+## ZMLTleader(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('10.5')
+## Problem1('1')
+###############Source###############
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+"PGchoicemacros.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT("Afin d'obtenir 100% pour ce problème, toutes les réponses doivent être correctes.");
+
+# No partial credit on this problem, so we say:
+install_problem_grader(~~&std_problem_grader);
+
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(nep=>{});
+Context()->variables->add(n=>'Real');
+
+$b=random(1,7,1);
+$c = random(-10,-5,1);
+
+$r = non_zero_random(-3,3,1);
+$d = abs($c) + $r;
+$f = random(1,5,1);
+
+
+$poly = list_random("n + $b", "n^2 + $b"); 
+
+$gen_exp = random(0,1,1);
+if ($gen_exp == 0) { 
+  $exp_num = "n";
+  $exp_den = "n + $f";
+  }
+else {
+  $exp_den = "n";
+  $exp_num = "n + $f";
+  };
+
+ $frac = list_random(
+Compute(" ($poly)*($c)**($exp_num)/($d**($exp_den))")->reduce,
+Compute(" ($c)**($exp_num)/(($poly)*$d**($exp_den))")->reduce);
+
+$soln1 = Compute("abs($c)/$d")->reduce;
+
+if ($r>0) {
+	$soln2='A';
+} else {
+	$soln2='B';
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit une série
+\( \displaystyle \sum_{n=1}^{\infty} a_n \)
+où
+\[ a_n = $frac \]
+Dans ce problème, on utilise le critère de d'Alembert généralisé afin de déterminer si la série est convergente.
+
+$PAR
+
+Calculer
+\[ L =\lim_{n\to\infty} \left| \frac{ a_{n+1} }{a_n} \right| \]
+Entrer la valeur de la limite \(L\). Entrer $BBOLD inf $EBOLD pour \(\infty\), $BBOLD -inf $EBOLD pour \(-\infty\) et $BBOLD nep $EBOLD si la limite n'existe pas.
+$BR
+\( L = \) \{ans_rule( 30) \}
+
+$PAR
+
+Lequel des énoncés suivants est vrai? $BR
+${BBOLD}A${EBOLD}. Suivant le critère de d'Alembert généralisé, la série converge absolument. $BR
+${BBOLD}B${EBOLD}. Suivant le critère de d'Alembert généralisé, la série diverge. $BR
+${BBOLD}C${EBOLD}. Suivant le critère de d'Alembert généralisé, la série converge conditionnellement. $BR
+${BBOLD}D${EBOLD}. Le test n'est pas concluant, mais la série converge absolument suivant un ou plusieurs autres critères. $BR
+${BBOLD}E${EBOLD}. Le test n'est pas concluant, mais la série diverge suivant un ou plusieurs autres critères. $BR
+${BBOLD}F${EBOLD}. Le test n'est pas concluant, mais la série converge conditionnellement suivant un ou plusieurs autres critères. $BR
+Choisir la lettre de l'énoncé qui est vrai :
+\{pop_up_list(['?', 'A', 'B', 'C', 'D', 'E', 'F']) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($soln1->cmp);
+ANS(str_cmp($soln2));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

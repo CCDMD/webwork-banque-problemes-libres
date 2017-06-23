@@ -1,0 +1,82 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('approximation par le polynôme de Taylor', 'estimation', 'polynôme de MacLaurin', 'polynôme de Taylor', 'série de MacLaurin', 'série de Taylor')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/NAU/setCalcII/TaylorSqrtApproxSimple.pg
+## ZInstitution(NAU)
+## ZAuthor(Jim Swift)
+## ZMLT(SeriesApp_02)
+###############Source###############
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+ "PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+
+Context("Numeric");
+$n = random(1,2);
+$p = 2*$n;
+#$n = 2;  # For the Simple version
+$a = 10**$p;
+$c0 = Real("10^$n");
+$c1 = Real("1/(2*10^($n))");
+$c2 = Real("-1/(8*10^(3*$n))");
+$c3 = Real("1/(16*10^(5*$n))");
+$b = non_zero_random(-$c0, $c0, 2);
+#$b =1;  # For simple version
+$c = $a + $b;
+$approx = Real("$c0 + $c1*$b + $c2*($b)^2 + $c3*($b)^3");
+
+
+BEGIN_TEXT
+Le développement de \( f(x) = \sqrt{$a + x} \) en série de Taylor centrée en \( 0 \) est représentée par une série 
+de puissances de la forme \( \displaystyle \sum_{n=0}^\infty
+c_n\,x^n\).
+$PAR
+Trouver les coefficients des quatre premiers termes. $BR
+
+\( c_0 = \) \{ans_rule(20)\}  $BR
+
+\( c_1 = \) \{ans_rule(20)\}  $BR
+
+\( c_2 = \) \{ans_rule(20)\}  $BR
+
+\( c_3 = \) \{ans_rule(20)\}  $BR
+$PAR
+$BR
+Utiliser le polynôme de Taylor de degré 3 de la fonction \(f\) centré en \( 0\) pour estimer la 
+valeur exacte de \(f($b) = \sqrt{$c}\).
+$PAR \(\sqrt{$c} \approx\)  \{ans_rule(60)\}  $BR
+END_TEXT
+
+
+ANS($c0->cmp);
+ANS($c1->cmp);
+ANS($c2->cmp);
+ANS($c3->cmp);
+
+## On s'assure que la valeur entrée est la bonne approximation
+## et que l'étudiant n'a pas entré sqrt(c) comme réponse
+ANS($approx->cmp(checker=>sub {
+my ( $correct, $student, $ansHash ) = @_;
+my $errorcorrect = Real($approx - sqrt($c));
+my $errorstu = Real($student - sqrt($c));
+return  $errorcorrect == $errorstu;
+} ) );
+ENDDOCUMENT();        # This should be the last executable line in the
+#problem.
+

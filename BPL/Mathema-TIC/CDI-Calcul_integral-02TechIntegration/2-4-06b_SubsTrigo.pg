@@ -30,9 +30,10 @@ DOCUMENT();        # This should be the first executable line in the problem.
 
 loadMacros(
   "PGstandard.pl",
- # "AppletObjects.pl",
   "MathObjects.pl",
+"PGasu.pl",
   "parserFormulaUpToConstant.pl",
+  "scaffold.pl",
   "PGcourse.pl",
 );
 
@@ -41,25 +42,158 @@ COMMENT('Fonction x^2/sqrt(a^2-x^2) de substitution trigonométrique de type sin
 TEXT(beginproblem());
 $showPartialCorrectAnswers = 1;
 
+Context()->variables->add(t=>["Real",limits=>[-3,3]],dt=>["Real",limits=>[0,1]]);
+
 $a = random(2,9,1);
 
 $a2 = $a*$a;
-$a3 = $a2*$a;
-$a4 = $a2*$a2;
+
+if( $a%2 == 0){
+$texcof = Compute("$a2/2");
+} else { $texcof = "\frac{$a2}{2}";}
+
+
+# Côtés du triangle de substitution
+$opp = Compute("x");
+$adj = Compute("sqrt($a2 - x^2)");
+$hyp = Compute("$a");
+
+# Substitution
+$x = Compute("$a*sin(t)");
+$dx = Compute("$a*cos(t)*dt");
+$expres = Compute("$a*cos(t)");
+
+# Intégrale en fonction de t
+$Int = Compute("$a2*sin^2(t)*dt");
+$IntId = Compute("$a2/2(1-cos(2*t))*dt");
+$anst = FormulaUpToConstant("$a2/2*t - $a2/2*sin(t)*cos(t)");
+$ans = FormulaUpToConstant("($a2)/2*asin(x/($a))-x*sqrt($a2-x^2)/2");
+$ans->{limits} = [-$a,$a];
 
 
 BEGIN_TEXT
 Évaluer l'intégrale indéfinie.
 \[ \int \frac{x^2 dx}{\sqrt{$a2 - x^2}} \]
 
-Réponse : \{ans_rule(45) \}
+Ce problème comporte plusieurs parties. Vous devez répondre correctement aux questions pour passer aux parties suivantes.
+$PAR
 END_TEXT
 
-$ans = FormulaUpToConstant("($a2)/2*asin(x/($a))-x*sqrt($a2-x^2)/2");
-$ans->{limits} = [-$a,$a];
-ANS( $ans->cmp());
+
+## Début du problème par parties
+Scaffold::Begin(
+      can_open => "when_previous_correct",
+      is_open  => "correct_or_first_incorrect"
+);
+
+Section::Begin("Partie 1");
+BEGIN_TEXT
+Compléter le triangle de substitution ci-dessous à partir de l'expression trouvée à l'étape précédente.
+$BR
+$BCENTER
+\{ image( "triangle.png", width=>125, height=>69,tex_size=>300 ) \}
+$ECENTER
+$BR
+Côté opposé à \(t\) :  \{ans_rule(15)\}  $BR
+Côté adjacent à \(t\) :  \{ans_rule(15)\} $BR
+Hypoténuse :  \{ans_rule(15)\} $BR
+END_TEXT
+
+ANS($opp->cmp);
+ANS($adj->cmp);
+ANS($hyp->cmp);
+
+Section::End();
+
+Section::Begin("Partie 2");
+BEGIN_TEXT
+Effectuer votre substitution trigonométrique en complétant les expressions demandées.$BR
+$BBOLD Note : Exprimer vos fonctions trigonométriques en fonction de la variable \(t\)$EBOLD.
+$PAR
+\(x =\)  \{ans_rule(20)\} $BR
+\(dx =\)  \{ans_rule(20)\} $BR
+\(\sqrt{$a2-x^2} =\)  \{ans_rule(20)\} $BR
+END_TEXT
+
+ANS($x->cmp);
+ANS($dx->cmp);
+ANS($expres->cmp);
+
+Section::End();
+
+Context()->texStrings;
+Section::Begin("Partie 3");
+BEGIN_TEXT
+Exprimer l'intégrale de départ en fonction de \(t\) à l'aide des expressions trouvées à l'étape précédente en 
+$BBOLD simplifiant complètement votre réponse.$EBOLD
+$PAR
+\( \displaystyle\int \frac{x^2 dx}{\sqrt{$a2 - x^2}}=\displaystyle\int \)  \{ans_rule(30)\}
+END_TEXT
+
+$ans3 = fun_cmp($Int,var=>['t','dt']);		   
+$ans3->install_pre_filter(must_have_filter('cos',
+                  'no',
+                  "Simplifier votre réponse complètement."
+                   ));
+$ans3->install_post_filter(~~&catch_errors_filter);
+ANS($ans3);
+
+Section::End();
+
+Section::Begin("Partie 4");
+BEGIN_TEXT
+Simplifier la dernière intégrale en utilisant l'identité trigonométique suivante.
+\[ \sin^2(a) = \frac{1}{2}(1-\cos(2a)) \]
+$PAR
+\( \displaystyle \int \frac{x^2 dx}{\sqrt{$a2 - x^2}}=\int $a2\sin^2(t)\,dt = \int \) \{ans_rule(30)\}
+END_TEXT
+
+$ans4 = fun_cmp($Int,var=>['t','dt']);		   
+$ans4->install_pre_filter(must_have_filter('sin',
+                  'no',
+                  "Utiliser l'identité trigonométrique."
+                   ));
+$ans4->install_post_filter(~~&catch_errors_filter);
+ANS($ans4);
+
+Section::End();
+
+Section::Begin("Partie 5");
+BEGIN_TEXT
+Évaluer l'intégrale de la partie précédente en fonction de \(t\).
+$PAR
+\( \displaystyle \int \frac{x^2 dx}{\sqrt{$a2 - x^2}} = \int $texcof (1-\cos(2t))\,dt  = \) \{ans_rule(30)\}
+END_TEXT
+
+ANS($anst->cmp);
+
+Section::End();
+
+Section::Begin("Partie 6");
+BEGIN_TEXT
+En utilisant votre triangle de substitution, exprimer la valeur de l'intégrale en fonction de \(x\).
+$PAR
+\( \displaystyle\int \frac{x^2 dx}{\sqrt{$a2 - x^2}} = $texcof\left( t - \frac{\sin(2t)}{2} \right) + C = \) \{ans_rule(45)\}
+END_TEXT
 
 
+$showHint = 1;
+BEGIN_HINT
+Il faut remplacer l'expression \(\sin(2t)\) à l'aide de l'identité trigonométrique suivante.
+\[\frac{\sin(2a)}{2}=\sin(a)\cos(a)\]
+END_HINT
+
+ANS($ans->cmp);
+
+Section::End();
+Context()->normalStrings;
+
+Scaffold::End();
+## Fin du problème
+ 
+$a3 = $a2*$a;
+$a4 = $a2*$a2;
+ 
 Context()->texStrings;
 BEGIN_SOLUTION
 On utilise une substitution trigonométrique.  On choisit une fonction sinus.

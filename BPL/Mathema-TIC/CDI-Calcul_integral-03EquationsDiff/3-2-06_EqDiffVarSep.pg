@@ -1,0 +1,152 @@
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('résolution d\'une équation', 'ordre 1', 'solution générale', 'solution particulière', 'à variables séparables', 'équation différentielle')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+
+###############Source###############
+## source : Library/FortLewis/DiffEq/1-First-order/03-Separable/Lebl-1-3-01.pg
+## ZDate(01/30/2011)
+## ZInstitution(Fort Lewis College)
+## ZAuthor(Paul Pearson)
+## TitleText1('Notes on Diffy Qs')
+## AuthorText1('Jiri Lebl')
+## EditionText1('December 9, 2010')
+## Section1('1.3')
+## Problem1('1')
+###############Source###############
+
+
+
+##############################
+#  Initialization
+
+DOCUMENT(); 
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"answerHints.pl",
+"parserImplicitPlane.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+
+#############################
+#  Setup 1
+
+Context("ImplicitPlane");
+Context()->variables->are(
+x=>"Real",y=>"Real"
+);
+
+$a = random(2,7,1);
+$aa = $a * $a;
+
+$s = random(-1,1,2);
+$sa = $s * $a;
+
+$b = random(-7,-2,1);
+$bb = $b * $b;
+
+#$c = -($b);
+#$cc = $bb;
+
+$answera = Formula("y^2 - (x/$a)^2"); 
+
+$answerb = Formula("x/$sa")->reduce;
+
+
+#############################
+#  Main text 1
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre l'équation différentielle
+\( \displaystyle \frac{dy}{dx} = \frac{x}{$aa y} \).
+
+\{ BeginList('OL',type=>'a') \}
+
+$ITEM Déterminer une solution implicite de l'équation et l'exprimer sous la forme :
+$BR
+\{ ans_rule(20) \} = \(C\) où \(C\,\in\mathbb{R}\).
+
+$ITEMSEP
+$ITEM Déterminer la solution particulière qui passe par le point \( (x,y) = ($sa,1) \).
+$BR
+\(y = \) \{ ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+##############################
+#  Answer evaluation 1
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $answera->cmp(checker => sub {
+      my ( $correct, $student, $self ) = @_;
+      my $context = Context()->copy;
+      return 0 if $student == 0;
+      $context->flags->set(no_parameters=>0);
+      $context->variables->add('C0'=>'Parameter');
+      my $c0 = Formula($context,'C0');
+      $student = Formula($context,$student);
+      $correct = Formula($context,"$c0 * $answera");
+      return $correct == $student;
+    }
+) );
+
+ANS( $answerb->cmp()->withPostFilter(AnswerHints( 
+  Formula("-$answerb") => "Lorsque x = $sa, on a y = 1, donc doit être positive pour cette valeur de x.",
+)) );
+
+
+
+####################################
+#  Setup 2
+
+Context("Numeric");
+Context()->variables->are(
+x=>"Real",y=>"Real"
+);
+
+
+#sol particulière au point (0,b) où b<0
+$answerc = Compute("-sqrt( (x/$a)^2 + $bb )");
+
+
+#############################
+#  Main text 2
+
+Context()->texStrings;
+BEGIN_TEXT
+$ITEMSEP
+$ITEM Déterminer la solution particulière qui passe par le point \( (x,y) = (0,$b) \).
+$BR
+\(y = \) \{ ans_rule(25) \}
+
+
+\{ EndList('OL') \}
+END_TEXT
+Context()->normalStrings;
+
+
+############################
+#  Answers 2
+
+ANS( $answerc->cmp()->withPostFilter(AnswerHints( 
+  Formula("-$answerc") => "Lorsque x = 0, on a y = $b, donc doit être négative pour cette valeur de x.",
+))
+ );
+
+
+ENDDOCUMENT();

@@ -1,0 +1,98 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de comparaison par une limite', 'série', 'série p de Riemann', 'série à termes positifs')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.3_Convergence_of_Series_with_Positive_Terms/10.3.51.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Christopher Sira)
+## ZMLT(Simple_cmp_to_vanishing_p-series)
+## ZMLTleader(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.3')
+## Problem1('51')
+###############Source###############
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+ "PGchoicemacros.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT('Suggestion : restreindre le nombre de tentatives pour réussir le problème car la série est divergente.');
+
+Context()->variables->add(n=>'Real');
+
+$a = Real(random(3, 7, 1));
+$b = Real(random(6, 9, 1));
+$p = Real(random(3, 7, 1));
+$pm1 = $p-1;
+$p2m1 = 2*$p-1;
+
+$start = 1;
+$ch = random(0,1,1); ##0 diverge, 1 converge! LAD
+
+if ($ch >0) {#converge
+    $answer = "converge";
+    $type = "convergente";
+    $wrong = "diverge";
+    $start = 1;
+    $func = "\frac{\sqrt[$p]{n}}{$a n^2 + $b}";
+    $bn = "\frac{1}{n^{\frac{$p2m1}{$p}}}";
+    $cn = "\frac{n^2}{$a n^2 + $b}";
+    $pnum = $p2m1;
+    $compare = ">";
+    
+}else{
+    $answer = "diverge";
+    $type = "divergente";
+    $wrong = "converge";
+    $start = 1;
+    $func = "\frac{\sqrt[$p]{n}}{$a n + $b}";
+    $bn = "\frac{1}{n^{\frac{$pm1}{$p}}}";
+    $cn = "\frac{n}{$a n + $b}";
+    $pnum = $pm1;
+    $compare = "<";
+}
+
+
+$mc = new_multiple_choice();
+
+$mc->qa("Déterminer la convergence ou la divergence de la série \[ \displaystyle \sum_{n=$start}^{\infty} $func .\]",
+    $answer);
+$mc->extra($wrong);
+$mc->makeLast("diverge");
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ $mc->print_q; \}
+\{ $mc->print_a; \}
+END_TEXT
+Context()->normalStrings;
+
+ANS(str_cmp($mc->correct_ans));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+On applique le critère de comparaison à l'aide d'une limite  avec \( a_n = $func \) et \( b_n = $bn \):
+
+\[ L = \lim_{n\to\infty} \frac{a_n}{b_n} = \lim_{n\to\infty} \frac{$func}{$bn} = \lim_{n\to\infty} $cn = \frac{1}{$a} .\]
+
+La série \( \displaystyle \sum_{n=1}^{\infty} $bn \) est une  série-\(p\)  $type \(\left( p = \frac{$pnum}{$p} $compare 1\right)  \).  Puisque \( L > 0 \) existe, on peut conclure selon le critère de comparaison à l'aide d'une limite que \( \displaystyle \sum_{n=1}^{\infty} $func \) $answer aussi.
+END_SOLUTION
+
+ENDDOCUMENT();
+
+

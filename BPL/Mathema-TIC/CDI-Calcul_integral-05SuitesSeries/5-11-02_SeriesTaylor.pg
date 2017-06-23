@@ -1,0 +1,129 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('rayon de convergence', 'série de MacLaurin', 'série de puissances')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/Indiana/Indiana_setSeries9Taylor/e8_7_11.pg
+## ZDate(6/3/2002)
+## ZInstitution(Rochester)
+## ZMLT(LnSeriesSimpleInterval)
+## ZMLTleader(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('10.7')
+## Problem1('15')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Stewart')
+## EditionText2('6')
+## Section2('11.10')
+## Problem2('31')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,10,1);
+$b = random(2,10,1);
+
+BEGIN_TEXT
+On représente la fonction \(f(x)= $a \ln($b-x) \) par une série de puissances  (série de Maclaurin) de la forme \(\displaystyle  f(x) = \sum_{n=0}^\infty c_n x^n \) $BR
+$PAR
+Déterminer les coefficients des cinq premiers termes de la série de MacLaurin.$BR
+\( c_0 = \) \{ans_rule(20)\}  $BR
+
+\( c_1 = \) \{ans_rule(20)\}  $BR
+
+\( c_2 = \) \{ans_rule(20)\}  $BR
+
+\( c_3 = \) \{ans_rule(20)\}  $BR
+
+\( c_4 = \) \{ans_rule(20)\}  $BR
+$PAR
+Déterminer le rayon de convergence \( R = \) \{ans_rule(20)\}. $BR
+
+END_TEXT
+
+$ans0 =  Compute("$a*ln($b)") ;
+$ans1 =  Compute("(-1)*$a/$b") ;
+$ans2 =  Compute("(-1)*$a*(1/$b)^2/2");
+$ans3 =  Compute("(-1)*$a*(1/$b)^3/3");
+$ans4 =  Compute("(-1)*$a*(1/$b)^4/4");
+$ans5 =  Real($b);
+
+ANS($ans0->cmp);
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+ANS($ans4->cmp);
+ANS($ans5->cmp);
+
+BEGIN_SOLUTION
+On effectue les dérivées successives de \(f(x)\) pour obtenir les coefficients des cinq premiers termes de la série :
+\[
+\begin{aligned}
+f(x)		&=	$a \ln($b-x)	\\\\
+f'(x)		&=	\frac{-$a}{$b-x}	\\\\
+f''(x)		&=	\frac{-$a}{($b-x)^2}	\\\\
+f^{(3)}(x)	&=	\frac{-2 \cdot $a}{($b-x)^3}	\\\\
+f^{(4)}(x)	&=	\frac{-3! \cdot $a}{($b-x)^4}
+\end{aligned}
+\]
+On remplace \(x\) par \(0\) dans la fonction et dans chacune de ses dérivées pour obtenir les coefficients :
+\[
+\begin{aligned}
+c_0	&=	\frac{f(0)}{0!} = \frac{$a \ln $b}{0!} = $a \ln($b) 	\\\\
+c_1	&=	\frac{f'(0)}{1!} = \frac{\left(\frac{-$a}{$b}\right)}{1!}
+			= \frac{-$a}{$b} 	\\\\
+c_2	&=	\frac{f''(0)}{2!} = \frac{\left(\frac{-$a}{$b^2}\right)}{2!}
+			= \frac{-$a}{2 \cdot $b^2}	\\\\
+c_3	&=	\frac{f^{(3)}(0)}{3!}
+			= \frac{\left(\frac{-2 \cdot $a}{$b^3}\right)}{3!}
+			= \frac{-$a}{3 \cdot $b^3}	\\\\
+c_4	&=	\frac{f^{(4)}(0)}{4!}
+			= \frac{\left(\frac{-3! \cdot $a}{$b^4}\right)}{4!}
+			= \frac{-$a}{4 \cdot $b^4}	\\\\
+\cdots	&	\hspace{0.5 cm} \cdots	\\\\
+c_n	&=	\frac{-$a}{n \cdot $b^n} \text{  si } n > 0
+\end{aligned}
+\]
+Pour déterminer le rayon de convergence, on applique le critère de d'Alembert généralisé à la série de puissance obtenue :
+\[
+\begin{aligned}
+f(x)
+&=	\sum_{n=0}^\infty c_n x^n = c_0 + \sum_{n=1}^\infty c_n x^n	\\\\
+&=	$a \ln($b) + \sum_{n=1}^\infty \frac{-$a}{n \cdot $b^n}x^n	\\\\
+&=	$a \left( \ln($b) - \sum_{n=1}^\infty \frac{x^n}{n \cdot $b^n} \right)
+\end{aligned}
+\]
+On applique le critère de d'Alembert généralisé à \(\displaystyle \sum_{n=1}^\infty \frac{x^n}{n \cdot $b^n}\) :
+\[
+\lim_{n\to\infty} \left| \frac{\left(\frac{x^{n+1}}{(n+1)$b^{n+1}}\right)}
+		{\left(\frac{x^n}{n \cdot $b^n}\right)} \right|
+=	\lim_{n\to\infty} \left|
+		\left(\frac{n}{n+1}\right)\left(\frac{x}{$b}\right) \right| \\\\
+=	\left| \frac{x}{$b} \right| = \frac{\left|x\right|}{$b}
+\]
+Le rayon de convergence est obtenu lorsque l'expression
+\(\frac{\left|x\right|}{$b}\) est inférieure à 1.  Il faut donc que
+\(\left|x\right| < $b\) et par conséquent \($b\) est le rayon de convergence.
+END_SOLUTION
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

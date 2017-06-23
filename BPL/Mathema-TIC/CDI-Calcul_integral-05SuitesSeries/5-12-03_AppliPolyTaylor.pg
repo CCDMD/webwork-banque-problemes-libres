@@ -1,0 +1,123 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('estimation', 'limite', 'polynôme de MacLaurin', 'polynôme de Taylor')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+###############Source###############
+## source : Library/Michigan/Chap10Sec1/Q28.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZMLT(TrigFunctionsLimits)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('10.1')
+## Problem1('28')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('10.1')
+## Problem2('25')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('10.1')
+## Problem3('29')
+###############Source###############
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"contextLimitedPolynomial.pl",
+ "PGcourse.pl",
+);
+
+Context("LimitedPolynomial");
+Context()->flags->set(reduceConstants=>0);
+Context()->operators->redefine("!");
+$showPartialCorrectAnswers = 1;
+
+$which = list_random(0,1);
+
+if ( $which ) {
+    $func = "\sin(x)";
+    $n = 3;
+    $poly = Compute("x - x^3/3!");
+    $ratio = Compute("1 - x^2/3!");
+    $numer = "\sin(x)";
+    $fat0 = 0;
+    $fptext = "\(f'(x) = \cos(x)\), \(f''(x) = -\sin(x)\) et " .
+        "\(f'''(x) = -\cos(x)\),$PAR alors en \(x=0\) on a $PAR\(f'(0) = 1\), " .
+	  "\(f''(0) = 0\) et \(f'''(0) = -1\).";
+    $lim = Compute("1");
+} else {
+    $func = "\cos(x)";
+    $n = 4;
+    $poly = Compute("1 - x^2/2! + x^4/4!");
+    $ratio = Compute("x/2! - x^3/4!");
+    $numer = "1 - \cos(x)";
+    $fat0 = 1;
+    $fptext = "\(f'(x) = -\sin(x)\), \(f''(x) = -\cos(x)\), " .
+        "\(f'''(x) = \sin(x)\) et \(f^{(4)}(x) = \cos(x)\), $PAR alors en " .
+	  "\(x=0\) on a $PAR \(f'(0) = 0\), \(f''(0) = -1\), \(f'''(0) = 0\) " .
+	    "et \(f^{(4)}(0) = 1\).";
+    $lim = Compute("0");
+}
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+a) Développer la fonction \($func\) en polynôme de Taylor de degré $n centré en \(0\).
+$PAR
+\( T_{$n}(x) = \) \{ ans_rule(35) \}
+$BR
+$PAR
+b) Simplifier l'expression suivante en utilisant \(T_{$n}(x)\) :
+$PAR
+\( \displaystyle\frac{$numer}{x} = \) \{ ans_rule(35) \}
+$BR
+$PAR
+c) Évaluer ensuite la limite :
+$PAR
+\( \displaystyle \lim_{x\to0}\,\frac{$numer}{x} = \) \{ ans_rule(35) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($poly->cmp() );
+ANS($ratio->cmp() );
+ANS($lim->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+On détermine un polynôme de Taylor de degré $n en dérivant successivement
+\($func\) et en évaluant les dérivées en \(x=0\) :
+$PAR
+$fptext
+$PAR
+On a également \(f(0) = $fat0\), alors le polynôme de Taylor est
+\[T_{$n}(x) = $poly.\]
+$PAR
+On en déduit que \(\displaystyle \frac{$numer}{x} \approx $ratio\).  Cette expression n'est valable que pour de petites valeurs de  \(x\), alors on calcule la limite :
+\[
+\lim_{x\to 0}{$numer \over x} \approx
+	\lim_{x\to 0}\left( $ratio\right) = $lim.
+\]
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT();

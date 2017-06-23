@@ -1,0 +1,114 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('disques', 'fonction exponentielle', 'méthode des tranches', 'solide de révolution', 'volume')
+
+## Institution(Collège de Bois-de-Boulogne) 
+## Author(Julie Tremblay)
+## Date : mars 2017
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"parserPopUp.pl",
+"MathObjects.pl",
+"weightedGrader.pl",
+"PGcourse.pl",
+);
+
+install_weighted_grader();
+$showPartialCorrectAnswers = 1;
+
+COMMENT('Les points sont répartis de la façon suivante : 50% pour la première réponse, 2% pour la deuxième, 4% 
+pour la troisième et la quatrième et 40% pour la dernière réponse. Par contre, si un étudiant répond correctement à dernière réponse, le volume, en
+ laissant vide les précédentes, il obtiendra 100% des points.');
+ 
+TEXT(beginproblem());
+
+
+# Begin stuff to be modified =======================
+
+Context()->variables->add(y=>"Real");
+Context()->variables->set(x=>{limits=>[0.75,1.25]},y=>{limits=>[0.75,1.25]});
+
+# coefficients de la fonction
+$a = random(1,5);
+$c = random(2,5,1);
+# bornes
+$b = random(2,7);
+
+# fonction
+$f = Compute("$a*x^2+$c")->reduce;
+
+# Réponses 
+$integrand = Compute("pi*($f)^2");
+$differential = PopUp(["", "dx", "dy"], "dx");
+$lowerlimit = Real(0);
+$upperlimit = Real($b);
+
+$aa = $a*$a;
+$ac2 = 2*$a*$c;
+$cc = $c*$c;
+$volume = Compute("pi*($aa*($b)^5/5 + $ac2*($b)^3/3 + $cc*$b)");
+
+# answer weights for integrand, differential, lowerlimit, upperlimit, and volume
+@weights=(50,2,4,4,40);
+
+# answer evaluators
+@ans_eval=(
+$integrand->cmp,
+$differential->cmp,
+$lowerlimit->cmp,
+$upperlimit->cmp,
+$volume->cmp(
+  tolType => 'absolute',
+  tolerance => .001,
+));
+
+# End stuff to be modified ==========================
+
+
+Context()->texStrings;
+$region = "y= $f, \quad y=0, \quad x=0, \quad x=$b"; # already displaymath mode
+$lineofrotation = "l'axe des \( x\)"; 
+
+BEGIN_TEXT
+
+Le volume du solide de révolution engendré par la rotation de la région délimitée par
+\[
+$region
+\] 
+autour de $lineofrotation peut se calculer, selon la méthode du disque, au moyen de l'intégrale définie :
+$BR
+$BCENTER
+\( \displaystyle V = \int_a^b \) 
+\{NAMED_ANS_RULE('optional1',30)\}  
+\{NAMED_POP_UP_LIST('optional2',['','dx','dy'])\}
+$ECENTER
+$BR
+dont les bornes d'intégration sont
+\( a = \) \{NAMED_ANS_RULE('optional3',10)\} et 
+\( b = \) \{NAMED_ANS_RULE('optional4',10)\}.
+$BR
+$BR
+Le volume \( V = \)  \{ans_rule(30)\} unités cubes.
+
+$PAR
+${BITALIC}Note : Pour obtenir tous les points, la dernière réponse doit être exacte et les réponses aux questions précédentes doivent être exactes ou laissées en blanc. ${EITALIC}
+
+END_TEXT
+Context()->normalStrings;
+
+NAMED_WEIGHTED_ANS('optional1', @ans_eval[0], @weights[0]);
+NAMED_WEIGHTED_ANS('optional2', @ans_eval[1], @weights[1]);
+NAMED_WEIGHTED_ANS('optional3', @ans_eval[2], @weights[2]);
+NAMED_WEIGHTED_ANS('optional4', @ans_eval[3], @weights[3]);
+CREDIT_ANS(@ans_eval[4],['optional1','optional2','optional3','optional4'],@weights[4]);
+
+
+ENDDOCUMENT();

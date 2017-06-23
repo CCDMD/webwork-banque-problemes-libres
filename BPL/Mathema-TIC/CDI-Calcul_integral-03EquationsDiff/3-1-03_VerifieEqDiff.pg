@@ -1,0 +1,88 @@
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('coefficients constants', 'ordre 2', 'solution particulière', 'vérification', 'équation différentielle', 'équation homogène', 'équation linéaire')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mars 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+
+###############Source###############
+## source : Library/MiamiUOhio/DiffEq/Definitions_and_Terminology/Problem16.pg
+## ZDate(05/22/2012)
+## ZInstitution(Miami Univ. Ohio and Hope College)
+## ZAuthor(Anna Ghazaryan, Fuli Zhang, and Paul Pearson)
+## MLT(verify_find_parameter_order2)
+## TitleText1('Differential equations An introduction to modern methods and applications')
+## AuthorText1('James R. Brannan, William E. Boyce')
+## EditionText1('')
+## Section1('1.4')
+## Problem1('16')
+###############Source###############
+
+
+
+DOCUMENT();      
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("La fonction est y=e^(rt). r est solution de l\'équation r^2 - a^2=0 et a peut prendre des valeurs entre 2 et 10.");
+
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Numeric");
+
+##############################################################
+#
+#  Text
+#
+#
+
+
+# Réponse, la liste -a, a
+$a = random(2,10,1);
+$aa = $a * $a;
+$ans = Compute("-$a,$a");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \(y'' - $aa y=0\).
+$PAR
+Trouver les valeurs de \( r \) telles que \( y = e^{rx} \) vérifie l'équation différentielle.  S'il y a plusieurs réponses, les séparer par des virgules.
+$PAR
+\( r = \) \{ ans_rule(15) \}
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+#
+#  Answers
+#
+#
+
+ANS( $ans->cmp->withPostFilter(sub { 
+  my $ans = shift; 
+  $ans->{ans_message} = "Il existe une autre valeur de r" 
+    if $ans->{ans_message} eq "There should be more numbers in your list";
+  return $ans; 
+}));
+
+ENDDOCUMENT();    

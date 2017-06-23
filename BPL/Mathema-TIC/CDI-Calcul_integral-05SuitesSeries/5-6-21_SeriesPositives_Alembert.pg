@@ -1,0 +1,96 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de d\'Alembert', 'factorielle', 'série', 'série à termes positifs')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_11_6_prob01.pg
+## ZDate(04/13/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('11.6')
+## Problem1('')
+###############Source###############
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl", 
+);
+
+#####################################################################
+
+COMMENT("Afin d'obtenir 100 % pour ce problème, toutes les réponses doivent être correctes.");
+
+# Afin d'obtenir 100 % pour ce problème, toutes les réponses doivent être correctes.
+install_problem_grader(~~&std_problem_grader);
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem());
+#####################################################################
+
+Context("Numeric");
+Context()->strings->add(nep=>{});
+
+$a = random(2,5,1);
+
+$ans = Compute("$a/e");
+
+if ($a < 2.73){$popup1 = PopUp(['?','Convergente', 'Divergente','Sans conclusion'],'Convergente');
+}
+if ($a > 2.73){$popup1 = PopUp(['?','Convergente', 'Divergente','Sans conclusion'],'Divergente');
+}
+
+#####################################################################
+
+$showHint = 5;
+Context()->texStrings;
+BEGIN_TEXT
+Soit la série \(\displaystyle \sum_{n=1}^{\infty} \frac{$a^n n!}{n^n}\).$BR
+Évaluer la limite ci-dessous.  Si elle est infinie, entrer ${BBOLD}inf$EBOLD.  Si elle n'existe pas, entrer ${BBOLD}nep$EBOLD. 
+\[
+\lim_{n\to\infty} \frac{a_{n+1}}{a_n}= L
+\]
+\(L =\) \{ans_rule(30)\} $PAR
+Qu'est-ce que le critère de d'Alembert permet de conclure sur cette série?  Choisir ${BBOLD}Convergente$EBOLD, ${BBOLD}Divergente$EBOLD ou $BBOLD Sans conclusion$EBOLD.
+$BR
+Réponse : \{$popup1->menu\}
+$PAR
+${BITALIC}Note : Un indice sera donné après $showHint tentatives non réussies.$EITALIC
+END_TEXT
+
+#####################################################################
+
+ANS(($ans)->cmp());
+ANS($popup1->cmp);
+
+
+BEGIN_HINT
+Pour appliquer le critère de d'Alembert sur la série \(\displaystyle \sum_{n=1}^{\infty} \frac{$a^n n!}{n^n}\), il faut faire le rapport entre deux termes successifs \(\frac{a_{n+1}}{a_n}\) et simplifier l'expression. On obtient :
+\[ \begin{align}
+\frac{a_{n+1}}{a_n} &= \frac{$a^{n+1}(n+1)!}{(n+1)^{n+1}}\cdot \frac{n^n}{4^n\;n!} \\
+&= \frac{$a\cdot \cancel{$a^n} (n+1)\cancel{n!} \cdot n^n}{(n+1)^n (n+1)\cdot \cancel{$a^n} \; \cancel{n!}} \\
+&= \frac{$a \cancel{(n+1)}\cdot n^n}{(n+1)^n \cancel{(n+1)} } \\
+&= \frac{$a \; n^n}{(n+1)^n } \\
+&= $a \left( \frac{n}{n+1} \right)^n
+\end{align}\]
+
+Par conséquent, il faut évaluer la limite \(\displaystyle \lim_{n\to\infty} $a \left( \frac{n}{n+1} \right)^n \), de la forme \( 1^{\infty}\), avant de tirer une 
+conclusion sur la convergence ou divergence de la série à l'aide du critère de d'Alembert.
+END_HINT
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,105 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de l\'intégrale', 'série', 'série à termes positifs')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.3_Convergence_of_Series_with_Positive_Terms/10.3.5.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Christopher Sira)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.3')
+## Problem1('5')
+###############Source###############
+
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl",
+);
+
+COMMENT("Afin d'obtenir 100% pour ce problème, toutes les réponses doivent être correctes.");
+
+Context()->variables->add(n=>'Real');
+Context()->strings->add(nep=>{});
+
+$start = Real(random(10, 25, 1));
+$pc = Real(random(3, 9, 1));
+$a =  Real(random(3, 9, 2));
+$am2 = $a-2;
+$ap2 = $a+2;
+$pc4 = 4*$pc;
+$a3m4 = 3*$a-4;
+$a3m2 = 3*$am2;
+$spc = $start**3+$pc;
+
+
+$int_lim = 
+
+$func = "\frac{n^2}{\left(n^3 + $pc\right)^{\frac{$a}{2}}}";
+$f = Formula("x^2/(x^3 + $pc)^($a/2)");
+$ans_lim = Compute("(2/(3*$am2*($spc)**($am2/2)))");
+
+$popup = PopUp(["?","convergente","divergente"],"convergente");
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+À l'aide du critère de l'intégrale, déterminer si la série suivante est convergente.
+\[ \sum_{n=$start}^{\infty} $func \]
+a) Indiquer la fonction \(f(x)\) à intégrer et la valeur de l'intégrale impropre.  
+$BR
+Si l'intégrale impropre est divergente, entrer $BBOLD inf $EBOLD pour \(\infty\), $BBOLD -inf $EBOLD pour \(-\infty\)
+ ou $BBOLD nep $EBOLD si la limite n'existe pas.
+$PAR
+L'intégrale impropre $PAR
+\(\displaystyle \int_{$start}^{\infty} \) \{ ans_rule() \} \(dx =\) \{ ans_rule() \}
+$PAR
+b) Selon le critère de l'intégrale,
+ la série \( \displaystyle \sum_{n=$start}^{\infty} $func \) est  \{ $popup->menu() \}. 
+END_TEXT
+Context()->normalStrings;
+
+# L'étudiant doit répondre correctement à toutes les questions pour avoir 100%
+install_problem_grader(~~&std_problem_grader);
+
+ANS($f->cmp);
+ANS($ans_lim->cmp);
+ANS($popup->cmp());
+
+
+$func2 = "\frac{x^2}{\left(x^3 + $pc\right)^{\frac{$a}{2}}}";
+$deriv = "\frac{2x\left(x^3+$pc \right)^{\frac{$a}{2}}-x^2\cdot \frac{$a}{2}\left( x^3+$pc \right)^{\frac{$am2}{2}}\cdot 3x^2}{\left(x^3+$pc \right)^{$a}} = \frac{x($pc4-$a3m4 x^3)}{2(x^3+$pc)^{\frac{$ap2}{2}}}";
+$lim = "-\frac{2}{$a3m2} \lim_{t\to\infty} \left(\cancelto{0}{\frac{1}{(t^3 + $pc)^{\frac{$am2}{2}}}} - \frac{1}{$spc^{\frac{$am2}{2}}}\right) = \frac{2}{$a3m2 \cdot $spc^{\frac{$am2}{2}}} ";
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Soit \( f(x) = $func2 \).  Cette fonction est continue et positive sur l'intervalle  \( x \ge $start \).  De plus, puisque
+
+\[ f'(x) = $deriv, \]
+
+on voit que \( f'(x) < 0 \) pour \( x \ge $start \), donc \(f\) est décroissante sur l'intervalle  \( x \ge $start \).  Le critère de l'intégrale s'applique. Pour calculer l'intégrale impropre, on utilise la substitution  \( u = x^3 + $pc \), \( du = 3x^2 \, dx \).  
+On obtient
+$PAR
+\[ \int_{$start}^{\infty} $func2 \, dx =  \lim_{t\to\infty} \int_{$start}^{t} $func2 \, dx = \frac{1}{3}\lim_{t\to\infty}\int_{$start^3 + $pc}^{t^3 +$pc} \frac{du}{u^{$a/2}} \]
+\[= $lim. \]
+$PAR
+L'intégrale est impropre \{$popup->correct_ans()\} par conséquent, la série \( \displaystyle \sum_{n=$start}^{\infty} $func \) est \{$popup->correct_ans()\} aussi.
+END_SOLUTION
+
+ENDDOCUMENT();
+
+

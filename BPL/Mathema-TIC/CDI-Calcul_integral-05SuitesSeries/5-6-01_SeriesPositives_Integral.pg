@@ -1,0 +1,91 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de l\'intégrale', 'série', 'série à termes positifs')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.3_Convergence_of_Series_with_Positive_Terms/10.3.3.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Christopher Sira)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.3')
+## Problem1('3')
+###############Source###############
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl",
+);
+
+COMMENT("Afin d'obtenir 100% pour ce problème, toutes les réponses doivent être correctes.");
+
+Context()->variables->add(n=>'Real');
+Context()->strings->add(nep=>{});
+
+
+$a = Real(random(2, 9, 1));
+$a2 = $a - 1;
+$a3 = Real(1/$a2);
+$b = Real(random(2,7,1));
+$bm1 = $b-1;
+$bp1 = $b+1;
+
+
+($func, $f, $ans_lim, $func2, $lim, $popup) = @{ list_random(
+["\frac{1}{\sqrt[$b]{n}}", Formula(" x^(-1/$b)") , "inf"  , "\frac{1}{\sqrt[$b]{x}}", "\(\frac{$b}{$bm1} \displaystyle \lim_{b\to\infty}\left(b^{\frac{$bm1}{$b}} - 1\right) = \infty \)", PopUp(["?","convergente","divergente"],"divergente")],
+["\frac{1}{\sqrt[$bp1]{n^{$b}}}", Formula("x^(-$b/$bp1) "), "inf","\frac{1}{\sqrt[$bp1]{x^{$b}}}", "\($bp1 \displaystyle \lim_{b\to\infty}\left(b^{\frac{1}{$bp1}} - 1\right) = \infty \)",PopUp(["?","convergente","divergente"],"divergente")],
+["\frac{1}{n^{$a}}", Formula(" x^(-$a)"), $a3 ,"\frac{1}{x^{$a}}", "\(-\frac{1}{$a2} \displaystyle \lim_{b\to\infty}\left(b^{-$a2} - 1\right) = \frac{1}{$a2} \)", PopUp(["?","convergente","divergente"],"convergente")]
+) };
+
+$start = 1;
+
+Context()->texStrings;
+BEGIN_TEXT
+À l'aide du critère de l'intégrale, déterminer si la série suivante est convergente.
+\[ \sum_{n=$start}^{\infty} $func \]
+a) Indiquer la fonction \(f(x)\) à intégrer et la valeur de l'intégrale impropre.
+$BR
+Si l'intégrale impropre est divergente, entrer $BBOLD inf $EBOLD pour \(\infty\), $BBOLD -inf $EBOLD pour \(-\infty\)
+ ou $BBOLD nep $EBOLD si la limite n'existe pas.
+$PAR
+L'intégrale impropre
+$PAR
+\(\displaystyle\int_{$start}^{\infty} \) \{ ans_rule() \} \(dx =\) \{ ans_rule() \}
+$PAR
+b) Sachant que la fonction \(f\) est continue, positive et décroissante sur l'intervalle \( x \ge $start \), en vertu du critère de l'intégrale,
+ la série \( \displaystyle \sum_{n=$start}^{\infty} $func \) est \{ $popup->menu() \}.
+END_TEXT
+Context()->normalStrings;
+
+# L'étudiant doit répondre correctement à toutes les questions pour avoir 100%
+install_problem_grader(~~&std_problem_grader);
+
+ANS($f->cmp);
+ANS(Compute("$ans_lim")->cmp);
+ANS($popup->cmp());
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Soit \( f(x) = $func2 \).  Cette fonction est continue, positive et décroissante sur l'intervalle \( x \ge $start \), alors on peut appliquer le critère de l'intégrale.  On obtient
+$PAR
+\( \displaystyle \int_{$start}^{\infty} $func2 \, dx = \displaystyle \lim_{b\to\infty} \displaystyle \int_{$start}^{b} $func2 \, dx = \) $lim.
+$PAR
+L'intégrale impropre est \{$popup->correct_ans()\} par conséquent, la série \( \displaystyle \sum_{n=$start}^{\infty} $func \) est \{$popup->correct_ans()\} aussi.
+$PAR
+END_SOLUTION
+
+ENDDOCUMENT();
+
+
