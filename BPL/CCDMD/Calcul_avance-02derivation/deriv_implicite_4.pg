@@ -1,0 +1,106 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('applications', 'dérivation implicite', 'dérivée partielle', 'dérivée partielle d\'ordre 1', 'fonction de deux variables')
+## Author('Éric Gaul')
+## Institution('Collège Montmorency')
+## Solution par Éric Gaul
+## Date : mars 2017
+## Language(fr)
+
+
+## TitleText1('Calcul à plusieurs variables')
+## AuthorText1('Stewart (adapt. Guérin)')
+## EditionText1('2')
+## Section1('4.3')
+## Problem1('32')
+
+
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "PGML.pl",
+   "PGauxiliaryFunctions.pl",
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+$context = Context("Numeric");
+$context->variables->add(y=>'Real');
+$context->variables->add(z=>'Real');
+
+$k1 = Compute(random(2, 9));
+$k2 = Compute(random(2, 9));
+while ($k2 == $k1) {
+   $k2 = 2*Compute(random(2, 9));    
+}
+$k3 = list_random(11, 13, 17, 19, 23);
+$k4 = $k1*$k2*$k3;
+
+$left = Formula("$k1*x^2+$k2*y^2+$k3*z^2-2*$k3*z")->reduce;
+$right = Formula("$k4")->reduce;
+$dFdx = Formula("2*$k1*x")->reduce;
+$dFdy = Formula("2*$k2*y")->reduce;
+$dFdz = Formula("2*$k3*(z-1)")->reduce;
+
+$dzdx = Formula("-$k1*x/($k3*(z-1))")->reduce;
+$dzdy = Formula("-$k2*y/($k3*(z-1))")->reduce;
+
+##############################################################
+#
+#  Text
+#
+#
+
+BEGIN_PGML
+Soit la relation : [`[$left] = [$right]`].
+
+Utiliser les formules suivantes :
+
+>> [`\ \ \dfrac{\partial z}{\partial x} = -\dfrac{\partial F/\partial x}{\partial F/\partial z}\ \ `]
+et
+[`\ \ \dfrac{\partial z}{\partial y} = -\dfrac{\partial F/\partial y}{\partial F/\partial z}\ \ `] <<
+
+pour déterminer [`\dfrac{\partial z}{\partial x}`] ainsi que [`\dfrac{\partial z}{\partial y}`] . 
+
+[`\dfrac{\partial z}{\partial x} =`] [____________________________]{$dzdx}
+
+[`\dfrac{\partial z}{\partial y} =`] [____________________________]{$dzdy}
+
+END_PGML
+
+##############################################################
+#
+#  Answers
+#
+#
+
+BEGIN_PGML_SOLUTION
+On commence par écrire : [`F(x, y, z) = [$left] - [$right] = 0\ .`]
+
+On a ensuite : [`\ \dfrac{\partial F}{\partial x} = [$dFdx]\ `],
+ [`\ \ \dfrac{\partial F}{\partial y} = [$dFdy]\ \ `] ainsi que [`\ \ \dfrac{\partial F}{\partial z} = [$dFdz]\ `].
+
+Par conséquent :
+
+>> [`\ \displaystyle \dfrac{\partial z}{\partial x} = -\dfrac{\partial F/\partial x}{\partial F/\partial z} = [$dzdx]\ `] <<
+
+et
+
+>> [`\ \displaystyle \dfrac{\partial z}{\partial y} = -\dfrac{\partial F/\partial y}{\partial F/\partial z} = [$dzdy]\ `] <<
+
+END_PGML_SOLUTION
+ENDDOCUMENT();

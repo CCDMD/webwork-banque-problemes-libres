@@ -1,0 +1,180 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Fonction et relation à plusieurs variables)
+## KEYWORDS('courbes de niveau', 'graphique', 'hyperboloïde', 'hyperboloïde à deux nappes', 'hyperboloïde à une nappe', 'surfaces de niveau', 'traces')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################
+## DESCRIPTION
+##   Identify Level Curves
+## ENDDESCRIPTION
+## Tagged by nhamblet
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Concepts for multivariable functions)
+## ZDBsection(Traces, contours, and level sets)
+## ZDate(8/24/07)
+## Institution(Union College)
+## MLT(tcl_match_level_surface_to_graph)
+## MLTleader(1)
+## Level(2)
+###############Source#################
+
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "contextABCD.pl",
+  "imageChoice.pl",
+  "LiveGraphics3D.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+$lsize = [200,200];  # the size of the Live3D images
+$ltsize = 400;       # tex size of the Live3D images
+
+#
+#  The Live3D files and their associated GIFs
+#
+@QA = (
+  "\(\frac{1}{2}x^2 - 3y^2 - z^2 = -1\)", "levels-10a-1",
+  "\(\frac{1}{2}y^2 - 3z^2 - x^2 = -1\)", "levels-10a-2",
+  "\(\frac{1}{2}z^2 - 3x^2 - y^2 = -1\)", "levels-10a-3",
+  "\(\frac{1}{2}x^2 - y^2 - 3z^2 = -1\)", "levels-10a-4",
+
+  "\(2x^2 - 3y^2 - z^2 = 1\)",   "levels-10a-5",
+  "\(2y^2 - 3z^2 - x^2 = 1\)",   "levels-10a-6",
+  "\(2z^2 - 3x^2 - y^2 = 1\)",   "levels-10a-7",
+  "\(2x^2 - y^2 - 3z^2 = 1\)",   "levels-10a-8",
+);
+
+@explanations=("Sur les plans \( x = k\), les traces ont pour équations : \( 3y^2 + z^2 = 1 + \frac{k^2}{2} \), il s'agit donc d'ellipses dont le grand demi-diamètre repose sur l'axe des \(z\).
+Sur les plans \( y= k\) et \( z = k\), les traces sont des hyperboles. La surface de niveau est donc un hyperboloïde à une nappe dont l'axe se confond avec l'axe des \(x\) ",
+"Sur les plans \( y = k\), les traces ont pour équations : \( 3z^2 + x^2 = 1 + \frac{k^2}{2} \), il s'agit donc d'ellipses dont le grand demi-diamètre repose sur l'axe des \(x\).
+Sur les plans \( x= k\) et \( z = k\), les traces sont des hyperboles. La surface de niveau est donc un hyperboloïde à une nappe dont l'axe se confond avec l'axe des \(y\) ",
+"Sur les plans \( z = k\), les traces ont pour équations : \( 3x^2 + y^2 = 1 + \frac{k^2}{2} \), il s'agit donc d'ellipses dont le grand demi-diamètre repose sur l'axe des \(y\).
+Sur les plans \( x= k\) et \( y = k\), les traces sont des hyperboles. La surface de niveau est donc un hyperboloïde à une nappe dont l'axe se confond avec l'axe des \(z\) ",
+"Sur les plans \( x = k\), les traces ont pour équations : \( y^2 + 3 z^2 = 1 + \frac{k^2}{2} \), il s'agit donc d'ellipses dont le grand demi-diamètre repose sur l'axe des \(y\).
+Sur les plans \( y= k\) et \( z = k\), les traces sont des hyperboles. La surface de niveau est donc un hyperboloïde à une nappe dont l'axe se confond avec l'axe des \(x\) ",
+"Sur les plans \( x = k\), les traces ont pour équations : \( 3 y^2 +  z^2 = 2 k^2 -1 \), ainsi si \( 2 k^2 -1 > 0\), il s'agit donc d'ellipses dont le grand demi-diamètre repose sur l'axe des \(z\). Sur les plans 
+\( y= k\) et \( z = k\), les traces sont des hyperboles. La surface de niveau est donc un hyperboloïde à deux nappes dont l'axe se confond avec l'axe des \(x\) ",
+"Sur les plans \( y = k\), les traces ont pour équations : \( 3 z^2 +  x^2 = 2 k^2 -1 \), ainsi si \( 2 k^2 -1 > 0\), il s'agit donc d'ellipses dont le grand demi-diamètre repose sur l'axe des \(x\). Sur les plans
+\( z= k\) et \( x = k\),les traces sont des hyperboles. La surface de niveau est donc un hyperboloïde à deux nappes dont l'axe se confond avec l'axe des \(y\) ",
+"Sur les plans \( z = k\), les traces ont pour équations : \( 3 x^2 +  y^2 = 2 k^2 -1 \), ainsi si \( 2 k^2 -1 > 0\), il s'agit donc d'ellipses dont le grand demi-diamètre repose sur l'axe des \(y\). Sur les plans
+\( x= k\) et \( y = k\), les traces sont des hyperboles.. La surface de niveau est donc un hyperboloïde à deux nappes dont l'axe se confond avec l'axe des \(z\) ",
+"Sur les plans \( x = k\), les traces ont pour équations : \(  y^2 +  3 z^2 = 2 k^2 -1 \), ainsi si \( 2 k^2 -1 > 0\), il s'agit donc d'ellipses dont le grand demi-diamètre repose sur l'axe des \(y\). Sur les plans 
+\( y= k\) et \( z = k\), les traces sont des hyperboles. . La surface de niveau est donc un hyperboloïde à deux nappes dont l'axe se confond avec l'axe des \(x\) ",
+);
+##############################################
+
+#
+#  use an image match list
+#
+$ml = new_image_match_list();
+$ml->{separation} = 5;      # spacing between questions
+$ml->qa(@QA);               #  set the questions and answers
+$ml->choose(4);             #  select 4 of them
+
+##############################################
+
+#
+#  Make a table of the Live3D images
+#
+
+sub my_print_a {
+  my $self = shift; my (@name) = @_;
+
+  BeginTable().
+    AlignedRow([Live3D($name[0]),Live3D($name[1])]).
+    TableSpace(5,0).
+    AlignedRow([Bold("A"),Bold("B")]).
+    TableSpace(25,6).
+    AlignedRow([Live3D($name[2]),Live3D($name[3])]).
+    TableSpace(5,0).
+    AlignedRow([Bold("C"),Bold("D")]).
+  EndTable();
+}
+
+sub Bold {$BBOLD.$_[0].$EBOLD}
+
+sub Live3D {
+  my $name = shift;
+  my $mfile = alias("${name}-zip.html");
+  my $gfile = alias("${name}.gif");
+  return Live3Dfile("${name}.m",
+      image => $gfile,
+      archive => $mfile,
+      size => $lsize, tex_size => $ltsize,
+      scale => 1.4);
+}
+
+$ml->rf_print_a(~~&my_print_a);
+
+##############################################
+#  Main text
+
+BEGIN_TEXT
+
+\{ColumnTable(
+  "Associer chacune des équations suivantes avec le
+  graphique de la surface qu'elle représente.".
+  $BCENTER.$PAR.$ml->print_q.$ECENTER.$PAR.
+  "(les surfaces tournent en glissant la souris sur les images)",
+  $ml->print_a,
+  indent => 0, separation => 30, valign => "TOP"
+)\}
+$PAR
+
+END_TEXT
+
+##################################################
+#  Answers
+
+Context("ABCD");
+ANS(string_cmp($ml->ra_correct_ans));
+
+$showPartialCorrectAnswers = 0;
+install_problem_grader(~~&std_problem_grader);
+
+##################################################
+
+@correctAns = @{$ml->ra_correct_ans};
+@askedQuestions = ();
+foreach $q ( @{$ml->selected_q} ) {
+  $i = 0;
+  foreach $mq ( @{$ml->questions} ) {
+    if ( $q eq $mq ) {
+      push(@askedQuestions, $i);
+      last;
+    }
+    $i++;
+  } 
+}
+BEGIN_SOLUTION
+$BBOLD 1. $EBOLD
+$explanations[$askedQuestions[0]]. La bonne réponse est donc $correctAns[0].
+$BR
+$BBOLD 2. $EBOLD
+$explanations[$askedQuestions[1]]. La bonne réponse est donc  $correctAns[1].
+$BR
+$BBOLD 3. $EBOLD
+$explanations[$askedQuestions[2]]. La bonne réponse est donc $correctAns[2].
+$BR
+$BBOLD 4. $EBOLD
+$explanations[$askedQuestions[3]]. La bonne réponse est donc $correctAns[3].
+$BR
+END_SOLUTION
+
+ENDDOCUMENT();

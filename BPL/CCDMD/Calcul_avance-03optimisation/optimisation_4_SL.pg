@@ -1,0 +1,158 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('applications', 'contraintes', 'extremum', 'extremum absolu', 'maximisation', 'maximum absolu', 'optimisation', 'optimisation sous contrainte', 'point critique', 'test de la dérivée seconde')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : avril 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+
+###############Source################
+# DESCRIPTION
+# Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+# originally from 5ed (with updates)
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+## Tagged by glr 02/08/10
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('Maximum and Minimum Values')
+## Date('')
+## Author('Gavin LaRose')
+## Institution('University of Michigan')
+## TitleText1('Calculus')
+## EditionText1('5')
+## AuthorText1('Hughes-Hallett')
+## Section1('15.2')
+## Problem1('25')
+## Textbook tags
+## HHChapter1('Optimization: Local and Global Extrema')
+## HHSection1('Optimization')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+);
+
+Context("Numeric");
+$showPartialCorrectAnswers = 1;
+
+$c1 = random(6, 10, 0.5);
+$c2 = random(3, 5.4, 0.2);
+$q1 = random(0.01, 0.04, 0.01);
+$q2 = $q1 + random(0.01, 0.03, 0.01);
+$p0 = random(30,80,10);
+
+$twoq2 = 2*$q2;
+$c1pc2 = $c1 + $c2;
+$q2pq1 = $q2 + $q1;
+$twoq2pq1 = 2*$q2pq1;
+$fourq2 = 4*$q2;
+
+$q1val = Compute( "$p0/(2*(2*$q1 + $q2))" );
+$q2val = Compute( "$p0*$q1/(2*(2*$q1 + $q2)*$q2)" );
+($q1n, $q1d) = reduce( 10000*$p0, 20000*(2*$q1 + $q2) );
+($q2n, $q2d) = reduce( 10000*$p0*$q1, (20000*(2*$q1 + $q2)*$q2) );
+$q1disp = ( $q1d == 1 ) ? $q1n : "\frac{$q1n}{$q1d}";
+$q2disp = ( $q2d == 1 ) ? $q2n : "\frac{$q2n}{$q2d}";
+
+$dval = $twoq2pq1*$twoq2 - $twoq2*$twoq2;
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+
+Une entreprise exploite deux usines qui fabriquent le même article, et dont
+les fonctions de coût total sont :
+\[
+C_1 = $c1 + $q1 q_1^2 \quad\mbox{et}\quad C_2 = $c2 + $q2 q_2^2,
+\]
+où  \(q_1\) et \(q_2\) sont les quantités produites par chaque usine.
+La demande totale, soit la quantité \(q = q_1 + q_2\) , est liée au prix
+de vente unitaire \(p\) de chaque article par la relation :
+\[
+p = $p0 - $q2 q.
+\]
+Quelle quantité chaque usine devrait-elle produire afin de maximiser le profit de la compagnie ?
+
+$PAR
+\(q_1 = \) \{ ans_rule(20) \} articles $PAR
+\(q_2 = \) \{ ans_rule(20) \} articles
+
+$PAR
+
+Quel est le profit réalisé dans ce cas ?
+
+$PAR
+
+Le profit maximal est alors de : \{ ans_rule(20) \} $
+
+$PAR
+
+${BITALIC}Adapté de : M. Rosser, Basic
+Mathematics for Economists, p. 318 (New York:
+Routledge, 1993).$EITALIC
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($q1val->cmp() );
+ANS($q2val->cmp() );
+$profitmax = -$c1pc2 + $p0*$q1val + $p0*$q2val - $q2pq1*($q1val**2) - $twoq2*($q2val**2) - $twoq2 * $q1val *$q2val;
+ANS(num_cmp($profitmax));
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+Le revenu total est
+\[
+R = p q = ($p0 - $q2 q) q = $p0 q - $q2 q^2,
+\]
+et comme \(q=q_1+q_2\), on obtient :
+\[
+R = $p0 q_1 + $p0 q_2 - $q2 q_1^2 - $twoq2 q_1 q_2 - $q2 q_2^2.
+\]
+Alors le profit est
+\[
+P(q_1,q_2) = R - C_1 - C_2 = 
+  -$c1pc2 + $p0 q_1 + $p0 q_2 - $q2pq1 q_1^2 - $twoq2 q_2^2 - $twoq2 q_1q_2.
+\]
+À un maximum local, on a :
+\[
+{\partial P\over\partial q_1} = $p0 - $twoq2pq1 q_1 - $twoq2 q_2 = 0,
+\]
+et
+\[
+{\partial P\over\partial q_2} = $p0 - $fourq2 q_2 - $twoq2 q_1 = 0.
+\]
+En résolvant ces équations, on trouve que
+\[
+q_1 = $q1disp \quad\mbox{and}\quad q_2 = $q2disp.
+\]
+Pour voir si on a trouvé un maximum local, on calcule les dérivées partielle d'ordre 2 :
+\[
+{\partial^2P\over\partial q_1^2} = -$twoq2pq1, \quad
+{\partial^2P\over\partial q_2^2} = -$twoq2, \quad
+{\partial^2P\over\partial q_1\partial q_2} = -$twoq2.
+\]
+Alors,
+\[
+D = {\partial^2P\over\partial q_1^2}{\partial^2P\over\partial q_2^2} 
+- \left({\partial^2P\over\partial q_1\partial q_2}\right)^2 =
+    (-$twoq2pq1)(-$twoq2) - (-$twoq2)^2 = $dval,
+\]
+et donc, nous avons trouvé un maximum local. Le graphe de \(P(q_1,q_2)\) a
+la forme d'une paraboloïde à l'envers puisque \(P\) est une quadrique en 
+ \(q_1\) et \(q_2\), alors \(($q1disp,$q2disp)\) est bien un maximum global.
+$PAR
+On calcule le profit maximal en remplaçant le point \(q_1=$q1disp, q_2=$q2disp\)
+dans la fonction \(P(q_1,q_2)\), ce qui donne \( $profitmax \) dollars.
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

@@ -1,0 +1,100 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('point critique')
+## Adapté par Éric Gaul, Collège Montmorency
+## Date : avril 2017
+## Language(fr)
+
+
+
+
+########################################################################
+
+DOCUMENT();        
+
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "parserVectorUtils.pl",
+  "PGML.pl",
+);
+########################################################################
+
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem);
+
+##############################################################
+
+Context("Numeric");
+Context()->variables->add(y =>'Real', z =>'Real');
+Context("Point");
+
+$a = random(1, 10, 1)**2;
+$b = random(1, 10, 1);
+
+
+$f = Formula("(x^3/3-$a*x)*($b*y-y^2)") -> reduce;
+$fxexpanded = Formula("(x^2-$a)*($b*y-y^2)") -> reduce;
+$fyexpanded = Formula("(x^3/3-$a*x)*($b-2*y)") -> reduce;
+
+
+$P1 = Point(sqrt($a), $b/2);
+$P2 = Point(-sqrt($a), $b/2);
+$P3 = Point(0, 0);
+$P4 = Point(0, $b);
+$P5 = Point(sqrt(3*$a), 0);
+$P6 = Point(-sqrt(3*$a), 0);
+$P7 = Point(sqrt(3*$a), $b);
+$P8 = Point(-sqrt(3*$a), $b);
+
+
+$rep = List($P1, $P2, $P3, $P4, $P5, $P6, $P7, $P8);
+
+
+
+##############################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Trouver tous les points critiques de la fonction \(f(x,y) = $f\).$BR
+Remarque : 
+donner la réponse sous forme d'une liste de points séparés par des virgules : \( (x_0, y_0), (x_1, y_1), \) etc.
+$PAR
+\{ans_rule(60)\}
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+
+ANS( $rep->cmp() );
+
+########################################################################
+
+
+BEGIN_PGML_SOLUTION
+On calcule les dérivées partielles de [`\ f(x, y) \ =\  [$f]\ `] égalise à zéro :
+
+>> [``f_x(x, y) = [$fxexpanded] = 0``] <<
+
+>> [``f_y(x, y) = [$fyexpanded] = 0``] <<
+
+
+Les solutions de la première équation sont : [`x = \pm\sqrt{[$a]}\ `] ou [`\ y = 0\ `] ou [`\ y = [$b]`].  
+Les solutions de la seconde équation sont : [`x = 0\ `] ou [`x = \pm\sqrt{[$a*3]}`] ou [`\ y = [$b/2]`].  
+
+On vérifie que chacune des combinaisons de [`x`], solution de l'une des équations, avec un [`y`] solution de l'autre
+équation, conduit à une solution possible du système. Par conséquent, les points critiques sont :
+
+>> [`[$rep]`]  <<
+
+
+
+END_PGML_SOLUTION
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

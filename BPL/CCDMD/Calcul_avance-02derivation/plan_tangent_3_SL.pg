@@ -1,0 +1,143 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('plan tangent')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+
+###############Source#################
+## DESCRIPTION
+##   Calculate Differentials
+## ENDDESCRIPTION
+## Tagged by nhamblet
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('Tangent Planes')
+## ZDate('10/23/09')
+## Author('Paul Pearson')
+## Institution('Fort Lewis College')
+## TitleText1('Calculus')
+## TitleText2('Calculus')
+## EditionText1('4')
+## EditionText1('5')
+## AuthorText1('Hughes-Hallett')
+## AuthorText2('Hughes-Hallett')
+## Section1('14.3')
+## Section2('14.3')
+## Problem1('14')
+## Problem2('18')
+
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGgraphmacros.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"weightedGrader.pl",
+);
+
+install_weighted_grader();
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+Context("Numeric")->variables->are(x=>'Real',y=>'Real',z=>'Real');
+
+#
+#  The function
+#
+
+$m = random(2,4,1);
+$n = $m++;
+
+$f = Formula("x^($n) - y^($m)");
+
+#
+#  Partial derivatives
+#
+$fx = $f->D('x');
+$fy = $f->D('y');
+
+#
+#  A point (x,y) = (a,b)
+#
+($a,$b) = (random(1,5,1),random(1,5,1));
+
+$fab = $f -> eval(x=>$a,y=>$b) -> reduce;
+
+$fxab = $fx -> eval(x=>$a,y=>$b) -> reduce;
+$fyab = $fy -> eval(x=>$a,y=>$b) -> reduce;
+
+$tangentplane = Formula("$fab + ($fxab)*(x-$a) + ($fyab)*(y-$b)") -> reduce;
+
+
+
+##########
+#  Part A
+
+$cmc = new_checkbox_multiple_choice();
+
+$cmc -> qa (
+"En regardant sa réponse de plus près, qu'est-ce qui indique qu'elle est incorrecte ? " .
+"Sélectionner toutes les raisons qui s'appliquent.",
+"Les dérivées partielles n'ont pas été évaluées au point \( ( $a, $b )\).",
+"La réponse n'est pas une fonction linéaire.",                
+);
+
+$cmc -> extra(
+"Le terme \( $fab \) ne devrait pas faire partie de la réponse.",
+"\( (x - $a) \) et \( (y - $b) \) devraient être \( x \) et \( y \).",
+);
+
+$cmc->makeLast("Toutes ces réponses.");
+
+
+
+##############################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+
+On a demandé à un étudiant de trouver l'équation du plan tangent
+à la surface de : \( z = $f \) au point 
+\( (x,y) = ($a,$b) \).$BR
+La réponse de l'étudiant était :
+\( z = $fab + $fx (x - $a) + $fy (y - $b).\) 
+$PAR
+$BBOLD (a) $EBOLD 
+\{ $cmc->print_q() \}
+$BR
+\{ $cmc->print_a() \}
+$PAR
+$BBOLD (b) $EBOLD 
+Trouver l'équation du plan tangent au point 
+\( (x,y) = ($a,$b) \).
+$PAR
+\( z = \) \{ans_rule(40)\}
+
+END_TEXT
+Context()->normalStrings;
+
+
+##################################################
+#  Answers
+
+WEIGHTED_ANS(checkbox_cmp($cmc->correct_ans), 5);
+WEIGHTED_ANS($tangentplane->cmp(), 95);
+
+$showPartialCorrectAnswers = 0;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

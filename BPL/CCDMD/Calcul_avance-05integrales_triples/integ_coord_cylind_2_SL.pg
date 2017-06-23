@@ -1,0 +1,131 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('coordonnées cylindriques', 'intégrale triple')
+## Révisé par Éric Gaul, Collège Montmorency
+## Date : mai 2017
+## Language(fr)
+
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+###############Source################
+## DESCRIPTION
+## Seting up an integral in cylindrical coordinates
+## ENDDESCRIPTION
+## ZDBsubject('Calculus')
+## ZDBchapter('Multiple Integrals')
+## ZDBsection('Triple Integrals in Cylindrical and Spherical Coordinates')
+## Date('10/31/09')
+## Author('Paul Pearson')
+## Institution('Fort Lewis College')
+## TitleText1('Calculus')
+## TitleText2('Calculus')
+## EditionText1('4')
+## EditionText2('5')
+## AuthorText1('Hughes-Hallett')
+## AuthorText2('Hughes-Hallett')
+## Section1('16.5')
+## Section2('16.5')
+## Problem1('')
+## Problem2('8')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"weightedGrader.pl",
+"answerHints.pl",
+);
+
+
+TEXT(beginproblem());
+
+###############################
+#  Set-up
+
+Context("Numeric")->variables->are(r=>"Real",z=>"Real",theta=>"Real");
+
+$h = random(3,9,2);
+$r = random(2,6,1);
+$zmin = random(-2,-1,1);
+
+
+#############################
+#  Main Text
+
+BEGIN_TEXT
+Soit la fonction : \( \ f(x,y,z) = x^2 + y^2 + z^2 \ \), ainsi que
+$BR
+le cylindre plein \( \ E\ \) de hauteur \($h\), de rayon \($r\), centré autour de l'axe des \(z\), et dont la base est située à \( z = $zmin \).
+$PAR
+$BBOLD (a) $EBOLD
+En itérant l'intégrale en coordonnée cylindriques :$BR
+$BCENTER
+\( \displaystyle 
+\iiint_{E} \, f(x, y, z) \, dV 
+=
+\int_{\alpha}^{\beta} \!\! \int_{\gamma}^{\delta} \!\! \int_{\varepsilon}^{\kappa}  \)
+\{ ans_rule(20) \}
+\( \, dz \, dr \, d\theta \)
+$ECENTER$BR
+on obtient les bornes d'intégration suivantes 
+(on écrira ${BITALIC}theta${EITALIC} pour le symbole \( \theta \)) :
+$PAR
+\( \alpha = \) \{ ans_rule(20) \}
+$BR
+\( \beta = \) \{ ans_rule(20) \}
+$BR
+\( \gamma = \) \{ ans_rule(20) \}
+$BR
+\( \delta = \) \{ ans_rule(20) \}
+$BR
+\( \varepsilon = \) \{ ans_rule(20) \}
+$BR
+\( \kappa = \) \{ ans_rule(20) \}
+$PAR
+$BBOLD (b) $EBOLD
+Évaluer l'intégrale :
+\{ ans_rule(40) \}
+END_TEXT
+
+
+##############################
+#  Answer evaluators
+
+install_weighted_grader();
+$showPartialCorrectAnswers = 1;
+
+#  integrand
+WEIGHTED_ANS(Formula("(r^2+z^2)*r")->cmp()
+->withPostFilter(AnswerHints(
+  Formula("r^2+z^2") => 
+  "Que vaut dV en coordonnées cylindriques ?",
+  [Formula("r^3+z^2"),Formula("r^2+r*z^2")] => 
+  "Vous devez multiplier les deux termes par r",
+)), 20
+);
+
+#  theta limits
+WEIGHTED_ANS(Formula("0")->cmp(), 5 );
+WEIGHTED_ANS(Formula("2*pi")->cmp(), 5 );
+
+#  r limits
+WEIGHTED_ANS(Formula("0")->cmp(), 5 );
+WEIGHTED_ANS(Formula("$r")->cmp(), 5 );
+
+#  z limits
+WEIGHTED_ANS(Formula("$zmin")->cmp(), 5 );
+WEIGHTED_ANS(Formula("$zmin + $h")->cmp(), 5 );
+
+$E = $zmin;
+$F = $zmin + $h;
+
+$num = Real("3*$r^4*($F-$E) + 2*$r^2*($F^3 - $E^3)");
+#  value of integral
+WEIGHTED_ANS(Compute("pi * $num / 6")->cmp(), 50 );
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

@@ -1,0 +1,72 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('intégrale double', 'intégrale itérée')
+## Modifié par Éric Gaul, Collège Montmorency
+## Traduction française : Éric Gaul
+## Date : avril 2017
+## Language(fr)
+
+
+###############Source###############
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+## Tagged by tda2d
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Integration of multivariable functions)
+## ZDBsection(Double integrals over rectangles)
+## Institution(Alfred University)
+## Author(Darwyn Cook)
+## MLT(EvaluateIteratedIntegralOverRectlBP)
+## Level(3)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Anton')
+## EditionText1('8')
+## Section1('15.1')
+## Problem1('')
+
+
+
+
+DOCUMENT();
+
+# Load whatever macros you need for the problem
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGauxiliaryFunctions.pl",
+           "MathObjects.pl",
+          );
+ 
+## Do NOT show partial correct answers
+$showPartialCorrectAnswers = 0;
+TEXT(beginproblem());
+Context("Numeric")->variables->are(x=>'Real',y=>'Real');
+$x1 = 0;
+$x2 = random(2,10);
+$y1 = 0;
+$y2 = random(2,10);
+$c = non_zero_random(-5,5);
+$d = non_zero_random(-5,5);
+
+$f = Formula("e^($c*x+$d*y)")->reduce;
+$f1 = Formula("e^($c*x)") -> reduce;
+$f2 = Formula("e^($d*y)") -> reduce;
+$ans = Compute("($x2**$c-1)*($y2**$d-1)/($c*$d)");
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer l'intégrale itérée suivante :
+$PAR
+\(\displaystyle \int_{$x1}^{\ln ($x2)} \!\! \int_{$y1}^{\ln($y2)} \, $f \, dy\, dx =\)
+\{ans_rule(20)\}
+$PAR $BITALIC $BBOLD Note. $EBOLD En remarquant que
+\( $f = $f1 \, $f2\), on peut simplifier les calculs à effectuer. 
+$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+ANS($ans->cmp);
+
+ENDDOCUMENT();

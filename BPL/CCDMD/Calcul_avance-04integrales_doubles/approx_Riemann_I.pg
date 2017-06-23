@@ -1,0 +1,86 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('approximation', 'double somme de Riemann', 'intégrale double', 'intégrale définie', 'méthode du point milieu')
+## Modifié par Éric Gaul, Collège Montmorency
+## Traduction française : Éric Gaul
+## Date : avril 2017
+## Language(fr)
+
+
+###############Source###############
+#DESCRIPTION
+##  Calculus: Double integrals over rectangles
+##ENDDESCRIPTION
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Integration of multivariable functions)
+## ZDBsection(Double integrals over rectangles)
+## Date(04/18/2014)
+## Institution(Colby College)
+## Author(Justin Sukiennik)
+## MLT(RiemannSumSubdividedRectangles)
+## Level(2)
+## MO(1)
+## TitleText1('Multivariable Calculus')
+## AuthorText1('Stewart')
+## EditionText1('7')
+## Section1('15.1')
+## Problem1('')
+
+
+########################################################################
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "parserVectorUtils.pl"
+);
+########################################################################
+
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem);
+
+##############################################################
+
+Context("Numeric");
+Context()->variables->add(y =>'Real', z =>'Real');
+
+$a = random(4,16,4);
+$b = random(2,4,2);
+
+$a1 = Compute("$a^2/4");
+
+$f = Formula("$b*y - x^2")->reduce;
+
+$c1 = $f->eval(x=>$a/4,y=>$a/4);
+$c2 = $f->eval(x=>$a/4,y=>3*$a/4);
+$c3 = $f->eval(x=>3*$a/4,y=>$a/4);
+$c4 = $f->eval(x=>3*$a/4,y=>3*$a/4);
+
+$ans = Compute("$a1*($c1+$c2+$c3+$c4)");
+
+##############################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la région du plan : \(R = [0,$a] \times [0,$a]\).
+Subdiviser chaque côté de \(R\) en \(m = n = 2\) sous-intervalles,
+puis utiliser la règle du point-milieu pour approximer :
+\[
+\iint_R \left($b y - x^2 \right)dA.
+\]
+$PAR
+L'approximation donne : \{ans_rule(20)\}
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+
+ANS( $ans->cmp(tolType => 'absolute',tolerance => .01) );
+
+########################################################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

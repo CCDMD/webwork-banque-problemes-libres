@@ -1,0 +1,181 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Limite et continuité)
+## KEYWORDS('continuité', 'continuité sur une région', 'discontinuité', 'domaine', 'fonction de deux variables')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source################
+# DESCRIPTION
+# Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+# originally from 5ed (with updates)
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+## Tagged by glr 05/26/09
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Differentiation of multivariable functions)
+## ZDBsection(Limits and continuity)
+## Institution(University of Michigan)
+## Author(Gavin LaRose)
+## Level(2)
+## MO(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('5')
+## Section1('12.6')
+## Problem1('23')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('6')
+## Section2('12.6')
+## Problem2('23')
+## Textbook tags
+## HHChapter1('Functions of Several Variables')
+###############Source################
+
+
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+);
+
+
+Context("Numeric");
+Context()->variables->add( y=>'Real', m=>'Real' );
+$showPartialCorrectAnswers = 1;
+
+$a = random(1,8,1);
+
+$f = Compute( "$a*x*y/(x^2 + y^2)" )->reduce();
+$fypop = PopUp( [ "?", "oui", "non" ], "oui" );
+$fxpop = PopUp( [ "?", "oui", "non" ], "oui" );
+$fxypop = PopUp( [ "?", "oui", "non" ], "non" );
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+
+Soit la fonction \(f\) dont le graphique est :
+$BR
+$BCENTER
+\{ image( "surface.png", height=>453, width=>524, tex_size=>300,
+          extra_html_tags=>'alt="Graphique de la fonction f"' ) \}
+$ECENTER
+$BR
+Cette fonction est définie par :
+\[ f(x,y) = \begin{cases} $f, & (x,y) \ne (0,0) \\
+                    0,  & (x,y) = (0,0). \end{cases} \]
+
+$PAR
+${BBOLD}(a)$EBOLD
+Déterminer une expression algébrique pour la fonction d'une variable \(f(0,y)\) :
+$PAR
+\( \ \ f(0,y) = \) \{ ans_rule(35) \} (si \(y \neq 0\))
+$PAR
+Quelle est la valeur de \( f(0,0) \) ?
+$PAR
+\( \ \ f(0,0) = \) \{ ans_rule(35) \}
+$PAR
+Déterminer sa limite quand \(y\to 0\) :
+$PAR
+\( \ \ \lim\limits_{y\to 0} f(0,y) = \) \{ ans_rule(35) \}
+
+$PAR
+${BBOLD}(b)$EBOLD
+Suite aux réponses en ${BBOLD}(a)$EBOLD, la fonction d'une variable \(f(0,y)\) est-elle continue ?
+\{ $fypop->menu() \}
+
+$PAR
+${BBOLD}(c)$EBOLD
+Soit maintenant \(f(x,0)\) :
+$PAR
+\( \ \ f(x,0) = \) \{ ans_rule(35) \}  (si \(x \neq 0\))
+$PAR
+\( \ \ f(0,0) = \) \{ ans_rule(35) \}
+$PAR
+\( \ \ \lim\limits_{x\to 0} f(x,0) = \) \{ ans_rule(35) \}
+
+$PAR
+${BBOLD}(d)$EBOLD
+Suite aux réponses en ${BBOLD}(c)$EBOLD, la fonction d'une variable \(f(x, 0)\) est-elle continue ?
+\{ $fxpop->menu() \}
+
+$PAR
+${BBOLD}(e)$EBOLD
+Soit maintenant l'étude de \(f\) selon des droites passant par l'origine,
+données par \(y = m x\) pour diverses valeurs de \(m\).
+
+$PAR
+Déterminer \(f\) le long de la droite \(y = x\ \ \) (pour \( (x, y) \neq (0, 0) \)) :
+$PAR
+\( \ \ f(x,x) = \) \{ ans_rule(25) \}
+
+
+$PAR
+Déterminer et simplifier \(f\) le long de la droites \(y = m x\ \ \) (pour \( (x, y) \neq (0, 0) \)) :
+$PAR
+\( \ \ f(x,mx) = \) \{ ans_rule(25) \}
+
+$PAR
+${BBOLD}(f)$EBOLD
+\(f(x,y)\) est-elle continue en \((0,0)\)?
+\{ $fxypop->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Formula( 0 )->cmp() );
+ANS(Compute( 0 )->cmp() );
+ANS(Compute( 0 )->cmp() );
+ANS($fypop->cmp() );
+ANS(Formula( 0 )->cmp() );
+ANS(Compute( 0 )->cmp() );
+ANS(Compute( 0 )->cmp() );
+ANS($fxpop->cmp() );
+ANS(Compute( "$a/2" )->cmp() );
+ANS(Compute( "$a*m/(m^2 + 1)" )->cmp() );
+ANS($fxypop->cmp() );
+
+$ao2 = ($a/2 == int($a/2)) ? $a/2 : "\frac{$a}{2}";
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+${BBOLD}(a)-(d)$EBOLD
+\(f(x,0)=0\) pour tout \(x\) et \(f(0,y)=0\) pour tout \(y\),
+alors \(\lim\limits_{x\to0} f(x,0) = 0 = \lim\limits_{y\to0} f(0,y)\)
+et il s'agit donc de fonctions (constantes) continues.
+
+$PAR
+${BBOLD}(e)$EBOLD
+Le long de \(y = x\), on a :
+\[ f(x,y) = f(x,x) = $ao2. \]
+Puisque cette valeur est constante, il s'agit d'une courbe de niveau de \(f\). 
+De façon similaire, le long de la droite \(y = m x\), on a :
+\[ f(x,y) = f(x, mx) = \frac{$a m}{m^2 + 1},\]
+ce qui est aussi une constante, et donc chacune de ces droites
+est une courbe de niveau de la fonction \(f\).
+
+$PAR
+${BBOLD}(f)$EBOLD
+Finalement, puisque \(f(x,y) = $ao2\) le long de la droite \(y = x\), et que \(f(x,0) = 0\), 
+il est toujours possible de trouver des points de la surface de \( f \) à ces deux hauteurs,
+même si on se rapproche infiniment de l'origine. La limite de \( f \) ne peut donc pas exister
+à l'origine. La fonction \( f \) ne peut donc pas être continue à l'origine non plus,
+malgré que les fonctions  \(f(x,0)\) et \(f(0,y)\) soient continues en
+\((0,0)\).
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+;
+ENDDOCUMENT();

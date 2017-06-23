@@ -1,0 +1,112 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Fonction et relation à plusieurs variables)
+## KEYWORDS('R^3', 'cylindre', 'cône', 'ellipsoïde', 'hyperboloïde', 'hyperboloïde à deux nappes', 'hyperboloïde à une nappe', 'paraboloïde', 'paraboloïde elliptique', 'paraboloïde hyperbolique', 'surface', 'surface quadrique')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################
+## DESCRIPTION
+##   Identifying surfaces
+## ENDDESCRIPTION
+## Tagged by nhamblet
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Concepts for multivariable functions)
+## ZDBsection(Quadratic surfaces)
+## ZDate(10/23/09)
+## Institution(Fort Lewis College)
+## Author(Paul Pearson)
+## MLT(qs_identify)
+## MLTleader(1)
+## Level(2)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('5')
+## Section1('12.5')
+## Problem1('8 11')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('')
+## Section2('12.5')
+## Problem2('8 11')
+###############Source#################
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"PGcourse.pl",
+"PGgraders.pl",
+);
+
+TEXT(beginproblem());
+
+for $i (0..6) {
+$a[$i] = random(2,9,1);
+}
+
+@questions_and_answers = (
+"hyperboloïde à une nappe", "axe des y", "\(  $a[3] y^2 - $a[4]x^2 - $a[0] z^2 + 1 = 0 \)",
+"hyperboloïde à deux nappes", "axe des z", "\( -$a[0] x^2  - $a[1] y^2 + z^2 = 1 \)",
+"cône", "axe des y", "\( -$a[2] x^2 + $a[3] y^2 - z^2 = 0 \)",
+"paraboloïde elliptique", "axe des z", "\( $a[4] x^2 + $a[5] y^2 - z = 0 \)",
+"cylindre circulaire", "axe des x", "\( $a[6] y^2 + $a[6] z^2 = 1 \)",
+);
+
+@choices1 = (
+"paraboloïde elliptique", 
+"paraboloïde hyperbolique",
+"hyperboloïde à une nappe",
+"hyperboloïde à deux nappes",
+"cône", 
+"cylindre circulaire", 
+"cylindre elliptique",
+"cylindre parabolique"
+);
+
+@choices2 = ("axe des x", "axe des y", "axe des z");
+
+BEGIN_TEXT
+Pour chacune des équations suivantes, identifier la surface qu'elle
+représente parmi les choix donnés, et indiquer également l'axe de symétrie de la surface.
+$BR$BR
+
+END_TEXT
+
+$numq = scalar(@questions_and_answers)/3; # $numq = number of questions
+@shuffle = shuffle($numq);
+@abc = (a..z); # or (A..Z) or (1..$numq)
+
+for $qn (0..$numq-1) { # $qn  = question number
+$qns = $shuffle[$qn];  # $qns = question number shuffled
+BEGIN_TEXT
+$abc[$qn]. 
+\{ pop_up_list(['?', @choices1]) \} $SPACE 
+\{ pop_up_list(['?', @choices2]) \} $SPACE
+$questions_and_answers[3*$qns+2]
+$BR$BR
+END_TEXT
+ANS(str_cmp($questions_and_answers[3*$qns], 
+filters=>["trim_whitespace","compress_whitespace"]));
+ANS(str_cmp($questions_and_answers[3*$qns+1], 
+filters=>["trim_whitespace","compress_whitespace"]));
+}
+
+#install_problem_grader(~~&std_problem_grader);
+
+install_problem_grader(~~&custom_problem_grader_fluid);
+$ENV{'grader_numright'} = [2,5,7,10];
+$ENV{'grader_scores'} = [0.1,0.6,0.8,1];
+$ENV{'grader_message'} = "You can earn " .
+"10% des points pour 2 à 4 bonnes réponses, " .
+"60% des points pour 5 à 6 bonnes réponses et " .
+"80% des points pour 7 à 9 bonnes réponses.";
+
+
+
+$showPartialCorrectAnswers=0;
+
+ENDDOCUMENT();
+

@@ -1,0 +1,102 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('applications', 'approximation linéaire', 'calcul d\'incertitude', 'différentielle')
+## Créé par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Language(fr)
+
+
+###############Source#################
+
+
+
+
+DOCUMENT();
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGauxiliaryFunctions.pl",
+           "PGgraphmacros.pl",
+           "PGML.pl",
+           "PGauxiliaryFunctions.pl",
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Numeric");
+Context()->variables->add(y => 'Real');
+
+
+
+BEGIN_PGML
+**Les différentielles et le calcul d'incertitude.**
+
+Les règles simples utilisées dans le calcul d'incertitude
+proviennent des différentielles de fonctions de plusieurs variables.
+
+Dans tous les cas où [`z`] dépend de deux variables [`x`] et [`y`], on a que :
+
+>> [``dz = \dfrac{\partial z}{\partial x} dx + \dfrac{\partial z}{\partial y} dy\ .``]<<
+
+On pose alors :
+
+>> [``\Delta z\ \ \approx\ \  
+      \textrm{max } \left| dz \right| \ \ \leq\ \  \left| \dfrac{\partial z}{\partial x} \right| \Delta x + \left| \dfrac{\partial z}{\partial y} \right| \Delta y ``] <<
+
+(on obtient la valeur maximale de la différentielle en prenant les valeurs absolues et on suppose toujours [`\Delta x \geq 0`] pour toute variable [`x`]).
+      
+-----
+
+**Exemple.** on désire connaître l'incertitude [`\Delta z`]
+sur une mesure [`z`] calculée à partir de deux autres
+mesures [`(x \pm \Delta x)`] et [`(y \pm \Delta y)`] par la formule :
+
+>> [``z = x - y\ .``] <<
+
+On en tire la règle de la différence comme suit :
+
+>> [``\Delta z \ \ \approx\ \ ``] [_____]{1} [`` \Delta x\ +\ ``] [_____]{1} [``\Delta y \ \ =\ \  \Delta x + \Delta y\ ,``] <<
+
+qui se lit : _l'incertitude absolue sur une différence est la somme des incertitudes absolues_ .
+
+-----
+
+On veut maintenant connaître l'incertitude [`\Delta z`]
+sur une mesure [`z`] calculée à partir de deux autres
+mesures [`(x \pm \Delta x)`] et [`(y \pm \Delta y)`] par la formule :
+
+>> [``z = \dfrac{x}{y}\ .``] <<
+
+Dans ce cas, on a que :
+
+>> [`dz = `] [__________]{"1/y"} [`dx\ + `] [__________]{"-x/y^2"} [`dy`] <<
+
+Alors :
+
+>> [`\Delta z \approx `] [__________]{"abs(1/y)"} [`\Delta x\ + `] [__________]{"abs(-x/y^2)"} [`\Delta y`] <<
+
+Cette règle étant peu commode à retenir, on calcule plutôt l' **incertitude relative**  sur [`z`] 
+en divisant toute l'équation par [`\left| z \right| = \left| \frac{x}{y} \right| = \frac{\left| x \right|}{\left| {y} \right|}`] :
+
+>> [`\dfrac{\Delta z}{\left| z \right|} \approx `] [__________]{"abs(1/x)"} [`\Delta x\ + `] [__________]{"abs(1/y)"} [`\Delta y`] <<
+
+d'où [`\dfrac{\Delta z}{\left| z \right|} \approx \dfrac{\Delta x}{\left| x \right|} + \dfrac{\Delta y}{\left| y \right|}`],
+résumée par : _l'incertitude relative sur un quotient est la somme des incertitudes relatives_ .
+END_PGML
+
+
+ENDDOCUMENT();
+
+
+
+

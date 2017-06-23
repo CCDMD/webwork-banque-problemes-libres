@@ -1,0 +1,91 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('coordonnées polaires', 'intégrale double')
+## Révisé par Éric Gaul, Collège Montmorency
+## Date : avril 2017
+## Language(fr)
+
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+###############Source################
+# DESCRIPTION
+# Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+# originally from 5ed (with updates)
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+## Tagged by glr 04/29/10
+## ZDBsubject('Calculus')
+## ZDBchapter('Multiple Integrals')
+## ZDBsection('Double Integrals in Polar Coordinates')
+## Date('')
+## Author('Gavin LaRose')
+## Institution('University of Michigan')
+## TitleText1('Calculus')
+## EditionText1('5')
+## AuthorText1('Hughes-Hallett')
+## Section1('16.4')
+## Problem1('23')
+## Textbook tags
+## HHChapter1('Integrating Functions of Several Variables')
+## HHSection1('Double Integrals in Polar Coordinates')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+);
+
+Context("Numeric");
+$showPartialCorrectAnswers = 1;
+
+$r = random(1,7,1);
+$rsq = $r*$r;
+$rfo = $rsq*$rsq;
+$vol = Compute( "pi*$rfo/2" );
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+Trouver le volume de la région située entre le graphe de
+\( \ f(x,y) = $rsq - x^2 - y^2 \ \) et le plan \(\ xy \).
+$PAR
+Le volume demandé est : \{ ans_rule(35) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS($vol->cmp() );
+
+($r2n,$r2d) = reduce( $rfo, 2 );
+$r4o2 = ( $r2d == 1 ) ? $r2n : "\frac{$r2n}{$r2d}";
+($r4n,$r4d) = reduce( $rfo, 4 );
+$r4o4 = ( $r4d == 1 ) ? $r4n : "\frac{$r4n}{$r4d}";
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+Le graphe de \(f(x,y) = $rsq - x^2 - y^2\) ressemble à un bol à l'envers, et la
+région qui nous intéresse est contenue entre le bol (en haut) et
+le plan \(xy\) (en dessous).
+Nous devons d'abord trouver la région dans le plan-\(xy\) où \(f(x,y)\) est positif.
+Pour ce faire, nous posons \(f(x,y) \ge 0\) et obtenons \(x^2+y^2\leq$rsq\). Donc, le disque
+\(x^2+y^2 \le $rsq\) est
+la région \(R \) sur lequel nous intégrons.
+\[
+  \mbox{Volume} =\int\!\!\!\int_R ($rsq-x^2-y^2)\,dA =
+  \int_0^{2\pi} \int_0^$r ($rsq-r^2)\,r\,dr\,d\theta
+\]
+\[
+   =  \int_0^{2\pi} \left( \frac {$rsq}{2}r^2-\frac 14 r^4\right)\bigg|_0^$r\,d\theta
+\]
+\[
+   = $r4o4 \int_0^{2\pi} \,d\theta
+   = $r4o2\pi.
+\]
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

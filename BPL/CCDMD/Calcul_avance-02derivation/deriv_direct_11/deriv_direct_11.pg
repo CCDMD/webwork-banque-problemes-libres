@@ -1,0 +1,140 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('applications', 'courbes de niveau', 'méthode du gradient')
+## Modifié par Éric Gaul, Collège Montmorency
+## Traduction française : Éric Gaul
+## Date : mars 2017
+## Language(fr)
+
+
+###############Source###############
+# DESCRIPTION
+# Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+# originally from 5ed (with updates)
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+## Tagged by glr 05/08/09
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Differentiation of multivariable functions)
+## ZDBsection(Directional derivatives and the gradient)
+## Institution(University of Michigan)
+## Author(Gavin LaRose)
+## MLT(WhereToGo)
+## MLTleader(1)
+## Level(2)
+## MO(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('5')
+## Section1('12.3')
+## Problem1('21')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('6')
+## Section2('12.3')
+## Problem2('27')
+## TitleText3('Applied Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('4')
+## Section3('9.2')
+## Problem3('24')
+## Textbook tags
+## HHChapter1('Functions of Several Variables')
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+);
+
+
+
+Context("Numeric");
+$showPartialCorrectAnswers = 0;
+
+@graphs = ( image( "q21f1.png", tex_size=>300, height=>223, width=>360,
+		   extra_html_tags=>'alt="graph of contours"' ),
+	    image( "q21f2.png", tex_size=>300, height=>223, width=>360,
+		   extra_html_tags=>'alt="graph of contours"' ),
+	    image( "q21f3.png", tex_size=>300, height=>223, width=>360,
+		   extra_html_tags=>'alt="graph of contours"' ),
+	    image( "q21f4.png", tex_size=>300, height=>223, width=>360,
+		   extra_html_tags=>'alt="graph of contours"' ) );
+
+@steep  = ( qw( A B B A ) );  # cue dancing queen here
+@view   = ( qw( B A A B ) );
+@stream = ( qw( A B B A ) );
+
+$z0  = random( 50, 250, 50 );
+$del = random( 50, 100, 25 );
+$z1  = $z0 + $del;
+$z2  = $z1 + $del;
+
+$which = random(0,3,1);
+
+@pops = ( PopUp( [ "?", "A", "B" ], $steep[$which] ),
+	  PopUp( [ "?", "A", "B" ], $view[$which] ),
+	  PopUp( [ "?", "A", "B" ], $stream[$which] ) );
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+
+La figure illustre une carte de courbes de niveau avec
+deux sentiers \( A \) et \( B \).  Les hauteurs des courbes de niveau sont
+\( z = z_0 = $z0 \), \( z = z_1 = $z1 \), et \( z = z_2 = $z2 \).
+$PAR
+${BCENTER}
+\{ $graphs[$which] \}
+$ECENTER
+$PAR
+
+${BBOLD}(a)$EBOLD
+Sur lequel des sentiers \( A \) ou \( B \) l'ascension sera-t-elle la plus raide ?
+\{ $pops[0]->menu() \}
+$PAR
+${BBOLD}(b)$EBOLD
+Sur lequel des sentiers \( A \) ou \( B \) aurez-vous la meilleure vue du paysage
+environnant (en supposant que les arbres n'obstruent pas votre vue) ?
+\{ $pops[1]->menu() \}
+$PAR
+${BBOLD}(c)$EBOLD
+Sur lequel des chemins la présence d'un ruisseau est-elle la plus probable ?
+\{ $pops[2]->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($pops[0]->cmp() );
+ANS($pops[1]->cmp() );
+ANS($pops[2]->cmp() );
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+${BBOLD}(a)$EBOLD
+Les courbes de niveau sont les plus rapprochées sur le sentier
+\{ $pops[0]->correct_ans() \}, donc le sentier \{ $pops[0]->correct_ans() \}
+a la pente la plus raide.
+$PAR
+${BBOLD}(b)$EBOLD
+Si vous êtes sur le sentier \{ $pops[0]->correct_ans() \} et regardez de chaque côté
+pour prendre connaissance du paysage, vous verrez des pentes à votre gauche et à
+votre droite qui obstrueront votre vue.  Par contre, les hauteurs diminuent
+de chaque côté du sentier  \{ $pops[1]->correct_ans() \}, donnant de meilleures chances
+d'avoir une vue vers le lointain.
+$PAR
+${BBOLD}(c)$EBOLD
+Il y a plus de chances qu'un ruisseau suive le sentier
+\{ $pops[2]->correct_ans() \}, parce que l'eau suit la direction
+de descente la plus abrupte.
+END_SOLUTION
+Context()->normalStrings;
+
+
+;
+ENDDOCUMENT();

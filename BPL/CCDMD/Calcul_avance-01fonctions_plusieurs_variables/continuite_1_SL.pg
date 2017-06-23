@@ -1,0 +1,105 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Limite et continuité)
+## KEYWORDS('continuité', 'continuité en un point', 'fonction définie par parties', 'limite à gauche et à droite')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+###############Source#################
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+## Tagged by YL
+## ZDBsubject('Calculus')
+## ZDBchapter('Limits and Derivatives')
+## ZDBsection('Continuity')
+## ZDate('')
+## Author('')
+## Institution('ASU')
+## TitleText1('Calculus: Early Transcendentals')
+## EditionText1('5e')
+## AuthorText1('Stewart')
+## Section1('2.5')
+## Problem1('')
+## TitleText2('Calculus: Early Transcendentals')
+## EditionText2('6')
+## AuthorText2('Stewart')
+## Section2('2.5')
+## Problem2('')
+## TitleText3('Calculus: Early Transcendentals')
+## EditionText3('1')
+## AuthorText3('Rogawski')
+## Section3('2.4')
+## Problem3('5')
+###############Source#################
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros("PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+           "PGauxiliaryFunctions.pl");
+
+TEXT(beginproblem());
+
+#Context()->strings->add(nep=>{}, dne => {alias => "nep"} );
+
+$showPartialCorrectAnswers = 1;
+$a = random(2,8,2);
+$b = random(1,9,2);
+$c = non_zero_random(-6,6,1);
+
+$displayedfunc = MODES(TeX=>"\[ f(x) = \begin{cases}
+             $a + x, & x < $c, \\
+             $b - x, & x \geq $c.
+             \end{cases}
+ \]",
+HTML_dpng=>"\[ f(x) = \begin{cases}
+             $a + x, & x < $c, \\
+             $b - x, & x \geq $c.
+             \end{cases}
+ \]",
+ HTML=> "<p>Cette fonction est définie par cas:
+<blockquote>
+ <br> \(f(x) = $a + x \) if \( x\lt $c \),
+ <br> \(f(x) = $b - x \) if \( x \geq $c. \)
+</blockquote>
+<p>");
+
+
+BEGIN_TEXT
+Soit la fonction définie par parties :
+$displayedfunc
+$PAR
+Calculer les limites demandées et déterminer la continuité de \(f(x)\) au point indiqué. $BR
+$BBOLD Remarques : $EBOLD$BR
+$NBSP$NBSP$NBSP \(\small \bullet\) Écrire ${BBOLD}nep${EBOLD} si une limite n'existe pas.$BR
+$NBSP$NBSP$NBSP \(\small \bullet\) Il faut pouvoir esquisser le graphique de \(y=f(x)\) (incluant des cercles vides et des cercles pleins aux endroits appropriés).
+
+$PAR
+$BBOLD (a) $EBOLD \(\ \ \displaystyle{\lim_{x \rightarrow ($c)^{-}} f(x)} = \)  \{ans_rule(30)\}
+$BR
+$BBOLD (b) $EBOLD \(\ \ \displaystyle{\lim_{x \rightarrow ($c)^{+}} f(x)} = \)  \{ans_rule(30)\}
+$BR
+$BBOLD (c) $EBOLD \(\ \ \displaystyle{\lim_{x \rightarrow $c} f(x)} = \)  \{ans_rule(30)\}
+$BR
+$BBOLD (d) $EBOLD \(\ \ \displaystyle{ f($c)} = \)  \{ans_rule(30)\}
+
+$BR
+Est-ce que \(f\) est continue en \(x=$c\)? ($BBOLD oui $EBOLD ou $BBOLD non $EBOLD) \{ans_rule(25)\}
+
+$BR
+
+END_TEXT
+
+@answers = (num_cmp($a + $c, strings=>["nep"]),num_cmp($b - $c, strings=>["nep"]),
+  num_cmp("nep", strings=>["nep"]),num_cmp($b - $c, strings=>["nep"]), str_cmp(non));
+
+
+
+
+ANS(@answers );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

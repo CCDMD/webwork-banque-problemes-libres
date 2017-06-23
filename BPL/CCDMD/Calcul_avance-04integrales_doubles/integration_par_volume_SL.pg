@@ -1,0 +1,111 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('intégrale définie', 'volume')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : avril 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+
+###############Source################
+## DESCRIPTION
+## Estimating double integrals  
+## ENDDESCRIPTION
+## ZDBsubject('Calculus')
+## ZDBchapter('Multiple Integrals')
+## ZDBsection('Double Integrals over General Regions')
+## Date('10/15/09')
+## Author('Paul Pearson')
+## Institution('Fort Lewis College')
+## TitleText1('Calculus')
+## TitleText2('Calculus')
+## EditionText1('4')
+## EditionText2('5')
+## AuthorText1('Hughes-Hallett')
+## AuthorText2('Hughes-Hallett')
+## Section1('16.1')
+## Section2('16.1')
+## Problem1('11')
+## Problem2('11')
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"PGcourse.pl",
+"PGgraders.pl",
+"PGML.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+# Create and use pop up lists 
+$tf = new_select_list();
+$tf->rf_print_q(~~&pop_up_list_print_q);
+
+# Specify choices presented to students
+$tf->ra_pop_up_list( 
+[ 
+No_answer => "?", 
+"positive"=>"positive", 
+"negative"=>"négative",
+"nulle"=>"nulle"
+] );
+
+# Questions and answers
+$tf -> qa ( 
+"\( \displaystyle \iint_{D} $a x \, dA \)$BR","nulle",    
+"\( \displaystyle \iint_{D_{sup}} $a x \, dA \)$BR","nulle",    
+"\( \displaystyle \iint_{D_{droite}} $a x \, dA \)$BR","positive",
+"\( \displaystyle \iint_{D} $a y \, dA \)$BR","nulle",    
+"\( \displaystyle \iint_{D_{inf}} $a y \, dA \)$BR","negative",
+"\( \displaystyle \iint_{D_{gauche}} $a y \, dA \)$BR","nulle",    
+);
+
+# How many questions to use
+$tf->choose(6);
+
+
+##############################################
+#  Main text
+
+BEGIN_TEXT
+Décider, sans calculer, si chacune des intégrales
+ci-dessous est positive, négative ou nulle.
+$BR
+Les régions d'intégration sont définies comme suit :
+$BR
+END_TEXT
+
+BEGIN_PGML
+
+    [`D`] : le disque unité centré à l'origine, soit  l'intérieur
+    du cercle correspondant, incluant sa frontière.  
+    [`D_{sup}`] : la moitié supérieure de [`D`].  
+    [`D_{inf}`] : la moitié inférieure de [`D`].  
+    [`D_{droite}`] : la moitié de droite de [`D`].  
+    [`D_{gauche}`] : la moitié de gauche de [`D`].
+END_PGML
+
+BEGIN_TEXT
+\{ $tf->print_q() \}
+END_TEXT
+
+install_problem_grader(~~&custom_problem_grader_fluid);
+$ENV{'grader_numright'} = [3,5];
+$ENV{'grader_scores'} = [0.6,1];
+$ENV{'grader_message'} = "You can earn " .
+"50% partial credit for 3 - 5 correct answers.";
+
+$showPartialCorrectAnswers = 0;
+
+ANS(str_cmp($tf->ra_correct_ans));
+
+ENDDOCUMENT();

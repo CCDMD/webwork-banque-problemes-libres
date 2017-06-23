@@ -1,0 +1,203 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('coordonnées cylindriques', 'intégrale triple')
+## Révisé par Éric Gaul, Collège Montmorency
+## Date : mai 2017
+## Language(fr)
+
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+###############Source################
+## DESCRIPTION
+## Seting up an integral in cylindrical coordinates
+## ENDDESCRIPTION
+## ZDBsubject('Calculus')
+## ZDBchapter('Multiple Integrals')
+## ZDBsection('Triple Integrals in Cylindrical and Spherical Coordinates')
+## Date('10/31/09')
+## Author('Paul Pearson')
+## Institution('Fort Lewis College')
+## TitleText1('Calculus')
+## TitleText2('Calculus')
+## EditionText1('4')
+## EditionText2('5')
+## AuthorText1('Hughes-Hallett')
+## AuthorText2('Hughes-Hallett')
+## Section1('16.5')
+## Section2('16.5')
+## Problem1('')
+## Problem2('18')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"PGcourse.pl",
+"LiveGraphicsParametricSurface3D.pl",
+"unionTables.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+Context("Numeric");
+
+Context()->variables->are(x=>"Real",y=>"Real",z=>"Real",u=>"Real",v=>"Real",r=>"Real",theta=>"Real");
+
+$r = random(4,8,2);
+$r2 = 2*$r;
+
+$plot1 = ParametricSurface3D(
+Fx => Formula("$r * cos(u)"),
+Fy => Formula("$r * sin(u)"),
+Fz => Formula("v"),
+uvar => 'u',
+vvar => 'v',
+umin =>  pi,
+umax =>  2*pi,
+vmin =>  0,
+vmax =>  $r,
+usamples => 10,
+vsamples => 1,
+axesframed => 1,
+xaxislabel => "X",
+yaxislabel => "Y",
+zaxislabel => "Z",
+outputtype => 1,
+);
+
+
+$plot4 = ParametricSurface3D(
+Fx => Formula("u * cos(v)"),
+Fy => Formula("u * sin(v)"),
+Fz => Formula("0"),
+uvar => 'u',
+vvar => 'v',
+umin =>  0,
+umax =>  $r,
+vmin =>  pi,
+vmax =>  2*pi,
+usamples => 5,
+vsamples => 10,
+axesframed => 1,
+xaxislabel => "X",
+yaxislabel => "Y",
+zaxislabel => "Z",
+outputtype => 1,
+);
+
+$plot5 = ParametricSurface3D(
+Fx => Formula("u * cos(v)"),
+Fy => Formula("u * sin(v)"),
+Fz => Formula("u"),
+uvar => 'u',
+vvar => 'v',
+umin =>  0,
+umax =>  $r,
+vmin =>  pi,
+vmax =>  2*pi,
+usamples => 5,
+vsamples => 10,
+axesframed => 1,
+xaxislabel => "X",
+yaxislabel => "Y",
+zaxislabel => "Z",
+outputtype => 1,
+);
+
+
+
+$plot = 
+$beginplot . 
+"{" .
+"RGBColor[0,0,1]," .
+$plot1 .
+"," .
+"{Polygon[{{0,0,0},{$r,0,0},{$r,0,$r}}]}" .
+"," .
+"{Polygon[{{0,0,0},{-$r,0,0},{-$r,0,$r}}]}" .
+"," .
+$plot4 .
+"," .
+$plot5 .
+"}" . 
+",Axes->True,AxesLabel->{X,Y,Z}," .
+"ViewPoint->{-2.299560248721872, 2.1997998840378945, 1.1501752617253937},
+ViewVertical->{0.1890439007979272, -0.5850056675307971, 1.8747847831794622}" .
+$endplot;
+
+
+
+##########################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+ColumnTable(
+"On considère le solide \(E\) illustré sur la figure : c'est une portion de cylindre circulaire de diamètre \($r2\) et de hauteur \($r\), centré autour de l'axe des \(z\), sa base étant située sur le plan \(Oxy\), avec \( y \leq 0 \), et un morceau conique retiré.
+Déterminer les bornes d'intégration pour une intégrale itérée de la forme : ".
+$PAR.
+$BCENTER.
+"\( \displaystyle
+\iiint_E \, f \, dV
+=
+\int_{\alpha}^{\beta} \!\! \int_{\gamma}^{\delta} \!\! \int_{\varepsilon}^{\kappa} \, f(r,\theta,z)\, r \, dz \, dr\, d\theta.
+\)".
+$ECENTER.
+$PAR.
+"(Si nécessaire, on écrira ${BITALIC}theta${EITALIC} pour le symbole \(\theta\))".
+$PAR.
+"\( \alpha = \) ".ans_rule(20).$BR.
+"\( \beta = \) ".ans_rule(20).$BR.
+"\( \gamma = \) ".ans_rule(20).$BR.
+"\( \delta = \) ".ans_rule(20).$BR.
+"\( \varepsilon = \) ".ans_rule(20).$BR.
+"\( \kappa = \) ".ans_rule(20).$BR.
+$BR,  
+$BCENTER.
+Live3Ddata(
+$plot,
+image => alias("HGM5-16-5-18.png"), 
+size => [400,400],
+tex_size => 600,
+tex_center => 1,
+scale => 1.2,
+).
+"(glisser la souris pour faire tourner la figure)".
+$ECENTER,
+indent=>0, separation=>30, valign=>"TOP"
+)
+\}
+END_TEXT
+Context()->normalStrings;
+
+
+##################################################
+#  Answers
+
+$showPartialCorrectAnswers = 1;
+
+#  theta
+ANS(Formula("pi")->cmp() );
+ANS(Formula("2*pi")->cmp() );
+
+#  radius r
+ANS(Formula("0")->cmp() );
+ANS(Formula("$r")->cmp() );
+
+#  height z
+ANS(Formula("0")->cmp() );
+ANS(Formula("r")->cmp() );
+
+COMMENT("Uses interactive graphics generated on-the-fly");
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

@@ -1,0 +1,139 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Fonction et relation à plusieurs variables)
+## KEYWORDS('fonction de deux variables', 'fonction polynomiale', 'graphique', 'traces')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################
+## DESCRIPTION
+##   Relate Trace Graphs to Equations for a Function
+## ENDDESCRIPTION
+## Tagged by nhamblet
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Concepts for multivariable functions)
+## ZDBsection(Traces, contours, and level sets)
+## ZDate(8/23/07)
+## Institution(Union College)
+## MLT(tcl_traces_recover_fn)
+## MLTleader(1)
+## Level(2)
+## MO(1)
+###############Source#################
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "unionImage.pl",
+  "PGgraphmacros.pl",
+  "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+Context("Numeric")->variables->are(
+  x=>'Real', y=>'Real',
+  a=>'Real', b=>'Real',
+);
+
+#
+#  The function to plot
+#
+$a = non_zero_random(-4,-1,1);
+$b = non_zero_random(-3,3,1);
+$f = Formula("a x^2 + b y");
+
+#
+#  Traces to show
+#
+$x = non_zero_random(-1,1,1);
+$y = non_zero_random(-1,1,1);
+
+#
+#  Graph size
+#
+($xm,$xM) = (-2,2);
+($ym,$yM) = (-2,2);
+($zm,$zM) = (-5,5);
+$size = [200,300];
+$tex_size = 350;
+
+##############################################
+
+#
+#  The plot defaults
+#
+@Goptions = (
+  $ym,$zm,$yM,$zM,                            # dimensions of graph
+  axes => [0,0], grid => [$yM-$ym,$zM-$zm],   # number of grid lines
+  size => $size                               # pixel dimension
+);
+@imageoptions = (size=>$size, tex_size=>$tex_size, border => 0);
+
+$xdomain  = "x in <$xm,$xM>";
+$ydomain  = "x in <$ym,$yM>";
+$plotoptions = "using color:red and weight=2";
+
+#
+#  Make the traces
+#
+$Gx = init_graph(@Goptions);
+$fx = $f->substitute(a=>$a,b=>$b,x=>$x,y=>'x');
+plot_functions($Gx,"$fx for $ydomain $plotoptions");
+$Xtrace = Image($Gx,@imageoptions);
+
+$Gy = init_graph(@Goptions);
+$fy = $f->substitute(a=>$a,b=>$b,y=>$y);
+plot_functions($Gy,"$fy for $xdomain $plotoptions");
+$Ytrace = Image($Gy,@imageoptions);
+
+#
+#  Make the table of images
+#
+$Images =
+  BeginTable().
+    AlignedRow([$Xtrace,$Ytrace]).
+    AlignedRow(["Trace en \(x=$x\)", "Trace en \(y=$y\)"]).
+  EndTable();
+
+##############################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Les graphiques ci-dessous représentent les traces
+d'une fonction en \(x=$x\) et \(y=$y\).
+$PAR
+
+$Images
+$PAR
+
+Si \(f(x,y) = $f\), alors :
+\(a\) = \{ans_rule(6)\} et \(b\) = \{ans_rule(6)\}.
+
+END_TEXT
+Context()->normalStrings;
+
+##################################################
+#  Answers
+
+ANS(Real($a)->cmp);
+ANS(Real($b)->cmp);
+
+$showPartialCorrectAnswers = 1;
+
+##################################################
+
+
+;
+ENDDOCUMENT();

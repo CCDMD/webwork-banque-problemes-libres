@@ -1,0 +1,129 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('arbre (dérivation en chaîne)', 'dérivation en chaîne', 'dérivée partielle', 'fonction de deux variables')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+
+###############Source################
+# DESCRIPTION
+# Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+# originally from 5ed (with updates)
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+## Tagged by glr 01/11/10
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('The Chain Rule')
+## ZDate('')
+## Author('Gavin LaRose')
+## Institution('University of Michigan')
+## TitleText1('Calculus')
+## EditionText1('5')
+## AuthorText1('Hughes-Hallett')
+## Section1('14.6')
+## Problem1('9')
+## Textbook tags
+## HHChapter1('Differentiating Functions of Several Variables')
+## HHSection1('The Chain Rule')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+);
+
+Context("Numeric");
+Context()->variables->add( u=>'Real', v=>'Real', y=>'Real' );
+$showPartialCorrectAnswers = 1;
+
+$r = random(2,3,1);
+$whichz = random(0,1,1);
+$whichz = 1;
+if ( $whichz ) {
+    $zfunc = Compute( "x*e^y" );
+} else {
+    $zfunc = Compute( "y*e^x" );
+}
+$whichu = random(0,1,1);
+if ( $whichu ) {
+    $xfunc = Compute( "u^$r + v^$r" );
+    $yfunc = Compute( "u^$r - v^$r" );
+} else {
+    $xfunc = Compute( "u^$r - v^$r" );
+    $yfunc = Compute( "u^$r + v^$r" );
+}
+
+$dzdx = $zfunc->D('x');
+$dzdy = $zfunc->D('y');
+
+$dxdu = $xfunc->D('u');
+$dxdv = $xfunc->D('v');
+$dydu = $yfunc->D('u');
+$dydv = $yfunc->D('v');
+
+$dzdxsub = $dzdx->substitute( x=>$xfunc, y=>$yfunc );
+$dzdysub = $dzdy->substitute( x=>$xfunc, y=>$yfunc );
+$dzdusub = Compute( "($dzdxsub)*($dxdu) + ($dzdysub)*($dydu)" )->reduce();
+$dzdvsub = Compute( "($dzdxsub)*($dxdv) + ($dzdysub)*($dydv)" )->reduce();
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+Soit : 
+\[ z = $zfunc,\qquad x = $xfunc \qquad \textrm{ et }\qquad y = $yfunc. \]
+Calculer \( \dfrac{\partial z}{\partial u} \) et \( \dfrac{\partial z}{\partial v} \)$BR
+(les variables sont restreintes aux domaines où les fonctions sont définies).
+$PAR
+\( \dfrac{\partial z}{\partial u} = \) \{ ans_rule(75) \}
+$PAR
+\( \dfrac{\partial z}{\partial v} = \) \{ ans_rule(75) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($dzdusub->cmp( checker=>sub {
+    my ( $correct, $student, $ansHash ) = @_;
+    if ( $correct == $student ) {
+        return 1;
+    } else {
+        return ( Compute( "($dzdx)*($dxdu)+($dzdy)*($dydu)" ) == $student ) ? 1 : 0;
+    } } ) );
+ANS($dzdvsub->cmp( checker=>sub {
+    my ( $correct, $student, $ansHash ) = @_;
+    if ( $correct == $student ) {
+        return 1;
+    } else {
+        return ( Compute( "($dzdx)*($dxdv)+($dzdy)*($dydv)" ) == $student ) ? 1 : 0;
+    } } ) );
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+La fonction \(z\) est une fonction de deux variables \(x\) et \(y\), lesquelles 
+sont elles-mêmes des fonctions de deux variables $u$ et $v$.
+Les deux règles de dérivation
+en chaîne qui s'appliquent sont alors :
+\[
+\frac{\partial z}{\partial u}  = 
+       \frac{\partial z}{\partial x}\frac{\partial x}{\partial u}+
+       \frac{\partial z}{\partial y}\frac{\partial y}{\partial u} \]
+\[ = ($dzdx) \left($dxdu\right) + ($dzdy)\cdot\left($dydu\right) \]
+\[ = $dzdusub. \]
+et
+\[
+\frac{\partial z}{\partial v} = 
+       \frac{\partial z}{\partial x}\frac{\partial x}{\partial v}+
+       \frac{\partial z}{\partial y}\frac{\partial y}{\partial v} \]
+\[ = ($dzdx)\left($dxdv\right) + ($dzdy)\cdot \left($dydv\right) \]
+\[ = $dzdvsub. \]
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

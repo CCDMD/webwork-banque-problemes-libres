@@ -1,0 +1,64 @@
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('ordre 1', 'résolution d\'une équation', 'solution particulière', 'à variables séparables')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################
+## ZDBsubject(Differential equations)
+## ZDBchapter(First order differential equations)
+## ZDBsection(Separable)
+## Institution(W.H.Freeman)
+## Author(Christopher Sira)
+## Level(3)
+## MO(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('5.8')
+## Problem1('9')
+###############Source#################
+
+
+
+DOCUMENT();
+loadMacros("PG.pl","PGbasicmacros.pl","PGanswermacros.pl");
+loadMacros("Parser.pl");
+loadMacros("freemanMacros.pl");
+
+TEXT(beginproblem());
+
+$cons = random(2, 19);
+$y_of = random(1, 9);
+$IC = random(1, 9);
+
+Context()->variables->add(t=>'Real');
+$answer = Formula("$IC e^($cons(t-$y_of))");
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer la solution de :
+\( \dfrac{dy}{dt} = $cons y \) $BR
+telle que  
+\( y($y_of) = $IC \).
+$PAR
+$NBSP $NBSP \(y(t) = \)\{ans_rule()\}
+END_TEXT
+
+ANS($answer->cmp);
+
+$niceexp = Formula("$cons * $y_of")->reduce;
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+$PAR
+$SOL
+Puisque \( y'=$cons y \), on obtient que \( y(t)=C e^{$cons t} \)
+où \( C\) est une constante réelle. $BR
+La condition initiale \( y($y_of)=$IC \)
+signifie que \( $IC = C e^{$cons \cdot $y_of} \) et donc \( C=$IC e^{-$niceexp} \).$BR
+Ainsi, \( y(t)= ($IC e^{-$niceexp})e^{$cons t}=$answer. \)
+END_SOLUTION
+
+ENDDOCUMENT();

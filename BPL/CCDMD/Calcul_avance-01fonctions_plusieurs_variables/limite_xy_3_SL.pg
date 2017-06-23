@@ -1,0 +1,192 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction de deux variables', 'limite', 'limite (par plusieurs approches)', 'n\'existe pas')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+## Traduction française et adaptation de la solution : Éric Gaul
+
+
+###############Source################
+## DESCRIPTION
+# Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+# originally from 5ed (with updates)
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+## Tagged by glr 05/26/09
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('Limits and Continuity')
+## ZDate('')
+## Author('Gavin LaRose')
+## Institution('University of Michigan')
+## TitleText1('Calculus')
+## EditionText1('5')
+## AuthorText1('Hughes-Hallett')
+## Section1('12.6')
+## Problem1('13')
+## Textbook tags
+## HHChapter1('Functions of Several Variables')
+## HHSection1('Limits and Continuity')
+###############Source################
+
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+# "parserNumberWithUnits.pl",
+# "parserFormulaWithUnits.pl", 
+# "parserFormulaUpToConstant.pl",
+# "PGcourse.pl",
+);
+
+
+Context("Numeric");
+Context()->variables->add( y => 'Real', m => 'Real' );
+$showPartialCorrectAnswers = 1;
+
+$d = random(1,5,1);
+$r = list_random(1,2);
+$s = list_random(1,2);
+if ( $r == $s ) {
+    $mexp = "";
+} else {
+    $mexp = ( $r == 1 ) ? "^{1/2}" : "^2";
+}
+
+$a = random(1,8,1);
+$f = Compute( "($a*x^($r) - y^($s))/(x^($r) + y^($s))" )->reduce();
+
+$m1 = random(2,4,1);
+$m2 = $m1 + 1;
+
+$lim1 = Compute( "($a - $m1^$s)/(1 + $m1^$s)" )->reduce();
+$lim2 = Compute( "($a - $m2^$s)/(1 + $m2^$s)" )->reduce();
+$limm = Compute( "($a - m^$s)/(1 + m^$s)" )->reduce();
+
+$fm1 = $f->substitute( y => Compute("$m1*x$mexp") );
+$fm2 = $f->substitute( y => Compute("$m2*x$mexp") );
+$fm  = $f->substitute( y => Compute("m*x$mexp") );
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+
+Dans ce problème, on montre que la fonction
+\[ f(x,y) = $f \]
+ne possède pas de limite au point
+lorsque \( (x,y)\to (0,0) \).
+
+$PAR
+${BBOLD}(a)$EBOLD
+On considère \( (x,y)\to (0,0) \) le long de la courbe
+\( y = $m1 x$mexp \). Dans ce cas, la limite est :
+$PAR
+$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP
+\( \displaystyle \lim\limits_{(x,$m1 x$mexp)\to(0,0)} $f = \)
+\{ ans_rule(35) \}
+
+$PAR
+${BBOLD}(b)$EBOLD
+On considère maintenant\( (x,y)\to (0,0) \) le long de la courbe
+\( y = $m2 x$mexp \). Dans ce cas, la limite est :
+$PAR
+$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP
+\( \displaystyle \lim\limits_{(x,$m2 x$mexp)\to(0,0)} $f = \)
+\{ ans_rule(35) \}
+
+$PAR
+${BBOLD}(c)$EBOLD
+On note que les résultats de 
+${BBOLD}(a)$EBOLD et ${BBOLD}(b)$EBOLD
+indiquent ensemble que \(f\) n'a pas de limite lorsque \( (x,y)\to (0,0) \).
+Pour le montrer de façon plus générale, on considère \( (x,y)\to (0,0) \) le long de la courbe \( y = m x$mexp \), pour des valeurs arbitraires de \(m\). 
+Dans ce cas, la limite est :
+$PAR
+$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP
+\( \displaystyle \lim\limits_{(x,m x$mexp)\to(0,0)} $f = \)
+\{ ans_rule(35) \}
+$PAR
+${BITALIC}Il faut être en mesure d'expliquer en quoi ces résultats indiquent que \(f\) ne possède pas de limite lorsque \((x,y)\to(0,0)\).$EITALIC
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($lim1->cmp() );
+ANS($lim2->cmp() );
+ANS($limm->cmp() );
+
+## this is kludgy.  there should be a routine to do this
+##    for us.
+sub redfrac {
+    my ( $n, $d ) = @_;
+    ( $n, $d ) = reduce( $n, $d );
+
+    if ( $n == 1 && $d == 1 ) {
+	return 1;
+    } elsif ( $n == 1 ) {
+	return "\frac{1}{$d}";
+    } elsif ( $d == 1 ) {
+	return "$n";
+    } else {
+	return "\frac{$n}{$d}";
+    }
+}
+$l1 = redfrac( ($a - $m1**$s), (1 + $m1**$s) );
+$l2 = redfrac( ($a - $m2**$s), (1 + $m2**$s) );
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+
+Il faut montrer que \(f\) ne possède pas de limite lorsque \((x,y)\) tend vers
+\((0,0)\).
+
+$PAR
+${BBOLD}(a)$EBOLD
+SI \((x,y)\) tend vers \((0,0)\) le long de la courbe
+\( y = $m1 x$mexp\), alors
+\[ f(x,y) = f(x,$m1 x$mexp) = $fm1 = $l1. \]
+
+Il s'ensuit que :
+\[\lim_{x\to0} f(x,$m1 x$mexp) = $l1.\]
+
+$PAR
+${BBOLD}(b)$EBOLD
+De façon similaire, si \((x,y)\) tend vers \((0,0)\) le long de la courbe
+\( y = $m2 x$mexp\), alors :
+\[ f(x,y) = f(x,$m2 x$mexp) = $fm2 = $l2, \]
+
+et ainsi : 
+\[\lim_{x\to0} f(x,$m2 x$mexp) = $l2.\]
+
+$PAR
+Puisqu'on obtient deux valeurs distinctes pour ces limites, on en conclut
+que la limite ne peut exister au point \((0,0)\).
+Peu importe qu'on se rapproche de l'origine d'aussi près que l'on peut imaginer,
+il y aura des valeurs de \(f(x,y)\) près de \($l1\) et d'autres près de \($l2\),
+alors que pour que la limite puisse exister, ces valeurs devraient être identiques.
+
+$PAR
+${BBOLD}(c)$EBOLD
+Plus généralement, quand \((x,y)\)
+tend vers \((0,0)\) le long de la courbe \( y = m x$mexp\), on obtient :
+\[ f(x,y) = f(x,m x$mexp) = $limm, \]
+ce qui fait en sorte que : 
+\[ \lim_{x\to0} f(x,m x$mexp) = $limm. \]
+On constate alors que différentes valeurs de \(m\) conduisent à des valeurs
+différentes pour la limite de la fonction.  La limite de la fonction ne peut
+donc pas exister au point \((0,0)\).
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

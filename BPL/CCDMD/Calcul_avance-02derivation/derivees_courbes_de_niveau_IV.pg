@@ -1,0 +1,294 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation - définition et interprétation)
+## KEYWORDS('dérivée en un point', 'dérivée partielle', 'estimation', 'graphique', 'taux de variation', 'taux de variation instantané')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################
+## Tagged by glr 06/22/09
+# DESCRIPTION
+# Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+# originally from 5ed (with updates)
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Differentiation of multivariable functions)
+## ZDBsection(Partial derivatives)
+## Institution(University of Michigan)
+## Author(Gavin LaRose)
+## MLT(2varfirstgraph)
+## MLTleader(1)
+## Level(3)
+## MO(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('5')
+## Section1('14.1')
+## Problem1('9')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('6')
+## Section2('14.1')
+## Problem2('10')
+## Textbook tags
+## HHChapter1('Differentiating Functions of Several Variables')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+"PGgraphmacros.pl",
+"parserPopUp.pl",
+);
+
+
+
+
+Context("Numeric");
+$showPartialCorrectAnswers = 0;
+
+## we graph a bunch of circles or hyperbolas, and label the contours
+##    differently for each problem variation
+$contour = init_graph( -3.5,-3.5,3.5,3.5, axes=>[0,0], size=>[300,300] );
+
+## add labels
+$contour->lb('reset');
+$contour->lb( new Label(3.4,-0.1,"x","right","top") );
+$contour->lb( new Label(0.1,3.4,"y","left","top") );
+
+$whichgr = list_random(0,1);
+
+## the contour values
+$v0 = random(2,10,2);
+$dv = list_random(-1,1)*($v0/2);
+@cval = ( $v0 );
+for ( my $i=1; $i<8; $i++ ) { push( @cval, $cval[-1]+$dv ); }
+
+if ( $whichgr ) {
+    ## then plot circles
+    @xf = ();
+    @yf = ();
+    @fn = ();
+    # foreach my $r ( (1, 1.75, 2.25, 2.65, 3, 3.25) ) {
+    foreach my $r ( (1.5, 2.5, 3.25, 3.75, 4.125, 4.375, 4.5) ) {
+	push( @xf, sub { my $t = shift(); return $r*cos($t); } );
+	push( @yf, sub { my $t = shift(); return $r*sin($t); } );
+	push( @fn, new Fun( $xf[-1], $yf[-1], $contour ) );
+	$fn[-1]->domain(0,6.3);
+    }
+
+    @cloc = ( [1,1.125], [1.5,2], [2,2.5], [2.5,2.75], [3,2.7],
+	      [2.85,3], [3.2,3.125]);
+    ## label the contours
+    my $i=0;
+    foreach my $r ( @cloc  ) {
+	$contour->lb( new Label( $r->[0], $r->[1], $cval[$i++], "black",
+				 "left", "bottom" ) );
+    }
+
+    ## and add the points
+    $contour->stamps( closed_circle( 2.25, 2.25, "black" ) );
+    $contour->stamps( closed_circle( 2.25, -2.25, "black" ) );
+    $contour->stamps( closed_circle( -2.25, -2.25, "black" ) );
+    $contour->stamps( closed_circle( -2.25, 2.25, "black" ) );
+    $contour->lb( new Label( 2.125, 2.25, "P", "black", "right", "top" ) );
+    $contour->lb( new Label( 2.25, -2.125, "Q", "black", "right", "bottom" ) );
+    $contour->lb( new Label( -2.125, -2.25, "R", "black", "left", "bottom" ) );
+    $contour->lb( new Label( -2.125, 2.25, "S", "black", "left", "top" ) );
+
+} else {
+    ## plot hyperbolas
+    foreach my $r ( .25,1,2,3,4,5,6,7 ) {
+	add_functions( $contour, "$r/x for x in <-3.5,-0.05> using " .
+		       "color:blue and weight:2",
+		       "$r/x for x in <0.05,3.5> using " .
+		       "color:blue and weight:2",
+		       "-$r/x for x in <-3.5,-0.05> using " .
+		       "color:blue and weight:2",
+		       "-$r/x for x in <0.05,3.5> using " .
+		       "color:blue and weight:2" );
+    }
+
+    ## label the contours
+    my $i=0;
+    my @cloc = ( [.5,.5], [1,1], [1.4,1.4], [1.5,2], [2,2], [1.9,2.5],
+		 [1.9,3], [2.9,2.5] );
+    my @cloc2 = ( [.6,.7], [1.1,1], [1.5,1.5], [1.6,2], [2.1,2],
+		  [2.0,2.6], [2.0,3.2], [3.0,2.7] );
+    foreach my $r ( @cloc ) {
+	my $s = $cloc2[$i];
+	$contour->lb( new Label($r->[0], $r->[1], $cval[$i], "black",
+				"left", "bottom") );
+	$contour->lb( new Label($s->[0], -1*$s->[1], $cval[$i], "black",
+				"right", "top") );
+	$contour->lb( new Label(-$r->[0], $r->[1], $cval[$i], "black", "right",
+				"bottom") );
+	$contour->lb( new Label(-$s->[0], -$s->[1], $cval[$i++], "black",
+				"left", "top") );
+    }
+
+    ## and add the points
+    $contour->stamps( closed_circle( 1.732, 1.732, "black" ) );
+    $contour->stamps( closed_circle( 1.732, -1.732, "black" ) );
+    $contour->stamps( closed_circle( -1.732, -1.732, "black" ) );
+    $contour->stamps( closed_circle( -1.732, 1.732, "black" ) );
+    $contour->lb( new Label( 1.75, 1.75, "P", "black", "left", "bottom" ) );
+    $contour->lb( new Label( 1.75, -1.75, "Q", "black", "left", "top" ) );
+    $contour->lb( new Label( -1.75, -1.75, "R", "black", "right", "top" ) );
+    $contour->lb( new Label( -1.75, 1.75, "S", "black", "right",
+			     "bottom" ) );
+}
+
+## Finally, the partials are
+@fx = ();  @fy = ();
+$fx[0] = PopUp( [ "?", "positive", "négative" ],
+		( $dv > 0 ) ? "positive" : "négative" );
+$fy[0] = PopUp( [ "?", "positive", "négative" ],
+		( $dv > 0 ) ? "positive" : "négative" );
+$fx[1] = PopUp( [ "?", "positive", "négative" ],
+		( $dv > 0 ) ? "positive" : "négative" );
+$fy[1] = PopUp( [ "?", "positive", "négative" ],
+		( $dv > 0 ) ? "négative" : "positive" );
+$fx[2] = PopUp( [ "?", "positive", "négative" ],
+		( $dv > 0 ) ? "négative" : "positive" );
+$fy[2] = PopUp( [ "?", "positive", "négative" ],
+		( $dv > 0 ) ? "négative" : "positive" );
+$fx[3] = PopUp( [ "?", "positive", "négative" ],
+		( $dv > 0 ) ? "négative" : "positive" );
+$fy[3] = PopUp( [ "?", "positive", "négative" ],
+		( $dv > 0 ) ? "positive" : "négative" );
+@points = ( qw( P Q R S ) );
+
+## we'll ask for three of these
+@ask = PGsort( sub { $_[0] < $_[1] }, NchooseK( 4, 3 ) );
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+
+Déterminer les signes de \( f_x \) et de \( f_y \) en chacun des points
+indiqués en utilisant le graphique des courbes de niveau de \( f \) illustré.
+$PAR
+$BBOLD Remarques. $EBOLD
+Le point \(P\) est dans le premier quandrant.
+Les points \(Q\) à \(S\) sont disposés dans le sens des aiguilles d'une
+montre à partir de \(P\).
+$PAR
+$BCENTER
+\{ image( insertGraph( $contour ), tex_size=>300, height=>300, width=>300,
+	  extra_html_tags=>'alt="' . $grdesc . '"' ) \}
+$ECENTER
+$PAR
+${BBOLD}(a)$EBOLD
+Au point \( $points[$ask[0]] \),$BR
+\( \ \ \ \ \ \ f_x \) est \{ $fx[$ask[0]]->menu() \} \(\ \) et $BR
+\( \ \ \ \ \ \ f_y \) est \{ $fy[$ask[0]]->menu() \} \(\ \).
+
+$PAR
+${BBOLD}(b)$EBOLD
+Au point \( $points[$ask[1]] \),$BR
+\( \ \ \ \ \ \ f_x \) est \{ $fx[$ask[1]]->menu() \} \(\ \)et $BR
+\( \ \ \ \ \ \ f_y \) est \{ $fy[$ask[1]]->menu() \} \(\ \).
+
+$PAR
+${BBOLD}(c)$EBOLD
+Au point \( $points[$ask[2]] \),$BR
+\( \ \ \ \ \ \ f_x \) est \{ $fx[$ask[2]]->menu() \} \(\ \)et $BR
+\( \ \ \ \ \ \ f_y \) est \{ $fy[$ask[2]]->menu() \} \(\ \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($fx[$ask[0]]->cmp() );
+ANS($fy[$ask[0]]->cmp() );
+ANS($fx[$ask[1]]->cmp() );
+ANS($fy[$ask[1]]->cmp() );
+ANS($fx[$ask[2]]->cmp() );
+ANS($fy[$ask[2]]->cmp() );
+
+## are f_x and f_y increasing or decreasing?
+@index = ();
+@indey = ();
+if ( $dv > 0 ) {
+    push( @index, ( 'augmente', 'augmente', 'diminue', 'diminue' ) );
+    push( @indey, ( 'augmente', 'diminue', 'diminue', 'augmente' ) );
+} else {
+    push( @index, ( 'diminue', 'diminue', 'augmente', 'augmente' ) );
+    push( @indey, ( 'diminue', 'augmente', 'augmente', 'diminue' ) );
+}
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+${BBOLD}(a)$EBOLD
+À partir du point
+\($points[$ask[0]]\)
+, si on déplace en direction croissante pour \(x\), alors \(f\)
+$index[$ask[0]]
+, donc
+\(f_x($points[$ask[0]])\)
+est
+\{ $fx[$ask[0]]->correct_ans() \}
+.
+$PAR
+À partir du point
+\($points[$ask[0]]\)
+, si on déplace en direction croissante pour \(y\), alors \(f\)
+$indey[$ask[0]]
+, donc
+\(f_y($points[$ask[0]])\)
+est
+\{ $fy[$ask[0]]->correct_ans() \}
+.
+$PAR
+${BBOLD}(b)$EBOLD
+À partir du point
+\($points[$ask[1]]\)
+, si on déplace en direction croissante pour \(x\), alors \(f\)
+$index[$ask[1]]
+, donc
+\(f_x($points[$ask[1]])\)
+est
+\{ $fx[$ask[1]]->correct_ans() \}
+.
+$PAR
+À partir du point
+\($points[$ask[1]]\)
+, si on déplace en direction croissante pour \(y\), alors \(f\)
+$indey[$ask[1]]
+, donc
+\(f_y($points[$ask[1]])\)
+est
+\{ $fy[$ask[1]]->correct_ans() \}
+.
+$PAR
+${BBOLD}(c)$EBOLD
+À partir du point
+\($points[$ask[2]]\)
+, si on déplace en direction croissante pour \(x\), alors \(f\)
+$index[$ask[2]]
+, donc
+\(f_x($points[$ask[2]])\)
+est
+\{ $fx[$ask[2]]->correct_ans() \}
+.
+$PAR
+À partir du point
+\($points[$ask[2]]\)
+, si on déplace en direction croissante pour \(y\), alors \(f\)
+$indey[$ask[2]]
+, donc
+\(f_y($points[$ask[2]])\)
+est
+\{ $fy[$ask[2]]->correct_ans() \}
+.
+$PAR
+END_SOLUTION
+Context()->normalStrings;
+
+
+;
+ENDDOCUMENT();

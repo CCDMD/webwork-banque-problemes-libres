@@ -1,0 +1,125 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Fonction et relation à plusieurs variables)
+## KEYWORDS('courbes de niveau', 'fonction de deux variables')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+###############Source#################
+## DESCRIPTION
+##   Identify Level Curves
+## ENDDESCRIPTION
+## Tagged by nhamblet
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('Graphs and Level Surfaces')
+## ZDate('10/23/09')
+## Author('Paul Pearson')
+## Institution('Fort Lewis College')
+## TitleText1('Calculus')
+## TitleText2('Calculus')
+## EditionText1('4')
+## EditionText1('5')
+## AuthorText1('Hughes-Hallett')
+## AuthorText2('Hughes-Hallett')
+## Section1('12.3')
+## Section2('12.3')
+## Problem1('18')
+## Problem2('16')
+###############Source#################
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+#  "MathObjects.pl",
+#  "contextABCD.pl",
+  "imageChoice.pl",
+  "PGcourse.pl",
+"unionTables.pl",
+"PGgraders.pl",
+);
+
+$refreshCachedImages=1;
+
+###############################
+#  Set-up
+
+$size = [300,300];   # the size of the images
+$tsize = 450;        # tex size of the images
+
+#
+#  Array of functions and their associated GIFs or PNGs
+#
+
+@QA = (
+"\( f(x,y) = \sin(x) \)",
+"contour01.png",
+"\( f(x,y) = (x-y)^2 \)",
+"contour03.png",
+"\( f(x,y) = x+y \)",
+"contour11.png",
+"\( f(x,y) = y^2 \)",
+"contour12.png",
+);
+
+$ml = new_image_match_list(
+  link => 1,                #  do not link to separate image
+  size => $size,            #  image size in pixels
+  tex_size => $tsize,       #  tex size in precent times 10
+  columns => 2,             #  number of columns
+);
+$ml->{separation} = 3;      # separation for questions in the list
+
+$ml->rf_print_q(~~&pop_up_list_print_q); # use pop-up-lists
+$ml -> ra_pop_up_list([ No_answer=>"?", A=>"A", B=>"B", C=>"C", D=>"D" ] );
+
+$ml->qa(@QA);               #  set the questions and answers
+$ml->choose(4);             #  select 5 of them
+#$ml->choose_extra(1);       #  and show the other 1
+
+
+
+#############################
+#  Main Text
+
+TEXT(beginproblem());
+
+BEGIN_TEXT
+\{
+ColumnTable(
+"Associer chaque fonction avec ses courbes de niveau. 
+Les régions foncées représentent une basse altitude et les régions pâles représentent un plus haute altitude.".
+$BR.
+$BR. 
+$ml->print_q(),
+$ml->print_a(),
+indent => 0, separation => 30, valign => "TOP"
+)
+\}
+END_TEXT
+
+
+##############################
+#  Answer evaluators
+
+#Context("ABCD")->strings->add("E" => {},"F" => {},"?"=>{},"No_answer"=>{});
+
+#install_problem_grader(~~&std_problem_grader);
+
+install_problem_grader(~~&custom_problem_grader_fluid);
+$ENV{'grader_numright'} = [2,4];
+$ENV{'grader_scores'} = [0.5,1];
+$ENV{'grader_message'} = "Il est possible d'obtenir " .
+"50% des points pour 2 - 3 bonnes réponses.";
+
+$showPartialCorrectAnswers = 0;
+
+ANS(str_cmp($ml->ra_correct_ans));
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

@@ -1,0 +1,85 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('approximation linéaire')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+
+###############Source#################
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+## Tagged by tda2d
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('Tangent Planes')
+## ZDate('')
+## Author('')
+## Institution('Dartmouth')
+## TitleText1('Calculus')
+## EditionText1('5')
+## AuthorText1('Stewart')
+## Section1('15.4')
+## Problem1('')
+## TitleText2('Calculus: Early Transcendentals')
+## EditionText2('1')
+## AuthorText2('Rogawski')
+## Section2('14.4')
+## Problem2('4')
+
+
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+DOCUMENT();
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGauxiliaryFunctions.pl",
+           "PGgraphmacros.pl",
+           "Dartmouthmacros.pl");
+ 
+
+## Do NOT show partial correct answers
+$showPartialCorrectAnswers = 0;
+
+$b = random(2,5);
+$c = random(2,5);
+
+$x0 = random(-5,5);
+$y0 = random(-5,5);
+@squares=(4,9,16,25);
+$which_square = random(0,3);
+
+
+$a = $squares[$which_square] + $b*($x0)**2 + $c*($y0)**2;
+##f(x,y) = sqrt(a - bx^2 -cy^2) is now defined at (x0,y0)
+
+$z0 = sqrt($a - $b*($x0)**2 - $c*($y0)**2);
+
+## Ok, we are ready to begin the problem...
+##
+TEXT(beginproblem());
+
+
+BEGIN_TEXT
+Trouver la fonction \( L(x, y) \) représentant l'approximation linéaire de :$BR
+\(f(x,y) = \sqrt{$a - $b x^2 - $c y^2}\) au point : \( ($x0, $y0) \).
+$PAR
+\(L(x,y) = \)\{ans_rule(60)\}
+$PAR
+Utiliser ensuite cette approximation linéaire pour estimer la valeur de :$PAR
+\( f(\{$x0 - .1\}, \{$y0 + .1\}) \approx \) \{ans_rule(40)\}
+$PAR
+END_TEXT
+    $fx = - $b * $x0 / sqrt($a - $b*$x0*$x0 - $c*$y0*$y0);
+$fy =  - $c * $y0 / sqrt($a - $b*$x0*$x0 - $c*$y0*$y0);
+
+ANS(fun_cmp("$z0 + $fx*(x - $x0) + $fy * (y - $y0)", vars=>["x","y"]));
+
+ANS(num_cmp($z0 + $fx*(-.1) + $fy * .1));
+
+ENDDOCUMENT();
+

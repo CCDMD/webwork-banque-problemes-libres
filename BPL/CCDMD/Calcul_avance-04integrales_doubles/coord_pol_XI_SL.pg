@@ -1,0 +1,317 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('coordonnées polaires', 'intégrale double')
+## Révisé par Éric Gaul, Collège Montmorency
+## Date : avril 2017
+## Language(fr)
+
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+###############Source################
+## DESCRIPTION
+## Calculating double integrals in polar coordinates  
+## ENDDESCRIPTION
+## ZDBsubject('Calculus')
+## ZDBchapter('Multiple Integrals')
+## ZDBsection('Double Integrals in Polar Coordinates')
+## Date('10/31/09')
+## Author('Paul Pearson')
+## Institution('Fort Lewis College')
+## TitleText1('Calculus')
+## TitleText2('Calculus')
+## EditionText1('4')
+## EditionText2('5')
+## AuthorText1('Hughes-Hallett')
+## AuthorText2('Hughes-Hallett')
+## Section1('16.4')
+## Section2('16.4')
+## Problem1('18')
+## Problem2('22')
+
+DOCUMENT();        
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "parserMultiAnswer.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+Context("Numeric")->variables->are(r=>"Real",theta=>"Real",dr=>"Real",dtheta=>"Real");
+
+
+#-----------------------
+#  limits of integration
+
+$a = random(3,5,1);
+$asq = $a**2;
+
+
+#-----------
+#  integrand
+#
+
+$f = Formula("r**2 * cos(theta) * sin(theta) * r") -> reduce;
+
+#-----------
+#  volume
+#
+
+$V = Formula("$a**4 / 16") -> reduce;
+
+
+#=================================
+#  Multiple solutions
+#
+#  inner and outer differentials
+#
+#  arrays are (if r inner & theta outer integral, if theta inner & r outer integral)
+# 
+@id = (Formula("dr"),Formula("dtheta"));
+@od = (Formula("dtheta"),Formula("dr"));
+
+# inner limit high, inner limit low, outer limit high, outer limit low (case 0, case 1)
+@ilh = (Formula("$a"),Formula("pi/4"));
+@ill = (Formula("0"),Formula("0"));
+@olh = (Formula("pi/4"),Formula("$a"));
+@oll = (Formula("0"),Formula("0"));
+
+
+$multipart = MultiAnswer( $f, $id[0], $od[0], $oll[0], $olh[0], $ill[0], $ilh[0] )->with(
+    singleResult => 1,
+    checker => sub {
+        my ( $correct, $student, $self ) = @_;
+        my ( $fstu, $idstu, $odstu, $ollstu, $olhstu, $illstu, $ilhstu ) = @{$student};
+        if ( 
+             ( 
+             $f      == $fstu &&
+             $id[0]  == $idstu && 
+             $od[0]  == $odstu &&
+             $oll[0] == $ollstu &&
+             $olh[0] == $olhstu &&
+             $ill[0] == $illstu &&
+             $ilh[0] == $ilhstu  
+             )
+             ||
+             (
+             $f      == $fstu &&
+             $id[1]  == $idstu && 
+             $od[1]  == $odstu &&
+             $oll[1] == $ollstu &&
+             $olh[1] == $olhstu &&
+             $ill[1] == $illstu &&
+             $ilh[1] == $ilhstu  
+             )
+           ) {
+           return 1;
+        } elsif (
+             (
+             $f      == $fstu &&
+             $id[0]  == $idstu && 
+             $od[0]  == $odstu &&
+             ($oll[0] != $ollstu || $olh[0] != $olhstu) &&
+             $ill[0] == $illstu &&
+             $ilh[0] == $ilhstu 
+             )  
+             ||
+             (
+             $f      == $fstu &&
+             $id[1]  == $idstu && 
+             $od[1]  == $odstu &&
+             ($oll[1] != $ollstu || $olh[1] != $olhstu) &&
+             $ill[1] == $illstu &&
+             $ilh[1] == $ilhstu 
+             )  
+             ||
+             (
+             $f      == $fstu &&
+             $id[0]  == $idstu && 
+             $od[0]  == $odstu &&
+             $oll[0] == $ollstu &&
+             $olh[0] == $olhstu &&
+             ($ill[0] != $illstu || $ilh[0] != $ilhstu) 
+             )  
+             ||
+             (
+             $f      == $fstu &&
+             $id[1]  == $idstu && 
+             $od[1]  == $odstu &&
+             $oll[1] == $ollstu &&
+             $olh[1] == $olhstu &&
+             ($ill[1] != $illstu || $ilh[1] != $ilhstu) 
+             )  
+           ) {
+           $self->setMessage(1,"Vérifiez les bornes d'intégration.");
+           return 0.94;
+        } elsif (
+             (
+             $f      == $fstu &&
+             $id[0]  == $idstu && 
+             $od[0]  == $odstu &&
+             ($oll[0] != $ollstu || $olh[0] != $olhstu) &&
+             ($ill[0] != $illstu || $ilh[0] != $ilhstu)   
+             )  
+             ||
+             (
+             $f      == $fstu &&
+             $id[1]  == $idstu && 
+             $od[1]  == $odstu &&
+             ($oll[1] != $ollstu || $olh[1] != $olhstu) &&
+             ($ill[1] != $illstu || $ilh[1] != $ilhstu)   
+             )  
+           ) {
+           $self->setMessage(1,"Vérifiez les bornes d'intégration et l'ordre d'intégration.");
+           return 0.47;
+
+
+
+
+        } elsif (
+             ( 
+             $f      != $fstu &&
+             $id[0]  == $idstu && 
+             $od[0]  == $odstu &&
+             $oll[0] == $ollstu &&
+             $olh[0] == $olhstu &&
+             $ill[0] == $illstu &&
+             $ilh[0] == $ilhstu  
+             )
+             ||
+             (
+             $f      != $fstu &&
+             $id[1]  == $idstu && 
+             $od[1]  == $odstu &&
+             $oll[1] == $ollstu &&
+             $olh[1] == $olhstu &&
+             $ill[1] == $illstu &&
+             $ilh[1] == $ilhstu  
+             )
+           ) {
+           $self->setMessage(1,"Vérifiez la fonction à intégrer et dA.");
+           return 0.47;
+        } elsif (
+             (
+             $f      != $fstu &&
+             $id[0]  == $idstu && 
+             $od[0]  == $odstu &&
+             ($oll[0] != $ollstu || $olh[0] != $olhstu) &&
+             $ill[0] == $illstu &&
+             $ilh[0] == $ilhstu 
+             )  
+             ||
+             (
+             $f      != $fstu &&
+             $id[1]  == $idstu && 
+             $od[1]  == $odstu &&
+             ($oll[1] != $ollstu || $olh[1] != $olhstu) &&
+             $ill[1] == $illstu &&
+             $ilh[1] == $ilhstu 
+             )  
+             ||
+             (
+             $f      != $fstu &&
+             $id[0]  == $idstu && 
+             $od[0]  == $odstu &&
+             $oll[0] == $ollstu &&
+             $olh[0] == $olhstu &&
+             ($ill[0] != $illstu || $ilh[0] != $ilhstu) 
+             )  
+             ||
+             (
+             $f      != $fstu &&
+             $id[1]  == $idstu && 
+             $od[1]  == $odstu &&
+             $oll[1] == $ollstu &&
+             $olh[1] == $olhstu &&
+             ($ill[1] != $illstu || $ilh[1] != $ilhstu) 
+             )  
+           ) {
+           $self->setMessage(1,"Vérifiez les bornes d'intégration, la fonction à intégrer et dA.");
+           return 0.47;
+        } elsif (
+             (
+             $f      != $fstu &&
+             $id[0]  == $idstu && 
+             $od[0]  == $odstu &&
+             ($oll[0] != $ollstu || $olh[0] != $olhstu) &&
+             ($ill[0] != $illstu || $ilh[0] != $ilhstu)   
+             )  
+             ||
+             (
+             $f      != $fstu &&
+             $id[1]  == $idstu && 
+             $od[1]  == $odstu &&
+             ($oll[1] != $ollstu || $olh[1] != $olhstu) &&
+             ($ill[1] != $illstu || $ilh[1] != $ilhstu)   
+             )  
+           ) {
+           $self->setMessage(1,"Vérifiez les bornes d'intégration, l'ordre d'intégration, la fonction à intégrer et dA.");
+           return 0.24;
+        } else {
+             return 0;
+        }
+    }
+  );
+
+
+
+##############################################
+#  Main text
+
+Context()->texStrings;
+Context()->flags->set(reduceConstants=>0);
+BEGIN_TEXT
+Convertir l'intégrale ci-dessous en coordonnées polaires et évaluer l'intégrale :
+$BR
+\[ \displaystyle \int_{0}^{$a / \sqrt{2}} \!\! \int_{y}^{\sqrt{$asq - y^2}} xy \,\, dx \, dy \, .\]
+$PAR
+${BITALIC}$BBOLD Instructions.$EBOLD${EITALIC}
+Entrer la fonction à intégrer dans la première case-réponse,
+en écrivant ${BITALIC}theta${EITALIC} pour \(\theta\).
+Selon l'ordre d'intégration choisi,
+entrer ${BITALIC}dr${EITALIC} et ${BITALIC}dtheta${EITALIC}
+dans l'ordre désiré dans les deuxième et troisième cases-réponses
+avec un seul ${BITALIC}dr${EITALIC} ou 
+${BITALIC}dtheta${EITALIC} dans chaque case. Ensuite, entrer les bornes
+d'intégration et évaluer l'intégrale pour trouver le volume.
+$PAR
+\( \displaystyle \int_{\alpha}^{\beta} \!\! \int_{\gamma}^{\delta} \) 
+\{ $multipart->ans_rule(40) \}
+\{ $multipart->ans_rule(5) \}
+\{ $multipart->ans_rule(5) \}
+$BR
+$BR
+\( \alpha = \)  \{ $multipart->ans_rule(20) \} $BR
+\( \beta = \)  \{ $multipart->ans_rule(20) \} $BR
+\( \gamma = \)  \{ $multipart->ans_rule(20) \} $BR
+\( \delta = \)  \{ $multipart->ans_rule(20) \}
+$PAR
+L'intégrale vaut :  \{ ans_rule(40) \}
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+
+
+
+##################################################
+#  Answers
+
+ANS($multipart->cmp() );
+ANS(($V)->cmp());
+
+$showPartialCorrectAnswers = 1;
+
+COMMENT('Allows integration in either order.');
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

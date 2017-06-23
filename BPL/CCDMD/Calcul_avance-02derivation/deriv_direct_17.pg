@@ -1,0 +1,136 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('applications', 'courbes de niveau', 'méthode du gradient')
+## Modifié par Éric Gaul, Collège Montmorency
+## Traduction française : Éric Gaul
+## Date : mars 2017
+## Language(fr)
+
+
+###############Source###############
+## DESCRIPTION
+##   Estimating directional derivatives
+## ENDDESCRIPTION
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Differentiation of multivariable functions)
+## ZDBsection(Directional derivatives and the gradient)
+## ZDate(10/15/09)
+## Institution(Fort Lewis College)
+## Author(Paul Pearson)
+## Level(3)
+## MO(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('14.4')
+## Problem1('62')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('14.4')
+## Problem2('62')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"PGcourse.pl",
+"parserImplicitEquation.pl",
+);
+ 
+
+TEXT(beginproblem());
+
+
+#####################
+#  Setup
+
+Context("Vector");
+
+#
+#  function
+#
+$f = Formula("(y - x)**2 - x * y");
+
+#
+#  point
+#
+@xcoord = (-3,-2,2,3);
+@ycoord = (-2,-3,3,2);
+$sel = random(0,3,1);
+($x,$y) = (@xcoord[$sel],@ycoord[$sel]);
+
+#$x = list_random(-3,-2,2,3);
+#if (abs($x) == 2) {
+#  $y = list_random(-3,3);
+#} else {
+#  $y = list_random(-2,2);
+#}
+
+#
+#  gradient
+#
+$fx = $f->D('x');
+$fy = $f->D('y');
+
+$gradf = Formula("< $fx, $fy >") -> reduce;
+$gradfab = $gradf -> eval(x=>$x,y=>$y) -> reduce;
+
+
+
+Context("ImplicitEquation");
+Context()->variables->set( x=>{limits=>[-4,4]}, y=>{limits=>[-4,4]} );
+
+if ( $x == -3 ) {
+  $line = ImplicitEquation("y = -2");
+} elsif ( $x == -2 ) {
+  $line = ImplicitEquation("x = -2");
+} elsif ( $x == 2 ) {
+  $line = ImplicitEquation("x = 2");
+} else { # $x == 3
+  $line = ImplicitEquation("y = 2");
+}
+
+
+######################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Considérons la courbe \( (y-x)^2 + 2 = xy - 3 \) comme une courbe de niveau de \(f(x,y)\).
+$PAR
+$BBOLD (a) $EBOLD
+Utiliser \( \nabla f ($x,$y) \) pour trouver un vecteur normal à la courbe au point \( ($x,$y) \). 
+$PAR
+\{ ans_rule(40) \} $BITALIC (inscrire un vecteur avec des crochets, ex. \(< 1, 1 >\)) $EITALIC
+$PAR
+$BBOLD (b) $EBOLD
+Utiliser la réponse en (a) pour trouver une équation implicite
+pour la droite tangente à la courbe en \( ($x,$y) \). 
+$PAR
+\{ans_rule(40)\} $BITALIC (inscrire une équation mettant possiblement en relation \( x \) et \( y \))$EITALIC
+END_TEXT
+Context()->normalStrings;
+
+
+#######################
+#  Answer evaluators
+
+# make a custom answer checker as a subroutine
+sub parallel_vector_cmp {
+   my ($correct, $student, $ansHash) = @_;
+   return $student->isParallel($correct);
+}
+
+ANS($gradfab->cmp( checker=>~~&parallel_vector_cmp, showCoordinateHints => 0 ) );
+
+ANS($line->cmp());
+
+$showPartialCorrectAnswers = 1;
+
+
+;
+ENDDOCUMENT();

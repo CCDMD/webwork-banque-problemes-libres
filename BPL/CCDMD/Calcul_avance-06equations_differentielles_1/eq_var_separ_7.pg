@@ -1,0 +1,130 @@
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('directement intégrable', 'ordre 1', 'représentation graphique', 'résolution d\'une équation', 'solution particulière')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################
+## DESCRIPTION
+## First order differential equation
+## ENDDESCRIPTION
+## ZDBsubject(Differential equations)
+## ZDBchapter(Introductory concepts)
+## ZDBsection(Verification of solutions)
+## ZDate(01/01/2012)
+## Institution(Fort Lewis College)
+## Author(Paul Pearson)
+## Level(1)
+## MO(1)
+## TitleText1('Elementary Differential Equations')
+## AuthorText1('Kohler and Johnson')
+## EditionText1('2006')
+## Section1('1.2')
+## Problem1('22')
+###############Source#################
+
+
+
+##############################
+#  Initialization
+
+DOCUMENT(); 
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"PGgraphmacros.pl",
+"unionTables.pl",
+);
+
+TEXT(beginproblem());
+
+
+#############################
+#  Setup
+
+Context("Numeric")->variables->are(t=>"Real");
+
+$a = random(2,4,2);
+$b = -1*$a + random(3,5,2);
+
+$m = Real("($a+$b)/2");
+$t0 = Real("0");
+$y = Formula("($a + $b)*t^2/4 - $a");
+
+
+$gr = init_graph(-5,-5,5,5,axes=>[0,0]);
+$gr -> lb('reset');
+
+#  manually draw the grid
+foreach my $i (-5..5) {
+  $gr->moveTo($i,-5);
+  $gr->lineTo($i,5,'gray',1);
+  $gr->moveTo(-5,$i);
+  $gr->lineTo(5,$i,'gray',1);
+}
+
+
+#
+#  Graph labels and functions
+#
+$gr -> lb(new Label ( 4.5,0,'t','black','left','bottom'));
+$gr -> lb(new Label ( 0.25,4.5,'y','black','left','bottom'));
+
+foreach my $i (1..4) {
+  $gr -> lb(new Label ( $i,-0.5, $i,'black','center','middle'));
+  $gr -> lb(new Label (-$i,-0.5,-$i,'black','center','middle'));
+  $gr -> lb(new Label (-0.5, $i, $i,'black','center','middle'));
+  $gr -> lb(new Label (-0.5,-$i,-$i,'black','center','middle'));
+}
+
+add_functions($gr, "$y for t in <-5,5> using color:blue and weight:2");
+
+
+#############################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+\{
+ColumnTable(
+"Le graphique illustre la solution du problème de valeur initiale :$PAR
+$BCENTER \( y^{\,\prime}(t) = m t \), \( y(t_0) = -$a \) $ECENTER $BR 
+Déterminer les valeurs suivantes : ".
+$PAR.$NBSP.$NBSP.
+"\( m = \) ".
+ans_rule(10).
+$PAR.$NBSP.$NBSP.
+"\( t_0 = \) ".
+ans_rule(10).
+$PAR.$NBSP.$NBSP.
+"\( y(t) = \) ".
+ans_rule(30)
+,
+$BCENTER.
+image(insertGraph($gr), width=>300, height=>300, tex_size=>700).
+$ECENTER
+,
+indent => 0, separation => 30, valign => "TOP"
+);
+\}
+END_TEXT
+Context()->normalStrings;
+
+
+############################
+#  Answers
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $m->cmp() );
+ANS( $t0->cmp() );
+ANS( $y->cmp() );
+
+
+;
+
+ENDDOCUMENT();

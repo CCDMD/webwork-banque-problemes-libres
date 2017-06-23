@@ -1,0 +1,107 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation - définition et interprétation)
+## KEYWORDS('dérivée directionnelle', 'vecteur gradient')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+
+###############Source################
+## DESCRIPTION
+##   Estimating directional derivatives
+## ENDDESCRIPTION
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('Directional Derivatives and the Gradient Vector')
+## ZDate('10/15/09')
+## Author('Paul Pearson')
+## Institution('Fort Lewis College')
+## TitleText1('Calculus')
+## TitleText2('Calculus')
+## EditionText1('4')
+## EditionText2('5')
+## AuthorText1('Hughes-Hallett')
+## AuthorText2('Hughes-Hallett')
+## Section1('14.5')
+## Section2('14.5')
+## Problem1('')
+## Problem2('')
+## HGM4, Chapter 14 Check Your Understanding 20, 32, 42, 44
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"PGgraders.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+# Create and use pop up lists 
+$tf = new_select_list();
+$tf->rf_print_q(~~&pop_up_list_print_q);
+
+# Specify choices presented to students
+$tf->ra_pop_up_list( 
+[ No_answer => "?", "vrai"=>"vrai", "faux"=>"faux"] );
+
+# Questions and answers
+$tf -> qa ( 
+"Si \(f(x,y)\) est tel que \(f_x(a,b) = 0\) et \(f_y(a,b) = 0\) au point \((a,b)\), alors \(f\) est partout constant.",
+"faux", 
+"Le vecteur gradient \(\nabla f(a,b)\) est tangent à la courbe de niveau de \(f\) au point \((a,b)\).",
+"faux", 
+"\( f_{\vec{u}} \, (a,b) = || \nabla f(a,b) || \).",
+"faux", 
+"Supposons que \(f_x(a,b)\) et \(f_y(a,b)\) existent.  Alors il y a toujours une direction vers laquelle le taux de changement de \(f\) au point \((a,b)\) est zéro.",
+"vrai",  
+"\(f_{\vec{u}} \, (a,b)\) est parallèle à \(\vec{u}\).",
+"faux",
+"\(\nabla f(a,b)\) est un vecteur dans l'espace à 3 dimensions.",
+"faux",
+"Si \(\vec{u}\) est un vecteur unitaire, alors \( f_{\vec{u}} (a,b) \) est un vecteur.",
+"faux",
+"Si \(\vec{u}\) est perpendiculaire à \( \nabla f(a,b) \), alors \(f_{\vec{u}} \, (a,b) = \langle 0, 0 \rangle \).",
+"faux",
+);
+
+# How many questions to use
+$tf->choose(8);
+
+
+
+##############################################
+#  Main text
+
+BEGIN_TEXT
+Est-ce que les énoncés suivants sont vrais ou faux?
+$BR
+\{ $tf->print_q() \}
+END_TEXT
+
+
+##############################################
+#  Answer evaluation
+
+#install_problem_grader(~~&std_problem_grader);
+
+install_problem_grader(~~&custom_problem_grader_fluid);
+$ENV{'grader_numright'} = [4,6,8];
+$ENV{'grader_scores'} = [0.5,0.75,1];
+$ENV{'grader_message'} = "Vous pouvez obtenir " .
+"un résultat de 50% pour 4 à 5 réponses correctes et " .
+"un résultat de 75% pour 6 à 7 réponse correctes.";
+
+$showPartialCorrectAnswers = 0;
+
+ANS(str_cmp($tf->ra_correct_ans));
+
+ENDDOCUMENT(); 
