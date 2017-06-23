@@ -1,0 +1,269 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('intégrale itérée', 'intégrale triple', 'région solide', 'région solide de type 1', 'région solide de type 2')
+## Adapté par Éric Gaul, Collège Montmorency
+## Traduction française : Éric Gaul
+## Date : avril 2017
+## Language(fr)
+
+###############Source################
+# DESCRIPTION
+# Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+# originally from 5ed (with updates)
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+## Tagged by glr 03/25/10
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Integration of multivariable functions)
+## ZDBsection(Triple integrals)
+## Institution(University of Michigan)
+## Author(Gavin LaRose)
+## Level(2)
+## MO(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('5')
+## Section1('16.3')
+## Problem1('23')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('6')
+## Section2('16.3')
+## Problem2('40')
+## Textbook tags
+## HHChapter1('Integrating Functions of Several Variables')
+
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+"parserMultiAnswer.pl"
+);
+
+Context("Numeric");
+Context()->variables->add( y=>'Real', z=>'Real' );
+$showPartialCorrectAnswers = 1;
+
+## pick a figure
+$whichF = list_random(1,2,3,4);
+$fname = "int_triple_coord_cart_7-f$whichF.png";
+
+## the variable from y or z that has one sign
+@pvar = ( '', 'y', 'y', 'z', 'z' );
+$sgn  = ( $whichF == 2 || $whichF == 3 ) ? '\le' : '\ge';
+
+$len = random(1,3,1);
+$r0  = random(1,3,1);
+Context()->flags->set( limits=>[-$r0,$r0] );
+$r0s = $r0*$r0;
+
+## the sizes of these are
+@h = ( '', 338, 387, 244, 249 );
+@w = ( '', 288, 270, 334, 324 );
+@alt = ( '',
+	 "une portion de cylindre s'étendant du plan \( yz \) le long de l'axe des \(x\) positifs, " .
+	     "en n'incluant que la portion dont les coordonnées en \(x\) et en \(y\) sont positives toutes les deux.",
+	 "une portion de cylindre s'étendant du plan \( yz \) le long de l'axe des \(x\) positifs, " .
+	     "en n'incluant que la portion dont les coordonnées en \(x\) sont positives et celles en \(y\) sont négatives.",
+	 "une portion de cylindre s'étendant du plan \( yz \) le long de l'axe des \(x\) positifs, " .
+	     "en n'incluant que la portion dont les coordonnées en \(z\) sont négatives.",
+	 "une portion de cylindre s'étendant du plan \( yz \) le long de l'axe des \(x\) positifs, " .
+	     "en n'incluant que la portion dont les coordonnées en \(z\) sont positives.", );
+
+## then the default limits are
+if ( $whichF == 1 ) {
+    ## the limits for dy dz dx
+    %limyzx = ( y => [ Formula("0"), Compute("sqrt($r0s - z^2)") ],
+	    	z => [ Formula("-$r0"), Formula("$r0") ],
+	    	x => [ Formula("0"), Formula("$len") ] );
+    ## and the limits for dz dy dx
+    %limzyx = ( z => [ Compute("-sqrt($r0s - y^2)"),
+		       Compute("sqrt($r0s - y^2)") ],
+		y => [ Formula("0"), Formula("$r0") ],
+		x => [ Formula("0"), Formula("$len") ] );
+} elsif ( $whichF == 2 ) {
+    ## for figure 2, we have the same limits with y values multiplied by -1
+    ## the limits for dy dz dx
+    %limyzx = ( y => [ Compute("-sqrt($r0s - z^2)"), Formula("0") ],
+	    	z => [ Formula("-$r0"), Formula("$r0") ],
+	    	x => [ Formula("0"), Formula("$len") ] );
+    ## and the limits for dz dy dx
+    %limzyx = ( z => [ Compute("-sqrt($r0s - y^2)"),
+		       Compute("sqrt($r0s - y^2)") ],
+		y => [ Formula("-$r0"), Formula("0") ],
+		x => [ Formula("0"), Formula("$len") ] );
+} elsif ( $whichF == 3 ) {
+    ## for figure 3, those for figure 2 with y and z variables exchanged
+    ## the limits for dy dz dx
+    %limyzx = ( y => [ Compute("-sqrt($r0s - z^2)"),
+		       Compute("sqrt($r0s - z^2)") ],
+	    	z => [ Formula("-$r0"), Formula("0") ],
+	    	x => [ Formula("0"), Formula("$len") ] );
+    ## and the limits for dz dy dx
+    %limzyx = ( z => [ Compute("-sqrt($r0s - y^2)"), Formula("0") ],
+		y => [ Formula("-$r0"), Formula("$r0") ],
+		x => [ Formula("0"), Formula("$len") ] );
+} else {
+    ## for figure 4, those for figure 1 with y and z variables exchanged
+    ## the limits for dy dz dx
+    %limyzx = ( y => [ Compute("-sqrt($r0s - z^2)"),
+		       Compute("sqrt($r0s - z^2)") ],
+	    	z => [ Formula("0"), Formula("$r0") ],
+	    	x => [ Formula("0"), Formula("$len") ] );
+    ## and the limits for dz dy dx
+    %limzyx = ( z => [ Formula("0"), Compute("sqrt($r0s - y^2)") ],
+		y => [ Formula("-$r0"), Formula("$r0") ],
+		x => [ Formula("0"), Formula("$len") ] );
+}
+
+$mp = MultiAnswer( Compute("z"), Compute("y"), Compute("x"),
+		   $limzyx{"x"}->[0], $limzyx{"x"}->[1],
+		   $limzyx{"y"}->[0], $limzyx{"y"}->[1],
+		   $limzyx{"z"}->[0], $limzyx{"z"}->[1] )->with(
+    singleResult=>0,
+    checker=>sub {
+	my( $c, $s, $ansH ) = @_;
+
+	my @res = ( 0,0,0, 0,0, 0,0, 0,0 );
+
+	## variables we've found in the integral
+	my %donevar  = ( x => 0, y => 0, z => 0 );
+	my $yz = 0;
+	my @varorder = ( );
+
+	if ( $c->[0] == $s->[0] || $c->[1] == $s->[0] || $c->[2] == $s->[0] ) {
+	    $res[0] = 1;
+	    $donevar{$s->[0]->string()} = 1;
+	    push( @varorder, $s->[0]->string() );
+	    $yz = 1 if ( $s->[0]->string() eq 'y' );
+	} else {
+	    push( @varorder, 0 );
+	}
+	if ( ( $c->[0] == $s->[1] && ! $donevar{$c->[0]->string()} ) ||
+	     ( $c->[1] == $s->[1] && ! $donevar{$c->[1]->string()} ) ||
+	     ( $c->[2] == $s->[1] && ! $donevar{$c->[2]->string()} ) ) {
+	    $res[1] = 1;
+	    $donevar{$s->[1]->string()} = 1;
+	    push( @varorder, $s->[1]->string() );
+	    $yz = 1 if ( $s->[1]->string() eq 'y' && ! $donevar{'z'} );
+	} else {
+	    push( @varorder, 0 );
+	}
+	if ( ( $c->[0] == $s->[2] && ! $donevar{$c->[0]->string()} ) ||
+	     ( $c->[1] == $s->[2] && ! $donevar{$c->[1]->string()} ) ||
+	     ( $c->[2] == $s->[2] && ! $donevar{$c->[2]->string()} ) ) {
+	    $res[2] = 1;
+	    $donevar{$s->[2]->string()} = 1;
+	    push( @varorder, $s->[2]->string() );
+	} else {
+	    push( @varorder, 0 );
+	}
+	## now @varorder is a list of the correct variables that we have
+        ##    in the differential. to check the limits for each we need
+	##    to know if the order is yz or zy (the location of the x 
+        ##    differential doesn't matter)
+        $lim = ( $yz ) ? ~~%limyzx : ~~%limzyx;
+	my $i = 7;
+	foreach my $v ( @varorder ) {
+	    if ( $v ) {
+		$res[$i] = ( $lim->{$v}->[0] == $s->[$i] ) ? 1 : 0;
+		$res[$i+1] = ( $lim->{$v}->[1] == $s->[$i+1] ) ? 1 : 0;
+	    }
+	    $i -= 2;
+	}
+
+	return [ @res ];
+} );
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+Inscire les limites d'intégration de l'intégale :
+\( \displaystyle\iiint_W \, f(x,y,z)\,dV \),
+$BR
+où \(\ W\ \) est la portion de cylindre illustrée, 
+si la longueur est 
+\(\ $len\ \) et que le rayon est \(\ $r0\)
+(l'axe du cylindre se confond avec l'axe du système de coordonnées
+et l'origine \((0,0,0)\) repose sur l'une des arêtes du solide).
+$PAR
+$BCENTER
+\{ image( $fname, tex_size=>200, height=>$h[$whichf], width=>$w[$whichf],
+	  extra_html_tags=>'alt="' . $alt[$whichf] . '"' ) \}
+$ECENTER
+
+\( \displaystyle \iiint_W \, f(x,y,z)\,dV = \int_a^b \!\! \int_c^d \!\! \int_e^f \, f(x,y,z)\, d\)\{ $mp->ans_rule(3) \}
+\(d\)\{ $mp->ans_rule(3) \}
+\(d\)\{ $mp->ans_rule(3) \},
+$PAR
+où :
+\(a = \) \{$mp->ans_rule(15) \},
+\(b = \) \{$mp->ans_rule(15) \},$BR
+\(c = \) \{$mp->ans_rule(15) \},
+\(d = \) \{$mp->ans_rule(15) \},$BR
+\(e = \) \{$mp->ans_rule(15) \} et
+\(f = \) \{$mp->ans_rule(15) \}.
+$PAR
+${BEMPH}$BITALIC $BBOLD Remarque. $EBOLD Toutes les cases-réponses doivent être complétée pour valider la réponse.$EITALIC$EEMPH
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $mp->cmp() );
+
+if ( $whichF == 1 || $whichF == 2 ) {
+    %lim1 = %limyzx;
+    @var1 = ( 'y', 'z', 'x' );
+    %lim2 = %limzyx;
+    @var2 = ( 'z', 'y', 'x' );
+} else {
+    %lim1 = %limzyx;
+    @var1 = ( 'z', 'y', 'x' );
+    %lim2 = %limyzx;
+    @var2 = ( 'y', 'z', 'x' );
+}
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+Une tranche de \(W\) pour une valeur constante de \(x\)
+est une portion du cercle d'équation \(y^2 + z^2 = $r0s\), pour
+\($pvar[$whichF]$sgn 0\). On peut donc inscrire, pour l'intégrale intérieure :
+\[
+    \int_{$lim1{$var1[0]}->[0]}^{$lim1{$var1[0]}->[1]} f(x,y,z)\,d$var1[0].
+\]
+Aligner ces tranches parallèles à l'axe des \($var1[1]\) résulte en un parcours de
+\($var1[1]=$lim1{$var1[1]}->[0]\) à
+\($var1[1]=$lim1{$var1[1]}->[1]\), résultant en :
+\[
+  \int_{$lim1{$var1[1]}->[0]}^{$lim1{$var1[1]}->[1]}
+    \int_{$lim1{$var1[0]}->[0]}^{$lim1{$var1[0]}->[1]} f(x,y,z)\,
+	d$var1[0]\,d$var1[1].
+\]
+Finalement, il y a une tranche pour chaque \(x\) entre \( 0 \) et \( $len \), donc l'intégrale
+itérée est :
+\[
+\int_{0}^{$len}
+  \int_{$lim1{$var1[1]}->[0]}^{$lim1{$var1[1]}->[1]}
+    \int_{$lim1{$var1[0]}->[0]}^{$lim1{$var1[0]}->[1]} f(x,y,z)\,
+	d$var1[0]\,d$var1[1]\,dx.
+\]
+$PAR
+Il est également possible d'écrire :
+\[
+\int_{0}^{$len}
+  \int_{$lim2{$var2[1]}->[0]}^{$lim2{$var2[1]}->[1]}
+    \int_{$lim2{$var2[0]}->[0]}^{$lim2{$var2[0]}->[1]} f(x,y,z)\,
+	d$var2[0]\,d$var2[1]\,dx.
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+;
+
+ENDDOCUMENT();
