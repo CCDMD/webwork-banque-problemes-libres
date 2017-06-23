@@ -1,6 +1,6 @@
 ## DBsubject(Géométrie)
 ## DBchapter(Trigonométrie)
-## KEYWORDS('rapport trigonométrique', 'résolution d\'un triangle', 'sinus')
+## KEYWORDS('degré', 'rapport trigonométrique', 'résolution d\'un triangle', 'sinus')
 
 ## Institution(Collège de Bois-de-Boulogne)
 ## Author(Julie Tremblay)
@@ -15,12 +15,15 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "PGunion.pl",
+    "contextTrigDegrees.pl",
   "PGgraphmacros.pl",
 );
 
 
 TEXT(beginproblem());
 $showPartialCorrectAnswers = 1;
+
+Context("TrigDegrees");
 
 ### Pour rafraîchir le cache lorsqu’il a des graphiques dynamiques, sinon une image dans le cache peut s’afficher à la place
 $refreshCachedImages = 1;
@@ -31,9 +34,9 @@ $hyp = random(5,30);
 
 ### réponse - on cherche le côté opposé
 
-$arad = Formula("$a*pi/180");
-$aradf = sprintf("%.3f",Real("$arad"));
-$opp = Real("$hyp*sin($arad)");
+#$arad = Formula("$a*pi/180");
+#$aradf = sprintf("%.3f",Real("$arad"));
+$opp = Real("$hyp*sin($a)");
 
 
 # déterminer l'image à afficher dans la question
@@ -74,11 +77,12 @@ $gr->lb( new Label(2.7,0.3,'a','black','center','middle'));
 
 
 BEGIN_TEXT
-Déterminer la longueur du côté \(x\) dans le triangle rectangle suivant, où \(a=$aradf\) rad.
+Déterminer la longueur du côté \(x\) dans le triangle rectangle suivant, où \(a=$a^{\circ}\).
 $PAR \{ image( insertGraph($gr), width=>180, tex_size=> 400 ) \} $PAR
 $BR
 \(x = \) \{ans_rule(10)\}
-$BR
+$PAR
+${BBOLD}Note :$EBOLD Les angles doivent être entrés en degrés.
 END_TEXT
 
 ANS($opp->cmp);
