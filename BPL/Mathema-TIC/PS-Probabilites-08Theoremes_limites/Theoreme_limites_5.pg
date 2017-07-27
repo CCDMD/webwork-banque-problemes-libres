@@ -38,14 +38,29 @@ $prob=random(0.95,0.99,0.002);
 $obj=random(100,200,10);
 $defect=random(5,15,1);
 $borne=($defect+0.5-(1-$prob)*$obj)/(sqrt($obj*$prob*(1-$prob)));} until($borne<=3 && $borne>0);
+$mu=$obj*(1-$prob);
+$sigma2=$obj*$prob*(1-$prob);
+$defectp5=$defect+0.5;
+$z=($defectp5-$mu)/sqrt($sigma2);
 $ans1=normal_prob($borne,infty);
 $ans1=Compute("$ans1");
 BEGIN_TEXT
-Une usine fabrique des objets qui sont jugés acceptables avec probabilité \($prob\). Les objets sont vendus en lot de \($obj\). La compagnie rembourse le lot aux clients si plus de \($defect\) sont inacceptables. Approximer
+Une usine fabrique des objets qui sont jugés acceptables avec probabilité \($prob\). Les objets sont vendus en lot de \($obj\). La compagnie rembourse le lot aux clients si plus de \($defect\) sont inacceptables. Approximer par la loi normale
 la probabilité qu'un lot soit remboursable.
 $BR
 \{$ans1->ans_rule(10)\}
 END_TEXT
 ANS($ans1->cmp);
-
+BEGIN_SOLUTION
+Soit \(N\) le nombre d'objets défectueux dans un lot. La variable \(N\) suit une loi binomiale de paramètre \($obj\) et \($prob\).  On utilise l'approximation par la loi normale avec le théorème central limite. La moyenne \(\mu\) de \(N\) est \(\mu=$obj(1-$prob)=$mu\) et la variance \(\sigma^2=$obj*$prob*(1-$prob)=$sigma2\). On a alors
+\[
+\begin{aligned}
+\mathbb{P}[X> $defect]&= \mathbb{P}[X\geq $defectp5]\\
+&=\mathbb{P}[\frac{X-\mu}{\sigma}\geq \frac{$defectp5-\mu}{\sigma}]\\
+&\approx\mathbb{P}[Z\geq $z]\\
+&=1-\Phi($z)\\
+&=$ans1.\\
+\end{aligned}
+\]
+END_SOLUTION
 ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

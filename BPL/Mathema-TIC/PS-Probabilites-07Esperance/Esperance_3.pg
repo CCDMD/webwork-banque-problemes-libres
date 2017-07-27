@@ -31,6 +31,7 @@ Context("Numeric");
 $n=random(5,10,1);
 $p=random(0.1,0.9,0.1);
 $m=random(2,$n,1);
+$msur2=$m/2;
 $ans1=Compute("$m/2");       #X|X+Y=m est une hypergéom
 BEGIN_TEXT
 Soit \(X\) et \(Y\) des variables aléatoires indépendantes de loi binomiale avec paramètres \($n\) et \($p\).
@@ -42,7 +43,25 @@ $BR
 END_TEXT
 $showHint=3;
 BEGIN_HINT
-Quelle est la loi conditionnelle de \(X\) sachant \(X+Y=m\) si \(X,Y\) sont des varianble i.i.d. de loi binomiale \(n,p\)?
+Quelle est la loi conditionnelle de \(X\) sachant \(X+Y=m\) si \(X,Y\) sont des variables i.i.d. de loi binomiale \(n,p\)?
 END_HINT
 ANS($ans1->cmp);
+BEGIN_SOLUTION
+Soit \(X\) et \(Y\) des variables de loi binomiale avec paramètres \(n,p\).
+Commençons par déterminer la loi de la variable \(X\) sachant la somme \(X+Y=m\), pour un nombre \(m\) entre \(0\) et \(2n\). On a 
+\[
+\begin{aligned}
+\mathbb{P}[X=k~|~X+Y=m]&= \frac{\mathbb{P}[(X=k) \cap (X+Y=m)]}{\mathbb{P}[X+Y=m]}\\
+&=\frac{\mathbb{P}[(X=k) \cap (k+Y=m)]}{\mathbb{P}[X+Y=m]}\\
+\frac{\mathbb{P}[X=k]\mathbb{P}[Y=m-k]}{\mathbb{P}[X+Y=m]}\\
+&=\frac{{n\choose k}p^k(1-p)^{n-k} \times {n\choose m-k}p^{m-k}(1-p)^{n-(m-p)}}{{2n\choose m}p^{m}(1-p)^{2n-m}}\\
+&=\frac{{n\choose k}\times {n\choose m-k}}{{2n\choose m}}.
+\end{aligned}
+\]
+Dans le raisonnent ci-dessus, on a utilisé le fait que \(X\) et \(Y\) sont indépendantes pour séparer \(\mathbb{P}[(X=k) \cap (k+Y=m)]\) et le fait qu'une somme de deux binomiales i.i.d. est une binomiale de paramètres \(2n,p\).
+$BR
+Certains reconnaîtront ici l'expression d'une variable aléatoire de loi hypergéométrique de paramètres \(2n,n,m\). L'espérance d'une telle variable est \(n\frac{m}{2n}=\frac{m}{2}\).
+$BR
+Dans notre cas particulier, l'espérance est donc \( $msur2\).
+END_SOLUTION
 ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

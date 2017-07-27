@@ -26,6 +26,7 @@ TEXT(beginproblem());
 Context("Numeric");
 $urn1=random(6,8,1);
 $urn1c=10-$urn1;
+$probinter=1/2*($urn1/10)**2+1/2*($urn1c/10)**2;
 $ans1=Compute("1/2*$urn1/10+1/2*$urn1c/10");      #calcul bidon, au cas où on voudrait généraliser
 $ans2=Compute("(1/2*($urn1/10)^3+1/2*($urn1c/10)^3)/(1/2*($urn1/10)^2+1/2*($urn1c/10)^2)");
 $ans3=Compute("1/2*($urn1/10)**2/(1/2*($urn1/10)**2+1/2*($urn1c/10)**2)");
@@ -50,5 +51,41 @@ END_TEXT
 ANS($ans1->cmp);
 ANS($ans2->cmp);
 ANS($ans3->cmp);
-
+BEGIN_SOLUTION
+Notons \(N_k\) l'événement la \(k^e\) bille tirée est noire, $BR
+notons \(F\) l'événement la pièce tombe sur face et $BR
+notons \(F^c\) l'événement la pièce tombe sur pile.
+$BR
+$BR
+Pour le 1., comme la pièce est balancée et que les urnes sont symétriques, la probabilité de sélectionner une bille noire est de \(\frac{1}{2}\). On peut tout de même s'en assurer avec un calcul. On cherche \(P(N_1)\). En vertu de la loi des probabilités totales, on a
+\[
+P(N_1)=P(N_1~|~F)P(F)+P(N_1~|~F^c)P(F^c),
+\]
+ce qui nous donne \(P(N_1)=\frac{$urn1}{10}\frac{1}{2}+\frac{$urn1c}{10}\frac{1}{2}=\frac{1}{2}\).
+$BR
+$BR
+Pour le 2., on cherche \(P(N_3~|~N_1\cap N_2)\). On utilise la formule de Bayes:
+\[
+P(N_3~|~N_1\cap N_2)=\frac{P(N_1\cap N_2~|~N_3)P(N_3)}{P(N_1\cap N_2)}.
+\]
+$BR
+Pour calculer \(P(N_1\cap N_2)\), on conditionne sur le résultat de la pièce:
+\[
+P(N_1\cap N_2)=P(N_1\cap N_2~|~F)P(F)+P(N_1\cap N_2~|~F^c)P(F^c),
+\]
+ce qui nous donne \(P(N_1\cap N_2)=\left(\frac{$urn1}{10}\right)^2\frac{1}{2}+\left(\frac{$urn1c}{10}\right)^2\frac{1}{2}=$probinter\).
+$BR
+Pour calculer le numérateur, on utilise le fait que \(P(N_1\cap N_2~|~N_3)P(N_3)=P(N_1\cap N_2\cap N_3)\) et on conditionne sur le résultat de la pièce comme pour le calcul précédent. On trouve \(P(N_1\cap N_2~|~N_3)P(N_3)=\left(\frac{$urn1}{10}\right)^3\frac{1}{2}+\left(\frac{$urn1c}{10}\right)^3\frac{1}{2}\).  Au final on trouve
+\[
+P(N_3~|~N_1\cap N_2)=\frac{\left(\frac{$urn1}{10}\right)^3\frac{1}{2}+\left(\frac{$urn1c}{10}\right)^3\frac{1}{2}}{\left(\frac{$urn1}{10}\right)^2\frac{1}{2}+\left(\frac{$urn1c}{10}\right)^2\frac{1}{2}}=$ans2.
+\]
+$BR
+$BR
+Pour le 3., on cherche \(P(F~|~N_1\cap N_2)\). On utilise la formule de Bayes:
+\[
+P(F~|~N_1\cap N_2)=\frac{P(N_1\cap N_2~|~F)P(F)}{P(N_1\cap N_2)}.
+\]
+Puisque le tirage est fait avec remise, \(P(N_1\cap N_2~|~F)=\left(\frac{$urn1}{10}\right)^2\).  Au final, on obtient \(P(N_3~|~N_1\cap N_2)=$ans2\).
+\(P(F~|~N_1\cap N_2)=\frac{\left(\frac{$urn1}{10}\right)^2\frac{1}{2}}{\left(\frac{$urn1}{10}\right)^2\frac{1}{2}+\left(\frac{$urn1c}{10}\right)^2\frac{1}{2}}=$ans3.\)
+END_SOLUTION
 ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

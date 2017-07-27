@@ -42,6 +42,10 @@ $Urnes{"A"}{noire}=$UrnAno/$totA;
 $Urnes{"B"}{blanche}=$UrnBbl/$totB;
 $Urnes{"B"}{rouge}=$UrnBro/$totB;
 $Urnes{"B"}{noire}=$UrnBno/$totB;
+%Couleur;
+$Couleur{"blanche"}='B';
+$Couleur{"rouge"}='R';
+$Couleur{"noire"}="N";
 $ans=$Urnes{$urne}{$couleur}/($Urnes{$urne}{$couleur}+$Urnes{$noturne}{$couleur});
 $ans=Compute("$ans");
 BEGIN_TEXT
@@ -50,5 +54,18 @@ $BR
 La probabilité que la bille $couleur provienne de l'urne \($urne\) est \{$ans->ans_rule(20)\}
 END_TEXT
 ANS($ans->cmp);
-
+BEGIN_SOLUTION
+On note \(U\) l'événement la bille provient de l'urne \($urne\) et \($Couleur{$couleur} \) l'événement la bille tirée est de couleur $couleur. On cherche \(P(U~|~$Couleur{$couleur})\).
+$BR
+En utilisant la formule de Bayes, on trouve
+\[
+P(U~|~$Couleur{$couleur})=\frac{P($Couleur{$couleur}~|~U)P(U)}{P($Couleur{$couleur}~|~U)P(U)+P($Couleur{$couleur}~|~U^c)P(U^c)}
+\]
+Comme le choix de l'urne est fait de façon équiprobable, on a \(P(U)=P(U^c)=1/2\). De plus, \(P($Couleur{$couleur}~|~U)=$Urnes{$urne}{$couleur}\) et  \(P($Couleur{$couleur}~|~U^c)=$Urnes{$noturne}{$couleur}\). 
+$BR
+Au final, on obtient 
+\[
+P(U~|~$Couleur{$couleur})=\frac{$Urnes{$urne}{$couleur}}{$Urnes{$urne}{$couleur}+$Urnes{$noturne}{$couleur}}=$ans.
+\]
+END_SOLUTION
 ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

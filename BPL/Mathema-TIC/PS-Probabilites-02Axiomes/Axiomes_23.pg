@@ -40,13 +40,15 @@ loadMacros(
 
 TEXT(beginproblem()); 
 
-
+Context("Numeric");
 $draw = random(3, 5, 1); 
 $white = random(5, 10, 1); 
 $blue = random(5, 10, 1); 
 $red = random(5, 10, 1);
 
 $total = $red+$white+$blue; 
+$drawm2=$draw-2;
+$bpw=$blue+$white;
 $C1 = fact($red)/(fact($draw)*fact($red-$draw)); 
 $C2 = fact($total)/(fact($draw)*fact($total-$draw));
 
@@ -56,26 +58,38 @@ $C4 = fact($white+$blue)/(fact($white+$blue-$draw)*fact($draw));
 
 BEGIN_TEXT;
 Un sac contient $red billes rouges, $white billes blanches et $blue billes bleues.
-On tire $draw billes au hasard, sans remise.  
-Quelle est la probabilité que toutes les billes soient rouges? 
+On tire $draw billes au hasard, sans remise. 
+$BR 
+a) Quelle est la probabilité que toutes les billes soient rouges? 
 $BR  $BR 
 La probabilité que toutes les billes soient rouges est égale à \{ans_rule(10)\}. 
 $BR
 $BR
-Quelle est la probabilité qu'exactement deux billes soient rouges?
+b) Quelle est la probabilité qu'exactement deux billes soient rouges?
 $BR
 La probabilité qu'exactement deux billes soient rouges est égale à  \{ans_rule(10)\}.
 $BR
 $BR
-Quelle est la probabilité qu'aucune bille ne soit rouge?
+c) Quelle est la probabilité qu'aucune bille ne soit rouge?
 $BR
 La probabilité qu'aucune bille ne soit rouge est égale à \{ans_rule(10)\}.
 $BR
 END_TEXT
-
-ANS(num_cmp("$C1/$C2", mode => 'std'));
-ANS(num_cmp("$C3/$C2", mode => 'std'));
-ANS(num_cmp("$C4/$C2", mode => 'std'));
-
+Context("IntegerFunctions");
+$ANS1=Compute("$C1/$C2");
+$ANS2=Compute("$C3/$C2");
+$ANS3=Compute("$C4/$C2");
+ANS($ANS1->cmp());
+ANS($ANS2->cmp());
+ANS($ANS3->cmp());
+BEGIN_SOLUTION
+Pour le a), on doit s'assurer de sélectionner les \($draw\) billes parmi les \($red\) disponibles. Comme il y a \({$red\choose $draw}=$C1\) manières de le faire et qu'au total il y a \({$total\choose $draw}=$C2\) tirages différents, on conclut que la probabilité que toutes les billes soient rouges est \(\frac{{$red\choose $draw}}{{$total\choose $draw}}=$C1/$C2\).
+$BR
+$BR
+Pour le b), on veut obtenir exactement deux billes rouges. Pour cela, on doit sélectionner ces deux billes rouges parmi les \($red\) disponibles et ensuite sélectionner \($draw-2\) billes parmi les \($blue+$white\) qui ne sont pas rouges. On obtient donc \({$red\choose 2}{$bpw\choose $drawm2}=$C3\) tirages possibles. La probabilité est donc \(\frac{$C3}{$C2}\).
+$BR
+$BR
+Pour le c), on doit sélectionner toutes les billes parmi les \($bpw\) qui ne sont pas rouges. On obtient \({$bpw\choose $draw}\) tirages possibles, ce qui donne une probabilité de \(\frac{$C4}{$C2}\).
+END_SOLUTION 
 ENDDOCUMENT();
 
