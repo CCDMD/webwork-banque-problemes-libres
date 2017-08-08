@@ -1,0 +1,129 @@
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('condition initiale', 'ordre 2', 'solution générale', 'solution particulière', 'vérification', 'équation homogène', 'équation linéaire')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################
+## DESCRIPTION
+## Introduction to differential equations
+## ENDDESCRIPTION
+## ZDBsubject(Differential equations)
+## ZDBchapter(Introductory concepts)
+## ZDBsection(Verification of solutions)
+## ZDate(01/30/2011)
+## Institution(Fort Lewis College)
+## Author(Paul Pearson)
+## Level(2)
+## MO(1)
+## TitleText1('Notes on Diffy Qs')
+## AuthorText1('Edwards and Penney')
+## EditionText1('4')
+## Section1('1.1')
+## Problem1('1')
+## TitleText2('Differential Equations Computing and Modeling')
+## AuthorText2('')
+## EditionText2('')
+## Section2('.')
+## Problem2('')
+###############Source#################
+
+
+##############################
+#  Initialization
+
+DOCUMENT(); 
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"unionLists.pl",
+"answerHints.pl",
+);
+
+TEXT(beginproblem());
+
+
+#############################
+#  Setup
+
+Context("Numeric")->variables->add(
+t=>"Real", 'c1'=>"Real", 'c2'=>"Real",
+);
+
+
+$k = random(2,5,1);
+$km1 = $k-1;
+$kp1 = $k+1;
+
+$x = Formula("c1 e^(-t) + c2 e^($k t)");
+
+$expr = "x'' - $km1 x' - $k x";
+
+Context()->flags->set(
+  reduceConstants=>0, # no decimals
+  reduceConstantFunctions=>1, # combine 4+5*2?
+  formatStudentAnswer=>'parsed', # no decimals
+);
+
+$answer[0] = Formula("c1 e^(-t) + $k^2 c2 e^($k t)")->reduce;
+$answer[1] = Formula("-$km1 (-c1 e^(-t) + $k c2 e^($k t))")->reduce;
+$answer[2] = Formula("-$k (c1 e^(-t) + c2 e^($k t))")->reduce;
+
+$C = random(2,5,1);
+$D = random(1,3,1);
+
+$Anum = $k * $C - $D;
+$Bnum = $C + $D;
+
+$answer[3] = Compute("$Anum / $kp1 e^(-t) + $Bnum / $kp1 e^($k t)");
+
+
+#############################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la fonction \( x(t) = $x \).  
+\{ BeginList("OL",type=>"a") \}
+
+$ITEM Vérifier que \( x(t) \) est une solution
+de l'équation différentielle :
+ \( x^{\,\prime\prime} - $km1 x^{\,\prime} - $k x = 0 \)
+en substituant dans l'équation$BR
+(inscrire les termes dans l'ordre donné et inscrire ${BTT}${BBOLD}c1${EBOLD}${ETT}
+en guise de \( c_1 \) ainsi que  ${BTT}${BBOLD}c2${EBOLD}${ETT} en guise de \( c_2 \)).
+$PAR
+$NBSP
+\{ ans_rule(20) \}
++
+\{ ans_rule(20) \}
++
+\{ ans_rule(20) \}
+\( = 0 \).
+
+$ITEM  Déterminer \( x(t) \) si  \( x(0) = $C \) et \( x^{\,\prime}(0) = $D \).
+$PAR
+$NBSP$NBSP$NBSP\( x(t) = \) \{ ans_rule(30) \} 
+
+\{ EndList("OL") \}
+END_TEXT
+Context()->normalStrings;
+
+
+############################
+#  Answers
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $answer[0]->cmp() );
+ANS( $answer[1]->cmp() );
+ANS( $answer[2]->cmp() );
+ANS( $answer[3]->cmp() );
+
+;
+
+ENDDOCUMENT();

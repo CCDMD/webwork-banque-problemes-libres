@@ -1,0 +1,123 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation - définition et interprétation)
+## KEYWORDS('dérivée partielle', 'fonction dérivée', 'limite', 'taux de variation instantané')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################
+## DESCRIPTION
+## Partial derivatives
+## ENDDESCRIPTION
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Differentiation of multivariable functions)
+## ZDBsection(Partial derivatives)
+## ZDate(08/24/2012)
+## Institution(Hope College)
+## Author(Paul Pearson)
+## MLT(LimitDefn)
+## MLTleader(1)
+## Level(3)
+## TitleText1('Multivariable Mathematics')
+## AuthorText1('Darin Stephenson')
+## EditionText1('Version 3.0')
+## Section1('10.2')
+## Problem1('')
+###############Source#################
+
+
+##############################
+#  Initialization
+
+DOCUMENT(); 
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserDifferenceQuotient.pl",
+);
+
+TEXT(beginproblem());
+
+#############################
+#  Setup
+
+Context("Numeric")->variables->are(
+x=>'Real',
+y=>'Real',
+);
+
+# construct the function
+$a = random(2,9,1);
+
+$choice = random(0, 1);
+
+if ($choice == 0) {
+   $f = Formula("$a x^3 y^2");
+} else {
+   $f = Formula("$a x^2 y^3");
+}
+   $fx = $f->D('x');
+   $fy = $f->D('y');
+
+if ($choice == 0) {
+   $fxh = DifferenceQuotient("$a*y^2*(3x^2+3xh+h^2)","h");
+   $fyh = DifferenceQuotient("$a*x^3*(2*y+h)","h");
+} else {
+   $fxh = DifferenceQuotient("$a*y^3*(2*x+h)","h");
+   $fyh = DifferenceQuotient("$a*x^2*(3y^2+3yh+h^2)","h");
+}
+
+######################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer les dérivées partielles d'ordre 1 de \( f(x,y) = $f \)
+en utilisant la définition par une limite.
+Chaque limite doit être simplifiée au maximum avant d'être inscrite.
+$PAR
+$BBOLD (a) $EBOLD
+\( \ \ \displaystyle
+f_x(x,y)
+=
+\lim_{h \to 0} \frac{f(x+h,y)-f(x,y)}{h} 
+=
+\lim_{h \to 0}
+\Bigg(
+\)
+\{ ans_rule(30) \}
+\( \Bigg) = \)
+\{ ans_rule(20) \}
+$PAR
+$BBOLD (b) $EBOLD
+\( \ \ \displaystyle
+f_y(x,y)
+=
+\lim_{h \to 0} \frac{f(x,y+h)-f(x,y)}{h} 
+=
+\lim_{h \to 0}
+\Bigg(
+\)
+\{ ans_rule(30) \}
+\( \Bigg) = \)
+\{ ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+########################
+#  Answer evaluation
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $fxh->cmp() );
+ANS( $fx ->cmp() );
+
+ANS( $fyh->cmp() );
+ANS( $fy ->cmp() );
+
+
+COMMENT("Uses parserDifferenceQuotient.pl to require students to simplify their difference quotients.");
+
+ENDDOCUMENT();

@@ -1,0 +1,122 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('approximation par le polynôme de Taylor', 'estimation', 'polynôme de Taylor', 'série de Taylor')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/NAU/setCalcII/T2SqrtApprox.pg
+## ZInstitution(NAU)
+## ZAuthor(Jim Swift)
+## ZMLT(SeriesApp_02)
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"scaffold.pl",
+"PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+# choix de la fonction
+$i = random(0,1);
+@trigtex = ("\sin","\cos");
+
+# choix de l'angle a
+@a = (pi/6,pi/3);
+@adeg = (30,60);
+@atex = ("\frac{\pi}{6}","\frac{\pi}{3}");
+
+# valeur de l'angle à estimer (en degré)
+$diff = non_zero_random(-5,5);
+$c = $adeg[$i] + $diff;
+$crad = Real("$c*pi/180");
+
+# Les polynômes de Taylor centrée en a
+$c0 = 1/2;
+if($i==0) {$c1 = sqrt(3)/2;} else {$c1 = -sqrt(3)/2;}
+$c2  = -1/4;
+if($i==0) {$c3 = -sqrt(3)/12;} else {$c3 = sqrt(3)/12;}
+$T = Formula("$c0 + $c1*(x-$a[$i]) + $c2*(x-$a[$i])^2 + $c3*(x-$a[$i])^3");
+
+# Approximation de c radian
+$Tc = $T->eval(x=>$crad);
+
+## Début du problème par parties
+Scaffold::Begin(
+      can_open => "when_previous_correct",
+      is_open  => "correct_or_first_incorrect"
+);
+
+Section::Begin("Partie 1");
+BEGIN_TEXT
+Le développement de la fonction \( f\) en série de Taylor centrée en \( a \) est
+\[ f(x) =  \sum_{n=0}^{\infty}\frac{f^{(n)}(a)}{n!}(x-a)^n = f(a) + f'(a) (x-a) + \frac{f''(a)}{2}(x-a)^2 + \frac{f'''(a)}{3!} (x-a)^3 + \cdots \] 
+$PAR
+Le problème suivant utilise ce développement pour la fonction \(f(x) = $trigtex[$i](x)\) et ${BBOLD}l'angle en radian$EBOLD $BR
+\(a = \) \{ans_rule(5)\} 
+afin d'évaluer approximativement \($trigtex[$i]($c)\).  
+END_TEXT
+
+ANS($a[$i]->cmp);
+
+Section::End();
+
+Context()->texStrings;
+Section::Begin("Partie 2");
+BEGIN_TEXT
+En effet, \(a = $adeg[$i] =$atex[$i]\) est la meilleure valeur de \(a\) à utiliser, car elle est proche de \($c\) 
+et que \(f($atex[$i])=$trigtex[$i]\left($atex[$i]\right)\) se calcule sans l'aide d'une calculatrice. 
+De plus, on calcule aussi facilement
+\(f'\left($atex[$i]\right)\), \(f''\left($atex[$i]\right)\) et \(f'''\left($atex[$i]\right)\) sans calculatrice. Essayer de résoudre ce problème sans l'aide d'une calculatrice.
+$PAR
+Trouver tout d'abord les quatre premiers termes non nuls de la série de Taylor de \(f(x)=$trigtex[$i](x)\) centrée en \($atex[$i]\), c'est-à-dire déterminer 
+le polynôme de Taylor de degré 3, \(T_3(x)\).
+$PAR
+\(T_3(x) = \) \{ans_rule(20)\} \( + \) \{ans_rule(20)\} \( + \) \{ans_rule(20)\} \( + \) \{ans_rule(20)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS( Formula("$c0")->cmp());
+ANS( Compute("$c1*(x-$a[$i])")->cmp());
+ANS( Compute("$c2*(x-$a[$i])^2")->cmp());
+ANS( Compute("$c3*(x-$a[$i])^3")->cmp());
+
+
+Section::End();
+
+Section::Begin("Partie 3");
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Trouver maintentant l'approximation de \($trigtex[$i]($c)\) à l'aide de \(T_3(x)\).
+L'approximation de \(f\) autour de \(x = $atex[$i]\) est donnée par
+$PAR
+\( $trigtex[$i]($c)  \approx T_3($c) =  \)  \{ans_rule(50)\}
+$PAR
+${BBOLD}Note :$EBOLD Ne pas oublier de convertir l'angle en radian.
+END_TEXT
+Context()->normalStrings;
+
+
+Context()->functions->undefine("cos","sin");
+ANS($Tc->cmp());
+
+Section::End();
+
+Scaffold::End();
+## Fin du problème
+
+ENDDOCUMENT();        # This should be the last executable line in the
+#problem.
+

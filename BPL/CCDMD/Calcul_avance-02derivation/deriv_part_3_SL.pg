@@ -1,0 +1,83 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivée partielle', 'dérivée partielle d\'ordre 1', 'fonction de deux variables')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+
+###############Source################
+## DESCRIPTION
+## Tagged by glr 07/31/09
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('Partial Derivatives')
+## ZDate('')
+## Author('Gavin LaRose')
+## Institution('University of Michigan')
+## TitleText1('Calculus')
+## EditionText1('5')
+## AuthorText1('Hughes-Hallett')
+## Section1('14.2')
+## Problem1('8')
+## Textbook tags
+## HHChapter1('Differentiating Functions of Several Variables')
+## HHSection1('Computing Partial Derivatives Algebraically')
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+);
+
+
+Context("Numeric");
+Context()->variables->add( y=>'Real', z=>'Real' );
+$showPartialCorrectAnswers = 1;
+
+$r1 = random(2,5,1);
+$a  = random(2,5,1);
+$r2 = random(3,7,1);
+$b  = random(8,17,1);
+$c  = random(4,9,1);
+$f  = Compute("($a*x^2*y^$r2-y^$r2)/($b*x*y - $c)");
+
+$fy = $f->D('y');
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+Soit la fonction de deux variables :
+\( \displaystyle
+    z = $f
+\).
+$PAR
+Calculer la dérivée partielle demandée (on suppose que les variables sont
+restreintes à un domaine où la fonction est définie).
+$PAR
+\( \ \ z_y = \) \{ ans_rule(65) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($fy->cmp() );
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+On utilise la règle de dérivation d'un quotient, qui dit que la
+dérivée de \( z = \dfrac{u}{v} \) par rapport à une variable \( y \)
+est : \( z_y = \dfrac{u_y v - u v_y}{v^2} \).
+$PAR
+On obtient donc :
+\[ z_y = $fy. \]
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

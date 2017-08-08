@@ -1,0 +1,126 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('applications', 'maximum absolu', 'minimum absolu', 'multiplicateur de Lagrange', 'optimisation', 'optimisation sous contrainte', 'une contrainte d\'égalité')
+## Révisé par Éric Gaul, Collège Montmorency
+## Date : avril 2017
+## Language(fr)
+
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+###############Source################
+# DESCRIPTION
+# Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+# originally from 5ed (with updates)
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+## Tagged by glr 02/12/10
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('Lagrange Multipliers')
+## Date('')
+## Author('Gavin LaRose')
+## Institution('University of Michigan')
+## TitleText1('Calculus')
+## EditionText1('5')
+## AuthorText1('Hughes-Hallett')
+## Section1('15.3')
+## Problem1('29')
+## Textbook tags
+## HHChapter1('Optimization: Local and Global Extrema')
+## HHSection1('Constrained Optimization: Lagrange Multipliers')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+);
+
+Context("Numeric");
+$showPartialCorrectAnswers = 1;
+
+$a = random(3,7,1);
+$b = random(1,$a-1,1);  $bd = ( $b == 1 ) ? '' : $b;
+$c = random($b,7,1);
+$d = random(500,1000,100);
+
+## pick the production quota so that x and y are integer
+($xn, $xd) = reduce( 2*$c - $b, 2*($a + $c - $b) );
+$p = random(10,15,1);
+$q = $p*$xd;
+$qp1 = $q + 1;
+$qm1 = $q - 1;
+
+## then the minimum is at
+$x0 = $p*$xn;
+$y0 = $q - $x0;
+
+## and is
+$cost = Compute( "$a*$x0*$x0 + $b*$x0*$y0 + $c*$y0*$y0 + $d" );
+
+## lambda is
+$lambda = Compute( "2*$a*$x0 + $b*$y0" );
+$lam = 2*$a*$x0 + $b*$y0;
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+Une compagnie fabrique \( x \) unités d'un item et \( y \) unités d'un autre.
+Le coût total en dollars, \( C \), de production de ces items est approximée par la fonction :
+\[
+	C = $a x^2 + $bd xy + $c y^2 + $d.
+\]
+$PAR
+
+${BBOLD}(a)$EBOLD
+Si le quota de production pour le nombre total d'items (des deux types combinés) est \( $q \), trouver le coût de production minimum.
+$PAR
+\{ ans_rule(35) \} $
+
+$PAR
+${BBOLD}(b)$EBOLD
+Estimer le coût de production additionnel ou les économies si le quota de production est augmenté à \( $qp1 \) ou diminué à \( $qm1 \).
+$PAR
+\{ ans_rule(35) \} $
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($cost->cmp() );
+ANS($lambda->cmp() );
+
+$twoa = 2*$a;
+$twoc = 2*$c;
+$xcoef = 2*($a + $c - $b);
+$xrhs = ($twoc - $b)*$q;
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+${BBOLD}(a)$EBOLD
+Nous voulons minimiser \(C\) sous la contrainte \(g=x+y=$q\).
+En utilisation les multiplicateurs de Lagrange, on doit avoir :
+\[ $twoa x + $b y = \lambda, \]
+et
+\[ $b x + $twoc y = \lambda. \]
+En vertu de la contrainte, \( y = $q - x\), de sorte que, en égalant
+ces deux équations et en substituant \(y\), on obtient :
+\[ $twoa x + $b( $q - x ) = \lambda = $b x + $twoc ( $q - x ), \]
+ou
+\( $xcoef x = $xrhs\).  Alors \(x = $x0\) et \(y = $q - $x0 = $y0\).
+Donc \(C = $cost\) dollars.
+$PAR
+${BBOLD}(b)$EBOLD
+Notons que par le raisonnement précédent, nous avons que :
+\[ \lambda = $twoa x + $b y = ($twoa)($x0) + ($b)($y0) = $lambda.\]
+Ainsi, l'augmentation de la production de 1 causera une augmentation des coûts
+d'approximativement ${DOLLAR}$lam.
+Similairement, une diminution de la production de 1 générera des économies d'approximativement ${DOLLAR}$lam.
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

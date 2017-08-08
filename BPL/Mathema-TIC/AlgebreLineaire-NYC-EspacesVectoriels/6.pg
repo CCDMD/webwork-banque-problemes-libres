@@ -1,0 +1,85 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Espace vectoriel)
+## KEYWORDS('polynôme', 'sous-espace vectoriel')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##########################################SOURCE################
+## Tagged by cmd6a 5/3/06
+## ZDBsubject(Linear algebra)
+## ZDBchapter(Abstract vector spaces)
+## ZDBsection(Subspaces)
+## ZInstitution(Rochester)
+## ZLevel(4)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('7.1')
+###############Source###############
+## Level(3)   
+## Language(fr)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGchoicemacros.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+@a = NchooseK(9,9);
+@nz = NchooseK(9,9);
+foreach $i (0..8) { $nz[$i] = $nz[$i]+1; } 
+
+
+$nn = random(3,5,1);
+
+
+
+@yes1 = ("\( \{ p(t) \ | \ p($a[0])=0 \} \)", 
+	 "\( \{ p(t) \ | \ p'($a[1])=p($a[3]) \} \)", 
+ 	 "\( \{ p(t) \ | \ \int_0^{$a[4]} p(t)dt = 0 \} \)", 
+	 "\( \{ p(t) \ | \ p'(t) \) est une constante \( \} \)" );
+
+@yes2 = ('\( \{ p(t) \ | \ p(-t)=p(t) \) pour tout \( t \} \)', 
+	 '\( \{ p(t) \ | \ p(-t)=-p(t) \) pour tout \( t \} \)');
+ 
+$tag = random(0,1,1);
+
+@y = ($yes1[0], $yes1[1], $yes1[2], $yes1[3], $yes2[$tag]);
+
+@slice = NchooseK(5,5);
+@sy = @y[@slice];
+
+@n = ("\( \{ p(t) \ | \ p($a[2])=$nz[0] \} \)",
+	  "\( \{ p(t) \ | \ p'($a[2])=$nz[0] \} \)",
+	  "\( \{ p(t) \ | \ p'(t)=$nz[0] \} \)",
+	  "\( \{ p(t) \ | \ p'(t) + $nz[1] p(t) + $nz[2] =0 \} \)");	
+	  
+@aslice = NchooseK(4,4);
+@sn = @n[@aslice];
+
+$cmc = new_checkbox_multiple_choice();
+
+$cmc -> qa ("Parmi les sous-ensembles de \(\mathbf{P}_$nn\), les polynôme de degré au plus \( $nn \), lesquels sont des sous-espaces vectoriels de \(\mathbf{P}_$nn\)?", 
+            $sy[0], $sy[1], $sy[2], $sy[3]);
+
+$cmc-> extra ($sn[0], $sn[1]);
+
+
+BEGIN_TEXT
+
+\{ $cmc -> print_q \}
+$BR
+\{ $cmc -> print_a \}
+
+END_TEXT
+
+ANS(checkbox_cmp( $cmc->correct_ans )   ) ;
+               
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

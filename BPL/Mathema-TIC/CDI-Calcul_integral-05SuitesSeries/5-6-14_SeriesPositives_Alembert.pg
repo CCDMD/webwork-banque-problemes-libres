@@ -1,0 +1,93 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de d\'Alembert', 'série', 'série à termes positifs')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.5_The_Ratio_and_Root_Tests/10.5.5.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Emily Price)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.5')
+## Problem1('5')
+###############Source###############
+
+
+DOCUMENT();
+
+
+#Load Necessary Macros
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT("Afin d'obtenir 100 % pour ce problème, toutes les réponses doivent être correctes. Suggestion : restreindre le nombre de tentatives pour réussir le problème car r = 1.");
+
+Context()->variables->add(n=>'Real');
+
+#Book Values
+# $exp1 = 2
+# $exp2 = 1
+# $constant = 1
+
+$exp1 = random(2, 7);
+do{$exp2 = random(1,7)} until($exp2 != $exp1);
+
+
+# numérateur
+$num = Formula("n^{$exp2}")->reduce;
+
+# dénominateur
+$c = random(1, 9);
+$den = Formula("n^{$exp1} + $c");
+
+$L = Real(1);
+$popup = PopUp(['?','convergente', 'divergente','sans conclusion'],'sans conclusion');
+
+Context()->texStrings;
+
+BEGIN_TEXT
+Utiliser le critère de d'Alembert pour déterminer si la série suivante est convergente, divergente ou si on n'arrive à aucune conclusion.
+\[  \sum_{n=1}^{\infty} \frac{$num}{$den} \]
+\(\displaystyle L = \lim_{n \to \infty}  \frac{a_{n+1}}{a_n}  =\) \{ans_rule(10)\}
+$PAR
+\( \displaystyle\sum_{n=1}^{\infty} \frac{$num}{$den} \) est \{$popup->menu\}.
+END_TEXT
+
+Context()->normalStrings;
+
+#Answer Check Time!
+# Afin d'obtenir 100 % pour ce problème, toutes les réponses doivent être correctes.
+install_problem_grader(~~&std_problem_grader);
+
+ANS($L->cmp);
+ANS($popup->cmp);
+
+$num2 = Formula("(n+1)^{$exp2}")->reduce;
+$den2 = Formula("(n+1)^{$exp1} + $c")->reduce;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Si \(\displaystyle a_n = \frac{$num}{$den} \),
+ 
+\[  \frac{a_{n+1}}{a_n}  = 
+\frac{$num2}{$den2} \cdot \frac{$den}{$num} = \frac{$num2}{$num} \cdot \frac{$den}{$den2}, \]
+et
+\[ L = \lim_{n \to \infty}  \frac{a_{n+1}}{a_n}  = 1 \cdot 1 = 1. \]
+Par conséquent, pour la série \( \displaystyle\sum_{n=1}^{\infty} \frac{$num}{$den} \), le critère de d'Alembert ne permet pas d'arriver à une conclusion.
+
+END_SOLUTION
+
+ENDDOCUMENT()

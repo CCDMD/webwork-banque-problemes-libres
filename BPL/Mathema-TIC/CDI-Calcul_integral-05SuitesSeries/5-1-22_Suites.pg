@@ -1,0 +1,78 @@
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'factorielle', 'limite d\'une suite', 'suite')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mai 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/Rochester/setSequences2Limits/ur_sq_2_16.pg
+## ZInstitution(OSU)
+## ZMLT(InterestingLimits)
+## ZMLTleader(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('10.1')
+## Problem1('59')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Stewart')
+## EditionText2('6')
+## Section2('11.1')
+## Problem2('37')
+###############Source###############
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+Context()->strings->add(Divergente=>{},DIV=>{alias=>'Divergente'});
+
+$a=non_zero_random(-8,8,2);
+do{$b=non_zero_random(-10,10,2)} until(abs($b)!=abs($a));
+
+if ($a<0) {
+	$soln= Compute("Divergente");
+    $pa = "($a)^n";
+} else {
+    $pa = "$a^n";
+	if ($b>0) {
+		$soln=Compute("inf");
+	} else {
+		$soln=Compute("-inf");
+	}
+}
+	
+Context()->texStrings;
+BEGIN_TEXT
+Soit la suite
+\[ a_n =  \frac{$b\cdot n!}{$pa}\]
+
+Déterminer si la suite \(\lbrace a_n\rbrace\) est convergente ou divergente.
+Si elle est convergente, calculer sa limite.
+Si elle est divergente et tend vers l'infini positif, entrer $BBOLD inf$EBOLD.
+Si elle est divergente et tend vers l'infini négatif, entrer  $BBOLD -inf$EBOLD.
+Si elle est divergente et ne tend pas vers l'infini positif ou négatif, entrer  $BBOLD DIV$EBOLD.
+
+$PAR
+\( \displaystyle \lim_{n\to\infty} a_n = \) \{ans_rule( 30) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS($soln->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

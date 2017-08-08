@@ -24,15 +24,13 @@ loadMacros(
 TEXT(beginproblem());
 ######Initialisation des paramètres#######
 $a=random(5,12);
+$a2=Compute(2*$a);
+$ap1=Compute($a+1);
 #######Calcul des réponses##########
 $ans1=Compute("(2*$a)!");
 $ans2=Compute("2*$a!*$a!");
 $ans3=Compute("($a+1)!*$a!");
-$ans4temp=2*$a*$a;
-for($i=1;$i<=$a-1;$i++){
-$ans4temp=$ans4temp*($a-$i)*($a-$i);
-}
-$ans4=Compute("$ans4temp");
+$ans4=$ans2;
 
 ####### Question#################
 BEGIN_TEXT
@@ -51,5 +49,14 @@ ANS($ans2->cmp);
 ANS($ans3->cmp);
 ANS($ans4->cmp);
 
+BEGIN_SOLUTION
+Pour le a), aucune condition n'est imposée. On a donc \($a+$a=$a2 \) personnes  différentes à permuter. Ceci nous donne \($a2 !\) manières de créer le rang.
+$BR
+Pour le b), les hommes et les femmes doivent rester ensemble. Il y a deux scénarios possibles, soit le rang est formé avec le groupe d'hommes en premier, suivi du groupe de femmes, soit l'inverse. Ceci nous donne un facteur \(2!\). Ensuite, autant les hommes que les femmes peuvent être permutés à l'intérieur de leur groupe respectif. Pour chaque groupe, on obtient un facteur \($a!\). La réponse finale est donc \(2($a!)^2\) rangs possibles.
+$BR
+Pour le c), uniquement les hommes restent groupés. On peut donc considérer un groupe de \($a+1=$ap1\) individus à permuter, ce qui donne \($ap1!\). Pour chacune de ces permutations, on doit aussi considérer le groupe d'hommes, qui peut aussi être permuté de \($a!\) manières différentes. Ceci nous donne une réponse finale de \($ap1! $a!\) rangs possibles.
+$BR
+Finalement pour le d), on doit alterner entre un homme et une femme. Remarquons que pour chaque rang où il y a alternance, il y a un rang correspondant où les hommes et les femmes sont groupées entre eux et vice-versa, pour chaque rang où les sexes sont groupés, il y a un rang correspondant où les sexes sont alternés. Cette bijection entre les deux situations nous dit que la réponse doit être \(2($a!)^2\) manières de créer le rang.
+END_SOLUTION
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.

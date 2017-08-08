@@ -1,0 +1,173 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivabilité', 'dérivée partielle', 'dérivée partielle d\'ordre 1', 'dérivée partielle d\'ordre 2', 'fonction de deux variables', 'théorème de Clairault')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+
+###############Source#################
+# DESCRIPTION
+# Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+# originally from 5ed (with updates)
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+## Tagged by glr 07/31/09
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Differentiation of multivariable functions)
+## ZDBsection(Partial derivatives)
+## Institution(University of Michigan)
+## Author(Gavin LaRose)
+## Level(5)
+## MO(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('5')
+## Section1('14.2')
+## Problem1('43')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('6')
+## Section2('14.2')
+## Problem2('49')
+## Textbook tags
+## HHChapter1('Differentiating Functions of Several Variables')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+"PGgraphmacros.pl",
+);
+
+
+Context("Numeric");
+Context()->variables->add( t=>'Real', H=>'Real' );
+
+$a = random(80,150,10);
+$r = random(0.05, 0.2, 0.05);
+
+$h = Compute("$a*e^{-$r*t}sin(pi*x)");
+
+
+$x0 = random(0.1,0.3,0.1);
+$x1 = 1 - $x0;
+
+$hx = $h->D('x');
+$hx0 = $hx->substitute( x=> $x0 );
+$hx1 = $hx->substitute( x=> $x1 );
+$ht = $h->D('t');
+
+$showPartialCorrectAnswers = 1;
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+
+Une tige d'un mètre de long est chauffée inégalement.$BR
+La température de la tige, en \( {}^\circ \)C, à une distance de \( x \) mètre d'une des extrémités de la tige,$BR
+est ensuite donnée au temps \( t \) secondes par la fonction : \( H(x,t) = $h \ \ \) (pour \(0\le x\le 1\)).
+$PAR
+Suggestion : faire une esquisse de la fonctions de \(H\) selon \(x\) pour
+les temps \(t=0\) et \(t=1\). 
+$PAR
+${BBOLD}(a)$EBOLD
+Calculer :
+$BR
+\( \ \ \ \ \ \ H_x($x0,t) = \) \{ ans_rule(35) \}
+$BR
+\( \ \ \ \ \ \ H_x($x1,t) = \) \{ ans_rule(35) \}.
+$PAR
+${BITALIC}
+S'assurer de pouvoir donner l'interprétation, dans le contexte,
+des deux dérivées et d'expliquer pourquoi elles ont tel signe.
+$EITALIC
+$PAR
+${BBOLD}(b)$EBOLD
+Calculer :
+$BR
+\( \ \ \ \ \ \ H_t(x,t) = \) \{ ans_rule(35) \}.
+$PAR
+${BITALIC}
+S'assurer ici aussi de pouvoir donner l'interprétation et
+l'explication du signe.
+$EITALIC
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($hx0->cmp() );
+ANS($hx1->cmp() );
+ANS($ht->cmp() );
+
+$y0 = $a + 10;
+$n = ($y0+10)/10;
+$ht0 = $h->substitute(t=>0);
+$ht1 = $h->substitute(t=>1);
+$gr = init_graph( -0.25, -10, 1.25, $y0, axes=>[0,0], size=>[250,250],
+		  ticks=>[6,$n]);
+add_functions( $gr, "$ht0 for x in <0,1> using color:red and weight:2",
+	       "$ht1 for x in <0,1> using color:blue and weight:2" );
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+En substituant \(t=0\) et \(t=1\) dans l'expression pour \(H\) on obtient :
+\[
+H(x,0) = $ht0,
+\]
+et
+\[
+H(x,1) = $ht1.
+\]
+Les graphiques de ces fonctions sont donnés plus bas (où \(H(x,0)\) est en rouge
+et \(H(x,1)\) est en bleu).
+$PAR
+$BCENTER
+\{ image(insertGraph($gr), tex_size=>250, height=>250, width=>250,
+         extra_html_tags=>'alt="Graphique des deux fonctions"' ) \}
+$ECENTER
+$PAR
+On remarque que la distribution de la température de départ tend à 
+diminuer à mesure que le temps avance.
+$PAR
+${BBOLD}(a)$EBOLD
+Pour calculer \(H_x(x,t)\), on garde \(t\) constant et on dérive selon \(x\) :
+\[
+H_x(x,t) = \frac{\partial}{\partial x}H(x,t) = \frac{\partial}{\partial x}
+ $h = $hx.
+\]
+Ainsi :
+\[ H_x($x0,t) = $a\pi e^{-$r t}\cos($x0 \pi) = $hx0\quad
+    {}^\circ\hbox{C/mètre}, \]
+et
+\[ H_x($x1,t) = $a\pi e^{-$r t}\cos($x1 \pi) = $hx1\quad
+    {}^\circ\hbox{C/mètre}. \]
+L'interprétation qu'on fait de ces dérivées est qu'il s'agit du taux de
+variation de la température aux points \(x=$x0\) et \(x=$x1\) à mesure que
+la distance croît à partir du point \(x=0\). 
+On remarque aussi que \(e^{-$r t}\) est positif pour tout \(t\).
+Selon l'expression \(H(x,t)\), plus la position \( x \) est près du centre de la tige,
+plus grande est la température.
+La dérivée partielle \(H_x($x0,t)\) a un signe positif parce qu'en \(x=$x0\),
+si \(x\) croît, on s'approche du centre de la tige qui est le point le plus chaud.
+La dérivée partielle \(H_x($x1,t)\) a un signe négatif parce qu'en \(x=$x1\),
+si \(x\) croît, on s'éloigne du centre de la tige qui est le point le plus chaud.
+$PAR
+${BBOLD}(b)$EBOLD
+Pour calculer \(H_t(x,t)\), on garde \(x\) constant et on dérive selon \(t\) :
+\[ \frac{\partial H}{\partial t}=\frac{\partial}{\partial
+    t}($h) = $ht\quad {}^\circ\hbox{C/s}.\]
+En termes de température, la dérivée partielle \(H_t(x,t)\) représente le taux de variation
+de la température au point \(x \) et au temps \( t \) à mesure que le temps passe.
+Pour tout \(t\) et pour tout \(0<x<1\),  \(H_t(x,t)\) est négative.
+La température diminue donc le long de toute la tige avec le temps.
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+;
+ENDDOCUMENT();

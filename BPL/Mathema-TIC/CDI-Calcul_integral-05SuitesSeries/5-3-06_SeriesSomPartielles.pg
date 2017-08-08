@@ -1,0 +1,94 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('somme', 'somme télescopique', 'sommes partielles', 'série')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mai 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source :Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.2_Summing_an_Infinite_Series/10.2.11.pg
+## Traduction française : Sylvie Charbonneau
+## ZInstitution(The College of Idaho)
+## ZAuthor(LA Danielson)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.2')
+## Problem1('11')
+###############Source###############
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers=1;
+
+
+# Ajouter une variable n qui sera évaluée seulement pour des entiers
+# Le flag resolution spécifie la distance entre des test_points possibles
+Context()->variables->add(n => ['Real', limits=>[1,20], resolution=>1]);
+
+$a = random(2,12);
+$b = $a + 1;
+
+$k = random(3,6);
+
+$sn = Formula("1/$b - 1/(n+$b)")->reduce;
+$sk = $sn->eval(n=>$k);
+$sum = Compute("1/$b")->reduce;
+
+#for solution formatting
+$ns[1] = $b;
+$ns[2] = $ns[1]+1;
+$textsom = "\left(\frac{1}{$ns[1]}-\cancel{\frac{1}{$ns[2]}}\right)+";
+for($i=2; $i<$k; $i++){
+   $ns[$i+1]= $ns[$i]+1;
+   $textsom = $textsom."\left(\cancel{\frac{1}{$ns[$i]}}-\cancel{\frac{1}{$ns[$i+1]}}\right)+";
+}
+
+$ns[$k+1] = $ns[$k]+1;
+$textsom = $textsom."\left(\cancel{\frac{1}{$ns[$k]}}-\frac{1}{$ns[$k+1]}\right)";
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer  \(S_{$k}\) et \(S_{n}\), puis calculer la somme \(S\) de la série télescopique 
+\[S=\sum_{k=1}^\infty \left(\frac{1}{k+$a}-\frac{1}{k+$b}\right)\]
+où \(S_n\) est la somme partielle des \(n\) premières valeurs de \(k\).
+
+$PAR \(S_{$k}\) =  \{ans_rule()\} 
+$PAR \(S_{n}\) =  \{ans_rule()\} 
+$PAR \(S\) =  \{ans_rule()\} 
+END_TEXT
+
+Context()->normalStrings;
+
+ANS($sk->cmp);
+ANS($sn->cmp);
+ANS($sum->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+\[S_{$k}=$textsom;\]
+
+Le terme général de la suite de sommes partielles est
+\[\begin{aligned}
+S_n&=\left(\frac{1}{$ns[1]}-\cancel{\frac{1}{$ns[2]}}\right)+\left(\cancel{\frac{1}{$ns[2]}}-\cancel{\frac{1}{$ns[3]}}\right)+\left(\cancel{\frac{1}{$ns[3]}}-\cancel{\frac{1}{$ns[4]}}\right)+\cdots +\left(\cancel{\frac{1}{n+$a}}-\frac{1}{n+$ns[1]}\right)\\
+&=\frac{1}{$ns[1]}-\frac{1}{n+$ns[1]};
+\end{aligned}
+\]
+Ainsi,
+\[S=\lim_{n\rightarrow \infty} S_n=\lim_{n\rightarrow \infty}\left(\frac{1}{$ns[1]}-\frac{1}{n+$ns[1]}\right)=\frac{1}{$ns[1]}.\]
+$PAR Par conséquent la somme de la série télescopique est \(\dfrac{1}{$ns[1]}\).
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

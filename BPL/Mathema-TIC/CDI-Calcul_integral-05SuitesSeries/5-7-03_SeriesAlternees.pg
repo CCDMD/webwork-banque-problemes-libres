@@ -1,0 +1,76 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de Leibniz', 'critère du terme général', 'série alternée')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/ma123DB/set11/s11_5_11.pg
+## ZDate(6/3/2002)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('11.5')
+## Problem1('11')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"unionTables.pl",
+"parserPopUp.pl",
+"PGcourse.pl"
+);
+
+COMMENT('Suggestion : restreindre le nombre de tentatives pour réussir le problème.');
+
+TEXT(beginproblem());
+
+# Afin d'obtenir 100 % pour ce problème, toutes les réponses doivent être correctes.
+# install_problem_grader(~~&std_problem_grader);
+$showPartialCorrectAnswers = 1;
+Context("Numeric")->variables->are(n=>"Real");
+
+$a = random(2,9,1);
+$b = random(1,6);
+
+
+($an,$borne,$lim,$crois,$ouinon,$reponse) = @{list_random([Compute("sqrt(n)/(n+$a)")->reduce,$a,Real(0),"décroissante","Oui","Convergente par le critère des séries alternées"],[Compute("n/($b*n+$a)")->reduce,1,Compute("1/$b"),"croissante","Non","Divergente par le critère du terme général"])};
+
+$applique = PopUp(['?','Oui', 'Non'],$ouinon);
+$popup1 = PopUp(['?','croissante', 'décroissante'],$crois);
+$popup2 = PopUp(['?','Convergente par le critère des séries alternées', 'Divergente par le critère du terme général', 'Sans conclusion'],$reponse);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la série
+\[\sum_{n=1}^\infty (-1)^{n+1}$an\] 
+a) Vérifier si le critère des séries alternées (critère de Leibniz) s'applique à cette série.
+$BR
+\(\displaystyle \lim_{n\to\infty} $an = \) \{ans_rule(20)\}
+$PAR
+et pour tout \(n\ge $borne\), la suite \(\left\lbrace $an \right\rbrace\) est  \{$popup1->menu\}.
+$PAR
+Est-ce que le critère des séries alternées s'applique à cette série? \{$applique->menu\}.
+$PAR
+b) Déterminer si la série est convergente par le critère des séries alternées, divergente par le critère 
+du terme général ou on ne peut tirer aucune conclusion. \{$popup2->menu\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($lim->cmp);
+ANS($popup1->cmp);
+ANS($applique->cmp);
+ANS($popup2->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

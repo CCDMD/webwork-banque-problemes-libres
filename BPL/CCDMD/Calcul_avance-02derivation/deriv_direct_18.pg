@@ -1,0 +1,122 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation - définition et interprétation)
+## KEYWORDS('dérivée directionnelle', 'dérivée en un point', 'dérivée partielle', 'dérivée partielle d\'ordre 2', 'graphique', 'signe de la dérivée', 'vecteur gradient')
+## Modifié par Éric Gaul, Collège Montmorency
+## Traduction française : Éric Gaul
+## Date : mars 2017
+## Language(fr)
+
+
+###############Source###############
+## DESCRIPTION
+##   Estimating directional derivatives
+## ENDDESCRIPTION
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Differentiation of multivariable functions)
+## ZDBsection(Directional derivatives and the gradient)
+## ZDate(10/15/09)
+## Institution(Fort Lewis College)
+## Author(Paul Pearson)
+## MLT(ApproxDirDeriv)
+## MLTleader(1)
+## Level(3)
+## MO(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('14.4')
+## Problem1('69 70 71 72 73 74')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('14')
+## Problem2('69 70 71 72 73 74')
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"unionTables.pl",
+"MathObjects.pl",
+"answerHints.pl",
+);
+
+
+TEXT(beginproblem());
+
+$refreshCachedImages=1;
+
+##############################################
+#  Setup
+
+$a = random(0,1,1);
+if ($a==0) { $A = "\vec{i}"; } else { $A = "\vec{j}"; }
+
+$b = random(0,1,1);
+if ($b==0) { 
+  $BP = "(2,3)";
+  $BV = "-\vec{j}"; 
+} else {
+  $BP = "(3,2)";
+  $BV = "-\vec{i}"; 
+}
+
+$c = random(0,1,1);
+@C = ( "(4,1)", "(1,4)" );
+
+$d = random(0,4,1);
+
+##############################################
+#  Main text
+
+BEGIN_TEXT
+\{
+ColumnTable(
+"Utiliser le graphique des courbes de niveau de  \( f(x,y) \) 
+pour estimer, dans chacun des cas suivants, la valeur de la dérivée
+directionnelle de \( f \) dans la direction de \( \vec{u} \) au point \( P \).".
+$BR.
+$BR.
+"(a) Au point \( P = (2,2) \) dans la direction \( \vec{u} = $A \), on a : \( f_{\vec{u}}(2, 2) \approx \) ". 
+ans_rule(10).
+$BR.
+$BR.
+"(b) Au point \( P = $BP \) dans la direction \( \vec{u} = $BV \), on a : \( f_{\vec{u}}$BP \approx \) ". 
+ans_rule(10).
+$BR.
+$BR.
+"(c) Au point \( P = $C[$c] \) dans la direction \( \vec{u} = (\vec{i} + \vec{j})/\sqrt{2} \), on a : \( f_{\vec{u}}$C[$c] \approx \) ". 
+ans_rule(10).
+$BR.
+$BR.
+"(d) Au point \( P = ($d,0) \) dans la direction \( \vec{u} = -\vec{i} \), on a : \( f_{\vec{u}}($d,0) \approx \)  ". 
+ans_rule(10), 
+# comma!
+$BCENTER.
+image("deriv_direct_18HGM4-14-4-40-Gradients-etc.png", width=>500, height=>500, tex_size=>600).
+$BR.$BITALIC.
+"(cliquer sur le graphique pour l'agrandir)".$EITALIC.
+$ECENTER, # comma!
+indent => 0, separation => 30, valign => "TOP"
+)
+\}
+END_TEXT
+
+$showPartialCorrectAnswers=1;
+
+ANS(Compute("2")->cmp(tolerance=>"0.2",tolType=>"absolute") );
+ANS(Compute("-2")->cmp(tolerance=>"0.2",tolType=>"absolute") );
+ANS(Compute("6/sqrt(2)")->cmp(tolerance=>"0.3",tolType=>"absolute") 
+->withPostFilter(AnswerHints( 
+  Compute("4") => "Essayer une approximation sur la courbe de niveau z = 10",
+  Compute("4/sqrt(2)") => "Essayer une approximation sur la courbe de niveau z = 10",
+  Formula("6") => "En se déplaçant dans la direction <1,1>, de quelle distance se déplace-t-on (horizontalement) ?", 
+))
+);
+ANS(Compute("0")->cmp(tolerance=>"0.2",tolType=>"absolute") );
+
+
+ENDDOCUMENT();

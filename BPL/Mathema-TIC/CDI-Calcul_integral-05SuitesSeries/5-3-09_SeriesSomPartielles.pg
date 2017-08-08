@@ -1,0 +1,95 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('somme', 'sommes partielles', 'série', 'terme général')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mai 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.2_Summing_an_Infinite_Series/10.2.42.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Keith Thompson)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.2')
+## Problem1('42')
+###############Source###############
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers=1;
+# Ajouter une variable n qui sera évaluée seulement pour des entiers
+# Le flag resolution spécifie la distance entre des test_points possibles
+Context()->variables->add(k => ['Real', limits=>[2,20], resolution=>1]);
+
+
+$base=random(2,9,1);
+$num=random(2,9,1);
+
+$ans1=$base-$num/100;
+$ans2=$num*(1/9-1/256);
+$ans3=$num/4-$num/9;
+$ans4=Formula("$num/(k-1)^2 - $num/k^2");
+$ans5=$base;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \(S=\sum\limits_{k=1}^\infty a_k\) une série telle que \(S_n=$base-\dfrac{$num}{n^2}\).
+$PAR
+$BBOLD a) $EBOLD Quelle est la valeur de  \(\sum\limits_{k=1}^{10} a_k\) et de  \(\sum\limits_{k=4}^{16} a_k\)?
+$BR  \(\sum\limits_{k=1}^{10} a_k=\) \{ans_rule()\} 
+$BR \(\sum\limits_{k=4}^{16} a_k=\)  \{ans_rule()\}
+$PAR
+$BBOLD b) $EBOLD Quelle est la valeur de  \(a_3\)?
+$BR \(a_3=\)  \{ans_rule()\} 
+$PAR
+$BBOLD  c) $EBOLD Déterminer le terme général \(a_k\).
+$BR \(a_k=\)  \{ans_rule()\} 
+$PAR
+$BBOLD d) $EBOLD Calculer la somme  \(\sum\limits_{k=1}^\infty a_k\).
+$BR \(\sum\limits_{k=1}^\infty a_k=\)  \{ans_rule()\} 
+END_TEXT
+
+Context()->normalStrings;
+
+ANS(Real($ans1)->cmp);
+ANS(Real($ans2)->cmp);
+ANS(Real($ans3)->cmp);
+ANS($ans4->cmp);
+ANS(Real($ans5)->cmp);
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$BBOLD a) $EBOLD 
+\[\sum_{k=1}^{10} a_k=S_{10}=$base-\frac{$num}{10^2}=$ans1;\]
+\[\sum_{k=4}^{16} a_k= \sum_{k=1}^{16} a_k-\sum_{k=1}^3 a_k= S_{16}-S_3\]
+\[=\left($base-\frac{$num}{16^2}\right)-\left($base-\frac{$num}{3^2}\right)=\frac{$num}{9}-\frac{$num}{256}.\]
+
+$BBOLD b) $EBOLD 
+\[a_3=(a_1+a_2+a_3)-(a_1+a_2)=S_3-S_2=\]
+\[\left($base-\frac{$num}{3^2}\right)-\left($base-\frac{$num}{2^2}\right)=\frac{$num}{4}-\frac{$num}{9}.\]
+
+$BBOLD  c) $EBOLD Puisque \(a_n=S_n-S_{n-1}\), on a :
+\[a_n=S_n-S_{n-1}=\left($base-\frac{$num}{n^2}\right)-\left($base-\frac{$num}{(n-1)^2}\right)=\frac{$num}{(n-1)^2}-\frac{$num}{n^2}\]
+Donc \(\displaystyle a_k =\frac{$num}{(k-1)^2}-\frac{$num}{k^2} \).
+$PAR
+$BBOLD d) $EBOLD La somme \(\sum\limits_{k=1}^\infty a_k\) est la limite des sommes partielles \(\{S_n\}\). Par conséquent, 
+\[\sum_{k=1}^\infty a_k = \lim_{n\rightarrow \infty} S_n = \lim_{n\rightarrow \infty} \left($base - \frac{$num}{n^2}\right) = $base.\]
+
+END_SOLUTION
+Context()->normalStrings;
+ENDDOCUMENT();

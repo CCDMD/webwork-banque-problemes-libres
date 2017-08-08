@@ -1,0 +1,111 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('coordonnées cylindriques')
+## Conçu par Éric Gaul, Collège Montmorency
+## Author('Éric Gaul')
+## Institution('Collège Montmorency')
+## Date : mai 2017
+## Language(fr)
+
+
+
+###########################
+#  Initialization
+
+DOCUMENT();  
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"PGgraders.pl",
+"unionTables.pl",
+"PGML.pl",
+"PGgraders.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+###########################
+#  Setup
+
+#
+#  Create a matching list and use popups
+#
+$ml = new_match_list();
+$ml->rf_print_q(~~&pop_up_list_print_q);
+$ml->ra_pop_up_list([
+"Pas de réponse" => "-",
+"A" => "A", "B" => "B", "C" => "C", 
+"D" => "D", "E" => "E", "F" => "F",
+"G" => "G", "H" => "H", "I" => "I",
+"J" => "J", "K" => "K", "L" => "L",
+]);
+
+#
+#  Add correct questions and answers
+#
+$ml->qa(
+"`r = 1`", "Cylindre circulaire d'axe vertical (correspondant à l'axe des `z`)",
+"`z = r`", "Cône circulaire à deux nappes d'axe vertical",
+"`z = r^2`", "Paraboloïde circulaire d'axe vertical",
+"`z = r^2(\cos^2(\theta)+1)`", "Paraboloïde elliptique d'axe vertical",
+"`r=\sqrt{1-z^2}`", "Sphère centrée à l'origine",
+"`r=\sqrt{1-2 z^2}`", "Ellipsoïde centré à l'origine",
+"`r=\cos(\theta)`", "Cylindre circulaire d'axe vertical (ne correspondant pas à l'axe des `z`)",
+"`z=-1`", "Plan horizontal",
+"`\theta=1`", "Plan vertical",
+"`r=\theta`", "Cylindre hélicoïdal (en forme de spirale) d'axe vertical",
+);
+$ml->choose(10);
+
+#
+#  Add extra incorrect answers
+#
+$ml->extra(
+"Hyperboloïde à deux nappes d'axe vertical", 
+"Paraboloïde hyperbolique",
+);
+$ml->choose_extra(2);
+  
+#$ml->makeLast("Aucune des réponses ci-haut");
+
+
+
+###########################
+#  Main text
+
+BEGIN_PGML
+Associer chacune des relations sous forme cylindrique avec sa description détaillée :
+
+[@ ColumnMatchTable($ml) @]*
+END_PGML
+
+
+############################
+#  Answer evaluation
+#
+
+#  All or nothing grader
+#  
+#install_problem_grader(~~&std_problem_grader);
+
+ANS( str_cmp( $ml->ra_correct_ans ) );
+
+
+############################
+#  Solution
+
+@correct = @{$ml->ra_correct_ans()};
+$answerstring = join(", ", @correct);
+
+BEGIN_PGML_SOLUTION
+Les bonnes réponses sont : [$answerstring].
+END_PGML_SOLUTION
+
+COMMENT('MathObject version. Uses PGML.');
+
+ENDDOCUMENT();
+

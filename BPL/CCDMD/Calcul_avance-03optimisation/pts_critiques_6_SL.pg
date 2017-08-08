@@ -1,0 +1,106 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('graphique', 'maximum relatif', 'minimum relatif', 'point critique', 'point de selle')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : avril 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011
+## RESSOURCES('levels-5a.gif','levels-5a-zip.html','levels-5a.nb')
+
+
+###############Source################
+## DESCRIPTION
+##   Analyze a Graph to Identify Critical Points
+## ENDDESCRIPTION
+## Tagged by nhamblet
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('Maximum and Minimum Values')
+## Date('8/23/07')
+## Author('')
+## Institution('Union College')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+  "LiveGraphics3D.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+$lfile = "levels-5a"; # the data file
+$lsize = [450,450];   # the size of the Live3D images
+$ltsize = 600;        # tex size of Live3D images
+
+#
+#  Answers for this function
+#
+$maxs = 1;
+$mins = 1;
+$saddles = 1;
+
+##############################################
+
+#
+#  Get the Live3D object
+#
+$mfile = alias($lfile."-zip.html");
+$gfile = alias($lfile.".gif");
+$live3d = Live3Dfile($lfile.".m",
+  image => $gfile,
+  archive => $mfile,
+  size => $lsize, tex_size => $ltsize, tex_center => 1,
+  scale => 1.4);
+
+@opts = (separation => 5);
+$QUESTIONS =
+  BeginTable(spacing => 3).
+    Row([ans_rule(5)," maxima relatifs"],@opts).
+    Row([ans_rule(5)," minima relatifs"],@opts).
+    Row([ans_rule(5)," points de selle"],@opts).
+  EndTable();
+
+##############################################
+#  Main text
+
+BEGIN_TEXT
+
+\{ColumnTable(
+  $live3d.$LIVEMESSAGE,
+  "Indiquer le nombre de points stationnaires de chaque type
+   pour la surface illustrée à gauche.".$PAR.
+  $QUESTIONS,
+  indent => 20, valign => "MIDDLE", separation => 30
+)\}
+$PAR
+
+END_TEXT
+
+##################################################
+#  Answers
+
+ANS(num_cmp($maxs));    # number of maxima
+ANS(num_cmp($mins));    # number of minima
+ANS(num_cmp($saddles)); # number of saddles
+
+#$showPartialCorrectAnswers = 0;
+#install_problem_grader(~~&std_problem_grader);
+
+##################################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

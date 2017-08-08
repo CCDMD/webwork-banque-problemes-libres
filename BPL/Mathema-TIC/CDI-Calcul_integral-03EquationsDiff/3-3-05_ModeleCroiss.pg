@@ -1,0 +1,75 @@
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('croissance / décroissance', 'modélisation', 'ordre 1', 'résolution d\'une équation', 'à variables séparables', 'équation différentielle')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(5)  
+## Language(fr)
+
+###############Source###############
+## source : Library/OSU/high_school_apcalc/dcrev3/prob3.pg
+## ZInstitution(OSU)
+## ZMLT(applications_exponential_findY_findT_findYprime)
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+
+$showPartialCorrectAnswers = 1;
+Context()->variables->are(t=>"Real");
+
+
+$a = random(2,5,1);
+$a2 = $a*10000;
+
+$a2tex = $a*10 . " " . "000";
+$b = random(3,7,1);
+$b2 = $b*$a2;
+$b2tex = $a*$b*10 . " " . "000";
+
+$c = random(2,5,1)*50;
+$d = random($b+1,15,1);
+$d2 = $d*$a2;
+$d2tex = $a*$d*10 . " " . "000";
+
+do{$e = random(2,7,1)*50;} until($e!=$c);
+
+$P = Formula("$a2*$b^(t/$c)");
+$ans2 = Compute("$c*ln($d)/ln($b)");
+$ans3 = Compute("$a2*$b^($e/$c)*ln($b)/$c");
+
+
+TEXT(beginproblem());
+BEGIN_TEXT
+Quelque part dans le futur, une colonie d'humains s'installe sur Mars. La colonie commence avec $a2tex personnes et augmente exponentiellement  pour atteindre $b2tex en $c ans.
+$PAR
+${BBOLD}a)$EBOLD Déterminer une formule qui représente la population \(P\) d'humains sur Mars en fonction du temps \(t\) (en années) depuis le début de la colonie.
+$BR
+\(P(t)=\) \{ans_rule(40)\}
+$PAR
+${BBOLD}b)$EBOLD En supposant que la population continue d'augmenter exponentiellement, dans combien de temps atteindra-t-elle $d2tex personnes?
+$BR
+\(t = \)\{ans_rule(40)\} ans
+$PAR
+${BBOLD}c)$EBOLD Quel est le taux de variation de la taille de la population (en personnes par an)
+$e ans après le début de la colonie?
+$BR
+Taux = \{ans_rule(40)\} personnes/an
+END_TEXT
+
+ANS($P->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+
+ENDDOCUMENT();

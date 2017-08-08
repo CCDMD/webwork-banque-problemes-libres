@@ -37,8 +37,31 @@ $ans2=Compute("-$var1");
 $ans3=Compute("$var2-$var1");
 if($ans3==0){
 $ans4=Compute("OUI");
+$rep4="Pour le 5., la réponse rapide est oui, les variables sont indépendantes. Il ne faut toutefois pas tomber dans le piège de dire que deux variables ayant zéro comme covariance sont indépendantes, ce n'est pas toujours  le cas.
+$BR
+Vérifions ici que \(U\) et \(V\) sont indépendantes en déterminant leur densité conjointe. On utilise le résultat disant que la densité conjointe de \(U,V\), notée \(f_{U,V}(u,v)\) est donnée par
+\[
+f_{U,V}(u,v)=f_{X,Y}(x,y)|J(x,y)|^{-1}
+\]
+où \(f_{X,Y}(x,y)\) est la densité conjointe de \(X,Y\) et \(J(x,y)\) est le jacobien de la transformation \(U,V\). Dans notre cas, ce jacobien est égal à \(2\) et la densité conjointe de \(X,Y\) est donnée par 
+\[
+f_{X,Y}=\frac{1}{2\pi \sigma^2}e^{-\frac{x^2+y^2}{2\sigma^2}}
+\]
+où \(\sigma^2=$var1\), la variance de \(X\) et \(Y\).  De plus, puisque \(X=(U-V)/2\) et \(Y=(U+V)/2\), on trouve 
+\[
+\begin{aligned}
+f_{U,V}(u,v)&=\frac{1}{2\pi \sigma^2}e^{-\frac{x^2+y^2}{2\sigma^2}}\frac{1}{2}\\
+&=\frac{1}{4\pi \sigma^2}e^{-\frac{(u-v)^2+(u+v)^2}{8\sigma^2}}\\
+&=\frac{1}{4\pi \sigma^2}e^{-\frac{u^2+v^2}{4\sigma^2}}\\
+&=\frac{1}{\sqrt{4\pi \sigma^2}}e^{-\frac{u^2}{4\sigma^2}}\frac{1}{\sqrt{4\pi \sigma^2}}e^{-\frac{v^2}{4\sigma^2}}\\
+&=f_U(u)f_V(v)
+\end{aligned}
+\]
+ce qui montre que \(U\) et \(V\) sont indépendantes.
+ ";
 } else{
 $ans4=Compute("NON");
+$rep4="Pour le 5., puisque la covariance entre \(U\) et \(V\) est non-nulle, les variables ne peuvent pas être indépendantes.";
 }
 BEGIN_TEXT
 Soit \(X\) une variable aléatoire de loi \(\mathcal{N}(0,$var1)\) et \(Y\) une variable aléatoire de loi \(\mathcal{N}(0,$var2)\) indépendante de \(X\). On pose \(U=X+Y\) et \(V=Y-X\). Calculer:
@@ -64,4 +87,31 @@ ANS($ans2->cmp);
 ANS($ans3->cmp);
 ANS(Compute("NON")->cmp);
 ANS($ans4->cmp);
+BEGIN_SOLUTION
+Pour le 1., on utilise la définition de la covariance:
+\[
+Cov[X,U]=\mathbb{E}[XU]-\mathbb{E}[X]E[U]
+\]
+Comme l'espérance de \(X\) est zéro, le second terme disparait. En utilisant le fait que \(U=X_Y\), on obtient
+\[
+\mathbb{E}[XU]=\mathbb{E}[X(X+Y)=\mathbb{E}[X^2+XY]=E[X^2]+E[XY]
+\]
+où la linéarité de l'espérance a été utilisée pour la dernière égalité. Puisque \(X\) et \(Y\) sont indépendantes, on a \(\mathbb{E}[XY]=\mathbb{E}[X]\mathbb{E}[Y]=0\) car l'espérance de \(X\) est zéro. De plus l'espérance nulle entraine,\(\mathbb{E}[X^2]=Var[X]\) et donc \(Cov[X,U]=$var1\).
+$BR
+$BR
+Pour le 2., on procède d'une manière similaire. On arrive à
+\[
+Cov[X,V]=-E[X^2]=-$var1.
+\]
+$BR
+$BR
+Pour le 3, on obtient après le développement de la covariance
+\[
+Cov[U,V]=E[Y^2-X^2]=E[Y^2]-E[X^2]=$var2-$var1=$ans3.
+\]
+Pour le 4., étant donné la covariance non nulle entre \(X\) et \(U\), les variables ne peuvent être indépendantes. De la définition de \(U\) il est aussi évident qu'elles sont dépendantes puisque connaître \(X\) donne de l'information sur \(U\).
+$BR
+$BR
+$rep4
+END_SOLUTION
 ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

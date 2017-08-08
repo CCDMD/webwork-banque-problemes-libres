@@ -1,0 +1,115 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence absolue et conditionnelle', 'convergence et divergence', 'critère de Cauchy généralisé', 'série alternée')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/Rochester/setSeries7AbsolutelyConvergent/benny_root1.pg
+## ZInstitution(OSU)
+## ZMLT(App_misapp_of_the_root_test)
+## ZMLTleader(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('10.5')
+## Problem1('37')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+"PGchoicemacros.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT("Afin d'obtenir 100% pour ce problème, toutes les réponses doivent être correctes.");
+
+# No partial credit on this problem, so we say:
+install_problem_grader(~~&std_problem_grader);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(nep=>{});
+Context()->variables->add(n=>'Real');
+Context()->noreduce("(-x)-y");
+
+$a      = random(1,5);
+$b      = non_zero_random(-9,9);
+do{$c = non_zero_random(-5,5)} until(abs($c)!=$a && ($b<0 || $c<0) );
+
+
+do{$d = random(1,9,1);} until($a/$c*$d != $b && $c/$a*$b != $d);
+
+
+if(-$d/$c == int(-$d/$c) && -$d/$c > 0){
+$start = -$d/$c + 1;
+} else { $start = 1;}
+
+
+$exp_num = random(1,2,1);
+$coef_en = Compute("$exp_num n")->reduce;
+
+$exp_den = random(1,2,1);
+$coef_ed = Compute("$exp_den*n")->reduce;
+
+if ($exp_num > $exp_den) {
+  $soln1 = Compute("inf");
+  $soln2 = 'B';
+  };
+if ($exp_num < $exp_den) {
+  $soln1 = Compute("0");
+  $soln2 = 'A';
+  };
+if ($exp_num == $exp_den) {
+  $soln1 = Compute("abs( ($a/$c)^($exp_num))");
+  if ($soln1 < 1) {$soln2 = 'A'}
+  else {$soln2 = 'B'};
+  };
+
+$frac = Compute("($a*n+$b)^($coef_en)/($c*n+$d)^($coef_ed)")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit une série
+\( \displaystyle \sum_{n=$start}^{\infty} a_n \)
+où
+\[ a_n = $frac \]
+Dans ce problème, on utilise le critère de critère de Cauchy généralisé afin de déterminer si la série est convergente.
+
+$PAR
+
+Évaluer la limite
+\[ L =\lim_{n\rightarrow\infty} \sqrt[n]{|a_n|} \]
+Entrer la valeur de la limite \(L\). Entrer $BBOLD inf $EBOLD pour \(\infty\), $BBOLD -inf $EBOLD pour \(-\infty\) et $BBOLD nep $EBOLD si la limite n'existe pas.
+$BR
+\( L = \) \{ans_rule( 30) \}
+$PAR
+Lequel des énoncés suivants est vrai? $BR
+${BBOLD}A${EBOLD}. Selon le test de la racine \(n^e\), la série converge absolument. $BR
+${BBOLD}B${EBOLD}. Selon le test de la racine \(n^e\), la série diverge. $BR
+${BBOLD}C${EBOLD}. Selon le test de la racine \(n^e\), la série converge conditionnellement. $BR
+${BBOLD}D${EBOLD}. Le test n'est pas concluant, mais la série converge absolument suivant un ou plusieurs autres critères. $BR
+${BBOLD}E${EBOLD}. Le test n'est pas concluant, mais la série diverge suivant un ou plusieurs autres critères. $BR
+${BBOLD}F${EBOLD}. Le test n'est pas concluant, mais la série converge conditionnellement suivant un ou plusieurs autres critères. $BR
+
+Choisir la lettre de l'énoncé qui est vrai :
+\{pop_up_list(['?', 'A', 'B', 'C', 'D', 'E', 'F']) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($soln1->cmp);
+ANS(str_cmp($soln2));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

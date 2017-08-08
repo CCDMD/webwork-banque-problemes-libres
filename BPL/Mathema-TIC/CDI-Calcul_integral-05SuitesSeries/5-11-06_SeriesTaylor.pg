@@ -1,0 +1,82 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('intervalle de convergence', 'série de Taylor')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_11_10_13.pg
+## ZDate(04/26/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('11.10')
+## Problem1('13')
+###############Source###############
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "weightedGrader.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT("Les cinq premières réponses valent 10% chacune et la dernière réponse vaut 50% de la note.");
+
+#####################################################################
+install_weighted_grader();
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem());
+
+#####################################################################
+Context("Numeric");
+# Let students type "EmptySet" instead of "NONE"
+#Context()->constants->add(EmptySet => Set());
+#Context()->flags->set(noneWord=>"EmptySet");
+
+$a = non_zero_random(-4,4,1);
+
+$ans0 = Compute("e^($a)");
+$ans1 = Compute("(e^($a))*(x-$a)");
+$ans2 = Compute("((e^($a))/2)*(x-$a)^2");
+$ans3 = Compute("((e^($a))/6)*(x-$a)^3");
+$ans4 = Compute("((e^($a))/24)*(x-$a)^4");
+
+Context("Interval");
+$ans5 = Compute("(-inf,inf)");
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer les cinq premiers termes non nuls de la série de Taylor centrée en \(a = $a\) qui représente la fonction suivante.
+\[
+f(x) = e^x
+\]
+$BR
+Réponse : \(f(x) = \) \{ans_rule(10)\} \( + \) \{ans_rule(10)\} \( + \) \{ans_rule(10)\} \( + \) \{ans_rule(10)\} \( + \) \{ans_rule(10)\} \(+ \cdots\)
+$PAR
+Quel est l'intervalle de convergence? \{ans_rule(20)\} 
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+WEIGHTED_ANS( ($ans0)->cmp(), 10 );
+WEIGHTED_ANS( ($ans1)->cmp(), 10 );
+WEIGHTED_ANS( ($ans2)->cmp(), 10 );
+WEIGHTED_ANS( ($ans3)->cmp(), 10 );
+WEIGHTED_ANS( ($ans4)->cmp(), 10 );
+WEIGHTED_ANS( ($ans5)->cmp(), 50 );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

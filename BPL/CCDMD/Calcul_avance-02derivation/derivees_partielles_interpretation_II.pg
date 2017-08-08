@@ -1,0 +1,76 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation - définition et interprétation)
+## KEYWORDS('dérivée en un point', 'dérivée partielle', 'pente de la droite tangente')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################<
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Differentiation of multivariable functions)
+## ZDBsection(Partial derivatives)
+## Institution(W.H.Freeman)
+## Author(JustAsk - Vladimir Finkelshtein)
+## Level(3)
+## MO(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('14.3')
+## Problem1('7')
+
+
+
+DOCUMENT();
+
+loadMacros("PG.pl","PGbasicmacros.pl","PGanswermacros.pl");
+loadMacros("Parser.pl");
+loadMacros("freemanMacros.pl");
+loadMacros("PGauxiliaryFunctions.pl");
+loadMacros("PGgraphmacros.pl");
+loadMacros("PGchoicemacros.pl");
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+$a=non_zero_random(2,19,1);
+$xpow=random(3,7,1);
+$ypow=random(3,7,1);
+$xpow1=$xpow-1;
+
+$context = Context();
+$context->variables->add(y=>'Real');
+$f=Formula("x^($xpow)+$a*x*y-y^($ypow)")->reduce();
+$z=Formula("x^($xpow)+$a*x-1")->reduce();
+$dzdx=Formula("$xpow*x^($xpow-1)+$a*y")->reduce();
+$ans=$xpow+$a;
+
+BEGIN_TEXT
+\{ textbook_ref_exact("Rogawski ET 2e", "14.3","7") \}
+$PAR
+L'intersection du plan d'équation \(y=1\) et de la surface de la fonction \(z=$f\) est une courbe de l'espace.$BR
+Déterminer la pente \( m \) de la tangente à cette courbe au point \( P(1,1,$a) \). 
+$PAR
+\(m=\) \{ans_rule()\}
+$BR
+END_TEXT 
+
+Context()->normalStrings;
+
+ANS(Real($ans)->cmp);
+
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+La pente de la droite tangente à la courbe \(z=z(x,1)=$z\),$BR
+qui est l'intersection de la surface de \(z=$f\) avec le plan \(y=1\),$BR
+est donnée par la dérivée partielle de \( z \) selon \( x \) évaluée au point \( (1, 1) \) : \( m = \frac {\partial{z}}{\partial{x}}(1,1).\)
+$PAR
+Puisque \( \frac {\partial{z}}{\partial{x}}=\frac {\partial}{\partial{x}}\left( $f \right) = $dzdx \),$BR
+on a : \( m=\frac {\partial{z}}{\partial{x}}(1,1)=$xpow \cdot 1^{$xpow1}+$a \cdot 1=$ans \).
+$BR
+END_SOLUTION
+
+ENDDOCUMENT();

@@ -1,0 +1,125 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Espace vectoriel)
+## KEYWORDS('base', 'ensemble générateur', 'espace euclidien', 'indépendance')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##Level(4)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserMultiAnswer.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Vector');
+
+
+$rep1= Vector(1,0,0,0);
+$rep2= Vector(0,1,0,0);
+$rep3= Vector(0,0,1,0);
+$rep4= Vector(0,0,0,1);
+$a1=non_zero_random(-3,3);
+$a2=non_zero_random(-3,3);
+$a3=non_zero_random(-3,3);
+$a4=non_zero_random(-3,3);
+$a = Vector($a1,$a2,$a3, $a4);
+
+   
+
+
+#Un bonne réponse
+#C contiendra cette bonne réponse
+#S contiendra la réponse de l'étudiant
+
+
+$image_multians = MultiAnswer($rep1, $rep2,$rep3,$rep4)->with(
+  singleResult => 1,
+  separator => ',',
+  tex_separator => ',',
+
+  checker => sub {
+      my ( $correct, $student, $self ) = @_;
+      my @c = @{$correct};
+      my @s = @{$student};
+
+      return 0 if scalar(@s) < scalar(@c);  # Valide s'il manque des entrées
+
+     
+	  $C=Matrix($rep1 ,$rep2,$rep3,$rep4
+          )->transpose;
+
+    
+  
+      $S = Matrix( $s[0] , $s[1] ,$s[2],$s[3]
+      )->transpose;
+
+	  
+	  #Les réponses de l'étudiant sont les colonnes de la matrice $S
+      # A^T A est inversible ssi les colonnes sont linéairement idépendantes
+
+
+	  
+	#Validation: un des vecteurs est le vecteur a
+	
+      if ( $s[0]!=$a && $s[1]!=$a && $s[2]!=$a && $s[3]!=$a) {
+        Value->Error("La base doit contenir le vecteur \(\vec{a}\)");
+        return 0;
+      }
+     
+
+      #Validation: les vecteurs sont linéairement indépendants
+	  
+      if ( (($S->transpose) * $S)->det == 0) {
+        Value->Error("Les vecteurs sont linéairement dépendants");
+        return 0;
+      }
+
+	  
+	   #Validation: les vecteurs sont orthogonaux
+      if ( $s[0].$s[1] != 0 || $s[0].$s[2]!=0 || $s[0].$s[3]!=0 || $s[1].$s[2]!=0 || $s[1].$s[3]!=0 || $s[2].$s[3]!=0) {
+        Value->Error("Les vecteurs ne sont pas orthogonaux deux à deux");
+        return 0;
+      }
+	  
+	  
+	  
+     	  #Validation: les vecteurs engendrent le bon espace vectoriel
+		  #  C et S engendrent le même espace s'il existe un changement de base X 
+		  #  S = CX et  X est donné par (C^T C)^{-1} C^T S = X.
+	      $CTC = ($C->transpose) * $C;
+          $X = ($CTC->inverse) * (($C->transpose) * $S);
+      return $S == $C * $X;
+
+
+  }
+);
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Trouver une base \(B\)  orthogonale de \( \mathbb{R}^4   \) contenant le vecteur \(\vec{a}=$a\).
+$BR
+$BR
+\(B\)  = \(\Bigg\lbrace\) 
+\{ $image_multians->ans_array() \}, 
+\{ $image_multians->ans_array() \},
+\{ $image_multians->ans_array() \},
+\{ $image_multians->ans_array() \}
+\(\Bigg\rbrace\)
+END_TEXT
+Context()->normalStrings;
+
+ANS( $image_multians->cmp() );
+
+
+;
+
+ENDDOCUMENT();

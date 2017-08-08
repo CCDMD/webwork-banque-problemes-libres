@@ -1,0 +1,162 @@
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('champ de directions', 'modélisation', 'ordre 1', 'représentation graphique', 'système d\'équations différentielles')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+## Tagged by glr 02/04/09
+## ZDBsubject(Differential equations)
+## ZDBchapter(Systems of differential equations)
+## ZDBsection(Phase planes)
+## Institution(University of Michigan)
+## Author(Gavin LaRose)
+## Level(3)
+## MO(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('11.8')
+## Problem1('5')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('11.8')
+## Problem2('5')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('11.8')
+## Problem3('19')
+## TitleText4('Applied Calculus')
+## AuthorText4('Hughes-Hallett')
+## EditionText4('4')
+## Section4('10.6')
+## Problem4('12')
+###############Source#################
+
+
+
+## Textbook tags
+## HHChapter1('Differential Equations')
+## HHChapter2('Differential Equations')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"PGgraphmacros.pl",
+"parserPopUp.pl",
+# "parserNumberWithUnits.pl",
+# "parserFormulaWithUnits.pl", 
+# "parserFormulaUpToConstant.pl",
+# "PGcourse.pl",
+);
+
+Context("Numeric");
+Context()->variables->add( y=>'Real', w=>'Real', r=>'Real', t=>'Real' );
+$showPartialCorrectAnswers = 0;
+
+$dx = sub { my ( $x, $y ) = @_; return $x - $x*$y; };
+$dy = sub { my ( $x, $y ) = @_; return -1*$y + $x*$y; };
+$gr = init_graph( 0, 0, 4, 4, axes=>[0,0], size=>[250,250] );
+$fn = new VectorField( $dx, $dy, $gr );
+$fn->dot_radius(1);
+$fn->x_steps(20);
+$fn->y_steps(20);
+$fn->rf_arrow_length( sub{
+  my($dx,$dy)=@_;
+  return(0) if sqrt($dx*$dx + $dy*$dy)==0;
+  0.125*1/sqrt($dx*$dx + $dy*$dy);
+} );
+
+$gr->lb('reset');
+$gr->lb( new Label(-0.5,2,"v","black") );
+$gr->lb( new Label(2,-0.5,"m","black") );
+$gr->lb( new Label(4,0,"4","black","right","bottom") );
+$gr->lb( new Label(0,4,"4","black","left","top") );
+$gr->lb( new Label(1,0,"1","black","center","bottom") );
+$gr->lb( new Label(0,1,"1","black","left","middle") );
+
+$w0 = random(1,4,1);
+$r0 = random(1,4,1);
+$dw0 = $w0 - $w0*$r0;
+$dr0 = -1*$r0 + $w0*$r0;
+
+$wAns = ( $dw0 == 0 ) ? "reste stable" :
+    ( $dw0 > 0 ? "augmente" : "diminue" );
+$rAns = ( $dr0 == 0 ) ? "reste stable" :
+    ( $dr0 > 0 ? "augmente" : "diminue" );
+
+$wChg = PopUp( ["choisir...", "augmente", "diminue", "reste stable"], $wAns );
+$rChg = PopUp( ["choisir...", "augmente", "diminue", "reste stable"], $rAns );
+$long = PopUp( ["choisir...", "v et m tendent vers zéro",
+		"v tend vers zéro et m tend vers l'infini",
+		"v tend vers l'infini et m tend vers zéro",
+		"v et m tendent tous les deux vers des valeurs stables bornées non nulles",
+		"v et m oscillent"], "v et m oscillent" );
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit \( v \) le nombre de vers (en millions) et
+\( m \) le nombre de merles (en milliers) vivant sur une île.
+Supposons que  \( v \) et \( m \) satisfont les équations
+différentielles suivantes, dont le champs de direction
+est également illustré (avec \(m\) sur l'axe horizontal
+et \(v\) sur l'axe vertical).
+\[ \frac{dv}{dt} = v - vm, \qquad \frac{dm}{dt}=-m+vm. \]
+
+$BR
+$BCENTER
+\{ image( insertGraph( $gr ), tex_size=>350, height=>300, width=>300,
+	  extra_html_tags=>"alt='champ de directions du système d\'équations différentielles donné'" ) \}
+$ECENTER
+$PAR
+
+$BBOLD Note. $EBOLD Les pointes de flèches sont indiquées en rouge. 
+$PAR
+Supposons que \(v=$w0\) et \(m=$r0\) quand \(t=0\).
+$PAR
+Au départ, le nombre de vers augment-t-il, diminue-t-il ou est-il stable ?
+\{ $wChg->menu() \}
+$PAR
+Au départ, le nombre de merles augment-t-il, diminue-t-il ou est-il stable ?
+\{ $rChg->menu() \}
+
+$PAR
+Que se produit-il à long terme ?
+$PAR
+\{ $long->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $wChg->cmp() );
+ANS( $rChg->cmp() );
+ANS( $long->cmp() );
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+Si \(v=$w0\) et \(m=$r0\), alors
+\(\frac{dv}{dt} = $dw0\) et \(\frac{dm}{dt} = $r0\),
+donc au départ le nombre de vers \{ $wChg->correct_ans \}
+et le nombre de merles \{ $rChg->correct_ans \}.
+Cependant, à long terme, les populations oscilleront et
+elles reviendront même aux niveaux de \(v=$w0\) et \(m=$r0\).
+END_SOLUTION
+Context()->normalStrings;
+
+;
+
+ENDDOCUMENT();

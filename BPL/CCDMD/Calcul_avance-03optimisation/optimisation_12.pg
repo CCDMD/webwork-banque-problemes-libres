@@ -1,0 +1,80 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('applications', 'minimisation', 'minimum', 'minimum absolu', 'optimisation', 'optimisation sous contrainte', 'une contrainte d\'égalité')
+## Date('04/04/2017')
+## Author('Éric Gaul')
+## Institution('Collège Montmorency')
+
+## TitleText1('Calcul à plusieurs variables')
+## AuthorText1('Stewart (adapt. J. Guérin)')
+## EditionText1('2')
+## Section1('5.1')
+## Problem1('43')
+
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "PGML.pl",
+   "PGauxiliaryFunctions.pl",
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Numeric");
+Context()->variables->add(y => "Real", z => "Real"); 
+
+$a = Compute(random(1, 5));
+$b = Compute(random(1, 5));
+while($a == $b) {
+    $b = Compute(random(1, 5));
+}
+$x0 = Compute(random(1, 10));
+$y0 = Compute(random(1, 10));
+$z0 = Compute(0);
+$cone = Formula("$a*x^2 + $b*y^2") -> reduce;
+
+$x1 = $x0/($a+1);
+$x2 = $x1;
+$y1 = $y0/($b+1);
+$y2 = $y1;
+$z1 = -sqrt($a*$x1**2+$b*$y1**2);
+$z2 = +sqrt($a*$x1**2+$b*$y1**2);
+
+
+##############################################################
+#
+#  Text
+#
+#
+
+BEGIN_PGML
+Trouver les points du cône [`z^2 = [$cone]`] les plus proche du point [`([$x0], [$y0], [$z0])`].
+
+Les points sont, du plus bas au plus haut :
+
+    [`(`] [__________]{$x1} , [__________]{$y1} , [__________]{$z1} [`)`]
+
+    [`(`] [__________]{$x2} , [__________]{$y2} , [__________]{$z2} [`)`]
+END_PGML
+
+##############################################################
+#
+#  Answers
+#
+#
+
+ENDDOCUMENT();

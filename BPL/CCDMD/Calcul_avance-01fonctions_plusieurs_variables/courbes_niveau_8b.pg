@@ -1,0 +1,134 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Fonction et relation à plusieurs variables)
+## KEYWORDS('R^3', 'fonction de trois variables', 'graphique', 'surfaces de niveau', 'traces')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+## RESSOURCES('levels-8b.gif','levels-8b-zip.html','levels-8b.nb')
+
+###############Source#################
+## DESCRIPTION
+##   Identify Level Curves
+## ENDDESCRIPTION
+## Tagged by nhamblet
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Concepts for multivariable functions)
+## ZDBsection(Traces, contours, and level sets)
+## ZDate(8/23/07)
+## Institution(Union College)
+## MLT(tcl_slices_java)
+## MLTleader(1)
+## Level(2)
+###############Source#################
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "contextABCD.pl",
+  "imageChoice.pl",
+  "LiveGraphics3D.pl",
+  "PGcourse.pl",
+  "PGML.pl",
+);
+
+
+TEXT(beginproblem());
+
+
+
+##############################################
+#  Setup
+
+$size = [150,150];   # the size of the images
+$tsize = 250;        # the tex size of the images
+$lsize = [250,250];  # the size of the Live3D images
+$ltsize = 600;       # the tex size of Live3D images
+
+$mfile = alias("levels-8b-zip.html");
+$gfile = alias("levels-8b.gif");
+$live3d = Live3Dfile("levels-8b.m",
+	image => $gfile,
+	archive => $mfile,
+	size => $lsize, tex_size => $ltsize, tex_center => 1,
+	scale => 1.4);
+
+#
+#  The slices and their associated GIFs
+#
+@QA = (
+  "Trace en \(z = 0\)",      "courbes_niveau_8b-graph-1b.gif",
+  "Trace en \(y = -1\)",     "courbes_niveau_8b-graph-2b.gif",
+  "Trace en \(z = 1.5\)",    "courbes_niveau_8b-graph-3b.gif",
+  "Trace en \(y = -1.8\)",   "courbes_niveau_8b-graph-4b.gif",
+  "Trace en \(x = 1\)",      "courbes_niveau_8b-graph-5b.gif",
+  "Trace en \(x = -1.415\)", "courbes_niveau_8b-graph-6b.gif",
+  "Trace en \(x = 1.8\)",    "courbes_niveau_8b-graph-7b.gif",
+  "Trace en \(x = -2.25\)",  "courbes_niveau_8b-graph-8b.gif",
+);
+
+##############################################
+
+#
+#  use an image match list
+#
+$ml = new_image_match_list(
+  link => 0,                #  don't link to separate image
+  size => $size,            #  image size in pixels
+  tex_size => $tsize,       #  tex size in percent times 10
+  border => 0,              #  image doesn't need border
+  columns => 3,             #  number of columns
+);
+$ml->{separation} = 3;      # separation for questions in the list
+
+$ml->qa(@QA);               #  set the questions and answers
+$ml->choose([1,5],2);       #  select 4 of them
+$ml->choose_extra(2);       #  and show another 2
+
+@good = @{$ml->ra_correct_ans};
+
+##############################################
+#  Main tex
+
+BEGIN_TEXT
+
+
+\{ColumnTable(
+  "Soit la surface de niveau ci-contre.$BBR
+   Associer chaque trace avec son graphique :".
+  $BCENTER.$PAR.$ml->print_q.$ECENTER,
+  $live3d.$LIVEMESSAGE,
+  indent => 20, valign => "BOTTOM"
+)\}
+$PAR
+
+\{$ml->print_a\}
+$PAR
+
+END_TEXT
+
+
+##################################################
+#  Answers
+
+Context("ABCD")->strings->add(E=>{}, F=>{});
+ANS(string_cmp($ml->ra_correct_ans));
+
+$showPartialCorrectAnswers = 0;
+install_problem_grader(~~&std_problem_grader);
+
+##################################################
+
+#BEGIN_PGML_SOLUTION
+#[$good[0]]
+#[$good[1]]
+#[$good[2]]
+#[$good[3]]
+#END_PGML_SOLUTION
+
+;
+ENDDOCUMENT();

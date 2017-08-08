@@ -1,0 +1,82 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Vecteurs et espace euclidien)
+## KEYWORDS('R^3', 'base', 'changement de base', 'combinaison linéaire')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##Level(3)
+##Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"MatrixUnits.pl",
+"PGcourse.pl",
+);
+
+
+
+
+TEXT(beginproblem()); 
+$refreshCachedImages = 1;
+Context('Matrix');
+   
+
+$U = GL3Z();
+$b11=$U->element(1,1);
+$b12=$U->element(1,2);
+$b13=$U->element(1,3);
+$b21=$U->element(2,1);
+$b22=$U->element(2,2);
+$b23=$U->element(2,3);
+$b31=$U->element(3,1);
+$b32=$U->element(3,2);
+$b33=$U->element(3,3);
+
+
+$VV = $U->inverse;
+
+ $b1=Formula("$b11 x^2+$b21 x+$b31 ")->reduce;
+  $b2=Formula("$b12 x^2+$b22 x+$b32 ")->reduce;
+   $b3=Formula("$b13 x^2+$b23 x+$b33 ")->reduce;
+
+
+$v1=random(1,9);
+$v2=random(1,9);
+$v3=random(1,9);
+
+$V=Matrix([[$v1,$v2,$v3]])->transpose;
+$rep=$VV*$V;
+
+$rep1=$rep->element(1,1);
+$rep2=$rep->element(2,1);
+$rep3=$rep->element(3,1);
+#($u1,$u2,$u3) = $V->value;
+
+
+
+
+$p=Formula("$v1 x^2+$v2 x+$v3")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \(B=  \left\lbrace  p_1(x), \ p_2(x),\ p_3(x)     \right\rbrace= \left\lbrace    $b1, \ $b2, \ $b3  \right\rbrace\), une base de \( \mathbf{P}_2\), l'espace  vectoriel des polynômes de degré au plus \(2\). 
+$PAR
+
+Donner les composantes de \( p(x)=$p\) dans la base \( B\).
+$BR
+$BR
+
+\( p(x) \)= \{ ans_rule(5) \}\(p_1(x)\)+\{ ans_rule(5) \}\(p_3(x)\)+\{ ans_rule(5) \}\(p_3(x) \)
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( $rep1->cmp() );
+ANS( $rep2->cmp() );
+ANS( $rep3->cmp() );
+
+
+
+ENDDOCUMENT();

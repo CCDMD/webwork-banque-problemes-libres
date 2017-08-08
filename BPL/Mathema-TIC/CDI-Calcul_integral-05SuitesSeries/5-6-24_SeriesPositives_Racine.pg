@@ -1,0 +1,72 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de Cauchy', 'série', 'série à termes positifs')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source :Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.5_The_Ratio_and_Root_Tests/10.5.41.pg
+## ZInstitution(The College of Idaho)
+## ZAuthor(LA Danielson)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.5')
+## Problem1('41')
+###############Source###############
+
+
+DOCUMENT();
+
+#Load Necessary Macros
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT("Afin d'obtenir 100 % pour ce problème, toutes les réponses doivent être correctes.");
+
+Context()->strings->add(nep=>{});
+Context()->variables->add(n=>'Real');
+
+$a = random(2,9,1);
+$ans2 = Compute("1/exp(1/$a)");
+
+($an, $exp, $result, $L, $FinalState, $popup) = @{list_random(
+	[ "\left(1+\frac{1}{$a n}\right)^{-n}", "-1", "1^{-1} = 1", Real(1), "le test n'est pas concluant pour la série \( \sum\limits_{n=1}^{\infty} \left(1+\frac{1}{$a n}\right)^{-n} \).  Puisque \[ \lim_{n\to\infty} a_n = \lim_{n\to\infty} \left( 1+\frac{1}{$a n}\right)^{-n} = \lim_{n\to\infty}\left[\left(1+\frac{1}{$a n} \right)^{$a n} \right]^{-\frac{1}{$a}} =e^{-\frac{1}{$a}} \ne 0,\] la série diverge selon le critère du terme général.", PopUp(['?','convergente', 'divergente','sans conclusion'],'sans conclusion')],
+	[ "\left(1+\frac{1}{$a n}\right)^{-n^2}", "-n", "\lim_{n\to\infty} \left( 1+\frac{1}{$a n}\right)^{-n} = \lim_{n\to\infty}\left[\left(1+\frac{1}{$a n} \right)^{$a n} \right]^{-\frac{1}{$a}} =e^{-\frac{1}{$a}}<1", $ans2, "la série \( \sum\limits_{n=1}^{\infty} \left(1+\frac{1}{$a n}\right)^{-n^2} \) converge selon le critère de la racine \(n^e\).", PopUp(['?','convergente', 'divergente','sans conclusion'],'convergente') ] )};
+ 
+Context()->texStrings;
+BEGIN_TEXT
+Utiliser le critère de la racine \(n^e\) (critère de Cauchy) pour déterminer si la série est convergente ou divergente, ou si on n'arrive à aucune conclusion.
+\[ \displaystyle \sum_{n=1}^{\infty} $an \]
+\(\displaystyle L = \lim\limits_{n \to \infty} \sqrt[n]{ a_n } =\) \{ans_rule(20)\}
+$PAR
+\( \displaystyle \sum_{n=1}^{\infty} $an \) est \{$popup->menu\}.
+END_TEXT
+
+
+Context()->normalStrings;
+
+#Answer Check Time!
+# Afin d'obtenir 100 % pour ce problème, toutes les réponses doivent être correctes.
+install_problem_grader(~~&std_problem_grader);
+
+ANS($L->cmp);
+ANS($popup->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Si \( \displaystyle a_n = $an\), 
+\[ \sqrt[n]{a_n} = \sqrt[n]{$an} = \left( 1 + \frac{1}{$a n} \right)^{$exp} \] et \[ \lim_{n \to \infty} \sqrt[n]{a_n} = $result. \]
+Par conséquent, $FinalState
+END_SOLUTION
+
+ENDDOCUMENT()

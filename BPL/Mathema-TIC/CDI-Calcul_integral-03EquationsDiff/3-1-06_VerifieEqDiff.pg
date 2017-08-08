@@ -1,0 +1,111 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('ordre 1', 'ordre 2', 'vérification', 'équation différentielle')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : Library/Michigan/Chap11Sec1/Q15.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZMLT(verify_matching_leibniz)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('11.1')
+## Problem1('15')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('11.')
+## Problem2('2')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('11.1')
+## Problem3('25')
+###############Source###############
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"PGcourse.pl",
+);
+
+Context("Numeric");
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,8,1);
+$asq = $a*$a;
+
+$match = new_match_list();
+$match->qa( "\(\frac{dy}{dx}=-$a y\)", "\(y = e^{-$a x}\)",
+	    "\(\frac{dy}{dx}=$a y\)",  "\(y = e^{$a x}\)",
+	    "\(\frac{d^2y}{dx^2}=$asq y\)",
+	    "\(y = e^{-$a x}\) ou \(y = e^{$a x}\)",
+	    "\(\frac{d^2y}{dx^2}=-$asq y\)", "\(y = \sin($a x)\)" );
+$match->choose(4);
+$match->extra( "\(y = $a\sin(x)\)",
+ 	       "\(y = \sin($a x)\) ou \(y = $a\sin(x)\)" );
+# $match->makeLast( "\(y = e^{-$a x}\) ou \(y = e^{$a x}\)",
+# 		  "\(y = \sin($a x)\) ou \(y = $a\sin(x)\)" );
+$match->choose_extra(2);
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+Associer chaque solution à une équation différentielle.  S'il y a plus d'une solution à une équation, associer cette équation à la liste complète de ses solutions.
+
+\{ $match->print_q() \}
+\{ $match->print_a() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(str_cmp( $match->ra_correct_ans ) );
+
+@q = @{$match->selected_q()};
+@a = @{$match->ra_correct_ans};
+
+Context()->texStrings;
+BEGIN_SOLUTION
+En calculant les dérivées pour vérifier chaque solution, on obtient $BR
+
+\( \frac{d}{dx} (e^{-$a x}) = -$a e^{-$a x} = -$a y\), $BR
+\( \frac{d^2}{dx^2} (e^{-$a x}) = $asq e^{-$a x} = $asq y\),
+$PAR
+\( \frac{d}{dx} (e^{$a x}) = $a e^{$a x} = $a  y\), $BR
+\( \frac{d^2}{dx^2} (e^{$a x}) = $asq e^{$a x} = $asq y \),
+$PAR
+\( \frac{d}{dx} (\sin($a x)) = $a \cos($a x)\), $BR
+\( \frac{d^2}{dx^2} (\sin($a x)) = -$asq \sin($a x) = -$asq y\),
+$PAR
+\( \frac{d}{dx} ($a \sin(x)) = $a \cos(x)\) et $BR
+\( \frac{d^2}{dx^2} ($a \sin(x)) = -$a \sin(x) = -$a y\).
+$PAR
+Ainsi, les bonnes réponses sont : $BR
+$q[0] : $a[0], $BR
+$q[1] : $a[1], $BR
+$q[2] : $a[2], $BR
+$q[3] : $a[3]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

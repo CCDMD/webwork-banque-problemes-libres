@@ -1,0 +1,101 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Vecteurs et espace euclidien)
+## KEYWORDS('R^3', 'base', 'changement de base', 'combinaison linéaire')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##Level(3)
+##Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"MatrixUnits.pl",
+"PGcourse.pl",
+);
+
+
+
+
+TEXT(beginproblem()); 
+$refreshCachedImages = 1;
+Context('Matrix');
+   
+
+$U = GL3Z();
+$UU=GL3Z();
+while ($UU == $U)
+ { 
+$U = GL3Z();
+$UU=GL3Z(); 
+}
+
+
+
+$VV = $U->inverse;
+
+
+$b11=$U->element(1,1);
+$b12=$U->element(1,2);
+$b13=$U->element(1,3);
+$b21=$U->element(2,1);
+$b22=$U->element(2,2);
+$b23=$U->element(2,3);
+$b31=$U->element(3,1);
+$b32=$U->element(3,2);
+$b33=$U->element(3,3);
+$bb11=$UU->element(1,1);
+$bb12=$UU->element(1,2);
+$bb13=$UU->element(1,3);
+$bb21=$UU->element(2,1);
+$bb22=$UU->element(2,2);
+$bb23=$UU->element(2,3);
+$bb31=$UU->element(3,1);
+$bb32=$UU->element(3,2);
+$bb33=$UU->element(3,3);
+
+
+
+
+$v1=random(1,5);
+$v2=random(1,5);
+$v3=random(1,5);
+
+$V=Matrix([[$v1,$v2,$v3]])->transpose;
+#$trans=$UU*$V;
+$rep=$VV*$UU*$V;
+
+$rep1=$rep->element(1,1);
+$rep2=$rep->element(2,1);
+$rep3=$rep->element(3,1);
+
+
+
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit \(B=  \left\lbrace  \vec \alpha_1, \ \vec \alpha_2  ,\vec \alpha_3    \right\rbrace= \left\lbrace  $bb11\vec{i}+$bb21\vec{j}+$bb31 \vec{k},  \ $bb12\vec{i}+$bb22\vec{j}+$bb32 \vec k, \ $bb13\vec{i}+$bb23\vec{j}+$bb33 \vec k   \right\rbrace\) et
+ \(\widetilde{B}=  \left\lbrace  \vec \beta_1, \ \vec \beta_2 , \ \vec \beta_3   \right\rbrace= \left\lbrace  $b11\vec{i}+$b21\vec{j}+$b31 \vec k,  \ $b12\vec{i}+$b22\vec{j}+$b32 \vec k,  $b13\vec{i}+$b23\vec{j}+$b33 \vec k   \right\rbrace\), deux bases de \( \mathbb{R}^3\). 
+$BR
+
+Donner les composantes du vecteur  \( \vec{v}=$v1 \vec \alpha_1+$v2 \vec \alpha_2 +$v3 \vec \alpha_3  \) dans la base \( \widetilde{B}\).
+$BR
+$BR
+
+\( \vec{v}\)= \{ ans_rule(5) \}\(\vec \beta_1\)+\{ ans_rule(5) \}\( \vec \beta_2\)+\{ ans_rule(5) \}\( \vec \beta_3\)
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( $rep1->cmp() );
+ANS( $rep2->cmp() );
+ANS( $rep3->cmp() );
+
+
+
+ENDDOCUMENT();

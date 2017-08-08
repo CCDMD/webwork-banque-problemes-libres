@@ -2,15 +2,14 @@
 ## Algebraic equations
 ## ENDDESCRIPTION
 
-## DBsubject(Algèbre)
-## DBchapter(Factorisation)
-## DBsection(Double mise en évidence)
-## KEYWORDS('Factorisation','français','Mise en évidence double')
-## Author(Julie Tremblay)
-## Institution(Collège de Bois-de-Boulogne)
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('factorisation', 'mise en évidence double')
 
-## Level(2)
+## Traduction('Julie Tremblay')
+## Institution(Collège de Bois-de-Boulogne)
 ## Language(fr)
+## Author(Julie Tremblay)
 
 
 ########################################
@@ -22,8 +21,8 @@ DOCUMENT();
 loadMacros(
 "PGstandard.pl",
 "MathObjects.pl",
-"parserMultiAnswer.pl",
-"AnswerFormatHelp.pl",
+"unorderedAnswer.pl",
+#"AnswerFormatHelp.pl",
 "PGcourse.pl",
 );
 
@@ -46,29 +45,6 @@ $expression = Compute("x*y + $a*x + $b*y + $a*$b")->reduce();
 $fac1 = Formula("(x + $b)")->reduce();
 $fac2 = Formula("(y + $a)")->reduce();
 
-$multians = MultiAnswer($fac1, $fac2)->with(
-  singleResult => 0,
-  allowBlankAnswers => 1,
-  checker => sub {
-      my ( $correct, $student, $self ) = @_;
-      my ( $f1stu, $f2stu ) = @{$student};
-      my ( $f1, $f2 ) = @{$correct};
-      if ( ($f1 == $f1stu && $f2 == $f2stu) ||
-           ($f1 == $f2stu && $f2 == $f1stu) ) {
-          return [1,1];
-      } else {
-          if ($f1 == $f1stu || $f2 == $f1stu) {
-              return [1,0];
-          } elsif ($f1 == $f2stu || $f2 == $f2stu) {
-              return [0,1];
-          } else {
-              return [0,0];
-          }
-      }
-  }
-);
-
-
 
 ################################################
 #  Main text
@@ -78,12 +54,11 @@ Context()->texStrings;
 BEGIN_TEXT
 
 Factoriser l'expression \($expression\).
-$BR
-$BR
+$PAR
 \( \big( \)
-\{ $multians->ans_rule(10) \}
+\{ ans_rule(20) \}
 \( \big) \big( \)
-\{ $multians->ans_rule(10) \}
+\{ ans_rule(20) \}
 \( \big) \)
 END_TEXT
 Context()->normalStrings;
@@ -94,21 +69,18 @@ Context()->normalStrings;
 
 $showPartialCorrectAnswers = 1;
 
-ANS($multians->cmp());
+UNORDERED_ANS($fac1->cmp(),$fac2->cmp());
 
 $c = $a*$b;
 
 Context()->texStrings;
 BEGIN_SOLUTION
-
 Le polynôme \($expression\) se factorise par une mise en évidence double.
-$BR
-$BR
 \[
 \begin{array}{rl}  $expression &=\underbrace{xy + $a x} + \underbrace{$b y + $c} \\[0.5em] &=  x(y+$a) + $b(y+$a)   \\[0.5em]  &= (x + $b)(y + $a)  \end{array}
 \]
 END_SOLUTION
 Context()->normalStrings;
 
-COMMENT('MathObject version');
+#COMMENT('MathObject version');
 ENDDOCUMENT();

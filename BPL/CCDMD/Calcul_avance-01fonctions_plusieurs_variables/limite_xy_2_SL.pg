@@ -1,0 +1,128 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Limite et continuité)
+## KEYWORDS('fonction de deux variables', 'limite', 'limite (par plusieurs approches)', 'n\'existe pas')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+## Traduction française et adaptation de la solution : Éric Gaul
+
+###############Source#################
+# DESCRIPTION
+# Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+# originally from 5ed (with updates)
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+## Tagged by glr 05/26/09
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('Limits and Continuity')
+## ZDate('')
+## Author('Gavin LaRose')
+## Institution('University of Michigan')
+## TitleText1('Calculus')
+## EditionText1('5')
+## AuthorText1('Hughes-Hallett')
+## Section1('12.6')
+## Problem1('15')
+## Textbook tags
+## HHChapter1('Functions of Several Variables')
+## HHSection1('Limits and Continuity')
+###############Source#################
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+# "parserNumberWithUnits.pl",
+# "parserFormulaWithUnits.pl", 
+# "parserFormulaUpToConstant.pl",
+# "PGcourse.pl",
+);
+
+
+Context("Numeric");
+Context()->variables->add( y => 'Real' );
+$showPartialCorrectAnswers = 1;
+
+$r = random(2,5,1);
+$rp1 = $r + 1;
+$twor = 2*$r;
+
+$f = Compute( "(x^($r))*y/(x^($twor) + y^($r))" )->reduce();
+
+$lim2 = ( $r == 2 ) ? Compute("1/2") : Compute("1");
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+
+Dans ce problème, on montre que la fonction
+\[ f(x,y) = $f \]
+ne possède pas de limite au point
+\( (0,0) \) en comparant les limites suivantes :
+
+$PAR
+${BBOLD}(a)$EBOLD
+La limite de \(f\) lorsque \( (x,y) \to (0,0) \) le long de la droite  \(y = x\) :
+$PAR
+$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP\( \lim\limits_{{}^{(x,y)\to(0,0)}_{\ \ \ \ \ y=x}} f(x,y) = \)
+\{ ans_rule(35) \}
+
+$PAR
+${BBOLD}(b)$EBOLD
+La limite de
+\(f\) lorsque \((x,y)\to(0,0)\) le long de la courbe \(y = x^$r\) :
+$PAR
+$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP\( \lim\limits_{{}^{(x,y)\to(0,0)}_{\ \ \ \ \ y=x^$r}} f(x,y) = \)
+\{ ans_rule(35) \}
+
+$PAR
+${BITALIC}Il faut être en mesure d'expliquer pourquoi les résultats en 
+${BBOLD}(a)$EBOLD et ${BBOLD}(b)$EBOLD impliquent ensemble que \(f\) ne possède pas de limite au point (0,0).
+${EITALIC}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute(0)->cmp() );
+ANS($lim2->cmp() );
+
+$exp2 = $r*$r;
+$den = ( $r == 2 ) ? "2 x^{$twor}" : "x^{$twor} + x^{$exp2}";
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+${BBOLD}(a)$EBOLD
+Supposons que \((x,y)\) tend vers \((0,0)\) le long de la droite \(y=x\).
+Ainsi : 
+\[ f(x,y) = f(x,x) = \frac{x^$rp1}{x^{$twor} + x^$r} = \frac{x}{x^$r+1},\]
+ce qui fait que :
+\[\lim_{^{(x,y)\to(0,0)}_{y=x}} f(x,y) = \lim_{x\to0} \frac{x}{x^$r+1} =
+0.\]
+
+$PAR
+${BBOLD}(b)$EBOLD
+D'un autre côté, si \((x,y)\) tend vers \((0,0)\) le long de la courbe
+\(y=x^$r\), on obtient :
+\[ f(x,y)=f(x,x^$r) = \frac{x^{$twor}}{$den} = $lim2,\]
+et alors : 
+\[\lim_{^{(x,y)\to(0,0)}_{y=x^$r}} f(x,y) = \lim_{x\to0}f(x,x^$r) = $lim2.\]
+
+
+$PAR
+Ainsi, peu importe comment ils sont près de l'origine, il y aura des points
+\((x,y)\) pour lesquels \(f(x,y)\) est près de 0 et d'autres points \((x,y)\) pour lesquels
+\(f(x,y)\) est près de \($lim2\).  Il s'ensuit que
+\[ \lim_{(x,y)\to(0,0)} f(x,y) \]
+ne peut exister.
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

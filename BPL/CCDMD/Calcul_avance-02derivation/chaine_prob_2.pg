@@ -1,0 +1,114 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('applications', 'dérivation en chaîne', 'dérivée en un point', 'dérivée partielle', 'dérivée partielle d\'ordre 1', 'dérivée totale', 'fonction de deux variables')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+
+###############Source################
+## DESCRIPTION
+##   The chain rule
+## ENDDESCRIPTION
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('The Chain Rule')
+## ZDate('10/15/09')
+## Author('Paul Pearson')
+## Institution('Fort Lewis College')
+## TitleText1('Calculus')
+## TitleText2('Calculus')
+## EditionText1('4')
+## EditionText2('5')
+## AuthorText1('Hughes-Hallett')
+## AuthorText2('Hughes-Hallett')
+## Section1('14.6')
+## Section2('14.6')
+## Problem1('19')
+## Problem2('18')
+
+
+
+DOCUMENT();        
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+Context("Numeric");
+
+#
+#  The functions
+#
+
+$I =  random(2,5,1);
+$R1 = random(3,5,1);
+$R2 = random(3,5,1);
+
+#
+# partial derivatives
+#
+$It  = random(0.01, 0.04, 0.01);
+$R1t = random(0.4, 0.6, 0.1);
+$R2t = random(-0.3, -0.1, 0.1);
+$absR2t = abs($R2t);
+
+
+$Vt = Real("
+($R1 * $R2)/($R1 + $R2) * $It 
++ 
+$I * $R2 * ( 1/($R1 + $R2) - $R1 / (($R1 + $R2)**2) ) * $R1t 
++
+$I * $R1 * ( 1/($R1 + $R2) - $R2 / (($R1 + $R2)**2) ) * $R2t 
+");
+
+
+##############################################
+#  Main text
+
+Context()->texStrings;
+Context()->flags->set(reduceConstants=>0);
+BEGIN_TEXT
+
+Le tension, \(V\) (en volts), le long d'un circuit est donné par
+la loi d'Ohm: \( V = IR \), où \( I \) est mesure l'intensité du 
+courant électrique (en ampères) et \( R \) est la 
+résistance (en ohms).  Si nous plaçons deux circuits avec
+résistance \( R_1 \) et \( R_2 \) en parallèle, alors 
+leur résistance combinée, \( R \), est donnée par 
+
+\[ \frac{1}{R} = \frac{1}{R_1} + \frac{1}{R_2}. \]
+
+Supposons que le courant soit de \( $I \) ampères et augmente à 
+un taux de \( $It \) ampères/seconde, que \( R_1 = $R1 \) ohms et 
+augmente à raison de \( $R1t \) ohms/seconde, alors que \( R_2 =
+$R2 \) ohms et décroît à un taux de \( $absR2t \) ohms/seconde.  
+Calculer le taux de variation de la tension selon le temps.
+
+$PAR
+
+\{ans_rule(30)\} volts/seconde
+
+END_TEXT
+Context()->normalStrings;
+
+
+##################################################
+#  Answers
+
+ANS($Vt->cmp);
+
+$showPartialCorrectAnswers = 1;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

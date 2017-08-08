@@ -1,0 +1,113 @@
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('ordre 1', 'résolution d\'une équation', 'solution particulière', 'à variables séparables')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+## Tagged by glr 02/08/09
+## ZDBsubject(Differential equations)
+## ZDBchapter(First order differential equations)
+## ZDBsection(Separable)
+## Institution(University of Michigan)
+## Author(Gavin LaRose)
+## Level(4)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('11.4')
+## Problem1('21')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('11.4')
+## Problem2('21')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('11.4')
+## Problem3('22')
+## Textbook tags
+## HHChapter1('Differential Equations')
+## HHChapter2('Differential Equations')
+###############Source#################
+
+
+
+
+
+DOCUMENT();
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+);
+ 
+Context("Numeric");
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,9,1);
+$b = random(1,7,1);
+$bd = ( $b == 1 ) ? '' : $b;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Déterminer la solution de :
+\( \dfrac{dz}{dt} = $a t e^{$bd z} \)
+ $BR
+passant par l'origine.
+$PAR
+$NBSP $NBSP \( z = \) \{ ans_rule(35) \}
+
+END_TEXT
+Context()->normalStrings;
+
+$tlim = sqrt(2/($a*$b));
+
+ANS(fun_cmp( "(-1/$b)*ln(1 - $a*$b*t^2/2)", 'var'=>['t','z'], 
+		'limits'=>[[-$tlim, $tlim],[0,1]] ) );
+
+$oob = ( $b == 1 ) ? '' : "{1\over $b}";
+$oob1 = ( $b == 1 ) ? '1' : "{1\over $b}";
+$ab = $a*$b;
+$ab2 = ( $ab/2 == int($ab/2) ) ? $ab/2 : "{$ab\over2}";
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+En séparant les variables on obtient :
+\[ e^{-$bd z}\, dz = $a dt, \]
+Donc :
+\[ \int e^{-$bd z}\,dz = \int $a t\,dt, \]
+Ce qui donne, en intégrant :
+\[ 
+ -$oob e^{-$bd z} = \frac{$a t^2}{2} + C.
+\]
+Puisque la solution doit passer par l'origine, \(z=0\) quand \(t=0\), 
+ce qui permet de trouver \( C = -$oob1\).$PAR
+
+Donc :\(
+-$oob e^{-$bd z}=\frac{$a t^2}{2} - $oob1,
+\)
+d'où, en isolant \(z\) :
+\[
+z=-$oob \ln\left(1- $ab2 t^2\right).
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+;
+ENDDOCUMENT();

@@ -1,0 +1,76 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de Cauchy', 'série', 'série à termes positifs')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.5_The_Ratio_and_Root_Tests/10.5.37.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Emily Price)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.5')
+## Problem1('37')
+###############Source###############
+
+
+DOCUMENT();
+
+#Load Necessary Macros
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT("Afin d'obtenir 100 % pour ce problème, toutes les réponses doivent être correctes.");
+
+Context()->variables->add(n=>'Real');
+Context()->strings->add(nep=>{});
+
+
+$exp = random(2, 9);
+$base = random(5,15,1);
+
+($an, $den, $result, $L, $compare, $answer) = @{list_random(
+	[ "\frac{1}{n^{$exp n}}", "n^{$exp}", "0", Real(0), "<", PopUp(['?','convergente', 'divergente','sans conclusion'],'convergente')],
+	[ "\frac{1}{$base^n}", "$base",  "\frac{1}{$base}", Real(1/$base), "<", PopUp(['?','convergente', 'divergente','sans conclusion'],'convergente')] )};
+ 
+Context()->texStrings;
+
+BEGIN_TEXT
+Utiliser le critère de la racine \(n^e\) (critère de Cauchy) pour déterminer si la série est convergente ou divergente, ou si on n'arrive à aucune conclusion.
+\[  \sum\limits_{n=1}^{\infty} $an \]
+\(\displaystyle L = \lim_{n \to \infty} \sqrt[n]{ a_n} =\) \{ans_rule(20)\}
+$PAR
+ \(\displaystyle \sum_{n=1}^{\infty} $an \) est \{$answer->menu\}.
+END_TEXT
+
+Context()->normalStrings;
+
+#Answer Check Time!
+
+# Afin d'obtenir 100 % pour ce problème, toutes les réponses doivent être correctes.
+install_problem_grader(~~&std_problem_grader);
+
+ANS($L->cmp);
+ANS($answer->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Si \( \displaystyle a_n = $an \), 
+\[ \sqrt[n]{a_n} = \sqrt[n]{$an} = \frac{1}{$den} \] 
+et 
+\[ L = \lim_{n \to \infty} \sqrt[n]{a_n} = $result $compare 1. \]
+Par conséquent, la série \( \sum\limits_{n=1}^{\infty} $an \) est \{$answer->correct_ans()\} selon le critère de la racine \(n^e\).
+END_SOLUTION
+
+ENDDOCUMENT()

@@ -1,0 +1,100 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'somme', 'sommes partielles', 'série', 'série géométrique')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mai 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_11_2_6.pg
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(Nminus1Numerator)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('11.2')
+## Problem1('6')
+###############Source###############
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "weightedGrader.pl",
+  "PGcourse.pl", 
+);
+
+#####################################################################
+
+COMMENT("Les cinq premières réponses valent chacune pour 10% de la note et la dernière réponse compte pour 50%. La raison de la série géométrique est choisie
+ aléatoire >1 ou <1.");
+
+install_weighted_grader();
+
+$showPartialCorrectAnswers = 1;
+TEXT(beginproblem());
+
+Context("Numeric");
+Context()->strings->add(Divergente=>{},DIV=>{alias=>'Divergente'});
+
+$a = random(2,10);
+$b = $a+1;
+#$a = list_random(0.1,0.2,0.3,0.4,0.6,0.7,0.8,0.9);
+
+$i = random(0,1);
+
+# si i=0, il y a convergence, raison = a/b<1
+if($i==0) {
+$rtex = "\frac{$a}{$b}";
+$r = Compute("$a/$b");
+$ans6 = Compute("1/(1-$r)");
+
+} else { #divergence, raison = b/a>1
+$rtex = "\frac{$b}{$a}";
+$r = Compute("$b/$a");
+$ans6 = Compute("Divergente");
+}
+
+$ans1 = Compute("1")->reduce;
+$ans2 = Compute("1+$r")->reduce;
+$ans3 = Compute("1+$r+$r^2")->reduce;
+$ans4 = Compute("1+$r+$r^2+$r^3")->reduce;
+$ans5 = Compute("1+$r+$r^2+$r^3+$r^4")->reduce;
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Calculer les cinq premières sommes partielles de la série. Puis, calculer la somme si la série est convergente.  Si elle est divergente, entrer ${BBOLD}DIV$EBOLD. 
+\[
+\sum_{n=1}^{\infty} \left($rtex\right)^{n-1}
+\]
+$BR
+\(S_{1} =\) \{ans_rule(30)\}, $BR
+\(S_{2} =\) \{ans_rule(30)\}, $BR
+\(S_{3} =\) \{ans_rule(30)\}, $BR
+\(S_{4} =\) \{ans_rule(30)\}$BR
+et  \(S_{5} =\) \{ans_rule(35)\}
+$PAR
+Somme : \{ans_rule(20)\}
+END_TEXT
+
+#####################################################################
+
+WEIGHTED_ANS( ($ans1)->cmp(), 10 );
+WEIGHTED_ANS( ($ans2)->cmp(), 10 );
+WEIGHTED_ANS( ($ans3)->cmp(), 10 );
+WEIGHTED_ANS( ($ans4)->cmp(), 10 );
+WEIGHTED_ANS( ($ans5)->cmp(), 10 );
+
+WEIGHTED_ANS( ($ans6)->cmp(), 50 );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

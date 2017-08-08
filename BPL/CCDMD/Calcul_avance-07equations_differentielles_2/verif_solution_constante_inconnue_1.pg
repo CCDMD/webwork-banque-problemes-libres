@@ -1,0 +1,124 @@
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('ordre 2', 'solution générale', 'vérification', 'équation linéaire')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################
+## DESCRIPTION
+## Introduction to differential equations
+## ENDDESCRIPTION
+## ZDBsubject(Differential equations)
+## ZDBchapter(Introductory concepts)
+## ZDBsection(Verification of solutions)
+## ZDate(01/30/2011)
+## Institution(Fort Lewis College)
+## Author(Paul Pearson)
+## Level(2)
+## MO(1)
+## TitleText1('Notes on Diffy Qs')
+## AuthorText1('Edwards and Penney')
+## EditionText1('4')
+## Section1('1.1')
+## Problem1('1')
+## TitleText2('Differential Equations Computing and Modeling')
+## AuthorText2('')
+## EditionText2('')
+## Section2('.')
+## Problem2('')
+###############Source#################
+
+
+
+##############################
+#  Initialization
+
+DOCUMENT(); 
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"AnswerFormatHelp.pl",
+"unionLists.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+);
+
+TEXT(beginproblem());
+
+
+#############################
+#  Setup
+
+Context("Numeric")->variables->add(
+r=>"Real"
+);
+
+
+# roots
+$r1 = random(2,9,1);
+do { $r2 = random(2,9,1); } until ($r2 != $r1);
+
+$p1 = $r1 - $r2;
+$p0 = $r1 * $r2;
+
+$answer[0] = Formula("r^2 e^(r x) + $p1 r e^(r x) - $p0 e^(r x)");
+
+
+Context("PolynomialFactors-Strict");
+Context()->variables->are(r=>"Real");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$answer[1] = Compute("(r+$r1)(r-$r2)");
+
+$answer[2] = List(Real(-$r1),Real($r2));
+
+
+#############################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit l'équation différentielle :
+\( y^{\,\prime\prime} + $p1 y^{\,\prime} - $p0 y = 0 \).
+\{ BeginList('OL',type=>'a') \}
+
+$ITEM Substituer la fonction suivante : \( y = e^{rx} \)
+(où \( r \) est une constante quelconque) dans l'équation.
+$PAR
+$NBSP \{ ans_rule(30) \} \( = 0 \).
+
+$ITEM Simplifier au maximum l'équation obtenue précédemment
+en factorisant au maximum et en divisant les facteurs assurément non nuls.
+$PAR
+$NBSP \{ ans_rule(30) \} \( = 0 \). 
+
+$ITEM Trouver la ou les valeur(s) de \( r \) telle(s) que \( y = e^{rx} \) 
+satisfait l'équation de départ.  S'il y a plus d'une réponse,
+inscrire ces dernières en les séparant par des virgules.
+$PAR
+$NBSP$NBSP$NBSP \( r = \) 
+\{ ans_rule(20) \}
+
+\{ EndList('OL') \}
+END_TEXT
+Context()->normalStrings;
+
+
+############################
+#  Answers
+
+$showPartialCorrectAnswers = 1;
+
+foreach my $i (0..2) {
+  ANS( $answer[$i]->cmp() );
+}
+
+;
+
+ENDDOCUMENT();

@@ -1,0 +1,181 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation - définition et interprétation)
+## KEYWORDS('accroissement', 'dérivée en un point', 'dérivée partielle', 'graphique', 'pente de la droite tangente', 'signe de la dérivée', 'taux de variation', 'taux de variation instantané')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Language(fr)
+## Traduction française de la solution : Éric Gaul
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+
+###############Source#################
+## Tagged by glr 06/22/09
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('Partial Derivatives')
+## ZDate('')
+## Author('Gavin LaRose')
+## Institution('University of Michigan')
+## TitleText1('Calculus')
+## EditionText1('5')
+## AuthorText1('Hughes-Hallett')
+## Section1('14.1')
+## Problem1('20')
+## Textbook tags
+## HHChapter1('Differentiating Functions of Several Variables')
+## HHSection1('The Partial Derivative')
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+"PGgraphmacros.pl",
+"parserPopUp.pl",
+);
+
+
+Context("Numeric");
+$showPartialCorrectAnswers = 1;
+
+## plot a bunch of parabolas
+$gr = init_graph( -5, -5, 5, 5, axes=>[0,0], size=>[250,250] );
+$gr->lb( 'reset' );
+$gr->lb( new Label( 4.9, -0.1, "5", "black", "right", "top" ) );
+$gr->lb( new Label( -0.1, 4.9, "5", "black", "right", "top" ) );
+my @func = ();
+for ( my $i=-35; $i<4; $i+=2 ) {
+    push( @func, "(x-1)^2+$i for x in <-5,5> using color:blue and weight:2" );
+}
+add_functions( $gr, @func );
+
+## put in a point P and another Q
+$gr->stamps( closed_circle( 2,-2, "blue" ) );
+$gr->stamps( closed_circle( -1,1, "blue" ) );
+$gr->lb( new Label( 1.9, -1.9, "P", "black", "right", "bottom" ) );
+$gr->lb( new Label( -0.75, 1, "Q", "black", "left", "top" ) );
+
+## pick one at which to specify a derivative
+$whichp = list_random("P", "Q");
+## a derivative
+$whichd = list_random("x", "y");
+## and a sign
+$whichs = list_random("positif", "négatif");
+$others = $whichs eq "positif" ? "négatif" : "positif";
+
+$whichchg = ( $whichs eq "positif" ) ? "augmente" : "diminue";
+$Whichchg = $whichchg;
+$Otherchg = ( $whichs eq "positif" ) ? "diminue" : "augmente";
+
+## then the questions and answers are
+if ( $whichp eq "P" ) {
+    if ( $whichd eq "x" ) {
+	@q = ( "Quel est le signe de \(f_y(P)\)?",
+	       "Quel est le signe de \(f_x(Q)\)?",
+	       "Quel est le signe de \(f_y(Q)\)?" );
+	@a = ( PopUp( [ "?", "positif", "négatif", "zéro" ], $others ),
+	       PopUp( [ "?", "positif", "négatif", "zéro" ], $others ),
+	       PopUp( [ "?", "positif", "négatif", "zéro" ], $others ) );
+	@expl = ( "$Otherchg lorsqu'on se déplace vers la droite sur \(P\).  Alors \(f_y(P)\) " .
+		      "est $others.",
+		  "$Otherchg lorsqu'on se déplace vers \(Q\).  Alors \(f_x(Q)\) " .
+		      "est $others.",
+		  "$Otherchg lorsqu'on se déplace vers le haut sur \(Q\).  Alors \(f_y(Q)\) " .
+		      "est $others.", );
+    } else {
+	@q = ( "Quel est le signe de \(f_x(P)\)?",
+	       "Quel est le signe de \(f_x(Q)\)?",
+	       "Quel est le signe de \(f_y(Q)\)?" );
+	@a = ( PopUp( [ "?", "positif", "négatif", "zéro" ], $others ),
+	       PopUp( [ "?", "positif", "négatif", "zéro" ], $whichs ),
+	       PopUp( [ "?", "positif", "négatif", "zéro" ], $whichs ) );
+	@expl = ( "$Otherchg lorsqu'on se déplace vers la droite en \(P\).  Alors " .
+		      "\(f_x(P)\) is $others.",
+		  "$Whichchg lorsqu'on se déplace vers le droite en \(Q\).  Alors \(f_x(Q)\) " .
+		      "est $whichs.",
+		  "$Whichchg lorsqu'on se déplace vers le haut en \(Q\).  Alors \(f_y(Q)\) " .
+		      "est $whichs.", );
+    }
+} else {
+    if ( $whichd eq "x" ) {
+	@q = ( "Quel est le signe de \(f_y(Q)\)?",
+	       "Quel est le signe de \(f_x(P)\)?",
+	       "Quel est le signe de \(f_y(P)\)?" );
+	@a = ( PopUp( [ "?", "positif", "négatif", "zéro" ], $whichs ),
+	       PopUp( [ "?", "positif", "négatif", "zéro" ], $others ),
+	       PopUp( [ "?", "positif", "négatif", "zéro" ], $whichs ) );
+	@expl = ( "$Whichchg lorsqu'on se déplace vers le haut en \(Q\).  Alors \(f_y(Q)\) " .
+		      "est $whichs.",
+		  "$Otherchg lorsqu'on se déplace vers la droite en \(P\).  Alors \(f_x(P)\) " .
+		      "est $others.",
+		  "$Whichchg lorsqu'on se déplace vers le haut en \(P\).  Alors \(f_y(P)\) " .
+		      "est $whichs.", );
+    } else {
+	@q = ( "Quel est le signe de \(f_x(Q)\)?",
+	       "Quel est le signe de \(f_x(P)\)?",
+	       "Quel est le signe de \(f_y(P)\)?" );
+	@a = ( PopUp( [ "?", "positif", "négatif", "zéro" ], $whichs ),
+	       PopUp( [ "?", "positif", "négatif", "zéro" ], $others ),
+	       PopUp( [ "?", "positif", "négatif", "zéro" ], $whichs ) );
+	@expl = ( "$Whichchg lorsqu'on se déplace vers la droite en \(Q\).  Alors " .
+		      "\(f_y(P)\) est $whichs.",
+		  "$Otherchg lorsqu'on se déplace vers la droite en \(P\).  Alors \(f_x(P)\) " .
+		      "est $others.",
+		  "$Whichchg lorsqu'on se déplace vers le haut en \(Q\).  Alors \(f_y(Q)\) " .
+		      "est $whichs.", );
+    }
+}
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+
+La figure ci-bas illustre des courbes de niveau de \(f(x,y)\),$BR
+Remarquer que les valeurs de \(f\) sur les courbes de niveau sont manquantes.
+$PAR
+$BCENTER
+\{ image( insertGraph( $gr ), tex_size=>250, height=>250, width=>250,
+	  extra_html_tags=>'alt="Graphique des courbes de niveau de f(x, y)"' ) \}
+$ECENTER
+$PAR
+En supposant que \(f_{$whichd}($whichp)\) est $whichs, répondre aux question suivantes,
+à propos des autres dérivées de \(f\) au point \(P\) et \(Q\).
+$PAR
+${BBOLD}(a)$EBOLD $q[0] \{ $a[0]->menu() \}
+$PAR
+${BBOLD}(b)$EBOLD $q[1] \{ $a[1]->menu() \}
+$PAR
+${BBOLD}(c)$EBOLD $q[2] \{ $a[2]->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($a[0]->cmp() );
+ANS($a[1]->cmp() );
+ANS($a[2]->cmp() );
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+Le fait que le signe de \(f_{$whichd}($whichp)\) soit $whichs signifie
+que la valeur de la fonction $whichchg quand on se déplace vers la droite à
+partir du point \($whichp\).$PAR
+Ainsi, la valeur de \( f  \) sur les courbes de niveau : 
+$PAR
+${BBOLD}(a)$EBOLD
+$expl[0]
+$PAR
+${BBOLD}(b)$EBOLD
+$expl[1]
+$PAR
+${BBOLD}(c)$EBOLD
+$expl[2]
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

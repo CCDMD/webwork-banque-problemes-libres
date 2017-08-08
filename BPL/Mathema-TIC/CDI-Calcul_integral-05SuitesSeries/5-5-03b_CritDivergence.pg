@@ -1,0 +1,82 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère du terme général', 'limite', 'limite d\'une suite', 'série', 'série à termes positifs')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "scaffold.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl", 
+);
+
+#####################################################################
+
+$showPartialCorrectAnswers = 1;
+TEXT(beginproblem());
+
+
+Context("Numeric");
+Context()->strings->add(Divergente=>{},DIV=>{alias=>'Divergente'});
+
+$a = random(2,8);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit :$BR
+\[ \sum_{n=1}^{\infty} \left(1+\frac{$a}{n}\right)^n \]
+END_TEXT
+
+
+## Début du problème par parties
+Scaffold::Begin(
+      can_open => "when_previous_correct",
+      is_open  => "correct_or_first_incorrect"
+);
+
+$lim = Compute("exp($a)");
+
+Section::Begin("Partie 1");
+BEGIN_TEXT
+Calculer \(\displaystyle \lim_{n\to\infty} \left(1+\frac{$a}{n}\right)^n  \) afin de déterminer si la suite \( \left\lbrace \left(1+\frac{$a}{n}\right)^n  \right\rbrace \) est convergente. Si la limite n'existe pas, entrer ${BBOLD}DIV$EBOLD.
+$PAR
+\(\displaystyle \lim_{n\to\infty} \left(1+\frac{$a}{n}\right)^n  = \) \{ans_rule(10)\} 
+END_TEXT
+
+ANS($lim->cmp);
+
+Section::End();
+
+
+Section::Begin("Partie 2");
+
+$popup = PopUp(['?','Convergente', 'Divergente', 'Sans conclusion'],'Divergente');
+
+BEGIN_TEXT
+Sachant que \(\displaystyle \lim_{n\to\infty} \left(1+\frac{$a}{n}\right)^n  = e^{$a}\), déterminer 
+si la série \( \displaystyle \sum_{n=1}^\infty \left(1+\frac{$a}{n}\right)^n   \) est convergente, divergente ou vous ne pouvez rien conclure par la valeur de la limite. \{$popup->menu\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($popup->cmp);
+
+Section::End();
+
+
+Scaffold::End();
+## Fin du problème
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,76 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de l'intégrale)
+## KEYWORDS('aire')
+## Date('01/04/2016')
+## Author('Éric Gaul')
+## Institution('Collège Montmorency')
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "PGML.pl",
+   "PGauxiliaryFunctions.pl",
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Numeric");
+Context()->variables->add(y=>"Real", z=>"Real");
+
+$x0 = Formula("pi");
+$x0 *= -random(1, 5)/2;
+$x0 = $x0 -> reduce;
+$x1 = Formula("pi");
+$x1 *= random(1, 5)/2;
+$x1 = $x1 -> reduce;
+$a = Compute(random(2, 5));
+$b = Compute(random(2, 5));
+$f1 = Formula("cos(x)+$a");
+$f2 = Formula("sin(x)-$b");
+$rep = Formula("sin($x1)+cos($x1)+($b+$a)*$x1-sin($x0)-cos($x0)-($b+$a)*$x0");
+
+##############################################################
+#
+#  Text
+#
+#
+
+BEGIN_PGML
+L'aire d'une région [`\ D\ `] du plan [`\ xy\ `] peut être calculée à l'aide d'une
+intégrale double. En effet, l'intégrale double de la fonction [`\ f(x, y) = 1\ `] sur 
+le domaine [`\ D\ `] peut être interprétée comme le volume d'un cylindre dont la base est
+[`\ D\ `] et dont la hauteur est [`1`]. Cela signifie que le volume obtenu
+par l'intégrale correspond également à l'aire de la base, soit l'aire de [`\ D\ `].
+
+Calculer, à l'aide d'une intégrale double,
+l'aire de la région [`\ D\ `] du plan [`\ xy\ `] délimitée par les droites :
+
+>> [`x = [$x0]\ `] et [`\ x = [$x1]`] <<
+
+et les courbes :
+
+>> [`y = [$f2]\ `] et [`\ y = [$f1]`]. <<
+
+L'aire de [`\ D\ `] vaut : [________________________________________]{$rep}
+END_PGML
+
+##############################################################
+#
+#  Answers
+#
+#
+
+ENDDOCUMENT();

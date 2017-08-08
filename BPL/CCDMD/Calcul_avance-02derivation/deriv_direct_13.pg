@@ -1,0 +1,316 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation - définition et interprétation)
+## KEYWORDS('dérivée directionnelle', 'dérivée en un point', 'dérivée partielle', 'dérivée partielle d\'ordre 2', 'graphique', 'signe de la dérivée', 'vecteur gradient')
+## Modifié par Éric Gaul, Collège Montmorency
+## Traduction française : Éric Gaul
+## Date : mars 2017
+## Language(fr)
+
+
+###############Source###############
+## DESCRIPTION
+# Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+# originally from 5ed (with updates)
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+## Tagged by glr 01/11/10
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Differentiation of multivariable functions)
+## ZDBsection(Directional derivatives and the gradient)
+## Institution(University of Michigan)
+## Author(Gavin LaRose)
+## MLT(SignOfPartialDerivs)
+## MLTleader(1)
+## Level(2)
+## MO(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('5')
+## Section1('14.7')
+## Problem1('44')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('6')
+## Section2('14.7')
+## Problem2('44')
+## Textbook tags
+## HHChapter1('Differentiating Functions of Several Variables')
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+"PGgraphmacros.pl",
+"parserPopUp.pl",
+);
+
+Context("Vector2D");
+$showPartialCorrectAnswers = 1;
+
+## whether contours increase or decrease in value as x increases
+$c_inc = random(-1,1,2);
+## thus the starting value is
+$c0 = ( $c_inc == -1 ) ? 10 : 1;
+
+$gr = init_graph( -1,-1,6,6, axes=>[0,0], ticks=>[7,7], size=>[250,250] );
+## draw rays out from the origin or in to the top corner
+$dir = random(0,1,1);
+if ( $dir ) {
+    ## then draw out from the origin
+    $grExpl = "Graphique des courbes de niveau";
+    sub stptA { my $m=shift(); return 1/sqrt(1 + $m*$m); }
+
+    ## the lines have slopes
+    @slopes = ( 6/1.5, 6/2.25, 6/2.75, 6/3.5, 6/4.75, 5.25/6, 3.5/6,
+		2.25/6, 1.25/6, .5/6 );
+    ## the lines
+    @f = ();
+    foreach my $m ( @slopes ) {
+	$x0 = stptA( $m );
+	push( @f, "$m*x for x in <$x0,6> using color:blue and weight:2" );
+    }
+    add_functions( $gr, @f );
+
+    ## add the points P and Q
+    $gr->stamps( closed_circle( 1, 6/1.5, 'black' ) );
+    $gr->lb( new Label( 1, 6/1.5, "P", 'black', 'right', 'bottom' ) );
+    $gr->stamps( closed_circle( 5, 5*3.5/6, 'black' ) );
+    $gr->lb( new Label( 5, 5*3.5/6, "Q", 'black', 'right', 'bottom' ) );
+
+    ## and the labels for the contours
+    $c = $c0;
+    for ( my $i=0; $i<5; $i++ ) {
+	$gr->lb( new Label( 6/$slopes[$i], 6, "$c ", 'black', 'right', 'top' ) );
+	$c += $c_inc;
+    }
+    for ( my $i=5; $i<10; $i++ ) {
+	$gr->lb( new Label( 5.8, 6*$slopes[$i], $c, 'black', 'right', 'top' ) );
+	$c += $c_inc;
+    }
+
+    ## then the answers to the various questions are
+    $z_incx = PopUp( [ "?", "croissante", "décroissante" ],
+		     $c_inc > 0 ? "croissante" : "décroissante" );
+    $z_incy = PopUp( [ "?", "croissante", "décroissante" ],
+		     $c_inc > 0 ? "décroissante" : "croissante" );
+    $fx_pos = PopUp( [ "?", "positive", "négative" ],
+		     $c_inc > 0 ? "positive" : "négative" );
+    $fy_pos = PopUp( [ "?", "positive", "négative" ],
+		     $c_inc > 0 ? "négative" : "positive" );
+    $fxx_pos = PopUp( [ "?", "positive", "négative" ],
+		      $c_inc > 0 ? "négative" : "positive" );
+    $fyy_pos = PopUp( [ "?", "positive", "négative" ],
+		      $c_inc > 0 ? "positive" : "négative" );
+
+    ## these are parallel to the gradient vectors at these points
+    ##   their magnitudes are very wrong
+    $dirP = Vector( (4*$c_inc, -1*$c_inc) );
+    $dirQ = Vector( (7*$c_inc/12, -1*$c_inc) );
+
+    $gradLonger = PopUp( [ "?", "en P", "en Q" ], "en P" );
+
+} else {
+    ## in from top corner
+    $grExpl = "Graph with lines extending radially in a direction out " .
+        "from the origin, starting a short ways out from the origin.  " .
+	"The values on the contours are $c0 to $c1, from the contour " .
+	"closest to the y-axis to that closest to the x-axis.";
+    sub stpt {
+	my ($m, $x0, $y0) = @_;
+	return (1/(1+$m*$m))*(6 + $m*$m*$x0 - $m*($y0-6) -
+			      sqrt(-35 - $m*$m*(35 - 12*$x0 + $x0*$x0) +
+				   2*$m*($x0 - 6)*($y0 - 6) + 12*$y0 -
+				   $y0*$y0));
+    }
+
+    ## the lines have start points (which determine the slopes, because
+    ##    they all go through (6,6))
+    @x0 = ( 0, 0, 0, 0, 0, 0.75, 2.5, 3.75, 4.75, 5.5 );
+    @y0 = ( 4.5, 3.75, 3.25, 2.5, 1.25, 0, 0, 0, 0, 0 );
+    ## the lines
+    @f = ();
+    for ( my $i=0; $i<10; $i++ ) {
+	$m = (6 - $y0[$i])/(6 - $x0[$i]);
+	$x1 = stpt( $m, $x0[$i], $y0[$i] );
+	push( @f, "$y0[$i] + $m*(x-$x0[$i]) for x in <$x0[$i],$x1> using " .
+	      "color:blue and weight:2" );
+    }
+    add_functions( $gr, @f );
+
+    ## add the points P and Q
+    $gr->stamps( closed_circle( 4, 5.5, 'black' ) );
+    $gr->lb( new Label( 4, 5.4, "P", 'black', 'right', 'top' ) );
+    $gr->stamps( closed_circle( 5, 6/7, 'black' ) );
+    $gr->lb( new Label( 5, 6/7, "Q ", 'black', 'right', 'bottom' ) );
+
+    ## and the labels for the contours
+    $c = $c0;
+    for ( my $i=0; $i<5; $i++ ) {
+	$gr->lb( new Label( 0, $y0[$i]+.15, " $c", 'black', 'left', 'bottom' ) );
+	$c += $c_inc;
+    }
+    for ( my $i=5; $i<10; $i++ ) {
+	$gr->lb( new Label( $x0[$i], 0, $c, 'black', 'right', 'bottom' ) );
+	$c += $c_inc;
+    }
+
+    ## then the answers to the various questions are
+    $z_incx = PopUp( [ "?", "croissante", "décroissante" ],
+		     $c_inc > 0 ? "croissante" : "décroissante" );
+    $z_incy = PopUp( [ "?", "croissante", "décroissante" ],
+		     $c_inc > 0 ? "décroissante" : "croissante" );
+    $fx_pos = PopUp( [ "?", "positive", "négative" ],
+		     $c_inc > 0 ? "positive" : "négative" );
+    $fy_pos = PopUp( [ "?", "positive", "négative" ],
+		     $c_inc > 0 ? "négative" : "positive" );
+    $fxx_pos = PopUp( [ "?", "positive", "négative" ],
+		      $c_inc > 0 ? "positive" : "négative" );
+    $fyy_pos = PopUp( [ "?", "positive", "négative" ],
+		      $c_inc > 0 ? "négative" : "positive" );
+
+    ## these are parallel to the gradient vectors at these points
+    ##   their magnitudes are very wrong
+    $dirP = Vector( ($c_inc, -4*$c_inc) );
+    $dirQ = Vector( ($c_inc, -7*$c_inc/12) );
+
+    $gradLonger = PopUp( [ "?", "P", "Q" ], "P" );
+}
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+Soit le graphique des courbes de niveau de la fonction
+différentiable \( z=f(x,y) \).
+$PAR
+$BCENTER
+\{ image(insertGraph( $gr ), tex_size=>250, height=>250, width=>250,
+	 extra_html_tags=>'alt="' . $grExpl . '"') \}
+$ECENTER
+$PAR
+${BBOLD}(a)$EBOLD
+La fonction \( z \) est-elle croissante ou décroissante selon \( x \) ?
+\{ $z_incx->menu() \}
+\(\ \ \ \) Selon \( y \) ?
+\{ $z_incy->menu() \}
+
+$PAR
+${BBOLD}(b)$EBOLD
+La fonction \( f_x \) est-elle positive ou négative ?
+\{ $fx_pos->menu() \}
+\(\ \ \ \) Qu'en est-il de \( f_y \) ?
+\{ $fy_pos->menu() \}
+
+$PAR
+${BBOLD}(c)$EBOLD
+La fonction \( f_{xx} \) est-elle positive ou négative ?
+\{ $fxx_pos->menu() \}
+\(\ \ \ \) Qu'en est-il de \( f_{yy} \)?
+\{ $fyy_pos->menu() \}
+
+$PAR
+${BBOLD}(d)$EBOLD
+Dans quelle direction pointe le vecteur \(\nabla f\) au point \(P\) ? \{ ans_rule(25) \}
+$PAR
+Dans quelle direction pointe le vecteur \(\nabla f\) au point \(Q\) ? \{ ans_rule(25) \}
+
+$PAR
+${BBOLD}(e)$EBOLD
+Le vecteur \( \nabla f \) est-il plus long en \( P \) ou en \( Q \)?
+\{ $gradLonger->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+
+# $BR
+# ${BITALIC}(donner un vecteur pointant à droite, inscrit par exemple : \(<2, {-3}>\))$EITALIC
+# $BR
+# ${BITALIC}(donner ici aussi un vecteur pointant à droite)$EITALIC
+
+
+ANS($z_incx->cmp() );   ANS($z_incy->cmp() );
+ANS($fx_pos->cmp() );   ANS($fy_pos->cmp() );
+ANS($fxx_pos->cmp() );  ANS($fyy_pos->cmp() );
+ANS($dirP->cmp( checker=>sub {
+    my ( $correct, $student, $ansHash ) = @_;
+    @cVals = $correct->value;
+    @sVals = $student->value;
+    return $cVals[0]*$sVals[0] > 0 && $cVals[1]*$sVals[1] > 0;
+} ) );
+ANS($dirQ->cmp( checker=>sub {
+    my ( $correct, $student, $ansHash ) = @_;
+    @cVals = $correct->value;
+    @sVals = $student->value;
+    return $cVals[0]*$sVals[0] > 0 && $cVals[1]*$sVals[1] > 0;
+} ) );
+ANS($gradLonger->cmp() );
+
+if ( $c_inc > 0 ) {
+    $inc_label = 'augmentent';
+    $inc_labeling = 'croissante';
+    $dec_label = 'diminuent';
+    $dec_labeling = 'décroissante';
+} else {
+    $inc_label = 'diminuent';
+    $inc_labeling = 'dereasing';
+    $dec_label = 'augmentent';
+    $dec_labeling = 'croissante';
+}
+if ( $dir ) {
+    $closer_label = "s'éloignent";
+    $pgrad_dir = ( $c_inc > 0 ) ? "vers la droite et légèrement vers le bas" :
+        "vers la droite et légèrement vers le haut";
+    $qgrad_dir = ( $c_inc > 0 ) ? "vers la droite et rapidement vers le bas" :
+        "vers la gauche et rapidement vers le haut";
+} else {
+    $closer_label = "se rapprochent";
+    $pgrad_dir = ( $c_inc > 0 ) ? "vers la droite et rapidement vers le bas" :
+        "vers la gauche et rapidement vers le haut";
+    $qgrad_dir = ( $c_inc > 0 ) ? "vers la droite et légèrement vers le bas" :
+        "vers la gauche et légèrement vers le haut";
+}
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+${BBOLD}(a)$EBOLD
+En se déplaçant vers la droite parallèlelement à l'axe des \(x\), 
+les valeurs de \(z\) lues sur les courbes de niveau $inc_label,
+donc \(z\) est une fonction $inc_labeling selon \(x\).
+En se déplaçant vers le haut parallèlelement à l'axe des \(y\), 
+les valeurs de \(z\) lues sur les courbes de niveau $dec_label,
+donc \(z\) est une fonction $dec_labeling selon \(y\).
+
+$PAR
+${BBOLD}(b)$EBOLD
+Puisque \(z\) est une fonction $inc_labeling selon \(x\), \(f_x\) est
+\{ $fx_pos->correct_ans() \}.  On raisonne de façon similaire pour déterminer
+que \(f_y\) est \{ $fy_pos->correct_ans() \}.
+
+$PAR
+${BBOLD}(c)$EBOLD
+Puisque les courbes de niveau $closer_label en se déplaçant vers la droite, \(f_{xx}\)
+est \{ $fxx_pos->correct_ans() \}.  On raisonne de façon similaire pour déterminer
+que \(f_{yy}\) est  \{ $fyy_pos->correct_ans() \}.
+
+$PAR
+${BBOLD}(d)$EBOLD
+Le vecteur \(\nabla f\) est perpendiculaire aux courbes de niveau et pointe
+dans la direction des valeurs croissantes de \(f\).  En \(P\), il doit donc
+pointer $pgrad_dir, et en \(Q\), il faut qu'il pointe $qgrad_dir.
+
+$PAR
+${BBOLD}(e)$EBOLD
+Le vecteur \(\nabla f\) est plus long 
+\{ $gradLonger->correct_ans() \} parce que les courbes de niveau
+sont plus près les unes des autres en ce point.
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+;
+ENDDOCUMENT();

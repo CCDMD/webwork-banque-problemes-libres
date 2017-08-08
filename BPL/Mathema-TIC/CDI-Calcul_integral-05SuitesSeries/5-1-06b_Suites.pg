@@ -1,0 +1,71 @@
+#DESCRIPTION
+##  Algebra: Geometric sequence
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('notation', 'suite', 'suite géométrique', 'terme général')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : avril 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+#####################################################################
+
+$showPartialCorrectAnswers = 1;
+TEXT(beginproblem());
+
+Context("Numeric");
+# Ajouter une variable n qui sera évaluée seulement pour des entiers
+# Le flag resolution spécifie la distance entre des test_points possibles
+Context()->variables->are(n => ['Real', limits=>[1,20], resolution=>1]);
+
+Context()->operators->undefine(",");
+#Context()->strings->remove("NONE");
+
+$a = random(2,3,1);
+$b = random($a+1,5,1);
+$s = random(-1,1,2);
+
+$a[1] = -$s*$a;
+$b[1] = 1;
+
+foreach $i (2..5) {
+$a[$i] = -$a[$i-1];
+$b[$i] = $b[$i-1]*$b;
+}
+
+$ans = Compute("($s*$a*(-1)^n)/($b^(n-1))")->reduce;
+
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer le terme général  \(a_n\) de la suite géométrique suivante (commençant par \(a_1\)) :
+\[
+\left\lbrace $a[1], \frac{$a[2]}{$b[2]}, \frac{$a[3]}{$b[3]}, \frac{$a[4]}{$b[4]}, \frac{$a[5]}{$b[5]} \ldots\right\rbrace.
+\]
+$PAR
+\(a_n =\) \{ans_rule(20)\} $PAR
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+ANS(($ans)->cmp());
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

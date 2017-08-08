@@ -1,0 +1,114 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence absolue et conditionnelle', 'convergence et divergence', 'critère de l\'intégrale', 'critères de convergence', 'série alternée', 'série p de Riemann')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/ma123DB/set11/s11_6_3.pg
+## ZDate(6/3/2002)
+## ZMLT(AC_CC_D_simple_cmp_w_ps)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('11.6')
+## Problem1('3')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Rogawski')
+## EditionText2('1')
+## Section2('10.4')
+## Problem2('3')
+###############Source###############
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGchoicemacros.pl",
+"scaffold.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+Context()->variables->add(n => 'Real');
+
+$showPartialCorrectAnswers = 1;
+$a = random(1,5,1);
+$poly = Compute("n^($a)")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer si la série suivante est absolument convergente, conditionnellement convergente ou divergente :
+\[ \sum_{n=1}^\infty\frac{ (-1)^{n+1} }{$poly {\sqrt{n}}}\]
+END_TEXT
+
+## Début du problème par parties
+Scaffold::Begin(
+      can_open => "when_previous_correct",
+      is_open  => "correct_or_first_incorrect"
+);
+
+Section::Begin("Partie 1");
+
+$popup1 = PopUp(["?","Convergente","Divergente"],"Convergente");
+$mc = new_checkbox_multiple_choice();
+
+$mc -> qa (
+"choisir tous les critères de convergence qui s'appliquent.", 
+"Critère de l'intégrale",
+"Critère des séries-p",              
+);
+
+$mc -> extra(
+"Critère de d'Alembert",
+"Critère des séries géométriques",
+);
+
+Context()->texStrings;
+BEGIN_TEXT
+En considérant la série des valeurs absolues
+\[ \sum_{n=1}^\infty \left|\frac{ (-1)^{n+1} }{$poly {\sqrt{n}}} \right| = \sum_{n=1}^\infty\frac{ 1 }{$poly {\sqrt{n}}},\]
+\{ $mc -> print_q() \}
+$BR
+\{ $mc -> print_a() \}
+$BR
+À l'aide d'un critère choisi, déterminer si cette série est convergente ou divergente. \{$popup1->menu\} $BR 
+END_TEXT
+Context()->normalStrings;
+
+ANS( checkbox_cmp( $mc->correct_ans() ) );
+ANS($popup1->cmp);
+Section::End();
+
+
+Section::Begin("Partie 2");
+
+$popup2 = PopUp(["?","Absolument convergente","Conditionnellement convergente","Divergente"],"Absolument convergente");
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer si la série \(\displaystyle\sum_{n=1}^\infty \frac{ (-1)^{n+1} }{$poly {\sqrt{n}}} \) est absolument convergente, conditionnellement convergente ou divergente :
+$PAR
+Réponse : \{$popup2->menu\}.
+END_TEXT
+Context()->normalStrings;
+
+ANS($popup2->cmp);
+Section::End();
+
+
+Scaffold::End();
+## Fin du problème
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

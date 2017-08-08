@@ -1,0 +1,86 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al.,
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('notation', 'suite', 'terme général')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : avril 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/Michigan/5e/Chap9Sec1/Q05.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZMLT(FormulaLinear)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('5')
+## Section1('9.1')
+## Problem1('5')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('6')
+## Section2('9.1')
+## Problem2('11')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"PGcourse.pl",
+);
+
+Context("Numeric");
+# Ajouter une variable n qui sera évaluée seulement pour des entiers
+# Le flag resolution spécifie la distance entre des test_points possibles
+Context()->variables->are(n => ['Real', limits=>[1,10], resolution=>1]);
+Context()->flags->set( reduceConstants=> 0 );
+
+$showPartialCorrectAnswers = 1;
+
+# Suite dont le terme général est (n+c)/(an+b)
+$a = random(2,4,1);
+$b = random(1,3,1);
+$c = random(1,5,1);
+$sn  = Compute( "(n + $c)/($a*n + $b)" );
+$seq = "\frac{" . ($c+1) . "}{" . ($a + $b) . "},\; \frac{" .
+       ($c+2) . "}{" . ($a*2 + $b) . "},\; \frac{" .
+       ($c+3) . "}{" . ($a*3 + $b) . "},\; \frac{" .
+       ($c+4) . "}{" . ($a*4 + $b) . "},\; \frac{" .
+       ($c+5) . "}{" . ($a*5 + $b) . "}";
+
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer le terme général \( a_n \), \( n \geq 1 \), de la suite dont les premiers termes sont les suivants :
+\[ $seq, \ldots \]
+
+$PAR
+\( a_n = \) \{ ans_rule(35) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $sn->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Le numérateur est \(n + $c\).  Le dénominateur est linéaire (la différence entre les dénominateurs de deux termes successifs est égale à $a),
+et est égal à \($a n + $b\), alors
+\[ a_n = $sn. \]
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

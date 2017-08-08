@@ -1,0 +1,112 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('applications', 'dérivation implicite', 'dérivée partielle', 'dérivée partielle d\'ordre 1', 'fonction de deux variables')
+## Author('Éric Gaul')
+## Institution('Collège Montmorency')
+## Solution par Éric Gaul
+## Date : mars 2017
+## Language(fr)
+
+
+## TitleText1('Calcul à plusieurs variables')
+## AuthorText1('Stewart (adapt. Guérin)')
+## EditionText1('2')
+## Section1('4.3')
+## Problem1('33')
+
+
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "PGML.pl",
+   "PGauxiliaryFunctions.pl",
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+$context = Context("Numeric");
+$context->variables->add(y=>'Real');
+$context->variables->add(z=>'Real');
+
+do {
+   $x = Compute(random(2, 8));
+   $y = Compute(random(2, 8));
+   $k1 = $x * $y;
+   $k2 = random(1, 7, 1);
+} while( $k1*$k2 == $x*$y );
+
+$left = Formula("$k1*e^($k2*z)")->reduce;
+$right = Formula("e^($k2)*x*y*z")->reduce;
+$dFdx = Formula("-e^($k2)*y*z")->reduce;
+$dFdy = Formula("-e^($k2)*x*z")->reduce;
+$dFdz = Formula("$k1*$k2*e^($k2*z) - e^($k2)*x*y")->reduce;
+
+
+$dzdx = Formula("y*z/($k1*$k2*e^($k2*(z-1))-x*y)")->reduce;
+$dzdy = Formula("x*z/($k1*$k2*e^($k2*(z-1))-x*y)")->reduce;
+
+$dzdx0 = $dzdx->eval(x=>$x, y=>$y, z=>1);
+$dzdy0 = $dzdy->eval(x=>$x, y=>$y, z=>1);
+
+##############################################################
+#
+#  Text
+#
+#
+
+BEGIN_PGML
+Soit la relation : [`[$left] = [$right]`].
+
+Utiliser les formules suivantes :
+
+>> [`\ \ \dfrac{\partial z}{\partial x} = -\dfrac{\partial F/\partial x}{\partial F/\partial z}\ \ `]
+et
+[`\ \ \dfrac{\partial z}{\partial y} = -\dfrac{\partial F/\partial y}{\partial F/\partial z}\ \ `] <<
+
+pour déterminer [`\dfrac{\partial z}{\partial x}`] ainsi que [`\dfrac{\partial z}{\partial y}`] au point [`([$x], [$y], 1)`]. 
+
+[`\dfrac{\partial z}{\partial x}([$x], [$y], 1) =`] [____________________________]{$dzdx0}
+
+[`\dfrac{\partial z}{\partial y}([$x], [$y], 1) =`] [____________________________]{$dzdy0}
+
+END_PGML
+
+##############################################################
+#
+#  Answers
+#
+#
+
+BEGIN_PGML_SOLUTION
+On commence par écrire : [`F(x, y, z) = [$left] - [$right] = 0\ .`]
+
+On a ensuite : [`\ \dfrac{\partial F}{\partial x} = [$dFdx]\ `],
+ [`\ \ \dfrac{\partial F}{\partial y} = [$dFdy]\ \ `] ainsi que [`\ \ \dfrac{\partial F}{\partial z} = [$dFdz]\ `].
+
+Par conséquent :
+
+>> [`\ \displaystyle \dfrac{\partial z}{\partial x} = -\dfrac{\partial F/\partial x}{\partial F/\partial z} = [$dzdx]\ `] <<
+
+et
+
+>> [`\ \displaystyle \dfrac{\partial z}{\partial y} = -\dfrac{\partial F/\partial y}{\partial F/\partial z} = [$dzdy]\ `]. <<
+
+Si on évalue ces fonctions au point [`([$x], [$y], 1)`] :
+
+>> [`\ \displaystyle \dfrac{\partial z}{\partial x}([$x], [$y], 1) = [$dzdx0]\ `] et [`\ \displaystyle \dfrac{\partial z}{\partial x}([$x], [$y], 1) = [$dzdy0]\ `] <<
+END_PGML_SOLUTION
+ENDDOCUMENT();

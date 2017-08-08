@@ -1,0 +1,73 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'somme', 'série', 'série géométrique')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mai 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/Dartmouth/setStewartCh12S2/problem_4.pg
+## ZInstitution(Dartmouth)
+## TitleText1('Calculus')
+## AuthorText1('Stewart')
+## EditionText1('5')
+## Section1('12.2')
+## Problem1('')
+###############Source###############
+
+DOCUMENT();
+loadMacros(  
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+  );
+
+COMMENT("La raison de la série géométrique est choisie de façon aléatoire >1 ou <1.");
+
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->strings->add(Divergente=>{},DIV=>{alias=>'Divergente'});
+
+
+$a =random(2,10);
+$b = random($a + 1, $a + 5);
+
+#choix de convergente (r=a/b) ou divergente (r=b/a) 
+$c = random(0,1);
+if ($c==0) { # convergente
+ $num = $a;
+ $den = $b;
+ $ans = Compute("$a^3/($b-$a)");
+} else { #divergente
+ $num = $b;
+ $den = $a;
+ $ans = Compute("Divergente");
+}
+
+TEXT(beginproblem());
+
+BEGIN_TEXT
+Soit la série
+\[
+    \sum_{n=1}^\infty \frac{$num^{n+2}}{$den^n}
+\]
+
+Calculer la somme si la série est convergente.  Si elle est divergente, entrer ${BBOLD}DIV$EBOLD. 
+$PAR
+\(S = \) \{ans_rule(40)\}
+$PAR
+END_TEXT
+
+ANS($ans->cmp);
+
+
+ENDDOCUMENT();
+
+
+
+

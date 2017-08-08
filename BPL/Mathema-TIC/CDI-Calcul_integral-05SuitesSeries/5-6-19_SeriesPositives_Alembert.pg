@@ -1,0 +1,205 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de d\'Alembert', 'factorielle', 'série', 'série à termes positifs')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/FortLewis/Calc2/9-4-Ratio-test/ratio-06.pg
+## ZInstitution(Fort Lewis College)
+## ZAuthor(Paul Pearson)
+## TitleText1('Calculus')
+###############Source###############
+
+
+###############################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"unionTables.pl",
+"parserPopUp.pl",
+"PGgraders.pl",
+"parserMultiAnswer.pl",
+"PGcourse.pl"
+);
+
+COMMENT("L\'étudiant recevra 40% des points s\'il a 2 ou 3 bonnes réponses. Il aura donc 100% avec 4 bonnes réponses seulement.");
+
+TEXT(beginproblem);
+
+
+###############################
+#  Setup
+
+Context("Numeric");
+# Ajouter une variable n qui sera évaluée seulement pour des entiers
+# Le flag resolution spécifie la distance entre des test_points possibles
+Context()->variables->are(n => ['Real', limits=>[1,20], resolution=>1]);
+
+Context()->strings->add(nep=>{});
+
+$a = random(2,9,1);
+$b = random(1,5,1);
+$c = 1;
+
+$bp1 = $b + 1;
+
+# TeX
+
+# choix de la série : i=0: converge, i=1: diverge
+$i = random(0,1);
+
+if($i==0) {
+$series = "\sum_{n=$c}^{\infty} \frac{n $a^n}{(n+$b)!}";
+
+$num1 = Formula("$a (n+1)");
+$den1 = Formula("n (n+$bp1)"); 
+
+$num2 = Formula("$a + $a/n");
+$den2 = Formula("n+$bp1"); 
+
+$numbogus[0] = Formula("(n+1)*($a)^(n+1) * (n+$b)!");
+$numbogus[1] = Formula("(n+1)*($a)^(n+1)");
+$numbogus[2] = Formula("(n+1) * (n+$b)!");
+
+$denbogus[0] = Formula("((n+$bp1)!) * n*$a^n");
+$denbogus[1] = Formula("((n+$bp1)!) * n");
+$denbogus[2] = Formula("(n+$bp1) * n");
+
+$limit = Formula("0");
+$popup = PopUp(["?","Convergente","Divergente","Sans conclusion"],"Convergente");
+
+} else {
+$series = "\sum_{n=$c}^{\infty} \frac{(n+$b)!}{n $a^n}";
+
+$den1 = Formula("$a (n+1)");
+$num1 = Formula("n (n+$bp1)"); 
+
+$den2 = Formula("$a + $a/n");
+$num2 = Formula("n+$bp1"); 
+
+$denbogus[0] = Formula("(n+1)*($a)^(n+1) * (n+$b)!");
+$denbogus[1] = Formula("(n+1)*($a)^(n+1)");
+$denbogus[2] = Formula("(n+1) * (n+$b)!");
+
+$numbogus[0] = Formula("((n+$bp1)!) * n*$a^n");
+$numbogus[1] = Formula("((n+$bp1)!) * n");
+$numbogus[2] = Formula("(n+$bp1) * n");
+
+$limit = Formula("inf");
+$popup = PopUp(["?","Convergente","Divergente","Sans conclusion"],"Divergente");
+
+}
+
+foreach my $i (0..2) {
+$numbogus[$i]->{test_points} = [[1],[2],[3],[4]];
+}
+
+foreach my $i (0..2) {
+$denbogus[$i]->{test_points} = [[1],[2],[3],[4]];
+}
+
+
+$multians = MultiAnswer($num1, $den1)->with(
+  singleResult => 0,
+  checker => sub {
+      my ( $correct, $student, $ansHash ) = @_;
+      my ( $stu1, $stu2 ) = @{$student};
+
+      if ( ($numbogus[0] == $stu1 && $denbogus[0] == $stu2) || 
+           ($numbogus[1] == $stu1 && $denbogus[1] == $stu2) ||
+           ($numbogus[2] == $stu1 && $denbogus[2] == $stu2)
+         )
+      {
+          $ansHash->setMessage(1,"Simplifier davantage");
+          $ansHash->setMessage(2,"Simplifier davantage");
+          return [0,0];
+      } elsif (($num1 == $stu1 && $den2 == $stu2) || 
+               ($num2 == $stu1 && $den1 == $stu2)) {
+          $ansHash->setMessage(1,"Vérifier les manipulations algébriques");
+          $ansHash->setMessage(2,"Vérifier les manipulations algébriques");
+          return [0,0];
+      }
+    
+      
+      if (($num1 == $stu1 && $den1 == $stu2) ||
+          ($num2 == $stu1 && $den2 == $stu2) ) {
+          return [1,1];
+      } elsif ($num1 == $stu1 || $num2 == $stu1) {
+          return [1,0];
+      } elsif ($den1 == $stu2 || $den2 == $stu2) {
+          return [0,1];
+      } else {
+          return [0,0];
+      }
+  }
+);
+
+$fraction = "\lim_{n \to \infty} \frac{ a_{n+1} }{ a_{n} } = \lim_{n \to \infty}";
+
+
+# 
+#  Display the fraction and answer blanks nicely
+#
+Context()->texStrings;
+  $showfraction =
+  ColumnTable(
+  "\( \displaystyle $fraction \)",
+  $multians->ans_rule(20).$BR.$HR.$multians->ans_rule(20),
+  indent => 0, separation => 10, valign => "MIDDLE"
+  );
+Context()->normalStrings;
+
+
+
+#################################
+#  Main text
+
+BEGIN_TEXT
+Appliquer le critère de d'Alembert pour déterminer si la série 
+\( \displaystyle $series \) est convergente ou divergente.
+$BR
+$BR
+a) Faire le rapport entre deux termes successifs.  Simplifier l'expression.
+$BR
+$BITALIC $BBOLD Note$EBOLD : Vous devez entrer une réponse dans chacune des cases afin qu'elles soient évaluées.$EITALIC 
+$BR
+$showfraction
+$PAR
+b) Évaluer la limite de l'expression précédente. Entrer $BBOLD inf $EBOLD pour \(\infty\), $BBOLD -inf $EBOLD pour \(-\infty\),
+et $BBOLD nep $EBOLD si la limite n'existe pas.
+$PAR
+\( \displaystyle \lim_{n\to\infty} \frac{a_{n+1}}{a_{n}} \, =\) 
+\{ ans_rule(20) \}
+$PAR
+Le critère de d'Alembert permet-il de dire que la série est convergente, divergente, ou est-il sans conclusion?
+\{ $popup->menu() \}
+END_TEXT
+
+
+##########################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers=1;
+install_problem_grader(~~&custom_problem_grader_fluid);
+$ENV{'grader_numright'} = [2,4];
+$ENV{'grader_scores'} = [0.4,1];
+$ENV{'grader_message'} = "Vous obtiendrez " .
+"40% des points si vous avez 2 ou 3 bonnes réponses.";
+
+ANS( $multians->cmp() );
+
+ANS( $limit->cmp() );
+ANS( $popup->cmp() );
+
+
+ENDDOCUMENT();

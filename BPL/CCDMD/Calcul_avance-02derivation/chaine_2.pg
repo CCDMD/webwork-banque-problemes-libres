@@ -1,0 +1,125 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('arbre (dérivation en chaîne)', 'dérivation en chaîne', 'dérivée partielle', 'fonction de deux variables')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+
+###############Source################
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+## Tagged by tda2d
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('The Chain Rule')
+## ZDate('')
+## Author('')
+## Institution('Dartmouth')
+## TitleText1('Calculus')
+## EditionText1('5')
+## AuthorText1('Stewart')
+## Section1('15.5')
+## Problem1('')
+## TitleText2('Calculus: Early Transcendentals')
+## EditionText2('1')
+## AuthorText2('Rogawski')
+## Section2('14.6')
+## Problem2('6 7 8 9 10')
+
+
+
+DOCUMENT();
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGauxiliaryFunctions.pl",
+           "PGgraphmacros.pl",
+           "Dartmouthmacros.pl");
+ 
+
+## Do NOT show partial correct answers
+$showPartialCorrectAnswers = 1;
+
+$a = 2*random(1,5)+1;
+$b = 2*random(1,5);
+$c = 2*random(1,5);
+$d = 2*random(1,5)+1;
+if (random(0, 1) == 0) {
+    $temp = $c;
+    $c = $a;
+    $a = $temp;
+    $temp = $d;
+    $d = $b;
+    $b = $temp;
+}
+
+## Ok, we are ready to begin the problem...
+##
+TEXT(beginproblem());
+
+
+BEGIN_TEXT
+$BR
+Utiliser la règle de dérivation en chaîne pour calculer  \(\dfrac{\partial z}{\partial s}\) et
+ \(\dfrac{\partial z}{\partial t}\), où :
+\[ z = e^{xy}\tan y, \ \ \ x = $a s + $b t \ \ \ \textrm{ et }\ \ \  y = \frac{$c s}{$d t}\]
+$PAR
+On commence par dériver les expressions données :
+$PAR
+\(\frac{\partial z}{\partial x} = \)\{ans_rule(30)\}
+\(\frac{\partial z}{\partial y} = \)\{ans_rule(30)\}
+$PAR
+\(\frac{\partial x}{\partial s} = \)\{ans_rule(30)\}
+\(\frac{\partial x}{\partial t} = \)\{ans_rule(30)\}
+$PAR
+\(\frac{\partial y}{\partial s} = \)\{ans_rule(30)\}
+\(\frac{\partial y}{\partial t} = \)\{ans_rule(30)\}
+$PAR
+On combine ensuite selon les règles :
+$PAR
+\(\frac{\partial z}{\partial s} = 
+\frac{\partial z}{\partial x}\frac{\partial x}{\partial s} + 
+\frac{\partial z}{\partial y}\frac{\partial y}{\partial s}\)
+et
+\(\frac{\partial z}{\partial t} =
+\frac{\partial z}{\partial x}\frac{\partial x}{\partial t} + 
+\frac{\partial z}{\partial y}\frac{\partial y}{\partial t}\)
+$PAR
+... pour obtenir deux fonctions des variables indépendantes \( s \) et \( t \) :
+$PAR
+\(\frac{\partial z}{\partial s} = \) \{ans_rule(100)\}
+ $PAR
+\(\frac{\partial z}{\partial t} = \) \{ans_rule(100)\} 
+END_TEXT
+
+
+ANS(fun_cmp("y*tan(y)*exp(x*y)", vars=>["x","y"]));
+ANS(fun_cmp("exp(x*y)*sec(y)**2 + tan(y)*x*exp(x*y)", vars=>["x","y","z"]));
+ANS(fun_cmp("$a", vars=>["s","t"]));
+ANS(fun_cmp("$b", vars=>["s","t"]));
+ANS(fun_cmp("$c/($d*t)", vars=>["s","t"]));
+ANS(fun_cmp("-$c*s/($d*t**2)", vars=>["s","t"]));
+
+$x = "$a*s+$b*t";
+$y = "$c*s/($d*t)";
+$zx = "($y)*tan($y)*exp(($x)*($y))";
+$zy = "exp(($x)*($y))*sec($y)**2 + tan($y)*($x)*exp(($x)*($y))";
+$xs = "$a";
+$xt = "$b";
+$ys = "$c/($d*t)";
+$yt = "-$c*s/($d*t**2)";
+
+ANS(fun_cmp("(($zx)*($xs))+(($zy)*($ys))", vars=>["t", "s"]));
+ANS(fun_cmp("(($zx)*($xt))+(($zy)*($yt))", vars=>["t", "s"]));
+
+
+
+ENDDOCUMENT();
+
+
+
+

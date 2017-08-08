@@ -1,0 +1,86 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de d\'Alembert', 'série', 'série à termes positifs')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.5_The_Ratio_and_Root_Tests/10.5.1.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Emily Price)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.5')
+## Problem1('1')
+###############Source###############
+
+
+DOCUMENT();
+
+
+#Load Necessary Macros
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT("Afin d'obtenir 100 % pour ce problème, toutes les réponses doivent être correctes.");
+Context()->variables->add(n=>'Real');
+
+
+#Random Values
+$a = random(1, 15);
+do{$b = random(1, 15);} until( int($a/$b)!= $a/$b && int($b/$a)!= $b/$a); #la série est convergente ou divergente
+
+($base0,$base1) = reduce($a,$b);
+
+$L = Compute("$base0/$base1");
+$series = "\frac{$base0^n}{$base1^n}";
+
+if($L < 1) {
+$popup = PopUp(['?','convergente', 'divergente','sans conclusion'],'convergente');
+$symb = "<";
+} else {
+$popup = PopUp(['?','convergente', 'divergente','sans conclusion'],'divergente');
+$symb = ">";
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+Utiliser le critère de d'Alembert pour déterminer si la série suivante est convergente, divergente ou si on n'arrive à aucune conclusion.
+\[  \sum\limits_{n=1}^{\infty} $series \]
+\(\displaystyle L = \lim_{n \to \infty} \frac{a_{n+1}}{a_n}  =\) \{ans_rule(20)\}
+$PAR
+ \( \displaystyle \sum_{n=1}^{\infty} $series \) est \{$popup->menu\}.
+END_TEXT
+
+Context()->normalStrings;
+
+#Answer Check Time!
+
+# Afin d'obtenir 100 % pour ce problème, toutes les réponses doivent être correctes.
+install_problem_grader(~~&std_problem_grader);
+
+
+ANS($L->cmp);
+ANS($popup->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Si \( \displaystyle a_n = $series \), 
+\[ \frac{a_{n+1}}{a_n}  = \frac{$base0^{n+1}}{$base1^{n+1}} \cdot \frac{$base1^n}{$base0^n} = \frac{$base0}{$base1} \]
+et 
+\[ L = \lim_{n \to \infty}  \frac{a_{n+1}}{a_n} = \frac{$base0}{$base1} $symb 1. \]
+Par conséquent, la série \( \displaystyle \sum_{n=1}^{\infty} $series \) est \{$popup->correct_ans()\} selon le critère de d'Alembert.
+END_SOLUTION
+
+ENDDOCUMENT()

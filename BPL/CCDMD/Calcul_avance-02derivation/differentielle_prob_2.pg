@@ -1,0 +1,151 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('applications', 'approximation linéaire', 'calcul d\'incertitude', 'différentielle')
+## Adaptation par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Language(fr)
+
+
+###############Source#################
+## TitleText1('Calcul à plusieurs variables')
+## AuthorText1('Stewart (adapt. Jean Guérin')
+## EditionText1('52)
+## Section1('4.2')
+## Problem1('42')
+
+
+
+
+DOCUMENT();
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGauxiliaryFunctions.pl",
+           "PGgraphmacros.pl",
+           "PGML.pl",
+           "PGauxiliaryFunctions.pl",
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Numeric");
+Context()->variables->add(y => 'Real');
+Context()->variables->add(z => 'Real');
+
+
+
+
+$a = Compute(random(5, 15, 0.05));
+$b = Compute(random(5, 15, 0.05));
+while ($b == $a) {
+   $b = Compute(random(5, 15, 0.05));
+} 
+$c = Compute(random(5, 15, 0.05));
+while ($c == $a || $c == $b) {
+   $c = Compute(random(5, 15, 0.05));
+} 
+$dela = Compute(random(1, 6));
+$delb = Compute(random(1, 6));
+while ($delb == $dela) {
+   $delb = Compute(random(1, 6));
+} 
+$delc = Compute(random(1, 6));
+while ($delc == $dela || $delc == $delb) {
+   $delc = Compute(random(1, 6));
+} 
+$dela *= 0.05;
+$delb *= 0.05;
+$delc *= 0.05;
+
+$astr = sprintf("%.2f", $a);
+$bstr = sprintf("%.2f", $b);
+$cstr = sprintf("%.2f", $c);
+$delastr = sprintf("%.2f", $dela);
+$delbstr = sprintf("%.2f", $delb);
+$delcstr = sprintf("%.2f", $delc);
+
+$repa = Compute($b*$c*$dela + $a*$c*$delb + $a*$b*$delc);
+$vol = $a*$b*$c;
+$repb = Compute($repa*100/($vol));
+$repc = Compute((2*$c+$b)*$dela + (2*$c+$a)*$delb + 2*($a+$b)*$delc);
+$surf = 2*$a*$c + 2*$b*$c + $a*$b;
+$repd = Compute($repc*100/($surf));
+
+BEGIN_PGML
+Une boîte rectangulaire ouverte sur le dessus a des côtés de
+[`([$astr] \pm [$delastr])`] cm et [`([$bstr] \pm [$delbstr])`] cm , et une
+hauteur de [`([$cstr] \pm [$delcstr])`] cm. En utilisant les différentielles :
+
+**(a)**
+Estimer l'incertitude absolue sur le calcul du volume de cette boîte
+
+    [__________]{$repa} cm[`^3`] (avec un maximum de précision)
+
+**(b)**
+Estimer l'incertitude relative sur le calcul du volume de cette boîte
+
+    [__________]{$repb} [`\%`] (avec un maximum de précision)
+
+**(c)**
+Estimer l'incertitude absolue sur le calcul de la surface de cette boîte
+
+    [__________]{$repc} cm[`^2`] (avec un maximum de précision)
+
+**(d)**
+Estimer l'incertitude relative sur le calcul de la surface de cette boîte
+
+    [__________]{$repd} [`\%`] (avec un maximum de précision)
+
+END_PGML
+
+BEGIN_PGML_SOLUTION
+**(a)**  
+Le volume de la boîte est donné par : [`V = x y z`], où les variables
+[`x, y, z`] représentent respectivement la largeur, la profondeur et la
+hauteur de la boîte.
+
+On a : [`dV = \dfrac{\partial V}{\partial x} dx + \dfrac{\partial V}{\partial y} dy + \dfrac{\partial V}{\partial z} dz`]  
+et donc : [`dV = y\, z \, dx + x\, z \, dy + x\, y  \, dz`]  
+
+L'incertitude est alors estimée par la différentielle, en susbtituant les valeurs données :  
+[`\Delta V \approx [$b] \cdot [$c] \cdot [$dela] + [$a] \cdot [$c] \cdot [$delb] + [$a] \cdot [$b] \cdot [$delc] = [$repa]`] cm[`^3`].
+
+
+**(b)**  
+Le volume est de : [`V = x y z = [$a] \cdot [$b] \cdot [$c] = [$a*$b*$c]`] cm[`^3`].  
+L'incertitude relative est donnée par : [`\dfrac{\Delta V}{\left| V \right|} \approx \dfrac{dV}{V} = \dfrac{[$repa] \textrm{ cm}^3}{[$a*$b*$c] \textrm{ cm}^3} = [$repb/100] = [$repb]\,\%`].
+
+
+**(c)**  
+La surface de la boîte est donné par : [`S = 2 x z + 2 y z + x y`], où les variables
+[`x, y, z`] représentent respectivement la largeur, la profondeur et la
+hauteur de la boîte.
+
+On a : [`dS = \dfrac{\partial V}{\partial x} dx + \dfrac{\partial V}{\partial y} dy + \dfrac{\partial V}{\partial z} dz`]  
+et donc : [`dS = (2 z + y) \, dx + (2 z + x) \, dy + 2( x + y )  \, dz`]  
+
+L'incertitude est alors estimée par la différentielle, en susbtituant les valeurs données :  
+[`\Delta V \approx (2 \cdot [$c] + [$b]) [$dela] + (2 \cdot [$c] + [$a]) [$delb] + 2([$a] + [$b]) [$delc] = [$repc]`] cm[`^2`].
+
+
+**(d)**  
+La surface est de : [`V =  2 x z + 2 y z + x y = 2 \cdot [$a] \cdot [$c] + 2 \cdot [$b] \cdot [$c] + [$a] \cdot [$b] = [$surf]`] cm[`^3`].  
+L'incertitude relative est donnée par : [`\dfrac{\Delta S}{\left| S \right|} \approx \dfrac{dS}{S} = \dfrac{[$repc] \textrm{ cm}^2}{[$surf] \textrm{ cm}^2} = [$repd/100] = [$repd]\,\%`].
+END_PGML_SOLUTION
+
+
+ENDDOCUMENT();
+
+
+
+

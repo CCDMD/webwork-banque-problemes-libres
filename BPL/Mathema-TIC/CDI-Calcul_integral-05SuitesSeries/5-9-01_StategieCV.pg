@@ -1,0 +1,215 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de Leibniz', 'critère de comparaison', 'critère de comparaison par une limite', 'critère de d\'Alembert', 'critères de convergence', 'série')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/Michigan/Chap9Sec4/Q05.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZMLT(Use_particular_tests)
+## ZMLTleader(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('9.4')
+## Problem1('5 13 21 27')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('9.4')
+## Problem2('9 17 25 39')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('9.4')
+## Problem3('9 18 26 42')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Suggestion : restreindre le nombre de tentatives pour réussir le problème.");
+
+Context("Numeric");
+## this is multiple choice, so make it so that multiple-guess is less
+##    likely to be successful
+$showPartialCorrectAnswers = 1;
+
+$r = random(2,6,1);
+$rp1 = $r + 1;
+$a = random(2,5,1);
+$b = list_random("e",2,3,5);
+
+## we pick from a couple of different series for each test that
+##    we have students use to determine convergence
+## for each entry, we have [ a_n, starting index, convergence, additional ]
+##    for comparison, additional = comparison function, reason for
+##        convergence or divergence
+@compare = ( [ "\frac{1}{n^$r + $b^n}", 1, "converge", "\frac{1}{n^$r}",
+	       "car il s'agit d'une série-\(p\) où \(p>1\)" ],
+	     [ "\frac{$a^n}{n + $a^n}", 1, "diverge", "\frac{$a^n}{$a^n+$a^n}",
+	       "car les termes de la série sont constants " .
+	       "\(\left(\displaystyle\frac{$a^n}{$a^n+$a^n} = \frac{1}{2}\right)\), ainsi ils ne " .
+	       "tendent pas vers zéro et donc la série diverge" ] );
+## for ratio, additional = ratio, simplified ratio, limit
+@ratio   = ( [ "\frac{1}{r^n n!},\; r>0", 1, "converge",
+	       "\frac{1}{r^{n+1} (n+1)!}\cdot \frac{r^n n!}{1}",
+	       "\frac{1}{r (n+1)}",
+	       "0" ],
+	     [ "\frac{$a^n}{n^$r}", 1, "diverge",
+	       "\frac{$a^{n+1}}{(n+1)^$r}\cdot \frac{n^$r}{$a^n}",
+	       "\frac{$a n^$r}{n^$r + $r n^{$rm1 +\cdots}}",
+	       "$a" ], );
+## for alternating, additional = s_n, limit
+@altern  = ( [ "\frac{(-1)^{n-1}}{$a n + 1}", 1, "converge", "\frac{1}{$a n+1}",
+	       "0" , "\frac{1}{$a(n+1) + 1}"  ],
+	     [ "\frac{(-1)^{n-1}}{\sqrt n + n^$r}", 1, "converge", 
+	       "\frac{1}{\sqrt n + n^$r}", "0", "\frac{1}{\sqrt{n+1}+(n+1)^$r}"  ], );
+## for limcomp, additional = comparison term, why, ratio, simplified ratio,
+##    limit
+@limcomp = ( [ "\frac{n^$r+1}{n^$rp1+$a}", 1, "diverge", "\frac{1}{n}",
+	       "la plus grande puissance de n au numérateur et au dénominateur " .
+	           "des termes de la série est dans un rapport de \(1/n\), " .
+	           "et on connaît la convergence de la " .
+	           "série \(\displaystyle\sum \frac{1}{n}\)",
+	       "\frac{n^$r+1}{n^$rp1 + $a}\cdot\frac{n}{1} = " .
+	           "\frac{n^$rp1 + n}{n^$rp1 + $a}",
+	       "\frac{1+\frac{1}{n}}{1 + \frac{$a}{n^$rp1}}",
+	       1 ],
+	     [ "\frac{$b}{$a\sqrt n + n}", 1, "diverge", "\frac{1}{n}",
+	       "la plus grande puissance de n au dénominateur est \(n\), alors " .
+	           "on connaît le critère de convergence " .
+	           "de la série, car on connaît le critère " .
+	           "de convergence de \(\displaystyle \sum\frac{1}{n}\)",
+	       "\frac{$b}{$a\sqrt n + n}\cdot\frac{n}{1} = " .
+	           "\frac{$b n}{$a\sqrt n + n} = \frac{$b}{\frac{$a\sqrt n}{n}+1}",
+	       "\frac{$b}{\frac{$a}{\sqrt n} + 1}",
+	       "$b" ],
+	     );
+
+$whichC = random(0,@compare-1,1);  @cvals = @{$compare[$whichC]};
+$whichR = random(0,@ratio-1,1);    @rvals = @{$ratio[$whichR]};
+$whichA = random(0,@altern-1,1);   @avals = @{$altern[$whichA]};
+$whichL = random(0,@limcomp-1,1);  @lvals = @{$limcomp[$whichL]};
+
+$compareMC = new_multiple_choice();
+$ratioMC   = new_multiple_choice();
+$alternMC  = new_multiple_choice();
+$limcompMC = new_multiple_choice();
+
+$compareMC->qa("Appliquer le critère de comparaison pour déterminer si " .
+	       "\(\displaystyle \sum_{n=$cvals[1]}^{\infty} $cvals[0]\) " .
+	       "converge ou diverge : cette série", $cvals[2]);
+$compareMC->makeLast("converge","diverge");
+$ratioMC->qa("Appliquer le critère de d'Alembert pour déterminer si " .
+	       "\(\displaystyle\sum_{n=$rvals[1]}^{\infty} $rvals[0]\), " .
+	       "converge ou diverge : cette série", $rvals[2]);
+$ratioMC->makeLast("converge","diverge");
+$alternMC->qa("Appliquer le critère des séries alternées pour déterminer si" .
+	       "\(\displaystyle\sum_{n=$avals[1]}^{\infty} $avals[0]\) " .
+	       "converge ou diverge : cette série", $avals[2]);
+$alternMC->makeLast("converge","diverge");
+$limcompMC->qa("Appliquer le critère de comparaison à l'aide d'une limite pour déterminer si " .
+	       "\(\displaystyle\sum_{n=$lvals[1]}^{\infty} $lvals[0]\) " .
+	       "converge ou diverge : cette série", $lvals[2]);
+$limcompMC->makeLast("converge","diverge");
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+${BBOLD}a)$EBOLD
+\{ $compareMC->print_q() \}
+\{ $compareMC->print_a() \}
+
+$PAR
+${BBOLD}b)$EBOLD
+\{ $ratioMC->print_q() \}
+\{ $ratioMC->print_a() \}
+
+$PAR
+${BBOLD}c)$EBOLD
+\{ $alternMC->print_q() \}
+\{ $alternMC->print_a() \}
+
+$PAR
+${BBOLD}d)$EBOLD
+\{ $limcompMC->print_q() \}
+\{ $limcompMC->print_a() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(radio_cmp( $compareMC->correct_ans() ) );
+ANS(radio_cmp( $ratioMC->correct_ans() ) );
+ANS(radio_cmp( $alternMC->correct_ans() ) );
+ANS(radio_cmp( $limcompMC->correct_ans() ) );
+
+$csgn = ( $cvals[2] eq 'converge' ) ? "<" : ">";
+$rp   = ( $whichR == 0 ) ? "," : "";
+$rsgn = ( $rvals[2] eq 'converge' ) ? "<" : ">";
+$rexpl = ( $rvals[5] eq '\infty' ) ? "diverge" : "\($rvals[5] $rsgn 1\)";
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+${BBOLD}a)$EBOLD
+Pour déterminer la convergence de la série
+\(\displaystyle \sum_{n=$cvals[1]}^{\infty} $cvals[0]\), on la compare à
+\(\displaystyle\sum_{n=$cvals[1]}^{\infty} $cvals[3]\), sachant qu'elle
+$cvals[2] $cvals[4].  Puisque \(\displaystyle $cvals[0] $csgn $cvals[3]\), on sait que
+\(\displaystyle\sum_{n=$cvals[1]}^{\infty} $cvals[0] $csgn
+    \sum_{n=$cvals[1]}^{\infty} $cvals[3]\) et donc que
+\(\displaystyle\sum_{n=$cvals[1]}^{\infty} $cvals[0]\) $cvals[2].
+
+$PAR
+${BBOLD}b)$EBOLD
+Pour déterminer la convergence de la série
+\(\displaystyle\sum_{n=$rvals[1]}^{\infty} $rvals[0]\)$rp en appliquant le critère de d'Alembert, on fait d'abord le rapport entre le \(n^e\) et le \((n+1)^e\) terme :
+\[\frac{a_{n+1}}{a_n} = $rvals[3] = $rvals[4],\]
+et
+\[\lim_{n\to\infty} $rvals[4] = $rvals[5]. \]
+Puisque $rexpl, on sait que
+\(\displaystyle\sum_{n=$rvals[1]}^{\infty} $rvals[0]\)$rp $rvals[2].
+
+$PAR
+${BBOLD}c)$EBOLD
+Pour déterminer la convergence de la série
+\(\displaystyle\sum_{n=$avals[1]}^{\infty} $avals[0]\) en appliquant le test des séries alternées, on doit déterminer \(\displaystyle\lim_{n\to\infty} $avals[3]\).
+On observe que \(\displaystyle\lim_{n\to\infty} $avals[3] = $avals[4]\) et la suite \(\left\lbrace $avals[3]\right\rbrace\) est décroissante car 
+\(\displaystyle $avals[5] < $avals[3]\). Donc suivant le critère des séries alternées, 
+\(\displaystyle\sum_{n=$avals[1]}^{\infty} $avals[0]\) $avals[2].
+
+$PAR
+${BBOLD}d)$EBOLD
+Pour déterminer la convergence de la série
+\(\displaystyle\sum_{n=$lvals[1]}^{\infty} $lvals[0]\) en appliquant le test de comparaison à l'aide d'une limite, on doit comparer les termes de la série à ceux d'une autre série.  On choisit la comparaison avec les termes de
+\(\displaystyle\sum_{n=$lvals[1]}^{\infty} $lvals[3]\), car
+$lvals[4].  On évalue ensuite la limite \(n\to\infty\) du rapport des termes, \(a_n = $lvals[0]\) et \(b_n = $lvals[3]\), de la série.
+On obtient
+\[ \frac{a_n}{b_n} = $lvals[5] = $lvals[6]. \]
+Alors \(\displaystyle\lim_{n\to\infty} $lvals[6] = $lvals[7]\), et on sait que les deux séries ont les mêmes critères de convergence. Par conséquent,
+puisqu'on sait que
+\(\displaystyle\sum_{n=$lvals[1]}^{\infty} $lvals[3]\) $lvals[2], on sait que
+\(\displaystyle\sum_{n=$lvals[1]}^{\infty} $lvals[0]\) $lvals[2] aussi.
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT();

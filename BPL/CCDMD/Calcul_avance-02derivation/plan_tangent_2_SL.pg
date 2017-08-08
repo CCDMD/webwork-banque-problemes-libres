@@ -1,0 +1,126 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('plan tangent')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+
+###############Source#################
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+## Tagged by tda2d
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('Tangent Planes')
+## ZDate('')
+## Author('')
+## Institution('Dartmouth')
+## TitleText1('Basic Multivariable Calculus')
+## EditionText1('3')
+## AuthorText1('Marsden, Tromba, Weinstein')
+## Section1('2.4')
+## Problem1('')
+
+
+
+
+DOCUMENT();
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGanswermacros.pl",
+           "MathObjects.pl");
+ 
+
+## Lots of set up goes here
+$a = random(1,9);
+$b = random(1,9);
+
+
+##f(x,y) = cos(ax)cos(by)
+$k0 = non_zero_random(-3,3);
+$k1 = non_zero_random(-3,3);
+
+sub cs {
+  my $inp = shift;
+  $inp += 32 if($inp<0);
+  my @cosvals = (1,0,-1,0);
+  return($cosvals[$inp % 4]);
+}
+
+if ($k0 == 1) {
+   $x0 = Formula("pi/2");
+} elsif ($k0 == -1) {
+   $x0 = Formula("-pi/2");
+} elsif ($k0 == 2) {
+   $x0 = Formula("pi");
+} elsif ($k0 == -2) {
+   $x0 = Formula("-pi");
+} elsif ($k0 % 2 == 0) {
+   $k0div2 = $k0 /2 ;
+   $x0 = Formula("$k0div2 pi");
+} else {
+   $x0 = Formula("$k0 pi/2");
+}
+if ($k1 == 1) {
+   $y0 = Formula("pi/2");
+} elsif ($k1 == -1) {
+   $y0 = Formula("-pi/2");
+} elsif ($k1 == 2) {
+   $y0 = Formula("pi");
+} elsif ($k1 == -2) {
+   $y0 = Formula("-pi");
+} elsif ($k1 % 2 == 0) {
+   $k1div2 = $k1 /2 ;
+   $y0 = Formula("$k1div2 pi");
+} else {
+   $y0 = Formula("$k1 pi/2");
+}
+
+
+$a_x = nicestring([$a], ['x']);
+$b_y = nicestring([$b], ['y']);
+
+#$k0_pi_2 = nicestring([$k0], ['\pi/2']);
+#$k1_pi_2 = nicestring([$k1], ['\pi/2']);
+
+$ak0 = ($a*$k0)." pi/2";
+$ak0 = ($a*$k0/2)." pi" if ((($a*$k0) % 2) == 0);
+
+$bk1 = ($b*$k1)." pi/2";
+$bk1 = ($b*$k1/2)." pi" if ((($b*$k1) % 2) == 0);
+
+$z0 = cs($a * $k0)* cs($b *$k1);
+
+## Ok, we are ready to begin the problem...
+##
+TEXT(beginproblem());
+
+Context()->texStrings;
+BEGIN_TEXT
+Trouver l'équation du plan tangent à la surface de : 
+\(z = \cos($a_x) \cos($b_y) \) $BR
+au point \( ($x0, $y0, f($x0, $y0)) \)
+$PAR
+\( z = \) \{ans_rule(80)\}
+END_TEXT
+Context()->normalStrings;
+
+#$ans1 = "cos($a * $x0) * cos($b * $y0) + 
+#              ( - $a * sin($a * $x0) * cos($b * $y0)) * (x - $x0) +
+#              ( - $b * cos($a * $x0) * sin($b * $y0)) * (y - $y0)";
+
+$ans = FEQ("$z0 + 
+              ( - $a * sin($ak0) * cos($bk1)) * (x - $x0) +
+              ( - $b * cos($ak0) * sin($bk1)) * (y - $y0)");
+
+
+ANS(fun_cmp($ans, vars=>2));
+
+ENDDOCUMENT();
+
+
+
+

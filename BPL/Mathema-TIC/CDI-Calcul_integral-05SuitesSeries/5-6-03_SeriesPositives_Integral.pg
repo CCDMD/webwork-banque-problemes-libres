@@ -1,0 +1,78 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de l\'intégrale', 'série', 'série à termes positifs')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_11_3_15.pg
+## ZDate(04/07/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(bxsqone)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('11.3')
+## Problem1('15')
+###############Source###############
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT("Afin d'obtenir 100% pour ce problème, toutes les réponses doivent être correctes.");
+
+# L'étudiant doit répondre correctement à toutes les questions pour avoir 100%
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem());
+#####################################################################
+
+Context("Numeric");
+Context()->strings->add(Divergente=>{},DIV=>{alias=>'Divergente'});
+
+$a = list_random(1,2,3,5,6,7,11);
+$b = random(1,5,1);
+
+$c = Compute("$b^2");
+
+$ans = Compute("($a/$b)*((pi/2)-arctan(1/$b))");
+$popup = PopUp(['?','Convergente', 'Divergente'],'Convergente');
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer l'intégrale impropre, c'est-à-dire donner la valeur si elle est convergente. Si elle est divergente, entrer ${BBOLD}DIV$EBOLD. 
+\[
+\int_1^{\infty} \frac{$a}{x^2 + $c}\,dx
+\]
+Réponse : \{ans_rule(20)\} $PAR
+À l'aide de l'intégrale impropre ci-dessus et du critère de l'intégrale, déterminer si la série suivante est $BITALIC convergente $EITALIC ou $BITALIC divergente. $EITALIC  Choisir ${BBOLD}Convergente$EBOLD ou ${BBOLD}Divergente$EBOLD.$BR
+\[
+\sum_{n=1}^{\infty} \frac{$a}{n^2 + $c}
+\]
+Réponse : \{$popup->menu\}
+END_TEXT
+
+#####################################################################
+
+ANS(($ans)->cmp());
+ANS($popup->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

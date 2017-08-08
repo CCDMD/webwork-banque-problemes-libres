@@ -1,0 +1,214 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Fonction et relation à plusieurs variables)
+## KEYWORDS('domaine', 'fonction de deux variables', 'graphique')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Concepts for multivariable functions)
+## ZDBsection(Notation, domain, and range)
+## Institution(W.H.Freeman)
+## Author(Nathan Wodarz)
+## MLT(ndr_domain)
+## MLTleader(1)
+## Level(2)
+## TitleText1('Calculus Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('14.1')
+## Problem1('7')
+###############Source#################
+
+DOCUMENT();
+loadMacros("PG.pl","PGbasicmacros.pl","PGanswermacros.pl");
+loadMacros("Parser.pl");
+loadMacros("freemanMacros.pl");
+loadMacros("PGauxiliaryFunctions.pl");
+loadMacros("PGgraphmacros.pl");
+loadMacros("PGchoicemacros.pl");
+
+################# Setting up the problem goes here.
+### Book
+
+
+TEXT(beginproblem());
+Context()->variables->add(y=>"Real");
+
+
+
+$a = 5;
+
+
+# Minimum and maximum x and y values to graph.
+$xmin = -$a;
+$ymin = -$a;
+$xmax = $a;
+$ymax = $a;
+
+$xrange = $xmax-$xmin;
+$yrange = $ymax-$ymin;
+
+$xsize = $xrange*25;
+$ysize = $yrange*25;
+
+$graph1 = init_graph(
+    $xmin, $ymin,
+    $xmax, $ymax,
+    grid => [$xrange,$yrange],
+    axes => [0,0],
+);
+
+
+$graph2 = init_graph(
+    $xmin, $ymin,
+    $xmax, $ymax,
+    grid => [$xrange,$yrange],
+    axes => [0,0],
+);
+
+$graph3 = init_graph(
+    $xmin, $ymin,
+    $xmax, $ymax,
+    grid => [$xrange,$yrange],
+    axes => [0,0],
+);
+
+$graph4 = init_graph(
+    $xmin, $ymin,
+    $xmax, $ymax,
+    grid => [$xrange,$yrange],
+    axes => [0,0],
+);
+
+
+$a1 = non_zero_random(-3,3);
+$b1= non_zero_random(-3,3);
+$f1 = Formula("ln($a1*x + $b1*y)")->reduce;
+$g1 = Formula("$a1*x + $b1*y")->reduce;
+
+do {
+$n1 = random(2,5);
+$n2 = random(2,5);
+} until (($n1 %2 != 0)||($n2 % 2 != 0));
+
+$f2 = $g1;
+
+$f3 = Formula("sqrt(x^($n1)*y^($n2))")->reduce;
+$g3 = Formula("x^($n1)*y^($n2)");
+
+$f4 = Formula("e^(1/($a1*x+$b1*y))")->reduce;
+$g4 = Formula("(1/($a1*x+$b1*y))")->reduce;
+
+$f1_graph = "-$a1*x/$b1 for x in [-$a,$a] using color:yellow and weight:3";
+plot_functions($graph1,$f1_graph);
+
+if ($a1 > 0) {
+  $graph1->fillRegion([1,0,'yellow']);
+} else {
+  $graph1->fillRegion([-1,0,'yellow']);
+}
+
+
+
+  $graph2->fillRegion([1,0,'yellow']);
+
+  $fn = new Fun( sub { my $t = shift();
+    return 0; },sub { my $t = shift();
+    return $t; }, $graph3 );
+  $fn->color('blue');
+  $fn->domain(-$a,$a);
+  $fn->weight(3);
+
+  $fn = new Fun( sub { my $t = shift();
+    return $t; },sub { my $t = shift();
+    return 0; }, $graph3 );
+  $fn->color('blue');
+  $fn->domain(-$a,$a);
+  $fn->weight(3);
+
+if ($g3->eval(x=>1,y=>1) > 0) {
+  $graph3->fillRegion([1,1,'yellow']);
+}
+if ($g3->eval(x=>1,y=>-1) > 0) {
+  $graph3->fillRegion([1,-1,'yellow']);
+}
+if ($g3->eval(x=>-1,y=>1) > 0) {
+  $graph3->fillRegion([-1,1,'yellow']);
+}
+if ($g3->eval(x=>-1,y=>-1) > 0) {
+  $graph3->fillRegion([-1,-1,'yellow']);
+}  
+
+$graph4->fillRegion([1,0,'yellow']);
+$f4_graph = "-$a1*x/$b1 for x in [-$a,$a] using color:white and weight:6";
+plot_functions($graph4,$f4_graph);
+
+
+$ml = new_match_list();
+
+$ml->qa(
+'\(f(x,y) = $f1\)',
+image(insertGraph($graph1), width => 150, height => 150, tex_size => 700, extra_html_tags=>'style="padding:5px;"'),
+'\(f(x,y) = $f2\)',
+image(insertGraph($graph2), width => 150, height => 150, tex_size => 700, extra_html_tags=>'style="padding:5px;"'),
+'\(f(x,y) = $f3\)',
+image(insertGraph($graph3), width => 150, height => 150, tex_size => 700, extra_html_tags=>'style="padding:5px;"'),
+'\(f(x,y) = $f4\)',
+image(insertGraph($graph4), width => 150, height => 150, tex_size => 700, extra_html_tags=>'style="padding:5px;"'),
+);
+
+Context()->texStrings;
+$ml->choose(4);
+#$ml->choose(3);
+
+BEGIN_TEXT
+\{ textbook_ref_exact("Rogawski ET 2e", "14.1","7") \}
+$PAR
+Associer à chacune des fonctions suivantes le graphique représentant
+son domaine :
+$PAR
+\{ $ml->print_q() \}
+$PAR
+\{ $ml->print_a() \}
+
+END_TEXT
+
+######################## Answer starts here.
+
+Context()->normalStrings;
+
+ANS(str_cmp($ml->ra_correct_ans));
+
+Context()->texStrings;
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+$PAR
+$SOL
+$PAR
+Le domaine de \(\{$f1->TeX\}\) est la région du plan : \(\{$g1->TeX\} > 0\),
+qui est en fait un demi-plan dont la frontière est : \(\{$g1->TeX\} = 0\)
+(qui n'est pas inclue dans le demi-plan).
+
+$PAR
+La fonction \(\{$f2->TeX\}\) est un polynôme. Par conséquent, son domaine
+est le plan en entier.
+
+$PAR
+Le domaine de \(\{$f3->TeX\}\) est la région du plan correspondant à l'inéquation : \(\{$g3->TeX\} \geq 0\).
+Le domaine inclut donc les droites : \(x = 0\) et \(y = 0\).
+Le facteur \(x^{$n1}\) est positif \{if (($n1 % 2) == 0) { "pour tout \(x\) non nul et n'est jamais négatif"}else{ "pour tout \(x\) positif et négatif pour tout \(x\) négatif"}\}.
+Le facteur \(y^{$n2}\) est positif \{if (($n2 % 2) == 0) { "pour tout \(y\) non nul et n'est jamais négatif"}else{ "pour tout \(y\) positif et négatif pour tout \(y\) négatif"}\}.
+Le produit des facteurs \(x^{$n1}\) et \(y^{$n2}\)  est positif si les deux facteurs sont positifs en même temps ou négatifs en même temps. Cela ne se produit que dans les quadrants
+I et \{if ((($n1 % 2) != 0)&&(($n2 % 2) != 0)) {"III"} elsif (($n1 % 2) == 0) {"II"} else {"IV"}\}.
+
+$PAR
+Le domaine de \(\{$f4->TeX\}\) est le même que le domaine de l'exposant.
+On cherche donc le domaine de \(\{$g4->TeX\}\), qui doit vérifier \(\{$g1->TeX\} \neq 0\). Le domaine cherché correspond donc au plan en entier
+à l'exception de la droite \(\{$g1->TeX\} = 0\). 
+END_SOLUTION
+
+
+ENDDOCUMENT();

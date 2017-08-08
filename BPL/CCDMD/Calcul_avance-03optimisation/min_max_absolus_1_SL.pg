@@ -1,0 +1,116 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('courbes de niveau', 'extremum absolu', 'graphique', 'maximum absolu', 'minimum absolu', 'point critique')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : avril 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+
+###############Source################
+# DESCRIPTION
+# Problem from Calculus, multi-variable, Hughes-Hallett et al.,
+# originally from 5ed (with updates)
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+## Tagged by glr 02/08/10
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Differentiation of multivariable functions)
+## ZDBsection(Extreme values and optimization)
+## Institution(University of Michigan)
+## Author(Gavin LaRose)
+## Level(3)
+## Static(1)
+## MO(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('5')
+## Section1('15.2')
+## Problem1('3')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('6')
+## Section2('15.2')
+## Problem2('3')
+## TitleText3('Applied Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('4')
+## Section3('9.5')
+## Problem3('4')
+## Textbook tags
+## HHChapter1('Optimization: Local and Global Extrema')
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+);
+
+Context("Point");
+$showPartialCorrectAnswers = 1;
+
+$whichgr = random(1,12,1);
+# solnMap[i] = [ [ xmin, ymin, zmin ], [ xmax, ymax, zmax ] ]
+@solnMap = ( [ [ 2.5, 5, 20.5 ], [ 0, 0, 31.5 ] ],
+	     [ [ 0, 0, 20.5 ], [ 2.5, 5, 31.5 ] ],
+	     [ [ 2.5, 5, -27.5 ], [ 0, 0, -16.5 ] ],
+	     [ [ 0, 0, -27.5 ], [ 2.5, 5, -16.5 ] ],
+	     [ [ 2.5, 5, -5.5 ], [ 0, 0, 5.5 ] ],
+	     [ [ 0, 0, -5.5 ], [ 2.5, 5, 5.5 ] ],
+	     [ [ 2.5, 0, 20.5 ], [ 5, 5, 31.5 ] ],
+	     [ [ 5, 5, 20.5 ], [ 2.5, 0, 31.5 ] ],
+	     [ [ 2.5, 0, -27.5 ], [ 5, 5, -16.5 ] ],
+	     [ [ 5, 5, -27.5 ], [ 2.5, 0, -16.5 ] ],
+	     [ [ 2.5, 0, -5.5 ], [ 5, 5, 5.5 ] ],
+	     [ [ 5, 5, -5.5 ], [ 2.5, 0, 5.5 ] ] );
+@soln = @{$solnMap[$whichgr-1]};
+
+$gr = "min_max_absolus_1_SLfig" . $whichgr . ".png";
+$minPt = Point( $soln[0]->[0], $soln[0]->[1] );
+$minV  = Compute( $soln[0]->[2] );
+$maxPt = Point( $soln[1]->[0], $soln[1]->[1] );
+$maxV  = Compute( $soln[1]->[2] );
+
+Context()->texStrings;
+TEXT(beginproblem());
+BEGIN_TEXT
+
+Les courbes de niveau d'une fonction \( f(x,y) \) sont illustrées ci-dessous.
+$PAR
+$BCENTER
+\{ image( $gr, tex_size=>300, height=>372, width=>360,
+          extra_html_tags=>'alt="contour diagram"' ) \}
+$ECENTER
+$PAR
+Estimer la position et approximer la valeur du maximum et du minimum global sur la région illustrée.
+$PAR 
+Maximum global au point : \{ ans_rule(30) \} valant : \{ ans_rule(15) \}
+$BR
+Minimum global au point : \{ ans_rule(30) \} valant : \{ ans_rule(15) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($maxPt->cmp(tolType=>'absolute',tolerance=>'.3') );
+ANS($maxV->cmp(tolType=>'absolute',tolerance=>'.51') );
+ANS($minPt->cmp(tolType=>'absolute',tolerance=>'.3') );
+ANS($minV->cmp(tolType=>'absolute',tolerance=>'.51') );
+
+$mxv = ( $maxV > 0 ) ? int( $maxV ) : int($maxV - 1);
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+La valeur maximum, qui est juste au-dessus de \( $mxv \),
+disons \( $maxV \), et atteint approximativement à \($maxPt\).
+La valeur minimale, qui est d'environ \( $minV \), est atteinte approximativement au point \( $minPt \).
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+;
+ENDDOCUMENT();

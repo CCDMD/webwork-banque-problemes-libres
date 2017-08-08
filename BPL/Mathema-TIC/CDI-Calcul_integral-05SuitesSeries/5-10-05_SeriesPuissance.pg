@@ -1,0 +1,108 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('critère de d\'Alembert généralisé', 'intervalle de convergence', 'rayon de convergence', 'série de puissances')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/Michigan/Chap9Sec5/Q26.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZMLT(IntervalCnonzeroMpoly)
+## ZMLTleader(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('9.5')
+## Problem1('26')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('9.5')
+## Problem2('26')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('9.5')
+## Problem3('29')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+Context("Interval");
+$showPartialCorrectAnswers = 1;
+
+$r = random(2,6,1);
+$s = random(2,5,1);
+$a = random(2,5,1);
+
+$int = Interval("(-$a,$a)");
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+Déterminer l'intervalle de convergence de 
+\[ \sum_{n=1}^\infty\,\frac{n^$r\,x^{$s n}}{$a^{$s n}}. \]
+$PAR
+Intervalle de convergence (sous forme d'intervalle) = \{ ans_rule(15) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS($int->cmp(showEndpointHints=>0,showEndTypeHints=>0) );
+
+if($s%2 == 0) { $n1 = "";}
+else {$n1 = "(-1)^n";}
+
+Context()->texStrings;
+BEGIN_SOLUTION
+On applique le critère de d'Alembert généralisé :
+\[ \begin{align}
+\left| \frac{a_{n+1}}{ {a_n}}\right| &=
+\left|{{(n+1)^$r x^{$s(n+1)}} \over {$a^{$s(n+1)}}} \cdot
+      \frac{$a^{$s n}}{{n^$r x^{$s n}}}\right| \\
+      &= \left(\frac{n+1}{n}\right)^{$r} \cdot \frac{x^$s}{$a^{$s}}
+\end{align}\]
+Puisque \( \lim\limits_{n\to\infty} \frac{n+1}{n} = 1\),
+on a
+\[
+\lim_{n\to\infty} \left|{{a_{n+1}} \over {a_n}}\right|=\frac{{x^$s}}{$a^{$s}}.
+\]
+On obtient \( \frac{{x^$s}}{$a^{$s}} < 1\) si \(|x| < $a\).  Le rayon de convergence est \($a\) et la série converge si \(-$a < x < $a\).
+$PAR
+
+On vérifie les bornes de l'intervalle.  Si \(x = -$a\), on obtient
+\[
+\sum_{n=1}^{\infty}\frac{n^$r x^{$s n}}{ $a^{$s n}} =
+\sum_{n=1}^{\infty}\frac{n^$r (-$a)^{$s n}}{$a^{$s n}} =
+\sum_{n=1}^{\infty} $n1 n^{$r},
+\]
+qui diverge car le terme général ne tend pas vers 0.  De même, si \(x = $a\), on obtient
+\[
+\sum_{n=1}^{\infty}\frac{n^$r x^{$s n}}{ $a^{$s n}} =
+\sum_{n=1}^{\infty}\frac{n^$r\,$a^{$s n}}{$a^{$s n}} =
+\sum_{n=1}^{\infty} n^{$r},
+\]
+qui diverge également par le critère du terme général.  La série diverge aux bornes de l'intervalle, alors l'intervalle de convergence est donné par \($int\).
+
+
+END_SOLUTION
+Context()->normalStrings;
+ENDDOCUMENT();

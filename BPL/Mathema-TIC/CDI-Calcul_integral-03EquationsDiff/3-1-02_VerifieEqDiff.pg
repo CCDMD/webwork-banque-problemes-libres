@@ -1,0 +1,65 @@
+## Ressource produite dans le cadre du projet Mathéma-TIC 
+## (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et 
+## Bruno Poellhuber - Université de Montréal),
+## financé par le programme d’arrimage universités-collèges (PCUC) 
+## du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
+
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('coefficients constants', 'ordre 2', 'solution particulière', 'vérification', 'équation différentielle', 'équation homogène', 'équation linéaire')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mars 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+COMMENT("La fonction est y=sin(kt) ou y=cos(kt) est choisie aléatoirement. k peut prendre des valeurs entre 2 et 20.");
+
+$showPartialCorrectAnswers = 1;
+
+## Choisir une valeur de k for sin(kt)
+$k = non_zero_random(2,20);
+
+## l'équation est y'' + k^2 y = 0
+$kk = $k*$k;
+
+## choix de la fonction y
+$y = list_random( "\sin(kt)" , "\cos(kt)" );
+
+# Réponse, la liste -k, k
+$ans = Compute("-$k,$k");
+
+## Énoncé du problème
+TEXT(beginproblem());
+
+
+BEGIN_TEXT
+Pour quelle(s) valeur(s) de \(k\) la fonction \(y = $y \) est-elle une solution de l'équation différentielle  \( y'' + $kk y = 0\)? 
+$PAR
+\(k = \)\{ ans_rule(15) \}
+END_TEXT
+
+
+ANS($ans->cmp->withPostFilter(sub { 
+  my $ans = shift; 
+  $ans->{ans_message} = "Il existe une autre valeur de k" 
+    if $ans->{ans_message} eq "There should be more numbers in your list";
+  return $ans; 
+}));
+
+ENDDOCUMENT();
+
+
+
+

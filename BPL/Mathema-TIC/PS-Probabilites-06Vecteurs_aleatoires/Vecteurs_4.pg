@@ -29,20 +29,49 @@ TEXT(beginproblem());
 #####Initialisation des paramètres######################
 Context("Numeric");
 $nbr=random(4,10,1);
+$nbrm1=$nbr-1;
+$nbrm2=$nbr-2;
 $ans1=Compute("1/$nbr");   #indépendance entre le fait de savoir que X_1 est le max des précédents et X_nbr le nouveau max
 $ans2=Compute("1/$nbr+1/2*($nbr-1)/$nbr");   # on conditionne sur X_nbr>X_1 ou X_nbr<X_1
 BEGIN_TEXT
 Soit \(X_i, 1\leq i\leq $nbr\) des variables aléatoires continues i.i.d. Calculer
 \{BeginList("OL")\}
 
-$ITEM \(\mathbb{P}(X_{$nbr}>X_1~|~X_1=\max(X_1,X_2,\ldots , X_{$nbr}))=\) \{ $ans1->ans_rule(10) \}
+$ITEM \(\mathbb{P}(X_{$nbr}>X_1~|~X_1=\max(X_1,X_2,\ldots , X_{$nbrm1}))=\) \{ $ans1->ans_rule(10) \}
 $ITEMSEP
 
-$ITEM \(\mathbb{P}(X_{$nbr}>X_2~|~X_1=\max(X_1,X_2,\ldots , X_{$nbr}))=\) \{$ans2-> ans_rule(10) \}
+$ITEM \(\mathbb{P}(X_{$nbr}>X_2~|~X_1=\max(X_1,X_2,\ldots , X_{$nbrm1}))=\) \{$ans2-> ans_rule(10) \}
 $ITEMSEP
 
 \{EndList("OL")\}
 END_TEXT
 ANS($ans1->cmp);
 ANS($ans2->cmp);
+BEGIN_SOLUTION
+Pour le 1., remarquons dans un premier temps qu'une  variable particulière a une chance sur \($nbr\) d'être la variable maximale d'un ensemble de \($nbr\) variables aléatoires i.i.d. par symétrie.  Considérons maintenant les permutations de \($nbr\) variables où \(X_1\) est le maximum des \($nbrm1\) premières variables. Pour les \($nbrm1\) premières variables, il y a \($nbrm2 !\) permutations possibles. Pour chacune de ces permutations, on peut placer la variable \(X_$nbr\) à \($nbr\) endroits, pour un total de \($nbr \times $nbrm2 !\) permutations de \($nbr\) variables avec \(X_1\) le maximum des \($nbrm1\) premières variables.
+
+Parmi ces permutations, il y en a \($nbrm2 !\) qui ont \(X_$nbr\) comme maximum absolu, ce qui fait en sorte que 
+\[
+\mathbb{P}(X_{$nbr}>X_1~|~X_1=\max(X_1,X_2,\ldots , X_{$nbrm1}))=\frac{$nbrm2 !}{$nbr\times $nbrm2 !}=\frac{1}{$nbr}.
+\]
+En particulier, on constate que le fait que \(X_$nbr\) soit le nouveau maximum est indépendant de savoir qui était le maximum initial.
+$BR
+$BR
+Pour le 2., on conditionne sur le fait que \(X_$nbr\) est plus grand ou non que \(X_1\):
+\[
+\begin{aligned}
+\mathbb{P}(X_{$nbr}>X_2~|~X_1=\max(X_1,X_2,\ldots , X_{$nbrm1}))&=\mathbb{P}(X_{$nbr}>X_2~|~X_1=\max(X_1,X_2,\ldots , X_{$nbrm1}),X_$nbr>X_1))\mathbb{P}(X_$nbr>X_1)\\
+&\phantom{=} +\mathbb{P}(X_{$nbr}>X_2~|~X_1=\max(X_1,X_2,\ldots , X_{$nbrm1}),X_$nbr\leq X_1))\mathbb{P}(X_$nbr\leq X_1).
+\end{aligned}
+\]
+Si \(X_$nbr>X_1\), ce qui, selon 1., survient avec probabilité \(1/$nbr\), alors \(X_$nbr\) est aussi plus grand que \(X_2\)
+$BR
+Si toutefois \(X_$nbr\leq X_1\), alors \(X_$nbr\) peut tout aussi bien être plus grand ou plus petit que \(X_2\). Par symétrie, il sera plus grand avec probabilité \(1/2\). On obtient alors
+\[
+\begin{aligned}
+\mathbb{P}(X_{$nbr}>X_2~|~X_1=\max(X_1,X_2,\ldots , X_{$nbrm1}))&=\frac{1}{$nbr}+\frac{1}{2}\left(1-\frac{1}{$nbr}\right)\\
+&=$ans2.
+\end{aligned}
+\]
+END_SOLUTION
 ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

@@ -1,0 +1,103 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('dérivation en chaîne', 'dérivée partielle', 'fonction de deux variables')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+
+###############Source################
+## DESCRIPTION
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+## Tagged by tda2d
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('The Chain Rule')
+## ZDate('')
+## Author('')
+## Institution('Dartmouth')
+## TitleText1('Calculus')
+## EditionText1('5')
+## AuthorText1('Stewart')
+## Section1('15.5')
+## Problem1('')
+## TitleText2('Calculus: Early Transcendentals')
+## EditionText2('1')
+## AuthorText2('Rogawski')
+## Section2('14.6')
+## Problem2('6 7 8 9 10')
+
+
+
+DOCUMENT();
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGauxiliaryFunctions.pl",
+           "PGgraphmacros.pl",
+           "Dartmouthmacros.pl");
+ 
+
+## Do NOT show partial correct answers
+$showPartialCorrectAnswers = 1;
+
+$a = random(-5,5);
+$b = non_zero_random(-1,1);
+$c = random(-5,5);
+$d = non_zero_random(-1,1);
+$m = random(2,7);
+$n = random(2,7);
+
+$xstring = "$a + $b t^$m";
+if ($b == -1) {$xstring = "$a - t^$m";}
+elsif($b == 1) {$xstring = "$a + t^$m";}
+
+$ystring = "$c + $d t^$n";
+if ($d == -1) {$ystring = "$c - t^$n";}
+elsif($d == 1) {$ystring = "$c + t^$n";}
+## Ok, we are ready to begin the problem...
+##
+TEXT(beginproblem());
+
+
+BEGIN_TEXT
+    Utiliser la règle de dérivation en chaîne pour calculer \(\dfrac{dz}{dt}\), où :
+\[ z = x^2 y + x y^2, \ \ \ x = $xstring \ \ \ \mathrm{ et }\ \ \ y = $ystring.\]
+$PAR
+On commence par dériver les expressions données :
+$PAR
+\(\frac{\partial z}{\partial x} = \)\{ans_rule(30)\}
+$PAR
+\(\frac{\partial z}{\partial y} = \)\{ans_rule(30)\}
+$PAR
+\(\frac{dx}{dt} = \)\{ans_rule(30)\}
+$PAR
+\(\frac{dy}{dt} = \)\{ans_rule(30)\}
+$PAR
+On combine ensuite en une fonction de la variable indépendante :
+$PAR
+\(\frac{dz}{dt} = \)\{ans_rule(70)\}
+END_TEXT
+
+ANS(fun_cmp("2*x*y + y**2", vars=>["x","y"]));
+ANS(fun_cmp("x**2 + 2*x*y", vars=>["x","y"]));
+ANS(fun_cmp("$b*$m*t**($m - 1)", vars=>["t"]));
+ANS(fun_cmp("$d*$n*t**($n - 1)", vars=>["t"]));
+
+$xy2 = "2*($a+$b*t**$m)*($c+$d*t**$n)";
+$x2 = "($a+$b*t**$m)**2";
+$y2 = "($c+$d*t**$n)**2";
+
+ANS(fun_cmp("($xy2 + $y2)*$b*$m*t**($m - 1) + ($xy2 + $x2)*$d*$n*t**($n - 1)", vars=>["t"]));
+
+
+
+ENDDOCUMENT();
+
+
+
+

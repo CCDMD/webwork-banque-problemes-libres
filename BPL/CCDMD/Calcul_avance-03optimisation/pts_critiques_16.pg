@@ -1,0 +1,100 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('maximum relatif', 'minimum relatif', 'point critique', 'point de selle', 'test de la dérivée seconde')
+## Traduit et adapté par Éric Gaul, Collège Montmorency
+## Date : avril 2017
+## Language(fr)
+
+
+###############Source################
+#DESCRIPTION
+##  Calculus: Local extrema of functions of two variables
+##ENDDESCRIPTION
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Differentiation of multivariable functions)
+## ZDBsection(Extreme values and optimization)
+## Date(04/18/2014)
+## Institution(Colby College)
+## Author(Justin Sukiennik)
+## MLT(maxMinSaddleList)
+## MLTleader(1)
+## Level(3)
+## MO(1)
+## TitleText1('Multivariable Calculus')
+## AuthorText1('Stewart')
+## EditionText1('7')
+## Section1('14.7')
+## Problem1('7')
+
+
+
+########################################################################
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "parserVectorUtils.pl"
+);
+##############################################################
+
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+TEXT(beginproblem);
+
+##############################################################
+
+Context("Numeric");
+Context()->strings->add(none=>{},EmptySet=>{alias=>"none"});
+Context()->variables->add(y =>'Real', z =>'Real');
+
+$a = list_random(1,4,9,16,25,36);
+
+$sa = Compute("sqrt($a)");
+
+Context("Point");
+
+$P1 = Point($sa,$sa,0);
+$P2 = Point(-$sa,-$sa,0);
+
+$ans1 = "nep";
+$ans2 = "nep";
+$ans3 = List($P1,$P2);
+
+##############################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Répondre aux questions suivantes concernant \( f(x,y) = (x-y)($a-xy) \).$BR
+Remarque : 
+donner chaque réponse sous forme d'une liste de points séparés par des virgules : \( (x_0, y_0, z_0), (x_1, y_1, z_1), \) etc.
+ou inscire $BBOLD nep $EBOLD s'il n'y en a pas.
+$PAR
+$BBOLD (a) $EBOLD Déterminer les maxima locaux de \(f\) s'il en existe.
+$PAR
+\(\ \ \ \) \{ans_rule(60)\}
+$PAR
+$BBOLD (b) $EBOLD Déterminer les minima locaux de \(f\) s'il en existe.
+$PAR
+\(\ \ \ \) \{ans_rule(60)\}
+$PAR
+$BBOLD (c) $EBOLD Déterminer les points de selle de \(f\) s'il en existe.
+$PAR
+\(\ \ \ \) \{ans_rule(60)\}
+$PAR
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+
+ANS( str_cmp($ans1) );
+ANS( str_cmp($ans2) );
+ANS( $ans3->cmp() );
+
+########################################################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

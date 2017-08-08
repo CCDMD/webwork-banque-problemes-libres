@@ -1,0 +1,94 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('coordonnées cylindriques', 'coordonnées rectangulaires', 'coordonnées sphériques', 'intégrale itérée', 'intégrale triple')
+## Adapté par Éric Gaul, Collège Montmorency
+## Traduction française : Éric Gaul
+## Date : avril 2017
+## Language(fr)
+
+###############Source################
+## DESCRIPTION
+## Seting up an integral in cylindrical coordinates
+## ENDDESCRIPTION
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Integration of multivariable functions)
+## ZDBsection(Triple integrals in cylindrical and spherical)
+## Date(10/31/09)
+## Institution(Fort Lewis College)
+## Author(Paul Pearson)
+## Level(2)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('16.5')
+## Problem1('')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('16.5')
+## Problem2('')
+
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+"PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+###############################
+#  Set-up
+
+# Create and use pop up lists 
+$tf = new_select_list();
+$tf->rf_print_q(~~&pop_up_list_print_q);
+
+# Specify choices presented to students
+$tf->ra_pop_up_list( 
+[ No_answer => "?", "positive"=>"positive", "négative"=>"négative", "nulle"=>"nulle"] );
+
+# Questions and answers
+$tf -> qa ( 
+"\( \displaystyle \iiint_E\, (z^2-z) \, dV \)$BR",
+"négative",
+"\( \displaystyle \iiint_E\, (-xz) \, dV \)$BR",
+"nulle",
+"\( \displaystyle \iiint_E\, xy \, dV \)$BR",
+"nulle",
+"\( \displaystyle \iiint_E\, z \, dV \)$BR",
+"positive",
+"\( \displaystyle \iiint_E\, \, dV \)$BR",
+"positive",
+);
+
+# How many questions to use
+$tf->choose(5);
+
+#############################
+#  Main Text
+
+BEGIN_TEXT
+Soit \( E \) la moitié supérieure de la boule de rayon
+\(1\) centrée à l'origine.
+Sans les calculer, déterminer si chacune des intégrales
+ci-dessous est positive, négative ou nulle :
+$PAR
+\{ $tf->print_q() \}
+END_TEXT
+
+ 
+##############################
+#  Answer evaluators
+
+install_problem_grader(~~&std_problem_grader);
+$showPartialCorrectAnswers = 0;
+
+ANS(str_cmp($tf->ra_correct_ans));
+
+
+ENDDOCUMENT();

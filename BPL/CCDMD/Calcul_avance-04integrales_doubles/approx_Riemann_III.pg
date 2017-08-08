@@ -1,0 +1,129 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('approximation', 'double somme de Riemann', 'intégrale double', 'intégrale définie')
+## Modifié par Éric Gaul, Collège Montmorency
+## Traduction française : Éric Gaul
+## Date : avril 2017
+## Language(fr)
+
+
+###############Source###############
+## DESCRIPTION
+## Estimating double integrals  
+## ENDDESCRIPTION
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Integration of multivariable functions)
+## ZDBsection(Double integrals over rectangles)
+## Date(10/15/09)
+## Institution(Fort Lewis College)
+## Author(Paul Pearson)
+## MLT(RiemannSumLeftRightOverUnder)
+## MLTleader(1)
+## Level(2)
+## MO(1)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('16.1')
+## Problem1('')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('16.1')
+## Problem2('')
+
+
+
+DOCUMENT();        
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+Context("Numeric")->variables->are(x=>"Real",y=>"Real");
+
+#
+#  The function
+#
+$a = random(1,9,1);
+$f = Formula("$a**2 - x**2 - y**2")->reduce;
+
+#
+#  The input points
+#
+@x = (0,3,6);
+@y = (0,2,4);
+
+$coarseover   = 24*($f -> eval(x=>0,y=>0)) -> reduce;
+$coarseunder  = 24*($f -> eval(x=>6,y=>4)) -> reduce;
+
+$fineunder = 0;
+$fineover  = 0;
+for $i (0..1) {
+for $j (0..1) {
+$fineunder = ($fineunder + 6*($f->eval(x=>$x[$i+1], y=>$y[$j+1]))) -> reduce;
+$fineover  = ($fineover  + 6*($f->eval(x=>$x[$i],   y=>$y[$j])))   -> reduce;
+}
+}
+
+
+##############################################
+#  Main text
+
+Context()->texStrings;
+Context()->flags->set(reduceConstants=>0);
+BEGIN_TEXT
+
+Soit \(R\) le rectangle
+de sommets : \((0,0), (6,0), (6,4), (0,4)\). 
+$PAR
+Dans les questions qui suivent, approximer :
+\[ \displaystyle \iint_R \left( $f \right) \, dA \]
+en utilisant des sommes de Riemann.
+$PAR
+Pour les approximations, utiliser : soit les coins inférieurs gauches,
+soit les coins supérieurs droits de chaque subdivision rectangulaire,
+selon ce qui est approprié à la situation.
+$PAR
+
+$BBOLD (a) $EBOLD
+Sans subdiviser \(R\) : 
+$BR
+Somme inférieure : \{ans_rule(40)\}
+$BR
+Somme supérieure : \{ans_rule(40)\}
+$PAR
+
+$BBOLD (b) $EBOLD
+En subdivisant \(R\) en quatre rectangles égaux :
+$BR
+Somme inférieure : \{ans_rule(40)\}
+$BR
+Somme supérieure : \{ans_rule(40)\}
+
+END_TEXT
+Context()->normalStrings;
+
+
+##################################################
+#  Answers
+
+ANS(($coarseunder)->cmp);
+ANS(($coarseover) ->cmp);
+ANS(($fineunder)  ->cmp);
+ANS(($fineover)   ->cmp);
+
+
+$showPartialCorrectAnswers = 1;
+
+
+;
+ENDDOCUMENT();

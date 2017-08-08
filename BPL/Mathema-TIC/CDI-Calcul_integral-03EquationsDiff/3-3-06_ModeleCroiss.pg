@@ -1,0 +1,95 @@
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('condition initiale', 'croissance / décroissance', 'modélisation', 'ordre 1', 'résolution d\'une équation', 'à variables séparables', 'équation différentielle')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(5)  
+## Language(fr)
+
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_7_4_4.pg
+## ZDate(06/10/2011)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## MLT(applications_exponential_given_two_values)
+## MLTleader(1)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('7.4')
+## Problem1('4')
+###############Source###############
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+#####################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+#####################################################################
+
+Context("Numeric");
+Context()->variables->are(t=>'Real');
+Context()->variables->set(t=>{limits=>[0,8]});
+
+$a = random(2,5,1);
+$d = random(3,5,1);
+
+# c et b sont des carrés parfaits 
+# c est un multiple de b
+$csq = random(4,12,1);
+$bsq = $csq * random(2,5);
+$b = $bsq**2;
+$c = $b*$csq**2;
+
+$P0 = Real($b/$csq);
+
+$ans1 = Compute("ln($csq^2)/4");
+$ans2 = Compute("$P0");
+$ans3 = Compute("$P0*($csq)^(t/2)");
+$ans4 = Compute("$P0*($csq)^($d/2)");
+$ans5 = Compute("2*ln(1000000/$P0)/[ln($csq)]");
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Une culture de bactéries s'accroît à un taux constant.  Le nombre de bactéries est égal à \($b\) après \(2\) heures et à \($c\) après \(6\) heures.  Répondre aux questions suivantes.
+$PAR
+$BBOLD 1. $EBOLD Quel est le taux de croissance relatif? $BR
+Réponse : \(k = \) \{ans_rule(20) \} $PAR
+$BBOLD 2. $EBOLD Quelle était la taille initiale de la culture? $BR
+Réponse :  \(P_0 = \) \{ans_rule(20) \} $PAR
+$BBOLD 3. $EBOLD Écrire l'expression qui représente le nombre de bactéries après \(t\) heures. $BR
+Réponse : \(P(t)= \) \{ans_rule(30) \} $PAR
+$BBOLD 4. $EBOLD Calculer le nombre de bactéries après \($d\) heures. $BR
+Réponse :  \{ans_rule(20) \} $PAR
+$BBOLD 5. $EBOLD À quel moment le nombre de bactéries atteint-il \(1000000?\) $BR
+Réponse (en heures) : \(t = \) \{ans_rule(20) \} $PAR
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+Context("Numeric");
+
+ANS( ($ans1)->cmp());
+ANS( ($ans2)->cmp() );
+ANS( ($ans3)->cmp() );
+ANS( ($ans4)->cmp() );
+ANS( ($ans5)->cmp() );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

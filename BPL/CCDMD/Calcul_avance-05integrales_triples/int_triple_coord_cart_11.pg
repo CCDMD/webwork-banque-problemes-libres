@@ -1,0 +1,77 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('intégrale définie', 'intégrale itérée', 'intégrale triple', 'région solide', 'région solide de type 1', 'région solide de type 2', 'région solide de type 3')
+## Adapté par Éric Gaul, Collège Montmorency
+## Traduction française : Éric Gaul
+## Date : avril 2017
+## Language(fr)
+
+###############Source################
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Integration of multivariable functions)
+## ZDBsection(Triple integrals)
+## Institution(W.H.Freeman)
+## Author(JustAsk - Kobi Fonarov)
+## MLT(Triple_Integral_Rectangular_parallelopiped)
+## MLTleader(1)
+## Level(3)
+## MO(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('15.3')
+## Problem1('6')
+
+
+
+DOCUMENT();
+
+loadMacros("PG.pl","PGbasicmacros.pl","PGanswermacros.pl");
+loadMacros("Parser.pl");
+loadMacros("freemanMacros.pl");
+
+TEXT(beginproblem());
+
+$x1=random(2,3);
+$x2=$x1*random(2,9);
+$y=random(2,9);
+$z=random(2,10,2);
+
+$answer=Real($y*($z**2)*ln($x2/$x1)/2);
+
+Context()->texStrings;
+
+BEGIN_TEXT
+\{ textbook_ref_exact("Rogawski ET 2e", "15.3","6") \}
+Évaluer l'intégrale triple suivante : \(\displaystyle \iiint_{B} \, f(x,y,z) \, dV \), où :
+$BR
+\( \displaystyle f(x,y,z)=\frac{z}{x}\ \)
+et
+\(\ \displaystyle B = \left\lbrace \ (x, y, z) \, | \, $x1\le x\le $x2,0\le y\le $y, 0\le z \le $z \right\rbrace\ \)
+$PAR
+L'intégrale vaut : \{ans_rule()\}
+$PAR
+
+END_TEXT
+
+ANS($answer->cmp);
+
+Context()->texStrings;
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+On itère l'intégrale et on utilise la propriété des produits des fonctions de variables simples :
+$PAR
+\[\begin{array}{rcl}
+$IIINT _{$box} f( x,y,z ) \,dV &=&
+\int_{$x1}^{$x2} \int_0^{$y} \int_0^{$z} \frac{z}{x} \,dz \,dy \,dx\\
+&=&
+\left(\int_0^{$z} z \,dz\right)\left(\int_0^{$y} 1 \,dy\right)\left(\int_{$x1}^{$x2} \frac{1}{x} \,dx\right)\\
+&=&
+\left(\frac{1}{2}{z}^2\bigg|_0^{$z}\right)\left(y\bigg|_0^{$y}\right)\left( \ln x\bigg|_{$x1}^{$x2}\right)\\
+&=&
+\{($z**2)/2\}\cdot $y\cdot ( \ln {$x2}- \ln {$x1} )\\
+&=&\{$y*($z**2)/2\} \ln \{$x2/$x1\}
+\end{array}\]
+END_SOLUTION
+
+ENDDOCUMENT();

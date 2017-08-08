@@ -1,0 +1,86 @@
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('coefficients constants', 'condition initiale', 'directement intégrable', 'modélisation', 'ordre 2', 'solution générale', 'solution particulière')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mai 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################
+#DESCRIPTION
+#TYPE('word problem')
+# Anti-derivatives -- distance for stopping car
+#ENDDESCRIPTION
+## ZDBsubject(Differential equations)
+## ZDBchapter(Higher order differential equations)
+## ZDBsection(Applications)
+## Institution(Univeristy of Utah)
+## Author(Utah ww group)
+## Level(5)
+## TitleText1('Calculus')
+## AuthorText1('Dale Varberg, Edwin J. Purcell, and Steven E. Rigdon')
+## EditionText1('9')
+## Section1('.')
+## Problem1('')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+"PGauxiliaryFunctions.pl");
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$initialSpeed = random(40,50,1)*2;
+$decelerationRate = random(2,8,1)*2;
+$stopTime = $initialSpeed/$decelerationRate;
+$distance = -0.5*$decelerationRate*$stopTime**2 + $initialSpeed*$stopTime;
+
+TEXT(EV2(<<EOT));
+Une voiture se déplaçant à une vitesse de \(!{$initialSpeed}\) mètre par seconde 
+se met à décélérer à un taux constant de \(!{$decelerationRate}\) mètre per seconde carrée.
+Combien de mètres parcourra-t-elle à partir de ce moment et jusqu'à l'arrêt complet ?
+$PAR
+\{ans_rule(20)\}
+EOT
+
+ANS(num_cmp($distance));
+
+
+SOLUTION(EV3(<<'EOT')); 
+Développons une solution générale au problème.
+
+Soit \(s(t)\) la distance parcourue par la voiture, \(t\) secondes
+après avoir commencé à appliquer les freins.
+Supposons que la voiture décélère à raison de \(g\) mètre par seconde carrée.
+Alors :
+\[s''(t) = -g\]
+et, en intégrant une première fois :
+\[s'(t) = -gt + v_0\]
+où \(v_0\) est la vitesse de la voiture au temps \(0\).
+Intégrer une seconde fois donne :
+\[s(t) = -\frac{gt^2}{2} + v_0t. \]
+La constante d'intégration donne cette fois \(0\), puisqu'au temps \(t=0\),
+la voiture a parcouru une distance de \(0\) mètre.
+On demande la distance parcourue jusqu'à l'immobilisation ;
+à ce moment, la vitesse est nulle, ce qui donne :
+\[t = \frac{v_0}{g}.\]
+En substituant cette valeur du temps dans la formule de la distance, on obtient :
+\[s = -\frac{gv_0^2}{2g^2}+ \frac{v_0^2}{g} = 
+   -\frac{v_0^2}{2g}+ \frac{v_0^2}{g} = \frac{v_0^2}{2g}.\]
+En considérant les données particulières données dans l'énoncé : 
+\[v_0=!{$initialSpeed:%5.0f}\ {\textrm{m}/\textrm{s}}, \quad g=
+!{$decelerationRate:%5.0f}\ {\textrm{m}/{\textrm{s}}^2}\]
+on obtient la réponse :
+\[s \approx !{$distance:%5.2f}\ \textrm{m}\]
+
+
+EOT
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

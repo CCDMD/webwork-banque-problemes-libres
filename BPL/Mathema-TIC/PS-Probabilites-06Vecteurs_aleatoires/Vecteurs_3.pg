@@ -32,7 +32,7 @@ $Max=random(5,9,1);
 $n1=random(2,$Max);
 $m1=random(1,$n1);
 do{$n2=random(2,$Max);} until($n2!=$n1);
-$m2=random(1,$n1);
+$m2=random(1,$n2);
 $n3=random(1,$Max,1);
 $m3=random(1,$n3,1);
 $ans1=Compute("1/$Max*1/$n1");                  #1 chance sur $max d'avoir n1 et une chance sur $n1 d'avoir $m1 sachant N=$n1$
@@ -60,4 +60,28 @@ END_TEXT
 ANS($ans1->cmp);
 ANS($ans2->cmp);
 ANS($ans3->cmp);
+BEGIN_SOLUTION
+Pour le 1., on calcule \(\mathbb{P}(N=$n1,M=$m1)=\mathbb{P}(M=$m1~ ~N=$n1)\mathbb{P}(N=$n1)\). La probabilité d'avoir \(N=$n1\) est égale à \(1/$Max\). Une fois \(N\) fixé, on a une probabilité de \(1/$n1\) d'obtenir \(M=$m1\). En combinant ensemble, on obtient une probabilité conjointe de \(\mathbb{P}(N=$n1,M=$m1)=\frac{1}{$Max}\frac{1}{$n1}=$ans1\).
+$BR
+$BR
+Pour le 2., le raisonnement est identique. On obtient une probabilité conjointe de \(\mathbb{P}(N=$n2,M=$m2)=\frac{1}{$Max}\frac{1}{$n2}=$ans2\).
+$BR
+$BR
+Pour le 3., on utilise la formule de Bayes:
+\[
+\mathbb{P}(N=$n3~|~M=$m3)=\frac{\mathbb{P}(M=$m3~|~N=$n3)\mathbb{P}(N=$n3)}{\mathbb{P}(M=$m3)}
+\]
+Le numérateur est égal à \(\frac{1}{$n3}\frac{1}{$Max}\). Pour calculer le dénominateur, on doit faire la somme pour toutes les probabilités conjointes où \(M=$m3\). On obtient
+\[
+\begin{aligned}
+\mathbb{P}(M=$m3)&=\sum_{k=1}^$Max \mathbb{P}(N=k,M=$m3)\\
+&=\sum_{k=1}^$Max \frac{1}{$Max}\frac{1}{k}\\
+&=\frac{1}{$Max}$probm3
+\end{aligned}
+\]
+Au final, on obtient une probabilité de 
+\[
+\mathbb{P}(N=$n3~|~M=$m3)= \frac{\frac{1}{$n3}\frac{1}{$Max}}{\frac{1}{$Max}$probm3}=\frac{1}{$n3}\frac{1}{$probm3}=$ans3
+\]
+END_SOLUTION
 ENDDOCUMENT();         # Ceci est la dernière ligne exécutable

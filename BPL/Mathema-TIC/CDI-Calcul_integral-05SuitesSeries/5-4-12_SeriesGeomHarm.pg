@@ -1,0 +1,73 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('nombre périodique', 'somme', 'série géométrique')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source :Library/UMN/calculusStewartCCC/s_11_2_37.pg
+## ZDate(03/23/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## MLT(RepeatedDecimals)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('11.2')
+## Problem1('37')
+###############Source###############
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "contextFraction.pl"
+);
+
+#####################################################################
+
+$showPartialCorrectAnswers = 1;
+TEXT(beginproblem());
+
+
+Context("Numeric");
+
+$a = random(1,8);
+do{$b = random(1,9);} until($b!=$a);
+$c = random(1,9,1);
+
+$abc = Compute($a*100+$b*10+$c);
+
+$an = Compute("30969+$abc");
+Context("Fraction-NoDecimals");
+
+$ans = Compute("$an/9990")->reduce;
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Exprimer le nombre décimal périodique en fraction. 
+\[
+3,1\overline{$a $b $c}
+\]
+$PAR
+Réponse (en fraction) : \{ans_rule(20)\}
+$BR
+${BBOLD}Note : ${EBOLD} ${BITALIC} Utiliser uniquement l'opération de division (/) et le signe négatif (-) si nécessaire.${EITALIC}
+$PAR
+END_TEXT
+
+#####################################################################
+
+ANS(($ans)->cmp());
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

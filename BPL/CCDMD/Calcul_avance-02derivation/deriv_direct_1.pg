@@ -1,0 +1,132 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Applications de la limite et de la dérivée)
+## KEYWORDS('applications', 'plan tangent à une surface de niveau')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Language(fr)
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+
+###############Source################
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+## Tagged by tda2d
+## ZDBsubject('Calculus')
+## ZDBchapter('Partial Derivatives')
+## ZDBsection('Directional Derivatives and the Gradient Vector')
+## ZDate('')
+## Author('')
+## Institution('Dartmouth')
+## TitleText1('Calculus')
+## EditionText1('5')
+## AuthorText1('Stewart')
+## Section1('15.6')
+## Problem1('')
+## TitleText2('Calculus: Early Transcendentals')
+## EditionText2('1')
+## AuthorText2('Rogawski')
+## Section2('14.5')
+## Problem2('40')
+
+
+DOCUMENT();
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGauxiliaryFunctions.pl",
+);
+ 
+##Hack around evaluation problem
+sub calleval {
+   my ($ans_evaluator,$student_answer) = @_;
+   my $rh_ans_hash = "";
+   if  ( ref($ans_evaluator) eq 'AnswerEvaluator' ) { # new style
+            $rh_ans_hash = $ans_evaluator->evaluate($student_answer);
+   } elsif (ref($ans_evaluator) eq  'CODE' )     { #old style
+            $rh_ans_hash = &$ans_evaluator($student_answer);
+   } else {
+            warn "Il y a un problème avec l'évaluateur de réponse";
+   }
+   return $rh_ans_hash;
+} 
+
+## Do NOT show partial correct answers
+$showPartialCorrectAnswers = 1;
+
+$a = random(1,5);
+$b = random(1,5);
+$c = random(1,5);
+$d = non_zero_random(-5,5);
+$e = non_zero_random(-5,5);
+$f = non_zero_random(-5,5);
+$g = random(-10,10);
+
+$as = $a;
+if ($a == 1 ) { $as = ""; }
+$bs = $b;
+if ($b == 1 ) { $bs = ""; }
+$cs = $c;
+if ($c == 1 ) { $cs = ""; }
+$ds = $d;
+if ($d == 1 ) { $ds = ""; }
+if ($d == -1 ) { $ds = "-"; }
+$es = $e;
+if ($e == 1 ) { $es = ""; }
+if ($e == -1 ) { $es = "-"; }
+$fs = $f;
+if ($f == 1 ) { $fs = ""; }
+if ($f == -1 ) { $fs = "-"; }
+
+## Ok, we are ready to begin the problem...
+##
+TEXT(beginproblem());
+
+
+BEGIN_TEXT
+Trouver les points sur la surface \(\ $as x^2 + $bs y^2 + $cs z^2 = 1\ \)
+pour lesquels $BR le plan tangent est parallèle au plan
+\(\ $ds x + $es y + $fs z = $g\).
+$PAR
+\(\Big(\)\{NAMED_ANS_RULE(first_x,20)\}, \{ans_rule()\},\{ans_rule()\}\(\Big)\) et $BR
+\(\Big(\)\{NAMED_ANS_RULE(second_x,20)\}, \{ans_rule()\},\{ans_rule()\}\(\Big)\)
+END_TEXT
+
+## Gradient = lambda * <$d, $e, $f>
+$lambda = 1/sqrt($d*$d/(4*$a) + $e*$e/(4*$b) + $f*$f/(4*$c));
+$x0 = $d*$lambda/(2*$a);
+$y0 = $e*$lambda/(2*$b);
+$z0 = $f*$lambda/(2*$c);
+
+
+($ans_eval1) = num_cmp($x0);                     ## Value of x coordinate of one solution
+$firstAnswer = $inputs_ref->{first_x};           ## Grab the first answer entered by student
+$firstAnswer = '' unless defined($firstAnswer);  ## Make sure it is defined
+#$firstAnswer =~ s/t/(1)/g;                      ## Globally substitute (1) for t in $firstAnswer
+$rh_ans_hash = &calleval($ans_eval1,$firstAnswer);        ## Check first answer against given
+
+## Check answers accordingly
+if ( $rh_ans_hash->{score} == 1 ) 
+{
+    NAMED_ANS(first_x, num_cmp($x0) );
+    ANS(num_cmp($y0));
+    ANS(num_cmp($z0));
+    NAMED_ANS(second_x, num_cmp(-$x0) );
+    ANS(num_cmp(-$y0));
+    ANS(num_cmp(-$z0));
+}
+else
+{   
+    NAMED_ANS(first_x, num_cmp(-$x0) );
+    ANS(num_cmp(-$y0));
+    ANS(num_cmp(-$z0));
+    NAMED_ANS(second_x, num_cmp($x0) );
+    ANS(num_cmp($y0));
+    ANS(num_cmp($z0));
+}
+
+ENDDOCUMENT();
+
+
+

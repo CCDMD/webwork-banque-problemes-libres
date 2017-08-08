@@ -1,0 +1,115 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('critère de d\'Alembert généralisé', 'intervalle de convergence', 'rayon de convergence', 'série de puissances', 'série harmonique', 'série harmonique alternée')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/Michigan/Chap9Sec5/Q23.pg
+## ZDate(04/14/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('9.5')
+## Problem1('23')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('9.5')
+## Problem2('23')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('9.5')
+## Problem3('26')
+## TitleText4('Calculus: Concepts and Contexts')
+## AuthorText4('Stewart')
+## EditionText4('4 Custom UMTYMP Ed.')
+## Section4('11.8')
+## Problem4('10')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+#"PGchoicemacros.pl",
+"PGcourse.pl",
+);
+
+Context("Interval");
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,9,1);
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit la série
+\[ \sum_{n=1}^{\infty} \frac{($a x)^n}{n}. \]
+
+Déterminer d'abord le rayon de convergence de cette série de puissances en appliquant le critère de d'Alembert généralisé, puis vérifier le comportement de la série aux bornes de l'intervalle engendré par le rayon de convergence.
+$PAR
+Rayon de convergence = \{ ans_rule(10) \} $BR
+Intervalle de convergence = \{ ans_rule(15) \}
+$PAR
+${BBOLD}Note :$EBOLD ${BITALIC}Entrer la réponse sous forme d'intervalle : ainsi, si l'intervalle de convergence est donné par \(-3 < x\le 5\), entrer \( (-3,5]\)$EITALIC.
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("1/$a")->cmp() );
+ANS(Interval("[-1/$a,1/$a)")->cmp(showEndpointHints=>0,showEndTypeHints=>0) );
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Soit \[\sum_{n=1}^{\infty} \frac{($a x)^n}{n}.\]
+En remplaçant \(n\) par \(n+1\), on obtient
+\(a_{n+1}=\frac{($a x)^{n+1}}{(n+1)}\). En appliquant le critère de d'Alembert généralisé, on a
+\[ \begin{align}
+\left|\frac{a_{n+1}}{a_n}\right| &=
+  \left|\frac{\frac{($a x)^{n+1}}{n+1}}{\frac{($a x)^n}{n}} \right| \\
+  &=\left|\frac{($a x)^{n+1} }{n+1}\cdot\frac{n}{($a x)^n}\right|\\
+  &=  $a |x|\left(\frac{n}{n+1}\right).
+\end{align}\]
+On obtient donc
+\[
+\lim_{n \to \infty}  \left|\frac{a_{n+1}}{a_n}\right|=$a|x|.
+\]
+La série converge si \( $a|x| < 1\), ainsi le rayon de convergence est \(R= \frac{1}{$a}\).
+$PAR
+Si \(x=\frac{1}{$a}\) la série devient la série harmonique
+\[
+\sum_{n=1}^{\infty} \frac{($a x)^n}{n} = \sum_{n=1}^{\infty} \frac{1}{n}
+\]
+qui diverge.
+
+$PAR
+Si \(x=-\frac{1}{$a}\) la série devient la série harmonique alternée
+\[
+\sum_{n=1}^{\infty} \frac{($a x)^n}{n} = \sum_{n=1}^{\infty} \frac{(-1)^n}{n}
+\]
+qui converge.
+
+$PAR
+L'intervalle de convergence est donc  \( \displaystyle\left[-\frac{1}{$a}, \frac{1}{$a}\right) \).
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

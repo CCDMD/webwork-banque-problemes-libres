@@ -1,0 +1,76 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('somme', 'série géométrique')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(5)  
+## Language(fr)
+###############Source###############
+## source :Library/Rochester/setAlgebra36SeqSeries/superball.pg
+## ZDate(6/3/2002)
+## ZInstitution(Rochester)
+## MLT(BouncingBall)
+## TitleText1('College Algebra')
+## AuthorText1('Stewart, Redlin, Watson')
+## EditionText1('3')
+## Section1('9.2')
+## Problem1('41')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "answerHints.pl",
+  "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+$n = random(4,10,1);
+$height = random(10,50,1);
+$a = random(1,5,1);
+$b = random($a+1,10,1);
+$a = $a/gcd($a,$b);
+$b = $b/gcd($a,$b);
+
+$frac = "\displaystyle \frac{$a}{$b}";
+
+$ans1 = Compute("$height*($a/$b)**($n)");
+$ans2 = Compute("$height + 2*$height*($a/$b)/(1-$a/$b)");
+
+$showHint = 4;
+BEGIN_TEXT;
+Une balle rebondissante, qui atteint le \($frac\) de sa hauteur précédente à chaque rebond, est lâchée d'une hauteur de \($height\) mètres.  $BR
+$BR
+Quelle est la hauteur atteinte par la balle, en mètres, au \($n^{ième}\) rebond? 
+$BR \{ans_rule(25)\} mètres
+$PAR
+Quelle distance totale la balle parcourt-elle, en mètres, avant de s'immobiliser? 
+$BR \{ans_rule(25)\} mètres
+$PAR
+$BITALIC Un indice sera donné après $showHint essais.$EITALIC
+END_TEXT
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+
+BEGIN_HINT
+La distance parcourue par la balle se modélise par une série géométrique.
+$PAR
+En lâchant la balle, elle parcourt $height mètres. Au premier rebond, la balle  
+atteint une hauteur de \( $height\cdot $frac \) mètres et redescend. Au deuxième rebond, elle 
+atteint une hauteur de \($height \cdot $frac\cdot $frac  = $height \left($frac\right)^2 \) mètres et redescend. 
+Au troisième rebond, elle atteint une hauteur de \($height\left($frac\right)^3 \) mètres et redescend.
+END_HINT
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

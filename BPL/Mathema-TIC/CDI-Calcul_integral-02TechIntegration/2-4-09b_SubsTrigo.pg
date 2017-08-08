@@ -1,0 +1,148 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('complétion de carré', 'intégrale indéfinie', 'substitution trigonométrique')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(4)  
+## Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGcourse.pl",
+);
+
+COMMENT('Fonction 1/sqrt(x^2 + 2ax + c) par substitution trigonométrique de type tan avec complétion du carré, c = a^2 + b^2');
+
+Context()->variables->add(t=>"Real",dt=>"Real");
+
+$a = random(2, 6);
+do{$b = random(1,8);} until($a!=$b);
+
+## créer le polynôme de forme (x+a)^2 + b^2
+$a2 = 2*$a;
+$aa = $a*$a;
+$bb = $b*$b;
+
+$c = $aa + $bb;
+$poly = Compute("x^2 + $a2*x + $c")->reduce;
+
+# Complétion du carré A^2+B^2 où A=x+a et B=b
+$A2 = Compute("(x+$a)^2");
+$B2 = Real($bb);
+
+# Côtés du triangle de substitution
+$opp = Compute("x+$a");
+$adj = Compute("$b");
+$hyp = Compute("sqrt($poly)");
+
+# Substitution
+$x = Compute("$b*tan(t)-$a");
+$dx = Compute("$b*sec^2(t)*dt");
+$expres = Compute("$b*sec(t)");
+
+# Intégrale en fonction de t
+$Int = Compute("sec(t)*dt");
+$anst = Compute("ln(abs(sec(t)+tan(t)))");
+$ans = Compute("ln(abs(sqrt($poly) + x + $a))")->reduce();
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer l'intégrale \( \displaystyle\int \frac{dx}{\sqrt{$poly}} \) en utilisant la complétion du carré et une substitution trigonométrique.
+$PAR
+$BBOLD Étape 1$EBOLD : Effectuer une complétion du carré pour remplacer l'expression \($poly\) sous la forme 
+d'une somme de carrés \(A^2 + B^2\) et telle que $BBOLD\(B\) est une constante.$EBOLD
+$PAR
+\[$poly = A^2 + B^2\]
+si \(A^2=\)\{ans_rule(5)\} et \(B^2=\) \{ans_rule(5)\}
+$PAR
+$BBOLD Étape 2$EBOLD : Compléter le triangle de substitution ci-dessous à partir de l'expression trouvée à l'étape précédente.
+$BR
+$BCENTER
+\{ image( "triangle.png", width=>125, height=>69,tex_size=>300 ) \}
+$ECENTER
+$BR
+Côté opposé à \(t\) :  \{ans_rule(10)\}  $BR
+Côté adjacent à \(t\) :  \{ans_rule(10)\} $BR
+Hypoténuse :  \{ans_rule(20)\} $BR
+$PAR
+$BBOLD Étape 3$EBOLD : Effectuer votre substitution trigonométrique en complétant les expressions demandées.$BR
+$BBOLD Note : Exprimer vos fonctions trigonométriques en fonction de la variable \(t\)$EBOLD.
+$PAR
+\(x =\)  \{ans_rule(20)\} $BR
+\(dx =\)  \{ans_rule(20)\} $BR
+\(\sqrt{$poly} =\)  \{ans_rule(20)\} $BR
+$PAR
+$BBOLD Étape 4$EBOLD : Exprimer l'intégrale de départ en fonction de \(t\) à l'aide des expressions trouvées à l'étape précédente et évaluer cette intégrale.
+$PAR
+\( \displaystyle\int \frac{dx}{\sqrt{$poly}}=\displaystyle\int \)  \{ans_rule(30)\} \(= \) \{ans_rule(30)\} \(+\,C \)
+$PAR
+$BBOLD Étape 5$EBOLD : En utilisant votre triangle de substitution, exprimer la valeur de l'intégrale en fonction de \(x\).
+$PAR
+\( \displaystyle\int \frac{dx}{\sqrt{$poly}} =\) \{ans_rule(45)\} \(+\,C \)
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($A2->cmp);
+ANS($B2->cmp);
+ANS($opp->cmp);
+ANS($adj->cmp);
+ANS($hyp->cmp);
+ANS($x->cmp);
+ANS($dx->cmp);
+ANS($expres->cmp);
+ANS($Int->cmp);
+ANS($anst->cmp);
+ANS($ans->cmp(upToConstant=>1));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+D'abord, on complète le carré :
+\[$poly = x^2 + $a2 x + $aa + $bb = (x + $a)^2 + $bb \]
+
+Soit \( u = x + $a \).  Alors, \( du = dx \) et
+
+\[ \int \frac{dx}{\sqrt{$poly}} = \int \frac{dx}{\sqrt{(x+$a)^2+$bb}} = \int \frac{du}{\sqrt{u^2 + $bb}} \]
+
+On fait ensuite la substitution trigonométrique.
+
+\[ u = $b \tan\theta \]
+\[ du = $b \sec^2\theta \, d\theta \]
+\[\begin{align}
+\sqrt{u^2 + $bb} &= \sqrt{$bb \tan^2\theta + $bb}\\
+&= $b\sqrt{\tan^2\theta + 1} \\
+&= $b \sqrt{\sec^2\theta} \\
+&= $b \sec\theta
+\end{align}\]
+$PAR
+Par conséquent,
+\[ \begin{align} 
+\int \frac{du}{\sqrt{u^2 + $bb}} 
+&= \int \frac{$b \sec^2\theta \, d\theta}{$b \sec\theta} \\
+&= \int \sec\theta \, d\theta \\
+&= \ln{\left| \sec\theta + \tan\theta \right|} + C 
+\end{align}\]
+$PAR
+Puisque \( u = $b \tan\theta \), on construit un triangle rectangle où \( \tan\theta = \frac{u}{$b} \). Ainsi, le côté opposé est égal à \(u\) et le côté adjacent est égal à \($b\), de sorte que l'hypoténuse est égale à \(\sqrt{u^2+$bb}\).
+$PAR
+Dans ce triangle, selon le théorème de Pythagore et la définition de la sécante \(\left(\frac{hyp}{adj}\right)\) dans un triangle rectangle, on voit que 
+\[\sec\theta = \frac{\sqrt{u^2 + $bb}}{$b} \]
+Et donc
+$PAR
+\[\ln{\left| \sec\theta + \tan\theta \right|} + C  = \ln{\left|\frac{\sqrt{u^2 + $bb}}{$b} + \frac{u}{$b}\right|} + C = \ln{\left|\sqrt{u^2 + $bb} + u\right|} - \ln($b) + C \]
+$PAR
+En posant \(C'= -\ln(3)+C\), on obtient
+
+\[ \int \frac{dx}{\sqrt{$poly}} = \ln{\left|\sqrt{u^2 + $bb} + u\right|} + C' = \ln{\left|\sqrt{$poly} + x + $a\right|} + C' \]
+$PAR
+END_SOLUTION
+
+ENDDOCUMENT();
+
+

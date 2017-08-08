@@ -1,0 +1,115 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère du terme général', 'limite', 'limite d\'une suite', 'série', 'série à termes positifs')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/Rochester/setSeries4Geometric/ns8_2_9.pg
+## ZDate(6/3/2002)
+## MLT(cnOVERlinn)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('10.2')
+## Problem1('19')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Stewart')
+## EditionText2('6')
+## Section2('11.2')
+## Problem2('9')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "scaffold.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl",
+);
+
+COMMENT('Le terme général tend vers 0 ou vers une valeur différente de 0, donc on ne peut tirer aucune conclusion sur la convergence 
+de la série ou la série diverge par le test de divergence (terme général)');
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context()->strings->add(Divergente=>{},DIV=>{alias=>'Divergente'});
+Context()->variables->add(n=>"Real");
+
+$a = random(2,4,1);
+$b = random(5,11,1);
+$c = random(1,11,1);
+
+#choix de l'exposant de n au dénominateur
+#si p=1, la série diverge, si p=2, on ne peut tirer de conclusion
+$p = random(1,2);
+$an = Compute("$a*n/($b*n^{$p}+$c)")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit :$BR
+\[ a_n = $an \]
+END_TEXT
+
+## Début du problème par parties
+Scaffold::Begin(
+      can_open => "when_previous_correct",
+      is_open  => "correct_or_first_incorrect"
+);
+
+Section::Begin("Partie 1");
+BEGIN_TEXT
+Calculer \(\displaystyle \lim_{n\to\infty} a_n\) afin de déterminer si la suite \( \lbrace a_n \rbrace \) est convergente. Si la limite n'existe pas, entrer ${BBOLD}DIV$EBOLD.
+$PAR
+\(\displaystyle \lim_{n\to\infty} $an = \) \{ans_rule(10)\} 
+END_TEXT
+
+if($p==1) { #converge vers a/b
+$ans1 = Compute("$a/$b");
+} else { #converge vers 0
+$ans1 = Compute("0");
+}
+ANS($ans1->cmp);
+
+Section::End();
+
+
+Section::Begin("Partie 2");
+
+if($p==1) { #série divergente
+$popup = PopUp(['?','Convergente', 'Divergente', 'Sans conclusion'],'Divergente');
+($n,$d) = reduce($a,$b);
+$lim = "\frac{$n}{$d}";
+} else {  #Sans conclusion
+$popup = PopUp(['?','Convergente', 'Divergente', 'Sans conclusion'],'Sans conclusion');
+$lim = $ans1;
+}
+
+
+
+BEGIN_TEXT
+Sachant que \(\displaystyle \lim_{n\to\infty} $an = $lim\), déterminer 
+si la série \( \displaystyle \sum_{n=1}^\infty $an  \) est convergente, divergente ou vous ne pouvez rien conclure par la valeur de la limite. \{$popup->menu\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($popup->cmp);
+
+Section::End();
+
+
+Scaffold::End();
+## Fin du problème
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

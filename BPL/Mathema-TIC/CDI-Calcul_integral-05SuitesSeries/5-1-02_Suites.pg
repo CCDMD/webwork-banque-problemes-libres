@@ -1,0 +1,106 @@
+#DESCRIPTION
+#Sequences
+#ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('notation', 'suite', 'terme général')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : avril 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+
+###############Source###############
+## source : Library/Rochester/setAlgebra36SeqSeries/closed_form.pg
+## Date(6/3/2002)
+## MLT(GenTerm)
+## TitleText1('College Algebra')
+## AuthorText1('Stewart, Redlin, Watson')
+## EditionText1('3')
+## Section1('9.1')
+## Problem1('17 19 20')
+###############Source###############
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGchoicemacros.pl",
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+# Ajouter une variable n qui sera évaluée seulement pour des entiers
+# Le flag resolution spécifie la distance entre des test_points possibles
+Context()->variables->are(n => ['Real', limits=>[1,20], resolution=>1]);
+
+$a1 = non_zero_random(-20,20,1);
+$d = non_zero_random(-10,10,1);
+
+$a2 = non_zero_random(-1,1,2);
+$r = non_zero_random(2,3,1);
+
+$b = non_zero_random(-2,2,1);
+$c = list_random(-2,2);
+
+foreach $i (1..5) {
+  $array[1][$i] = $a1+$d*($i-1);
+  $array[2][$i] = ($a2*$r)**($i-1);
+  $array[3][$i] = $i**2+$b;
+  $array[4][$i] = $c*$i**2;
+}
+
+$list1 = "";
+$list2 = "";
+$list3 = "";
+$list4 = "";
+
+foreach $i (1..5) {
+  $list1 = $list1.$array[1][$i].", ";
+  $list2 = $list2.$array[2][$i].", ";
+  $list3 = $list3.$array[3][$i].", ";
+  $list4 = $list4.$array[4][$i].", ";
+}
+
+qa(~~@questions, ~~@answers,
+
+"\($list1 \ldots;\quad a_n = \)"     ,        Compute("$a1+$d*(n-1)")->reduce        ,
+"\($list2 \ldots;\quad a_n = \)"     ,        Compute("($a2*$r)**(n-1)")->reduce        ,
+"\($list3 \ldots;\quad a_n = \)"     ,        Compute("(n)**2+$b")->reduce,
+"\($list4 \ldots;\quad a_n = \)"     ,        Compute("$c*(n)**2")->reduce        );
+
+# Now randomize the questions:
+@slice = &NchooseK(4,3);
+@shuffle = &shuffle(scalar(@slice));
+($ans1, $ans2, $ans3) = @answers[@slice] ;
+
+BEGIN_TEXT;
+Déterminer le terme général \( a_n \) de chacune des suites suivantes, où \(n\ge 1\).
+$BR
+$BR
+1. $questions[$slice[0]] \{ans_rule(20)\}. $BR$BR
+2. $questions[$slice[1]] \{ans_rule(20)\}. $BR$BR
+3. $questions[$slice[2]] \{ans_rule(20)\}.
+
+END_TEXT
+
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+
+
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

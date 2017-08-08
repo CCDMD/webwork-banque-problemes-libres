@@ -1,0 +1,88 @@
+#DESCRIPTION
+##  Calculus: Sequences
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('notation', 'suite', 'terme général')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : avril 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_11_1_12.pg
+## zDate(03/10/2010)
+## zInstitution(University of Minnesota)
+## zAuthor(Justin Sukiennik)
+## MLT(GenTerm)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('11.1')
+## Problem1('12')
+###############Source###############
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+#####################################################################
+
+$showPartialCorrectAnswers = 1;
+TEXT(beginproblem());
+
+Context("Numeric");
+# Ajouter une variable n qui sera évaluée seulement pour des entiers
+# Le flag resolution spécifie la distance entre des test_points possibles
+Context()->variables->are(n => ['Real', limits=>[1,20], resolution=>1]);
+
+Context()->operators->undefine(",");
+#Context()->strings->remove("NONE");
+
+$a = random(2,4,1);
+
+$as = Compute("$a-1");
+
+$a2 = Compute("$a+1")->reduce;
+$a3 = Compute("$a+2")->reduce;
+$a4 = Compute("$a+3")->reduce;
+$a5 = Compute("$a+4")->reduce;
+
+$b1 = Compute("$a2^2");
+$b2 = Compute("$a3^2");
+$b3 = Compute("$a4^2");
+$b4 = Compute("($a5)^2");
+$b5 = Compute("($a+5)^2");
+
+$ans = Compute("(-1)^n(n+$as)/(n+$a)^2")->reduce;
+
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer le terme général  \(a_n\) de la suite suivante (commençant par \(a_1\)) :
+\[
+\left\lbrace-\frac{$a}{$b1},\frac{$a2}{$b2},-\frac{$a3}{$b3},\frac{$a4}{$b4},-\frac{$a5}{$b5}, \ldots\right\rbrace.
+\]
+$PAR
+\(a_n =\) \{ans_rule(20)\} $PAR
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+ANS(($ans)->cmp());
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

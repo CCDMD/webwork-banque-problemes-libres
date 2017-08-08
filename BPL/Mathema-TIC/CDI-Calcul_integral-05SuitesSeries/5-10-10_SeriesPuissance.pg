@@ -1,0 +1,118 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('rayon de convergence', 'série de MacLaurin')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/Indiana/Indiana_setSeries8Power/eva8_6a.pg
+## ZInstitution(Rochester)
+## ZAuthor(Utah ww group)
+## ZMLT(SeriesForXOverLinear)
+## TitleText1('Calculus')
+## AuthorText1('Dale Varberg, Edwin J. Purcell, and Steve E. Rigdon')
+## EditionText1('9')
+## Section1('.')
+## Problem1('')
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,10,1);
+$b = random(2,10,1);
+
+BEGIN_TEXT
+Trouver les quatre premiers termes non nuls de la série de MacLaurin qui représente la fonction \( \displaystyle \frac{$a x}{$b + x} \).
+ $BR
+
+Premier terme = \{ans_rule(20)\}  $BR
+
+Deuxième terme = \{ans_rule(20)\}  $BR
+
+Troisième terme = \{ans_rule(20)\}  $BR
+
+Quatrième terme = \{ans_rule(20)\}  $BR
+$PAR
+Déterminer le rayon de convergence de la série de MacLaurin.$BR
+\( R = \) \{ans_rule(20)\}. $BR
+END_TEXT
+
+$ans0 =  Compute("$a/$b*x") ;
+$ans1 =  Compute("$a*(-1)*(1/$b)^2*x^2") ;
+$ans2 =  Compute("$a*(1/$b)^3*x^3") ;
+$ans3 =  Compute("$a*(-1)*(1/$b)^4*x^4") ;
+$ans4 =  Real($b) ;
+
+ANS($ans0->cmp);
+ANS($ans1->cmp);
+ANS($ans2->cmp);
+ANS($ans3->cmp);
+ANS($ans4->cmp);
+
+
+$soln_pow2 = $b**2;
+$soln_pow3 = $b**3;
+$soln_pow4 = $b**4;
+
+BEGIN_SOLUTION
+Au lieu de calculer les dérivées, il est plus facile de modifier la fonction à l'aide de la série de MacLaurin 
+de la fonction
+	\[
+	\begin{aligned}
+	\frac{1}{1-x}	&=	\sum_{n=0}^\infty x^n	\\\\
+ 					&\text{(si} \left|x\right| < 1 \text{)}
+	\end{aligned}
+	\]
+On modifie la fonction
+\(\displaystyle \frac{$a x}{$b + x}\) de la manière suivante :
+	\[
+	\begin{aligned}
+	\frac{$a x}{$b + x}
+	&=	\frac{$a x}{$b}\left(\frac{1}{1+\frac{x}{$b}}\right)			\\\\
+	&=	\frac{$a x}{$b}\sum_{n=0}^\infty \left(\frac{-x}{$b}\right)^n	\\\\
+	&=	\sum_{n=0}^\infty $a\left(-1\right)^n\left(\frac{x}{$b}\right)^{n+1}
+	\end{aligned}
+	\]
+On peut ainsi déjà énumérer quelques termes :
+	\[
+	\sum_{n=0}^\infty $a\left(-1\right)^n\left(\frac{x}{$b}\right)^{n+1}
+	=	\frac{$a}{$b}x + \frac{-$a}{$soln_pow2}x^2 +
+		\frac{$a}{$soln_pow3}x^3 + \frac{-$a}{$soln_pow4}x^4 + \cdots
+	\]
+	Et alors :
+	\[
+	\begin{aligned}
+	\text{Premier terme} &= \frac{$a}{$b}x 		\\\\
+	\text{Deuxième terme}	&= \frac{-$a}{$soln_pow2}x^2 	\\\\
+	\text{Troisième terme}	&= \frac{$a}{$soln_pow3}x^3 	\\\\
+	\text{Quatrième terme}	&= \frac{-$a}{$soln_pow4}x^4
+	\end{aligned}
+	\]
+On calcule le rayon de convergence à l'aide de la même substitution
+\(\left(\displaystyle \frac{-x}{$b} \text{ pour } x\right)\) :
+	\[
+	\begin{aligned}
+	\left|\frac{-x}{$b}\right| < 1
+	&\iff	\frac{\left|x\right|}{$b} < 1		\\\\
+	&\iff	\left|x\right| < $b
+	\end{aligned}
+	\]
+On obtient ainsi \(R=$b\).
+END_SOLUTION
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

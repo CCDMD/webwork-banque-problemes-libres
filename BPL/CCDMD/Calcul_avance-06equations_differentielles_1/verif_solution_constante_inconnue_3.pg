@@ -1,0 +1,85 @@
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('condition initiale', 'ordre 1', 'solution générale', 'solution particulière', 'vérification', 'équation linéaire')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : février 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################
+#DESCRIPTION
+##  Calculus: Differential equations
+##ENDDESCRIPTION
+## ZDBsubject(Differential equations)
+## ZDBchapter(Introductory concepts)
+## ZDBsection(Verification of solutions)
+## ZDate(10/12/2010)
+## Institution(University of Minnesota)
+## Author(Justin Sukiennik)
+## Level(3)
+## MO(1)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Stewart')
+## EditionText1('6')
+## Section1('9.1')
+## Problem1('6')
+###############Source#################
+
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+
+#####################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+#####################################################################
+
+Context("Numeric");
+Context()->variables->add(y=>'Real');
+Context()->variables->set(x=>{limits=>[1,10]});
+
+$a = random(1,9,2);
+$b = random(2,10,2);
+
+$c1 = Compute("$b*$a-ln($a)");
+$c2 = Compute("$b*$a-ln($b)");
+
+$ans1 = Formula("(ln(x)+$c1)/x");
+$ans2 = Formula("(ln(x)+$c2)/x");
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Vérifier que chaque fonction de la famille : \(\displaystyle y = \frac{\ln x + C}{x}\)
+$BR
+est une solution de l'équation différentielle : \(x^2 y' + x y =1.\) 
+$BR$BR
+Répondre ensuite aux questions suivantes : 
+$PAR
+a) Déterminer une solution de l'équation différentielle
+qui satisfait la condition initiale : \( y($a)= $b.\) $PAR
+$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP \(y = \) \{ans_rule(30) \} $PAR
+b) Déterminer une solution de l'équation différentielle
+qui satisfait la condition initiale :  \( y($b)= $a.\) $PAR
+$NBSP$NBSP$NBSP$NBSP$NBSP$NBSP \(y = \) \{ans_rule(30) \} 
+
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+ANS(($ans1)->cmp());
+ANS(($ans2)->cmp());
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

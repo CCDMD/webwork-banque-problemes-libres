@@ -1,0 +1,120 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Espace vectoriel)
+## KEYWORDS('base', 'ensemble générateur', 'espace euclidien', 'indépendance', 'sous-espace vectoriel')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(3)
+## Language(fr)
+
+
+DOCUMENT();
+loadMacros("PGstandard.pl",
+  "MathObjects.pl",
+  "parserVectorUtils.pl",
+  "parserMultiAnswer.pl",
+  "PGcourse.pl");
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+   
+
+
+$a=random(1,9);
+$b=random(1,9);
+$c=random(1,9);
+
+$f = Formula("$a x+$b y+$c z")->reduce;
+
+$rep1= Vector(1,0,-$a/$c);
+$rep2= Vector(0,1,-$b/$c);
+
+   
+
+
+#Un bonne réponse
+#C contiendra cette bonne réponse
+#S contiendra la réponse de l'étudiant
+
+
+$image_multians = MultiAnswer($rep1, $rep2)->with(
+  singleResult => 1,
+  separator => ',',
+  tex_separator => ',',
+
+  checker => sub {
+      my ( $correct, $student, $self ) = @_;
+      my @c = @{$correct};
+      my @s = @{$student};
+
+      return 0 if scalar(@s) < scalar(@c);  # Valide s'il manque des entrées
+
+     
+	  $C=Matrix($rep1 ,$rep2) ->transpose;
+
+    
+  
+      $S = Matrix( $s[0] , $s[1] )->transpose;
+
+	  
+	  #Les réponses de l'étudiant sont les colonnes de la matrice $S
+      # A^T A est inversible ssi les colonnes sont linéairement idépendantes
+
+
+	  
+
+     
+
+      #Validation: les vecteurs sont linéairement indépendantes
+	  #  Check that the student's vectors are linearly independent
+      if ( (($S->transpose) * $S)->det == 0) {
+        Value->Error("Les vecteurs sont linéairement dépendants");
+        return 0;
+      }
+
+	  
+	  #Validation: les vecteurs sont orthogonaux
+	
+      if ( $s[0].$s[1] != 0) {
+        Value->Error("Les vecteurs ne sont pas orthogonaux");
+        return 0;
+      }
+	  
+	  
+	  
+     	  #Validation: les vecteurs engentrent le bon espace vectoriel
+		  #  C et S engendrent le même espace s'il existe un changement de base X 
+		  #  S = CX et  X est donné par (C^T C)^{-1} C^T S = X.
+	      $CTC = ($C->transpose) * $C;
+          $X = ($CTC->inverse) * (($C->transpose) * $S);
+      return $S == $C * $X;
+
+
+  }
+);
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit \(  \pi: $f=0 \) un plan dans l'espace. Trouver \(B\), une base  orthogonale de l'espace vectoriel suivant:
+$BR
+$BR
+\( V=  \lbrace \ \  \vec{v}= < a,\ b,\ c\  > \in \mathbb{R}^3 \  |  \  P(a,b,c) \in \pi \  \rbrace    \).
+$BR
+$BR
+\(B = \Bigg\lbrace\) \{ $image_multians->ans_array() \}, 
+\{ $image_multians->ans_array() \}
+\(\Bigg\rbrace\)
+END_TEXT
+Context()->normalStrings;
+
+ANS( $image_multians->cmp() );
+
+
+;
+
+
+ENDDOCUMENT();		# This should be the last executable line in the problem.
+

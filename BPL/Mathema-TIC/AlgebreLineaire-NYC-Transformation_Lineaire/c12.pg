@@ -1,0 +1,89 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Transformation linéaire)
+## KEYWORDS('matrice de transformation', 'propriétés')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+#########################SOURCE####################
+## Date(July 2013)
+## Institution(Rochester and Hope College)
+## Author(Paul Pearson)
+## MO(1)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('9.3')
+#############################SOURCE##################
+##Level(4)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+
+for ($i=1; $i<3; $i++) {
+	$a[$i] = random(2,8,1);
+	$b[$i] = random(2,8,1);
+}
+
+# this will be an invertible matrix
+
+$p1 = random(-1,1,2);
+$p2 = non_zero_random(-3,3,1);
+$k = non_zero_random(-3,3,1);
+$r1 = $p1 * $k;
+$l = random(-1,1,2);
+$r2 = $p2 * $k + $l;
+
+$det = $p1 * $r2 - $p2 * $r1;
+
+# inverse
+
+$p1i = $r2/$det;
+$p2i = - $p2/$det;
+$r1i = - $r1/$det;
+$r2i = $p1/$det;
+
+$ans1 = ($p1*$a[1]+$r1*$a[2])*$p1i + ($p1*$b[1]+$r1*$b[2])*$p2i;
+$ans2 = ($p1*$a[1]+$r1*$a[2])*$r1i + ($p1*$b[1]+$r1*$b[2])*$r2i;
+$ans3 = ($p2*$a[1]+$r2*$a[2])*$p1i + ($p2*$b[1]+$r2*$b[2])*$p2i;
+$ans4 = ($p2*$a[1]+$r2*$a[2])*$r1i + ($p2*$b[1]+$r2*$b[2])*$r2i;
+
+$b1 = Matrix([[$p1], [$p2]]);
+$b2 = Matrix([[$r1], [$r2]]);
+
+$TB = Matrix([ [$a[1],$b[1]], [$a[2],$b[2]] ]);
+
+$TE = Matrix([[$ans1,$ans2],[$ans3,$ans4]]);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit \(\mathbf{B}= \left\lbrace \vec{b}_1, \vec{b}_2 \right\rbrace \) une base de \( {\mathbb R}^2 \) où \( \vec{b}_1 = $b1 \) et \(\vec{b}_2= $b2\) et soit \( T: {\mathbb R}^2 \rightarrow {\mathbb R}^2 \) une transformation linéaire telle que
+\( T(\vec{b}_1) = $a[1] \vec{b}_1 + $a[2] \vec{b}_2 \) and \( T(\vec{b}_2) = $b[1] \vec{b}_1 + $b[2] \vec{b}_2. \) 
+$BR
+$BR
+(a) Donner \(A_B\), la matrice associée à la transformation linéaire \(T\) relativement à la base \(\mathbf{B}\) de \( {\mathbb R}^2 \).
+$BR
+$BR
+\( A_B =\) \{ $TB->ans_array \} .
+$BR
+$BR
+(b) Donner \(A_e\), la matrice associée à la transformation linéaire \(T\) relativement à la base canonique de \( {\mathbb R}^2 \) .
+$BR
+$BR
+\(A_e =\) \{ $TE->ans_array \}
+END_TEXT
+Context()->normalStrings;
+
+ANS( $TB->cmp );
+ANS( $TE->cmp );
+
+;
+ENDDOCUMENT();

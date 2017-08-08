@@ -1,0 +1,150 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('graphique', 'limite d\'une suite', 'suite', 'suite bornée')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : avril 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/Michigan/Chap9Sec1/Q17.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('9.1')
+## Problem1('17')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('9.1')
+## Problem2('25')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('9.1')
+## Problem3('25')
+###############Source###############
+
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGgraphmacros.pl",
+"PGunion.pl",
+"imageChoice.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+
+$a = random(1,4,1);
+$b = random(1,4,1);
+
+# four sequences
+@seq = ();
+$seq[0] = "a_n = $a - \frac{$b}{n}";
+$seq[1] = "a_n = $a + \frac{(-1)^n}{n}";
+$seq[2] = "a_n = \frac{$a}{n}";
+$seq[3] = "a_n = $a + \frac{$b}{n}";
+
+# handy routine for generating sequence values
+sub sn { 
+    my ( $snum, $nval ) = @_;
+    if ( $snum == 0 )    { return( $a - $b/$nval ); }
+    elsif ( $snum == 1 ) { return( $a + ((-1)**$nval)/$nval ); }
+    elsif ( $snum == 2 ) { return( $a/$nval ); }
+    elsif ( $snum == 3 ) { return( $a + $b/$nval ); }
+    else { return(1); } # shouldn't ever happen; bail out
+}
+
+# make graphs for each
+@gr = ();
+foreach my $i (0..3) {
+    $gr[$i] = init_graph(-1,-1,10,($a+$b),'axes'=>[0,0]);
+    $gr[$i]->lb('reset');
+    $gr[$i]->h_ticks(0,"black",1,2,3,4,5,6,7,7,8,9);
+    $gr[$i]->v_ticks(0,"black",$a);
+    $gr[$i]->lb( new Label(-0.5, $a, $a , 'black','center','middle') );
+    foreach my $j (1..10) {
+	$gr[$i]->stamps(closed_circle($j, sn($i, $j), 'blue') );
+    $gr[$i]->lb( new Label($j,0, $j , 'black','center','top') );
+    }
+}
+
+@QA = ();
+foreach my $i (0..3) { push( @QA, "\($seq[$i]\)",  $gr[$i] ); }
+
+$ml = new_image_match_list(
+  link => 1,                #  do not link to separate image
+  size => [200,200],        #  image size in pixels
+  tex_size => 450,          #  tex size in precent times 10
+  columns => 2,             #  number of columns
+  separation => 20,         #  separation between image columns 
+);
+
+$ml->rf_print_q(~~&pop_up_list_print_q); # use pop-up-lists
+$ml->ra_pop_up_list([ No_answer=>"?", A=>"A", B=>"B", C=>"C", D=>"D"] );
+
+$ml->qa(@QA);               #  set the questions and answers
+$ml->choose(4);             #  select 4 of them
+#$ml->choose_extra(0);      #  and show the other 1
+
+
+
+##############################################
+#  Main text
+
+BEGIN_TEXT
+\{
+ColumnTable(
+"Associer chaque graphique à une suite.".
+$ml->print_q(), # comma!
+$BCENTER.
+$ml->print_a().
+$BR.
+"(Cliquer sur le graphique pour agrandir l'image)".
+$ECENTER, # comma!
+indent => 0, separation => 30, valign => "TOP"
+)
+\}
+END_TEXT
+
+
+#############################################
+#  Answer evaluation
+
+install_problem_grader(~~&std_problem_grader);
+$showPartialCorrectAnswers = 1;
+
+ANS(str_cmp($ml->ra_correct_ans));
+
+
+#################################################
+#  Solution
+
+foreach my $i (0..3) {
+  $a[$i] = $ml->ra_correct_ans->[$i];
+}
+
+#BEGIN_SOLUTION
+#Les suites correspondent respectivement aux graphiques suivants : $PAR
+#1 est associée au graphique $a[0], $BR
+#2 est associée au graphique $a[1], $BR
+#3 est associée au graphique $a[2] et $BR
+#4 est associée au graphique  $a[3].
+#END_SOLUTION
+
+ENDDOCUMENT();

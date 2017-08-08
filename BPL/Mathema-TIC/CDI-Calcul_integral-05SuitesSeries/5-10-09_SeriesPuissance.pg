@@ -1,0 +1,151 @@
+# DESCRIPTION
+# Problem from Calculus, single variable, Hughes-Hallett et al., 4th ed.
+# WeBWorK problem written by Gavin LaRose, <glarose@umich.edu>
+# ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'intervalle de convergence', 'rayon de convergence', 'série de puissances')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/Michigan/Chap9Sec5/Q33.pg
+## ZInstitution(University of Michigan)
+## ZAuthor(Gavin LaRose)
+## ZMLT(IntervalsFromPointsSeries)
+## TitleText1('Calculus')
+## AuthorText1('Hughes-Hallett')
+## EditionText1('4')
+## Section1('9.5')
+## Problem1('33')
+## TitleText2('Calculus')
+## AuthorText2('Hughes-Hallett')
+## EditionText2('5')
+## Section2('9.5')
+## Problem2('39')
+## TitleText3('Calculus')
+## AuthorText3('Hughes-Hallett')
+## EditionText3('6')
+## Section3('9.5')
+## Problem3('44')
+###############Source###############
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"parserPopUp.pl",
+"PGcourse.pl",
+);
+
+COMMENT("Suggestion : restreindre le nombre de tentatives pour réussir le problème.");
+
+
+Context("Numeric");
+$showPartialCorrectAnswers = 1;
+
+$a = random(3,5,1);
+## converges at
+$xc = 2*$a + 1;
+## diverges at
+$xd = $xc + random(3,5,1);
+
+## test points
+$x0 = 0;
+$x1 = $xc + non_zero_random(-2,2,1); # est tjrs > a
+do{$x2 = -1 + non_zero_random(-3,3,1);} until($x2!=0); # est tjrs < a
+$x3 = $xd + random(1,4,1);
+
+@options = ( "?", "la série est convergente", "la série est divergente",
+	     "la série peut être convergente ou divergente" );
+sub correctAns {
+    my $x = shift();
+    $xdneg = -1 - ($xd - $xc);
+    if ( $x <= $xc && $x >= -1 ) { return "la série est convergente"; }
+    elsif ( $x < $xd && $x > $xdneg ) { return "la série peut être convergente ou divergente"; }
+    else { return "la série est divergente"; }
+}
+$x0pop = PopUp( [ @options ], "la série est convergente" );
+$x1pop = PopUp( [ @options ], correctAns($x1) );
+$x2pop = PopUp( [ @options ], correctAns($x2) );
+$x3pop = PopUp( [ @options ], correctAns($x3) );
+
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+Si une série \( \sum c_n(x-$a)^n \) converge pour \( x=$xc \) et
+diverge pour \( x=$xd \), que peut-on dire de sa convergence 
+$PAR
+${BBOLD}a)$EBOLD pour \(x=$x3\)? $BR
+\{ $x3pop->menu() \}
+
+$PAR
+${BBOLD}b)$EBOLD pour  \(x=$x2\)? $BR
+\{ $x2pop->menu() \}
+
+$PAR
+${BBOLD}c)$EBOLD pour \(x=$x1\)? $BR
+\{ $x1pop->menu() \}
+
+$PAR
+${BBOLD}d)$EBOLD pour  \(x=$x0\)? $BR
+\{ $x0pop->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($x3pop->cmp() );
+ANS($x2pop->cmp() );
+ANS($x1pop->cmp() );
+ANS($x0pop->cmp() );
+
+$dc = $xc - $a;
+$dd = $xd - $a;
+$d0 = $a;
+$d1 = abs($x1 - $a);
+$d2 = abs($x2 - $a);
+$d3 = abs($x3 - $a);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La série est centrée en \(x=$a\).  Puisque la série converge pour
+\(x=$xc\), qui est à une distance de \($dc\) de \(x=$a\),
+on sait que le rayon de convergence peut être égal ou plus grand que \($dc\) \((R\ge $dc)\). 
+De plus, puisque la série diverge pour \(x=$xd\), qui est à une distance de \($dd\) de
+\(x=$a\), on sait que le rayon de convergence doit être plus petit ou égal à \($dd\) \((R\le $dd)\).
+$PAR
+Ainsi, \($dc\le R\le $dd\), ce qui signifie que la série peut être convergente ou divergente si la distance entre la 
+valeur de \(x\) et \(x=$a\) est située dans cette intervalle.
+$PAR
+${BBOLD}a)$EBOLD
+Puisque \(x=$x3\) est à une distance de \($d3\) de \(x=$a\),
+\{$x3pop->correct_ans()\} pour \(x=$x3\).
+
+$PAR
+${BBOLD}b)$EBOLD
+Puisque \(x=$x2\) est à une distance de \($d2\) de \(x=$a\),
+\{$x2pop->correct_ans()\} pour \(x=$x2\).
+
+$PAR
+${BBOLD}c)$EBOLD
+Puisque \(x=$x1\) est à une distance de \($d1\) de \(x=$a\),
+\{$x1pop->correct_ans()\} pour \(x=$x1\).
+
+$PAR
+${BBOLD}(d)$EBOLD
+Puisque \(x=$x0\) est à une distance de \($d0\) de \(x=$a\),
+\{$x0pop->correct_ans()\} pour \(x=$x0\).
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

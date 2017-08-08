@@ -1,0 +1,120 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Espace vectoriel)
+## KEYWORDS('base', 'matrice')
+## Adaptation(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+###############Source###############
+## Tagged by cmd6a 4/29/06
+## Date(July 2013)
+## Institution(Rochester and Hope College)
+## Author(Paul Pearson)
+## Static(1)
+## MO(1)
+## TitleText1('Linear Algebra with Applications')
+## AuthorText1('Jeffrey Holt')
+## EditionText1('1')
+## Section1('7.3')
+###############Source###############
+##Level(1)
+##Language(fr)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserMultiAnswer.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+
+$image1 = Matrix([ [1,0], [0,0] ]);
+$image2 = Matrix([ [0,0], [0,1] ]);
+
+
+
+#Un bonne réponse
+#C contient cette bonne réponse
+#S contient la réponse de l'étudiant
+
+
+
+$image_multians = MultiAnswer($image1, $image2)->with(
+  singleResult => 1,
+  separator => ',',
+  tex_separator => ',',
+
+  checker => sub {
+      my ( $correct, $student, $self ) = @_;
+      my @c = @{$correct};
+      my @s = @{$student};
+
+      return 0 if scalar(@s) < scalar(@c);  # count the number of vector inputs
+
+   
+	     $C = Matrix([ 
+      [$image1->element(1,1), $image1->element(1,2), $image1->element(2,1), $image1->element(2,2)],
+      [$image2->element(1,1), $image2->element(1,2), $image2->element(2,1), $image2->element(2,2)],
+      ])->transpose;
+
+      $s[0] = Matrix($s[0]);
+      $s[1] = Matrix($s[1]);
+      $S = Matrix([ 
+      [$s[0]->element(1,1), $s[0]->element(1,2), $s[0]->element(2,1), $s[0]->element(2,2)],
+      [$s[1]->element(1,1), $s[1]->element(1,2), $s[1]->element(2,1), $s[1]->element(2,2)],
+      ])->transpose;
+
+	  #Les matrices 2 par 2 sont isomorphes à R4 et les réponses de l'étudiant sont les colonnes de la matrice $S
+      # A^T A est inversible ssi les colonnes sont linéairement idépendantes
+	  
+	  
+	  
+      #  Validation: les matrices sont linéairement indépendantes
+      if ( (($S->transpose) * $S)->det == 0) {
+        Value->Error("Les matrices sont linéairement dépendentes");
+        return 0;
+      }
+
+	   	  #Validation: Les matrices engentre le bon espace vectoriel
+		  #  C et S engendrent le même espace s'il existe un changement de base X tel que S=CX donné par (C^T C)^{-1} C^T S = X.
+		  #  S = CX si  X est donné par (C^T C)^{-1} C^T S = X.
+		  $CTC = ($C->transpose) * $C;
+			$X = ($CTC->inverse) * (($C->transpose) * $S);
+      return $S == $C * $X;
+
+  }
+);
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Trouver une base \(B\) pour l'espace vectoriel des matrice diagonales \( 2 \times 2 \).
+$BR
+$BR
+ \(B\)= \(\Bigg\lbrace\) 
+\{ $image_multians->ans_array(2,2,5) \}, 
+\{ $image_multians->ans_array(2,2,5) \} 
+\(\Bigg\rbrace\)
+END_TEXT
+Context()->normalStrings;
+
+ANS( $image_multians->cmp() );
+
+
+;
+Context()->texStrings;
+BEGIN_SOLUTION
+${PAR}SOLUTION:${PAR}
+Une base sera un ensemble de deux matrices diagonales qui sont linéairement indépendantes. Il y a une infinité de réponses possibles. L'ensemble suivant est un exemple simple 
+d'une base de l'espace vectoriel des matrice diagonales \( 2 \times 2 \):
+\[B = \Bigg\lbrace$image1, $image2\Bigg\rbrace .\]
+En effet, les deux matrices sont diagonales et cet ensemble est linéairement indépendant car aucune de ces deux matrices peut s'écrire comme un multiple de l'autre.
+ 
+ 
+END_SOLUTION
+Context()->normalStrings;
+ENDDOCUMENT();

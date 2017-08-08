@@ -1,0 +1,90 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'somme', 'série', 'série géométrique')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mai 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : /Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/10_Infinite_Series/10.2_Summing_an_Infinite_Series/10.2.34.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Keith Thompson)
+## ZMLT(FirstFewTermsFindSum)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('10.2')
+## Problem1('34')
+###############Source###############
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers=1;
+
+Context()->strings->add(Divergente=>{},DIV=>{alias=>'Divergente'});
+
+$a= non_zero_random(-1,1,2)*random(2,7);
+$absa = abs($a);
+
+## on ne veut pas que c/a soit un entier
+do{$c=random($absa+1,12);} until( $c % $a != 0); 
+
+# on veut une fraction simplifiée
+($num,$den) = reduce($absa,$c);
+
+# le premier terme est num^(sp)/den
+$sp=random(2,5,1);
+$sp1=$sp+1;
+$sp2=$sp+2;
+$sp3=$sp+3;
+$a1 = "\frac{$num^{$sp}}{$den}";
+$a2 = "\frac{$num^{$sp1}}{$den^2}";
+$a3 = "\frac{$num^{$sp2}}{$den^3}";
+$a4 = "\frac{$num^{$sp3}}{$den^4}";
+
+if ($sp%2==0) { #exposant pair
+$sig1 = "";
+$sig2 = "-";
+$sig3 = "+";
+} else {
+$sig1 = "-";
+$sig2 = "+";
+$sig3 = "-";
+}
+
+
+$r = $a/$c;
+$ans1=  Compute("$sig1 ($num)^($sp)/($den + $num)")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+À l'aide de la formule de la somme d'une série géométrique, calculer la somme de la série suivante ou indiquer si la série diverge (entrer ${BBOLD}DIV$EBOLD si la série est diverge).
+
+\[$sig1 $a1 $sig2 $a2 $sig3 $a3 $sig2 $a4 $sig3 \cdots\]
+
+\(S=\) \{ans_rule()\} 
+END_TEXT
+Context()->normalStrings;
+
+ANS(Real($ans1)->cmp()); 
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La série est géométrique \(\sum\limits_{n=1}^{\infty}a r^{n-1}\), avec \(a= $a1\)  et \(|r|=\left\vert\frac{-$num}{$den}\right\vert<1\). Par conséquent, la série converge et 
+\[\sum_{n=1}^\infty $sig1 $a1\left(\frac{-$num}{$den}\right)^{n-1}=\frac{a}{1-r}= $sig1 $a1 \left(\frac{1}{1-\frac{-$num}{$den}}\right)=\frac{$sig1 $num^{$sp}}{$den+$num} = $ans1.\]
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

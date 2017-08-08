@@ -1,0 +1,81 @@
+#DESCRIPTION
+##  Calculus: Sequences
+##ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'factorielle', 'limite d\'une suite', 'suite')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : mai 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_11_1_25.pg
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('11.1')
+## Problem1('25')
+###############Source###############
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+);
+#####################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+#####################################################################
+
+Context("Numeric");
+Context()->strings->add(Divergente=>{},DIV=>{alias=>'Divergente'});
+# Ajouter une variable n qui sera évaluée seulement pour des entiers
+# Le flag resolution spécifie la distance entre des test_points possibles
+Context()->variables->add(n => ['Real', limits=>[1,10], resolution=>1]);
+
+Context()->operators->undefine("!");
+
+Context()->{error}{msg}{"Can't use '!' in this context"} 
+  = "Vous ne pouvez pas utiliser le '!'. Vous devez simplifier votre réponse.";
+
+$a = random(2,6,1);
+
+$ans1 = Compute("($a*n+1)*$a*n")->reduce;
+$ans2 = Compute("Divergente");
+
+###############################################################
+Context()->texStrings;
+
+BEGIN_TEXT
+Soit la suite
+\[ a_n = \frac{($a n+1)!}{($a n-1)!}\]
+a) Simplifier complètement le terme \(a_n\).
+$PAR
+\( \dfrac{($a n+1)!}{($a n-1)!} = \) \{ans_rule(20)\}
+$PAR
+b) Évaluer limite de la suite \( \lbrace a_{n}\rbrace\) afin de déterminer si la suite est convergente ou divergente. Si la limite n'existe pas, entrer $BBOLD DIV$EBOLD comme réponse.
+$PAR
+\(\displaystyle\lim_{n\to\infty}a_{n} = \) \{ans_rule(20)\}
+END_TEXT
+
+#####################################################################
+Context()->normalStrings;
+
+ANS(($ans1)->cmp());
+ANS(($ans2)->cmp());
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

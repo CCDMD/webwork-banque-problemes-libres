@@ -1,0 +1,106 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation - définition et interprétation)
+## KEYWORDS('accroissement', 'dérivée en un point', 'dérivée partielle', 'taux de variation instantané')
+## Modifié par Éric Gaul, Collège Montmorency
+## Date : mars 2017
+## Traduction française : Éric Gaul
+## Language(fr)
+
+###############Source#################
+## DESCRIPTION
+##   Calculate Partial Derivatives
+## ENDDESCRIPTION
+## Tagged by nhamblet
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Differentiation of multivariable functions)
+## ZDBsection(Partial derivatives)
+## ZDate(8/23/07)
+## Institution(Union College)
+## MLT(2varfirstpt2)
+## MLTleader(1)
+## Level(2)
+## MO(1)
+## TitleText1('Calculus')
+## AuthorText1('Anton')
+## EditionText1('7')
+## Section1('14.3')
+## Problem1('40')
+## TitleText2('Calculus: Early Transcendentals')
+## AuthorText2('Rogawski')
+## EditionText2('1')
+## Section2('14.3')
+## Problem2('40')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+##############################################
+#  Setup
+
+Context("Numeric")->variables->are(x=>'Real',y=>'Real');
+
+#
+#  The function
+#
+$a = random(1,5,1);
+$b = random(1,5,1);
+
+$f = Formula("sqrt($a x + $b y)")->reduce;
+
+#
+#  The point
+#
+($x,$y) = (random(1,5,1),random(1,5,1));
+
+#
+#  The derivatives
+#
+#$fx = $a/(2*sqrt($a*$x+$b*$y));
+#$fy = $b/(2*sqrt($a*$x+$b*$y));
+
+$fx = $f->D('x')->eval(x=>$x,y=>$y);
+$fy = $f->D('y')->eval(x=>$x,y=>$y);
+
+
+##############################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Soit la fonction \(z = $f\). On peut en déduire que :
+$PAR
+
+$BBOLD (a) $EBOLD \(\  \) le taux de variation de \(z\) en \(($x,$y)\) quand \(x\) varie
+mais que \(y\) demeure constant est \{ans_rule(15)\}
+$PAR
+
+$BBOLD (b) $EBOLD \(\  \) le taux de variation de \(z\) en \(($x,$y)\) quand \(y\) varie
+mais que \(x\) demeure constant est \{ans_rule(15)\}
+
+END_TEXT
+Context()->texStrings;
+
+##################################################
+#  Answers
+
+ANS($fx->cmp);
+ANS($fy->cmp);
+
+$showPartialCorrectAnswers = 1;
+
+##################################################
+
+
+;
+ENDDOCUMENT();

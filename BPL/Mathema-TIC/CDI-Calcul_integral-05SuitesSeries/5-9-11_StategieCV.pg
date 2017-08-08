@@ -1,0 +1,100 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('convergence et divergence', 'critère de comparaison', 'critère de d\'Alembert', 'critères de convergence', 'série', 'série géométrique')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/UMN/calculusStewartET/s_11_7_prob01.pg
+## ZDate(11/22/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(C_D_simple_mixed_list)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('11.7')
+## Problem1('')
+###############Source###############
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+#  "PGchoicemacros.pl",
+  "PGcourse.pl", 
+);
+#####################################################################
+
+COMMENT("Suggestion : restreindre le nombre de tentatives pour réussir le problème.");
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+#####################################################################
+
+Context("Numeric");
+Context()->variables->add(n =>'Real');
+
+$a1 = random(2,20,1);
+do{
+$a2 = random(2,20,1);
+($f1,$g1) = reduce($a1,$a2);
+} until($g1 != 1);
+
+
+if ($f1/$g1 < 1) {
+$popup1 = PopUp(['?','Convergente', 'Divergente'],'Convergente');
+}
+else{
+$popup1 = PopUp(['?','Convergente', 'Divergente'],'Divergente');
+}
+
+$b = random(1,2,1);
+
+if ($b==1) {
+$f2 = Formula("n!");
+$g2 = Formula("100^n");
+$popup2 = PopUp(['?','Convergente', 'Divergente'],'Divergente');
+}
+else{
+$f2 = Formula("100^n");
+$g2 = Formula("n!");
+$popup2 = PopUp(['?','Convergente', 'Divergente'],'Convergente');
+}
+
+$c = random(2,6,1);
+
+$popup3 = PopUp(['?','Convergente', 'Divergente'],'Convergente');
+
+###############################################################
+Context()->texStrings;
+
+BEGIN_TEXT
+Déterminer si chaque série est $BBOLD convergente $EBOLD ou $BBOLD divergente.$BR
+$PAR
+\{$popup1->menu\} $BBOLD 1. $EBOLD  \(\displaystyle \sum_{n=1}^{\infty} n\left(\frac{$f1}{$g1}\right)^n \) 
+$PAR
+\{$popup2->menu\} $BBOLD 2. $EBOLD  \(\displaystyle \sum_{n=1}^{\infty}\frac{$f2}{$g2} \)
+$PAR
+\{$popup3->menu\} $BBOLD 3. $EBOLD   \(\displaystyle \sum_{n=1}^{\infty}\frac{\sin($c n)}{$c^n}\)
+END_TEXT
+
+Context()->normalStrings;
+
+#####################################################################
+
+ANS($popup1->cmp);
+ANS($popup2->cmp);
+ANS($popup3->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

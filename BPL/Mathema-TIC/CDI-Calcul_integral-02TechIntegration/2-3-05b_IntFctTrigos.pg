@@ -1,0 +1,125 @@
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('changement de variable', 'fonction trigonométrique', 'identité trigonométrique', 'intégrale indéfinie', 'puissance des fonctions trigonométriques')
+
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : octobre 2016
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : Library/Rochester/setIntegrals5Trig/ur_in_5_1.pg
+## ZInstitution(Rochester)
+## MLT(odd_sin_power)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('1')
+## Section1('7.3')
+## Problem1('5')
+###############Source###############
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",           # Customization file for the course
+);
+
+$showPartialCorrectAnswers = 1;
+Context()->variables->set(x=>{limits=>[0,1.5]});
+Context()->flags->set(reduceConstants => 0);
+Context()->variables->add(dx=>"Real",u=>"Real");
+
+$n = random(2,10,2); ## exposant pair
+$a = random(2,20,1);
+$n1 = $n+1;
+$n2 = $n+2; 
+$n3 = $n+3;
+
+
+$integrand1 = Compute("sin^2($a*x)*cos^($n)($a*x)")->reduce;
+$integrand2 = Compute("sin($a*x)");
+$identite = Compute("cos^2($a*x)");
+$reste = Compute("cos^($n)($a*x)");
+$u = Compute("cos($a*x)")->reduce;
+$du = Compute("-$a*sin($a*x)*dx")->reduce;
+$integrandu = Compute("-1/$a*(u^($n)-u^($n2))");
+$ansu = Compute("-1/$a*(u^($n1)/$n1-u^($n3)/$n3)");
+$ans = Compute("-1/$a*(cos($a*x)**($n1)/$n1 - cos($a*x)**($n3)/$n3)");
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer l'intégrale indéfinie.
+$BR \[ \int \sin^3($a x)\cos^{$n}($a x) dx \]
+$BR
+On réécrit d'abord l'intégrale sous la forme
+$PAR
+\(\displaystyle\int\) \{ans_rule(25)\} \(\cdot\)\{ans_rule(7)\}\(dx\)
+$PAR
+En appliquant une identité trigonométrique appropriée, on obtient
+$PAR
+\(\displaystyle\int \Big( 1 - \) \{ans_rule(10)\} \(\Big)\)\{ans_rule(10)\} \(\cdot\)\{ans_rule(7)\}\(dx\).
+$PAR
+On pose ensuite \(u=\) \{ans_rule(12)\}, alors \(du=\)\{ans_rule(12)\}.
+$PAR
+Ainsi, l'intégrale devient
+$PAR
+\(\displaystyle\int\) \{ans_rule(25)\} \(du\) $PAR
+\(= \) \{ans_rule(45)\} \(+\;C\)     (réponse en fonction de \(u\) ) $PAR
+\(= \) \{ans_rule( 45) \} \(+\;C\)     (réponse en fonction de \(x\) )
+END_TEXT
+Context()->normalStrings;
+
+ANS($integrand1->cmp());
+ANS($integrand2->cmp());
+
+ANS($identite->cmp());
+ANS($reste->cmp());
+ANS($integrand2->cmp());
+
+ANS($u->cmp());
+ANS($du->cmp());
+
+ANS($integrandu->cmp());
+
+ANS($ansu->cmp(upToConstant=>1));
+ANS($ans->cmp(upToConstant=>1));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+On réécrit d'abord l'intégrale sous la forme
+\[ \int \sin($a x) \sin^2($a x)\cos^{$n}($a x) dx = 
+\int (1-\cos^2($a x))\cos^{$n}($a x) \cdot\sin($a x) dx .\] 
+$PAR
+On pose ensuite \(u=\cos($a x)\), alors \(du = - $a \sin($a x) dx\) ou 
+\(\displaystyle \frac{du}{-$a} = \sin($a x) dx\). 
+$PAR
+Ainsi, l'intégrale devient
+$BR
+\[
+\begin{aligned}
+ \int (1-\cos^2($a x))\cos^{$n}($a x) \cdot\sin($a x)dx 
+&= \int (1 - u^2)u^{$n} \cdot \frac{du}{-$a} \\
+&= - \frac{1}{$a} \int \left(u^{$n}-u^{$n2} \right) du \\ 
+&= - \frac{1}{$a} \left( \frac{u^{$n1}}{$n1} - \frac{u^{$n3}}{$n3} \right) + C \\
+&= - \frac{1}{$a} \left( \frac{\cos^{$n1}($a x)}{$n1} - \frac{\cos^{$n3}($a x)}{$n3} \right) + C
+\end{aligned}
+\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Fonction de la forme sin^3(ax)cos^n(ax) où n est un entier pair');
+
+
+ENDDOCUMENT();

@@ -1,0 +1,86 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Dérivation de fonctions)
+## KEYWORDS('applications', 'dérivation implicite', 'dérivée partielle', 'dérivée partielle d\'ordre 1', 'fonction de deux variables')
+## Author('Éric Gaul')
+## Institution('Collège Montmorency')
+## Solution par Éric Gaul
+## Date : mars 2017
+## Language(fr)
+
+
+## TitleText1('Calcul à plusieurs variables')
+## AuthorText1('Stewart (adapt. Guérin)')
+## EditionText1('2')
+## Section1('4.3')
+## Problem1('30')
+
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "PGML.pl",
+   "PGauxiliaryFunctions.pl",
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+$context = Context("Numeric");
+$context->variables->add(y=>'Real');
+
+$k1 = Compute(random(2, 9));
+$k2 = Compute(random(2, 9));
+$k3 = Compute(random(1, 9));
+
+$left = Formula("$k1*(e^y)*sin(x)")->reduce;
+$right = Formula("$k2*x*($k3+y)")->reduce;
+$dFdx = Formula("$k1*(e^y)*cos(x)-$k2*($k3+y)")->reduce;
+$dFdy = Formula("$k1*(e^y)*sin(x)-$k2*x")->reduce;
+
+$rep = Formula("(-$dFdx)/$dFdy")->reduce;
+
+##############################################################
+#
+#  Text
+#
+#
+
+BEGIN_PGML
+Soit la relation : [`[$left] = [$right]`].
+
+Utiliser la formule suivante :
+[`\ \ \dfrac{dy}{dx} = -\dfrac{\partial F/\partial x}{\partial F/\partial y}\ \ `]
+pour déterminer [`\dfrac{dy}{dx}`]. 
+
+ [`\dfrac{dy}{dx} =`] [_____________________________________________________________]{$rep}
+
+END_PGML
+
+##############################################################
+#
+#  Answers
+#
+#
+
+BEGIN_PGML_SOLUTION
+On commence par écrire : [`F(x, y) = [$left] - [$right] = 0\ .`]
+
+On a ensuite : [`\ \dfrac{\partial F}{\partial x} = [$dFdx]\ \ `]
+et [`\ \ \dfrac{\partial F}{\partial y} = [$dFdy]\ `].
+
+Par conséquent : [`\ \displaystyle \dfrac{dy}{dx} = -\dfrac{\partial F/\partial x}{\partial F/\partial y} = [$rep]\ `].
+
+END_PGML_SOLUTION
+ENDDOCUMENT();

@@ -1,0 +1,66 @@
+## DBsubject(Équations différentielles)
+## DBchapter(Équations différentielles ordinaires)
+## KEYWORDS('résolution d\'une équation', 'ordre 1', 'solution particulière', 'à variables séparables', 'équation différentielle')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+
+###############Source###############
+## source : Library/WHFreeman/Rogawski_Calculus_Early_Transcendentals_Second_Edition/5_The_Integral/5.8_Exponential_Growth_and_Decay/5.8.9.pg
+## ZInstitution(W.H.Freeman)
+## ZAuthor(Christopher Sira)
+## TitleText1('Calculus: Early Transcendentals')
+## AuthorText1('Rogawski')
+## EditionText1('2')
+## Section1('5.8')
+## Problem1('9')
+###############Source###############
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+);
+
+$cons = random(1, 9);
+$y_of = random(1, 9);
+$IC = random(1, 9);
+
+Context()->variables->add(t=>'Real');
+$answer = Formula("$IC e^($cons(t-$y_of))");
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer la solution de
+\[ \frac{dy}{dt} = $cons y \]
+qui vérifie 
+\[ y($y_of) = $IC \]
+$PAR
+\(y(t)=\) \{ans_rule()\}
+END_TEXT
+
+ANS($answer->cmp);
+
+$niceexp = Formula("$cons * $y_of")->reduce;
+
+BEGIN_SOLUTION
+Puisque \( y'=$cons y \), on résout l'équation de la façon suivante :
+\[\begin{align}
+\frac{dy}{dt} &= $cons y \\
+\int \frac{1}{y}\,dy &= \int $cons\,dt \\
+\ln|y| &= $cons t + C_1 \\
+y &= e^{$cons t + C_1} = e^{$cons t}e^{C_1} \\
+y &= C\, e^{$cons t} &&\text{; où }C = e^{C_1}
+\end{align}\]
+$BR
+Par conséquent, la solution générale est \( y(t)=C e^{$cons t} \) pour une constante quelconque  \( C\). La condition initiale  \( y($y_of)=$IC \) signifie que \( $IC = C e^{$cons \cdot $y_of} \) et donc \( C=$IC e^{-$niceexp} \). Par conséquent, \[ y(t)= ($IC e^{-$niceexp})e^{$cons t}=$answer. \]
+END_SOLUTION
+
+ENDDOCUMENT();

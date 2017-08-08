@@ -1,0 +1,229 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Intégration de fonctions)
+## KEYWORDS('coordonnées polaires', 'intégrale double')
+## Révisé par Éric Gaul, Collège Montmorency
+## Date : avril 2017
+## Language(fr)
+
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+
+###############Source################
+## DESCRIPTION
+## Seting up a double integral in polar coordinates  
+## ENDDESCRIPTION
+## ZDBsubject('Calculus')
+## ZDBchapter('Multiple Integrals')
+## ZDBsection('Double Integrals in Polar Coordinates')
+## Date('10/31/09')
+## Author('Paul Pearson')
+## Institution('Fort Lewis College')
+## TitleText1('Calculus')
+## TitleText2('Calculus')
+## EditionText1('4')
+## EditionText2('5')
+## AuthorText1('Hughes-Hallett')
+## AuthorText2('Hughes-Hallett')
+## Section1('16.4')
+## Section2('16.4')
+## Problem1('3')
+## Problem2('3')
+
+
+DOCUMENT();        
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"parserMultiAnswer.pl",
+"PGgraphmacros.pl",
+"unionTables.pl",
+);
+
+TEXT(beginproblem());
+
+$refreshCachedImages=1;
+
+##############################################
+#  Setup
+
+Context("Numeric")->variables->are(x=>"Real",y=>"Real");
+
+$select = random(0,3,1);
+
+$r = random(1,5,1);
+$R = random(1,5,1);
+while ($r == $R) {  $R = random(1,5,1); }
+
+$min = ($r, $R)[$r > $R];
+$max = ($r, $R)[$r < $R];
+
+$gr = init_graph(-5.5,-5.5,5.5,5.5,axes=>[0,0],size=>[400,400]);
+$gr->lb('reset');
+$gr->lb( new Label(5.2,0.2,'x','black','center','middle'));
+$gr->lb( new Label(0.2,5.2,'y','black','center','middle'));
+#$gr->new_color("lightblue",214,230,244);
+#$gr->new_color("darkblue", 100,100,255);
+$gr->new_color("lightred",  245,234,229); # light red-purple
+$gr->new_color("darkred",   159, 64, 16); # red-brown
+$gr->h_grid("gray",-5,-4,-3,-2,-1,1,2,3,4,5);
+$gr->v_grid("gray",-5,-4,-3,-2,-1,1,2,3,4,5);
+  foreach my $i (1..4) {
+    $gr->lb( new Label($i,-5.2,$i,  'black','center','middle'));
+    $gr->lb( new Label(-$i,-5.2,-$i,'black','center','middle'));
+    $gr->lb( new Label(-5.2,$i,$i,  'black','center','middle'));
+    $gr->lb( new Label(-5.2,-$i,-$i,'black','center','middle'));
+  }
+
+
+if ($select == 0) {
+
+$A = Formula("0");
+$B = Formula("pi");
+add_functions($gr,
+"sqrt($max^2-x^2) for x in <-$max,$max> using color:darkred and weight:2",
+"sqrt($min^2-x^2) for x in <-$min,$min> using color:darkred and weight:2",
+);
+$gr->moveTo(-$max,0);
+$gr->lineTo(-$min,0,"darkred",2);
+$gr->moveTo($min,0);
+$gr->lineTo($max,0,"darkred",2);
+$gr->fillRegion([($min+$max)/2,0.1,"lightred"]);
+
+} elsif ($select == 1) {
+
+$A = Formula("pi/2");
+$B = Formula("3*pi/2");
+add_functions($gr,
+"sqrt($max^2-x^2)  for x in <-$max,0> using color:darkred and weight:2",
+"sqrt($min^2-x^2)  for x in <-$min,0> using color:darkred and weight:2",
+"-sqrt($max^2-x^2) for x in <-$max,0> using color:darkred and weight:2",
+"-sqrt($min^2-x^2) for x in <-$min,0> using color:darkred and weight:2",
+);
+$gr->moveTo(0,$max);
+$gr->lineTo(0,$min,"darkred",2);
+$gr->moveTo(0,-$min);
+$gr->lineTo(0,-$max,"darkred",2);
+$gr->fillRegion([-($min+$max)/2,0.1,"lightred"]);
+
+} elsif ($select == 2) {
+
+$A = Formula("pi");
+$B = Formula("2*pi");
+add_functions($gr,
+"-sqrt($max^2-x^2) for x in <-$max,$max> using color:darkred and weight:2",
+"-sqrt($min^2-x^2) for x in <-$min,$min> using color:darkred and weight:2",
+);
+$gr->moveTo(-$max,0);
+$gr->lineTo(-$min,0,"darkred",2);
+$gr->moveTo($min,0);
+$gr->lineTo($max,0,"darkred",2);
+$gr->fillRegion([($min+$max)/2,-0.1,"lightred"]);
+
+
+} else {
+
+$A = Formula("-pi/2");
+$B = Formula("pi/2");
+add_functions($gr,
+"sqrt($max^2-x^2)  for x in <0,$max> using color:darkred and weight:2",
+"sqrt($min^2-x^2)  for x in <0,$min> using color:darkred and weight:2",
+"-sqrt($max^2-x^2) for x in <0,$max> using color:darkred and weight:2",
+"-sqrt($min^2-x^2) for x in <0,$min> using color:darkred and weight:2",
+);
+$gr->moveTo(0,$max);
+$gr->lineTo(0,$min,"darkred",2);
+$gr->moveTo(0,-$min);
+$gr->lineTo(0,-$max,"darkred",2);
+$gr->fillRegion([($min+$max)/2,0.1,"lightred"]);
+
+}
+
+$C = Formula("$min");
+$D = Formula("$max");
+
+
+
+$multians1 = MultiAnswer($A, $B)->with(
+  singleResult => 1, separator => ' to ', tex_separator => '\mbox{ to }',
+  checker => sub {
+      my ( $correct, $student, $self ) = @_;
+      my ( $Astu, $Bstu ) = @{$student};
+#     my ( $a, $b ) = @{$correct};
+      if ( (($Bstu - $Astu) == ($B - $A)) && 
+           (cos($Astu) == cos($A)) &&
+           (sin($Astu) == sin($A)) &&
+           (cos($Bstu) == cos($B)) &&
+           (sin($Bstu) == sin($B))
+         ) { return 1; } else { return 0; }
+  }
+);
+
+
+$multians2 = MultiAnswer($C, $D)->with(
+  singleResult => 1, separator => ' to ', tex_separator => '\mbox{ to }',
+  checker => sub {
+      my ( $correct, $student, $self ) = @_;
+      my ( $Cstu, $Dstu ) = @{$student};
+#     my ( $a, $b ) = @{$correct};
+      if ( ($Cstu  == $C) && ($Dstu == $D)
+         ) { return 1; } else { return 0; }
+  }
+);
+
+
+
+
+
+##############################################
+#  Main text
+
+Context()->texStrings;
+Context()->flags->set(reduceConstants=>0);
+BEGIN_TEXT
+\{
+ColumnTable(
+"Soit \(D\) la région ombrée dans la figure.
+En utilisant les coordonnées polaires, l'intégrale itérée s'écrit : ".
+$PAR.
+$BCENTER.
+"\[ \displaystyle
+\iint_D f(x,y) \, dA
+=
+\int_{\alpha}^{\beta} \!\! \int_{\gamma}^{\delta} f(r,\theta) \, r \, dr \, d\theta
+\]".
+$ECENTER.
+$PAR.
+"et les bornes d'intégration sont :".
+$BR.
+$BR.
+"\(\alpha\ = \) ".$multians1->ans_rule(20).$BR.
+"\(\beta\ = \) ".$multians1->ans_rule(20).$BR.
+"\(\gamma\ = \) ".$multians2->ans_rule(20).$BR.
+"\(\delta\ = \) ".$multians2->ans_rule(20).$BR,
+$BCENTER.
+image(insertGraph($gr),width=>300,height=>300,tex_size=>700).
+$BR.$BITALIC.
+"(cliquer sur le graphique pour l'agrandir)".$EITALIC.
+$ECENTER,
+indent=>0, separation=>30, valign=>"TOP"
+)
+\}
+END_TEXT
+Context()->normalStrings;
+
+
+##################################################
+#  Answers
+
+#WEIGHTED_ANS($multians1->cmp(), 50);
+#WEIGHTED_ANS($multians2->cmp(), 50);
+
+ANS($multians1->cmp());
+ANS($multians2->cmp());
+
+$showPartialCorrectAnswers = 1;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

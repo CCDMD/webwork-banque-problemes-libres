@@ -1,0 +1,99 @@
+## DBsubject(Algèbre linéaire)
+## DBchapter(Espace vectoriel)
+## KEYWORDS('dimension', 'matrice', 'polynôme', 'sous-espace vectoriel')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##Level(2)
+##Language(fr)
+###############Source###############
+## ZDBsubject(Linear algebra)
+## ZDBchapter(Abstract vector spaces)
+## ZDBsection(Basis and dimension)
+## ZLevel(2)
+## ZKEYWORDS('linear algebra','vector space','dimension')
+## ZAuthor:  John Hagood (adapted from setLinearAlgebra8VectorSpaces/ur_la_8_5.pg) 
+## Date Modified:  2006-04-02
+## Date Modified:  10/11/2013 by Nandor Sieben
+###############Source###############
+
+DOCUMENT();      
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGchoicemacros.pl"
+);
+
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+@c = NchooseK(6,6);
+foreach $i (0..6) { 
+	$c[$i] = $c[$i]+2;
+}
+
+@lu = ("supérieures", "inférieures");
+$tag = random(0,1,1);
+$lut = $lu[$tag];
+
+
+@q = ("L'espace vectoriel des matrices de format \({$c[0] \times $c[1]} \)", 
+      " L'espace vectoriel des polynômes de degré au plus  \($c[2] \)", 
+	 " L'espace vectoriel des polynômes de degré au plus  \($c[4] \) dont le terme constant est nul",
+      "L'espace vectoriel des matrices diagonales de format \($c[3] \times $c[3]\) ", 	
+      "L'espace vectoriel des matrices triangulaires  $lut  de format \($c[4] \times $c[4]\) ",
+      "L'espace vectoriel  \( {\mathbb R}^{\,$c[5]} \)",
+      "L'espace vectoriel des matrices de format \($c[3] \times $c[3]\) dont la trace est nulle",
+	  "L'espace vectoriel des matrices symétriques de format \($c[2] \times $c[2]\)",
+	  "L'espace vectoriel des matrices antisymétriques de format \($c[1] \times $c[1]\)",
+	  "L'espace vectoriel des matrices scalaires de format \($c[3] \times $c[3]\)");
+
+@a = ($c[0]*$c[1], 
+      $c[2]+1,
+	  $c[4],
+      $c[3],  
+      $c[4]*($c[4]+1)/2, 
+      $c[5],
+      $c[3]*$c[3]-1,
+	  $c[2]*($c[2]+1)/2,
+	  $c[1]*($c[1]-1)/2,
+	  1
+);
+
+@slice = NchooseK(10,10);
+
+@sq = @q[@slice];
+@sa = @a[@slice];
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Donner la dimension des espaces vectoriels suivants: 
+$PAR
+(a) $sq[0] \{ans_rule(5)\}
+$BR
+(b) $sq[1] \{ans_rule(5)\}
+$BR
+(c) $sq[2] \{ans_rule(5)\}
+$BR
+(d) $sq[3] \{ans_rule(5)\}
+$BR
+(e) $sq[4] \{ans_rule(5)\}
+$BR
+(f) $sq[5] \{ans_rule(5)\}
+
+
+END_TEXT
+Context()->normalStrings;
+ANS(num_cmp($sa[0]));
+ANS(num_cmp($sa[1]));
+ANS(num_cmp($sa[2]));
+ANS(num_cmp($sa[3]));
+ANS(num_cmp($sa[4]));
+ANS(num_cmp($sa[5]));
+
+ENDDOCUMENT(); 
+

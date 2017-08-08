@@ -1,0 +1,84 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('intervalle de convergence', 'série de MacLaurin', 'série de Taylor')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Modifié par Julie Tremblay - Collège de Bois-de-Boulogne
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(2)  
+## Language(fr)
+###############Source###############
+## source : Library/UMN/calculusStewartCCC/s_11_10_4.pg
+## ZDate(04/26/2010)
+## ZInstitution(University of Minnesota)
+## ZAuthor(Justin Sukiennik)
+## ZMLT(TrigSeries)
+## TitleText1('Calculus: Concepts and Contexts')
+## AuthorText1('Stewart')
+## EditionText1('4 Custom UMTYMP Ed.')
+## Section1('11.10')
+## Problem1('4')
+###############Source###############
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "weightedGrader.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT("Les cinq premières réponses valent 10% chacune et la dernière réponse vaut 50% de la note.");
+
+#####################################################################
+install_weighted_grader();
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem());
+
+#####################################################################
+Context("Numeric");
+# Let students type "EmptySet" instead of "NONE"
+#Context()->constants->add(EmptySet => Set());
+#Context()->flags->set(noneWord=>"EmptySet");
+
+$a = random(2,5,1);
+
+$ans0 = Compute("$a*x");
+$ans1 = Compute("-($a^3/6)*x^3");
+$ans2 = Compute("($a^5/5!)*x^5");
+$ans3 = Compute("-($a^7/7!)*x^7");
+$ans4 = Compute("($a^9/9!)*x^9");
+Context(Interval);
+$ans5 = Compute("(-inf,inf)");
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Déterminer les cinq premiers termes non nuls de la série de Maclaurin (série de Taylor centrée en \(a = 0\)) qui représente la fonction suivante.
+\[
+f(x) = \sin($a x)
+\]
+$BR
+Réponse : \(f(x) = \) \{ans_rule(10)\} \( + \) \{ans_rule(10)\} \( + \) \{ans_rule(10)\} \( + \) \{ans_rule(10)\} \( + \) \{ans_rule(10)\} \(+ \cdots\)
+$PAR
+Quel est l'intervalle de convergence? \{ans_rule(20)\} 
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+WEIGHTED_ANS( ($ans0)->cmp(), 10 );
+WEIGHTED_ANS( ($ans1)->cmp(), 10 );
+WEIGHTED_ANS( ($ans2)->cmp(), 10 );
+WEIGHTED_ANS( ($ans3)->cmp(), 10 );
+WEIGHTED_ANS( ($ans4)->cmp(), 10 );
+
+WEIGHTED_ANS( ($ans5)->cmp(), 50 );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,88 @@
+## DBsubject(Calcul différentiel et intégral à plusieurs variables)
+## DBchapter(Intégration - définition et interprétation)
+## KEYWORDS('approximation', 'double somme de Riemann', 'intégrale double', 'intégrale définie')
+## Modifié par Éric Gaul, Collège Montmorency
+## Traduction française : Éric Gaul
+## Date : avril 2017
+## Language(fr)
+
+
+###############Source###############
+#DESCRIPTION
+##  Calculus: Double integrals over rectangles
+##ENDDESCRIPTION
+## ZDBsubject(Calculus - multivariable)
+## ZDBchapter(Integration of multivariable functions)
+## ZDBsection(Double integrals over rectangles)
+## Date(04/18/2014)
+## Institution(Colby College)
+## Author(Justin Sukiennik)
+## MLT(RiemannSumSubdividedRectangle)
+## MLTleader(1)
+## Level(2)
+## MO(1)
+## TitleText1('Multivariable Calculus')
+## AuthorText1('Stewart')
+## EditionText1('7')
+## Section1('15.1')
+## Problem1('2')
+
+########################################################################
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "parserVectorUtils.pl"
+);
+########################################################################
+
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem);
+
+##############################################################
+
+Context("Numeric");
+Context()->variables->add(y =>'Real', z =>'Real');
+
+$a = random(1,4,1);
+
+$f = Formula("$a-x*(y)^2")->reduce;
+
+$c1 = $f->eval(x=>0,y=>0);
+$c2 = $f->eval(x=>0,y=>1);
+$c3 = $f->eval(x=>0,y=>2);
+$c4 = $f->eval(x=>2,y=>0);
+$c5 = $f->eval(x=>2,y=>1);
+$c6 = $f->eval(x=>2,y=>2);
+
+$ans = Compute("2*($c1+$c2+$c3+$c4+$c5+$c6)");
+
+##############################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la région du plan : \(R = [0,4] \times [-1,2]\).
+Développer une somme de Riemann en subdivisant
+\([0,4]\) en \(m=2\) sous-intervalles et \([-1,2]\) en \(n=3\)
+sous-intervalles, dans le but d'approximer :
+\[
+\iint_R  \left($a-xy^2\right) dA,
+\]
+en prenant comme points échantillons le coin supérieur gauche
+de chaque subdivision rectangulaire du domaine.
+$PAR
+L'approximation donne : \{ans_rule(20)\}
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+
+ANS( $ans->cmp(tolType => 'absolute',tolerance => .01) );
+
+########################################################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

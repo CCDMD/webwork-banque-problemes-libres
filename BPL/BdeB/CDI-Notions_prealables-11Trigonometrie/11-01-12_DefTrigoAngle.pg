@@ -1,6 +1,6 @@
 ## DBsubject(Géométrie)
 ## DBchapter(Trigonométrie)
-## KEYWORDS('rapport trigonométrique', 'résolution d\'un triangle', 'tangente')
+## KEYWORDS('degré', 'rapport trigonométrique', 'résolution d\'un triangle', 'tangente')
 ## Institution(Collège de Bois-de-Boulogne)
 ## Author(Julie Tremblay)
 ## Level(2)
@@ -15,12 +15,14 @@ loadMacros(
   "MathObjects.pl",
   "PGunion.pl",
   "PGgraphmacros.pl",
+  "contextTrigDegrees.pl",
   "PGcourse.pl",
 );
 
 
 TEXT(beginproblem());
 $showPartialCorrectAnswers = 1;
+Context("TrigDegrees");
 
 ### Pour rafraîchir le cache lorsqu’il a des graphiques dynamiques, sinon une image dans le cache peut s’afficher à la place
 $refreshCachedImages = 1;
@@ -32,9 +34,7 @@ $adj = random(5,30);
 
 ### réponse - on cherche le côté opposé
 
-$arad = Formula("$a*pi/180");
-$aradf = sprintf("%.3f",Real("$arad"));
-$opp = Real("$adj*tan($arad)");
+$opp = Real("$adj*tan($a)");
 
 
 # déterminer l'image à afficher dans la question
@@ -73,11 +73,12 @@ $gr->lb( new Label(0.7,1.3,"a",'black','center','middle'));
 
 
 BEGIN_TEXT
-Déterminer la longueur du côté \(x\) dans le triangle rectangle suivant, où \(a=$aradf\) rad.
+Déterminer la longueur du côté \(x\) dans le triangle rectangle suivant, où \(a=$a^{\circ}\).
 $PAR \{ image( insertGraph($gr), width=>180, tex_size=> 400 ) \} $PAR
 $BR
 \(x = \) \{ans_rule(20)\}
-$BR
+$PAR
+${BBOLD}Note :$EBOLD Les angles doivent être entrés en degrés.
 END_TEXT
 
 ANS($opp->cmp);
@@ -90,10 +91,10 @@ BEGIN_SOLUTION
 $BCENTER \{ image( insertGraph($gr), width=>180, tex_size=> 400 ) \} $ECENTER
 $BR
 Sachant que la fonction tangente est définie par le rapport \(\frac{\text{opp}}{\text{adj}}\), on a que
-\[ \tan($aradf) = \frac{x}{$adj}\]
+\[ \tan($a^{\circ}) = \frac{x}{$adj}\]
 
 Par conséquent, la longueur du côté \(x\) est
-\[x = $adj\cdot\tan($aradf) \approx $oppf\]
+\[x = $adj\cdot\tan($a^{\circ}) \approx $oppf\]
 
 END_SOLUTION
 Context()->normalStrings;

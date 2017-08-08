@@ -1,0 +1,125 @@
+## DBsubject(Calcul différentiel et intégral d'une variable)
+## DBchapter(Suites, sommation et séries)
+## KEYWORDS('approximation par le polynôme de Taylor', 'erreur', 'estimation', 'polynôme de Taylor', 'série de Taylor')
+
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne) 
+## Date : juin 2017
+## Traduction française : Sylvie Charbonneau
+## Level(3)  
+## Language(fr)
+###############Source###############
+## source : Library/NAU/setCalcII/T2SqrtApprox.pg
+## ZInstitution(NAU)
+## ZAuthor(Jim Swift)
+## ZMLT(SeriesApp_02)
+###############Source###############
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"scaffold.pl",
+"PGcourse.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+$n = random(1,2);
+$p = 2*$n;
+$a = Compute("10^$p")->reduce;
+
+$c0 = Compute("10^$n");
+$c1 = Compute("1/(2*10^($n))");
+$c2 = Compute("-1/(8*10^(3*$n))");
+$b = non_zero_random(-5, 5, 1)*10**($n-1);
+$c = $a + $b;
+
+## Début du problème par parties
+Scaffold::Begin(
+      can_open => "when_previous_correct",
+      is_open  => "correct_or_first_incorrect"
+);
+
+Section::Begin("Partie 1");
+BEGIN_TEXT
+Le développement de la fonction \( f\) en série de Taylor centrée en \( a \) est
+\[ f(x) =  \sum_{n=0}^{\infty}\frac{f^{(n)}(a)}{n!}(x-a)^n = f(a) + f'(a) (x-a) + \frac{f''(a)}{2}(x-a)^2 + \cdots \] 
+$PAR
+Le problème suivant utilise ce développement pour la fonction \(f(x) = \sqrt{x}\) et $BR
+\(a = \) \{ans_rule(5)\} 
+afin d'évaluer approximativement \(\sqrt{$c}\).  
+END_TEXT
+
+ANS($a->cmp);
+
+Section::End();
+
+Context()->texStrings;
+Section::Begin("Partie 2");
+BEGIN_TEXT
+En effet, \(a = $a\) est la meilleure valeur de \(a\) à utiliser, car elle est proche de \($c\) 
+et que \(f($a)=\sqrt{$a}\) se calcule sans l'aide d'une calculatrice. 
+De plus, on calcule aussi facilement
+\(f'($a)\) et \(f''($a)\) sans calculatrice. Essayer de résoudre ce problème sans l'aide d'une calculatrice.
+$PAR
+La première approximation est
+$PAR
+\(\sqrt{$c}  \approx T_1($c) = f(a) + f'(a) (x-a)  = \) \{ans_rule(20)\}
+$PAR
+Cela vous rappelle probablement l'approximation linéaire vue précédemment en calcul différentiel.  
+L'approximation quadratique de \(f\) autour de \(x = a\) est donnée par
+$PAR
+\( \displaystyle\sqrt{$c}  \approx T_2($c) = f(a) + f'(a) (x-a) + \frac{f''(a)}{2} (x-a)^2 = \) \{ans_rule(35)\}
+
+END_TEXT
+Context()->normalStrings;
+
+$approx1 = Real("$c0 + $c1*$b");
+$approx2 = Real("$c0 + $c1*$b + $c2*($b)^2");
+
+#Context()->functions->disable("sqrt");
+ANS($approx1->cmp);
+ANS($approx2->cmp);
+
+
+
+Section::End();
+
+Section::Begin("Partie 3");
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+${BBOLD}Attention!$EBOLD   WeBWorK peut indiquer que les réponses sont ${BITALIC}correctes $EITALIC alors qu'elles ne sont pas ${BITALIC}rigoureusement exactes$EITALIC.
+En effet, WeBWorK accepte comme réponse correcte toute réponse qui se situe à 0.001 près de la réponse exacte.
+Pour vérifier si les réponses de la partie 2 sont exactes, calculer l'erreur d'approximation.
+Cela se fait également sans l'aide de la calculatrice, puisque c'est WeBWorK qui fait les calculs.
+$PAR
+L'erreur (positive ou négative) de la première approximation est
+$PAR
+\(T_1($c) - \sqrt{$c}  = \) \{ans_rule(35)\}
+$PAR
+L'erreur (positive ou négative) de la deuxième approximation est
+$PAR
+\(T_2($c) - \sqrt{$c}  = \) \{ans_rule(50)\}
+
+END_TEXT
+Context()->normalStrings;
+
+$error1 = Real($approx1 - sqrt($c));
+$error2 = Real($approx2 - sqrt($c));
+
+ANS($error1->cmp);
+ANS($error2->cmp);
+
+Section::End();
+
+Scaffold::End();
+## Fin du problème
+
+ENDDOCUMENT();        # This should be the last executable line in the
+#problem.
+
