@@ -1,11 +1,11 @@
 ## Ressource produite dans le cadre du projet Mathéma-TIC (Samuel Bernard - Cégep régional de Lanaudière à Terrebonne, et Bruno Poellhuber - Université de Montréal), financé par le programme d’arrimage universités-collèges (PCUC) du ministère de l'Enseignement supérieur, de la Recherche et de la Science du Québec (MESRS).
 
 ## DBsubject(Probabilités)
-## DBchapter(Espérance revisitée)
-## DBsection(Inégalités)
+## DBchapter(Théorèmes limites)
+## KEYWORDS('inégalité de Markov', 'inégalité de Tchebychev')
+
 ## Author(Jean-Sébastien Turcotte)
 
-## KEYWORDS('Inégalité de Tchebychev','Inégalité de Markov')
 ## Level(2)    #Voir le fichier sur les levels
 ## Language(fr)
 
@@ -28,15 +28,14 @@ loadMacros(
 TEXT(beginproblem());
 #####Initialisation des paramètres######################
 Context("Numeric");
-$moy=random(60,80);
-$var=random(15,35);
-$res=random($moy+5,95);
+$moy=random(60,140);
+$var=random(400,900);
+$res=random($moy+15,$moy+ceil(sqrt($var)));
 $diff=$res-$moy;
-$inf=$moy-$diff;
 $ans1=Compute("$moy/$res");
-$ans2=Compute("1-$var/$diff**2");
+$ans2=Compute("$var/($var+$diff**2)");  #Tchebychev unilatérale
 BEGIN_TEXT
-Supposons que la moyenne d'un examen est de \($moy\). Soit \(X\) votre résultat à cet examen. 
+Le volume de ventes hebdomadaires d'un certain produit est une variable aléatoire de moyenne \($moy\).
 \{BeginList("OL")\}
 
 $ITEM Quelle est la probabilité maximale qu'il est possible de donner à \(\mathbb{P}(X\geq $res)\)?
@@ -44,9 +43,9 @@ $PAR
 \(\mathbb{P}(X\geq $res)\leq \)\{$ans1->ans_rule\}
 $ITEMSEP
 
-$ITEM On vous annonce que la variance de l'examen est \($var\). Quelle est la probabilité minimale qu'il est possible de donner à \(\mathbb{P}[$inf\leq X\leq $res]\)? 
+$ITEM On vous annonce que la variance est \($var\). Quelle est maintenant la borne améliorée qu'il est possible de donner à \(\mathbb{P}(X\geq $res))\)? 
 $PAR
-\(\mathbb{P}[$inf\leq X\leq $res]\geq \)\{$ans2->ans_rule\}
+\(\mathbb{P}(X\geq $res)\leq \)\{$ans2->ans_rule\}
 $ITEMSEP
 
 \{EndList("OL")\}
@@ -54,21 +53,4 @@ $ITEMSEP
 END_TEXT
 ANS($ans1->cmp);
 ANS($ans2->cmp);
-BEGIN_SOLUTION
-Pour le 1., on utilise l'inégalité de Markov: \(\mathbb{P}[X\geq a]\leq \frac{\mathbb{E}[X]}{a}\). On obtient alors
-\[
-\mathbb{P}[X\geq $res]\leq \frac{$moy}{$res}=$ans1.
-\]
-$BR
-Pour le 2., on peut utiliser l'inégalité de Chebyshev puisque la variance nous est donnée: \(\mathbb{P}[|X-\mu|\geq k]\leq \frac{\sigma^2}{k^2}\) où \(\mu\) et \(\sigma^2\) sont respectivement la moyenne et la variance de \(X\). Afin d'utiliser cette inégalité, il faudra réécrire la probabilité cherchée. On a 
-\[
-\begin{aligned}
-\mathbb{P}[$inf\leq X\leq $res]&=\mathbb{P}[$inf-$moy\leq X-$moy\leq $res-$moy]\\
-&=\mathbb{P}[-$diff\leq X-$moye\leq $diff]\\
-&=\mathbb{P}[|X-$moy|\leq $diff]\\
-&=1-\mathbb{P}[|X-$moy|\geq diff]
-\end{aligned}
-\]
-Par l'inégalité de Chebyshev, \(\mathbb{P}[|X-$moy|\geq $res]\leq \frac{$var}{$diff^2}=$ans2\), il suit que \(1-\mathbb{P}[|X-$moy|\geq $res]\geq $ans2\).
-END_SOLUTION
 ENDDOCUMENT();         # Ceci est la dernière ligne exécutable
