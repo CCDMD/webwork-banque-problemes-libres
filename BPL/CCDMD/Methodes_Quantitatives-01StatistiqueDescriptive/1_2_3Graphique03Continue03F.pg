@@ -1,0 +1,335 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('fréquence absolue', 'fréquence relative', 'graphique', 'modalité', 'polygone des densités', 'tableau', 'variable', 'variable quantitative continue')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl","PGauxiliaryFunctions.pl",
+"PGcourse.pl","unionTables.pl","PGchoicemacros.pl"
+);
+
+
+COMMENT("Niveau de difficulté : Facile. Compléter le tableau de distribution (avec les effectifs et pourcentages) à partir d'un polygone de fréquences ayant les effectifs. La variable est continue (3 classes). Il y a 4 contextes. Aucun effectif n'est nul. La solution n'a pas été programmée.");
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$TypeContexte = random(0,3);
+
+#Les effectifs en X et Y sont communs à tous les contextes.
+#Variable Y est utilisé
+
+$refreshCachedImages = 1;
+
+
+if ($TypeContexte == 0)
+{@VecteurContexte = ("X : Sexe", "Temps (min)", "Répartition des étudiants selon $BR le temps pris pour aller au cégep", "d'étudiantes et d'étudiants afin de connaitre le temps en minutes pris pour aller au cégep le matin", "afin de connaitre le temps en minutes pris pour aller au cégep le matin");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+
+@Y01VecteurModalite = ("[0, 20[", "[20, 40[", "[40, 60[","[60, 80[" );
+@Y01VecteurModaliteValeur = (10, 30, 50, 70);
+@Y01VecteurModaliteClasse = (0, 20, 40, 60, 80);
+@Y01VecteurModaliteG = (10, 30, 50, "Temps", 0, 70);
+
+@graphique60T = ("Répartition des étudiants selon", "le temps pris pour aller au cégep");
+@graphique60T = ("Repartition des etudiants selon", "le temps pris pour aller au cegep");
+}
+elsif ($TypeContexte == 1)
+{@VecteurContexte = ("X : Sexe", "Montant ($DOLLAR)", "Répartition des étudiants selon $BR le montant dépensé mensuellement pour le forfait cellulaire", "d'étudiantes et d'étudiants afin de connaitre le montant dépensé mensuellement pour le forfait cellulaire", "afin de connaitre le montant dépensé mensuellement pour le forfait cellulaire");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+
+@Y01VecteurModalite = ("[0, 40[", "[40, 80[", "[80, 120[" );
+@Y01VecteurModaliteValeur = (20, 60, 100, 140);
+@Y01VecteurModaliteClasse = (0, 40, 80, 120, 160);
+@Y01VecteurModaliteG = (20, 60, 100, "Montant", 0, 140);
+
+@graphique60T = ("Répartition des étudiants selon", "le montant dépensé en forfait cellulaire");
+@graphique60T = ("Repartition des etudiants selon", "le montant depense en forfait cellulaire");
+}
+
+elsif ($TypeContexte == 2)
+{@VecteurContexte = ("X : Sexe", "Temps (heures)", "Répartition des étudiants selon $BR le temps consacré à l'étude d'un examen final", "d'étudiantes et d'étudiants afin de connaitre le temps pris pour étudier l'examen final d'un cours de la dernière session", "afin de connaitre le temps en heures pris pour étudier l'examen final d'un cours de la dernière session");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+
+@Y01VecteurModalite = ("[0, 2[", "[2, 4[", "[4, 6[", "[6, 8[");
+@Y01VecteurModaliteValeur = (1, 3, 5, 7);
+@Y01VecteurModaliteClasse = (0, 2, 4, 6, 8);
+@Y01VecteurModaliteG = (1, 3, 5, "Temps", 0, 7);
+
+@graphique60T = ("Répartition des étudiants selon", "le temps consacré à étudier un examen");
+@graphique60T = ("Repartition des etudiants selon", "le temps consacre a etudier un examen");
+}
+elsif ($TypeContexte == 3)
+{@VecteurContexte = ("X : Sexe", "Montant ($DOLLAR)", "Répartition des étudiants selon $BR le montant dépensé à la cafétéria la semaine dernière", "d'étudiantes et d'étudiants afin de connaitre le montant dépensé à la cafétéria la semaine dernière", "afin de connaitre le montant dépensé à la cafétéria la semaine dernière");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+
+@Y01VecteurModalite = ("[0, 10[", "[10, 20[", "[20, 30[", "[30, 40[");
+@Y01VecteurModaliteValeur = (5, 15, 25, 35);
+@Y01VecteurModaliteClasse = (0, 10, 20, 30, 40);
+@Y01VecteurModaliteG = (5, 15, 25, "Montant", 0, 35);
+
+@graphique60T = ("Répartition des étudiants selon", "le montant dépensé à la cafétéria");
+@graphique60T = ("Repartition des etudiants selon", "le montant depense a la cafeteria");
+}
+
+#Calcul des effectifs en X et Y
+
+$Z01Effectif11 = random(5,15); 
+$Z01Effectif12 = random(5,15); 
+$Z01Effectif13 = random(5,15);
+
+if ($Z01Effectif11 == $Z01Effectif12)
+{$Z01Effectif11++;
+$Z01Effectif12--;}
+
+if ($Z01Effectif11 == $Z01Effectif13)
+{$Z01Effectif11++;
+$Z01Effectif13--;}
+
+if ($Z01Effectif12 == $Z01Effectif13)
+{$Z01Effectif13++;
+$Z01Effectif12--;}
+
+
+$Z01EffectifTotal1 = Compute("$Z01Effectif11 + $Z01Effectif12 + $Z01Effectif13");
+
+
+@Z01Reponse = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13, $Z01EffectifTotal1);
+
+
+#Calcul des pourcentages
+$Z01Pourcentage11t =Compute("$Z01Effectif11/$Z01EffectifTotal1*100");
+$Z01Pourcentage11 = sprintf("%0.1f","$Z01Pourcentage11t");
+$Z01Pourcentage12t =Compute("$Z01Effectif12/$Z01EffectifTotal1*100");
+$Z01Pourcentage12 = sprintf("%0.1f","$Z01Pourcentage12t");
+$Z01Pourcentage13t =Compute("$Z01Effectif13/$Z01EffectifTotal1*100");
+$Z01Pourcentage13 = sprintf("%0.1f","$Z01Pourcentage13t");
+
+$Z01PourcentageTotal1t = Compute("$Z01Pourcentage11 + $Z01Pourcentage12 + $Z01Pourcentage13");
+$Z01PourcentageTotal1 = sprintf("%0.1f","$Z01PourcentageTotal1t ");
+
+
+@Z01ReponsePourcentage = ($Z01Pourcentage11, $Z01Pourcentage12, $Z01Pourcentage13, $Z01PourcentageTotal1);
+
+
+
+
+
+#Graphique
+#@x60 = (-2, 14, 2, 5, 8, 10);
+#@x60 = (-3, 15, 3, 6, 9, 11);
+#@x60 = (-3, 12, 3, 6, 9, 9);
+@x60 = (-2, 10, 1, 3, 5, 7, 9);
+#@x60N = (0,1,2,3,4,5,6,7,8,9 10);
+@x60N = (0,2,4,6, 8);
+@x60Fermeture = (0, 7);
+
+$temp60c = random(0,2);
+if ($temp60c == 0)
+{@Couleur60 = (red, black);}
+elsif ($temp60c == 1)
+{@Couleur60 = (blue, black);}
+else
+{@Couleur60 = (green, black);}
+
+$x60Titre = 4.5;
+
+#@Valeur60 = ($Z01Pourcentage11, $Z01Pourcentage12, $Z01Pourcentage13);
+
+@Valeur60 = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13);
+
+
+#Trouver le max
+$Maxy60temp = $Valeur60[0];
+$temp60i = 0;
+do
+{$Maxy60temp1 = max($Maxy60temp,$Valeur60[$temp60i+1]); 
+$Maxy60temp = $Maxy60temp1;
+$temp60i++;}
+ while ($temp60i<2);
+
+if ($Maxy60temp < 7)
+{$Maxy60 = 6;}
+else
+{$Maxy60 = $Maxy60temp;}
+
+if ($Maxy60 <= 10)
+{@y60 = (-1, $Maxy60 +3, 1, 4, 6, 8, 10);
+$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'grid'=>[12,$Maxy60+4]);}
+elsif ($Maxy60 >= 20)
+{@y60 = (-3, $Maxy60 +3, 1, 4, 6, 8, 10);
+$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'grid'=>[12,$Maxy60+6]);}
+else
+{@y60 = (-2, $Maxy60 +3, 1, 4, 6, 8, 10);
+$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'grid'=>[12,$Maxy60+5]);}
+
+
+$graphique60 -> lb('reset');
+
+#Titre et unités sur Y
+if ($Maxy60 >= 20)
+{$graphique60 -> lb(new Label ( $x60Titre,$y60[1],$graphique60T[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60Titre,$y60[1]-1.5,$graphique60T[1],'black','center','top'));
+#$graphique60 -> lb(new Label ( 0,$y60[1]-4,"Effectif",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-3,"Nombre",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-4.5,"d'etu-",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-6,"diants",'black','right','top'));
+#Afficher l'unité sur Y
+$graphique60 -> lb(new Label ( 0,5,5,'black','right','middle'));
+$graphique60 -> lb(new Label ( 0,10,10,'black','right','middle'));
+$graphique60 -> lb(new Label ( 0,15,15,'black','right','middle'));
+if ($Maxy60 > 25)
+{$graphique60 -> lb(new Label ( 0,20,20,'black','right','middle'));}
+$graphique60 -> lb(new Label ( 0,$y60[2],$y60[2],'black','right','middle'));
+$graphique60 -> lb(new Label ( $x60[5], -1,$Y01VecteurModaliteG[3],'black','center','top'));
+
+}
+elsif ($Maxy60 <= 10)
+{$graphique60 -> lb(new Label ( $x60Titre,$y60[1]-0.5,$graphique60T[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60Titre,$y60[1]-1.1,$graphique60T[1],'black','center','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-1,"Nombre",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-1.5,"d'etu-",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-2,"diants",'black','right','top'));
+#Afficher l'unité sur Y
+$graphique60 -> lb(new Label ( 0,$y60[2],$y60[2],'black','right','middle'));
+if ($Maxy60 >  5)
+{$graphique60 -> lb(new Label ( 0,5,5,'black','right','middle'));}
+#Afficher les modalités sur X
+$graphique60 -> lb(new Label ( $x60[5], -0.5,$Y01VecteurModaliteG[3],'black','center','top'));
+
+}
+else
+{$graphique60 -> lb(new Label ( $x60Titre,$y60[1],$graphique60T[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60Titre,$y60[1]-1,$graphique60T[1],'black','center','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-1,"Nombre",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-2,"d'etu-",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-3,"diants",'black','right','top'));
+#Afficher l'unité sur Y
+$graphique60 -> lb(new Label ( 0,5,5,'black','right','middle'));
+$graphique60 -> lb(new Label ( 0,10,10,'black','right','middle'));
+if ($Maxy60 >  16)
+{$graphique60 -> lb(new Label ( 0,15,15,'black','right','middle'));}
+
+$graphique60 -> lb(new Label ( 0,$y60[2],$y60[2],'black','right','middle'));
+#Afficher les modalités sur X
+$graphique60 -> lb(new Label ( $x60[5], -1,$Y01VecteurModaliteG[3],'black','center','top'));
+}
+
+#Afficher les modalités sur X
+$graphique60 -> lb(new Label ( $x60N[0],0, $Y01VecteurModaliteClasse[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60N[1],0, $Y01VecteurModaliteClasse[1],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60N[2],0, $Y01VecteurModaliteClasse[2],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60N[3],0, $Y01VecteurModaliteClasse[3],'black','center','top'));
+
+$graphique60 -> lb(new Label ( $x60[2],0,$Y01VecteurModaliteValeur[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[3],0,$Y01VecteurModaliteValeur[1],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[4],0,$Y01VecteurModaliteValeur[2],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[5],0,$Y01VecteurModaliteValeur[3],'black','center','top'));
+
+
+#$graphique60 -> lb(new Label ( $x60[5]+1, $y60[3],$Y01VecteurModaliteG[3],'black','center','top'));
+
+
+#Unité Y
+$graphique60 -> lb(new Label ( 0,$y60[2],$y60[2],'black','right','middle'));
+
+
+
+
+
+$Ajust60 = 1;
+$Epaisseur60 = 1;
+
+
+#Ligne pour modalité 1 de X
+$graphique60->moveTo($x60Fermeture[0],0);
+$graphique60->lineTo($x60[2],$Valeur60[0],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[3],$Valeur60[1],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[4],$Valeur60[2],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60Fermeture[1],0,$Couleur60[0],$Epaisseur60);
+
+$pt60p1 = closed_circle( $x60[2],$Valeur60[0],$Couleur60[0]);
+$pt60p2 = closed_circle( $x60[3],$Valeur60[1],$Couleur60[0]);
+$pt60p3 = closed_circle( $x60[4],$Valeur60[2],$Couleur60[0]);
+$pt60p4 = closed_circle( $x60Fermeture[0],0,$Couleur60[0]);
+$pt60p5 = closed_circle( $x60Fermeture[1],0,$Couleur60[0]);
+
+
+$graphique60->stamps($pt60p1,$pt60p2,$pt60p3,$pt60p4,$pt60p5);
+
+
+$imageG60 = image(insertGraph($graphique60),width =>350,height=>250,tex_size=>350);
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Voici le graphique illustrant une enquête qui a été menée auprès d'un échantillon d'étudiants $VecteurContexte[4].
+$PAR
+$BCENTER
+$imageG60
+$ECENTER
+
+$PAR
+
+${BBOLD}Question : ${EBOLD} Compléter les cases manquantes du tableau de distribution suivant. Arrondir, s'il y a lieu, les pourcentages à une décimale et écrire la somme des pourcentages même si elle n'est pas exactement de 100.0 %.
+$BCENTER
+${BBOLD}
+$VecteurContexte[2]
+${EBOLD}
+$ECENTER
+
+$PAR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow(["${BBOLD}$VecteurContexte[1]${EBOLD}", "${BBOLD}Nombre $BR d'étudiants${EBOLD}","${BBOLD}Pourcentage $BR d'étudiants${EBOLD}"], align => CENTER, separation=>0).
+ 
+ AlignedRow(["$Y01VecteurModalite[0]",ans_rule(5), ans_rule(5)], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[1]",ans_rule(5), ans_rule(5)], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[2]",ans_rule(5), ans_rule(5)], align => CENTER, separation=>0).
+  AlignedRow(["${BBOLD}Total${EBOLD}", ans_rule(5), ans_rule(5)], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+
+
+ANS(num_cmp($Z01Reponse[0]));
+ANS(num_cmp($Z01ReponsePourcentage[0], tol => 0.0001, tolType => "absolute"));
+ANS(num_cmp($Z01Reponse[1]));
+ANS(num_cmp($Z01ReponsePourcentage[1], tol => 0.0001, tolType => "absolute"));
+ANS(num_cmp($Z01Reponse[2]));
+ANS(num_cmp($Z01ReponsePourcentage[2], tol => 0.0001, tolType => "absolute"));
+ANS(num_cmp($Z01Reponse[3]));
+ANS(num_cmp($Z01ReponsePourcentage[3], tol => 0.0001, tolType => "absolute"));
+
+
+
+
+ENDDOCUMENT(); 

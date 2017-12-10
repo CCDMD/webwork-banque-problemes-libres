@@ -1,0 +1,462 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Corrélation et régression linéaire)
+## KEYWORDS('coefficient de corrélation')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Choisir le graphique dont l'intensité et le sens de la corrélation sont donnés. L'intensité de la corrélation linéaire est choisie aléatoirement entre: nulle, faible, moyenne, forte, très forte et parfaite. Le sens de la corrélation est choisie aléatoirement entre positive et négative. Aucun contexte. Aucune solution n'a été programmée.");
+
+
+TEXT(beginproblem());
+
+$refreshCachedImages = 1;
+
+
+$x61 = -1;
+$x62 = 11;
+$y61 = -1;
+$y62 = 11;
+$AffichageX60 =10.5;
+$AffichageY60 =10.5;
+
+$ColeurPoints = "red";
+$ColeurCoord = "black";
+
+
+#Graphique r = 1
+$graphique10p = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique10p -> lb('reset');
+$graphique10p -> lb(new Label ( $AffichageX60,0,'X','black','left','top'));
+$graphique10p -> lb(new Label ( 0,$AffichageY60,'Y','black','right','top'));
+@X10pVecteurBaseDonnee = (2,2.5,3,3.5,4,4.5,5,5.5, 6, 6.5, 7, 7.5,8, 8.5, 9);
+@Y10pVecteurBaseDonnee = (2,2.5,3,3.5,4,4.5,5,5.5, 6, 6.5, 7, 7.5,8, 8.5, 9);
+$pt10p1 = closed_circle( $X10pVecteurBaseDonnee[0],$Y10pVecteurBaseDonnee[0], $ColeurPoints);
+$pt10p2 = closed_circle( $X10pVecteurBaseDonnee[1],$Y10pVecteurBaseDonnee[1], $ColeurPoints);
+$pt10p3 = closed_circle( $X10pVecteurBaseDonnee[2],$Y10pVecteurBaseDonnee[2], $ColeurPoints);
+$pt10p4 = closed_circle( $X10pVecteurBaseDonnee[3],$Y10pVecteurBaseDonnee[3], $ColeurPoints);
+$pt10p5 = closed_circle( $X10pVecteurBaseDonnee[4],$Y10pVecteurBaseDonnee[4], $ColeurPoints);
+$pt10p6 = closed_circle( $X10pVecteurBaseDonnee[5],$Y10pVecteurBaseDonnee[5], $ColeurPoints);
+$pt10p7 = closed_circle( $X10pVecteurBaseDonnee[6],$Y10pVecteurBaseDonnee[6], $ColeurPoints);
+$pt10p8 = closed_circle( $X10pVecteurBaseDonnee[7],$Y10pVecteurBaseDonnee[7], $ColeurPoints);
+$pt10p9 = closed_circle( $X10pVecteurBaseDonnee[8],$Y10pVecteurBaseDonnee[8], $ColeurPoints);
+$pt10p10 = closed_circle( $X10pVecteurBaseDonnee[9],$Y10pVecteurBaseDonnee[9], $ColeurPoints);
+$pt10p11 = closed_circle( $X10pVecteurBaseDonnee[10],$Y10pVecteurBaseDonnee[10], $ColeurPoints);
+$pt10p12 = closed_circle( $X10pVecteurBaseDonnee[11],$Y10pVecteurBaseDonnee[11], $ColeurPoints);
+$pt10p13 = closed_circle( $X10pVecteurBaseDonnee[12],$Y10pVecteurBaseDonnee[12], $ColeurPoints);
+$pt10p14 = closed_circle( $X10pVecteurBaseDonnee[13],$Y10pVecteurBaseDonnee[13], $ColeurPoints);
+$pt10p15 = closed_circle( $X10pVecteurBaseDonnee[14],$Y10pVecteurBaseDonnee[14], $ColeurPoints);
+$graphique10p->stamps($pt10p1,$pt10p2,$pt10p3,$pt10p4,$pt10p5,$pt10p6, $pt10p7,$pt10p8,$pt10p9, $pt10p10, $pt10p11, $pt10p12, $pt10p13, $pt10p14, $pt10p15);
+$imageG10p = image(insertGraph($graphique10p),width =>300,height=>250,tex_size=>360);
+
+#Graphique r =.95
+$graphique95p = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique95p -> lb('reset');
+$graphique95p -> lb(new Label ( $AffichageX60,0,'X','black','left','top'));
+$graphique95p -> lb(new Label ( 0,$AffichageY60,'Y','black','right','top'));
+$temp95p = random(0,3);
+$temp95p =3;
+if ($temp95p == 0)
+{
+@X95pVecteurBaseDonnee = (2,2.5,3,3.5,4,4.5,5,5.5, 6, 6.5, 6.8, 7.5,8, 8.5, 9);
+@Y95pVecteurBaseDonnee = (2,2.5,4,3.5,4,4.5,5,5.5, 6, 6.5, 7, 6.5,8, 8.5, 9);}
+elsif ($temp95p == 1)
+{
+@X95pVecteurBaseDonnee = (2,2.5,3,3.5,4.2,4.5,5,5.5, 6, 6.5, 7, 7.2,8, 8.5, 9);
+@Y95pVecteurBaseDonnee = (2,2.5,3,3.5,3,4.5,5,5.5, 6, 6.5, 7, 8.5,8, 8.5, 9);}
+elsif ($temp95p == 2)
+{
+@X95pVecteurBaseDonnee = (2,2.5,3,3.5,4,4.5,4.7,5.5, 6, 6.5, 7, 7.5,8, 8.7, 9);
+@Y95pVecteurBaseDonnee = (2,2.5,3,3.5,4,4.5,5.5,5.5, 6, 6.5, 7, 7.5,8, 7.5, 9);}
+elsif ($temp95p == 3)
+{
+@X95pVecteurBaseDonnee = (2,2.5,3,3.5,4,4.5,5,5.5, 6, 6.5, 6.8, 7.5,8, 8.5, 9);
+@Y95pVecteurBaseDonnee = (2,2.5,2,3.5,4,4.5,5,5.5, 6, 6.5, 7.5, 7.5,8, 8.5, 9);}
+$pt95p1 = closed_circle( $X95pVecteurBaseDonnee[0],$Y95pVecteurBaseDonnee[0], $ColeurPoints);
+$pt95p2 = closed_circle( $X95pVecteurBaseDonnee[1],$Y95pVecteurBaseDonnee[1], $ColeurPoints);
+$pt95p3 = closed_circle( $X95pVecteurBaseDonnee[2],$Y95pVecteurBaseDonnee[2], $ColeurPoints);
+$pt95p4 = closed_circle( $X95pVecteurBaseDonnee[3],$Y95pVecteurBaseDonnee[3], $ColeurPoints);
+$pt95p5 = closed_circle( $X95pVecteurBaseDonnee[4],$Y95pVecteurBaseDonnee[4], $ColeurPoints);
+$pt95p6 = closed_circle( $X95pVecteurBaseDonnee[5],$Y95pVecteurBaseDonnee[5], $ColeurPoints);
+$pt95p7 = closed_circle( $X95pVecteurBaseDonnee[6],$Y95pVecteurBaseDonnee[6], $ColeurPoints);
+$pt95p8 = closed_circle( $X95pVecteurBaseDonnee[7],$Y95pVecteurBaseDonnee[7], $ColeurPoints);
+$pt95p9 = closed_circle( $X95pVecteurBaseDonnee[8],$Y95pVecteurBaseDonnee[8], $ColeurPoints);
+$pt95p10 = closed_circle( $X95pVecteurBaseDonnee[9],$Y95pVecteurBaseDonnee[9], $ColeurPoints);
+$pt95p11 = closed_circle( $X95pVecteurBaseDonnee[10],$Y95pVecteurBaseDonnee[10], $ColeurPoints);
+$pt95p12 = closed_circle( $X95pVecteurBaseDonnee[11],$Y95pVecteurBaseDonnee[11], $ColeurPoints);
+$pt95p13 = closed_circle( $X95pVecteurBaseDonnee[12],$Y95pVecteurBaseDonnee[12], $ColeurPoints);
+$pt95p14 = closed_circle( $X95pVecteurBaseDonnee[13],$Y95pVecteurBaseDonnee[13], $ColeurPoints);
+$pt95p15 = closed_circle( $X95pVecteurBaseDonnee[14],$Y95pVecteurBaseDonnee[14], $ColeurPoints);
+$graphique95p->stamps($pt95p1,$pt95p2,$pt95p3,$pt95p4,$pt95p5,$pt95p6, $pt95p7,$pt95p8,$pt95p9, $pt95p10, $pt95p11, $pt95p12, $pt95p13, $pt95p14, $pt95p15);
+$imageG95p = image(insertGraph($graphique95p),width =>300,height=>250,tex_size=>360);
+
+
+
+#Graphique r =.90
+$graphique90p = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique90p -> lb('reset');
+$graphique90p -> lb(new Label ( $AffichageX60,0,'X','black','left','top'));
+$graphique90p -> lb(new Label ( 0,$AffichageY60,'Y','black','right','top'));
+@X90pVecteurBaseDonnee = (2,2.5,3,3.5,4,4.5,5,5.5, 6, 6.5, 7, 7.5,8, 8.5, 9);
+@Y90pVecteurBaseDonnee = (2, 1.5,2.5,5,3,5.5,5.5,5,4,7,6.5,8,9,8,7);
+$pt90p1 = closed_circle( $X90pVecteurBaseDonnee[0],$Y90pVecteurBaseDonnee[0], $ColeurPoints);
+$pt90p2 = closed_circle( $X90pVecteurBaseDonnee[1],$Y90pVecteurBaseDonnee[1], $ColeurPoints);
+$pt90p3 = closed_circle( $X90pVecteurBaseDonnee[2],$Y90pVecteurBaseDonnee[2], $ColeurPoints);
+$pt90p4 = closed_circle( $X90pVecteurBaseDonnee[3],$Y90pVecteurBaseDonnee[3], $ColeurPoints);
+$pt90p5 = closed_circle( $X90pVecteurBaseDonnee[4],$Y90pVecteurBaseDonnee[4], $ColeurPoints);
+$pt90p6 = closed_circle( $X90pVecteurBaseDonnee[5],$Y90pVecteurBaseDonnee[5], $ColeurPoints);
+$pt90p7 = closed_circle( $X90pVecteurBaseDonnee[6],$Y90pVecteurBaseDonnee[6], $ColeurPoints);
+$pt90p8 = closed_circle( $X90pVecteurBaseDonnee[7],$Y90pVecteurBaseDonnee[7], $ColeurPoints);
+$pt90p9 = closed_circle( $X90pVecteurBaseDonnee[8],$Y90pVecteurBaseDonnee[8], $ColeurPoints);
+$pt90p10 = closed_circle( $X90pVecteurBaseDonnee[9],$Y90pVecteurBaseDonnee[9], $ColeurPoints);
+$pt90p11 = closed_circle( $X90pVecteurBaseDonnee[10],$Y90pVecteurBaseDonnee[10], $ColeurPoints);
+$pt90p12 = closed_circle( $X90pVecteurBaseDonnee[11],$Y90pVecteurBaseDonnee[11], $ColeurPoints);
+$pt90p13 = closed_circle( $X90pVecteurBaseDonnee[12],$Y90pVecteurBaseDonnee[12], $ColeurPoints);
+$pt90p14 = closed_circle( $X90pVecteurBaseDonnee[13],$Y90pVecteurBaseDonnee[13], $ColeurPoints);
+$pt90p15 = closed_circle( $X90pVecteurBaseDonnee[14],$Y90pVecteurBaseDonnee[14], $ColeurPoints);
+$graphique90p->stamps($pt90p1,$pt90p2,$pt90p3,$pt90p4,$pt90p5,$pt90p6, $pt90p7,$pt90p8,$pt90p9, $pt90p10, $pt90p11, $pt90p12, $pt90p13, $pt90p14, $pt90p15);
+$imageG90p = image(insertGraph($graphique90p),width =>300,height=>250,tex_size=>360);
+
+#Graphique r =.60
+$graphique60p = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique60p -> lb('reset');
+$graphique60p -> lb(new Label ( $AffichageX60,0,'X','black','left','top'));
+$graphique60p -> lb(new Label ( 0,$AffichageY60,'Y','black','right','top'));
+@X60pVecteurBaseDonnee = (1,1,2,2,3,4,4,4,5,6,6,6,8,8,9);
+@Y60pVecteurBaseDonnee = (4,1,3,1,4,5,3,7,3,2,4,8,7,6,6);
+$pt60p1 = closed_circle( $X60pVecteurBaseDonnee[0],$Y60pVecteurBaseDonnee[0], $ColeurPoints);
+$pt60p2 = closed_circle( $X60pVecteurBaseDonnee[1],$Y60pVecteurBaseDonnee[1], $ColeurPoints);
+$pt60p3 = closed_circle( $X60pVecteurBaseDonnee[2],$Y60pVecteurBaseDonnee[2], $ColeurPoints);
+$pt60p4 = closed_circle( $X60pVecteurBaseDonnee[3],$Y60pVecteurBaseDonnee[3], $ColeurPoints);
+$pt60p5 = closed_circle( $X60pVecteurBaseDonnee[4],$Y60pVecteurBaseDonnee[4], $ColeurPoints);
+$pt60p6 = closed_circle( $X60pVecteurBaseDonnee[5],$Y60pVecteurBaseDonnee[5], $ColeurPoints);
+$pt60p7 = closed_circle( $X60pVecteurBaseDonnee[6],$Y60pVecteurBaseDonnee[6], $ColeurPoints);
+$pt60p8 = closed_circle( $X60pVecteurBaseDonnee[7],$Y60pVecteurBaseDonnee[7], $ColeurPoints);
+$pt60p9 = closed_circle( $X60pVecteurBaseDonnee[8],$Y60pVecteurBaseDonnee[8], $ColeurPoints);
+$pt60p10 = closed_circle( $X60pVecteurBaseDonnee[9],$Y60pVecteurBaseDonnee[9], $ColeurPoints);
+$pt60p11 = closed_circle( $X60pVecteurBaseDonnee[10],$Y60pVecteurBaseDonnee[10], $ColeurPoints);
+$pt60p12 = closed_circle( $X60pVecteurBaseDonnee[11],$Y60pVecteurBaseDonnee[11], $ColeurPoints);
+$pt60p13 = closed_circle( $X60pVecteurBaseDonnee[12],$Y60pVecteurBaseDonnee[12], $ColeurPoints);
+$pt60p14 = closed_circle( $X60pVecteurBaseDonnee[13],$Y60pVecteurBaseDonnee[13], $ColeurPoints);
+$pt60p15 = closed_circle( $X60pVecteurBaseDonnee[14],$Y60pVecteurBaseDonnee[14], $ColeurPoints);
+$graphique60p->stamps($pt60p1,$pt60p2,$pt60p3,$pt60p4,$pt60p5,$pt60p6, $pt60p7,$pt60p8,$pt60p9, $pt60p10, $pt60p11, $pt60p12, $pt60p13, $pt60p14, $pt60p15);
+$imageG60p = image(insertGraph($graphique60p),width =>300,height=>250,tex_size=>360);
+
+
+#Graphique r =.20
+$graphique20p = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique20p -> lb('reset');
+$graphique20p -> lb(new Label ( $AffichageX60,0,'X','black','left','top'));
+$graphique20p -> lb(new Label ( 0,$AffichageY60,'Y','black','right','top'));
+@X20pVecteurBaseDonnee = (3,4,5,4,7,9,1,5,6,4,5,1,2,4,3);
+@Y20pVecteurBaseDonnee = (2,8,6,4,7,3,1,5,8,5,6,5,5,2,9);
+$pt20p1 = closed_circle( $X20pVecteurBaseDonnee[0],$Y20pVecteurBaseDonnee[0], $ColeurPoints);
+$pt20p2 = closed_circle( $X20pVecteurBaseDonnee[1],$Y20pVecteurBaseDonnee[1], $ColeurPoints);
+$pt20p3 = closed_circle( $X20pVecteurBaseDonnee[2],$Y20pVecteurBaseDonnee[2], $ColeurPoints);
+$pt20p4 = closed_circle( $X20pVecteurBaseDonnee[3],$Y20pVecteurBaseDonnee[3], $ColeurPoints);
+$pt20p5 = closed_circle( $X20pVecteurBaseDonnee[4],$Y20pVecteurBaseDonnee[4], $ColeurPoints);
+$pt20p6 = closed_circle( $X20pVecteurBaseDonnee[5],$Y20pVecteurBaseDonnee[5], $ColeurPoints);
+$pt20p7 = closed_circle( $X20pVecteurBaseDonnee[6],$Y20pVecteurBaseDonnee[6], $ColeurPoints);
+$pt20p8 = closed_circle( $X20pVecteurBaseDonnee[7],$Y20pVecteurBaseDonnee[7], $ColeurPoints);
+$pt20p9 = closed_circle( $X20pVecteurBaseDonnee[8],$Y20pVecteurBaseDonnee[8], $ColeurPoints);
+$pt20p10 = closed_circle( $X20pVecteurBaseDonnee[9],$Y20pVecteurBaseDonnee[9], $ColeurPoints);
+$pt20p11 = closed_circle( $X20pVecteurBaseDonnee[10],$Y20pVecteurBaseDonnee[10], $ColeurPoints);
+$pt20p12 = closed_circle( $X20pVecteurBaseDonnee[11],$Y20pVecteurBaseDonnee[11], $ColeurPoints);
+$pt20p13 = closed_circle( $X20pVecteurBaseDonnee[12],$Y20pVecteurBaseDonnee[12], $ColeurPoints);
+$pt20p14 = closed_circle( $X20pVecteurBaseDonnee[13],$Y20pVecteurBaseDonnee[13], $ColeurPoints);
+$pt20p15 = closed_circle( $X20pVecteurBaseDonnee[14],$Y20pVecteurBaseDonnee[14], $ColeurPoints);
+$graphique20p->stamps($pt20p1,$pt20p2,$pt20p3,$pt20p4,$pt20p5,$pt20p6, $pt20p7,$pt20p8,$pt20p9, $pt20p10, $pt20p11, $pt20p12, $pt20p13, $pt20p14, $pt20p15);
+$imageG20p = image(insertGraph($graphique20p),width =>300,height=>250,tex_size=>360);
+
+#Graphique r =.03
+$graphique00p = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique00p -> lb('reset');
+$graphique00p -> lb(new Label ( $AffichageX60,0,'X','black','left','top'));
+$graphique00p -> lb(new Label ( 0,$AffichageY60,'Y','black','right','top'));
+@X00pVecteurBaseDonnee = (7,2,4,4,9,5,5,2,9,4,6,7,8,7,4);
+@Y00pVecteurBaseDonnee = (9,8,4,1,9,5,7,2,5,6,3,2,2,2,9);
+$pt00p1 = closed_circle( $X00pVecteurBaseDonnee[0],$Y00pVecteurBaseDonnee[0], $ColeurPoints);
+$pt00p2 = closed_circle( $X00pVecteurBaseDonnee[1],$Y00pVecteurBaseDonnee[1], $ColeurPoints);
+$pt00p3 = closed_circle( $X00pVecteurBaseDonnee[2],$Y00pVecteurBaseDonnee[2], $ColeurPoints);
+$pt00p4 = closed_circle( $X00pVecteurBaseDonnee[3],$Y00pVecteurBaseDonnee[3], $ColeurPoints);
+$pt00p5 = closed_circle( $X00pVecteurBaseDonnee[4],$Y00pVecteurBaseDonnee[4], $ColeurPoints);
+$pt00p6 = closed_circle( $X00pVecteurBaseDonnee[5],$Y00pVecteurBaseDonnee[5], $ColeurPoints);
+$pt00p7 = closed_circle( $X00pVecteurBaseDonnee[6],$Y00pVecteurBaseDonnee[6], $ColeurPoints);
+$pt00p8 = closed_circle( $X00pVecteurBaseDonnee[7],$Y00pVecteurBaseDonnee[7], $ColeurPoints);
+$pt00p9 = closed_circle( $X00pVecteurBaseDonnee[8],$Y00pVecteurBaseDonnee[8], $ColeurPoints);
+$pt00p10 = closed_circle( $X00pVecteurBaseDonnee[9],$Y00pVecteurBaseDonnee[9], $ColeurPoints);
+$pt00p11 = closed_circle( $X00pVecteurBaseDonnee[10],$Y00pVecteurBaseDonnee[10], $ColeurPoints);
+$pt00p12 = closed_circle( $X00pVecteurBaseDonnee[11],$Y00pVecteurBaseDonnee[11], $ColeurPoints);
+$pt00p13 = closed_circle( $X00pVecteurBaseDonnee[12],$Y00pVecteurBaseDonnee[12], $ColeurPoints);
+$pt00p14 = closed_circle( $X00pVecteurBaseDonnee[13],$Y00pVecteurBaseDonnee[13], $ColeurPoints);
+$pt00p15 = closed_circle( $X00pVecteurBaseDonnee[14],$Y00pVecteurBaseDonnee[14], $ColeurPoints);
+$graphique00p->stamps($pt00p1,$pt00p2,$pt00p3,$pt00p4,$pt00p5,$pt00p6, $pt00p7,$pt00p8,$pt00p9, $pt00p10, $pt00p11, $pt00p12, $pt00p13, $pt00p14, $pt00p15);
+$imageG00p = image(insertGraph($graphique00p),width =>300,height=>250,tex_size=>360);
+
+
+
+#Graphique r =-0.20
+$graphique20n = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique20n -> lb('reset');
+$graphique20n -> lb(new Label ( $AffichageX60,0,'X','black','left','top'));
+$graphique20n -> lb(new Label ( 0,$AffichageY60,'Y','black','right','top'));
+@X20nVecteurBaseDonnee = (4,4,1,8,4,6,2,5,6,6,9,3,5,8,6);
+@Y20nVecteurBaseDonnee = (3,2,4,1,2,8,9,1,1,4,2,7,6,8,8);
+$pt20n1 = closed_circle( $X20nVecteurBaseDonnee[0],$Y20nVecteurBaseDonnee[0], $ColeurPoints);
+$pt20n2 = closed_circle( $X20nVecteurBaseDonnee[1],$Y20nVecteurBaseDonnee[1], $ColeurPoints);
+$pt20n3 = closed_circle( $X20nVecteurBaseDonnee[2],$Y20nVecteurBaseDonnee[2], $ColeurPoints);
+$pt20n4 = closed_circle( $X20nVecteurBaseDonnee[3],$Y20nVecteurBaseDonnee[3], $ColeurPoints);
+$pt20n5 = closed_circle( $X20nVecteurBaseDonnee[4],$Y20nVecteurBaseDonnee[4], $ColeurPoints);
+$pt20n6 = closed_circle( $X20nVecteurBaseDonnee[5],$Y20nVecteurBaseDonnee[5], $ColeurPoints);
+$pt20n7 = closed_circle( $X20nVecteurBaseDonnee[6],$Y20nVecteurBaseDonnee[6], $ColeurPoints);
+$pt20n8 = closed_circle( $X20nVecteurBaseDonnee[7],$Y20nVecteurBaseDonnee[7], $ColeurPoints);
+$pt20n9 = closed_circle( $X20nVecteurBaseDonnee[8],$Y20nVecteurBaseDonnee[8], $ColeurPoints);
+$pt20n10 = closed_circle( $X20nVecteurBaseDonnee[9],$Y20nVecteurBaseDonnee[9], $ColeurPoints);
+$pt20n11 = closed_circle( $X20nVecteurBaseDonnee[10],$Y20nVecteurBaseDonnee[10], $ColeurPoints);
+$pt20n12 = closed_circle( $X20nVecteurBaseDonnee[11],$Y20nVecteurBaseDonnee[11], $ColeurPoints);
+$pt20n13 = closed_circle( $X20nVecteurBaseDonnee[12],$Y20nVecteurBaseDonnee[12], $ColeurPoints);
+$pt20n14 = closed_circle( $X20nVecteurBaseDonnee[13],$Y20nVecteurBaseDonnee[13], $ColeurPoints);
+$pt20n15 = closed_circle( $X20nVecteurBaseDonnee[14],$Y20nVecteurBaseDonnee[14], $ColeurPoints);
+$graphique20n->stamps($pt20n1,$pt20n2,$pt20n3,$pt20n4,$pt20n5,$pt20n6, $pt20n7,$pt20n8,$pt20n9, $pt20n10, $pt20n11, $pt20n12, $pt20n13, $pt20n14, $pt20n15);
+$imageG20n = image(insertGraph($graphique20n),width =>300,height=>250,tex_size=>360);
+
+#Graphique r = -0.60
+$graphique60n = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique60n -> lb('reset');
+$graphique60n -> lb(new Label ( $AffichageX60,0,'X','black','left','top'));
+$graphique60n -> lb(new Label ( 0,$AffichageY60,'Y','black','right','top'));
+@X60nVecteurBaseDonnee = (5,5,5,7,3,2,9,7,1,8,8,2,4,6,7);
+@Y60nVecteurBaseDonnee = (8,5,4,5,5,6,5,4,8,5,2,8,3,6,3);
+$pt60n1 = closed_circle( $X60nVecteurBaseDonnee[0],$Y60nVecteurBaseDonnee[0], $ColeurPoints);
+$pt60n2 = closed_circle( $X60nVecteurBaseDonnee[1],$Y60nVecteurBaseDonnee[1], $ColeurPoints);
+$pt60n3 = closed_circle( $X60nVecteurBaseDonnee[2],$Y60nVecteurBaseDonnee[2], $ColeurPoints);
+$pt60n4 = closed_circle( $X60nVecteurBaseDonnee[3],$Y60nVecteurBaseDonnee[3], $ColeurPoints);
+$pt60n5 = closed_circle( $X60nVecteurBaseDonnee[4],$Y60nVecteurBaseDonnee[4], $ColeurPoints);
+$pt60n6 = closed_circle( $X60nVecteurBaseDonnee[5],$Y60nVecteurBaseDonnee[5], $ColeurPoints);
+$pt60n7 = closed_circle( $X60nVecteurBaseDonnee[6],$Y60nVecteurBaseDonnee[6], $ColeurPoints);
+$pt60n8 = closed_circle( $X60nVecteurBaseDonnee[7],$Y60nVecteurBaseDonnee[7], $ColeurPoints);
+$pt60n9 = closed_circle( $X60nVecteurBaseDonnee[8],$Y60nVecteurBaseDonnee[8], $ColeurPoints);
+$pt60n10 = closed_circle( $X60nVecteurBaseDonnee[9],$Y60nVecteurBaseDonnee[9], $ColeurPoints);
+$pt60n11 = closed_circle( $X60nVecteurBaseDonnee[10],$Y60nVecteurBaseDonnee[10], $ColeurPoints);
+$pt60n12 = closed_circle( $X60nVecteurBaseDonnee[11],$Y60nVecteurBaseDonnee[11], $ColeurPoints);
+$pt60n13 = closed_circle( $X60nVecteurBaseDonnee[12],$Y60nVecteurBaseDonnee[12], $ColeurPoints);
+$pt60n14 = closed_circle( $X60nVecteurBaseDonnee[13],$Y60nVecteurBaseDonnee[13], $ColeurPoints);
+$pt60n15 = closed_circle( $X60nVecteurBaseDonnee[14],$Y60nVecteurBaseDonnee[14], $ColeurPoints);
+$graphique60n->stamps($pt60n1,$pt60n2,$pt60n3,$pt60n4,$pt60n5,$pt60n6, $pt60n7,$pt60n8,$pt60n9, $pt60n10, $pt60n11, $pt60n12, $pt60n13, $pt60n14, $pt60n15);
+$imageG60n = image(insertGraph($graphique60n),width =>300,height=>250,tex_size=>360);
+
+
+
+#Graphique r =-0.90
+$graphique90n = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique90n -> lb('reset');
+$graphique90n -> lb(new Label ( $AffichageX60,0,'X','black','left','top'));
+$graphique90n -> lb(new Label ( 0,$AffichageY60,'Y','black','right','top'));
+@X90nVecteurBaseDonnee = (2,2.5,3,3.5,4,4.5,5,5.5, 6, 6.5, 7, 7.5,8, 8.5, 9);
+@Y90nVecteurBaseDonnee = (2, 1.5,2.5,5,3,5.5,5.5,5,4,7,6.5,8,9,8,7);
+$pt90n1 = closed_circle( $X90nVecteurBaseDonnee[0],$Y90nVecteurBaseDonnee[14], $ColeurPoints);
+$pt90n2 = closed_circle( $X90nVecteurBaseDonnee[1],$Y90nVecteurBaseDonnee[13], $ColeurPoints);
+$pt90n3 = closed_circle( $X90nVecteurBaseDonnee[2],$Y90nVecteurBaseDonnee[12], $ColeurPoints);
+$pt90n4 = closed_circle( $X90nVecteurBaseDonnee[3],$Y90nVecteurBaseDonnee[11], $ColeurPoints);
+$pt90n5 = closed_circle( $X90nVecteurBaseDonnee[4],$Y90nVecteurBaseDonnee[10], $ColeurPoints);
+$pt90n6 = closed_circle( $X90nVecteurBaseDonnee[5],$Y90nVecteurBaseDonnee[9], $ColeurPoints);
+$pt90n7 = closed_circle( $X90nVecteurBaseDonnee[6],$Y90nVecteurBaseDonnee[8], $ColeurPoints);
+$pt90n8 = closed_circle( $X90nVecteurBaseDonnee[7],$Y90nVecteurBaseDonnee[7], $ColeurPoints);
+$pt90n9 = closed_circle( $X90nVecteurBaseDonnee[8],$Y90nVecteurBaseDonnee[6], $ColeurPoints);
+$pt90n10 = closed_circle( $X90nVecteurBaseDonnee[9],$Y90nVecteurBaseDonnee[5], $ColeurPoints);
+$pt90n11 = closed_circle( $X90nVecteurBaseDonnee[10],$Y90nVecteurBaseDonnee[4], $ColeurPoints);
+$pt90n12 = closed_circle( $X90nVecteurBaseDonnee[11],$Y90nVecteurBaseDonnee[3], $ColeurPoints);
+$pt90n13 = closed_circle( $X90nVecteurBaseDonnee[12],$Y90nVecteurBaseDonnee[2], $ColeurPoints);
+$pt90n14 = closed_circle( $X90nVecteurBaseDonnee[13],$Y90nVecteurBaseDonnee[1], $ColeurPoints);
+$pt90n15 = closed_circle( $X90nVecteurBaseDonnee[14],$Y90nVecteurBaseDonnee[0], $ColeurPoints);
+$graphique90n->stamps($pt90n1,$pt90n2,$pt90n3,$pt90n4,$pt90n5,$pt90n6, $pt90n7,$pt90n8,$pt90n9, $pt90n10, $pt90n11, $pt90n12, $pt90n13, $pt90n14, $pt90n15);
+$imageG90n = image(insertGraph($graphique90n),width =>300,height=>250,tex_size=>360);
+
+#Graphique r =-0.95
+$graphique95n = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique95n -> lb('reset');
+$graphique95n -> lb(new Label ( $AffichageX60,0,'X','black','left','top'));
+$graphique95n -> lb(new Label ( 0,$AffichageY60,'Y','black','right','top'));
+$temp95n = random(0,3);
+$temp95n =3;
+if ($temp95n == 0)
+{
+@X95nVecteurBaseDonnee = (2,2.5,3,3.5,4,4.5,5,5.5, 6, 6.5, 6.8, 7.5,8, 8.5, 9);
+@Y95nVecteurBaseDonnee = (2,2.5,4,3.5,4,4.5,5,5.5, 6, 6.5, 7, 6.5,8, 8.5, 9);}
+elsif ($temp95n == 1)
+{
+@X95nVecteurBaseDonnee = (2,2.5,3,3.5,4.2,4.5,5,5.5, 6, 6.5, 7, 7.2,8, 8.5, 9);
+@Y95nVecteurBaseDonnee = (2,2.5,3,3.5,3,4.5,5,5.5, 6, 6.5, 7, 8.5,8, 8.5, 9);}
+elsif ($temp95n == 2)
+{
+@X95nVecteurBaseDonnee = (2,2.5,3,3.5,4,4.5,4.7,5.5, 6, 6.5, 7, 7.5,8, 8.7, 9);
+@Y95nVecteurBaseDonnee = (2,2.5,3,3.5,4,4.5,5.5,5.5, 6, 6.5, 7, 7.5,8, 7.5, 9);}
+elsif ($temp95n == 3)
+{
+@X95nVecteurBaseDonnee = (2,2.5,3,3.5,4,4.5,5,5.5, 6, 6.5, 6.8, 7.5,8, 8.5, 9);
+@Y95nVecteurBaseDonnee = (2,2.5,2,3.5,4,4.5,5,5.5, 6, 6.5, 7.5, 7.5,8, 8.5, 9);}
+$pt95n1 = closed_circle( $X95nVecteurBaseDonnee[0],$Y95nVecteurBaseDonnee[14], $ColeurPoints);
+$pt95n2 = closed_circle( $X95nVecteurBaseDonnee[1],$Y95nVecteurBaseDonnee[13], $ColeurPoints);
+$pt95n3 = closed_circle( $X95nVecteurBaseDonnee[2],$Y95nVecteurBaseDonnee[12], $ColeurPoints);
+$pt95n4 = closed_circle( $X95nVecteurBaseDonnee[3],$Y95nVecteurBaseDonnee[11], $ColeurPoints);
+$pt95n5 = closed_circle( $X95nVecteurBaseDonnee[4],$Y95nVecteurBaseDonnee[10], $ColeurPoints);
+$pt95n6 = closed_circle( $X95nVecteurBaseDonnee[5],$Y95nVecteurBaseDonnee[9], $ColeurPoints);
+$pt95n7 = closed_circle( $X95nVecteurBaseDonnee[6],$Y95nVecteurBaseDonnee[8], $ColeurPoints);
+$pt95n8 = closed_circle( $X95nVecteurBaseDonnee[7],$Y95nVecteurBaseDonnee[7], $ColeurPoints);
+$pt95n9 = closed_circle( $X95nVecteurBaseDonnee[8],$Y95nVecteurBaseDonnee[6], $ColeurPoints);
+$pt95n10 = closed_circle( $X95nVecteurBaseDonnee[9],$Y95nVecteurBaseDonnee[5], $ColeurPoints);
+$pt95n11 = closed_circle( $X95nVecteurBaseDonnee[10],$Y95nVecteurBaseDonnee[4], $ColeurPoints);
+$pt95n12 = closed_circle( $X95nVecteurBaseDonnee[11],$Y95nVecteurBaseDonnee[3], $ColeurPoints);
+$pt95n13 = closed_circle( $X95nVecteurBaseDonnee[12],$Y95nVecteurBaseDonnee[2], $ColeurPoints);
+$pt95n14 = closed_circle( $X95nVecteurBaseDonnee[13],$Y95nVecteurBaseDonnee[1], $ColeurPoints);
+$pt95n15 = closed_circle( $X95nVecteurBaseDonnee[14],$Y95nVecteurBaseDonnee[0], $ColeurPoints);
+$graphique95n->stamps($pt95n1,$pt95n2,$pt95n3,$pt95n4,$pt95n5,$pt95n6, $pt95n7,$pt95n8,$pt95n9, $pt95n10, $pt95n11, $pt95n12, $pt95n13, $pt95n14, $pt95n15);
+$imageG95n = image(insertGraph($graphique95n),width =>300,height=>250,tex_size=>360);
+
+
+#Graphique r = -1
+$graphique10n = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0]);
+$graphique10n -> lb('reset');
+$graphique10n -> lb(new Label ( $AffichageX60,0,'X','black','left','top'));
+$graphique10n -> lb(new Label ( 0,$AffichageY60,'Y','black','right','top'));
+@X10nVecteurBaseDonnee = (2,2.5,3,3.5,4,4.5,5,5.5, 6, 6.5, 7, 7.5,8, 8.5, 9);
+@Y10nVecteurBaseDonnee = (2,2.5,3,3.5,4,4.5,5,5.5, 6, 6.5, 7, 7.5,8, 8.5, 9);
+$pt10n1 = closed_circle( $X10nVecteurBaseDonnee[0],$Y10nVecteurBaseDonnee[14], $ColeurPoints);
+$pt10n2 = closed_circle( $X10nVecteurBaseDonnee[1],$Y10nVecteurBaseDonnee[13], $ColeurPoints);
+$pt10n3 = closed_circle( $X10nVecteurBaseDonnee[2],$Y10nVecteurBaseDonnee[12], $ColeurPoints);
+$pt10n4 = closed_circle( $X10nVecteurBaseDonnee[3],$Y10nVecteurBaseDonnee[11], $ColeurPoints);
+$pt10n5 = closed_circle( $X10nVecteurBaseDonnee[4],$Y10nVecteurBaseDonnee[10], $ColeurPoints);
+$pt10n6 = closed_circle( $X10nVecteurBaseDonnee[5],$Y10nVecteurBaseDonnee[9], $ColeurPoints);
+$pt10n7 = closed_circle( $X10nVecteurBaseDonnee[6],$Y10nVecteurBaseDonnee[8], $ColeurPoints);
+$pt10n8 = closed_circle( $X10nVecteurBaseDonnee[7],$Y10nVecteurBaseDonnee[7], $ColeurPoints);
+$pt10n9 = closed_circle( $X10nVecteurBaseDonnee[8],$Y10nVecteurBaseDonnee[6], $ColeurPoints);
+$pt10n10 = closed_circle( $X10nVecteurBaseDonnee[9],$Y10nVecteurBaseDonnee[5], $ColeurPoints);
+$pt10n11 = closed_circle( $X10nVecteurBaseDonnee[10],$Y10nVecteurBaseDonnee[4], $ColeurPoints);
+$pt10n12 = closed_circle( $X10nVecteurBaseDonnee[11],$Y10nVecteurBaseDonnee[3], $ColeurPoints);
+$pt10n13 = closed_circle( $X10nVecteurBaseDonnee[12],$Y10nVecteurBaseDonnee[2], $ColeurPoints);
+$pt10n14 = closed_circle( $X10nVecteurBaseDonnee[13],$Y10nVecteurBaseDonnee[1], $ColeurPoints);
+$pt10n15 = closed_circle( $X10nVecteurBaseDonnee[14],$Y10nVecteurBaseDonnee[0], $ColeurPoints);
+$graphique10n->stamps($pt10n1,$pt10n2,$pt10n3,$pt10n4,$pt10n5,$pt10n6, $pt10n7,$pt10n8,$pt10n9, $pt10n10, $pt10n11, $pt10n12, $pt10n13, $pt10n14, $pt10n15);
+$imageG10n = image(insertGraph($graphique10n),width =>300,height=>250,tex_size=>360);
+
+$CorLin = list_random(-1,-0.95, -0.9,-0.6, -0.2, 0, 0.2, 0.6, 0.9, 0.95, 1);
+ 
+#$CorLin= 0;
+
+if ($CorLin == 0)
+{#Corrélation linéaire nulle
+$CorLinIntensite = "nulle";
+#Vecteur des graphiques
+@ImageGraphique60 = ($imageG00p,$imageG90p,$imageG10p,$imageG90n);
+}
+elsif ($CorLin == 0.2)
+{#Corrélation linéaire faible
+$CorLinIntensite = "faible et positive";
+@ImageGraphique60 = ($imageG20p,$imageG90p,$imageG10p,$imageG90n);
+}
+elsif ($CorLin == 0.6)
+{#Corrélation linéaire moyenne
+$CorLinIntensite = "moyenne et positive";
+@ImageGraphique60 = ($imageG60p,$imageG90p,$imageG10p,$imageG90n);
+}
+elsif ($CorLin == 0.9)
+{#Corrélation linéaire forte
+$CorLinIntensite = "forte et positive";
+@ImageGraphique60 = ($imageG90p,$imageG95p,$imageG10p,$imageG90n);
+}
+elsif ($CorLin == 0.95)
+{#Corrélation linéaire très forte
+$CorLinIntensite = "très forte et positive";
+@ImageGraphique60 = ($imageG95p,$imageG90p,$imageG10p,$imageG90n);
+}
+elsif ($CorLin == 1)
+{#Corrélation linéaire parfaite
+$CorLinIntensite = "parfaite et positive";
+@ImageGraphique60 = ($imageG10p,$imageG95p,$imageG90p,$imageG10n);
+}
+elsif ($CorLin == -0.2)
+{#Corrélation linéaire faible
+$CorLinIntensite = "faible et négative";
+@ImageGraphique60 = ($imageG20n,$imageG90n,$imageG10n,$imageG90p);
+}
+elsif ($CorLin == -0.6)
+{#Corrélation linéaire moyenne
+$CorLinIntensite = "moyenne et négative";
+@ImageGraphique60 = ($imageG60n,$imageG90n,$imageG10n,$imageG90p);
+}
+elsif ($CorLin == -0.9)
+{#Corrélation linéaire forte
+$CorLinIntensite = "forte et négative";
+@ImageGraphique60 = ($imageG90n,$imageG95n,$imageG10n,$imageG90p);
+}
+elsif ($CorLin ==-0.95)
+{#Corrélation linéaire très forte
+$CorLinIntensite = "très forte et négative";
+@ImageGraphique60 = ($imageG95n,$imageG90n,$imageG10n,$imageG90p);
+}
+elsif ($CorLin == -1)
+{#Corrélation linéaire parfaites
+$CorLinIntensite = "parfaite et négative";
+@ImageGraphique60 = ($imageG10n,$imageG95n,$imageG90n,$imageG10p);
+}
+
+
+
+
+
+
+
+
+
+@Choix = shuffle(4);
+#@Choix = (0,1,2,3);
+
+if ($Choix[0] == 0)
+{$RepPopUp60 = PopUp(["Sélectionner", "A", "B", "C", "D"], "A");}
+elsif ($Choix[1] == 0)
+{$RepPopUp60 = PopUp(["Sélectionner", "A", "B", "C", "D"], "B");}
+elsif ($Choix[2] == 0)
+{$RepPopUp60 = PopUp(["Sélectionner", "A", "B", "C", "D"], "C");}
+else
+{$RepPopUp60 = PopUp(["Sélectionner", "A", "B", "C", "D"], "D");}
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Indiquer le graphique dont la corrélation linéaire est $CorLinIntensite.
+\{$RepPopUp60->menu()\}
+$PAR
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"1pt", spacing=>2, padding=>2).
+  AlignedRow(["Graphique A","Graphique B"], align => CENTER, separation=>0).
+  AlignedRow(["$ImageGraphique60[$Choix[0]]","$ImageGraphique60[$Choix[1]]"], align => CENTER, separation=>0).
+  AlignedRow(["Graphique C","Graphique D"], align => CENTER, separation=>0).
+  AlignedRow(["$ImageGraphique60[$Choix[2]]","$ImageGraphique60[$Choix[3]]"], align => CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+$BR 
+Si nécessaire, cliquer sur un graphique pour l'agrandir.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepPopUp60->cmp() );
+
+
+ENDDOCUMENT(); 

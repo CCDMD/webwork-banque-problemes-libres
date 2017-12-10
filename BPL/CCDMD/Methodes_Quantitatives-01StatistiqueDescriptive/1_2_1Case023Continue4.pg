@@ -1,0 +1,265 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('fréquence absolue', 'fréquence relative', 'modalité', 'tableau', 'variable', 'variable quantitative continue')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl",
+);
+
+COMMENT("Niveau de difficulté : Facile. Tableau de distribution d'une variable quantitative continue (5 contextes) avec trois effectifs manquants. La solution a été programmée.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$temp1 = random(0,4);
+
+
+if ($temp1 == 0) 
+{
+@VecteurContexte = ("personnes","Taille (cm)", "Répartition d'étudiantes et d'étudiants $BR selon leur taille",
+"d'étudiantes et d'étudiants afin de connaitre leur taille en centimètres");
+@VecteurModalite = ("Moins de 160", "[160, 180[", "[180, 200[", "200 et plus");
+$Effectif1 = random(1,10);
+$Effectif2 = random(10,100);
+$Effectif3 = random(10,100);
+$Effectif4 = random(1,10);
+$EffectifTotal = Compute("$Effectif1 + $Effectif2 + $Effectif3 + $Effectif4");
+if ($EffectifTotal > 91 && $EffectifTotal <= 110 )
+{$Effectif1 = random(1,5);
+$Effectif2 = random(10,40);
+$Effectif3 = random(10,40);
+$Effectif4 = random(1,5);
+$EffectifTotal = Compute("$Effectif1 + $Effectif2 + $Effectif3 + $Effectif4");
+}
+@VecteurEffectif = ($Effectif1, $Effectif2, $Effectif3, $Effectif4);
+}
+elsif ($temp1 == 1)  {
+@VecteurContexte = ("personnes", "Poids (kg)", "Répartition des étudiantes et des étudiants $BR selon leur poids", "d'étudiantes et d'étudiants afin de connaitre leur poids en kilogrammes");
+@VecteurModalite = ("Moins de 60", "[60, 80[", "[80, 100[", "100 et plus");
+$Effectif1 = random(10, 50);
+$Effectif2 = random(10, 80);
+$Effectif3 = random(1, 20);
+$Effectif4 = random(1,5);
+$EffectifTotal = Compute("$Effectif1 + $Effectif2 + $Effectif3 + $Effectif4");
+if ($EffectifTotal > 91 && $EffectifTotal <= 110 )
+{$Effectif1 = random(10,40);
+$Effectif2 = random(10,40);
+$Effectif3 = random(1,5);
+$Effectif4 = random(1,5);
+$EffectifTotal = Compute("$Effectif1 + $Effectif2 + $Effectif3 + $Effectif4");
+}
+@VecteurEffectif = ($Effectif1, $Effectif2, $Effectif3, $Effectif4);
+}
+elsif ($temp1 == 2)  {
+@VecteurContexte = ("personnes", "Temps (heures)", "Répartition des étudiantes et des étudiants $BR selon leur nombre d'heures passées sur les réseaux sociaux", "d'étudiantes et d'étudiants afin de connaitre le nombre d'heures passées quotidiennement sur les réseaux sociaux");
+@VecteurModalite = ("Moins de 1", "[1, 3[", "[3, 5[", "5 et plus");
+$Effectif1 = random(20,80);
+$Effectif2 = random(20,200);
+$Effectif3 = random(20,80);
+$Effectif4 = random(5,20);
+$EffectifTotal = Compute("$Effectif1 + $Effectif2 + $Effectif3 + $Effectif4");
+if ($EffectifTotal > 91 && $EffectifTotal <= 110 )
+{$Effectif1 = random(10,20);
+$Effectif2 = random(10,40);
+$Effectif3 = random(10,20);
+$Effectif4 = random(1,5);
+$EffectifTotal = Compute("$Effectif1 + $Effectif2 + $Effectif3 + $Effectif4");
+}
+@VecteurEffectif = ($Effectif1, $Effectif2, $Effectif3, $Effectif4);
+}
+elsif ($temp1 == 3)  {
+@VecteurContexte = ("personnes", "Montant ($DOLLAR)", "Répartition des étudiantes et des étudiants $BR selon le montant dépensé pour leur forfait cellulaire", "d'étudiantes et d'étudiants afin de connaitre le montant dépensé pour leur forfait cellulaire");
+@VecteurModalite = ("Moins de 40", "[40, 60[", "[60, 80[", "80 et plus");
+$Effectif1 = random(30,100);
+$Effectif2 = random(30,200);
+$Effectif3 = random(30,80);
+$Effectif4 = random(30,80);
+$EffectifTotal = Compute("$Effectif1 + $Effectif2 + $Effectif3 + $Effectif4");
+if ($EffectifTotal > 91 && $EffectifTotal <= 110 )
+{$Effectif1 = random(10,20);
+$Effectif2 = random(10,40);
+$Effectif3 = random(10,20);
+$Effectif4 = random(1,5);
+$EffectifTotal = Compute("$Effectif1 + $Effectif2 + $Effectif3 + $Effectif4");
+}
+@VecteurEffectif = ($Effectif1, $Effectif2, $Effectif3, $Effectif4);
+}
+elsif ($temp1 == 4)  {
+@VecteurContexte = ("personnes", "Temps (min)", "Répartition des étudiantes et des étudiants $BR selon le temps pris pour se rendre au cégep", "d'étudiantes et d'étudiants afin de connaitre le temps en minutes pris pour se rendre au cégep le matin");
+@VecteurModalite = ("Moins de 20", "[20, 40[", "[40, 60[", "60 et plus");
+$Effectif1 = random(40,120);
+$Effectif2 = random(40,200);
+$Effectif3 = random(40,120);
+$Effectif4 = random(10,60);
+$EffectifTotal = Compute("$Effectif1 + $Effectif2 + $Effectif3 + $Effectif4");
+if ($EffectifTotal > 91 && $EffectifTotal <= 110 )
+{$Effectif1 = random(10,20);
+$Effectif2 = random(10,40);
+$Effectif3 = random(10,20);
+$Effectif4 = random(1,5);
+$EffectifTotal = Compute("$Effectif1 + $Effectif2 + $Effectif3 + $Effectif4");
+}
+@VecteurEffectif = ($Effectif1, $Effectif2, $Effectif3, $Effectif4);
+}
+
+#Cas 1: trois effectifs manquant
+$temp2 =random(0,3);
+if ($temp2 == 0) 
+{@AffichageEffectif = ("$Effectif1", ans_rule(5), ans_rule(5),ans_rule(5)); 
+@CompteurRep = (1, 2,3);
+$EffectifPresent = 0;}
+elsif ($temp2 == 1)  {@AffichageEffectif = (ans_rule(5), "$Effectif2", ans_rule(5),ans_rule(5)); 
+@CompteurRep = (0, 2,3);
+$EffectifPresent = 1;}
+elsif ($temp2 == 2)  {@AffichageEffectif = (ans_rule(5), ans_rule(5), "$Effectif3",ans_rule(5)); 
+@CompteurRep = (0, 1,3);
+$EffectifPresent = 2;}
+else {@AffichageEffectif = (ans_rule(5), ans_rule(5), ans_rule(5), "$Effectif4"); 
+@CompteurRep = (0, 1,2);
+$EffectifPresent = 3;}
+
+
+
+#Calcul des pourcentages
+$Pourcentage1t =Compute("$Effectif1/$EffectifTotal*100");
+$Pourcentage1tt = sprintf("%0.1f","$Pourcentage1t ");
+$Pourcentage2t = Compute("$Effectif2/$EffectifTotal*100");
+$Pourcentage2tt = sprintf("%0.1f","$Pourcentage2t ");
+$Pourcentage3t = Compute("$Effectif3/$EffectifTotal*100");
+$Pourcentage3tt = sprintf("%0.1f","$Pourcentage3t ");
+$Pourcentage4t = Compute("$Effectif4/$EffectifTotal*100");
+$Pourcentage4tt = sprintf("%0.1f","$Pourcentage4t ");
+$PourcentageTotalt = Compute("$Pourcentage1tt + $Pourcentage2tt + $Pourcentage3tt + $Pourcentage4tt");
+$PourcentageTotaltt = sprintf("%0.1f","$PourcentageTotalt ");
+
+#Ajuster un pourcentage si la somme ne donne pas 100.0
+if ($PourcentageTotaltt == 100.0)
+{$VariableTesting = 0;
+$Pourcentage1 = $Pourcentage1tt;
+$Pourcentage2 = $Pourcentage2tt;
+$Pourcentage3 = $Pourcentage3tt;
+$Pourcentage4 = $Pourcentage4tt;
+}
+elsif ($PourcentageTotaltt == 99.9)
+{$VariableTesting = 1;
+if ($EffectifPresent == 0)
+{$Pourcentage1 = Compute("$Pourcentage1tt + 0.1");
+$Pourcentage2 = $Pourcentage2tt;
+$Pourcentage3 = $Pourcentage3tt;
+$Pourcentage4 = $Pourcentage4tt;
+}
+elsif ($EffectifPresent == 1)
+{$Pourcentage2 = Compute("$Pourcentage2tt + 0.1");
+$Pourcentage1 = $Pourcentage1tt;
+$Pourcentage3 = $Pourcentage3tt;
+$Pourcentage4 = $Pourcentage4tt;
+}
+elsif ($EffectifPresent == 2)
+{$Pourcentage3 = Compute("$Pourcentage3tt + 0.1");
+$Pourcentage1 = $Pourcentage1tt;
+$Pourcentage2 = $Pourcentage2tt;
+$Pourcentage4 = $Pourcentage4tt;
+}
+elsif ($EffectifPresent == 3)
+{$Pourcentage4 = Compute("$Pourcentage4tt + 0.1");
+$Pourcentage1 = $Pourcentage1tt;
+$Pourcentage2 = $Pourcentage2tt;
+$Pourcentage3 = $Pourcentage3tt;
+}
+}
+elsif ($PourcentageTotaltt == 100.1)
+{$VariableTesting = 2;
+if ($EffectifPresent == 0)
+{$Pourcentage1 = Compute("$Pourcentage1tt - 0.1");
+$Pourcentage2 = $Pourcentage2tt;
+$Pourcentage3 = $Pourcentage3tt;
+$Pourcentage4 = $Pourcentage4tt;
+}
+elsif ($EffectifPresent == 1)
+{$Pourcentage2 = Compute("$Pourcentage2tt - 0.1");
+$Pourcentage1 = $Pourcentage1tt;
+$Pourcentage3 = $Pourcentage3tt;
+$Pourcentage4 = $Pourcentage4tt;
+}
+elsif ($EffectifPresent == 2)
+{$Pourcentage3 = Compute("$Pourcentage3tt - 0.1");
+$Pourcentage1 = $Pourcentage1tt;
+$Pourcentage2 = $Pourcentage2tt;
+$Pourcentage4 = $Pourcentage4tt;
+}
+elsif ($EffectifPresent == 3)
+{$Pourcentage4 = Compute("$Pourcentage4tt - 0.1");
+$Pourcentage1 = $Pourcentage1tt;
+$Pourcentage2 = $Pourcentage2tt;
+$Pourcentage3 = $Pourcentage3tt;
+}
+}
+
+$PourcentageTotal = "100.0";
+
+@AffichagePourcentage = ($Pourcentage1, $Pourcentage2, $Pourcentage3, $Pourcentage4);
+@VecteurPourcentage = ($Pourcentage1, $Pourcentage2, $Pourcentage3, $Pourcentage4);
+@RepEffectif = ($Effectif1, $Effectif2, $Effectif3, $Effectif4);
+@RepPourcentage = ($Pourcentage1, $Pourcentage2, $Pourcentage3, $Pourcentage4);
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Une enquête a été menée auprès $VecteurContexte[3]. Les résultats ont été compilés dans le tableau de distribution suivant.
+$PAR
+$BCENTER
+${BBOLD}
+$VecteurContexte[2]
+${EBOLD}
+$ECENTER
+
+
+$BR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+  AlignedRow(["${BBOLD} $VecteurContexte[1] ${EBOLD}","${BBOLD} Nombre d'étudiantes $BR et d'étudiants ${EBOLD}", "${BBOLD} Pourcentage d'étudiantes $BR et d'étudiants ${EBOLD}"], align => CENTER, separation=>0).
+ AlignedRow(["$VecteurModalite[0]","$AffichageEffectif[0]", "$AffichagePourcentage[0]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[1]","$AffichageEffectif[1]", "$AffichagePourcentage[1]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[2]","$AffichageEffectif[2]", "$AffichagePourcentage[2]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[3]","$AffichageEffectif[3]", "$AffichagePourcentage[3]"], align => CENTER, separation=>0).
+  AlignedRow(["${BBOLD} Total ${EBOLD}","${BBOLD} $EffectifTotal ${EBOLD}", "${BBOLD} $PourcentageTotal ${EBOLD}"], align => CENTER, separation=>0).
+EndTable()\}
+$PAR
+${BBOLD}Question : ${EBOLD} Compléter les cases manquantes. Arrondir, s'il y a lieu, les pourcentages à une décimale. 
+
+$BR 
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($RepEffectif[$CompteurRep[0]], tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($RepEffectif[$CompteurRep[1]], tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($RepEffectif[$CompteurRep[2]], tol => 0.00001, tolType => "absolute"));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Effectif de la classe "$VecteurModalite[$CompteurRep[0]]" : \(\displaystyle{$EffectifTotal \times \frac{@RepPourcentage[$CompteurRep[0]]}{100} = \frac{$EffectifTotal \times @RepPourcentage[$CompteurRep[0]]}{100} = $RepEffectif[$CompteurRep[0]]}\)
+$BR
+$BR
+Effectif de la classe "$VecteurModalite[$CompteurRep[1]]" : \(\displaystyle{$EffectifTotal \times \frac{@RepPourcentage[$CompteurRep[1]]}{100} = \frac{$EffectifTotal \times @RepPourcentage[$CompteurRep[1]]}{100} = $RepEffectif[$CompteurRep[1]]}\)
+$BR
+$BR
+Effectif de la classe "$VecteurModalite[$CompteurRep[2]]" : \(\displaystyle{$EffectifTotal \times \frac{@RepPourcentage[$CompteurRep[2]]}{100}  = \frac{$EffectifTotal \times @RepPourcentage[$CompteurRep[2]]}{100} = $RepEffectif[$CompteurRep[2]]}\)
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

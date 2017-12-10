@@ -1,0 +1,123 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('indicateur', 'indice')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl","PGchoicemacros.pl");
+
+COMMENT("VERSION CLASSE INVERSEE. Niveau de difficulté: Facile. Calculer l'IPC et le taux d'inflation. La solution a été programmée. La réponse doit absolument être arrondie selon les spécifications de la question.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$temp1 = random(0,2);
+
+
+if ($temp1 == 0)
+{
+@VecteurModalite = ("juillet 2014", "janvier 2015", "juillet 2015", "janvier 2016", "juillet 2016", "janvier 2017" );
+@VecteurModaliteMajuscule = ("Juillet 2014", "Janvier 2015", "Juillet 2015", "Janvier 2016", "Juillet 2016", "Janvier 2017" );
+}
+elsif ($temp1 == 1)
+{
+@VecteurModalite = ("juillet 2013", "janvier 2014", "juillet 2014", "janvier 2015", "juillet 2015", "janvier 2016" );
+@ VecteurModaliteMajuscule = ("Juillet 2013", "Janvier 2014", "Juillet 2014", "Janvier 2015", "Juillet 2015", "Janvier 2016" );
+}
+else
+{
+@VecteurModalite = ("janvier 2014", "juillet 2014", "janvier 2015", "juillet 2015", "janvier 2016", "juillet 2016" );
+@ VecteurModaliteMajuscule = ("Janvier 2014", "Juillet 2014", "Janvier 2015", "Juillet 2015", "Janvier 2016", "Juillet 2016" );
+}
+$Indice1t = random(122.7,123.9,0.1);
+$Indice2t = random(124,125.5,0.1);
+$Indice3t = random(125.6,126.5,0.1);
+$Indice4t = random(126.6,127,0.1);
+$Indice5t = random(127.1,128,0.1);
+$Indice6t = random(128.1,130,0.1);
+
+
+$Indice1 = sprintf("%0.1f","$Indice1t ");
+$Indice2 = sprintf("%0.1f","$Indice2t ");
+$Indice3 = sprintf("%0.1f","$Indice3t ");
+$Indice4 = sprintf("%0.1f","$Indice4t ");
+$Indice5 = sprintf("%0.1f","$Indice5t ");
+$Indice6 = sprintf("%0.1f","$Indice6t ");
+
+@VecteurIndice = ($Indice1, $Indice2, $Indice3, $Indice4, $Indice5, $Indice6);
+
+$QuestionPeriode1 = random(0,3);
+$QuestionPeriode2 = Compute("$QuestionPeriode1 + 2");
+$TauxInflationt = Compute("(($VecteurIndice[$QuestionPeriode2] - $VecteurIndice[$QuestionPeriode1])/$VecteurIndice[$QuestionPeriode1])*100");
+
+$TauxInflation =  sprintf("%0.1f","$TauxInflationt ");
+
+@VecteurPeriodeRef = (2002);
+$CompteurPeriodeRef = 0;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+L’indice des prix à la consommation (IPC) est un indice synthétique qui permet de suivre l’évolution des dépenses liées à la consommation, donc de suivre l'évolution du cout de la vie. L'IPC ne permet pas de connaitre le cout de la vie, parce que l'IPC est un indice, mais il permet de déterminer la variation du cout de la vie. Cette variation se calcule comme un pourcentage de variation des IPC :
+$PAR $SPACE $SPACE $SPACE
+
+\(\displaystyle {\rm{T_{[période 1,période 2]} = \frac{IPC_{période 2} - IPC_{période 1}}{IPC_{période 1}} \times 100}} \)
+$PAR Lorsque la variation est positive, elle s'appelle un taux d'inflation. Lorsqu'elle est négative, elle devient un taux de déflation.
+$PAR
+${BBOLD}Exemple :${EBOLD} Voici les indices des prix à la consommation (IPC) pour différentes périodes. 
+$PAR
+$BCENTER
+
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+ AlignedRow(["${BBOLD} Période ${EBOLD}","${BBOLD} IPC $BR ($VecteurPeriodeRef[$CompteurPeriodeRef] = 100) ${EBOLD}"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModaliteMajuscule[0]","$VecteurIndice[0]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModaliteMajuscule[1]","$VecteurIndice[1]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModaliteMajuscule[2]","$VecteurIndice[2]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModaliteMajuscule[3]","$VecteurIndice[3]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurModaliteMajuscule[4]","$VecteurIndice[4]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurModaliteMajuscule[5]","$VecteurIndice[5]"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$ECENTER
+$PAR 
+${BBOLD}Question :${EBOLD} Calculer le taux d'inflation entre 
+$VecteurModalite[$QuestionPeriode1] et $VecteurModalite[$QuestionPeriode2]. Arrondir la réponse à une décimale.
+$PAR $SPACE $SPACE $SPACE
+Taux d'inflation pour [$VecteurModalite[$QuestionPeriode1], $VecteurModalite[$QuestionPeriode2]] : \{ ans_rule(8)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($TauxInflation, tol => 0.00001, tolType => "absolute"));
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+$PAR
+Le taux d'inflation se calcule comme suit : 
+$PAR
+Taux d'inflation pour [$VecteurModalite[$QuestionPeriode1], $VecteurModalite[$QuestionPeriode2]] = 
+\(\displaystyle { \rm{\frac{IPC_{$VecteurModalite[$QuestionPeriode2]} - IPC_{$VecteurModalite[$QuestionPeriode1]}}{IPC_{$VecteurModalite[$QuestionPeriode1]}} \times 100}
+= \frac{$VecteurIndice[$QuestionPeriode2]- $VecteurIndice[$QuestionPeriode1]}{$VecteurIndice[$QuestionPeriode1]} \times 100} = $TauxInflation \)
+
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

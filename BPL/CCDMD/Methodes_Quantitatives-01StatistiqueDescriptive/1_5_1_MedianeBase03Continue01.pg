@@ -1,0 +1,284 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('fréquence absolue', 'mesure de tendance centrale', 'modalité', 'médiane', 'tableau', 'variable', 'variable quantitative continue', 'échantillon')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl","PGauxiliaryFunctions.pl",
+"PGcourse.pl","unionTables.pl", "PGchoicemacros.pl"
+);
+
+
+COMMENT("Niveau de difficulté : Facile. Déterminer la médiane en utilisant la série statistique d'une variable continue. Aucune valeur n'est nulle. Il y a 4 contextes. La série peut être paire ou impaire. La solution a été programmée.");
+
+TEXT(beginproblem());
+
+
+#Choisir le contexte
+$TypeContexte = random(0,3);
+
+#Choisir si la série est paire ou non
+#0 = Non
+#1 = Oui
+$SeriePaire = random(0,1);
+
+#Les effectifs en X et Y sont communs à tous les contextes.
+#Variable Y est utilisé
+if ($TypeContexte == 0)
+{@VecteurContexte = ("X : Sexe", "Temps (min)", "Répartition des étudiants selon $BR le temps pris pour aller au cégep", "d'étudiantes et d'étudiants afin de connaitre le temps en minutes pris pour aller au cégep le matin", "afin de connaitre le temps en minutes pris pour aller au cégep le matin");
+$Y01UniteS = "minute";
+$Y01UniteP = "minutes";
+$Y01Interpretation1 = "des étudiants ont pris";
+$Y01Interpretation2 = "pour se rendre au cégep.";
+
+$ValeurMin = 5.0;
+$ValeurMax = 50.0;
+$ValeurTol = 0.1;
+$ValeurTolA = "%0.1f";
+
+@Y01VecteurModalite = ("[0, 20[", "[20, 40[", "[40, 60[","[60, 80[" );
+@Y01VecteurModaliteValeur = (10, 30, 50, 70);
+@Y01VecteurModaliteClasse = (0, 20, 40, 60, 80);
+@Y01VecteurModaliteG = (10, 30, 50, "Temps", 0, 70);
+$Y01tolerance = 1;
+@graphique60T = ("Répartition des étudiants selon", "le temps pris pour aller au cégep");
+@graphique60T = ("Repartition des etudiants selon", "le temps pris pour aller au cegep");
+
+}
+elsif ($TypeContexte == 1)
+{@VecteurContexte = ("X : Sexe", "Montant ($DOLLAR)", "Répartition des étudiants selon $BR le montant dépensé mensuellement pour le forfait cellulaire", "d'étudiantes et d'étudiants afin de connaitre le montant dépensé mensuellement pour le forfait cellulaire", "afin de connaitre le montant dépensé mensuellement pour le forfait cellulaire");
+$Y01UniteS = "$DOLLAR";
+$Y01UniteP = "$DOLLAR";
+$Y01Interpretation1 = "des étudiants ont dépensé mensuellement";
+$Y01Interpretation2 ="pour leur forfait cellulaire.";
+
+$ValeurMin = 25.0;
+$ValeurMax = 100.0;
+$ValeurTol = 0.01;
+$ValeurTolA = "%0.2f";
+@Y01VecteurModalite = ("[0, 40[", "[40, 80[", "[80, 120[", "[90, 120[" );
+@Y01VecteurModaliteValeur = (20, 60, 100);
+@Y01VecteurModaliteClasse = (0, 40, 80, 120, 160);
+@Y01VecteurModaliteG = (20, 60, 100, "Montant", 0, 140);
+$Y01tolerance = 1;
+@graphique60T = ("Répartition des étudiants selon", "le montant dépensé en forfait cellulaire");
+@graphique60T = ("Repartition des etudiants selon", "le montant depense en forfait cellulaire");
+}
+
+elsif ($TypeContexte == 2)
+{@VecteurContexte = ("X : Sexe", "Temps (heures)", "Répartition des étudiants selon $BR le temps consacré à l'étude d'un examen final", "d'étudiantes et d'étudiants afin de connaitre le temps (en heures) pris pour étudier l'examen final d'un cours de la dernière session", "afin de connaitre le temps (en heures) pris pour étudier l'examen final d'un cours de la dernière session");
+$Y01UniteS = "heure";
+$Y01UniteP = "heures";
+$Y01Interpretation1 = "des étudiants ont pris";
+$Y01Interpretation2 = "pour étudier l'examen final.";
+
+$ValeurMin = 0.5;
+$ValeurMax = 8.0;
+$ValeurTol = 0.1;
+$ValeurTolA = "%0.1f";
+
+@Y01VecteurModalite = ("[0, 2[", "[2, 4[", "[4, 6[", "[6, 8[");
+@Y01VecteurModaliteValeur = (1, 3, 5, 7);
+@Y01VecteurModaliteClasse = (0, 2, 4, 6, 8);
+@Y01VecteurModaliteG = (1, 3, 5, "Temps", 0, 7);
+$Y01tolerance = 0.3;
+@graphique60T = ("Répartition des étudiants selon", "le temps consacré à étudier un examen");
+@graphique60T = ("Repartition des etudiants selon", "le temps consacre a etudier un examen");
+}
+elsif ($TypeContexte == 3)
+{@VecteurContexte = ("X : Sexe", "Montant ($DOLLAR)", "Répartition des étudiants selon $BR le montant dépensé à la cafétéria la semaine dernière", "d'étudiantes et d'étudiants afin de connaitre le montant dépensé à la cafétéria la semaine dernière", "afin de connaitre le montant dépensé à la cafétéria la semaine dernière");
+$Y01UniteS = "$DOLLAR";
+$Y01UniteP = "$DOLLAR";
+$Y01Interpretation1 = "des étudiants ont dépensé";
+$Y01Interpretation2 = "à la cafétéria la semaine dernière.";
+
+$ValeurMin = 5.0;
+$ValeurMax = 30.0;
+$ValeurTol = 0.01;
+$ValeurTolA = "%0.2f";
+
+@Y01VecteurModalite = ("[0, 10[", "[10, 20[", "[20, 30[", "[30, 40[");
+@Y01VecteurModaliteValeur = (5, 15, 25, 35);
+@Y01VecteurModaliteClasse = (0, 10, 20, 30, 40);
+@Y01VecteurModaliteG = (5, 15, 25, "Montant", 0, 35);
+$Y01tolerance = 1;
+@graphique60T = ("Répartition des étudiants selon", "le montant dépensé à la cafétéria");
+@graphique60T = ("Repartition des etudiants selon", "le montant depense a la cafeteria");
+}
+
+
+
+$Modalite1t = random($ValeurMin,$ValeurMax,$ValeurTol); 
+$Modalite2t = random($ValeurMin,$ValeurMax,$ValeurTol);
+$Modalite3t = random($ValeurMin,$ValeurMax,$ValeurTol);
+$Modalite4t = random($ValeurMin,$ValeurMax,$ValeurTol);
+$Modalite5t = random($ValeurMin,$ValeurMax,$ValeurTol);
+$Modalite6t = random($ValeurMin,$ValeurMax,$ValeurTol);
+$Modalite7t = random($ValeurMin,$ValeurMax,$ValeurTol);
+$Modalite8t = random($ValeurMin,$ValeurMax,$ValeurTol);
+$Modalite9t = random($ValeurMin,$ValeurMax,$ValeurTol);
+$Modalite10t = random($ValeurMin,$ValeurMax,$ValeurTol);
+
+$Modalite1 = sprintf($ValeurTolA,$Modalite1t);
+$Modalite2 = sprintf($ValeurTolA,$Modalite2t);
+$Modalite3 = sprintf($ValeurTolA,$Modalite3t);
+$Modalite4 = sprintf($ValeurTolA,$Modalite4t);
+$Modalite5 = sprintf($ValeurTolA,$Modalite5t);
+$Modalite6 = sprintf($ValeurTolA,$Modalite6t);
+$Modalite7 = sprintf($ValeurTolA,$Modalite7t);
+$Modalite8 = sprintf($ValeurTolA,$Modalite8t);
+$Modalite9 = sprintf($ValeurTolA,$Modalite9t);
+$Modalite10 = sprintf($ValeurTolA,$Modalite10t);
+
+
+if ($SeriePaire == 1)
+{#La série est paire
+$n = 6;
+@VecteurBaseDonnee = ( $Modalite1, $Modalite2, $Modalite3, $Modalite4, $Modalite5, $Modalite6); 
+$MedianePosition = 3.5;
+$MedianePosition1 = 3;
+$MedianePosition2 = 4;
+
+$MedianeCompteur = 2;
+}
+else
+{#La série est impaire
+$n = 5;
+@VecteurBaseDonnee = ( $Modalite1, $Modalite2, $Modalite3, $Modalite4, $Modalite5); 
+$MedianePosition = 3;
+$MedianeCompteur = 2;
+}
+
+$nAdd = Compute("$n +1");
+@ListeCroissante = num_sort(@VecteurBaseDonnee);
+
+
+
+
+#@AffichageBase = shuffle($n);
+
+
+#Explication du calcul de la médiane
+
+if ($SeriePaire == 1)
+{#La série est paire
+$Z01mediane = Compute("($ListeCroissante[$MedianeCompteur] + $ListeCroissante[$MedianeCompteur+1])/2");
+
+if ($ListeCroissante[$MedianeCompteur] == $ListeCroissante[$MedianeCompteur+1])
+{$medianeExplication = "La valeur de la médiane est la moyenne entre la valeur de la position $MedianePosition1 et celle de la position $MedianePosition2. Ainsi la médiane est \(\displaystyle{\frac{$ListeCroissante[$MedianeCompteur] + $ListeCroissante[$MedianeCompteur+1]}{2} = $Z01mediane.}\) Comme c'est la même valeur, il faudra utiliser ${BITALIC}au moins 50 %${EITALIC} dans l'interprétation.";
+
+$mediane50 ="Au moins 50 %";}
+else
+{$medianeExplication = "La valeur de la médiane est la moyenne entre la valeur de la position $MedianePosition1 et celle de la position $MedianePosition2. Ainsi la médiane est \(\displaystyle{\frac{$ListeCroissante[$MedianeCompteur] + $ListeCroissante[$MedianeCompteur+1]}{2} = $Z01mediane.}\)";
+$mediane50 ="50 %";}
+}
+else
+{#La série est impaire
+$Z01mediane = $ListeCroissante[$MedianeCompteur];
+$medianeExplication = "La valeur de la médiane est $Z01mediane.";
+$mediane50 ="Au moins 50 %";
+}
+
+
+#Interprétation de la médiane
+if ($Z01mediane < 2)
+{if ($Z01mediane == 0)
+{$medianeInterpretation = "$mediane50 $Y01Interpretation1  $Z01mediane $Y01UniteS $Y01Interpretation2";}
+else
+{$medianeInterpretation = "$mediane50 $Y01Interpretation1 $Z01mediane $Y01UniteS ou moins $Y01Interpretation2";}
+}
+else
+{$medianeInterpretation = "$mediane50 $Y01Interpretation1 $Z01mediane $Y01UniteP ou moins $Y01Interpretation2";}
+
+
+if ($SeriePaire == 1)
+{#La série est paire
+Context()->texStrings;
+BEGIN_TEXT
+Une enquête a été menée auprès d'un échantillon $VecteurContexte[3]. La série statistique ci-dessous représente les données recueillies.
+$PAR
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([$VecteurBaseDonnee[0],$VecteurBaseDonnee[1],$VecteurBaseDonnee[2], $VecteurBaseDonnee[3],$VecteurBaseDonnee[4],$VecteurBaseDonnee[5] ], align => CENTER, separation=>0).
+EndTable()\}
+$ECENTER
+$BR
+${BBOLD}Question : ${EBOLD} Déterminer la médiane de la série statistique.
+$PAR $SPACE $SPACE $SPACE Médiane = \{ans_rule(5)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($Z01mediane));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La médiane est la valeur centrale (la valeur médiane) d'une série statistique ordonnée. Elle divise cette série statistique en deux parties égales : il y a autant d'unités statistiques qui ont une valeur inférieure ou égale à la médiane que d'unités statistiques qui ont une valeur supérieure ou égale à la médiane.
+$PAR
+Il faut donc d'abord ordonner la série. 
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow(["${BBOLD}Position${EBOLD}",1,2,3,4,5,6], align => CENTER, separation=>0).
+AlignedRow(["${BBOLD}Valeur${EBOLD}", $ListeCroissante[0],$ListeCroissante[1],$ListeCroissante[2], $ListeCroissante[3],$ListeCroissante[4], $ListeCroissante[5] ], align => CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+$PAR
+Ensuite, calculons la position de la médiane. Il y a $n données (${BITALIC}n${EITALIC}
+ = $n). $BR $SPACE $SPACE $SPACE \(\displaystyle{\frac{n+1}{2} = \frac{$n + 1}{2} = \frac{$nAdd}{2} = $MedianePosition}\).$BR La médiane se trouve donc à la position $MedianePosition. $medianeExplication
+$PAR
+${BBOLD}Interprétation de la médiane :${EBOLD} $medianeInterpretation
+END_SOLUTION
+Context()->normalStrings;
+}
+else
+{#La série est impaire
+Context()->texStrings;
+BEGIN_TEXT
+Une enquête a été menée auprès d'un échantillon $VecteurContexte[3]. La série statistique ci-dessous représente les données recueillies.
+$PAR
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([$VecteurBaseDonnee[0],$VecteurBaseDonnee[1],$VecteurBaseDonnee[2], $VecteurBaseDonnee[3],$VecteurBaseDonnee[4] ], align => CENTER, separation=>0).
+EndTable()\}
+$ECENTER
+$BR
+${BBOLD}Question : ${EBOLD} Déterminer la médiane de la série statistique.
+$PAR $SPACE $SPACE $SPACE Médiane = \{ans_rule(5)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($Z01mediane));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La médiane est la valeur centrale (la valeur médiane) d'une série statistique ordonnée. Elle divise cette série statistique en deux parties égales : il y a autant d'unités statistiques qui ont une valeur inférieure ou égale à la médiane que d'unités statistiques qui ont une valeur supérieure ou égale à la médiane.
+$PAR
+Il faut donc d'abord ordonner la série. 
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow(["${BBOLD}Position${EBOLD}",1,2,3,4,5], align => CENTER, separation=>0).
+AlignedRow(["${BBOLD}Valeur${EBOLD}", $ListeCroissante[0],$ListeCroissante[1],$ListeCroissante[2], $ListeCroissante[3],$ListeCroissante[4] ], align => CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+$PAR
+Ensuite, calculons la position de la médiane. Il y a $n données (${BITALIC}n${EITALIC}
+ = $n). $BR $SPACE $SPACE $SPACE \(\displaystyle{\frac{n+1}{2} = \frac{$n + 1}{2} = \frac{$nAdd}{2} = $MedianePosition}\).$BR La médiane se trouve donc à la position $MedianePosition. $medianeExplication
+$PAR
+${BBOLD}Interprétation de la médiane :${EBOLD} $medianeInterpretation
+END_SOLUTION
+Context()->normalStrings;
+}
+
+ENDDOCUMENT(); 

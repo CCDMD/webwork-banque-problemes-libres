@@ -1,0 +1,196 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('indicateur', 'taux')
+
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "PGchoicemacros.pl");
+
+COMMENT("VERSION CLASSE INVERSÉE. Niveau de difficulté: Facile. Taux de natalité à calculer pour une des provinces du Canada. L'ordre de présentation des modalités n'est pas aléatoire. La solution a été programmée. La réponse doit absolument être arrondie selon les spécifications de la question.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$temp1 =random(0,8);
+
+
+# Effectif1 = Naissance
+# Effectif2 = Femme âgée entre 15 et 49 ans
+# Effectif3 = Décès
+# Effectif4 = Population
+
+
+if ($temp1 == 0) 
+{$Lieu = "Terre-Neuve-et-Labrador";
+$LieuB = "à Terre-Neuve-et-Labrador";
+$LieuA = " de Terre-Neuve-et-Labrador";
+$Effectif1 = random(4200,5000);
+$Effectif2 = random(110000,170000);
+$Effectif3 = random(4000,4600);
+$Effectif4 = random(520000,560000);
+}
+elsif ($temp1 == 1) 
+{$Lieu = "Ile-du-Prince-Édouard";
+$LieuA = "de l'Ile-du-Prince-Édouard";
+$LieuB = "à l'Ile-du-Prince-Édouard";
+$Effectif1 = random(1300,1500);
+$Effectif2 = random(30000,35000);
+$Effectif3 = random(1000,1300);
+$Effectif4 = random(140000,160000);
+}
+elsif ($temp1 == 2) 
+{$Lieu = "Nouvelle-Écosse";
+$LieuA = "de la Nouvelle-Écosse";
+$LieuB = "en Nouvelle-Écosse";
+$Effectif1 = random(8000,9000);
+$Effectif2 = random(200000,260000);
+$Effectif3 = random(7000,8000);
+$Effectif4 = random(900000,1100000);
+}
+elsif ($temp1 == 3) 
+{$Lieu = "Nouveau-Brunswick";
+$LieuA = "du Nouveau-Brunswick";
+$LieuB = "au Nouveau-Brunswick";
+$Effectif1 = random(6800,7600);
+$Effectif2 = random(150000,180000);
+$Effectif3 = random(6000,6500);
+$Effectif4 = random(800000,900000);
+}
+elsif ($temp1 == 4) 
+{$Lieu = "Québec";
+$LieuA = "du Québec";
+$LieuB = "au Québec";
+$Effectif1 = random(87000,90000);
+$Effectif2 = random(1800000,2200000);
+$Effectif3 = random(50000,70000);
+$Effectif4 = random(8700000,9000000);
+}
+elsif ($temp1 == 4) 
+{$Lieu = "Ontario";
+$LieuA = "de l'Ontario";
+$LieuB = "en Ontario";
+$Effectif1 = random(135000,145000);
+$Effectif2 = random(3000000,3500000);
+$Effectif3 = random(80000,100000);
+$Effectif4 = random(14000000,16000000);
+}
+elsif ($temp1 == 5) 
+{$Lieu = "Manitoba";
+$LieuA = "du Manitoba";
+$LieuB = "au Manitoba";
+$Effectif1 = random(14000,17000);
+$Effectif2 = random(300000,370000);
+$Effectif3 = random(10000,12000);
+$Effectif4 = random(1300000,1500000);
+}
+elsif ($temp1 == 6) 
+{$Lieu = "Saskatchewan";
+$LieuA = "de la Saskatchewan";
+$LieuB = "en Saskatchewan";
+$Effectif1 = random(14000,17000);
+$Effectif2 = random(250000,300000);
+$Effectif3 = random(8000,10000);
+$Effectif4 = random(1100000,1600000);
+}
+elsif ($temp1 == 7) 
+{$Lieu = "Alberta";
+$LieuA = "de l'Alberta";
+$LieuB = "en Alberta";
+$Effectif1 = random(45000,55000);
+$Effectif2 = random(1000000,1700000);
+$Effectif3 = random(20000,30000);
+$Effectif4 = random(4000000,4600000);
+}
+elsif ($temp1 == 8) 
+{$Lieu = "Colombie-Britannique";
+$LieuA = "de la Colombie-Britannique";
+$LieuB = "en Colombie-Britannique";
+$Effectif1 = random(35000,45000);
+$Effectif2 = random(900000,1200000);
+$Effectif3 = random(30000,35000);
+$Effectif4 = random(4000000,4600000);
+}
+
+
+@VecteurEffectif = ($Effectif1, $Effectif2, $Effectif3, $Effectif4);
+
+@VecteurModalite = ("Nombre de naissances vivantes", "Nombre de femmes âgées entre 15 ans et 49 ans", "Nombre de décès", "Taille de la population");
+@AffichageEffectif = ("$Effectif1","$Effectif2", "$Effectif3", "$Effectif4"); 
+@CompteurAffichage = (0,1,3);
+
+$TauxNatalitet = Compute("($Effectif1/$Effectif4)*1000");
+$TauxNatalite = sprintf("%0.1f","$TauxNatalitet ");
+
+$TauxFeconditet = Compute("($Effectif1/$Effectif2)*1000");
+$TauxFecondite = sprintf("%0.1f","$TauxFeconditet ");
+
+$TauxDecest = Compute("($Effectif3/$Effectif4)*1000");
+$TauxDeces = sprintf("%0.1f","$TauxDecest ");
+
+$TauxAccroissementt = Compute("(($Effectif1 - $Effectif3)/$Effectif4)*1000");
+$TauxAccroissement = sprintf("%0.1f","$TauxAccroissementt ");
+
+@TauxReponse = ($TauxNatalite, $TauxFecondite, $TauxDeces, $TauxAccroissement);
+@TauxReponseA = ("taux de natalité", "taux de fécondité"); 
+@CompteurReponse = (0,1);
+
+Context()->texStrings;
+BEGIN_TEXT
+Le taux de natalité est un indicateur démographique qui mesure l'importance du nombre de naissances par rapport à la taille de la population. Il se calcule comme suit : 
+$PAR
+$SPACE $SPACE $SPACE 
+Taux de natalité = \(\displaystyle {\rm{\frac{Nombre\ de\ naissances\ vivantes}{Taille\ de\ la\ population} \times 1000}}\) 
+$PAR
+Pour plus de précision, ce taux s'exprime en pour mille.
+$PAR
+${BBOLD}Exemple : ${EBOLD} Voici des données démographiques $LieuA pour l'année passée.
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+  AlignedRow(["${BBOLD}Données démographiques $BR $LieuA ${EBOLD}","${BBOLD} Effectif ${EBOLD}"], align => CENTER, separation=>0).
+ AlignedRow(["$VecteurModalite[$CompteurAffichage[0]]","$AffichageEffectif[$CompteurAffichage[0]]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[$CompteurAffichage[1]]","$AffichageEffectif[$CompteurAffichage[1]]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[$CompteurAffichage[2]]","$AffichageEffectif[$CompteurAffichage[2]]"], align => CENTER, separation=>0).
+EndTable()
+\}
+
+$PAR
+${BBOLD}Question : ${EBOLD} En utilisant ces données démographiques, calculer le $TauxReponseA[$CompteurReponse[0]], en arrondissant votre réponse à une décimale. 
+$PAR
+$SPACE $SPACE $SPACE  Taux de natalité = \{ans_rule(8)\}
+
+$BR 
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($TauxReponse[$CompteurReponse[0]], tol => 0.00001, tolType => "absolute"));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Le taux de natalité se calcule comme suit : 
+$PAR
+$SPACE $SPACE $SPACE  Taux de natalité = \(\displaystyle {\rm{\frac{Nombre\ de\ naissances\ vivantes}{Taille\ de\ la\ population} \times 1000}}\) 
+$PAR
+Pour cet exercice, le calcul devient :
+$BR
+$SPACE $SPACE $SPACE  Taux de natalité = \(\displaystyle {\frac{$Effectif1}{$Effectif4} \times 1000 = $TauxNatalite} \) 
+$PAR
+${BBOLD}Interprétation : ${EBOLD} L'année passée, $LieuB, pour 1000 habitants, il y a eu $TauxNatalite naissances vivantes. 
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

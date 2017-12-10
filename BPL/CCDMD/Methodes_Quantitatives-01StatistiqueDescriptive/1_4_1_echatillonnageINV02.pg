@@ -1,0 +1,117 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Échantillonnage)
+## KEYWORDS('aveuglette', 'jugé', 'non aléatoire', 'quotas', 'sondage', 'volontaires')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("VERSION CLASSE INVERSÉE Technique d'échantillonnage non aléatoires.");
+
+TEXT(beginproblem());
+
+@CompteurPopUp = shuffle(4);
+@CompteurPopUp1 = shuffle(4);
+@CompteurPopUp2 = shuffle(4);
+@CompteurPopUp3 = shuffle(4);
+
+@ChoixPopUp = ("Échantillonnage à l'aveuglette", "Échantillonnage de volontaires", "Échantillonnage par quotas", "Échantillonnage au jugé");
+
+$Nombre1 = random(50, 100);
+$Nombre21 = list_random(800,1000,1200,1400,1600,1800,2000);
+$Nombre22 = Compute("$Nombre21/40");
+$Nombre23 = Compute("$Nombre22 + $Nombre21/40");
+$Nombre24 = Compute("$Nombre23 + $Nombre21/40");
+
+$Nombre31 = random(60,75);
+$Nombre32 = random(150,300);
+$Nombre4 = random(10,25);
+$Nombre5 = random(10,20);
+$Nombre6 = random(30,60);
+$Nombre71 = random(10,60);
+$Nombre72 = random(20, 70);
+$Nombre8 = random(2,7);
+
+@VecteurExemple = (
+"Le service de cafétéria demande aux $Nombre5 clients qui viennent d'acheter un repas de remplir un questionnaire sur la rapidité du service.", 
+"$Nombre6 clients du service de cafétéria décident de faire partie d’un échantillon pour remplir un questionnaire sur la qualité de la nourriture.",
+"Le service de cafétéria demande à $Nombre71 étudiants et $Nombre72 enseignants de remplir un questionnaire sur le menu du jour.", 
+"Le service de cafétéria choisit $Nombre8 clients pour remplir un questionnaire parce que le service de cafétéria croit que les connaissances de ces clients sont importantes à connaitre.");
+
+
+@CompteurRep = shuffle(4);
+
+
+@VecteurRepPopUp = (
+PopUp(["Sélectionner la technique",  "$ChoixPopUp[$CompteurPopUp[0]]",  "$ChoixPopUp[$CompteurPopUp[1]]", "$ChoixPopUp[$CompteurPopUp[2]]", "$ChoixPopUp[$CompteurPopUp[3]]"], $ChoixPopUp[$CompteurRep[0]]),
+PopUp(["Sélectionner la technique",  "$ChoixPopUp[$CompteurPopUp1[0]]",  "$ChoixPopUp[$CompteurPopUp1[1]]", "$ChoixPopUp[$CompteurPopUp1[2]]", "$ChoixPopUp[$CompteurPopUp1[3]]"], $ChoixPopUp[$CompteurRep[1]]),
+PopUp(["Sélectionner la technique",  "$ChoixPopUp[$CompteurPopUp2[0]]",  "$ChoixPopUp[$CompteurPopUp2[1]]", "$ChoixPopUp[$CompteurPopUp2[2]]", "$ChoixPopUp[$CompteurPopUp2[3]]"], $ChoixPopUp[$CompteurRep[2]]),
+PopUp(["Sélectionner la technique",  "$ChoixPopUp[$CompteurPopUp3[0]]",  "$ChoixPopUp[$CompteurPopUp3[1]]", "$ChoixPopUp[$CompteurPopUp3[2]]", "$ChoixPopUp[$CompteurPopUp3[3]]"], $ChoixPopUp[$CompteurRep[3]])
+);
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Les techniques d'échantillonnage permettent de sélectionner un échantillon d'unités statistiques parmi la population. La technique peut être aléatoire ou non aléatoire. La technique d’échantillonnage est aléatoire lorsque toutes les unités statistiques ont une chance d’être sélectionnées (elles ont une probabilité non nulle de faire partie de l’échantillon). La technique est non aléatoire lorsque certaines unités statistiques n’ont aucune chance d’être sélectionnées.
+
+Il y a 4 techniques d'échantillonnage non aléatoires. 
+
+\{ BeginList("OL", type=>"a") \}
+$ITEM  L’échantillonnage est dit ${BBOLD}à l’aveuglette ou accidentel${EBOLD} lorsque l’unité statistique est sélectionnée par le chercheur parce qu’elle se trouve à proximité du chercheur au moment où il décide de constituer son échantillon.
+ $BR ${BBOLD}Exemple :${EBOLD} Sélectionner un client à la sortie d'un centre-d'achat. Prendre un échantillon de sang.
+$ITEMSEP 
+$ITEM  L’échantillonnage est dit ${BBOLD}de volontaires${EBOLD} lorsque l’unité statistique décide de faire partie de l’échantillon. 
+$BR ${BBOLD}Exemple :${EBOLD} Demander à des volontaires de venir tester un nouveau médicament dans un laboratoire. 
+$ITEMSEP
+$ITEM L’échantillonnage est dit ${BBOLD}par quotas${EBOLD} lorsque la population est divisée en strates (groupes ayant des caractéristiques communes, comme l’âge, le lieu, la langue parlée à la maison, le revenu) et que les unités statistiques sont sélectionnées ${BITALIC}arbitrairement${EITALIC} en conservant les proportions des strates dans l’échantillon. Cette technique d'échantillonnage se distingue de la technique d'échantillonnage stratifiée par le fait que la sélection est arbitraire et non aléatoire simple.
+$BR ${BBOLD}Exemple :${EBOLD} On sait qu’il y a 20 % de fumeurs dans la population. Le chercheur choisira arbitrairement 20 fumeurs et 80 non fumeurs pour une enquête sur 100 personnes. La division de la population en strates produit des quotas d’unités statistiques dans chaque strate. Une fois le quota atteint, le chercheur rejette les individus de cette strate.
+$ITEMSEP
+$ITEM L’échantillonnage est dit ${BBOLD}au jugé${EBOLD} lorsqu’une ou plusieurs unités statistiques sont sélectionnées pour leurs connaissances du sujet de l’étude. Ce sont des experts ou des représentants d’un groupe, comme des directeurs ou des représentants d’une association.
+$BR ${BBOLD}Exemple :${EBOLD} Le conseil d'administration choisit le directeur des finances pour venir présenter les états financiers.
+
+\{ EndList("OL") \}
+ 
+$BR ${BBOLD}Exercice :${EBOLD}
+
+Pour chacune des situations suivantes, sélectionner dans le menu déroulant la technique d'échantillonnage utilisée pour former l'échantillon.
+
+\{ BeginList("OL", type=>"a") \}
+$ITEM  $VecteurExemple[$CompteurRep[0]] \{ $VecteurRepPopUp[0]->menu()\} 
+$ITEMSEP 
+$ITEM   $VecteurExemple[$CompteurRep[1]] \{ $VecteurRepPopUp[1]->menu()\} 
+$ITEMSEP
+$ITEM   $VecteurExemple[$CompteurRep[2]] \{ $VecteurRepPopUp[2]->menu()\} 
+$ITEMSEP
+$ITEM  $VecteurExemple[$CompteurRep[3]] \{ $VecteurRepPopUp[3]->menu()\} 
+\{ EndList("OL") \}
+
+
+
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($VecteurRepPopUp[0]->cmp() );
+ANS($VecteurRepPopUp[1]->cmp() );
+ANS($VecteurRepPopUp[2]->cmp() );
+ANS($VecteurRepPopUp[3]->cmp() );
+
+
+ENDDOCUMENT(); 

@@ -1,0 +1,194 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('fréquence relative', 'mesure de dispersion', 'mesure de tendance centrale', 'modalité', 'mode', 'moyenne', 'population', 'tableau', 'taille de l\'échantillon', 'variable', 'variable quantitative continue', 'écart type', 'échantillon', 'échelle de rapport')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl","PGchoicemacros.pl");
+
+COMMENT("Niveau de difficulté : Moyen. Identifier le nombre d'unités statistiques et calculer la moyenne, l'écart type et l'écart type corrigé à partir des pourcentages d'un tableau de distribution. La variable est quantitative continue dont le milieu des classes est facile à calculer. Et il y a 4 contextes. Les mesures statistiques sont présentées aléatoirement. Les symboles des mesures ont été utilisés. La solution n'a pas été programmée. Les réponses doivent absolument être arrondies selon les spécifications de la question.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$temp1 =random(0,3);
+if ($temp1 == 0) 
+{
+@VecteurContexte = ("personnes", "Montant ($DOLLAR)", "Répartition des étudiantes et des étudiants $BR selon le montant dépensé pour leur forfait cellulaire", "d'étudiantes et d'étudiants afin de connaitre le montant dépensé mensuellement pour leur forfait cellulaire");
+@VecteurModalite = ("Moins de 40", "[40, 60[", "[60, 80[", "80 et plus");
+@VecteurModaliteValeur = (30, 50, 70, 90);
+
+#$Effectif1 = random(10,30);
+#$Effectif2 = random(10,30);
+#$Effectif3 = random(5,10);
+#$Effectif4 = random(1, 2);
+
+$Pourcentage1 = random(20,40, 0.1);
+$Pourcentage3 = random(5,15, 0.1);
+$Pourcentage4 = random(1,10, 0.1);
+$Pourcentage2 = Compute("100 - $Pourcentage1 - $Pourcentage3 - $Pourcentage4");
+$PourcentageTotal = 100.0; 
+
+}
+elsif ($temp1 == 1)  {
+@VecteurContexte = ("personnes","Taille (cm)", "Répartition des étudiantes et des étudiants $BR selon leur taille",
+"d'étudiantes et d'étudiants afin de connaitre leur taille en centimètres");
+@VecteurModalite = ("Moins de 160", "[160, 180[", "[180, 200[", "200 et plus");
+@VecteurModaliteValeur = (150, 170, 190, 210);
+#$Effectif1 = random(10,30);
+#$Effectif2 = random(10,30);
+#$Effectif3 = random(5,10);
+#$Effectif4 = random(1, 2);
+
+$Pourcentage1 = random(20,40, 0.1);
+$Pourcentage3 = random(5,15, 0.1);
+$Pourcentage4 = random(1,10, 0.1);
+$Pourcentage2 = Compute("100 - $Pourcentage1 - $Pourcentage3 - $Pourcentage4");
+$PourcentageTotal = 100.0; 
+
+}
+elsif ($temp1 == 2)  {
+@VecteurContexte = ("personnes", "Poids (kg)", "Répartition des étudiantes et des étudiants $BR selon leur poids", "d'étudiantes et d'étudiants afin de connaitre leur poids en kilogrammes");
+#@VecteurModalite = ("Moins de 50", "[50, 75[", "[75, 100[", "100 et plus");
+#@VecteurModaliteValeur = (37.5, 62.5, 87.5, 112.5);
+@VecteurModalite = ("Moins de 50", "[50, 70[", "[70, 90[", "90 et plus");
+@VecteurModaliteValeur = (40, 60, 80, 100);
+
+#$Effectif1 = random(5,8);
+#$Effectif2 = random(10,30);
+#$Effectif3 = random(10,30);
+#$Effectif4 = random(1,2 );
+
+$Pourcentage1 = random(10,20, 0.1);
+$Pourcentage3 = random(20, 30, 0.1);
+$Pourcentage4 = random(1,10, 0.1);
+$Pourcentage2 = Compute("100 - $Pourcentage1 - $Pourcentage3 - $Pourcentage4");
+$PourcentageTotal = 100.0; 
+
+}
+elsif ($temp1 == 3)  {
+@VecteurContexte = ("personnes", "Temps (min)", "Répartition des étudiantes et des étudiants $BR selon le temps pris pour aller à l'école", "d'étudiantes et d'étudiants afin de connaitre le temps (en minutes) pris pour aller à l'école le matin");
+@VecteurModalite = ("Moins de 20", "[20, 40[", "[40, 60[", "60 et plus");
+@VecteurModaliteValeur = (10, 30, 50, 70);
+#$Effectif1 = random(10,30);
+#$Effectif2 = random(10,30);
+#$Effectif3 = random(10,30);
+#$Effectif4 = random(10, 30);
+
+$Pourcentage1 = random(20,30, 0.1);
+$Pourcentage2 = random(20, 30, 0.1);
+$Pourcentage4 = random(20,30, 0.1);
+$Pourcentage3 = Compute("100 - $Pourcentage2 - $Pourcentage1 - $Pourcentage4");
+$PourcentageTotal = 100.0; 
+
+}
+
+#$EffectifTotal = Compute("$Effectif1 + $Effectif2 + $Effectif3 + $Effectif4");
+#@VecteurEffectif = ($Effectif1, $Effectif2, $Effectif3, $Effectif4);
+
+$Pourcentage1A = sprintf("%0.1f","$Pourcentage1 ");
+$Pourcentage2A = sprintf("%0.1f","$Pourcentage2 ");
+$Pourcentage3A = sprintf("%0.1f","$Pourcentage3 ");
+$Pourcentage4A = sprintf("%0.1f","$Pourcentage4 ");
+
+@VecteurPourcentage = ($Pourcentage1A, $Pourcentage2A, $Pourcentage3A, $Pourcentage4A);
+@AffichagePourcentage = ($Pourcentage1A, $Pourcentage2A, $Pourcentage3A, $Pourcentage4A);
+
+
+$NombreClasse = 4; 
+
+#Choisir un nombre fictif d'Unité statistique
+$temp2 =random(0,1);
+if ($temp2 == 0)
+{$NombreUS = random(50,90);}
+else
+{$NombreUS = random(110,190);}
+
+$moyenneTemp1 = 0; 
+$i = 0;
+do
+{$moyenneTemp2 = Compute("($VecteurPourcentage[$i]*$VecteurModaliteValeur[$i]) + $moyenneTemp1");
+$moyenneTemp1 = $moyenneTemp2;
+$i++}
+ while ($i<$NombreClasse);
+
+$moyennet = Compute("$moyenneTemp1/100");
+$moyenne = sprintf("%0.2f","$moyennet ");
+
+$VarianceTemp1 = 0; 
+$i = 0;
+do
+{$VarianceTemp2 = Compute("$VecteurPourcentage[$i]*($VecteurModaliteValeur[$i] - $moyenne)^2+ $VarianceTemp1");
+$VarianceTemp1 =$VarianceTemp2;
+$i++}
+ while ($i<$NombreClasse);
+
+$EcartypePopulationt = Compute("($VarianceTemp1/100)^0.5");
+$EcartypePopulation = sprintf("%0.2f","$EcartypePopulationt");
+$EcartypeEchantillont = Compute("($VarianceTemp1/(99))^0.5");
+$EcartypeEchantillon = sprintf("%0.2f","$EcartypeEchantillont");
+
+
+@VecteurNomMesure = ("\(\displaystyle{\it{n} =}\)", "\(\displaystyle{\mu =}\)", "\(\displaystyle{\sigma =}\)", "\(\displaystyle{\it{s} =}\)"); 
+#@VecteurNomMesure = ("Nombre d'unités statistiques :", "Moyenne :", "Écart type :", "Écart type corrigé :"); 
+@Reponse = ($NombreUS, $moyenne, $EcartypePopulation, $EcartypeEchantillon);
+@ReponseTol = (0.000001, 0.00001, 0.00001, 0.00001);
+@CompteurRep = shuffle(4);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Une enquête a été menée auprès $VecteurContexte[3]. $NombreUS personnes ont été interrogées. Le tableau de distribution suivant représente les données recueillies. 
+$PAR
+$BCENTER
+${BBOLD}
+$VecteurContexte[2]
+${EBOLD}
+$PAR
+
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+ AlignedRow(["${BBOLD} $VecteurContexte[1] ${EBOLD}","${BBOLD} Pourcentage d'étudiantes $BR et d'étudiants ${EBOLD}"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[0]","$VecteurPourcentage[0]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[1]","$VecteurPourcentage[1]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[2]","$VecteurPourcentage[2]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[3]","$VecteurPourcentage[3]"], align => CENTER, separation=>0).
+ AlignedRow(["${BBOLD} Total ${EBOLD}","${BBOLD} 100.0 ${EBOLD}"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$ECENTER
+$BR
+${BBOLD}Question : ${EBOLD} Calculer les mesures statistiques suivantes :
+$PAR
+$SPACE $SPACE $SPACE $VecteurNomMesure[$CompteurRep[0]]  \{ans_rule(5)\}
+$PAR
+$SPACE $SPACE $SPACE $VecteurNomMesure[$CompteurRep[1]]  \{ans_rule(5)\}
+$PAR
+$SPACE $SPACE $SPACE $VecteurNomMesure[$CompteurRep[2]]  \{ans_rule(5)\}
+$PAR
+$SPACE $SPACE $SPACE $VecteurNomMesure[$CompteurRep[3]]  \{ans_rule(5)\}
+$BR 
+$BR ${BBOLD}Note : ${EBOLD}Arrondir, s'il y a lieu, les mesures statistiques à deux décimales. 
+$BR 
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($Reponse[$CompteurRep[0]], tol => $ReponseTol[$CompteurRep[0]], tolType => "absolute"));
+ANS(num_cmp($Reponse[$CompteurRep[1]], tol => $ReponseTol[$CompteurRep[1]], tolType => "absolute"));
+ANS(num_cmp($Reponse[$CompteurRep[2]], tol => $ReponseTol[$CompteurRep[2]], tolType => "absolute"));
+ANS(num_cmp($Reponse[$CompteurRep[3]], tol => $ReponseTol[$CompteurRep[3]], tolType => "absolute"));
+
+ENDDOCUMENT(); 

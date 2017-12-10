@@ -1,0 +1,107 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('numératie')
+
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Accorder le nombre (singulier ou pluriel) de noms. Affichage aléatoire des questions.");
+
+TEXT(beginproblem());
+
+$Nbre1 = random(0.1,0.9, 0.1);
+$Nbre2 = random(1.1,1.9, 0.1);
+$Nbre3 = random(2.1,2.9, 0.1);
+
+
+@VecteurQuestion = ($Nbre1, $Nbre2, $Nbre3); 
+$Contexte = random(0,5);
+if ($Contexte == 0)
+{@VecteurRepPopUp = (
+PopUp(["Sélectionner", "million", "millions"], "million"), 
+PopUp(["Sélectionner", "milliard", "milliards"], "milliard"), 
+PopUp(["Sélectionner", "centimètre", "centimètres"], "centimètres"));
+@ChoixNomS= ("million", "milliard", "centimètre");
+@ChoixNomP= ("millions", "milliards", "centimètres");
+}
+elsif ($Contexte == 1)
+{@VecteurRepPopUp = (
+PopUp(["Sélectionner", "milliard", "milliards"], "milliard"), 
+PopUp(["Sélectionner", "million", "millions"], "million"), 
+PopUp(["Sélectionner", "centimètre", "centimètres"], "centimètres"));
+@ChoixNomS= ("milliard","million", "centimètre");
+@ChoixNomP= ( "milliards","millions", "centimètres");
+}
+elsif ($Contexte == 2)
+{@VecteurRepPopUp = (
+PopUp(["Sélectionner", "centimètre", "centimètres"], "centimètre"),
+PopUp(["Sélectionner", "milliard", "milliards"], "milliard"), 
+PopUp(["Sélectionner", "million", "millions"], "millions"));
+@ChoixNomS= ("centimètre","milliard","million");
+@ChoixNomP= ("centimètres", "milliards","millions");
+}
+elsif ($Contexte == 3)
+{@VecteurRepPopUp = (
+PopUp(["Sélectionner", "centimètre", "centimètres"], "centimètre"),
+PopUp(["Sélectionner", "million", "millions"], "million"),
+PopUp(["Sélectionner", "milliard", "milliards"], "milliards"));
+@ChoixNomS= ("centimètre","million","milliard");
+@ChoixNomP= ("centimètres","millions", "milliards");
+}
+elsif ($Contexte == 4)
+{@VecteurRepPopUp = (
+PopUp(["Sélectionner", "million", "millions"], "million"),
+PopUp(["Sélectionner", "centimètre", "centimètres"], "centimètre"),
+PopUp(["Sélectionner", "milliard", "milliards"], "milliards"));
+@ChoixNomS= ("million","centimètre","milliard");
+@ChoixNomP= ("millions","centimètres", "milliards");
+}
+elsif ($Contexte == 5)
+{@VecteurRepPopUp = (
+PopUp(["Sélectionner", "milliard", "milliards"], "milliard"),
+PopUp(["Sélectionner", "centimètre", "centimètres"], "centimètre"),
+PopUp(["Sélectionner", "million", "millions"], "millions"));
+@ChoixNomS= ("milliard","centimètre","million");
+@ChoixNomP= ("milliards","centimètres", "millions");
+}
+
+@CompteurAffichage = shuffle(3);
+
+Context()->texStrings;
+BEGIN_TEXT
+Accorder correctement chacun des noms suivants :
+
+\{ BeginList("UL") \}
+$ITEM Écrit-on $VecteurQuestion[$CompteurAffichage[0]] $ChoixNomS[$CompteurAffichage[0]] ou $VecteurQuestion[$CompteurAffichage[0]] $ChoixNomP[$CompteurAffichage[0]] ? \{$VecteurRepPopUp[$CompteurAffichage[0]]->menu()\}
+$ITEMSEP
+$ITEM Écrit-on $VecteurQuestion[$CompteurAffichage[1]] $ChoixNomS[$CompteurAffichage[1]] ou $VecteurQuestion[$CompteurAffichage[1]] $ChoixNomP[$CompteurAffichage[1]] ? \{$VecteurRepPopUp[$CompteurAffichage[1]]->menu()\}
+$ITEMSEP
+$ITEM Écrit-on $VecteurQuestion[$CompteurAffichage[2]] $ChoixNomS[$CompteurAffichage[2]] ou $VecteurQuestion[$CompteurAffichage[2]] $ChoixNomP[$CompteurAffichage[2]] ? \{$VecteurRepPopUp[$CompteurAffichage[2]]->menu()\}
+$ITEMSEP
+\{ EndList("UL") \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VecteurRepPopUp[$CompteurAffichage[0]]->cmp() );
+ANS($VecteurRepPopUp[$CompteurAffichage[1]]->cmp() );
+ANS($VecteurRepPopUp[$CompteurAffichage[2]]->cmp() );
+
+
+ENDDOCUMENT(); 

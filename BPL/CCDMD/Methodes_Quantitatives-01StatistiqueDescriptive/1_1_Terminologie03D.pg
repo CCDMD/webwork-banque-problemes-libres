@@ -1,0 +1,114 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('modalité', 'population', 'unité statistique', 'variable', 'variable qualitative', 'variable qualitative nominale', 'variable qualitative ordinale', 'variable quantitative continue', 'variable quantitative discrète')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("CONTEXTE 7 (4 contextes) : Niveau de difficulté : Difficile. Chaque type de variable est couvert.");
+
+TEXT(beginproblem());
+
+$ChoixContexte = random(0,3);
+
+@VecteurTypeVar = ("Qualitatif nominal", "Qualitatif ordinal", "Quantitatif discret", "Quantitatif continu");
+@CompteurTypeVar = (0,1,2,3);
+
+if ($ChoixContexte == 0)
+{
+@VecteurContexte = ("Quel est le nombre de décès au Québec pour chacune des journées du mois de mai de l'année passée ?", "à une statisticienne de Statistique Canada");
+@ChoixPopUp = ("Les journées du mois de mai de l'année passée", "Une journée du mois de mai de l'année passée", "Le nombre de décès au Québec", "Le mois de mai de l'année passé", "Statistique Canada", "Les statisticiens de Statistique Canada", "L'année passée", "Les décès", "Le Québec");
+$Rep1 = $ChoixPopUp[0];
+$Rep2 = $ChoixPopUp[1];
+$Rep3 = $ChoixPopUp[2];
+$Rep4 = $VecteurTypeVar[2];
+
+}
+elsif ($ChoixContexte == 1)
+{
+@VecteurContexte = ("Quel est le diamètre (en centimètres) de chacune des ruches d'abeilles situées dans le champs ?", "à l'apiculteur");
+@ChoixPopUp = ("Les ruches", "Une ruche", "Le diamètre", "Les abeilles", "Une abeille", "Centimètre", "Les apiculteurs", "Un apiculteur", "La langue parlée");
+$Rep1 = $ChoixPopUp[0];
+$Rep2 = $ChoixPopUp[1];
+$Rep3 = $ChoixPopUp[2];
+$Rep4 = $VecteurTypeVar[3];
+
+
+}
+elsif ($ChoixContexte == 2)
+{
+@VecteurContexte = ("Quel est le nombre d'enfants de chacune des familles résidant sur la rue Millet ?", "à un résident de la rue Millet");
+@ChoixPopUp = ("Les familles de la rue Millet", "Une famille de la rue Millet", "Le nombre d'enfants", "Les résidents de la rue Millet", "Un résident de la rue Millet", "Les enfants de la rue Millet", "Un enfant de la rue Millet", "La rue Millet", "La démographie");
+$Rep1 = $ChoixPopUp[0];
+$Rep2 = $ChoixPopUp[1];
+$Rep3 = $ChoixPopUp[2];
+$Rep4 = $VecteurTypeVar[2];
+
+}
+elsif ($ChoixContexte == 3)
+{
+@VecteurContexte = ("Quel est le niveau d'intérêt de chacun des groupes communautaires québécois par rapport à former une nouvelle association ?", "à un journaliste couvrant la nouvelle");
+@ChoixPopUp = ("Les groupes communautaires québécois", "Un groupe communautaire québécois", "Le niveau d'intérêt", "Les journalistes", "Un journaliste", "Les nouvelles associations", "Une nouvelle association", "Le Québec", "Les nouvelles");
+$Rep1 = $ChoixPopUp[0];
+$Rep2 = $ChoixPopUp[1];
+$Rep3 = $ChoixPopUp[2];
+$Rep4 = $VecteurTypeVar[1];
+}
+
+@CompteurPopUp = shuffle(9);
+
+@VecteurRepPopUp = (
+PopUp(["Sélectionner la population",  "$ChoixPopUp[$CompteurPopUp[0]]",  "$ChoixPopUp[$CompteurPopUp[1]]", "$ChoixPopUp[$CompteurPopUp[2]]", "$ChoixPopUp[$CompteurPopUp[3]]", "$ChoixPopUp[$CompteurPopUp[4]]", "$ChoixPopUp[$CompteurPopUp[5]]", "$ChoixPopUp[$CompteurPopUp[6]]", "$ChoixPopUp[$CompteurPopUp[7]]", "$ChoixPopUp[$CompteurPopUp[8]]"], $Rep1),
+PopUp(["Sélectionner l'unité statistique",  "$ChoixPopUp[$CompteurPopUp[0]]",  "$ChoixPopUp[$CompteurPopUp[1]]", "$ChoixPopUp[$CompteurPopUp[2]]", "$ChoixPopUp[$CompteurPopUp[3]]", "$ChoixPopUp[$CompteurPopUp[4]]", "$ChoixPopUp[$CompteurPopUp[5]]", "$ChoixPopUp[$CompteurPopUp[6]]", "$ChoixPopUp[$CompteurPopUp[7]]", "$ChoixPopUp[$CompteurPopUp[8]]"], $Rep2),
+PopUp(["Sélectionner la variable",  "$ChoixPopUp[$CompteurPopUp[0]]",  "$ChoixPopUp[$CompteurPopUp[1]]", "$ChoixPopUp[$CompteurPopUp[2]]", "$ChoixPopUp[$CompteurPopUp[3]]", "$ChoixPopUp[$CompteurPopUp[4]]", "$ChoixPopUp[$CompteurPopUp[5]]", "$ChoixPopUp[$CompteurPopUp[6]]", "$ChoixPopUp[$CompteurPopUp[7]]", "$ChoixPopUp[$CompteurPopUp[8]]"], $Rep3),
+PopUp(["Sélectionner le type de variable",  "$VecteurTypeVar[$CompteurTypeVar[0]]", "$VecteurTypeVar[$CompteurTypeVar[1]]", "$VecteurTypeVar[$CompteurTypeVar[2]]", "$VecteurTypeVar[$CompteurTypeVar[3]]"], $Rep4));
+
+
+#@TypeAffichage = shuffle(5);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Un chercheur a posé la question "${BITALIC}$VecteurContexte[0]${EITALIC}" $VecteurContexte[1]. Répondre aux questions suivantes :
+
+\{ BeginList("OL", type=>"a") \}
+$ITEM  Quelle est la population étudiée par le chercheur ? \{ $VecteurRepPopUp[0]->menu()\} 
+$ITEMSEP 
+$ITEM  Quelle est l'unité statistique étudiée par le chercheur ? \{ $VecteurRepPopUp[1]->menu()\} 
+$ITEMSEP
+$ITEM  Quelle est la variable étudiée par le chercheur ? \{ $VecteurRepPopUp[2]->menu()\} 
+$ITEMSEP
+$ITEM  Quel est le type de variable étudiée par le chercheur ? \{ $VecteurRepPopUp[3]->menu()\} 
+\{ EndList("OL") \}
+
+
+
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($VecteurRepPopUp[0]->cmp() );
+ANS($VecteurRepPopUp[1]->cmp() );
+ANS($VecteurRepPopUp[2]->cmp() );
+ANS($VecteurRepPopUp[3]->cmp() );
+
+
+
+ENDDOCUMENT(); 

@@ -1,0 +1,173 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('indicateur', 'indice')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl","PGchoicemacros.pl");
+
+COMMENT("Niveau de difficulté: Facile. Calculer un indice synthétique à partir de 4 indices élémentaires (à base 100). Il y a 4 contextes. La solution a été programmée. Faire les calculs sans arrondir. Arrondir uniquement la réponse à une décimale.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$temp1 = random(0,3);
+
+if ($temp1 == 0)
+{@VecteurContexte = ("du Guide alimentaire canadien", "Type d'aliments", "des aliments du Guide alimentaire canadien");
+@VecteurModalite = ("Légumes et fruits", "Produits céréaliers", "Lait et substituts", "Viandes et substituts");
+$Indice1t = random(105,115,0.1);
+$Indice2t = random(85,95,0.1);
+$Indice3t = random(105,115,0.1);
+$Indice4t = random(115,140,0.1);
+$Pourcentage1t = random(25,30, 0.1);
+$Pourcentage3t = random(10,15, 0.1);
+$Pourcentage4t = random(20,30, 0.1);
+$Pourcentage2t = Compute(" 100.0 - $Pourcentage1t - $Pourcentage3t - $Pourcentage4t ");
+$PourcentageTotal = Compute("  $Pourcentage1t +  $Pourcentage2t + $Pourcentage3t + $Pourcentage4t ");
+}
+elsif ($temp1 == 1)
+{@VecteurContexte = ("de dépenses liées à l'hébergement", "Type de dépenses", "des dépenses liées à l'hébergement");
+@VecteurModalite = ("Loyer", "Assurance", "Électricité", "Télécommunication");
+$Indice1t = random(105,115,0.1);
+$Indice2t = random(85,95,0.1);
+$Indice3t = random(105,115,0.1);
+$Indice4t = random(115,140,0.1);
+$Pourcentage1t = random(75,80, 0.1);
+$Pourcentage3t = random(4,7, 0.1);
+$Pourcentage4t = random(4,7, 0.1);
+$Pourcentage2t = Compute(" 100.0 - $Pourcentage1t - $Pourcentage3t - $Pourcentage4t ");
+$PourcentageTotal = Compute("  $Pourcentage1t +  $Pourcentage2t + $Pourcentage3t + $Pourcentage4t ");
+}
+elsif ($temp1 == 2)
+{@VecteurContexte = ("de revenus du Café étudiant", "Type de revenus", "des revenus du Café étudiant");
+@VecteurModalite = ("Repas du midi", "Collations", "Cafés", "Boissons (autres que café)");
+$Indice1t = random(105,115,0.1);
+$Indice2t = random(85,95,0.1);
+$Indice3t = random(105,115,0.1);
+$Indice4t = random(115,140,0.1);
+$Pourcentage1t = random(50,70, 0.1);
+$Pourcentage3t = random(10,14, 0.1);
+$Pourcentage4t = random(10,14, 0.1);
+$Pourcentage2t = Compute(" 100.0 - $Pourcentage1t - $Pourcentage3t - $Pourcentage4t ");
+$PourcentageTotal = Compute("  $Pourcentage1t +  $Pourcentage2t + $Pourcentage3t + $Pourcentage4t ");
+}
+elsif ($temp1 == 3)
+{@VecteurContexte = ("de revenus d'un concessionnaire automobile", "Type de revenus", "des revenus du concessionnaire automobile");
+@VecteurModalite = ("Vente de voitures neuves", "Vente de voitures usagées", "Vente de camions neufs", "Vente de camions usagés");
+$Indice1t = random(105,115,0.1);
+$Indice2t = random(85,95,0.1);
+$Indice3t = random(105,115,0.1);
+$Indice4t = random(115,140,0.1);
+$Pourcentage1t = random(25,30, 0.1);
+$Pourcentage3t = random(10,15, 0.1);
+$Pourcentage4t = random(20,30, 0.1);
+$Pourcentage2t = Compute(" 100.0 - $Pourcentage1t - $Pourcentage3t - $Pourcentage4t ");
+$PourcentageTotal = Compute("  $Pourcentage1t +  $Pourcentage2t + $Pourcentage3t + $Pourcentage4t ");
+}
+$Indice1 = sprintf("%0.1f","$Indice1t ");
+$Indice2 = sprintf("%0.1f","$Indice2t ");
+$Indice3 = sprintf("%0.1f","$Indice3t ");
+$Indice4 = sprintf("%0.1f","$Indice4t ");
+
+@VecteurIndice = ($Indice1, $Indice2, $Indice3, $Indice4);
+
+$Pourcentage1 = sprintf("%0.1f","$Pourcentage1t ");
+$Pourcentage2 = sprintf("%0.1f","$Pourcentage2t ");
+$Pourcentage3 = sprintf("%0.1f","$Pourcentage3t ");
+$Pourcentage4 = sprintf("%0.1f","$Pourcentage4t ");
+
+@VecteurPourcentage = ($Pourcentage1, $Pourcentage2, $Pourcentage3, $Pourcentage4);
+
+$IndiceSynthetique1 = Compute("($Indice1*$Pourcentage1)/100");
+$IndiceSynthetique2 = Compute("($Indice2*$Pourcentage2)/100");
+$IndiceSynthetique3 = Compute("($Indice3*$Pourcentage3)/100");
+$IndiceSynthetique4 = Compute("($Indice4*$Pourcentage4)/100");
+
+#$IndiceSynthetique1 = sprintf("%0.1f","$IndiceSynthetique1t ");
+#$IndiceSynthetique2 = sprintf("%0.1f","$IndiceSynthetique2t ");
+#$IndiceSynthetique3 = sprintf("%0.1f","$IndiceSynthetique3t ");
+#$IndiceSynthetique4 = sprintf("%0.1f","$IndiceSynthetique4t ");
+
+#$IndiceSynthetique2t = Compute("($Indice1*$Pourcentage1 + $Indice2*$Pourcentage2 +$Indice3*$Pourcentage3 +$Indice4*$Pourcentage4)/100");
+$IndiceSynthetiquet = Compute("$IndiceSynthetique1 + $IndiceSynthetique2 +$IndiceSynthetique3 +$IndiceSynthetique4");
+
+$IndiceSynthetique = sprintf("%0.1f","$IndiceSynthetiquet ");
+
+@VecteurPeriodeRef = (2014, 2015);
+$CompteurPeriodeRef = random(0,1);
+
+@VecteurPeriode = ("janvier 2016", "juillet 2016", "janvier 2017", "juillet 2017");
+$CompteurPeriode = random(0,3);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Voici les indices élémentaires des différentes catégories $VecteurContexte[0] pour le mois de $VecteurPeriode[$CompteurPeriode].  
+$PAR
+
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+ AlignedRow(["${BBOLD} $VecteurContexte[1] ${EBOLD}","${BBOLD} Indice $BR ($VecteurPeriodeRef[$CompteurPeriodeRef] = 100) ${EBOLD}", "${BBOLD} Pondération ${EBOLD}"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[0]","$VecteurIndice[0]", "$VecteurPourcentage[0]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[1]","$VecteurIndice[1]", "$VecteurPourcentage[1]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[2]","$VecteurIndice[2]", "$VecteurPourcentage[2]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[3]","$VecteurIndice[3]", "$VecteurPourcentage[3]"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$ECENTER
+$BR
+${BBOLD}Question :${EBOLD} Calculer l'indice synthétique $VecteurContexte[2] pour $VecteurPeriode[$CompteurPeriode]. Faire les calculs sans arrondir. Arrondir uniquement la réponse à une décimale.
+$PAR 
+$SPACE $SPACE $SPACE Indice synthétique $VecteurContexte[2] pour $VecteurPeriode[$CompteurPeriode]  : \{ ans_rule(8)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($IndiceSynthetique, tol => 0.00001, tolType => "absolute"));
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'indice synthétique se calcule à partir de la pondération des différents indices élémentaires qui le constituent : 
+$PAR
+\(\displaystyle {\rm{I_{période} = Indice\ élémentaire\ 1 \times pourcentage\ de\ l'indice\ élémentaire\ 1 }}\)
+$BR $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE
+\(\displaystyle {\rm{ + \ Indice\ élémentaire\ 2 \times pourcentage\ de\ l'indice\ élémentaire\ 2 }}\) 
+$BR $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE
+\(\displaystyle {\rm{ + \ ...}}\) 
+$PAR
+Pour cet exercice, les calculs deviennent :
+$BR
+\(\displaystyle {\rm{I_{$VecteurPeriode[$CompteurPeriode]}} = 
+$Indice1 \times $Pourcentage1 % + $Indice2 \times $Pourcentage2 % + $Indice3 \times $Pourcentage3 % + $Indice4 \times $Pourcentage4 %}\)
+$PAR $SPACE $SPACE $SPACE $SPACE $SPACE$SPACE $SPACE $SPACE
+\(\displaystyle { =  \frac{$Indice1 \times$Pourcentage1}{100} +  \frac{$Indice2 \times $Pourcentage2}{100} +  \frac{$Indice3 \times $Pourcentage3}{100} +  \frac{$Indice4 \times$Pourcentage4}{100}
+ }\)
+$PAR $SPACE $SPACE $SPACE $SPACE $SPACE$SPACE $SPACE $SPACE
+\(\displaystyle { =  $IndiceSynthetique1 + $IndiceSynthetique2 + $IndiceSynthetique3 + $IndiceSynthetique4
+ }\)
+$PAR $SPACE $SPACE $SPACE $SPACE $SPACE$SPACE $SPACE $SPACE
+\(\displaystyle { =  $IndiceSynthetique }\)
+
+$PAR
+$BR
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

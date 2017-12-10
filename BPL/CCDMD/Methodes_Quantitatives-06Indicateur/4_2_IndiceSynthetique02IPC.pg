@@ -1,0 +1,170 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('indicateur', 'indice')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl","PGchoicemacros.pl");
+
+COMMENT("Niveau de difficulté: Facile. Calculer l'IPC et le taux d'inflation. La solution a été programmée. Faire les calculs sans arrondir. Arrondir uniquement la réponse à une décimale.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+@VecteurModalite = ("Aliments", "Logement", "Dépenses courantes, ameublement et équipement du ménage", "Vêtements et chaussures", "Transports", "Soins de santé et soins personnels", "Loisirs, formation et lecture", "Boissons alcoolisées et produits du tabac ");
+$Indice1t = random(135,145,0.1);
+$Indice2t = random(130,135,0.1);
+$Indice3t = random(115,120,0.1);
+$Indice4t = random(85,95,0.1);
+$Indice5t = random(120,130,0.1);
+$Indice6t = random(115,120,0.1);
+$Indice7t = random(105,115,0.1);
+$Indice8t = random(145,160,0.1);
+
+$Pourcentage1t = random(15,20, 0.1);
+$Pourcentage3t = random(10,15, 0.1);
+$Pourcentage4t = random(4,7, 0.1);
+$Pourcentage5t = random(15,20, 0.1);
+$Pourcentage6t = random(4,7, 0.1);
+$Pourcentage7t = random(10,15, 0.1);
+$Pourcentage8t = random(2,4, 0.1);
+$Pourcentage2t = Compute(" 100.0 - $Pourcentage1t - $Pourcentage3t - $Pourcentage4t- $Pourcentage5t - $Pourcentage6t - $Pourcentage7t -$Pourcentage8t ");
+$PourcentageTotal = Compute("  $Pourcentage1t +  $Pourcentage2t + $Pourcentage3t + $Pourcentage4t + $Pourcentage5t + $Pourcentage6t + $Pourcentage7t +$Pourcentage8t ");
+
+$Indice1 = sprintf("%0.1f","$Indice1t ");
+$Indice2 = sprintf("%0.1f","$Indice2t ");
+$Indice3 = sprintf("%0.1f","$Indice3t ");
+$Indice4 = sprintf("%0.1f","$Indice4t ");
+$Indice5 = sprintf("%0.1f","$Indice5t ");
+$Indice6 = sprintf("%0.1f","$Indice6t ");
+$Indice7 = sprintf("%0.1f","$Indice7t ");
+$Indice8 = sprintf("%0.1f","$Indice8t ");
+
+@VecteurIndice = ($Indice1, $Indice2, $Indice3, $Indice4, $Indice5, $Indice6, $Indice7, $Indice8);
+
+$Pourcentage1 = sprintf("%0.1f","$Pourcentage1t ");
+$Pourcentage2 = sprintf("%0.1f","$Pourcentage2t ");
+$Pourcentage3 = sprintf("%0.1f","$Pourcentage3t ");
+$Pourcentage4 = sprintf("%0.1f","$Pourcentage4t ");
+$Pourcentage5 = sprintf("%0.1f","$Pourcentage5t ");
+$Pourcentage6 = sprintf("%0.1f","$Pourcentage6t ");
+$Pourcentage7 = sprintf("%0.1f","$Pourcentage7t ");
+$Pourcentage8 = sprintf("%0.1f","$Pourcentage8t ");
+
+@VecteurPourcentage = ($Pourcentage1, $Pourcentage2, $Pourcentage3, $Pourcentage4, $Pourcentage5, $Pourcentage6, $Pourcentage7, $Pourcentage8);
+
+
+$IndiceSynthetique1 = Compute("($Indice1*$Pourcentage1)/100");
+$IndiceSynthetique2 = Compute("($Indice2*$Pourcentage2)/100");
+$IndiceSynthetique3 = Compute("($Indice3*$Pourcentage3)/100");
+$IndiceSynthetique4 = Compute("($Indice4*$Pourcentage4)/100");
+$IndiceSynthetique5 = Compute("($Indice5*$Pourcentage5)/100");
+$IndiceSynthetique6 = Compute("($Indice6*$Pourcentage6)/100");
+$IndiceSynthetique7 = Compute("($Indice7*$Pourcentage7)/100");
+$IndiceSynthetique8 = Compute("($Indice8*$Pourcentage8)/100");
+
+#$IndiceSynthetique1 = sprintf("%0.1f","$IndiceSynthetique1t ");
+#$IndiceSynthetique2 = sprintf("%0.1f","$IndiceSynthetique2t ");
+#$IndiceSynthetique3 = sprintf("%0.1f","$IndiceSynthetique3t ");
+#$IndiceSynthetique4 = sprintf("%0.1f","$IndiceSynthetique4t ");
+#$IndiceSynthetique5 = sprintf("%0.1f","$IndiceSynthetique5t ");
+#$IndiceSynthetique6 = sprintf("%0.1f","$IndiceSynthetique6t ");
+#$IndiceSynthetique7 = sprintf("%0.1f","$IndiceSynthetique7t ");
+#$IndiceSynthetique8 = sprintf("%0.1f","$IndiceSynthetique8t ");
+
+$IndiceSynthetiquet = Compute("$IndiceSynthetique1 + $IndiceSynthetique2 +$IndiceSynthetique3 +$IndiceSynthetique4 + $IndiceSynthetique5 + $IndiceSynthetique6 +$IndiceSynthetique7 +$IndiceSynthetique8");
+
+$IndiceSynthetique = sprintf("%0.1f","$IndiceSynthetiquet ");
+
+$IndiceSynthetique2t = Compute("($Indice1*$Pourcentage1 + $Indice2*$Pourcentage2 +$Indice3*$Pourcentage3 +$Indice4*$Pourcentage4 + $Indice5*$Pourcentage5 + $Indice6*$Pourcentage6+ $Indice7*$Pourcentage7+$Indice8*$Pourcentage8)/100");
+
+
+@VecteurPeriodeRef = (2002);
+$CompteurPeriodeRef = 0;
+
+@VecteurPeriode = ("janvier 2015", "juillet 2015", "janvier 2016", "juillet 2016", "janvier 2017" );
+$CompteurPeriode = random(0,4);
+
+Context()->texStrings;
+BEGIN_TEXT
+Voici les indices élémentaires des différentes catégories de biens et services constituant un panier type d'un consommateur canadien pour le mois de $VecteurPeriode[$CompteurPeriode]. 
+$PAR
+
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+ AlignedRow(["${BBOLD} Catégorie ${EBOLD}","${BBOLD} Indice $BR ($VecteurPeriodeRef[$CompteurPeriodeRef] = 100) ${EBOLD}", "${BBOLD} Pondération ${EBOLD}"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[0]","$VecteurIndice[0]", "$VecteurPourcentage[0]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[1]","$VecteurIndice[1]", "$VecteurPourcentage[1]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[2]","$VecteurIndice[2]", "$VecteurPourcentage[2]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[3]","$VecteurIndice[3]", "$VecteurPourcentage[3]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurModalite[4]","$VecteurIndice[4]", "$VecteurPourcentage[4]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurModalite[5]","$VecteurIndice[5]", "$VecteurPourcentage[5]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurModalite[6]","$VecteurIndice[6]", "$VecteurPourcentage[6]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurModalite[7]","$VecteurIndice[7]", "$VecteurPourcentage[7]"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$ECENTER
+$BR ${BBOLD}Question :${EBOLD} Calculer l'indice des prix à la consommation (IPC) pour $VecteurPeriode[$CompteurPeriode]. Faire les calculs sans arrondir. Arrondir uniquement la réponse à une décimale. 
+$PAR $SPACE $SPACE $SPACE
+\(\displaystyle {\rm{IPC_{$VecteurPeriode[$CompteurPeriode]}}}\)  : \{ ans_rule(8)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($IndiceSynthetique, tol => 0.000001, tolType => "absolute"));
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+L'indice des prix à la consommation est un indice synthétique. Il se calcule à partir de la pondération des différents indices élémentaires qui le constituent : 
+$PAR
+\(\displaystyle {\rm{I_{période} = Indice\ élémentaire\ 1 \times pourcentage\ de\ l'indice\ élémentaire\ 1 }}\)
+$BR $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE
+\(\displaystyle {\rm{ + \ Indice\ élémentaire\ 2 \times pourcentage\ de\ l'indice\ élémentaire\ 2 }}\) 
+$BR $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE
+\(\displaystyle {\rm{ + \ ...}}\) 
+$PAR
+Pour cet exercice, les calculs deviennent :
+$BR
+\(\displaystyle {\rm{I_{$VecteurPeriode[$CompteurPeriode]}} = 
+$Indice1 \times $Pourcentage1 % + $Indice2 \times $Pourcentage2 % + $Indice3 \times $Pourcentage3 % + $Indice4 \times $Pourcentage4 %}\)
+$PAR $SPACE $SPACE $SPACE $SPACE $SPACE$SPACE $SPACE $SPACE
+\(\displaystyle {+  
+$Indice5 \times $Pourcentage5 % + $Indice6 \times $Pourcentage6 % + $Indice7 \times $Pourcentage7 % + $Indice8 \times $Pourcentage8 %}\)
+
+$PAR $SPACE $SPACE $SPACE $SPACE $SPACE$SPACE $SPACE $SPACE
+\(\displaystyle { =  \frac{$Indice1 \times$Pourcentage1}{100} +  \frac{$Indice2 \times $Pourcentage2}{100} +  \frac{$Indice3 \times $Pourcentage3}{100} +  \frac{$Indice4 \times$Pourcentage4}{100}
+ }\)
+$PAR $SPACE $SPACE $SPACE $SPACE $SPACE$SPACE $SPACE $SPACE
+\(\displaystyle { +  \frac{$Indice5 \times$Pourcentage5}{100} +  \frac{$Indice6 \times $Pourcentage6}{100} +  \frac{$Indice7 \times $Pourcentage7}{100} +  \frac{$Indice8 \times$Pourcentage8}{100}
+ }\)
+
+$PAR $SPACE $SPACE $SPACE $SPACE $SPACE$SPACE $SPACE $SPACE
+\(\displaystyle { =  $IndiceSynthetique1 + $IndiceSynthetique2 + $IndiceSynthetique3 + $IndiceSynthetique4
+ +$IndiceSynthetique5 + $IndiceSynthetique6 + $IndiceSynthetique7 + $IndiceSynthetique8
+ }\)
+$PAR $SPACE $SPACE $SPACE $SPACE $SPACE$SPACE $SPACE $SPACE
+\(\displaystyle { =  $IndiceSynthetique }\)
+
+
+
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

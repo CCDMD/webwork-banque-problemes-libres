@@ -1,0 +1,562 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Estimation par intervalle de confiance)
+## KEYWORDS('estimation ponctuelle', 'intervalle de confiance', 'marge d\'erreur', 'niveau de confiance', 'proportion')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl",
+"PGcourse.pl", "PGstatisticsmacros.pl", "PGnumericalmacros.pl", "unionTables.pl", "parserPopUp.pl","PGchoicemacros.pl", "unionLists.pl");
+
+
+COMMENT("Niveau de difficulté: Difficile. Il y a 5 contextes. PChapeau suit toujours un modèle normal. Les réponses sont des pourcentages arrondis à une décimale. La solution a été programmée et illustrée. Cas 2: Le pChapeau doit être CALCULÉ. La question porte sur l'autre modalité. Le niveau de confiance est NON STANDARD (autre que 90 %, 95 %, 99 %). Il n'y a AUCUN facteur de correction. L'écart type des Pchapeaux doit être arrondi à deux décimales. Les réponses doivent absolument être arrondies selon les spécifications de la question.");
+
+TEXT(beginproblem());
+
+Context()->strings->add(NA=>{}, dne => {alias => "NA"} );
+$refreshCachedImages = 1;
+
+#Choisir le niveau de confiance
+$ChoisirNiveau = random(0,1);
+$ChoisirNiveau = 1; 
+
+if ($ChoisirNiveau == 0)
+{$NiveauConfiance = list_random(90,95,99);}
+else
+{$NiveauConfiance = list_random(77,78,79,80,81,82,83,84,85,86,87,88,89,91,92,93,94,96);}
+
+#Choisir le contexte du problème
+$TypeContexte = random(0,4);
+
+#Choisir la façon de poser la question. Uniquement 2 est correct.
+$Question1presentationType = 2;
+
+#Facteur de correction
+#0 = Ne jamais mentionner le facteur de correction dans la solution et ne jamais en avoir.
+#1 = Mentionner le facteur de correction dans la solution et ne jamais en avoir.
+#2 = Mentionner le facteur de correction dans la solution et parfois en avoir.
+#3 = Mentionner le facteur de correction dans la solution et toujours en avoir.
+$ChoixFCtemp = random(0,1);
+$ChoixFCtemp = 0;
+if ($ChoixFCtemp == 0)
+{$TypeFC = 1;}
+else
+{$TypeFC = 3;}
+
+#PChapeau suit un modèle normal car la taille de l'échantillon est 
+#supérieure ou égale à 30 et les conditions sont toujours satisfaites
+
+#Afficher les pourcentages à deux décimales ou à une décimale ou au autre
+#Présentement il est arrondi à deux décimales
+$PrecisionPourcentage = "%0.2f";
+
+#Déterminer le contexte, sauf la taille de l'échantillon, c'est plus loin
+if ($TypeContexte == 0)
+{#Pourcentage fille
+$Conclusion = "le pourcentage de filles inscrites à ce cégep est situé";
+$Conclusion2 = "Le pourcentage de filles inscrites à ce cégep";
+$TaillePopulation = random(2000, 3000);
+$NomVariable = "de filles";
+$NomVariableTex = "Nombre \ de \ filles";}
+elsif ($TypeContexte == 1)
+{#Pourcentage de cadres
+$Conclusion = "le pourcentage de cadres qui travaillent dans cette entreprise est situé";
+$Conclusion2 = "Le pourcentage de cadres qui travaillent dans cette entreprise";
+$TaillePopulation = random(4000, 6000);
+$NomVariable = "de cadres";
+$NomVariableTex = "Nombre \ de \ cadres";}
+elsif ($TypeContexte == 2)
+{#Pourcentage d'étudiants ayant une voiture
+$Conclusion = "le pourcentage d'étudiants qui ont une voiture est situé";
+$Conclusion2 = "Le pourcentage d'étudiants qui ont une voiture";
+$TaillePopulation = random(2000, 3000);
+$NomVariable = "d'étudiants $BR ayant une voiture";
+$NomVariableTex = "Nombre \ d'étudiants";}
+elsif ($TypeContexte == 3)
+{#Pourcentage d'étudiants qui viennent à pied au cégep
+$Conclusion = "le pourcentage d'étudiants qui viennent à pied au cégep est situé";
+$Conclusion2 = "Le pourcentage d'étudiants qui viennent à pied au cégep";
+$TaillePopulation = random(2000, 5000);
+$NomVariable = "d'étudiants $BR qui viennent à pied au cégep";
+$NomVariableTex = "Nombre \ d'étudiants";}
+elsif ($TypeContexte == 4)
+{#Pièces défectueuses
+$Conclusion = "le pourcentage de pièces défectueuses produites par la machine est situé";
+$TaillePopulation = random(2000, 5000);
+$Conclusion2 = "Le pourcentage de pièces défectueuses produites par la machine";
+$NomVariable = "de pièces défectueuses $BR produites par la machine";
+$NomVariableTex = "Nombre \ de \ pièces";
+}
+
+#Variable commune
+$PrecisionVariableX = "%0.1f";
+$PrecisionVariableXc = Compute("0.1");
+
+#Déterminer la taille de l'échantillon et si Besoin du FC
+#0: La taille de l'échantillon est supérieure ou égale à 30
+if ($TypeFC == 0 || $TypeFC == 1)
+{#Pas de FC
+$TailleMinFCt = Compute("($TaillePopulation/20) - 1");
+$TailleMinFC = floor($TailleMinFCt);
+$TailleEchantillon = random(30, $TailleMinFC);
+$TestCalcul = Compute("20*$TailleEchantillon");
+#La variable TestCalcul est réutilisée plus loin
+$BesoinFC = 0;}
+elsif ($TypeFC == 2)
+{#Possiblement FC
+$TailleAutreFCt = Compute("($TaillePopulation/10)");
+$TailleAutreFC = ceil($TailleAutreFCt);
+$TailleEchantillon = random(30, $TailleAutreFC);
+$TestCalcul = Compute("20*$TailleEchantillon");
+#La variable TestCalcul est réutilisée plus loin
+if ($TaillePopulation >= $TestCalcul)
+{$BesoinFC = 0;}
+else
+{$BesoinFC = 1;}}
+else
+{#Toujours FC
+$TailleMinFCt = Compute("($TaillePopulation/20)");
+$TailleMinFC = ceil($TailleMinFCt);
+$TailleAutreFCt = Compute("($TaillePopulation/10)");
+$TailleAutreFC = ceil($TailleAutreFCt);
+$TailleEchantillon = random($TailleMinFC, $TailleAutreFC);
+$TestCalcul = Compute("20*$TailleEchantillon");
+#La variable TestCalcul est réutilisée plus loin
+$BesoinFC = 1;}
+
+#Il faut s'assurer que les conditions d'application sont satisfaites.
+
+#Déterminer la question du contexte = Besoin de la taille de l'échantillon
+if ($TypeContexte == 0)
+{#Pourcentage de filles
+$Pechantillont = random(40,60, 0.1);
+$NombreEchantillontemp = Compute("($Pechantillont*$TailleEchantillon)/100");
+$NombreEchantillon = ceil("$NombreEchantillontemp"); 
+$Pechantillontt = Compute("($NombreEchantillon/$TailleEchantillon)*100");
+$Pechantillon = sprintf("%0.1f","$Pechantillontt");
+
+$NombreEchantillon2 = Compute("$TailleEchantillon - $NombreEchantillon");
+
+$Question1contexte = "La responsable des admissions veut estimer le pourcentage de filles parmi les $TaillePopulation étudiants d'un cégep. Elle prélève un échantillon (sans remise) de $TailleEchantillon personnes inscrites à ce cégep et elle obtient $NombreEchantillon2 garçons dans l'échantillon.";
+$EstimerQuoi1 = "le pourcentage de filles qui sont inscrites à ce cégep";
+$EstimerQuoi2 = "du pourcentage de filles de cet échantillon";}
+elsif ($TypeContexte == 1)
+{#Pourcentage de cadres
+$Pechantillont = random(17,35, 0.1);
+$NombreEchantillontemp = Compute("($Pechantillont*$TailleEchantillon)/100");
+$NombreEchantillon = ceil("$NombreEchantillontemp"); 
+$Pechantillontt = Compute("($NombreEchantillon/$TailleEchantillon)*100");
+$Pechantillon = sprintf("%0.1f","$Pechantillontt");
+
+$NombreEchantillon2 = Compute("$TailleEchantillon - $NombreEchantillon");
+
+$Question1contexte = "Dans une entreprise, le responsable du service des ressources humaines veut estimer le pourcentage de cadres parmi ses $TaillePopulation employés. Il prélève un échantillon (sans remise) de $TailleEchantillon personnes qui travaillent dans cette entreprise et il obtient que $NombreEchantillon2 employés de l'échantillon ne sont pas des cadres.";
+$EstimerQuoi1 = "le pourcentage de cadres qui travaillent dans cette entreprise";
+$EstimerQuoi2 = "du pourcentage de cadres de cet échantillon";}
+elsif ($TypeContexte == 2)
+{#Pourcentage d'étudiants ayant une voiture
+$Pechantillont = random(40,60, 0.1);
+$NombreEchantillontemp = Compute("($Pechantillont*$TailleEchantillon)/100");
+$NombreEchantillon = ceil("$NombreEchantillontemp"); 
+$Pechantillontt = Compute("($NombreEchantillon/$TailleEchantillon)*100");
+$Pechantillon = sprintf("%0.1f","$Pechantillontt");
+$NombreEchantillon2 = Compute("$TailleEchantillon - $NombreEchantillon");
+
+$Question1contexte = "Le responsable du stationnement veut estimer le pourcentage des $TaillePopulation étudiants d'un cégep qui ont une voiture. Il prélève un échantillon (sans remise) de $TailleEchantillon étudiants de ce cégep et il obtient que $NombreEchantillon2 étudiants de l'échantillon n'ont pas de voiture.";
+$EstimerQuoi1 = "le pourcentage d'étudiants qui ont une voiture";
+$EstimerQuoi2 = "du pourcentage d'étudiants de cet échantillon";}
+elsif ($TypeContexte == 3)
+{#Pourcentage d'étudiants qui viennent à pieds au cégep
+$Pechantillont = random(17,42, 0.1);
+$NombreEchantillontemp = Compute("($Pechantillont*$TailleEchantillon)/100");
+$NombreEchantillon = ceil("$NombreEchantillontemp"); 
+$Pechantillontt = Compute("($NombreEchantillon/$TailleEchantillon)*100");
+$Pechantillon = sprintf("%0.1f","$Pechantillontt");
+$NombreEchantillon2 = Compute("$TailleEchantillon - $NombreEchantillon");
+
+$Question1contexte = "Un enseignant en éducation physique veut estimer le pourcentage des $TaillePopulation étudiants d'un cégep qui viennent à pied au cégep. Il prélève un échantillon (sans remise) de $TailleEchantillon étudiants de ce cégep et il obtient que $NombreEchantillon2 étudiants de l'échantillon ne viennent pas à pied au cégep.";
+$EstimerQuoi1 = "le pourcentage d'étudiants qui viennent à pied au cégep";
+$EstimerQuoi2 = "du pourcentage d'étudiants de cet échantillon";}
+elsif ($TypeContexte == 4)
+{#Pièces défectueuses
+if ($TailleEchantillon <51)
+{$Pechantillont = random(17,23, 0.1);}
+elsif ($TailleEchantillon > 50 && $TailleEchantillon <81)
+{$Pechantillont = random(10,20, 0.1);}
+elsif ($TailleEchantillon > 80 && $TailleEchantillon <121)
+{$Pechantillont = random(5,10, 0.1);}
+elsif ($TailleEchantillon > 120 && $TailleEchantillon <201)
+{$Pechantillont = random(3,10, 0.1);}
+else
+{$Pechantillont = random(3,10, 0.1);}
+$NombreEchantillontemp = Compute("($Pechantillont*$TailleEchantillon)/100");
+$NombreEchantillon = ceil("$NombreEchantillontemp"); 
+$Pechantillontt = Compute("($NombreEchantillon/$TailleEchantillon)*100");
+$Pechantillon = sprintf("%0.1f","$Pechantillontt");
+$NombreEchantillon2 = Compute("$TailleEchantillon - $NombreEchantillon");
+
+$Question1contexte = "Dans une usine, la responsable du service de la qualité de la production veut estimer le pourcentage de pièces défectueuses parmi les $TaillePopulation pièces produites par une machine. Elle prélève un échantillon (sans remise) de $TailleEchantillon pièces produites par la machine et elle obtient que $NombreEchantillon2 pièces de l'échantillon ne sont pas défectueuses.";
+$EstimerQuoi1 = "le pourcentage de pièces défectueuses produites par la machine";
+$EstimerQuoi2 = "du pourcentage de pièces défectueuses de cet échantillon";}
+
+
+
+#Moyenne et écart type pour les cotes Z
+$Ecarttype1 = 1;
+$Moyenne1 = 0;
+
+#Calcul de la moyenne des X barre et de l'écart type des X barre
+$MoyennePchapeau = sprintf($PrecisionVariableX,"$Pechantillon");
+#Facteur de correction
+if ($BesoinFC == 0)
+{$EcarttypePchapeaut = Compute("($Pechantillon*(100- $Pechantillon)/($TailleEchantillon))^0.5");
+$EcarttypePchapeau = sprintf("%0.2f","$EcarttypePchapeaut");
+if ($TypeFC == 0)
+{#0 = Ne jamais mentionner le facteur de correction dans la solution et ne jamais en avoir.
+$Solution2FC = " \(\displaystyle{\sigma_{\widehat{p}} = \sqrt{\frac{\widehat{p} \cdot (100.0 - \widehat{p})}{n}}}\) $BR \(\displaystyle{ \sigma_{\widehat{p}} = \sqrt{\frac{($Pechantillon\cdot(100.0 - $Pechantillon)}{$TailleEchantillon}} = $EcarttypePchapeau}\) $BR Comme \(p\) est inconnu, \(\widehat{p}\) est utilisé.";}
+else
+{#Expliquer pourquoi il n'y a pas de facteur de correction
+$Solution2FC = " \(\displaystyle{\sigma_{\widehat{p}} = \sqrt{\frac{\widehat{p} \cdot (100.0 - \widehat{p})}{n}}}\) (Comme \(p\) est inconnu, \(\widehat{p}\) est utilisé.) $BR \(\displaystyle{ \sigma_{\widehat{p}} = \sqrt{\frac{$Pechantillon\cdot(100.0 - $Pechantillon)}{$TailleEchantillon}} = $EcarttypePchapeau}\) $BR Le facteur de correction \(\displaystyle{\sqrt{\frac{N - n}{N - 1}}}\) n'est pas utilisé car l'échantillonnage se fait sans remise et \(\displaystyle{ N \ge 20n \ ($TaillePopulation \ge 20 \cdot $TailleEchantillon = $TestCalcul)}\).";}
+}
+else
+{$EcarttypePchapeaut = Compute("(($Pechantillon*(100- $Pechantillon)/($TailleEchantillon))^0.5)*(($TaillePopulation- $TailleEchantillon)/($TaillePopulation-1))^0.5");
+$EcarttypePchapeau = sprintf("%0.2f","$EcarttypePchapeaut");
+$Solution2FC = 
+"Le facteur de correction \(\displaystyle{\sqrt{\frac{N - n}{N - 1}}}\) doit être utilisé car l'échantillonnage se fait sans remise et \(\displaystyle{ N < 20n \ ($TaillePopulation < 20 \cdot $TailleEchantillon = $TestCalcul)}\). $BR \(\displaystyle{\sigma_{\widehat{p}} = \sqrt{\frac{\widehat{p} \cdot (100.0 - \widehat{p})}{n}} \times \sqrt{\frac{N - n}{N - 1}}}\) $BR (Comme \(p\) est inconnu, \(\widehat{p}\) est utilisé.) $BR \(\displaystyle{\sigma_{\widehat{p}} = \sqrt{\frac{$Pechantillon\cdot(100.0 - $Pechantillon)}{$TailleEchantillon}} \times \sqrt{\frac{$TaillePopulation - $TailleEchantillon}{$TaillePopulation - 1}} = $EcarttypePchapeau}\) ";}
+
+
+$MoyenneXc = $MoyennePchapeau;
+$EcarttypeXc = $EcarttypePchapeau;
+$GraphiqueSymboleA = "\{\displaystyle{\widehat{P}}\}";
+$SymboleXA = "\(\displaystyle{\widehat{P}}\)";
+
+if ( $NiveauConfiance == 90)
+{$CoteZ1 = Compute("-1.645");
+$CoteZ2 = Compute("1.645");}
+elsif ( $NiveauConfiance == 95)
+{$CoteZ1 = Compute("-1.96");
+$CoteZ2 = Compute("1.96");}
+elsif ( $NiveauConfiance == 99)
+{$CoteZ1 = Compute("-2.575");
+$CoteZ2 = Compute("2.575");}
+elsif ( $NiveauConfiance == 88)
+{$CoteZ1 = Compute("-1.555");
+$CoteZ2 = Compute("1.555");}
+else
+{$NiveauConfianceDivise = Compute("($NiveauConfiance/2)/100");
+$CoteZ2t = normal_distr($NiveauConfianceDivise, mean=>0, deviation=>1);
+$CoteZ2 = sprintf("%0.2f","$CoteZ2t");
+$CoteZ1t = Compute("-1*$CoteZ2");
+$CoteZ1 = sprintf("%0.2f","$CoteZ1t");}
+
+
+$EcartRept = Compute("$CoteZ2*$EcarttypeXc");
+$EcartRep = sprintf($PrecisionVariableX,"$EcartRept");
+
+$ValeurX2t=Compute("$MoyenneXc + $EcartRep");
+$ValeurX2 = sprintf($PrecisionVariableX,"$ValeurX2t");
+$ValeurX1t=Compute("$MoyenneXc - $EcartRep");
+$ValeurX1 = sprintf($PrecisionVariableX,"$ValeurX1t");
+
+
+#Tracer le graphique
+$FctNormal = Formula("exp(-1*(((x-$Moyenne1)/$Ecarttype1)^2)/2)/($Ecarttype1*(2*pi)^0.5)")-> reduce;
+$FctNormalZ1 = $FctNormal->eval(x=>$CoteZ1);
+$FctNormalZ2 = $FctNormal->eval(x=>$CoteZ2);
+
+$minX1 = -3.5;
+$maxX1 =3.5;
+$minY1 = -0.1;
+$maxY1t = $FctNormal->eval(x=>$Moyenne1);
+$maxY1 = Compute("$maxY1t + 0.1");
+$maxY1sol1 = Compute("$maxY1t + 0.03");
+$maxY1sol2 = Compute("$maxY1t + 0.06");
+
+#Affichage des noms de l'axe des X
+$lbZx = 3.3;
+$lbXx = 3.3;
+$IntervalleZ1Z2 = Compute("$CoteZ2 - $CoteZ1");
+
+#Ne pas afficher les valeurs X ou Z sur une autre valeur.
+if ($CoteZ2 >=2.5)
+{if ($CoteZ1 >= -0.5 && $CoteZ1 <= 0.5)
+{#Il faut ajuster la hauteur en y car Z1 et Z2 sont trop près des symboles Z, 0
+$lbZy= -0.06;
+$lbZy1= -0.08;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 =-0.02;
+$lbXy2 =-0.02;}
+elsif ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 est trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = 0;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.06;
+$lbXy = 0;
+$lbXy1 =0;
+$lbXy2 =0;}}
+elsif (($CoteZ2 >= -0.5 && $CoteZ2 <= 0.5 && $CoteZ2 != 0)|| ($CoteZ1 >= -0.5 && $CoteZ1 <= 0.5 && $CoteZ1 != 0))
+{if ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 et Z2 sont trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.07;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = -0.01;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.08;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 =-0.02;
+$lbXy2 =-0.02;}}
+elsif (($CoteZ2 == 0)||($CoteZ1 == 0)) 
+{if ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 est trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.08;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = -0.02;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.06;
+$lbXy = 0;
+$lbXy1 =0;
+$lbXy2 =0;}}
+else
+{if ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 est trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = 0;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.06;
+$lbXy = 0;
+$lbXy1 =0;
+$lbXy2 =0;}}
+
+$Ajustement = 0.01;
+
+$FctGraphiqueZ = "$FctNormal for x in <-3,3> using color:red and weight:2";
+$FctGraphiqueZ2 = "$FctNormal for x in <$CoteZ1,$CoteZ2> using color:blue and weight:2";
+$graphiqueZ = init_graph($minX1,$minY1,$maxX1, $maxY1,'axes'=>[0,0]);
+$graphiqueZ -> lb('reset');
+$graphiqueZ -> lb(new Label ( 0,$lbXy,"p = ?",'black','center','top'));
+$graphiqueZ->moveTo($CoteZ1,0);
+$graphiqueZ->lineTo($CoteZ1,$FctNormalZ1,'blue',3);
+$graphiqueZ->moveTo($CoteZ2,0);
+$graphiqueZ->lineTo($CoteZ2,$FctNormalZ2,'blue',3);
+$graphiqueZ->moveTo($CoteZ1,0);
+$graphiqueZ->lineTo($CoteZ2,0,'blue',3);
+#Afficher % à trouver
+$graphiqueZ->moveTo($CoteZ1,$maxY1sol2);
+$graphiqueZ->lineTo($CoteZ2,$maxY1sol2,'green',3);
+$graphiqueZ->moveTo($CoteZ1,$maxY1sol2 - $Ajustement);
+$graphiqueZ->lineTo($CoteZ1,$maxY1sol2+ $Ajustement,'green',3);
+$graphiqueZ->moveTo($CoteZ2,$maxY1sol2- $Ajustement);
+$graphiqueZ->lineTo($CoteZ2,$maxY1sol2+$Ajustement,'green',3);
+$graphiqueZ -> lb(new Label ( ($CoteZ1 + $CoteZ2)/2,$maxY1sol2,"$NiveauConfiance %",'black','center','top'));
+#Afficher P chapeau
+$graphiqueZ->moveTo(3.28,-0.01);
+$graphiqueZ->lineTo(3.33,-0.005,'black',2);
+$graphiqueZ->lineTo(3.4,-0.01,'black',2);
+$graphiqueZ -> lb(new Label ( $lbXx,-0.01,"P",'black','left','top'));
+
+#Afficher l'axe des Z
+$graphiqueZ->moveTo($minX1,$lbZy);
+$graphiqueZ->lineTo($maxX1,$lbZy,'gray',2);
+#Afficher 0
+$graphiqueZ -> lb(new Label (0,$lbZy,0,'black','center','top'));
+#Afficher le symbole Z
+if ($CoteZ2 > 2.5)
+{$graphiqueZ -> lb(new Label ( $lbXx,$lbZy-0.02,Z,'black','center','top'));}
+else
+{$graphiqueZ -> lb(new Label ( $lbXx,$lbZy,Z,'black','center','top'));}
+#Afficher les cotes Z
+$graphiqueZ -> lb(new Label ( $CoteZ2,$lbZy2,"$CoteZ2",'black','center','top'));
+$graphiqueZ -> lb(new Label ( $CoteZ1,$lbZy2,"$CoteZ1",'black','center','top'));
+#Afficher sur X
+$graphiqueZ -> lb(new Label ( $CoteZ1,$lbXy1,"p - E",'black','center','top'));
+$graphiqueZ -> lb(new Label ( $CoteZ2,$lbXy2,"p + E",'black','center','top'));
+#Afficher E et les lignes sur le graphique
+$hautNew = Compute("$maxY1sol2 /4");
+@LigneHaut2 = ($CoteZ2,$hautNew, 0,$hautNew,$CoteZ2,($hautNew)-$Ajustement,$CoteZ2,($hautNew)+$Ajustement,0,($hautNew)-$Ajustement,0,($hautNew)+$Ajustement, $CoteZ2 /2 ,$hautNew);
+$graphiqueZ->moveTo($LigneHaut2[0],$LigneHaut2[1]);
+$graphiqueZ->lineTo($LigneHaut2[2],$LigneHaut2[3],'gray',3);
+$graphiqueZ->moveTo($LigneHaut2[4],$LigneHaut2[5]);
+$graphiqueZ->lineTo($LigneHaut2[6],$LigneHaut2[7],'gray',3);
+$graphiqueZ->moveTo($LigneHaut2[8],$LigneHaut2[9]);
+$graphiqueZ->lineTo($LigneHaut2[10],$LigneHaut2[11],'gray',3);
+$graphiqueZ -> lb(new Label ($LigneHaut2[12],$LigneHaut2[13],"E",'black','right','top'));
+
+
+
+add_functions($graphiqueZ, $FctGraphiqueZ,$FctGraphiqueZ2);
+$imageZ = image(insertGraph($graphiqueZ),width =>300,height=>250,tex_size=>360);
+
+#Type question
+if ($Question1presentationType == 0)
+{$Question1presentation = "Construire un intervalle de confiance autour $EstimerQuoi2 afin d'estimer $EstimerQuoi1 avec un niveau de confiance de $NiveauConfiance %.";}
+elsif ($Question1presentationType == 1)
+{$Question1presentation ="Construire un intervalle de confiance afin d'estimer $EstimerQuoi1 avec un niveau de confiance de $NiveauConfiance %.";}
+else
+{$Question1presentation = "Construire un intervalle de confiance afin d'estimer $EstimerQuoi1. Utiliser un niveau de confiance de $NiveauConfiance %.";}
+
+#Solution
+
+#Étape 1: Données du problème
+@CompteurNomParametre = (0,1,2);
+@CompteurNomStatistique = (0,1,2);
+@VecteurNomParametreRep2 = ("Taille \(\displaystyle{(\it{N})}\) = $TaillePopulation", "Pourcentage $NomVariable $BR dans la population \(\displaystyle{(p)}\) = inconnu", "Nombre $NomVariable $BR dans la population \(\displaystyle{(N_1)}\) = inconnu"); 
+@VecteurNomStatistiqueRep2 = ("Taille \(\displaystyle{(\it{n})}\) = $TailleEchantillon", "Pourcentage $NomVariable $BR dans l'échantillon \(\displaystyle{(\widehat{p})}\) = $Pechantillon", "Nombre $NomVariable $BR dans l'échantillon \(\displaystyle{(n_1)}\) = $NombreEchantillon"); 
+
+#Étape 2: Justification que Pchapeau suit un modèle normal
+#Solution Question b
+$Sol2test2 = Compute("$Pechantillon * $TailleEchantillon");
+$Sol2test3 = Compute("(100-$Pechantillon) * $TailleEchantillon");
+
+#Calcul étape 3
+$RisqueErreur = Compute("100.0 - $NiveauConfiance");
+$RisqueErreurDemi = Compute("$RisqueErreur/2");
+$RisqueErreurDemiTable = Compute("$RisqueErreurDemi/100");
+
+#Autre conclusion
+$fois20 = Compute("($NiveauConfiance*20)/100");
+$Conclusion3 = "$Conclusion2 est de $Pechantillon % avec une marge d'erreur de $EcartRep % et un niveau de confiance de $NiveauConfiance % (la marge d'erreur est donc adéquate $fois20 fois sur 20).";
+$EcartUnite = "$EcartRep %"; 
+
+if ($NiveauConfiance>98)
+{$Chance = "chance";}
+else
+{$Chance = "chances";}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$Question1contexte 
+
+$PAR ${BBOLD}Question :${EBOLD} $Question1presentation
+
+
+$BR
+\{ BeginList("OL", type=>"a") \}
+$ITEM Donner l'estimation ponctuelle : \{ ans_rule(10) \}
+$ITEM Donner le risque d'erreur : \{ ans_rule(10) \}
+$ITEM Donner la marge d'erreur : \{ ans_rule(10) \}
+$ITEM Donner l'intervalle de confiance : 
+ \{ ans_rule(10) \} \( \displaystyle{ \le p \le }\) \{ ans_rule(10) \}
+
+\{ EndList("OL") \}
+
+$BR ${BBOLD}Faire les calculs en arrondissant à deux décimales.${EBOLD} Arrondir les réponses à une décimale. 
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($Pechantillon, tol => 0.0001, tolType => "absolute"));
+ANS(num_cmp($RisqueErreur, tol => 0.0001, tolType => "absolute"));
+ANS(num_cmp($EcartRep, tol => 0.0001, tolType => "absolute"));
+
+ANS(num_cmp($ValeurX1, tol => 0.0001, tolType => "absolute"));
+ANS(num_cmp($ValeurX2, tol => 0.0001, tolType => "absolute"));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+1) Identifier les données du problème et calculer le pourcentage \(\displaystyle{\widehat{p}}\).
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"1pt", spacing=>2, padding=>2).
+  AlignedRow(["${BBOLD}Paramètres de la population ${EBOLD}","${BBOLD}Statistiques de l'échantillon${EBOLD}"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[0]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[0]]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[1]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[1]]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[2]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[2]]"], align => CENTER, separation=>0).
+EndTable()
+\}
+$PAR
+\(\displaystyle{\widehat{p} = \rm{\frac{$NomVariableTex}{Taille \ de \ l'échantillon}}\times 100 = \frac{$TailleEchantillon - $NombreEchantillon2}{$TailleEchantillon}\times 100 =
+\frac{$NombreEchantillon}{$TailleEchantillon}\times 100 =  $Pechantillon}\)
+$ECENTER
+$PAR
+2) Justifier que la distribution des \(\displaystyle{\widehat{P}}\) (les proportions échantillonnales de taille $TailleEchantillon) suit un modèle normal et calculer \(\displaystyle{\sigma_{\widehat{p}}}\). 
+\{ BeginList("OL", type=>"a") \}
+$ITEM \(\displaystyle{\widehat{P} \sim N(\mu_{\widehat{p}}; {\sigma_{\widehat{p}}}^2)}\) parce que 
+$BR \(\displaystyle{n = $TailleEchantillon \ge 30,}\)
+$BR \(\displaystyle{np = $TailleEchantillon \cdot $Pechantillon = $Sol2test2 \ge 500,}\) 
+$BR \(\displaystyle{n(100-p) = $TailleEchantillon \cdot (100.0 - $Pechantillon) =  $Sol2test3 \ge 500. }\)
+$ITEMSEP
+$ITEM $Solution2FC 
+$ITEMSEP
+$ITEM Notons que \(\displaystyle{\mu_{\widehat{p}} = p = \ ? }\); c'est ce que l'on veut estimer.
+\{ EndList("OL") \}
+$PAR
+\{
+ColumnTable(
+"3) Calculer la cote Z associé au risque d'erreur \(\alpha\).".
+$BR. 
+"\(\displaystyle{ \alpha = (100.0 \ % - $NiveauConfiance \ %) = $RisqueErreur \ %}\)".
+$BR. 
+"\(\displaystyle{ \alpha/2 = ($RisqueErreur  \ %)/2 = $RisqueErreurDemi \ % = $RisqueErreurDemiTable}\)".
+$BR.
+"Alors \(\displaystyle{P(z > z_{$RisqueErreurDemiTable}) = $RisqueErreurDemiTable}\)".
+$BR.
+"Et \(\displaystyle{z_{$RisqueErreurDemiTable} = $CoteZ2}\)".
+$PAR.
+"4) Calculer la marge d'erreur.".
+$BR. 
+"\(\displaystyle{E = z_{$RisqueErreurDemiTable}\cdot\sigma_{\widehat{p}}}\)". 
+$BR.
+" \(\displaystyle{E = $CoteZ2 \cdot $EcarttypeXc = $EcartRep}\)".
+$PAR. 
+"5) Construire l'intervalle de confiance.".
+$BR.
+"\(\displaystyle{\widehat{p} - E \le p \le \widehat{p} - E}\)".
+$BR.
+"\(\displaystyle{$MoyenneXc - $EcartRep \le p \le $MoyenneXc + $EcartRep}\)".
+$BR.
+"\(\displaystyle{$ValeurX1 \le p \le $ValeurX2}\)",
+BeginTable(border=>1, tex_border=>"1pt", spacing=>1, padding=>1).
+AlignedRow(["$imageZ"], align=>LEFT, separation=>0).
+EndTable(),
+indent=>"0", separation=>"60", valign=>"TOP"
+);
+\}
+$PAR
+6) Interpréter l'intervalle de confiance.
+$PAR
+Au niveau de confiance de $NiveauConfiance %, $Conclusion entre $ValeurX1 % et $ValeurX2 %.
+$PAR
+${BITALIC}Autre formulation :${EITALIC} $Conclusion3
+$PAR ${BITALIC}Estimation ponctuelle :${EITALIC} $Pechantillon %.
+$PAR ${BITALIC}Risque d'erreur :${EITALIC} 100.0 % - $NiveauConfiance % = $RisqueErreur %. $BR Il y a donc $RisqueErreur % de $Chance que la marge d'erreur soit inadéquate.
+$PAR ${BITALIC}Marge d'erreur :${EITALIC} $EcartUnite.
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

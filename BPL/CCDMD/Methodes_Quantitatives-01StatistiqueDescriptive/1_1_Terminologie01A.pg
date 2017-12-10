@@ -1,0 +1,255 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('modalité', 'population', 'unité statistique', 'variable', 'variable qualitative', 'variable qualitative nominale', 'variable qualitative ordinale', 'variable quantitative continue', 'variable quantitative discrète')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("CONTEXTE 2 (3 contextes) : Niveau de difficulté : Moyen. Affichage aléatoire des questions. Affichage aléatoire des types de variable dans le menu déroulant.");
+
+TEXT(beginproblem());
+
+#Choix du contexte de l'exercice
+$ChoixContexte = random(0,2);
+
+#Les types de variables et l'affichage non aléatoire. Pour rendre l'affichage aléatoire, utiliser shuffle(4);
+@VecteurTypeVar = ("Qualitatif nominal", "Qualitatif ordinal", "Quantitatif discret", "Quantitatif continu");
+#@CompteurTypeVar1 = (0,1,2,3);
+@CompteurTypeVar1 = shuffle(4);
+#@CompteurTypeVar2 = (0,1,2,3);
+@CompteurTypeVar2 = shuffle(4);
+#@CompteurTypeVar3 = (0,1,2,3);
+@CompteurTypeVar3 = shuffle(4);
+#@CompteurTypeVar4 = (0,1,2,3);
+@CompteurTypeVar4 = shuffle(4);
+#@CompteurTypeVar5 = (0,1,2,3);
+@CompteurTypeVar5 = shuffle(4);
+
+#Les choix pour la question 1 (population) et la question 2 (unité statistique) sont aléatoires
+@CompteurPopUpP = shuffle(9);
+@CompteurPopUpP2 = shuffle(9);
+
+#L'affichage des questions du chercheur sont aléatoires
+@CompteurAffichage = shuffle(5);
+#@CompteurAffichage = (0,1,2,3,4);
+
+#Ordre des réponses aux noms des variables
+@CompteurPopUpQ1 = shuffle(5);
+@CompteurPopUpQ2 = shuffle(5);
+@CompteurPopUpQ3 = shuffle(5);
+@CompteurPopUpQ4 = shuffle(5);
+@CompteurPopUpQ5 = shuffle(5);
+
+
+if ($ChoixContexte == 0)
+{
+@VecteurContexte = ("Un employé du département de contrôle de la qualité d'une entreprise de biscuits se rend dans une épicerie pour vérifier si les boites de biscuits satisfont les exigences de son département. Il sélectionne 10 boites et il les analyse selon les questions suivantes :");
+#Ordinal, continu, discret, discret, nominal
+@VecteurQuestion = (
+"Quel est le niveau de détérioration de la boite ?", 
+"Quel est le prix de vente de la boite ?", 
+"Quel est le nombre de coins arrondis de la boite ?", 
+"Le poids de la boite est-il conforme au poids indiqué sur la boite ?", 
+"Quelle est la variété de biscuits de la boite ?");
+
+$ChoixPopUpVar1 = $VecteurTypeVar[1];
+$ChoixPopUpVar2 = $VecteurTypeVar[3];
+$ChoixPopUpVar3 = $VecteurTypeVar[2];
+$ChoixPopUpVar4 = $VecteurTypeVar[0];
+$ChoixPopUpVar5 = $VecteurTypeVar[0];
+
+@ChoixPopUpP = ("Les boites de biscuits", "Une boite de biscuits", "L'épicerie", "Les épiceries", "Le contrôle de la qualité", "Les clients", "Un client", "La qualité des boites de biscuits", "L'employé du contrôle de la qualité");
+$Rep1P = $ChoixPopUpP[0];
+$Rep2P = $ChoixPopUpP[1];
+
+@ChoixPopUpQ1 = ("Niveau de détérioration", "Très détérioré", "Aucune détérioration", "Peu détérioré", "Moyennement détérioré","Ne passe pas le test de qualité", "Aucune de ces réponses");
+$ChoixPopUpQ1Rep = $ChoixPopUpQ1[0];
+
+@ChoixPopUpQ2 = ("Prix de vente", "3,99 dollars", "En rabais", "Moins de 3 dollars", "Trop cher", "Ne passe pas le test de qualité", "Aucune de ces réponses");
+$ChoixPopUpQ2Rep = $ChoixPopUpQ2[0];
+
+@ChoixPopUpQ3 = ("Nombre de coins arrondis", "Aucun", "1 coin arrondi", "2 coins arrondis", "Nombre de coins", "Ne passe pas le test de qualité", "Aucune de ces réponses");
+$ChoixPopUpQ3Rep = $ChoixPopUpQ3[0];
+
+@ChoixPopUpQ4 = ("Conformité du poids de la boite", "Conforme", "Non conforme", "Poids de la boite", "200 grammes","Ne passe pas le test de qualité", "Aucune de ces réponses");
+$ChoixPopUpQ4Rep = $ChoixPopUpQ4[0];
+
+@ChoixPopUpQ5 = ("Variété de la boite", "Biscuits au chocolat", "Nombre de variétés de biscuits","Biscuits aux amandes", "Nombre de biscuits", "Ne passe pas le test de qualité", "Aucune de ces réponses");
+$ChoixPopUpQ5Rep = $ChoixPopUpQ5[0];
+
+}
+elsif ($ChoixContexte == 1)
+{
+@VecteurContexte = ("Le directeur des études du cégep se rend à la coopérative pour analyser la qualité des manuels scolaires qui y sont vendus. Il sélectionne 15 manuels scolaires et il les analyse selon les questions suivantes : ");
+@VecteurQuestion = (
+"Quel est le niveau de qualité de la reliure du manuel ?", 
+"Quel est le prix du manuel ?", 
+"Dans combien de cours ce manuel peut-il être utilisé ?", 
+"Dans quel cours ce manuel peut-il être utilisé ?", 
+"Combien d'auteurs y a-t-il ?");
+
+$ChoixPopUpVar1 = $VecteurTypeVar[1];
+$ChoixPopUpVar2 = $VecteurTypeVar[3];
+$ChoixPopUpVar3 = $VecteurTypeVar[2];
+$ChoixPopUpVar4 = $VecteurTypeVar[0];
+$ChoixPopUpVar5 = $VecteurTypeVar[2];
+
+@ChoixPopUpP = ("Les manuels scolaires", "Un manuel scolaire", "La coopérative", "Les coopératives", "Le directeur des études", "Les étudiants", "Un étudiant", "La qualité des manuels scolaires", "Les directeurs des études");
+$Rep1P = $ChoixPopUpP[0];
+$Rep2P = $ChoixPopUpP[1];
+
+@ChoixPopUpQ1 = ("Niveau de qualité de la reliure", "Très bonne qualité", "Très mauvaise qualité", "Qualité moyenne", "Aucune reliure", "La reliure", "Aucune de ces réponses");
+$ChoixPopUpQ1Rep = $ChoixPopUpQ1[0];
+
+@ChoixPopUpQ2 = ("Prix de vente", "59,99 dollars", "En rabais", "Moins de 3 dollars", "Trop cher", "Ne passe pas le test de qualité", "Aucune de ces réponses");
+$ChoixPopUpQ2Rep = $ChoixPopUpQ2[0];
+
+@ChoixPopUpQ3 = ("Nombre de cours", "Aucun cours", "1 cours", "2 cours", "Mathématiques", "Le cours qui utilise le manuel", "Aucune de ces réponses");
+$ChoixPopUpQ3Rep = $ChoixPopUpQ3[0];
+
+@ChoixPopUpQ4 = ("Le cours qui utilise le manuel", "Nombre de cours", "Aucun cours", "1 cours", "2 cours", "Mathématiques", "Aucune de ces réponses");
+$ChoixPopUpQ4Rep = $ChoixPopUpQ4[0];
+
+@ChoixPopUpQ5 = ("Nombre d'auteurs", "Aucun", "1 auteur","Auteurs du livre", "2 auteurs", "Plus de 2 auteurs", "Aucune de ces réponses");
+$ChoixPopUpQ5Rep = $ChoixPopUpQ5[0];
+
+}
+elsif ($ChoixContexte == 2)
+{
+@VecteurContexte = ("Le propriétaire d'un petit restaurant se rend dans la métropole pour analyser la qualité des menus du jour des restaurants du centre-ville. Il sélectionne 5 menus du jour de restaurants différents et il les analyse selon les questions suivantes : ");
+
+@VecteurQuestion = (
+"Quel est le niveau de compréhension du menu du jour ?", 
+"Quel est le prix du menu du jour ?", 
+"Combien de desserts sont-ils offerts dans le menu du jour ?", 
+"Le café ou le thé est-il inclus dans le menu du jour ?", 
+"Quels desserts sont-ils offerts dans le menu du jour ?");
+
+$ChoixPopUpVar1 = $VecteurTypeVar[1];
+$ChoixPopUpVar2 = $VecteurTypeVar[3];
+$ChoixPopUpVar3 = $VecteurTypeVar[2];
+$ChoixPopUpVar4 = $VecteurTypeVar[0];
+$ChoixPopUpVar5 = $VecteurTypeVar[0];
+
+
+
+@ChoixPopUpP = ("Les menus du jour", "Un menu du jour", "Un restaurant", "Les restaurants", "Le propriétaire", "Les propriétaires", "Le centre-ville de la métropole", "Les centres-villes", "Un propriétaire");
+$Rep1P = $ChoixPopUpP[0];
+$Rep2P = $ChoixPopUpP[1];
+
+@ChoixPopUpQ1 = ("Niveau de compréhension du menu", "Très facile à comprendre", "Très difficile à comprendre", "Plutôt facile à comprendre", "Plutôt difficile à comprendre", "Menu du jour", "Aucune de ces réponses");
+$ChoixPopUpQ1Rep = $ChoixPopUpQ1[0];
+
+@ChoixPopUpQ2 = ("Prix du menu du jour", "19,99 dollars", "Menu du jour", "Moins de 15 dollars", "Trop cher", "Prix du restaurant", "Aucune de ces réponses");
+$ChoixPopUpQ2Rep = $ChoixPopUpQ2[0];
+
+@ChoixPopUpQ3 = ("Nombre de desserts", "Aucun dessert", "1 dessert", "2 desserts", "Une pointe de gâteau ou de tarte", "Sortes de desserts", "Aucune de ces réponses");
+$ChoixPopUpQ3Rep = $ChoixPopUpQ3[0];
+
+@ChoixPopUpQ4 = ("Inclusion d'un café ou d'un thé dans le menu", "Un café", "Un thé", "Aucune mention", "Oui", "Non", "Aucune de ces réponses");
+$ChoixPopUpQ4Rep = $ChoixPopUpQ4[0];
+
+@ChoixPopUpQ5 = ("Sortes de desserts inclus dans le menu", "Nombre de desserts inclus dans le menu", "Pointe de tarte","Gâteau au chocolat", "2 desserts", "Aucun dessert", "Aucune de ces réponses");
+$ChoixPopUpQ5Rep = $ChoixPopUpQ5[0];
+
+
+}
+
+
+@VecteurRepPopUpV = (
+PopUp(["Sélectionner le type de variable",  "$VecteurTypeVar[$CompteurTypeVar1[0]]",  "$VecteurTypeVar[$CompteurTypeVar1[1]]", "$VecteurTypeVar[$CompteurTypeVar1[2]]", "$VecteurTypeVar[$CompteurTypeVar1[3]]"], "$ChoixPopUpVar1"),
+PopUp(["Sélectionner le type de variable",  "$VecteurTypeVar[$CompteurTypeVar2[0]]",  "$VecteurTypeVar[$CompteurTypeVar2[1]]", "$VecteurTypeVar[$CompteurTypeVar2[2]]", "$VecteurTypeVar[$CompteurTypeVar2[3]]"], "$ChoixPopUpVar2"),
+PopUp(["Sélectionner le type de variable",  "$VecteurTypeVar[$CompteurTypeVar3[0]]",  "$VecteurTypeVar[$CompteurTypeVar3[1]]", "$VecteurTypeVar[$CompteurTypeVar3[2]]", "$VecteurTypeVar[$CompteurTypeVar3[3]]"], "$ChoixPopUpVar3"),
+PopUp(["Sélectionner le type de variable",  "$VecteurTypeVar[$CompteurTypeVar4[0]]",  "$VecteurTypeVar[$CompteurTypeVar4[1]]", "$VecteurTypeVar[$CompteurTypeVar4[2]]", "$VecteurTypeVar[$CompteurTypeVar4[3]]"], "$ChoixPopUpVar4"),
+PopUp(["Sélectionner le type de variable",  "$VecteurTypeVar[$CompteurTypeVar5[0]]",  "$VecteurTypeVar[$CompteurTypeVar5[1]]", "$VecteurTypeVar[$CompteurTypeVar5[2]]", "$VecteurTypeVar[$CompteurTypeVar5[3]]"], "$ChoixPopUpVar5")
+);
+
+@VecteurRepPopUpP = (
+PopUp(["Sélectionner la population",  "$ChoixPopUpP[$CompteurPopUpP[0]]",  "$ChoixPopUpP[$CompteurPopUpP[1]]", "$ChoixPopUpP[$CompteurPopUpP[2]]", "$ChoixPopUpP[$CompteurPopUpP[3]]", "$ChoixPopUpP[$CompteurPopUpP[4]]", "$ChoixPopUpP[$CompteurPopUpP[5]]", "$ChoixPopUpP[$CompteurPopUpP[6]]", "$ChoixPopUpP[$CompteurPopUpP[7]]", "$ChoixPopUpP[$CompteurPopUpP[8]]"], "$Rep1P"),
+PopUp(["Sélectionner l'unité statistique",  "$ChoixPopUpP[$CompteurPopUpP2[0]]",  "$ChoixPopUpP[$CompteurPopUpP2[1]]", "$ChoixPopUpP[$CompteurPopUpP2[2]]", "$ChoixPopUpP[$CompteurPopUpP2[3]]", "$ChoixPopUpP[$CompteurPopUpP2[4]]", "$ChoixPopUpP[$CompteurPopUpP2[5]]", "$ChoixPopUpP[$CompteurPopUpP2[6]]", "$ChoixPopUpP[$CompteurPopUpP2[7]]", "$ChoixPopUpP[$CompteurPopUpP2[8]]"], "$Rep2P"));
+
+@VecteurRepPopUpQ = (
+PopUp(["Sélectionner la variable",  "$ChoixPopUpQ1[$CompteurPopUpQ1[0]]",  "$ChoixPopUpQ1[$CompteurPopUpQ1[1]]", "$ChoixPopUpQ1[$CompteurPopUpQ1[2]]", "$ChoixPopUpQ1[$CompteurPopUpQ1[3]]", "$ChoixPopUpQ1[$CompteurPopUpQ1[4]]", "$ChoixPopUpQ1[5]", "$ChoixPopUpQ1[6]", ], "$ChoixPopUpQ1Rep"),
+
+PopUp(["Sélectionner la variable",  "$ChoixPopUpQ2[$CompteurPopUpQ2[0]]",  "$ChoixPopUpQ2[$CompteurPopUpQ2[1]]", "$ChoixPopUpQ2[$CompteurPopUpQ2[2]]", "$ChoixPopUpQ2[$CompteurPopUpQ2[3]]", "$ChoixPopUpQ2[$CompteurPopUpQ2[4]]", "$ChoixPopUpQ2[5]", "$ChoixPopUpQ2[6]", ], "$ChoixPopUpQ2Rep"),
+
+PopUp(["Sélectionner la variable",  "$ChoixPopUpQ3[$CompteurPopUpQ3[0]]",  "$ChoixPopUpQ3[$CompteurPopUpQ3[1]]", "$ChoixPopUpQ3[$CompteurPopUpQ3[2]]", "$ChoixPopUpQ3[$CompteurPopUpQ3[3]]", "$ChoixPopUpQ3[$CompteurPopUpQ3[4]]", "$ChoixPopUpQ3[5]", "$ChoixPopUpQ3[6]", ], "$ChoixPopUpQ3Rep"),
+
+PopUp(["Sélectionner la variable",  "$ChoixPopUpQ4[$CompteurPopUpQ4[0]]",  "$ChoixPopUpQ4[$CompteurPopUpQ4[1]]", "$ChoixPopUpQ4[$CompteurPopUpQ4[2]]", "$ChoixPopUpQ4[$CompteurPopUpQ4[3]]", "$ChoixPopUpQ4[$CompteurPopUpQ4[4]]", "$ChoixPopUpQ4[5]", "$ChoixPopUpQ4[6]", ], "$ChoixPopUpQ4Rep"),
+
+PopUp(["Sélectionner la variable",  "$ChoixPopUpQ5[$CompteurPopUpQ5[0]]",  "$ChoixPopUpQ5[$CompteurPopUpQ5[1]]", "$ChoixPopUpQ5[$CompteurPopUpQ5[2]]", "$ChoixPopUpQ5[$CompteurPopUpQ5[3]]", "$ChoixPopUpQ5[$CompteurPopUpQ5[4]]", "$ChoixPopUpQ5[5]", "$ChoixPopUpQ5[6]", ], "$ChoixPopUpQ5Rep")
+);
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$VecteurContexte[0] 
+\{ BeginList("OL", type=>"a") \}
+$ITEM  $VecteurQuestion[$CompteurAffichage[0]] 
+$ITEMSEP 
+$ITEM  $VecteurQuestion[$CompteurAffichage[1]] 
+$ITEMSEP
+$ITEM  $VecteurQuestion[$CompteurAffichage[2]]
+$ITEMSEP
+$ITEM  $VecteurQuestion[$CompteurAffichage[3]] 
+$ITEMSEP
+$ITEM  $VecteurQuestion[$CompteurAffichage[4]] 
+$ITEMSEP
+\{ EndList("OL") \}
+
+${BBOLD}Question 1 :${EBOLD} Quelle est la population étudiée ? \{ $VecteurRepPopUpP[0]->menu() \}
+$PAR ${BBOLD}Question 2 :${EBOLD} Quelle est l'unité statistique étudiée ? \{ $VecteurRepPopUpP[1]->menu() \}
+
+$PAR ${BBOLD}Question 3 :${EBOLD} Identifier, à l'aide du menu déroulant, la variable étudiée et le type de variable pour chacune des questions posées.
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+ AlignedRow(["${BBOLD} Question du questionnaire ${EBOLD}","${BBOLD} Variable étudiée ${EBOLD}", "${BBOLD}Type de variable ${EBOLD}"], align => CENTER, separation=>0).
+  AlignedRow(["a. $VecteurQuestion[$CompteurAffichage[0]]",$VecteurRepPopUpQ[$CompteurAffichage[0]]->menu(), $VecteurRepPopUpV[$CompteurAffichage[0]]->menu()], align => LEFT, separation=>0).
+  AlignedRow(["b. $VecteurQuestion[$CompteurAffichage[1]]",$VecteurRepPopUpQ[$CompteurAffichage[1]]->menu(), $VecteurRepPopUpV[$CompteurAffichage[1]]->menu()], align => LEFT, separation=>0).
+  AlignedRow(["c. $VecteurQuestion[$CompteurAffichage[2]]",$VecteurRepPopUpQ[$CompteurAffichage[2]]->menu(), $VecteurRepPopUpV[$CompteurAffichage[2]]->menu()], align => LEFT, separation=>0).
+  AlignedRow(["d. $VecteurQuestion[$CompteurAffichage[3]]",$VecteurRepPopUpQ[$CompteurAffichage[3]]->menu(), $VecteurRepPopUpV[$CompteurAffichage[3]]->menu()], align => LEFT, separation=>0).
+  AlignedRow(["e. $VecteurQuestion[$CompteurAffichage[4]]",$VecteurRepPopUpQ[$CompteurAffichage[4]]->menu(), $VecteurRepPopUpV[$CompteurAffichage[4]]->menu()], align => LEFT, separation=>0).
+
+EndTable()
+\}
+$ECENTER
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VecteurRepPopUpP[0]->cmp() );
+ANS($VecteurRepPopUpP[1]->cmp() );
+
+ANS($VecteurRepPopUpQ[$CompteurAffichage[0]]->cmp() );
+ANS($VecteurRepPopUpV[$CompteurAffichage[0]]->cmp() );
+ANS($VecteurRepPopUpQ[$CompteurAffichage[1]]->cmp() );
+ANS($VecteurRepPopUpV[$CompteurAffichage[1]]->cmp() );
+ANS($VecteurRepPopUpQ[$CompteurAffichage[2]]->cmp() );
+ANS($VecteurRepPopUpV[$CompteurAffichage[2]]->cmp() );
+ANS($VecteurRepPopUpQ[$CompteurAffichage[3]]->cmp() );
+ANS($VecteurRepPopUpV[$CompteurAffichage[3]]->cmp() );
+ANS($VecteurRepPopUpQ[$CompteurAffichage[4]]->cmp() );
+ANS($VecteurRepPopUpV[$CompteurAffichage[4]]->cmp() );
+
+
+
+ENDDOCUMENT(); 

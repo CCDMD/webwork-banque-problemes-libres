@@ -1,0 +1,102 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('modalité', 'variable', 'variable qualitative', 'variable qualitative nominale', 'variable qualitative ordinale', 'variable quantitative continue', 'variable quantitative discrète')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("CONTEXTE 8 (4 contextes) : Niveau de difficulté : Difficile.");
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$ChoixContexte = random(0,3);
+
+#Ordre des réponses aux noms des variables
+@CompteurPopUpQ11 = shuffle(4);
+@CompteurPopUpQ12 = shuffle(4);
+@CompteurPopUpQ13 = shuffle(4);
+@CompteurPopUpQ14 = shuffle(4);
+
+
+if ($ChoixContexte == 0)
+{@ChoixPopulation = ("aux groupes communautaires", "Les groupes communautaires");
+@ChoixPopUpQ1 = ("Le champ d'intérêt", "Le niveau de satisfaction par rapport aux politiques gouvernementales", "Le nombre d'employés", "Le budget d'opération");
+}
+elsif ($ChoixContexte == 1)
+{
+@ChoixPopulation = ("aux pommes produites au Québec", "Les pommes produites au Québec"); 
+@ChoixPopUpQ1 = ("La variété de pomme", "Le niveau de détérioration de la pomme", "Le nombre de jours après la cueillette", "Le diamètre de la pomme");
+}
+elsif ($ChoixContexte == 2)
+{
+@ChoixPopulation = ("aux réclamations faites à une compagnie d'assurances", "Les réclamations faites à une compagnie d'assurances"); 
+@ChoixPopUpQ1 = ("Le type de réclamation", "Le niveau de satisfaction de l'assuré", "Le nombre d'employés ayant révisés la réclamation", "Le montant de la réclamation");
+}
+elsif ($ChoixContexte == 3)
+{
+@ChoixPopulation = ("aux journées du mois de juin", "Les journées du mois de juin"); 
+@ChoixPopUpQ1 = ("La météo à midi", "L'indice de qualité de l'air", "Le nombre de naissances", "La quantité de précipitation de pluie");
+}
+
+
+
+#Nom de la variable
+@VecteurRepPopUpQ = (
+PopUp(["Sélectionner la variable qualitative nominale",  "$ChoixPopUpQ1[$CompteurPopUpQ11[0]]",  "$ChoixPopUpQ1[$CompteurPopUpQ11[1]]", "$ChoixPopUpQ1[$CompteurPopUpQ11[2]]", "$ChoixPopUpQ1[$CompteurPopUpQ11[3]]" ], "$ChoixPopUpQ1[0]"),
+PopUp(["Sélectionner la variable qualitative ordinale",  "$ChoixPopUpQ1[$CompteurPopUpQ12[0]]",  "$ChoixPopUpQ1[$CompteurPopUpQ12[1]]", "$ChoixPopUpQ1[$CompteurPopUpQ12[2]]", "$ChoixPopUpQ1[$CompteurPopUpQ12[3]]" ], "$ChoixPopUpQ1[1]"),
+PopUp(["Sélectionner la variable quantitative discrète",  "$ChoixPopUpQ1[$CompteurPopUpQ13[0]]",  "$ChoixPopUpQ1[$CompteurPopUpQ13[1]]", "$ChoixPopUpQ1[$CompteurPopUpQ13[2]]", "$ChoixPopUpQ1[$CompteurPopUpQ13[3]]" ], "$ChoixPopUpQ1[2]"),
+PopUp(["Sélectionner la variable quantitative continue",  "$ChoixPopUpQ1[$CompteurPopUpQ14[0]]",  "$ChoixPopUpQ1[$CompteurPopUpQ14[1]]", "$ChoixPopUpQ1[$CompteurPopUpQ14[2]]", "$ChoixPopUpQ1[$CompteurPopUpQ14[3]]" ], "$ChoixPopUpQ1[3]"),
+
+);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Un chercheur s'intéresse $ChoixPopulation[0]. Plusieurs variables peuvent être étudiées. Pour chacun des types de variable, sélectionner dans le menu déroulant la variable appropriée. 
+$PAR
+
+
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+ AlignedRow(["${BBOLD}Type de variable${EBOLD}","${BBOLD}Population :${EBOLD} $ChoixPopulation[1]"], align => CENTER, separation=>0).
+  AlignedRow(["${BBOLD} Variable qualitative $BR nominale ${EBOLD}", $VecteurRepPopUpQ[0]->menu()], align => CENTER, separation=>0).
+  AlignedRow(["${BBOLD} Variable qualitative $BR ordinale ${EBOLD}", $VecteurRepPopUpQ[1]->menu()], align => CENTER, separation=>0).
+  AlignedRow(["${BBOLD} Variable quantitative $BR discrète ${EBOLD}", $VecteurRepPopUpQ[2]->menu()], align => CENTER, separation=>0).
+  AlignedRow(["${BBOLD} Variable quantitative $BR continue ${EBOLD}", $VecteurRepPopUpQ[3]->menu()], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$ECENTER
+
+
+
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($VecteurRepPopUpQ[0]->cmp() );
+ANS($VecteurRepPopUpQ[1]->cmp() );
+ANS($VecteurRepPopUpQ[2]->cmp() );
+ANS($VecteurRepPopUpQ[3]->cmp() );
+
+
+
+ENDDOCUMENT(); 

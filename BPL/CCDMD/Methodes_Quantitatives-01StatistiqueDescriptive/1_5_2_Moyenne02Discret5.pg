@@ -1,0 +1,122 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('fréquence absolue', 'mesure de dispersion', 'mesure de tendance centrale', 'modalité', 'mode', 'moyenne', 'population', 'tableau', 'taille de l\'échantillon', 'variable', 'variable quantitative discrète', 'écart type', 'échantillon', 'échelle de rapport')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl"
+);
+
+COMMENT("Niveau de difficulté : Facile. Identifier le nombre d'unités statistiques et calculer la moyenne, l'écart type et l'écart type corrigé à partir d'une série de 5 données. La variable est quantitative discrète dont les valeurs sont 0, 1, 2. Et il y a 5 contextes. La solution n'a pas été programmée. Les réponses doivent absolument être arrondies selon les spécifications de la question.");
+
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$temp1 =random(0,4);
+
+
+if ($temp1 == 0) 
+{@VecteurContexte = ("personnes","Nombre\ de\ frères\ et\ soeurs", "Répartition d'étudiantes et d'étudiants $BR selon leur nombre de frères et soeurs", "d'étudiantes et d'étudiants afin de connaitre leur nombre de frères et soeurs");
+@VecteurModalite = ("0", "1", "2 et plus");}
+elsif ($temp1 == 1)  {
+@VecteurContexte = ("personnes", "Nombre\ de\ téléphones\ cellulaires", "Répartition des étudiantes et des étudiants $BR selon leur nombre de téléphones cellulaires", "d'étudiantes et d'étudiants afin de connaitre le nombre de téléphones cellulaires achetés depuis deux ans");
+@VecteurModalite = ("0", "1", "2 et plus");}
+elsif ($temp1 == 2)  {
+@VecteurContexte = ("personnes", "Nombre\ de\ cafés", "Répartition des étudiantes et des étudiants $BR selon leur nombre de cafés", "d'étudiantes et d'étudiants afin de connaitre leur nombre de cafés achetés à la cafétéria durant une journée scolaire");
+@VecteurModalite = ("0", "1", "2 et plus");}
+elsif ($temp1 == 3)  {
+@VecteurContexte = ("personnes", "Nombre\ de\ repas", "Répartition des étudiantes et des étudiants $BR selon leur nombre de repas pris à la cafétéria", "d'étudiantes et d'étudiants afin de connaitre le nombre de fois qu'ils ont mangé à la cafétéria la semaine dernière");
+@VecteurModalite = ("0", "1", "2 et plus");}
+elsif ($temp1 == 4)  {
+@VecteurContexte = ("personnes", "Nombre\ d'animaux", "Répartition des étudiantes et des étudiants $BR selon leur nombre d'animaux de compagnie", "d'étudiantes et d'étudiants afin de connaitre le nombre d'animaux de compagnie qu'ils ont à leur domicile");
+@VecteurModalite = ("0", "1", "2 et plus");}
+
+$ValeurMin = 0;
+$ValeurMax = 2;
+
+$NombreUS = 5; 
+
+$Modalite1 = random($ValeurMin,$ValeurMax); 
+$Modalite2 = random($ValeurMin,$ValeurMax);
+$Modalite3 = random($ValeurMin,$ValeurMax);
+$Modalite4 = random($ValeurMin,$ValeurMax);
+$Modalite5 = random($ValeurMin,$ValeurMax);
+
+@VecteurBaseDonnee = ( $Modalite1, $Modalite2, $Modalite3, $Modalite4, $Modalite5); 
+
+$moyenneTemp1 = 0; 
+$i = 0;
+do
+{$moyenneTemp2 = Compute("$VecteurBaseDonnee[$i] + $moyenneTemp1");
+$moyenneTemp1 = $moyenneTemp2;
+$i++}
+ while ($i<$NombreUS);
+
+$moyennet = Compute("$moyenneTemp1/$NombreUS");
+$moyenne = sprintf("%0.2f","$moyennet ");
+
+$VarianceTemp1 = 0; 
+$i = 0;
+do
+{$VarianceTemp2 = Compute("($VecteurBaseDonnee[$i] - $moyenne)^2+ $VarianceTemp1");
+$VarianceTemp1 =$VarianceTemp2;
+$i++}
+ while ($i<$NombreUS);
+
+$EcartypePopulationt = Compute("($VarianceTemp1/$NombreUS)^0.5");
+$EcartypePopulation = sprintf("%0.2f","$EcartypePopulationt");
+$EcartypeEchantillont = Compute("($VarianceTemp1/($NombreUS - 1))^0.5");
+$EcartypeEchantillon = sprintf("%0.2f","$EcartypeEchantillont");
+
+
+@Reponse = ($NombreUS, $moyenne, $EcartypePopulation, $EcartypeEchantillon);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Une enquête a été menée auprès $VecteurContexte[3]. La série statistique ci-dessous représente les données recueillies. 
+$PAR
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([$VecteurBaseDonnee[0],$VecteurBaseDonnee[1],$VecteurBaseDonnee[2], $VecteurBaseDonnee[3],$VecteurBaseDonnee[4] ], align => CENTER, separation=>0).
+EndTable()
+\}
+
+$ECENTER
+$BR
+${BBOLD}Question : ${EBOLD} Calculer les mesures statistiques suivantes :
+$PAR
+$SPACE $SPACE $SPACE Nombre d'unités statistiques \(\displaystyle{(\it{n})}\) : \{ans_rule(8)\}
+$PAR
+$SPACE $SPACE $SPACE Moyenne \(\displaystyle{(\mu)}\) : \{ans_rule(8)\}
+$PAR
+$SPACE $SPACE $SPACE Écart type \(\displaystyle{(\sigma)}\) : \{ans_rule(8)\} 
+$PAR
+$SPACE $SPACE $SPACE Écart type corrigé \(\displaystyle{(\it{s})}\) : \{ans_rule(8)\}
+$BR 
+
+$BR ${BBOLD}Note : ${EBOLD} Arrondir, s'il y a lieu, les mesures statistiques à deux décimales. 
+$BR 
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($Reponse[0], tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($Reponse[1], tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($Reponse[2], tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($Reponse[3], tol => 0.000001, tolType => "absolute"));
+
+ENDDOCUMENT(); 

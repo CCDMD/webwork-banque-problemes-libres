@@ -1,0 +1,337 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('fréquence absolue', 'fréquence relative', 'tableau à double entrée', 'variable', 'variable qualitative', 'variable qualitative nominale', 'variable qualitative ordinale', 'échelle nominale', 'échelle ordinale')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Compléter les cases d'un tableau de contingence (deux effectifs manquants, un pourcentage manquant). Les deux variables sont qualitatives (2 modalités et 3 modalités). Le choix des effectifs manquants et des pourcentages manquants est aléatoire.  Il y a 4 contextes. La solution n'a pas été programmée.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$TypeContexte = random(0,3);
+
+#Contexte modifié pour afficher le nombre de filles et le nombre de garçons dans l'énoncé
+
+if ($TypeContexte == 0)
+{@VecteurContexte = ("X : Sexe", "Y : Opinion", "Répartition des étudiants selon le sexe et $BR l'opinion sur le nouveau projet de loi", "afin d'avoir leur opinion sur un nouveau projet de loi du gouvernement");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+#@X01VecteurGroupe = ("Nombre$BR de filles", "Nombre$BR de garçons");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("En accord", "En désaccord", "Sans opinion");
+@Y01VecteurModaliteG = ("En accord", "En desaccord", "Sans opinion", "Opinion");
+@Y01VecteurModaliteCode = ("A", "D", "S");
+@graphique60T = ("Répartition des étudiants selon le sexe et", "l'opinion sur le nouveau projet de loi");
+#Biais sur la série statistique en Y
+$Y01Biais = 0;
+}
+elsif ($TypeContexte == 1)
+{@VecteurContexte = ("X : Sexe", "Y : Appareil", "Répartition des étudiants selon le sexe et $BR l'appareil électronique utilisé pour faire leurs travaux scolaires", "afin de connaitre l'appareil électronique utilisé pour faire leurs travaux scolaires");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+#@X01VecteurGroupe = ("Nombre$BR de filles", "Nombre$BR de garçons");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("Ordinateur portable", "Tablette", "Autre");
+@Y01VecteurModaliteCode = ("O", "T", "A");
+#Biais sur la série statistique en Y
+$Y01Biais = 1;
+}
+elsif ($TypeContexte == 2)
+{@VecteurContexte = ("X : Sexe", "Y : Lieu de résidence", "Répartition des étudiants selon le sexe et $BR le lieu de résidence pendant l'année scolaire", "afin de connaitre leur lieu de résidence pendant l'année scolaire");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+#@X01VecteurGroupe = ("Nombre$BR de filles", "Nombre$BR de garçons");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("Chez ses parents", "En résidence", "En appartement ou autre");
+@Y01VecteurModaliteCode = ("P", "R", "A");
+#Biais sur la série statistique en Y
+$Y01Biais = 0;
+}
+elsif ($TypeContexte == 3)
+{@VecteurContexte = ("X : Sexe", "Y : Programme d'études", "Répartition des étudiants selon le sexe et $BR le programme d'études", "afin de connaitre leur programme d'études");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+#@X01VecteurGroupe = ("Nombre$BR de filles", "Nombre$BR de garçons");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("Préuniversitaire", "Technique", "Autre");
+@Y01VecteurModaliteCode = ("P", "T", "A");
+#Biais sur la série statistique en Y
+$Y01Biais = 1;
+}
+
+#Calcul des effectifs en X et Y
+if ($Y01Biais == 0)
+{$Z01Effectif1 = random(5,30); 
+$Z01Effectif2 = random(5,30); 
+$Z01Effectif3 = random(5,30);
+$Z02Effectif1 = random(5,30); 
+$Z02Effectif2 = random(5,30); 
+$Z02Effectif3 = random(5,30);}
+else
+{$Z01Effectif1 = random(5,30); 
+$Z01Effectif2 = random(5,30); 
+$Z01Effectif3 = random(2,5);
+$Z02Effectif1 = random(5,30); 
+$Z02Effectif2 = random(5,30); 
+$Z02Effectif3 = random(2,5);}
+
+$Z01EffectifTotal1 = Compute("$Z01Effectif1 + $Z01Effectif2 + $Z01Effectif3");
+$Z02EffectifTotal1 = Compute("$Z02Effectif1 + $Z02Effectif2 + $Z02Effectif3");
+
+
+$Z01temp2 =random(0,2);
+#La variable $Z01temp2 est réutilisée plus loin.
+if ($Z01temp2 == 0) 
+{@Z01AffichageEffectif = ("$Z01Effectif1", ans_rule(5), ans_rule(5),"$Z01EffectifTotal1"); 
+@Z01CompteurRepEffectif = (1, 2);
+$Z01EffectifPresent = 2;}
+elsif ($Z01temp2 == 1)  
+{@Z01AffichageEffectif = (ans_rule(5),"$Z01Effectif2", ans_rule(5),"$Z01EffectifTotal1"); 
+@Z01CompteurRepEffectif = (0, 2);
+$Z01EffectifPresent = 0;}
+elsif ($Z01temp2 == 2)  
+{@Z01AffichageEffectif = (ans_rule(5),ans_rule(5), "$Z01Effectif3", "$Z01EffectifTotal1"); 
+@Z01CompteurRepEffectif = (0, 1);
+$Z01EffectifPresent = 1;}
+
+#Calcul des pourcentages
+$Z01Pourcentage1t =Compute("$Z01Effectif1/$Z01EffectifTotal1*100");
+$Z01Pourcentage1tt = sprintf("%0.1f","$Z01Pourcentage1t");
+$Z01Pourcentage2t =Compute("$Z01Effectif2/$Z01EffectifTotal1*100");
+$Z01Pourcentage2tt = sprintf("%0.1f","$Z01Pourcentage2t");
+$Z01Pourcentage3t =Compute("$Z01Effectif3/$Z01EffectifTotal1*100");
+$Z01Pourcentage3tt = sprintf("%0.1f","$Z01Pourcentage3t");
+$Z01PourcentageTotal1t = Compute("$Z01Pourcentage1tt + $Z01Pourcentage2tt + $Z01Pourcentage3tt");
+$Z01PourcentageTotaltt = sprintf("%0.1f","$Z01PourcentageTotal1t ");
+
+
+#Ajuster un pourcentage si la somme ne donne pas 100.0
+if ($Z01PourcentageTotaltt == 100.0)
+{$Z01VariableTesting = 0;
+$Z01Pourcentage1 = $Z01Pourcentage1tt;
+$Z01Pourcentage2 = $Z01Pourcentage2tt;
+$Z01Pourcentage3 = $Z01Pourcentage3tt;
+$Z01Pourcentage4 = $Z01Pourcentage4tt;}
+elsif ($Z01PourcentageTotaltt == 99.9)
+{$Z01VariableTesting = 1;
+if ($Z01EffectifPresent == 0)
+{$Z01Pourcentage1 = Compute("$Z01Pourcentage1tt + 0.1");
+$Z01Pourcentage2 = $Z01Pourcentage2tt;
+$Z01Pourcentage3 = $Z01Pourcentage3tt;
+$Z01Pourcentage4 = $Z01Pourcentage4tt;}
+elsif ($Z01EffectifPresent == 1)
+{$Z01Pourcentage2 = Compute("$Z01Pourcentage2tt + 0.1");
+$Z01Pourcentage1 = $Z01Pourcentage1tt;
+$Z01Pourcentage3 = $Z01Pourcentage3tt;
+$Z01Pourcentage4 = $Z01Pourcentage4tt;}
+elsif ($Z01EffectifPresent == 2)
+{$Z01Pourcentage3 = Compute("$Z01Pourcentage3tt + 0.1");
+$Z01Pourcentage1 = $Z01Pourcentage1tt;
+$Z01Pourcentage2 = $Z01Pourcentage2tt;
+$Z01Pourcentage4 = $Z01Pourcentage4tt;}
+elsif ($Z01EffectifPresent == 3)
+{$Z01Pourcentage4 = Compute("$Z01Pourcentage4tt + 0.1");
+$Z01Pourcentage1 = $Z01Pourcentage1tt;
+$Z01Pourcentage2 = $Z01Pourcentage2tt;
+$Z01Pourcentage3 = $Z01Pourcentage3tt;}
+}
+elsif ($Z01PourcentageTotaltt == 100.1)
+{$Z01VariableTesting = 2;
+if ($Z01EffectifPresent == 0)
+{$Z01Pourcentage1 = Compute("$Z01Pourcentage1tt - 0.1");
+$Z01Pourcentage2 = $Z01Pourcentage2tt;
+$Z01Pourcentage3 = $Z01Pourcentage3tt;
+$Z01Pourcentage4 = $Z01Pourcentage4tt;}
+elsif ($Z01EffectifPresent == 1)
+{$Z01Pourcentage2 = Compute("$Z01Pourcentage2tt - 0.1");
+$Z01Pourcentage1 = $Z01Pourcentage1tt;
+$Z01Pourcentage3 = $Z01Pourcentage3tt;
+$Z01Pourcentage4 = $Z01Pourcentage4tt;}
+elsif ($Z01EffectifPresent == 2)
+{$Z01Pourcentage3 = Compute("$Z01Pourcentage3tt - 0.1");
+$Z01Pourcentage1 = $Z01Pourcentage1tt;
+$Z01Pourcentage2 = $Z01Pourcentage2tt;
+$Z01Pourcentage4 = $Z01Pourcentage4tt;}
+elsif ($Z01EffectifPresent == 3)
+{$Z01Pourcentage4 = Compute("$Z01Pourcentage4tt - 0.1");
+$Z01Pourcentage1 = $Z01Pourcentage1tt;
+$Z01Pourcentage2 = $Z01Pourcentage2tt;
+$Z01Pourcentage3 = $Z01Pourcentage3tt;}
+}
+
+$Z01PourcentageTotal = "100.0";
+
+
+if ($Z01temp2 == 0) 
+{@Z01AffichagePourcentage = (ans_rule(5), $Z01Pourcentage2, $Z01Pourcentage3, $Z01PourcentageTotal);
+@Z01CompteurRepPourcentage = (0);}
+elsif ($Z01temp2 == 1)  
+{@Z01AffichagePourcentage = ($Z01Pourcentage1,ans_rule(5), $Z01Pourcentage3, $Z01PourcentageTotal);
+@Z01CompteurRepPourcentage = (1);}
+elsif ($Z01temp2 == 2)  
+{@Z01AffichagePourcentage = ($Z01Pourcentage1,$Z01Pourcentage2, ans_rule(5), $Z01PourcentageTotal);
+@Z01CompteurRepPourcentage = (2);}
+
+@Z01RepEffectif = ($Z01Effectif1, $Z01Effectif2, $Z01Effectif3, $Z01EffectifTotal1);
+@Z01RepPourcentage = ($Z01Pourcentage1, $Z01Pourcentage2, $Z01Pourcentage3, $Z01PourcentageTotal);
+
+
+#Modalité 2 de X
+
+$Z02temp2 =random(0,2);
+#La variable $Z02temp2 est réutilisée plus loin.
+if ($Z02temp2 == 0) 
+{@Z02AffichageEffectif = ("$Z02Effectif1", ans_rule(5), ans_rule(5),"$Z02EffectifTotal1"); 
+@Z02CompteurRepEffectif = (1, 2);
+$Z02EffectifPresent = 2;}
+elsif ($Z02temp2 == 1)  
+{@Z02AffichageEffectif = (ans_rule(5),"$Z02Effectif2", ans_rule(5),"$Z02EffectifTotal1"); 
+@Z02CompteurRepEffectif = (0, 2);
+$Z02EffectifPresent = 0;}
+elsif ($Z02temp2 == 2)  
+{@Z02AffichageEffectif = (ans_rule(5),ans_rule(5), "$Z02Effectif3", "$Z02EffectifTotal1"); 
+@Z02CompteurRepEffectif = (0, 1);
+$Z02EffectifPresent = 1;}
+
+#Calcul des pourcentages
+$Z02Pourcentage1t =Compute("$Z02Effectif1/$Z02EffectifTotal1*100");
+$Z02Pourcentage1tt = sprintf("%0.1f","$Z02Pourcentage1t");
+$Z02Pourcentage2t =Compute("$Z02Effectif2/$Z02EffectifTotal1*100");
+$Z02Pourcentage2tt = sprintf("%0.1f","$Z02Pourcentage2t");
+$Z02Pourcentage3t =Compute("$Z02Effectif3/$Z02EffectifTotal1*100");
+$Z02Pourcentage3tt = sprintf("%0.1f","$Z02Pourcentage3t");
+$Z02PourcentageTotal1t = Compute("$Z02Pourcentage1tt + $Z02Pourcentage2tt + $Z02Pourcentage3tt");
+$Z02PourcentageTotaltt = sprintf("%0.1f","$Z02PourcentageTotal1t ");
+
+
+#Ajuster un pourcentage si la somme ne donne pas 100.0
+if ($Z02PourcentageTotaltt == 100.0)
+{$Z02VariableTesting = 0;
+$Z02Pourcentage1 = $Z02Pourcentage1tt;
+$Z02Pourcentage2 = $Z02Pourcentage2tt;
+$Z02Pourcentage3 = $Z02Pourcentage3tt;
+$Z02Pourcentage4 = $Z02Pourcentage4tt;}
+elsif ($Z02PourcentageTotaltt == 99.9)
+{$Z02VariableTesting = 1;
+if ($Z02EffectifPresent == 0)
+{$Z02Pourcentage1 = Compute("$Z02Pourcentage1tt + 0.1");
+$Z02Pourcentage2 = $Z02Pourcentage2tt;
+$Z02Pourcentage3 = $Z02Pourcentage3tt;
+$Z02Pourcentage4 = $Z02Pourcentage4tt;}
+elsif ($Z02EffectifPresent == 1)
+{$Z02Pourcentage2 = Compute("$Z02Pourcentage2tt + 0.1");
+$Z02Pourcentage1 = $Z02Pourcentage1tt;
+$Z02Pourcentage3 = $Z02Pourcentage3tt;
+$Z02Pourcentage4 = $Z02Pourcentage4tt;}
+elsif ($Z02EffectifPresent == 2)
+{$Z02Pourcentage3 = Compute("$Z02Pourcentage3tt + 0.1");
+$Z02Pourcentage1 = $Z02Pourcentage1tt;
+$Z02Pourcentage2 = $Z02Pourcentage2tt;
+$Z02Pourcentage4 = $Z02Pourcentage4tt;}
+elsif ($Z02EffectifPresent == 3)
+{$Z02Pourcentage4 = Compute("$Z02Pourcentage4tt + 0.1");
+$Z02Pourcentage1 = $Z02Pourcentage1tt;
+$Z02Pourcentage2 = $Z02Pourcentage2tt;
+$Z02Pourcentage3 = $Z02Pourcentage3tt;}
+}
+elsif ($Z02PourcentageTotaltt == 100.1)
+{$Z02VariableTesting = 2;
+if ($Z02EffectifPresent == 0)
+{$Z02Pourcentage1 = Compute("$Z02Pourcentage1tt - 0.1");
+$Z02Pourcentage2 = $Z02Pourcentage2tt;
+$Z02Pourcentage3 = $Z02Pourcentage3tt;
+$Z02Pourcentage4 = $Z02Pourcentage4tt;}
+elsif ($Z02EffectifPresent == 1)
+{$Z02Pourcentage2 = Compute("$Z02Pourcentage2tt - 0.1");
+$Z02Pourcentage1 = $Z02Pourcentage1tt;
+$Z02Pourcentage3 = $Z02Pourcentage3tt;
+$Z02Pourcentage4 = $Z02Pourcentage4tt;}
+elsif ($Z02EffectifPresent == 2)
+{$Z02Pourcentage3 = Compute("$Z02Pourcentage3tt - 0.1");
+$Z02Pourcentage1 = $Z02Pourcentage1tt;
+$Z02Pourcentage2 = $Z02Pourcentage2tt;
+$Z02Pourcentage4 = $Z02Pourcentage4tt;}
+elsif ($Z02EffectifPresent == 3)
+{$Z02Pourcentage4 = Compute("$Z02Pourcentage4tt - 0.1");
+$Z02Pourcentage1 = $Z02Pourcentage1tt;
+$Z02Pourcentage2 = $Z02Pourcentage2tt;
+$Z02Pourcentage3 = $Z02Pourcentage3tt;}
+}
+
+$Z02PourcentageTotal = "100.0";
+
+
+if ($Z02temp2 == 0) 
+{@Z02AffichagePourcentage = (ans_rule(5), $Z02Pourcentage2, $Z02Pourcentage3, $Z02PourcentageTotal);
+@Z02CompteurRepPourcentage = (0);}
+elsif ($Z02temp2 == 1)  
+{@Z02AffichagePourcentage = ($Z02Pourcentage1,ans_rule(5), $Z02Pourcentage3, $Z02PourcentageTotal);
+@Z02CompteurRepPourcentage = (1);}
+elsif ($Z02temp2 == 2)  
+{@Z02AffichagePourcentage = ($Z02Pourcentage1,$Z02Pourcentage2, ans_rule(5), $Z02PourcentageTotal);
+@Z02CompteurRepPourcentage = (2);}
+
+@Z02RepEffectif = ($Z02Effectif1, $Z02Effectif2, $Z02Effectif3, $Z02EffectifTotal1);
+@Z02RepPourcentage = ($Z02Pourcentage1, $Z02Pourcentage2, $Z02Pourcentage3, $Z02PourcentageTotal);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Une enquête a été menée auprès d'un échantillon d'étudiantes et d'étudiants $VecteurContexte[3]. Compléter les cases manquantes du tableau de contingence ci-dessous. Arrondir les pourcentages à une décimale.
+$PAR
+$BCENTER
+${BBOLD}
+$VecteurContexte[2]
+${EBOLD}
+$ECENTER
+
+$BR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([" ", "${BBOLD}$VecteurContexte[0]${EBOLD}","${BBOLD}$VecteurContexte[0]${EBOLD}","${BBOLD}$VecteurContexte[0]${EBOLD}","${BBOLD}$VecteurContexte[0]${EBOLD}"], align => CENTER, separation=>0).
+AlignedRow(["${BBOLD}$VecteurContexte[1]${EBOLD}", "${BBOLD}$X01VecteurGroupe[0]${EBOLD}","${BBOLD}$X01VecteurGroupe[1]${EBOLD}", "${BBOLD}$X01VecteurGroupe[2]${EBOLD}","${BBOLD}$X01VecteurGroupe[3]${EBOLD}"], align => CENTER, separation=>0).
+ 
+ AlignedRow(["$Y01VecteurModalite[0]","$Z01AffichageEffectif[0]","$Z01AffichagePourcentage[0]", "$Z02AffichageEffectif[0]", "$Z02AffichagePourcentage[0]"], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[1]","$Z01AffichageEffectif[1]","$Z01AffichagePourcentage[1]", "$Z02AffichageEffectif[1]", "$Z02AffichagePourcentage[1]"], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[2]","$Z01AffichageEffectif[2]","$Z01AffichagePourcentage[2]", "$Z02AffichageEffectif[2]", "$Z02AffichagePourcentage[2]"], align => CENTER, separation=>0).
+
+
+ AlignedRow(["${BBOLD}Total${EBOLD}","${BBOLD}$Z01AffichageEffectif[3]${EBOLD}", "${BBOLD}$Z01AffichagePourcentage[3]${EBOLD}", "${BBOLD}$Z02AffichageEffectif[3]${EBOLD}", "${BBOLD}$Z02AffichagePourcentage[3]${EBOLD}"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$BR
+END_TEXT
+Context()->normalStrings;
+
+
+ANS(num_cmp($Z01RepEffectif[$Z01CompteurRepEffectif[0]]));
+ANS(num_cmp($Z01RepEffectif[$Z01CompteurRepEffectif[1]]));
+ANS(num_cmp($Z01RepPourcentage[$Z01CompteurRepPourcentage[0]], tol => 0.0001, tolType => "absolute"));
+
+ANS(num_cmp($Z02RepEffectif[$Z02CompteurRepEffectif[0]]));
+ANS(num_cmp($Z02RepEffectif[$Z02CompteurRepEffectif[1]]));
+ANS(num_cmp($Z02RepPourcentage[$Z02CompteurRepPourcentage[0]], tol => 0.0001, tolType => "absolute"));
+
+
+
+
+ENDDOCUMENT(); 

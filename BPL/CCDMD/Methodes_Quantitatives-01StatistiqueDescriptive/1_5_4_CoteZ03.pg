@@ -1,0 +1,142 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Distributions normales)
+## KEYWORDS('cote Z', 'table')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl","PGchoicemacros.pl");
+
+COMMENT("Niveau de difficulté: Facile. Calculer la cote Z de la note de 3 étudiants. Une cote Z est nulle, une autre, négative et l'autre positive. La solution a été programmée. Elle n'a pas été illustrée. Les réponses doivent absolument être arrondies selon les spécifications de la question.");
+
+
+TEXT(beginproblem());
+
+@VecteurNom = ("Félix", "Ève", "Gabrielle", "Xavier", "Marc", "Léa", "Thomas", "Florence");
+@VecteurChoix = shuffle(8);
+
+#Cote Z nulle
+$MoyenneN10t = random(65,80, 0.1);
+$MoyenneN10 = sprintf("%0.1f","$MoyenneN10t");
+$EcarttypeN10t = random(1,5, 0.1);
+$EcarttypeN10 = sprintf("%0.1f","$EcarttypeN10t");
+$ValMaxN10 = Compute("$MoyenneN10 + (3*$EcarttypeN10)");
+$ValMinN10 = Compute("$MoyenneN10 - (3*$EcarttypeN10)");
+$NoteN10t = $MoyenneN10;
+$NoteN10 = sprintf("%0.1f","$NoteN10t");
+$NumN10t = Compute("$NoteN10 - $MoyenneN10");
+$NumN10 = sprintf("%0.1f","$NumN10t");
+$ReponseN10t = Compute("($NoteN10 - $MoyenneN10)/($EcarttypeN10)");
+$ReponseN10 =sprintf("%0.2f","$ReponseN10t ");
+
+#Cote Z positive
+$MoyenneN20t = random(65,80, 0.1);
+$MoyenneN20 = sprintf("%0.1f","$MoyenneN20t");
+$EcarttypeN20t = random(1,5, 0.1);
+$EcarttypeN20 = sprintf("%0.1f","$EcarttypeN20t");
+$ValMaxN20 = Compute("$MoyenneN20 + (3*$EcarttypeN20)");
+$ValMinN20 = Compute("$MoyenneN20 + (0.2*$EcarttypeN20)");
+$NoteN20t = random($ValMinN20, $ValMaxN20, 0.1);
+$NoteN20 = sprintf("%0.1f","$NoteN20t");
+$NumN20t = Compute("$NoteN20 - $MoyenneN20");
+$NumN20 = sprintf("%0.1f","$NumN20t");
+$ReponseN20t = Compute("($NoteN20 - $MoyenneN20)/($EcarttypeN20)");
+$ReponseN20 =sprintf("%0.2f","$ReponseN20t ");
+
+#Cote Z négative
+$MoyenneN30t = random(65,80, 0.1);
+$MoyenneN30 = sprintf("%0.1f","$MoyenneN30t");
+$EcarttypeN30t = random(1,5, 0.1);
+$EcarttypeN30 = sprintf("%0.1f","$EcarttypeN30t");
+$ValMaxN30 = Compute("$MoyenneN30 - (0.2*$EcarttypeN30)");
+$ValMinN30 = Compute("$MoyenneN30 - (3*$EcarttypeN30)");
+$NoteN30t = random($ValMinN30, $ValMaxN30, 0.1);
+$NoteN30 = sprintf("%0.1f","$NoteN30t");
+$NumN30t = Compute("$NoteN30 - $MoyenneN30");
+$NumN30 = sprintf("%0.1f","$NumN30t");
+$ReponseN30t = Compute("($NoteN30 - $MoyenneN30)/($EcarttypeN30)");
+$ReponseN30 =sprintf("%0.2f","$ReponseN30t ");
+
+@VecteurMoyenne = ($MoyenneN10, $MoyenneN20, $MoyenneN30);
+@VecteurNote = ($NoteN10, $NoteN20, $NoteN30);
+@VecteurNum = ($NumN10, $NumN20, $NumN30);
+@VecteurEcarttype = ($EcarttypeN10, $EcarttypeN20, $EcarttypeN30);
+@VecteurReponse = ($ReponseN10, $ReponseN20, $ReponseN30);
+@VecteurExplication = ("Une cote Z nulle signifie que la note est sur la moyenne.", "Une cote Z positive signifie que la note est au-dessus de la moyenne.", "Une cote Z négative signifie que la note est au-dessous de la moyenne.");
+@VecteurChoix2 = shuffle(3);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Voici les résultats au dernier examen de trois étudiants de différentes classes.
+
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+ AlignedRow(["${BBOLD} Nom de l'étudiant ${EBOLD}","${BBOLD} Note (%) ${EBOLD}", "${BBOLD} Moyenne $BR de la classe ${EBOLD}", "${BBOLD} Écart type $BR de la classe ${EBOLD}", "${BBOLD} Cote Z ${EBOLD}"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurNom[$VecteurChoix[0]]","$VecteurNote[$VecteurChoix2[0]]", "$VecteurMoyenne[$VecteurChoix2[0]]","$VecteurEcarttype[$VecteurChoix2[0]]", ans_rule(5)], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurNom[$VecteurChoix[1]]","$VecteurNote[$VecteurChoix2[1]]", "$VecteurMoyenne[$VecteurChoix2[1]]","$VecteurEcarttype[$VecteurChoix2[1]]", ans_rule(5)], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurNom[$VecteurChoix[2]]","$VecteurNote[$VecteurChoix2[2]]", "$VecteurMoyenne[$VecteurChoix2[2]]","$VecteurEcarttype[$VecteurChoix2[2]]", ans_rule(5)], align => CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+
+$BR ${BBOLD}Question :${EBOLD} Calculer la cote Z de chacun.  $BR 
+$BR 
+${BBOLD}Note : ${EBOLD}Arrondir la cote Z à deux décimales.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($VecteurReponse[$VecteurChoix2[0]], tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($VecteurReponse[$VecteurChoix2[1]], tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($VecteurReponse[$VecteurChoix2[2]], tol => 0.00001, tolType => "absolute"));
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La cote Z se calcule comme suit : 
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle{Z = \frac{X - \mu}{\sigma}}\)
+$PAR
+Pour chacun des étudiants, il faut utiliser les valeurs correspondants à leur groupe. 
+$PAR
+Pour $VecteurNom[$VecteurChoix[0]], les valeurs sont les suivantes : \(\displaystyle{X = $VecteurNote[$VecteurChoix2[0]], \mu = $VecteurMoyenne[$VecteurChoix2[0]], \sigma = $VecteurEcarttype[$VecteurChoix2[0]]}\). Ainsi le calcul devient :
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle{Z = \frac{X - \mu}{\sigma} = \frac{$VecteurNote[$VecteurChoix2[0]] - $VecteurMoyenne[$VecteurChoix2[0]]}{$VecteurEcarttype[$VecteurChoix2[0]]} = \frac{$VecteurNum[$VecteurChoix2[0]]}{$VecteurEcarttype[$VecteurChoix2[0]]}
+ = $VecteurReponse[$VecteurChoix2[0]]}\)
+$PAR
+$VecteurExplication[$VecteurChoix2[0]]
+$PAR
+$PAR
+Pour $VecteurNom[$VecteurChoix[1]], les valeurs sont les suivantes : \(\displaystyle{X = $VecteurNote[$VecteurChoix2[1]], \mu = $VecteurMoyenne[$VecteurChoix2[1]], \sigma = $VecteurEcarttype[$VecteurChoix2[1]]}\). Ainsi le calcul devient :
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle{Z = \frac{X - \mu}{\sigma} = \frac{$VecteurNote[$VecteurChoix2[1]] - $VecteurMoyenne[$VecteurChoix2[1]]}{$VecteurEcarttype[$VecteurChoix2[1]]} = \frac{$VecteurNum[$VecteurChoix2[1]]}{$VecteurEcarttype[$VecteurChoix2[1]]}
+ = $VecteurReponse[$VecteurChoix2[1]]}\)
+$PAR
+$VecteurExplication[$VecteurChoix2[1]]
+$PAR
+$PAR
+Pour $VecteurNom[$VecteurChoix[2]], les valeurs sont les suivantes : \(\displaystyle{X = $VecteurNote[$VecteurChoix2[2]], \mu = $VecteurMoyenne[$VecteurChoix2[2]], \sigma = $VecteurEcarttype[$VecteurChoix2[2]]}\). Ainsi le calcul devient :
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle{Z = \frac{X - \mu}{\sigma} = \frac{$VecteurNote[$VecteurChoix2[2]] - $VecteurMoyenne[$VecteurChoix2[2]]}{$VecteurEcarttype[$VecteurChoix2[2]]} = \frac{$VecteurNum[$VecteurChoix2[2]]}{$VecteurEcarttype[$VecteurChoix2[2]]}
+ = $VecteurReponse[$VecteurChoix2[2]]}\)
+$PAR
+$VecteurExplication[$VecteurChoix2[2]]
+$PAR
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

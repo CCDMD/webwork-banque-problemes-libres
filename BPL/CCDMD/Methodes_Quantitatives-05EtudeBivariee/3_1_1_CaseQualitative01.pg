@@ -1,0 +1,189 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('fréquence absolue', 'tableau à double entrée', 'variable', 'variable qualitative', 'variable qualitative nominale', 'variable qualitative ordinale', 'échelle nominale', 'échelle ordinale')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Compléter les cases d'un tableau de contingence (avec les effectifs). Les deux variables sont qualitatives (2 modalités et 3 modalités). L'ordre d'affichage des modalités de X et de Y dans le tableau n'est pas aléatoire.  Il y a 4 contextes. La solution n'a pas été programmée.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$TypeContexte = random(0,3);
+
+
+if ($TypeContexte == 0)
+{@VecteurContexte = ("X : Sexe", "Y : Opinion", "Répartition des étudiants selon le sexe et $BR l'opinion sur le nouveau projet de loi", "d'étudiantes et d'étudiants afin d'avoir leur opinion sur un nouveau projet de loi du gouvernement");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles", "Nombre$BR de garçons");
+#@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("En accord", "En désaccord", "Sans opinion");
+@Y01VecteurModaliteG = ("En accord", "En desaccord", "Sans opinion", "Opinion");
+@Y01VecteurModaliteCode = ("A", "D", "S");
+@graphique60T = ("Répartition des étudiants selon le sexe et", "l'opinion sur le nouveau projet de loi");
+#Biais sur la série statistique en Y
+$Y01Biais = 0;
+}
+elsif ($TypeContexte == 1)
+{@VecteurContexte = ("X : Sexe", "Y : Appareil", "Répartition des étudiants selon le sexe et $BR l'appareil électronique utilisé pour faire leurs travaux scolaires", "d'étudiantes et d'étudiants afin de connaitre l'appareil électronique utilisé pour faire leurs travaux scolaires");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles", "Nombre$BR de garçons");
+#@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("Ordinateur portable", "Tablette", "Autre");
+@Y01VecteurModaliteCode = ("O", "T", "A");
+#Biais sur la série statistique en Y
+$Y01Biais = 1;
+}
+elsif ($TypeContexte == 2)
+{@VecteurContexte = ("X : Sexe", "Y : Lieu de résidence", "Répartition des étudiants selon le sexe et $BR le lieu de résidence pendant l'année scolaire", "d'étudiantes et d'étudiants afin de connaitre leur lieu de résidence pendant l'année scolaire");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles", "Nombre$BR de garçons");
+#@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("Chez ses parents", "En résidence", "En appartement ou autre");
+@Y01VecteurModaliteCode = ("P", "R", "A");
+#Biais sur la série statistique en Y
+$Y01Biais = 0;
+}
+elsif ($TypeContexte == 3)
+{@VecteurContexte = ("X : Sexe", "Y : Programme d'études", "Répartition des étudiants selon le sexe et $BR le programme d'études", "d'étudiantes et d'étudiants afin de connaitre leur programme d'études");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles", "Nombre$BR de garçons");
+#@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("Préuniversitaire", "Technique", "Autre");
+@Y01VecteurModaliteCode = ("P", "T", "A");
+#Biais sur la série statistique en Y
+$Y01Biais = 1;
+}
+
+#Calcul des effectifs en X et Y
+if ($Y01Biais == 0)
+{$Z01Effectif11 = random(5,40); 
+$Z01Effectif12 = random(5,40); 
+$Z01Effectif13 = random(5,40);
+$Z01Effectif21 = random(5,40); 
+$Z01Effectif22 = random(5,40); 
+$Z01Effectif23 = random(5,40);}
+else
+{$Z01Effectif11 = random(5,30); 
+$Z01Effectif12 = random(5,30); 
+$Z01Effectif13 = random(2,5);
+$Z01Effectif21 = random(5,30); 
+$Z01Effectif22 = random(5,30); 
+$Z01Effectif23 = random(2,5);}
+
+$Z01Effectif31 = 0; 
+$Z01Effectif32 = 0; 
+$Z01Effectif33 = 0;
+
+$Z01EffectifTotal1 = Compute("$Z01Effectif11 + $Z01Effectif12 + $Z01Effectif13");
+$Z01EffectifTotal2 = Compute("$Z01Effectif21 + $Z01Effectif22 + $Z01Effectif23");
+$Z01EffectifTotal3 = Compute("$Z01Effectif31 + $Z01Effectif32 + $Z01Effectif33");
+
+$Z01EffectifTotal1h = Compute("$Z01Effectif11 + $Z01Effectif21");
+$Z01EffectifTotal2h = Compute("$Z01Effectif12 + $Z01Effectif22");
+$Z01EffectifTotal3h = Compute("$Z01Effectif13 + $Z01Effectif23");
+$Z01EffectifTotalh = Compute("$Z01EffectifTotal1h + $Z01EffectifTotal2h+$Z01EffectifTotal3h");
+
+@Z01Reponseh = ($Z01EffectifTotal1h, $Z01EffectifTotal2h, $Z01EffectifTotal3h, $Z01EffectifTotalh);
+
+
+
+#@CompteurAffichageX = shuffle(2);
+#@CompteurAffichageY = shuffle(3);
+
+@CompteurAffichageX = (0,1);
+@CompteurAffichageY = (0,1,2);
+
+$temp2 = random(0,2);
+if ($temp2 == 0) 
+{@AffichageEffectif1 = ($Z01Effectif11, ans_rule(5), $Z01Effectif13, $Z01EffectifTotal1);
+@AffichageEffectif2 = (ans_rule(5), $Z01Effectif22, ans_rule(5), $Z01EffectifTotal2);
+@AffichageEffectif3 = ($Z01EffectifTotal1h, ans_rule(5), ans_rule(5), ans_rule(5));
+@CompteurRep1 = (1);
+@CompteurRep2 = (0, 2);
+@CompteurRep3 = (1,2, 3);}
+elsif ($temp2 == 1) 
+{@AffichageEffectif1 = (ans_rule(5), $Z01Effectif12, $Z01Effectif13, $Z01EffectifTotal1);
+@AffichageEffectif2 = ($Z01Effectif21, ans_rule(5), ans_rule(5), $Z01EffectifTotal2);
+@AffichageEffectif3 = (ans_rule(5), $Z01EffectifTotal2h, ans_rule(5), ans_rule(5));
+@CompteurRep1 = (0);
+@CompteurRep2 = (1, 2);
+@CompteurRep3 = (0,2, 3);}
+elsif ($temp2 == 2) 
+{@AffichageEffectif1 = ($Z01Effectif11, $Z01Effectif12, ans_rule(5), $Z01EffectifTotal1);
+@AffichageEffectif2 = (ans_rule(5), ans_rule(5), $Z01Effectif23, $Z01EffectifTotal2);
+@AffichageEffectif3 = (ans_rule(5), $Z01EffectifTotal2h, ans_rule(5), ans_rule(5));
+@CompteurRep1 = (2);
+@CompteurRep2 = (0, 1);
+@CompteurRep3 = (0,2, 3);}
+
+
+
+
+@ReponseEffectif1 = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13, $Z01EffectifTotal1);
+@ReponseEffectif2 = ($Z01Effectif21, $Z01Effectif22, $Z01Effectif23, $Z01EffectifTotal2);
+@ReponseEffectif3 = ($Z01EffectifTotal1h, $Z01EffectifTotal2h, $Z01EffectifTotal3h, $Z01EffectifTotalh);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Une enquête a été menée auprès d'un échantillon $VecteurContexte[3]. Compléter les cases manquantes du tableau de contingence suivant : 
+$PAR
+$BCENTER
+${BBOLD}
+$VecteurContexte[2]
+${EBOLD}
+$ECENTER
+
+$BR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([" ", "${BBOLD}$VecteurContexte[0]${EBOLD}","${BBOLD}$VecteurContexte[0]${EBOLD}", " "], align => CENTER, separation=>0).
+AlignedRow(["${BBOLD}$VecteurContexte[1]${EBOLD}", "${BBOLD}$X01VecteurGroupe[$CompteurAffichageX[0]]${EBOLD}","${BBOLD}$X01VecteurGroupe[$CompteurAffichageX[1]]${EBOLD}", "${BBOLD}Total${EBOLD}"], align => CENTER, separation=>0).
+ 
+ AlignedRow(["$Y01VecteurModalite[0]","$AffichageEffectif1[0]", "$AffichageEffectif2[0]", "$AffichageEffectif3[0]"], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[1]","$AffichageEffectif1[1]", "$AffichageEffectif2[1]", "$AffichageEffectif3[1]"], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[2]","$AffichageEffectif1[2]", "$AffichageEffectif2[2]", "$AffichageEffectif3[2]"], align => CENTER, separation=>0).
+ AlignedRow(["${BBOLD}Total${EBOLD}","$AffichageEffectif1[3]", "$AffichageEffectif2[3]", "$AffichageEffectif3[3]"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS(num_cmp($ReponseEffectif1[$CompteurRep1[0]]));
+ANS(num_cmp($ReponseEffectif2[$CompteurRep2[0]]));
+ANS(num_cmp($ReponseEffectif2[$CompteurRep2[1]]));
+ANS(num_cmp($ReponseEffectif3[$CompteurRep3[0]]));
+ANS(num_cmp($ReponseEffectif3[$CompteurRep3[1]]));
+ANS(num_cmp($ReponseEffectif3[$CompteurRep3[2]]));
+
+
+
+
+
+ENDDOCUMENT(); 

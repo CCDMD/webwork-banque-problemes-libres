@@ -1,0 +1,148 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('fréquence absolue', 'mesure de dispersion', 'mesure de tendance centrale', 'modalité', 'mode', 'moyenne', 'population', 'tableau', 'taille de l\'échantillon', 'variable', 'variable quantitative discrète', 'écart type', 'échantillon', 'échelle de rapport')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl","PGchoicemacros.pl");
+
+COMMENT("Niveau de difficulté : Moyen. Identifier le nombre d'unités statistiques et calculer la moyenne, l'écart type et l'écart type corrigé à partir des effectifs d'un tableau de distribution. La variable est quantitative discrète dont les valeurs sont autres que 0, 1, 2, 3 et plus. Et il y a 4 contextes. Les mesures statistiques sont présentées aléatoirement. Les symboles des mesures ont été utilisés. La solution n'a pas été programmée. L'arrondi à trois décimales permet de distinguer l'écart type de l'écart type corrigé. Les réponses doivent absolument être arrondies selon les spécifications de la question.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$temp1 =random(0,3);
+
+if ($temp1 == 0) 
+{@VecteurContexte = ("personnes","Nombre de cours", "Répartition d'étudiantes et d'étudiants $BR selon leur nombre de cours pour cette session", "d'étudiantes et d'étudiants afin de connaitre leur nombre de cours pour cette session");
+@VecteurModalite = ("5 et moins", "6", "7", "8 et plus");
+@VecteurModaliteValeur = (5, 6, 7, 8);
+$Effectif1 = random(1,4);
+$Effectif2 = random(10,40);
+$Effectif3 = random(10,40);
+$Effectif4 = random(1, 4);
+}
+elsif ($temp1 == 1)  {
+@VecteurContexte = ("personnes", "Nombre de travaux", "Répartition des étudiantes et des étudiants $BR selon leur nombre de travaux scolaires", "d'étudiantes et d'étudiants afin de connaitre leur nombre de travaux scolaires à remettre en fin de session");
+@VecteurModalite = ("6 et moins", "7", "8", "9 et plus");
+@VecteurModaliteValeur = (6, 7, 8, 9);
+$Effectif1 = random(10,30);
+$Effectif2 = random(10,30);
+$Effectif3 = random(10,30);
+$Effectif4 = random(10, 30);
+}
+elsif ($temp1 == 2)  {
+@VecteurContexte = ("personnes", "Nombre de films", "Répartition des étudiantes et des étudiants $BR selon leur nombre de films vus au cinéma le mois passé", "d'étudiantes et d'étudiants afin de connaitre leur nombre de films vus au cinéma le mois passé");
+@VecteurModalite = ("2 et moins", "3", "4", "5 et plus");
+@VecteurModaliteValeur = (2, 3, 4, 5);
+$Effectif1 = random(10,30);
+$Effectif2 = random(10,30);
+$Effectif3 = random(2,6);
+$Effectif4 = random(2,6);
+}
+elsif ($temp1 == 3)  {
+@VecteurContexte = ("personnes", "Nombre de repas", "Répartition des étudiantes et des étudiants $BR selon le nombre de repas préparés à leur domicile", "d'étudiantes et d'étudiants afin de connaitre le nombre de repas préparés à leur domicile la semaine dernière");
+@VecteurModalite = ("7 et moins", "8", "9", "10 et plus");
+@VecteurModaliteValeur = (7, 8, 9, 10);
+$Effectif1 = random(10,30);
+$Effectif2 = random(10,30);
+$Effectif3 = random(10,30);
+$Effectif4 = random(10, 30);
+}
+
+$EffectifTotal = Compute("$Effectif1 + $Effectif2 + $Effectif3 + $Effectif4");
+@VecteurEffectif = ($Effectif1, $Effectif2, $Effectif3, $Effectif4);
+
+@RepEffectif = ($Effectif1, $Effectif2, $Effectif3, $Effectif4);
+
+$NombreClasse = 4; 
+$NombreUS = $EffectifTotal;
+
+$moyenneTemp1 = 0; 
+$i = 0;
+do
+{$moyenneTemp2 = Compute("($VecteurEffectif[$i]*$VecteurModaliteValeur[$i]) + $moyenneTemp1");
+$moyenneTemp1 = $moyenneTemp2;
+$i++}
+ while ($i<$NombreClasse);
+
+$moyennet = Compute("$moyenneTemp1/$NombreUS");
+$moyenne = sprintf("%0.3f","$moyennet ");
+
+$VarianceTemp1 = 0; 
+$i = 0;
+do
+{$VarianceTemp2 = Compute("$VecteurEffectif[$i]*($VecteurModaliteValeur[$i] - $moyenne)^2+ $VarianceTemp1");
+$VarianceTemp1 =$VarianceTemp2;
+$i++}
+ while ($i<$NombreClasse);
+
+$EcartypePopulationt = Compute("($VarianceTemp1/$NombreUS)^0.5");
+$EcartypePopulation = sprintf("%0.3f","$EcartypePopulationt");
+$EcartypeEchantillont = Compute("($VarianceTemp1/($NombreUS - 1))^0.5");
+$EcartypeEchantillon = sprintf("%0.3f","$EcartypeEchantillont");
+
+
+@VecteurNomMesure = ("\(\displaystyle{\it{n} =}\)", "\(\displaystyle{\mu =}\)", "\(\displaystyle{\sigma =}\)", "\(\displaystyle{\it{s} =}\)"); 
+#@VecteurNomMesure = ("Nombre d'unités statistiques :", "Moyenne :", "Écart type :", "Écart type corrigé :"); 
+@Reponse = ($NombreUS, $moyenne, $EcartypePopulation, $EcartypeEchantillon);
+@ReponseTol = (0.000001, 0.000001, 0.000001, 0.000001);
+@CompteurRep = shuffle(4);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Une enquête a été menée auprès $VecteurContexte[3]. Le tableau de distribution suivant représente les données recueillies. 
+$PAR
+$BCENTER
+${BBOLD}
+$VecteurContexte[2]
+${EBOLD}
+$PAR
+
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+ AlignedRow(["${BBOLD} $VecteurContexte[1] ${EBOLD}","${BBOLD} Nombre d'étudiantes $BR et d'étudiants  ${EBOLD}"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[0]","$VecteurEffectif[0]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[1]","$VecteurEffectif[1]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[2]","$VecteurEffectif[2]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[3]","$VecteurEffectif[3]"], align => CENTER, separation=>0).
+ AlignedRow(["${BBOLD} Total ${EBOLD}","${BBOLD} $EffectifTotal ${EBOLD}"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$ECENTER
+$BR
+${BBOLD}Question : ${EBOLD}Calculer les mesures statistiques suivantes :
+$PAR
+$SPACE $SPACE $SPACE $VecteurNomMesure[$CompteurRep[0]]  \{ans_rule(5)\}
+$PAR
+$SPACE $SPACE $SPACE $VecteurNomMesure[$CompteurRep[1]]  \{ans_rule(5)\}
+$PAR
+$SPACE $SPACE $SPACE $VecteurNomMesure[$CompteurRep[2]]  \{ans_rule(5)\}
+$PAR
+$SPACE $SPACE $SPACE $VecteurNomMesure[$CompteurRep[3]]  \{ans_rule(5)\}
+$BR 
+$BR ${BBOLD}Note : ${EBOLD}Arrondir, s'il y a lieu, les mesures statistiques à trois décimales. 
+$BR 
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($Reponse[$CompteurRep[0]], tol => $ReponseTol[$CompteurRep[0]], tolType => "absolute"));
+ANS(num_cmp($Reponse[$CompteurRep[1]], tol => $ReponseTol[$CompteurRep[1]], tolType => "absolute"));
+ANS(num_cmp($Reponse[$CompteurRep[2]], tol => $ReponseTol[$CompteurRep[2]], tolType => "absolute"));
+ANS(num_cmp($Reponse[$CompteurRep[3]], tol => $ReponseTol[$CompteurRep[3]], tolType => "absolute"));
+
+ENDDOCUMENT(); 

@@ -1,0 +1,279 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('fréquence absolue', 'mesure de tendance centrale', 'mode', 'tableau à double entrée', 'variable', 'variable qualitative', 'variable qualitative nominale', 'variable qualitative ordinale', 'échelle nominale', 'échelle ordinale')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl","PGauxiliaryFunctions.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Calculer les mesures appropriées à partir du tableau de contingence (avec les effectifs uniquement). Les deux variables sont qualitatives (2 modalités et 3 modalités). Il y a 4 contextes. La solution n'a pas été programmée.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$TypeContexte = random(0,3);
+if ($TypeContexte == 0)
+{@VecteurContexte = ("X : Sexe", "Y : Opinion", "Répartition des étudiants selon le sexe et $BR leur opinion sur le nouveau projet de loi", "d'étudiantes et d'étudiants afin d'avoir leur opinion sur un nouveau projet de loi du gouvernement");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("En accord", "En désaccord", "Sans opinion");
+@Y01VecteurModaliteG = ("En accord", "En desaccord", "Sans opinion", "Opinion");
+@Y01VecteurModaliteCode = ("A", "D", "S");
+@graphique60T = ("Répartition des étudiants selon le sexe et", "leur opinion sur le nouveau projet de loi");
+#Calcul des effectifs en X et Y
+$Z01Effectif11 = random(10,30); 
+$Z01Effectif12 = random(10,30); 
+$Z01Effectif13 = random(10,30);
+$Z01Effectif21 = random(10,30); 
+$Z01Effectif22 = random(10,30); 
+$Z01Effectif23 = random(10,30);
+$Z01Effectif31 = 0; 
+$Z01Effectif32 = 0; 
+$Z01Effectif33 = 0;}
+elsif ($TypeContexte == 1)
+{@VecteurContexte = ("X : Sexe", "Y : Appareil", "Répartition des étudiants selon le sexe et $BR l'appareil électronique utilisé pour faire leurs travaux scolaires", "d'étudiantes et d'étudiants afin de connaitre l'appareil électronique utilisé pour faire leurs travaux scolaires");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("Ordinateur portable", "Tablette", "Autre");
+@Y01VecteurModaliteCode = ("O", "T", "A");
+#Calcul des effectifs en X et Y
+$Z01Effectif11 = random(20,30); 
+$Z01Effectif12 = random(5,15); 
+$Z01Effectif13 = random(1,3);
+$Z01Effectif21 = random(20,30); 
+$Z01Effectif22 = random(5,15); 
+$Z01Effectif23 = random(1,3);
+$Z01Effectif31 = 0; 
+$Z01Effectif32 = 0; 
+$Z01Effectif33 = 0;}
+elsif ($TypeContexte == 2)
+{@VecteurContexte = ("X : Sexe", "Y : Lieu de résidence", "Répartition des étudiants selon le sexe et $BR le lieu de résidence pendant l'année scolaire", "d'étudiantes et d'étudiants afin de connaitre leur lieu de résidence pendant l'année scolaire");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("Chez ses parents", "En résidence", "En appartement ou autre");
+@Y01VecteurModaliteCode = ("P", "R", "A");
+#Calcul des effectifs en X et Y
+$Z01Effectif11 = random(20,30); 
+$Z01Effectif12 = random(1,3); 
+$Z01Effectif13 = random(5,15);
+$Z01Effectif21 = random(20,30); 
+$Z01Effectif22 = random(1,3); 
+$Z01Effectif23 = random(5,15);
+$Z01Effectif31 = 0; 
+$Z01Effectif32 = 0; 
+$Z01Effectif33 = 0;}
+elsif ($TypeContexte == 3)
+{@VecteurContexte = ("X : Sexe", "Y : Programme d'étude", "Répartition des étudiants selon le sexe et $BR le programme d'étude", "d'étudiantes et d'étudiants afin de connaitre leur programme d'étude");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("Préuniversitaire", "Technique", "Autre");
+@Y01VecteurModaliteCode = ("P", "T", "A");
+#Calcul des effectifs en X et Y
+$Z01Effectif11 = random(10,30); 
+$Z01Effectif12 = random(10,30); 
+$Z01Effectif13 = random(1,3);
+$Z01Effectif21 = random(10,30); 
+$Z01Effectif22 = random(10,30); 
+$Z01Effectif23 = random(1,3);
+$Z01Effectif31 = 0; 
+$Z01Effectif32 = 0; 
+$Z01Effectif33 = 0;
+}
+
+
+
+
+
+$Z01EffectifTotal1 = Compute("$Z01Effectif11 + $Z01Effectif12 + $Z01Effectif13");
+$Z01EffectifTotal2 = Compute("$Z01Effectif21 + $Z01Effectif22 + $Z01Effectif23");
+$Z01EffectifTotal3 = Compute("$Z01Effectif31 + $Z01Effectif32 + $Z01Effectif33");
+
+$Z01EffectifTotal1h = Compute("$Z01Effectif11 + $Z01Effectif21");
+$Z01EffectifTotal2h = Compute("$Z01Effectif12 + $Z01Effectif22");
+$Z01EffectifTotal3h = Compute("$Z01Effectif13 + $Z01Effectif23");
+$Z01EffectifTotalh = Compute("$Z01EffectifTotal1h + $Z01EffectifTotal2h+$Z01EffectifTotal3h");
+
+@Z01Reponse = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13, $Z01EffectifTotal1, $Z01Effectif21, $Z01Effectif22, $Z01Effectif23, $Z01EffectifTotal2, $Z01Effectif31, $Z01Effectif32, $Z01Effectif33, $Z01EffectifTotal3);
+@Z01Reponseh = ($Z01EffectifTotal1h, $Z01EffectifTotal2h, $Z01EffectifTotal3h, $Z01EffectifTotalh);
+
+
+#Calcul des pourcentages
+$Z01Pourcentage11t =Compute("$Z01Effectif11/$Z01EffectifTotal1*100");
+$Z01Pourcentage11 = sprintf("%0.1f","$Z01Pourcentage11t");
+$Z01Pourcentage12t =Compute("$Z01Effectif12/$Z01EffectifTotal1*100");
+$Z01Pourcentage12 = sprintf("%0.1f","$Z01Pourcentage12t");
+$Z01Pourcentage13t =Compute("$Z01Effectif13/$Z01EffectifTotal1*100");
+$Z01Pourcentage13 = sprintf("%0.1f","$Z01Pourcentage13t");
+$Z01PourcentageTotal1t = Compute("$Z01Pourcentage11 + $Z01Pourcentage12 + $Z01Pourcentage13");
+$Z01PourcentageTotal1 = sprintf("%0.1f","$Z01PourcentageTotal1t ");
+#Calcul des pourcentages
+$Z01Pourcentage21t =Compute("$Z01Effectif21/$Z01EffectifTotal2*100");
+$Z01Pourcentage21 = sprintf("%0.1f","$Z01Pourcentage21t");
+$Z01Pourcentage22t =Compute("$Z01Effectif22/$Z01EffectifTotal2*100");
+$Z01Pourcentage22 = sprintf("%0.1f","$Z01Pourcentage22t");
+$Z01Pourcentage23t =Compute("$Z01Effectif23/$Z01EffectifTotal2*100");
+$Z01Pourcentage23 = sprintf("%0.1f","$Z01Pourcentage23t");
+$Z01PourcentageTotal2t = Compute("$Z01Pourcentage21 + $Z01Pourcentage22 + $Z01Pourcentage23");
+$Z01PourcentageTotal2 = sprintf("%0.1f","$Z01PourcentageTotal2t ");
+#Calcul des pourcentages
+#$Z01Pourcentage31t =Compute("$Z01Effectif31/$Z01EffectifTotal3*100");
+#$Z01Pourcentage31 = sprintf("%0.1f","$Z01Pourcentage31t");
+#$Z01Pourcentage32t =Compute("$Z01Effectif32/$Z01EffectifTotal3*100");
+#$Z01Pourcentage32 = sprintf("%0.1f","$Z01Pourcentage32t");
+#$Z01Pourcentage33t =Compute("$Z01Effectif33/$Z01EffectifTotal3*100");
+#$Z01Pourcentage33 = sprintf("%0.1f","$Z01Pourcentage33t");
+#$Z01PourcentageTotal3t = Compute("$Z01Pourcentage31 + $Z01Pourcentage32 + $Z01Pourcentage33");
+#$Z01PourcentageTotal3 = sprintf("%0.1f","$Z01PourcentageTotal3t ");
+
+
+@Z01ReponsePourcentage = ($Z01Pourcentage11, $Z01Pourcentage12, $Z01Pourcentage13, $Z01PourcentageTotal1, $Z01Pourcentage21, $Z01Pourcentage22, $Z01Pourcentage23, $Z01PourcentageTotal2);
+
+#Déterminer le mode pour Modalité 1 de X
+if ($Z01Effectif11 == $Z01Effectif12)
+{if ($Z01Effectif11 == $Z01Effectif13)
+{#Les trois effectifs sont identiques
+$RepPopUp1 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "Trimodal");}
+elsif ($Z01Effectif11 >$Z01Effectif13)
+{#Les deux sont plus élevés
+$RepPopUp1 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "Bimodal");}
+else
+{#13 est le mode
+$RepPopUp1 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "$Y01VecteurModalite[2]");}
+}
+elsif ($Z01Effectif11 == $Z01Effectif13)
+{#11 = 13 et différent de 12
+if ($Z01Effectif11 >$Z01Effectif12)
+{#Les deux sont plus élevés
+$RepPopUp1 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "Bimodal");}
+else
+{#12 est le mode
+$RepPopUp1 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "$Y01VecteurModalite[1]");}
+}
+elsif ($Z01Effectif12 == $Z01Effectif13)
+{#12 = 13 et différent de 11
+if ($Z01Effectif12 >$Z01Effectif11)
+{#Les deux sont plus élevés
+$RepPopUp1 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "Bimodal");}
+else
+{#11 est le mode
+$RepPopUp1 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "$Y01VecteurModalite[0]");}
+}
+#Les trois sont différents
+elsif (($Z01Effectif11 > $Z01Effectif12) && ($Z01Effectif11 > $Z01Effectif13))
+{$RepPopUp1 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "$Y01VecteurModalite[0]");}
+elsif (($Z01Effectif12 > $Z01Effectif11) && ($Z01Effectif12 > $Z01Effectif13))
+{$RepPopUp1 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "$Y01VecteurModalite[1]");}
+elsif (($Z01Effectif13 > $Z01Effectif12) && ($Z01Effectif13 > $Z01Effectif11))
+{$RepPopUp1 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "$Y01VecteurModalite[2]");}
+
+
+#Déterminer le mode pour Modalité 2 de X
+if ($Z01Effectif21 == $Z01Effectif22)
+{if ($Z01Effectif21 == $Z01Effectif23)
+{#Les trois effectifs sont identiques
+$RepPopUp2 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "Trimodal");}
+elsif ($Z01Effectif21 >$Z01Effectif23)
+{#Les deux sont plus élevés
+$RepPopUp2 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "Bimodal");}
+else
+{#23 est le mode
+$RepPopUp2 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "$Y01VecteurModalite[2]");}
+}
+elsif ($Z01Effectif21 == $Z01Effectif23)
+{#21 = 23 et différent de 22
+if ($Z01Effectif21 >$Z01Effectif22)
+{#Les deux sont plus élevés
+$RepPopUp2 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "Bimodal");}
+else
+{#22 est le mode
+$RepPopUp2 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "$Y01VecteurModalite[1]");}
+}
+elsif ($Z01Effectif22 == $Z01Effectif23)
+{#22 = 23 et différent de 21
+if ($Z01Effectif22 >$Z01Effectif21)
+{#Les deux sont plus élevés
+$RepPopUp2 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "Bimodal");}
+else
+{#21 est le mode
+$RepPopUp2 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "$Y01VecteurModalite[0]");}
+}
+#Les trois sont différents
+elsif (($Z01Effectif21 > $Z01Effectif22) && ($Z01Effectif21 > $Z01Effectif23))
+{$RepPopUp2 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "$Y01VecteurModalite[0]");}
+elsif (($Z01Effectif22 > $Z01Effectif21) && ($Z01Effectif22 > $Z01Effectif23))
+{$RepPopUp2 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "$Y01VecteurModalite[1]");}
+elsif (($Z01Effectif23 > $Z01Effectif22) && ($Z01Effectif23 > $Z01Effectif21))
+{$RepPopUp2 = PopUp(["Sélectionner", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Filles", "Garçons", "Bimodal", "Trimodal"], "$Y01VecteurModalite[2]");}
+
+#@Z01Reponse = (0,1,2,3,4,5,6,7,8,9,10,11,12);
+#@Z01ReponsePourcentage = (0,1,2,3,4,5,6,7,8,9,10,11,12); 
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Le tableau de contingence suivant a été produit à partir d'une enquête qui a été menée auprès d'un échantillon $VecteurContexte[3].
+$PAR
+
+$BCENTER
+${BBOLD}
+$VecteurContexte[2]
+${EBOLD}
+$ECENTER
+
+$BR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([" ", "${BBOLD}$VecteurContexte[0]${EBOLD}","${BBOLD}$VecteurContexte[0]${EBOLD}"," "], align => CENTER, separation=>0).
+AlignedRow(["${BBOLD}$VecteurContexte[1]${EBOLD}", "${BBOLD}$X01VecteurGroupe[0]${EBOLD}","${BBOLD}$X01VecteurGroupe[2]${EBOLD}", "${BBOLD}Total${EBOLD}"], align => CENTER, separation=>0).
+ 
+ AlignedRow(["$Y01VecteurModalite[0]","$Z01Reponse[0]" ,"$Z01Reponse[4]", "${BBOLD}$Z01Reponseh[0]${EBOLD}" ], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[1]","$Z01Reponse[1]" ,"$Z01Reponse[5]", "${BBOLD}$Z01Reponseh[1]${EBOLD}" ], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[2]","$Z01Reponse[2]" ,"$Z01Reponse[6]", "${BBOLD}$Z01Reponseh[2]${EBOLD}" ], align => CENTER, separation=>0).
+  AlignedRow(["${BBOLD}Total${EBOLD}", "${BBOLD}$Z01Reponse[3]${EBOLD}" ,"${BBOLD}$Z01Reponse[7]${EBOLD}", "${BBOLD}$Z01Reponseh[3]${EBOLD}"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$BR
+${BBOLD}Question : ${EBOLD} Déterminer la mesure statistique appropriée. 
+$PAR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([" ", "${BBOLD}$VecteurContexte[0]${EBOLD}","${BBOLD}$VecteurContexte[0]${EBOLD}"], align => CENTER, separation=>0).
+AlignedRow(["${BBOLD}Mesure statistique${EBOLD}", "${BBOLD}$X01VecteurModalite[0]${EBOLD}","${BBOLD}$X01VecteurModalite[1]${EBOLD}"], align => CENTER, separation=>0).
+ 
+ AlignedRow(["Mode",$RepPopUp1->menu(), $RepPopUp2->menu()], align => CENTER, 
+separation=>0).
+
+EndTable()
+\}
+
+
+$BR 
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepPopUp1->cmp() );
+ANS($RepPopUp2->cmp() );
+
+
+ENDDOCUMENT(); 

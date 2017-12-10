@@ -1,0 +1,185 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('indicateur', 'taux')
+
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "PGchoicemacros.pl");
+
+COMMENT("Niveau de difficulté: Facile. Taux de chômage, taux d'activité et taux d'emploi à calculer pour une des provinces du Canada. L'ordre des modalités dans le tableau ne change pas. L'ordre des taux ne change pas. La solution a été programmée. La réponse doit absolument être arrondie selon les spécifications de la question.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$temp1 =random(0,8);
+if ($temp1 == 0) 
+{$Lieu = "Terre-Neuve-et-Labrador";
+$LieuA = " à Terre-Neuve-et-Labrador";
+$Effectif1t = random(2200,2500);
+$Effectif2t = random(350,450);
+$Effectif3t = random(1700,1800);}
+elsif ($temp1 == 1) 
+{$Lieu = "Ile-du-Prince-Édouard";
+$LieuA = "à l'Ile-du-Prince-Édouard";
+@VecteurModalite = ("Personnes occupées", "Chômeurs", "Personnes inactives", "Personnes actives");
+$Effectif1t = random(650,750);
+$Effectif2t = random(75,100);
+$Effectif3t = random(350,450);}
+elsif ($temp1 == 2) 
+{$Lieu = "Nouvelle-Écosse";
+$LieuA = "en Nouvelle-Écosse";
+$Effectif1t = random(4300,4700);
+$Effectif2t = random(370,430);
+$Effectif3t = random(2800,3200);}
+elsif ($temp1 == 3) 
+{$Lieu = "Nouveau-Brunswick";
+$LieuA = "au Nouveau-Brunswick";
+$Effectif1t = random(3400,3700);
+$Effectif2t = random(330,410);
+$Effectif3t = random(2500,3000);}
+elsif ($temp1 == 4) 
+{$Lieu = "Québec";
+$LieuA = "au Québec";
+$Effectif1t = random(41000,44000);
+$Effectif2t = random(2700,3100);
+$Effectif3t = random(14000,18000);}
+elsif ($temp1 == 4) 
+{$Lieu = "Ontario";
+$LieuA = "en Ontario";
+$Effectif1t = random(69000,72000);
+$Effectif2t = random(4500,5000);
+$Effectif3t = random(40000,42000);}
+elsif ($temp1 == 5) 
+{$Lieu = "Manitoba";
+$LieuA = "au Manitoba";
+$Effectif1t = random(6200,6500);
+$Effectif2t = random(380,450);
+$Effectif3t = random(3500,4500);}
+elsif ($temp1 == 6) 
+{$Lieu = "Saskatchewan";
+$LieuA = "en Saskatchewan";
+$Effectif1t = random(5500,6000);
+$Effectif2t = random(380,450);
+$Effectif3t = random(2600,3000);}
+elsif ($temp1 == 7) 
+{$Lieu = "Alberta";
+$LieuA = "en Alberta";
+$Effectif1t = random(21000,24000);
+$Effectif2t = random(1900,2500);
+$Effectif3t = random(10000,11000);}
+elsif ($temp1 == 8) 
+{$Lieu = "Colombie-Britannique";
+$LieuA = "en Colombie-Britannique";
+$Effectif1t = random(23000,29000);
+$Effectif2t = random(1000,2000);
+$Effectif3t = random(12000,17000);}
+
+#Calcul des effectifs à afficher
+$Effectif1t2 = Compute("$Effectif1t/10");
+$Effectif2t2 = Compute("$Effectif2t/10");
+$Effectif3t2 = Compute("$Effectif3t/10");
+$Effectif1 = sprintf("%0.1f","$Effectif1t2");
+$Effectif2 = sprintf("%0.1f","$Effectif2t2");
+$Effectif3 = sprintf("%0.1f","$Effectif3t2");
+
+$Effectif4t = Compute("$Effectif1 + $Effectif2");
+$Effectif4 = sprintf("%0.1f","$Effectif4t");
+
+$EffectifTotalt = Compute("$Effectif1 + $Effectif2 + $Effectif3");
+$EffectifTotal = sprintf("%0.1f","$EffectifTotalt");
+
+@VecteurEffectif = ($Effectif1, $Effectif2, $Effectif3, $Effectif4);
+
+@VecteurModalite = ("Personnes occupées", "Chômeurs", "Personnes inactives", "Personnes actives");
+@AffichageEffectif = ("$Effectif1","$Effectif2", "$Effectif3", "$Effectif4"); 
+@CompteurAffichage = (0,1,2);
+
+$TauxChomaget = Compute("($Effectif2/$Effectif4)*100");
+$TauxChomage = sprintf("%0.1f","$TauxChomaget ");
+
+$TauxActivitet = Compute("($Effectif4/$EffectifTotal)*100");
+$TauxActivite = sprintf("%0.1f","$TauxActivitet ");
+
+$TauxEmploit = Compute("($Effectif1/$EffectifTotal)*100");
+$TauxEmploi = sprintf("%0.1f","$TauxEmploit ");
+
+Context()->texStrings;
+BEGIN_TEXT
+Voici les données sur l'emploi $LieuA pour le mois passé. 
+
+
+$PAR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+   AlignedRow(["${BBOLD} Situation ${EBOLD}","${BBOLD} Effectif$BR (en milliers) ${EBOLD}"], align => CENTER, separation=>0).
+ AlignedRow(["$VecteurModalite[$CompteurAffichage[0]]","$AffichageEffectif[$CompteurAffichage[0]]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[$CompteurAffichage[1]]","$AffichageEffectif[$CompteurAffichage[1]]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[$CompteurAffichage[2]]","$AffichageEffectif[$CompteurAffichage[2]]"], align => CENTER, separation=>0).
+  AlignedRow(["Population âgée de $BR 15 ans et  plus","$EffectifTotal"], align => CENTER, separation=>0).
+EndTable()
+\}
+$BR
+${BBOLD}Question :${EBOLD} En utilisant ces données sur l'emploi, calculer les taux suivants en arrondissant votre réponse à une décimale. 
+$BR $SPACE $SPACE $SPACE Taux de chômage : \{ans_rule(5)\}
+$BR $SPACE $SPACE $SPACE Taux d'activité : \{ans_rule(5)\}
+$BR $SPACE $SPACE $SPACE Taux d'emploi : \{ans_rule(5)\}
+
+$BR 
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($TauxChomage, tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($TauxActivite, tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($TauxEmploi, tol => 0.00001, tolType => "absolute"));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Le taux de chômage se calcule comme suit : 
+$PAR
+$SPACE $SPACE $SPACE Taux de chômage = \(\displaystyle {\rm{\frac{Nombre\ de\ chômeurs}{Nombre\ de\ personnes\ occupées + Nombre\ de\ chômeurs} \times 100}}\) 
+$PAR
+$SPACE $SPACE $SPACE Taux de chômage = \(\displaystyle {\rm{\frac{Nombre\ de\ chômeurs}{Nombre\ de\ personnes\ actives} \times 100}}\) 
+$PAR
+Pour cet exercice, le calcul devient :
+$BR
+$SPACE $SPACE $SPACE Taux de chômage = \(\displaystyle {\frac{$Effectif2}{$Effectif1 + $Effectif2 } \times 100 = \frac{$Effectif2}{$Effectif4 } \times 100 = $TauxChomage} \) 
+
+$PAR
+$BR
+Le taux d'activité se calcule comme suit : 
+$PAR
+$SPACE $SPACE $SPACE Taux d'activité = \(\displaystyle {\rm{\frac{Nombre\ de\ personnes\ actives}{Taille\ de\ la\ population\ âgée\ de\ 15\ ans\ et\ plus} \times 100}}\) 
+$PAR
+Pour cet exercice, le calcul devient :
+$BR
+$SPACE $SPACE $SPACE Taux d'activité = \(\displaystyle {\frac{$Effectif1 + $Effectif2 }{$EffectifTotal} \times 100 = \frac{$Effectif4}{$EffectifTotal } \times 100 = $TauxActivite} \) 
+
+
+$PAR
+$BR
+Le taux d'emploi se calcule comme suit : 
+$PAR
+$SPACE $SPACE $SPACE Taux d'emploi = \(\displaystyle {\rm{\frac{Nombre\ de\ personnes\ occupées}{Taille\ de\ la\ population\ âgée\ de\ 15\ ans\ et\ plus} \times 100}}\) 
+$PAR
+Pour cet exercice, le calcul devient :
+$BR
+$SPACE $SPACE $SPACE Taux d'emploi = \(\displaystyle {\frac{$Effectif1}{$EffectifTotal} \times 100 = $TauxEmploi} \) 
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

@@ -1,0 +1,82 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('modalité', 'population', 'unité statistique', 'variable')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("VERSION CLASSE INVERSÉE : Introduction de la population et de l'unité statistique");
+
+TEXT(beginproblem());
+
+
+#Les choix pour la population pour l'unité statistique
+@CompteurPopUpP = shuffle(8);
+@CompteurPopUpP2 = shuffle(8);
+
+
+@VecteurContexte = ("la couleur préférée de chacun des enseignants du département de mathématiques");
+
+@ChoixPopUpP = ("Les enseignants du département", "Un enseignant du département", "Les couleurs préférées", "Une couleur préférée", "Le département de mathématiques", "Les départements de mathématiques", "Les mathématiques", "Le nombre d'enseignants au département");
+$Rep1P = $ChoixPopUpP[0];
+$Rep2P = $ChoixPopUpP[1];
+
+
+@VecteurRepPopUpP = (
+PopUp(["Sélectionner la population",  "$ChoixPopUpP[$CompteurPopUpP[0]]",  "$ChoixPopUpP[$CompteurPopUpP[1]]", "$ChoixPopUpP[$CompteurPopUpP[2]]", "$ChoixPopUpP[$CompteurPopUpP[3]]", "$ChoixPopUpP[$CompteurPopUpP[4]]", "$ChoixPopUpP[$CompteurPopUpP[5]]", "$ChoixPopUpP[$CompteurPopUpP[6]]", "$ChoixPopUpP[$CompteurPopUpP[7]]"], "$Rep1P"),
+PopUp(["Sélectionner l'unité statistique",  "$ChoixPopUpP[$CompteurPopUpP2[0]]",  "$ChoixPopUpP[$CompteurPopUpP2[1]]", "$ChoixPopUpP[$CompteurPopUpP2[2]]", "$ChoixPopUpP[$CompteurPopUpP2[3]]", "$ChoixPopUpP[$CompteurPopUpP2[4]]", "$ChoixPopUpP[$CompteurPopUpP2[5]]", "$ChoixPopUpP[$CompteurPopUpP2[6]]", "$ChoixPopUpP[$CompteurPopUpP2[7]]"], "$Rep2P"));
+
+
+Context()->texStrings;
+BEGIN_TEXT
+La ${BBOLD}population ${EBOLD} est l’ensemble de tous les individus, de tous les objets ou de tous les faits sur lesquels porte une étude. 
+\{ BeginList("UL") \}
+$ITEM  Les individus peuvent être des êtres humains (étudiants, travailleurs, électeurs, citadins, clients), des personnes morales (institutions d’enseignement, pays, entreprises, partis politiques), des êtres vivants (animaux, bactéries, plantes). 
+$ITEM  Les objets peuvent être les produits de consommation comme des biens durables (véhicules, ordinateurs, meubles), des biens semi-durables (vêtements, jouets, manuels scolaires), des biens non durables (légumes, viandes, essence). 
+$ITEM  Les faits ou les lieux peuvent être des crimes, des naissances, les quartiers d’une ville, des prix, des indices économiques ou démographiques. 
+\{ EndList("UL") \}
+Chaque élément de la population s’appelle une ${BBOLD}unité statistique${EBOLD}.  
+$PAR
+
+${BBOLD}Exemple :${EBOLD} Un chercheur s'intéresse ${BITALIC}au nombre de téléphones cellulaires achetés depuis deux ans par les étudiants de la classe${EITALIC}. Alors la population étudiée par le chercheur correspond aux ${BBOLD}étudiants de la classe${EBOLD} et l'unité statistique est un individu de cette population, donc ${BBOLD}un étudiant de la classe${EBOLD}.
+
+$PAR
+
+${BBOLD}Exercice :${EBOLD} Un chercheur s'intéresse à  ${BITALIC}$VecteurContexte[0]${EITALIC}. Répondre aux questions suivantes :
+
+\{ BeginList("OL", type=>"a") \}
+$ITEM  Quelle est la population étudiée par le chercheur ? \{ $VecteurRepPopUpP[0]->menu()\} 
+$ITEMSEP 
+$ITEM  Quelle est l'unité statistique étudiée par le chercheur ? \{ $VecteurRepPopUpP[1]->menu()\} 
+$ITEMSEP
+\{ EndList("OL") \}
+
+
+
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($VecteurRepPopUpP[0]->cmp() );
+ANS($VecteurRepPopUpP[1]->cmp() );
+
+
+
+ENDDOCUMENT(); 

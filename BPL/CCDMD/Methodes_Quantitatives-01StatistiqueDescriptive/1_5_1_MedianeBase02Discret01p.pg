@@ -1,0 +1,225 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('fréquence absolue', 'mesure de tendance centrale', 'modalité', 'médiane', 'tableau', 'variable', 'variable quantitative discrète', 'échantillon')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl","PGauxiliaryFunctions.pl",
+"PGcourse.pl","unionTables.pl", "PGchoicemacros.pl"
+);
+
+
+COMMENT("Niveau de difficulté : Facile. Déterminer la médiane en utilisant la série statistique d'une variable discrète. Les valeurs de la variable sont 0, 1, 2. Il y a 4 contextes. La série est PAIRE. La solution a été programmée.");
+
+TEXT(beginproblem());
+
+
+#Choisir le contexte
+$TypeContexte = random(0,3);
+
+#Nombre d'ordinateurs à la maison parentale
+#Nombre de tablettes à la maison parentale 
+#Nombre d'activités physiques (de plus de 30 minutes) effectués la semaine passée
+
+#Choisir si la série est paire ou non
+#0 = Non
+#1 = Oui
+#$SeriePaire = random(0,1);
+$SeriePaire = 1;
+
+
+#Les effectifs en X et Y sont communs à tous les contextes.
+#Variable Y est utilisé
+if ($TypeContexte == 0)
+{@VecteurContexte = ("X : Sexe", "Nombre de $BR tablettes", "Répartition des étudiants selon $BR le nombre de tablettes à la maison familiale", "d'étudiants afin de connaitre le nombre de tablettes à la maison familiale", "étudiantes et étudiants afin de connaitre le nombre de tablettes à la maison familiale");
+$Y01UniteS = "tablette";
+$Y01UniteP = "tablettes";
+$Y01Interpretation = "des étudiants ont";
+}
+elsif ($TypeContexte == 1)
+{@VecteurContexte = ("X : Sexe", "Nombre $BR de sorties", "Répartition des étudiants selon $BR le nombre de sorties au cinéma", "d'étudiants afin de connaitre le nombre de sorties au cinéma faites durant le mois passé", "étudiantes et étudiants afin de connaitre le nombre de sorties au cinéma faites durant le mois passé");
+$Y01UniteS = "sortie";
+$Y01UniteP = "sorties";
+$Y01Interpretation = "des étudiants ont fait";
+}
+elsif ($TypeContexte == 2)
+{@VecteurContexte = ("X : Sexe", "Nombre $BR de cafés", "Répartition des étudiants selon $BR le nombre de cafés achetés au café étudiant", "d'étudiants afin de connaitre le nombre de cafés achetés au café étudiant durant une journée scolaire", "étudiantes et étudiants afin de connaitre le nombre de cafés achetés au café étudiant durant une journée scolaire");
+$Y01UniteS = " café";
+$Y01UniteP = "cafés";
+$Y01Interpretation = "des étudiants ont acheté";
+}
+elsif ($TypeContexte == 3)
+{@VecteurContexte = ("X : Sexe", "Nombre $BR de repas", "Répartition des étudiants selon $BR le nombre de repas pris à la cafétéria la semaine dernière", "d'étudiants afin de connaitre le nombre de repas pris à la cafétéria la semaine dernière", "étudiantes et étudiants afin de connaitre le nombre de repas pris à la cafétéria la semaine dernière");
+$Y01UniteS = " repas";
+$Y01UniteP = "repas";
+$Y01Interpretation = "des étudiants ont acheté";
+}
+
+$ValeurMin = 0;
+$ValeurMax = 2;
+
+$Modalite1 = random($ValeurMin,$ValeurMax); 
+$Modalite2 = random($ValeurMin,$ValeurMax);
+$Modalite3 = random($ValeurMin,$ValeurMax);
+$Modalite4 = random($ValeurMin,$ValeurMax);
+$Modalite5 = random($ValeurMin,$ValeurMax);
+$Modalite6 = random($ValeurMin,$ValeurMax);
+$Modalite7 = random($ValeurMin,$ValeurMax);
+$Modalite8 = random($ValeurMin,$ValeurMax);
+$Modalite9 = random($ValeurMin,$ValeurMax);
+$Modalite10 = random($ValeurMin,$ValeurMax);
+
+
+if ($SeriePaire == 1)
+{#La série est paire
+$n = 6;
+@VecteurBaseDonnee = ( $Modalite1, $Modalite2, $Modalite3, $Modalite4, $Modalite5, $Modalite6); 
+$MedianePosition = 3.5;
+$MedianePosition1 = 3;
+$MedianePosition2 = 4;
+
+$MedianeCompteur = 2;
+}
+else
+{#La série est impaire
+$n = 5;
+@VecteurBaseDonnee = ( $Modalite1, $Modalite2, $Modalite3, $Modalite4, $Modalite5); 
+$MedianePosition = 3;
+$MedianeCompteur = 2;
+}
+
+$nAdd = Compute("$n +1");
+@ListeCroissante = num_sort(@VecteurBaseDonnee);
+
+
+
+
+#@AffichageBase = shuffle($n);
+
+
+#Explication du calcul de la médiane
+
+if ($SeriePaire == 1)
+{#La série est paire
+$Z01mediane = Compute("($ListeCroissante[$MedianeCompteur] + $ListeCroissante[$MedianeCompteur+1])/2");
+
+if ($ListeCroissante[$MedianeCompteur] == $ListeCroissante[$MedianeCompteur+1])
+{$medianeExplication = "La valeur de la médiane est la moyenne entre la valeur de la position $MedianePosition1 et celle de la position $MedianePosition2. Ainsi la médiane est \(\displaystyle{\frac{$ListeCroissante[$MedianeCompteur] + $ListeCroissante[$MedianeCompteur+1]}{2} = $Z01mediane.}\) Comme c'est la même valeur, il faudra utiliser ${BITALIC}au moins 50 %${EITALIC} dans l'interprétation.";
+
+$mediane50 ="Au moins 50 %";}
+else
+{$medianeExplication = "La valeur de la médiane est la moyenne entre la valeur de la position $MedianePosition1 et celle de la position $MedianePosition2. Ainsi la médiane est \(\displaystyle{\frac{$ListeCroissante[$MedianeCompteur] + $ListeCroissante[$MedianeCompteur+1]}{2} = $Z01mediane.}\)";
+$mediane50 ="50 %";}
+}
+else
+{#La série est impaire
+$Z01mediane = $ListeCroissante[$MedianeCompteur];
+$medianeExplication = "La valeur de la médiane est $Z01mediane.";
+$mediane50 ="Au moins 50 %";
+}
+
+
+#Interprétation de la médiane
+if ($Z01mediane < 2)
+{if ($Z01mediane == 0)
+{$medianeInterpretation = "$mediane50 $Y01Interpretation  $Z01mediane $Y01UniteS";}
+else
+{$medianeInterpretation = "$mediane50 $Y01Interpretation $Z01mediane $Y01UniteS ou moins";}
+}
+else
+{$medianeInterpretation = "$mediane50 $Y01Interpretation $Z01mediane $Y01UniteP ou moins";}
+
+
+if ($SeriePaire == 1)
+{#La série est paire
+Context()->texStrings;
+BEGIN_TEXT
+Une enquête a été menée auprès d'un échantillon $VecteurContexte[3]. La série statistique ci-dessous représente les données recueillies.
+$PAR
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([$VecteurBaseDonnee[0],$VecteurBaseDonnee[1],$VecteurBaseDonnee[2], $VecteurBaseDonnee[3],$VecteurBaseDonnee[4],$VecteurBaseDonnee[5] ], align => CENTER, separation=>0).
+EndTable()\}
+$ECENTER
+$BR
+${BBOLD}Question : ${EBOLD} Déterminer la médiane de la série statistique.
+$PAR $SPACE $SPACE $SPACE Médiane = \{ans_rule(5)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($Z01mediane));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La médiane est la valeur centrale (la valeur médiane) d'une série statistique ordonnée. Elle divise cette série statistique en deux parties égales : il y a autant d'unités statistiques qui ont une valeur inférieure ou égale à la médiane que d'unités statistiques qui ont une valeur supérieure ou égale à la médiane.
+$PAR
+Il faut donc d'abord ordonner la série. 
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow(["${BBOLD}Position${EBOLD}",1,2,3,4,5,6], align => CENTER, separation=>0).
+AlignedRow(["${BBOLD}Valeur${EBOLD}", $ListeCroissante[0],$ListeCroissante[1],$ListeCroissante[2], $ListeCroissante[3],$ListeCroissante[4], $ListeCroissante[5] ], align => CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+$PAR
+Ensuite, calculons la position de la médiane. Il y a $n données (${BITALIC}n${EITALIC} = $n). $BR 
+$SPACE $SPACE $SPACE \(\displaystyle{\frac{n+1}{2} = \frac{$n + 1}{2} = \frac{$nAdd}{2} = $MedianePosition}\).$BR 
+La médiane se trouve donc à la position $MedianePosition. $medianeExplication
+$PAR
+${BBOLD}Interprétation de la médiane :${EBOLD} $medianeInterpretation.
+END_SOLUTION
+Context()->normalStrings;
+}
+else
+{#La série est impaire
+Context()->texStrings;
+BEGIN_TEXT
+Une enquête a été menée auprès d'un échantillon $VecteurContexte[3]. La série statistique ci-dessous représente les données recueillies.
+$PAR
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([$VecteurBaseDonnee[0],$VecteurBaseDonnee[1],$VecteurBaseDonnee[2], $VecteurBaseDonnee[3],$VecteurBaseDonnee[4] ], align => CENTER, separation=>0).
+EndTable()\}
+$ECENTER
+$BR
+${BBOLD}Question : ${EBOLD} Déterminer la médiane de la série statistique.
+$PAR $SPACE $SPACE $SPACE Médiane = \{ans_rule(5)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($Z01mediane));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La médiane est la valeur centrale (la valeur médiane) d'une série statistique ordonnée. Elle divise cette série statistique en deux parties égales : il y a autant d'unités statistiques qui ont une valeur inférieure ou égale à la médiane que d'unités statistiques qui ont une valeur supérieure ou égale à la médiane.
+$PAR
+Il faut donc d'abord ordonner la série. 
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow(["${BBOLD}Position${EBOLD}",1,2,3,4,5], align => CENTER, separation=>0).
+AlignedRow(["${BBOLD}Valeur${EBOLD}", $ListeCroissante[0],$ListeCroissante[1],$ListeCroissante[2], $ListeCroissante[3],$ListeCroissante[4] ], align => CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+$PAR
+Ensuite, calculons la position de la médiane. Il y a $n données (${BITALIC}n${EITALIC} = $n). $BR 
+$SPACE $SPACE $SPACE \(\displaystyle{\frac{n+1}{2} = \frac{$n + 1}{2} = \frac{$nAdd}{2} = $MedianePosition}\).$BR 
+La médiane se trouve donc à la position $MedianePosition. $medianeExplication
+$PAR
+${BBOLD}Interprétation de la médiane :${EBOLD} $medianeInterpretation.
+END_SOLUTION
+Context()->normalStrings;
+}
+
+ENDDOCUMENT(); 

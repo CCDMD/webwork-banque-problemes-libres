@@ -1,0 +1,100 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('modalité', 'population', 'unité statistique', 'variable', 'variable qualitative', 'variable qualitative nominale', 'variable qualitative ordinale', 'variable quantitative continue', 'variable quantitative discrète')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("VERSION CLASSE INVERSÉE : Introduction de la variable et de ses types. ");
+
+TEXT(beginproblem());
+
+
+#L'affichage des types de variables n'est pas aléatoire. 
+#Pour rendre l'affichage aléatoire, utiliser shuffle(4);
+@VecteurTypeVar = ("Qualitatif nominal", "Qualitatif ordinal", "Quantitatif discret", "Quantitatif continu");
+@CompteurTypeVar = (0,1,2,3);
+#@CompteurTypeVar = shuffle(4);
+
+#Ordre des réponses aux noms des variables
+@CompteurPopUp = shuffle(9);
+@CompteurPopUp1 = shuffle(9);
+@CompteurPopUp2 = shuffle(9);
+
+
+#Exemple
+@VecteurContexte = ("au salaire horaire de chacun des employés de la coop");
+@ChoixPopUp = ("Les employés de la coop", "Un employé de la coop", "Le salaire horaire", "Le chercheur", "La coop", "Les coops", "Les chercheurs", "12,74 dollars", "Le salaire minimum");
+$Rep1 = $ChoixPopUp[0];
+$Rep2 = $ChoixPopUp[1];
+$Rep3 = $ChoixPopUp[2];
+$Rep4 = $VecteurTypeVar[3];
+
+
+@VecteurRepPopUp = (
+PopUp(["Sélectionner la population",  "$ChoixPopUp[$CompteurPopUp[0]]",  "$ChoixPopUp[$CompteurPopUp[1]]", "$ChoixPopUp[$CompteurPopUp[2]]", "$ChoixPopUp[$CompteurPopUp[3]]", "$ChoixPopUp[$CompteurPopUp[4]]", "$ChoixPopUp[$CompteurPopUp[5]]", "$ChoixPopUp[$CompteurPopUp[6]]", "$ChoixPopUp[$CompteurPopUp[7]]", "$ChoixPopUp[$CompteurPopUp[8]]"], $Rep1),
+PopUp(["Sélectionner l'unité statistique",  "$ChoixPopUp[$CompteurPopUp1[0]]",  "$ChoixPopUp[$CompteurPopUp1[1]]", "$ChoixPopUp[$CompteurPopUp1[2]]", "$ChoixPopUp[$CompteurPopUp1[3]]", "$ChoixPopUp[$CompteurPopUp1[4]]", "$ChoixPopUp[$CompteurPopUp1[5]]", "$ChoixPopUp[$CompteurPopUp1[6]]", "$ChoixPopUp[$CompteurPopUp1[7]]", "$ChoixPopUp[$CompteurPopUp1[8]]"], $Rep2),
+PopUp(["Sélectionner la variable",  "$ChoixPopUp[$CompteurPopUp2[0]]",  "$ChoixPopUp[$CompteurPopUp2[1]]", "$ChoixPopUp[$CompteurPopUp2[2]]", "$ChoixPopUp[$CompteurPopUp2[3]]", "$ChoixPopUp[$CompteurPopUp2[4]]", "$ChoixPopUp[$CompteurPopUp2[5]]", "$ChoixPopUp[$CompteurPopUp2[6]]", "$ChoixPopUp[$CompteurPopUp2[7]]", "$ChoixPopUp[$CompteurPopUp2[8]]"], $Rep3),
+PopUp(["Sélectionner le type de variable",  "$VecteurTypeVar[$CompteurTypeVar[0]]", "$VecteurTypeVar[$CompteurTypeVar[1]]", "$VecteurTypeVar[$CompteurTypeVar[2]]", "$VecteurTypeVar[$CompteurTypeVar[3]]"], $Rep4));
+
+#@TypeAffichage = shuffle(5);
+
+Context()->texStrings;
+BEGIN_TEXT
+Une ${BBOLD}variable${EBOLD} est une caractéristique de l’unité statistique qui est étudiée par le chercheur. Par exemple, un chercheur peut s'intéresser à ${BITALIC}la couleur préférée${EITALIC} des enfants d'un service de garde, au ${BITALIC}niveau de satisfaction${EITALIC} des Québécois par rapport au système de santé, au ${BITALIC}nombre d'enfants${EITALIC} des familles canadiennes, à ${BITALIC}la taille${EITALIC} des nouveaux-nés. Ces caractéristiques sont donc des variables parce qu'elles varient selon les unités statistiques. Les enfants d'un service de garde n'ont pas tous la même couleur préférée (même si certaines couleurs sont plus populaires que d'autres). De plus, plusieurs variables d'une même unité statistique peuvent être étudiées par un chercheur. Par exemple, le lieu de naissance d'un étudiant, de même que son niveau d'intérêt par rapport à un cours, son nombre de sessions passées au cégep, sa taille, sont toutes des variables qui pourraient être intéressées un chercheur.
+$PAR
+Il y a deux grandes catégories de variables: les variables quantitatives et les variables qualitatives. Une variable est dite quantitative lorsque ses valeurs sont des nombres (quantité associée à une unité statistique). Sinon, elle est dite qualitative et elle prend alors des modalités (qualité ou attribut d’une unité statistique). De façon plus précise, il y a 4 types de variables.
+\{ BeginList("UL") \}
+$ITEM Une variable qualitative est ${BBOLD}ordinale${EBOLD} si une relation d’ordre peut être établie entre les modalités de la variable; sinon, elle est ${BBOLD}nominale${EBOLD}.
+$ITEM Une variable quantitative est ${BBOLD}discrète${EBOLD} si ses valeurs sont isolées les unes des autres ou si elle ne prend que quelques valeurs. Une variable quantitative est ${BBOLD}continue${EBOLD} si la variable peut prendre n’importe quelle valeur contenue dans un intervalle donné de nombres réels. 
+\{ EndList("UL") \}
+Les variables peuvent être notées par des lettres majuscules, comme X ou Y, et leurs valeurs ou leurs modalités en minuscules \(x_1\), \(x_2\), etc., \(y_1\), \(y_2\), etc. Notons que le type de variable est un nom masculin. On dit donc qu'une variable est qualitative ordinale mais que son type est qualitatif ordinal. 
+$PAR
+${BBOLD}Exemple :${EBOLD} Un chercheur s'intéresse ${BITALIC}au nombre de téléphones cellulaires achetés depuis deux ans par les étudiants de la classe${EITALIC}. Alors la population étudiée par le chercheur correspond aux ${BBOLD}étudiants de la classe${EBOLD} et l'unité statistique est un individu de cette population, donc ${BBOLD}un étudiant de la classe${EBOLD}. La caractéristique étudiée par le chercheur, donc la variable, est ${BBOLD}le nombre de téléphones cellulaires achetés depuis deux ans${EBOLD}. Comme cette variable ne prend que des valeurs isolées, l'étudiant peut avoir acheté 1, 2, 3 téléphones cellulaires depuis deux ans (ou ne pas en avoir acheté), la variable est quantitative discrète. 
+
+$PAR
+
+${BBOLD}Exercice :${EBOLD} Un chercheur s'intéresse ${BITALIC}$VecteurContexte[0]${EITALIC}. Répondre aux questions suivantes :
+
+
+\{ BeginList("OL", type=>"a") \}
+$ITEM  Quelle est la population étudiée par le chercheur ? \{ $VecteurRepPopUp[0]->menu()\} 
+$ITEMSEP 
+$ITEM  Quelle est l'unité statistique étudiée par le chercheur ? \{ $VecteurRepPopUp[1]->menu()\} 
+$ITEMSEP
+$ITEM  Quelle est la variable étudiée par le chercheur ? \{ $VecteurRepPopUp[2]->menu()\} 
+$ITEMSEP
+$ITEM  Quel est le type de variable étudié par le chercheur ? \{ $VecteurRepPopUp[3]->menu()\} 
+\{ EndList("OL") \}
+
+
+
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($VecteurRepPopUp[0]->cmp() );
+ANS($VecteurRepPopUp[1]->cmp() );
+ANS($VecteurRepPopUp[2]->cmp() );
+ANS($VecteurRepPopUp[3]->cmp() );
+
+
+
+ENDDOCUMENT(); 

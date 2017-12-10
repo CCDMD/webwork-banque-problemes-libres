@@ -1,0 +1,320 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Test d'hypothèse)
+## KEYWORDS('coefficient de Cramer', 'fréquences observées', 'fréquences théoriques', 'hypothèse alternative', 'hypothèse nulle', 'règle de décision', 'région critique', 'seuil de signification', 'table', 'tableau de contingence', 'test d\'hypothèse', 'test d\'indépendance du khi deux', 'valeur critique', 'zone de rejet')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Les deux variables sont qualitatives (2 modalités et 3 modalités). Il y a 3 contextes. La solution a été programmée. Les variables peuvent ou non être indépendantes. Les totaux des fréquences théoriques ont été enlevés. Les réponses doivent absolument être arrondies selon les spécifications de la question.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$TypeContexte = random(0,2);
+
+#Choisir le seuil
+$alpha = list_random(1,5,10);
+
+#Choisir le nombre de décimales dans les calculs
+$PrecisionCalcul = "%0.2f";
+
+#Calcul du khi-carré critique
+if ($alpha == 1)
+{$Khi2c = Compute("6.63");}
+elsif ($alpha == 5)
+{$Khi2c = Compute("3.84");}
+elsif ($alpha == 10)
+{$Khi2c = Compute("2.71");}
+
+$NiveauConfiance = Compute("100 - $alpha");
+
+
+
+if ($TypeContexte == 0)
+{@VecteurContexte = ("X : Emploi", "Y : Réussite scolaire", "Répartition observée des étudiants selon l'emploi et $BR la réussite scolaire", "Répartition théorique des étudiants selon l'emploi et $BR la réussite scolaire", "entre l'occupation d'un emploi et la réussite scolaire");
+@X01VecteurModalite = ("Oui", "Non");
+@X01VecteurGroupe = ("Oui", "Non");
+@Y01VecteurModalite = ("Succès", "Échec");
+$X01Nom = "Occupation d'un emploi";
+$Y01Nom = "Réussite scolaire";
+}
+elsif ($TypeContexte == 1)
+{@VecteurContexte = ("X : Lieu de résidence", "Y : Animal de compagnie", "Répartition observée des étudiants selon le sexe et $BR la possession d'un animal de compagnie ou non","Répartition théorique des étudiants selon le sexe et $BR la possession d'un animal de compagnie ou non",  "entre le lieu de résidence pendant l'année scolaire et la possession d'un animal de compagnie ou non");
+@X01VecteurModalite = ("Résidence parentale", "Autre type de résidence");
+@X01VecteurGroupe = ("Résidence parentale", "Autre type de résidence");
+@Y01VecteurModalite = ("Oui", "Non");
+$X01Nom = "Lieu de résidence";
+$Y01Nom = "Possession d'un animal de compagnie";
+}
+elsif ($TypeContexte == 2)
+{@VecteurContexte = ("X : Lieu de résidence", "Y : Emploi", "Répartition observée des étudiants selon le lieu de résidence et $BR l'occupation d'un emploi ou non", "Répartition théorique des étudiants selon le lieu de résidence et $BR l'occupation d'un emploi ou non", "entre le lieu de résidence pendant l'année scolaire et l'occupation d'un emploi pendant l'année scolaire");
+@X01VecteurModalite = ("Résidence parentale", "Autre type de résidence");
+@X01VecteurGroupe = ("Résidence parentale", "Autre type de résidence");
+@Y01VecteurModalite =("Oui", "Non");
+#Biais sur la série statistique en Y
+$X01Nom = "Lieu de résidence";
+$Y01Nom = "Occupation d'un emploi ou non";
+}
+
+
+$Z01Effectif11 = random(10,40); 
+$Z01Effectif12 = random(10,40); 
+$Z01Effectif13 = 0;
+$Z01Effectif21 = random(10,40); 
+$Z01Effectif22 = random(10,40); 
+$Z01Effectif23 = 0;
+
+
+$Z01Effectif31 = 0; 
+$Z01Effectif32 = 0; 
+$Z01Effectif33 = 0;
+
+$Z01EffectifTotal1 = Compute("$Z01Effectif11 + $Z01Effectif12 + $Z01Effectif13");
+$Z01EffectifTotal2 = Compute("$Z01Effectif21 + $Z01Effectif22 + $Z01Effectif23");
+
+$Z01EffectifTotal1h = Compute("$Z01Effectif11 + $Z01Effectif21");
+$Z01EffectifTotal2h = Compute("$Z01Effectif12 + $Z01Effectif22");
+$Z01EffectifTotal3h = Compute("$Z01Effectif13 + $Z01Effectif23");
+$Z01EffectifTotalh = Compute("$Z01EffectifTotal1h + $Z01EffectifTotal2h+$Z01EffectifTotal3h");
+
+@Z01Reponseh = ($Z01EffectifTotal1h, $Z01EffectifTotal2h, $Z01EffectifTotal3h, $Z01EffectifTotalh);
+
+
+#@CompteurAffichageX = shuffle(2);
+#@CompteurAffichageY = shuffle(3);
+
+@CompteurAffichageX = (0,1);
+@CompteurAffichageY = (0,1,2);
+
+
+@AffichageEffectif1 = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13, $Z01EffectifTotal1);
+@AffichageEffectif2 = ($Z01Effectif21, $Z01Effectif22, $Z01Effectif23, $Z01EffectifTotal2);
+@AffichageEffectif3 = ($Z01EffectifTotal1h, $Z01EffectifTotal2h, $Z01EffectifTotal3h, $Z01EffectifTotalh);
+
+#Calcul des fréquences observées
+$Z01Effectif11tht = Compute("($Z01EffectifTotal1h*$Z01EffectifTotal1)/$Z01EffectifTotalh");
+$Z01Effectif12tht = Compute("($Z01EffectifTotal2h*$Z01EffectifTotal1)/$Z01EffectifTotalh");
+$Z01Effectif21tht = Compute("($Z01EffectifTotal1h*$Z01EffectifTotal2)/$Z01EffectifTotalh");
+$Z01Effectif22tht = Compute("($Z01EffectifTotal2h*$Z01EffectifTotal2)/$Z01EffectifTotalh");
+
+$Z01Effectif11th = sprintf($PrecisionCalcul,"$Z01Effectif11tht");
+$Z01Effectif12th = sprintf($PrecisionCalcul,"$Z01Effectif12tht");
+$Z01Effectif21th = sprintf($PrecisionCalcul,"$Z01Effectif21tht");
+$Z01Effectif22th = sprintf($PrecisionCalcul,"$Z01Effectif22tht");
+
+@AffichageEffectif1th = ($Z01Effectif11th, $Z01Effectif12th, $Z01Effectif13th, $Z01EffectifTotal1);
+@AffichageEffectif2th = ($Z01Effectif21th, $Z01Effectif22th, $Z01Effectif23th, $Z01EffectifTotal2);
+@AffichageEffectif3th = ($Z01EffectifTotal1h, $Z01EffectifTotal2h, $Z01EffectifTotal3h, $Z01EffectifTotalh);
+
+
+#$Z01EffectifTotal1th = Compute("$Z01Effectif11th + $Z01Effectif12th + $Z01Effectif13th");
+#$Z01EffectifTotal2th = Compute("$Z01Effectif21th + $Z01Effectif22th + $Z01Effectif23th");
+#$Z01EffectifTotal1hth = Compute("$Z01Effectif11th + $Z01Effectif21th");
+#$Z01EffectifTotal2hth = Compute("$Z01Effectif12th + $Z01Effectif22th");
+#$Z01EffectifTotal3hth = Compute("$Z01Effectif13th + $Z01Effectif23th");
+#$Z01EffectifTotalhth = Compute("$Z01EffectifTotal1hth + $Z01EffectifTotal2hth+$Z01EffectifTotal3hth");
+#@AffichageEffectif1th = ($Z01Effectif11th, $Z01Effectif12th, $Z01Effectif13th, $Z01EffectifTotal1th);
+#@AffichageEffectif2th = ($Z01Effectif21th, $Z01Effectif22th, $Z01Effectif23th, $Z01EffectifTotal2th);
+#@AffichageEffectif3th = ($Z01EffectifTotal1hth, $Z01EffectifTotal2hth, $Z01EffectifTotal3hth, $Z01EffectifTotalhth);
+
+
+#Calcul des khi-carrés
+$Z01Effectif11kt = Compute("(($Z01Effectif11 - $Z01Effectif11th)^2)/$Z01Effectif11th");
+$Z01Effectif12kt = Compute("(($Z01Effectif12 - $Z01Effectif12th)^2)/$Z01Effectif12th");
+$Z01Effectif21kt = Compute("(($Z01Effectif21 - $Z01Effectif21th)^2)/$Z01Effectif21th");
+$Z01Effectif22kt = Compute("(($Z01Effectif22 - $Z01Effectif22th)^2)/$Z01Effectif22th");
+
+$Z01Effectif11k = sprintf($PrecisionCalcul,"$Z01Effectif11kt");
+$Z01Effectif12k = sprintf($PrecisionCalcul,"$Z01Effectif12kt");
+$Z01Effectif21k = sprintf($PrecisionCalcul,"$Z01Effectif21kt");
+$Z01Effectif22k = sprintf($PrecisionCalcul,"$Z01Effectif22kt");
+
+$Khi2calcule = Compute("$Z01Effectif11k + $Z01Effectif12k+$Z01Effectif21k+$Z01Effectif22k");
+
+@AffichageEffectif1k = ($Z01Effectif11k, $Z01Effectif12k, $Z01Effectif13k, " ");
+@AffichageEffectif2k = ($Z01Effectif21k, $Z01Effectif22k, $Z01Effectif23k, " " );
+@AffichageEffectif3k = (" ", " ", " ", $Khi2calcule);
+
+
+@Hypothese = ("Les variables X et Y sont indépendantes.", "Les variables X et Y sont dépendantes.");
+@CompteurHypothese = shuffle(2);
+$RepPopUp1n = PopUp(["Sélectionner l'hypothèse nulle", "$Hypothese[$CompteurHypothese[0]]", "$Hypothese[$CompteurHypothese[1]]"], $Hypothese[0]);
+$RepPopUp1a = PopUp(["Sélectionner l'hypothèse alternative", "$Hypothese[$CompteurHypothese[0]]", "$Hypothese[$CompteurHypothese[1]]"], $Hypothese[1]);
+
+@VecteurPopUp = ("Au niveau de confiance de $NiveauConfiance %, les variables X et Y sont indépendantes.", "Au niveau de confiance de $NiveauConfiance %, les variables X et Y sont dépendantes.", "Au niveau de confiance de $alpha %, les variables X et Y sont indépendantes.","Au niveau de confiance de $alpha %, les variables X et Y sont dépendantes.");
+
+@CompteurVecteurPopUp = shuffle(4);
+if ($Khi2calcule < $Khi2c)
+{$RepPopUp2 = PopUp(["Sélectionner la conclusion", "$VecteurPopUp[$CompteurVecteurPopUp[0]]", "$VecteurPopUp[$CompteurVecteurPopUp[1]]", "$VecteurPopUp[$CompteurVecteurPopUp[2]]", "$VecteurPopUp[$CompteurVecteurPopUp[3]]"], $VecteurPopUp[0]);
+$Decision1 = "Comme $Khi2calcule < $Khi2c, l'hypothèse nulle n'est pas rejetée";
+$Conclusion1 = "indépendantes";}
+else
+{$RepPopUp2 = PopUp(["Sélectionner la conclusion", "$VecteurPopUp[$CompteurVecteurPopUp[0]]", "$VecteurPopUp[$CompteurVecteurPopUp[1]]", "$VecteurPopUp[$CompteurVecteurPopUp[2]]", "$VecteurPopUp[$CompteurVecteurPopUp[3]]"], $VecteurPopUp[1]);
+$Decision1 = "Comme $Khi2calcule > $Khi2c, l'hypothèse nulle est rejetée";
+$Conclusion1 = "dépendantes";}
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$ContexteQuestion
+
+Un chercheur s'est intéressé à savoir s'il y a un lien $VecteurContexte[4]. Il a prélevé un échantillon et a compilé les résultats dans le tableau de contingence suivant :  
+$PAR
+
+$BCENTER
+${BBOLD}
+$VecteurContexte[2]
+${EBOLD}
+$ECENTER
+
+$BR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([" ", "${BBOLD}$VecteurContexte[0]${EBOLD}","${BBOLD}$VecteurContexte[0]${EBOLD}", " "], align => CENTER, separation=>0).
+AlignedRow(["${BBOLD}$VecteurContexte[1]${EBOLD}", "${BBOLD}$X01VecteurGroupe[$CompteurAffichageX[0]]${EBOLD}","${BBOLD}$X01VecteurGroupe[$CompteurAffichageX[1]]${EBOLD}", "${BBOLD}Total${EBOLD}"], align => CENTER, separation=>0).
+ 
+ AlignedRow(["$Y01VecteurModalite[0]","$AffichageEffectif1[0]", "$AffichageEffectif2[0]", "${BBOLD}$AffichageEffectif3[0]${EBOLD}"], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[1]","$AffichageEffectif1[1]", "$AffichageEffectif2[1]", "${BBOLD}$AffichageEffectif3[1]${EBOLD}"], align => CENTER, separation=>0).
+ AlignedRow(["${BBOLD}Total${EBOLD}","${BBOLD}$AffichageEffectif1[3]${EBOLD}", "${BBOLD}$AffichageEffectif2[3]${EBOLD}", "${BBOLD}$AffichageEffectif3[3]${EBOLD}"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$PAR
+
+${BBOLD}Question : ${EBOLD} Faire un test d'indépendance du khi carré au seuil de signification de $alpha % pour déterminer s'il y a un lien entre les variables ${BITALIC}$X01Nom${EITALIC} et ${BITALIC}$Y01Nom${EITALIC}. ${BBOLD}Faire les calculs en arrondissant à deux décimales.${EBOLD}
+
+$PAR ${BBOLD}Étape 1 : Poser les hypothèses ${EBOLD}
+
+$PAR $SPACE $SPACE $SPACE a) Hypothèse nulle (\(H_0\)) : \{$RepPopUp1n->menu()\}
+$PAR $SPACE $SPACE $SPACE b) Hypothèse alternative (\(H_1\)) : \{$RepPopUp1a->menu()\}
+$PAR
+
+${BBOLD}Étape 2 : Calculer les fréquences théoriques ${EBOLD}
+$PAR
+$BCENTER
+${BBOLD}
+$VecteurContexte[3]
+${EBOLD}
+$ECENTER
+$BR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([" ", "${BBOLD}$VecteurContexte[0]${EBOLD}","${BBOLD}$VecteurContexte[0]${EBOLD}", " "], align => CENTER, separation=>0).
+AlignedRow(["${BBOLD}$VecteurContexte[1]${EBOLD}", "${BBOLD}$X01VecteurGroupe[$CompteurAffichageX[0]]${EBOLD}","${BBOLD}$X01VecteurGroupe[$CompteurAffichageX[1]]${EBOLD}", "${BBOLD}Total${EBOLD}"], align => CENTER, separation=>0).
+  AlignedRow(["$Y01VecteurModalite[0]",ans_rule(8), ans_rule(8), ans_rule(8)], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[1]",ans_rule(8), ans_rule(8), ans_rule(8)], align => CENTER, separation=>0).
+ AlignedRow(["${BBOLD}Total${EBOLD}",ans_rule(8), ans_rule(8), ans_rule(8)], align => CENTER, separation=>0).
+EndTable()
+\}
+$PAR ${BBOLD}Étape 3 : Calculer les khi carrés ${EBOLD}
+$PAR $BCENTER
+${BBOLD}
+Calcul des khi carrés
+${EBOLD}
+$ECENTER
+$BR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([" ", "${BBOLD}$VecteurContexte[0]${EBOLD}","${BBOLD}$VecteurContexte[0]${EBOLD}", " "], align => CENTER, separation=>0).
+AlignedRow(["${BBOLD}$VecteurContexte[1]${EBOLD}", "${BBOLD}$X01VecteurGroupe[$CompteurAffichageX[0]]${EBOLD}","${BBOLD}$X01VecteurGroupe[$CompteurAffichageX[1]]${EBOLD}", "${BBOLD}Total${EBOLD}"], align => CENTER, separation=>0).
+  AlignedRow(["$Y01VecteurModalite[0]",ans_rule(8), ans_rule(8), "${BBOLD}$AffichageEffectif3k[0]${EBOLD}"], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[1]",ans_rule(8), ans_rule(8), "${BBOLD}$AffichageEffectif3k[1]${EBOLD}"], align => CENTER, separation=>0).
+ AlignedRow(["${BBOLD}Total${EBOLD}","${BBOLD}$AffichageEffectif1k[3]${EBOLD}", "${BBOLD}$AffichageEffectif2k[3]${EBOLD}", ans_rule(8)], align => CENTER, separation=>0).
+EndTable()
+\}
+$PAR ${BBOLD}Étape 4 : Formuler la règle de décision ${EBOLD}
+$BR $SPACE $SPACE $SPACE  Compléter la règle de décision en écrivant le khi carré critique ( \(\displaystyle{{\chi^2}_c}\)).
+$BR $SPACE $SPACE $SPACE  $SPACE $SPACE $SPACE $SPACE  L'hypothèse nulle est rejetée si  \(\displaystyle{\chi^2}\) > \{ ans_rule(8) \}.
+$PAR ${BBOLD}Étape 5 : Conclure ${EBOLD}
+$PAR $SPACE $SPACE $SPACE  \{$RepPopUp2->menu()\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepPopUp1n->cmp() );
+ANS($RepPopUp1a->cmp() );
+
+ANS(num_cmp($AffichageEffectif1th[0], tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($AffichageEffectif2th[0], tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($AffichageEffectif3th[0], tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($AffichageEffectif1th[1], tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($AffichageEffectif2th[1], tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($AffichageEffectif3th[1], tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($AffichageEffectif1th[3], tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($AffichageEffectif2th[3], tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($AffichageEffectif3th[3], tol => 0.000001, tolType => "absolute"));
+
+ANS(num_cmp($AffichageEffectif1k[0], tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($AffichageEffectif2k[0], tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($AffichageEffectif1k[1], tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($AffichageEffectif2k[1], tol => 0.000001, tolType => "absolute"));
+
+
+#ANS(num_cmp($Khi2calcule, tol => 1));
+ANS(num_cmp($Khi2calcule, tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($Khi2c, tol => 0.000001, tolType => "absolute"));
+
+ANS($RepPopUp2->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+${BBOLD}Étape 1 : Poser les hypothèses ${EBOLD}
+
+$PAR $SPACE $SPACE $SPACE a) Hypothèse nulle (\(H_0\)) : Les variables ${BITALIC}$X01Nom${EITALIC} et ${BITALIC}$Y01Nom${EITALIC} sont indépendantes.
+$PAR $SPACE $SPACE $SPACE b) Hypothèse alternative (\(H_1\)) : Les variables ${BITALIC}$X01Nom${EITALIC} et ${BITALIC}$Y01Nom${EITALIC} sont dépendantes.
+$PAR
+${BBOLD}Étape 2 : Calculer les fréquences théoriques ${EBOLD}
+$PAR
+$BCENTER
+${BBOLD}
+$VecteurContexte[3]
+${EBOLD}
+$ECENTER
+$BR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([" ", "${BBOLD}$VecteurContexte[0]${EBOLD}","${BBOLD}$VecteurContexte[0]${EBOLD}", " "], align => CENTER, separation=>0).
+AlignedRow(["${BBOLD}$VecteurContexte[1]${EBOLD}", "${BBOLD}$X01VecteurGroupe[$CompteurAffichageX[0]]${EBOLD}","${BBOLD}$X01VecteurGroupe[$CompteurAffichageX[1]]${EBOLD}", "${BBOLD}Total${EBOLD}"], align => CENTER, separation=>0).
+  AlignedRow(["$Y01VecteurModalite[0]","$AffichageEffectif1th[0]", "$AffichageEffectif2th[0]", "${BBOLD}$AffichageEffectif3th[0]${EBOLD}"], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[1]","$AffichageEffectif1th[1]", "$AffichageEffectif2th[1]", "${BBOLD}$AffichageEffectif3th[1]${EBOLD}"], align => CENTER, separation=>0).
+ AlignedRow(["${BBOLD}Total${EBOLD}","${BBOLD}$AffichageEffectif1th[3]${EBOLD}", "${BBOLD}$AffichageEffectif2th[3]${EBOLD}", "${BBOLD}$AffichageEffectif3th[3]${EBOLD}"], align => CENTER, separation=>0).
+EndTable()
+\}
+$PAR ${BBOLD}Étape 3 : Calculer les khi carrés ${EBOLD}
+$PAR $BCENTER
+${BBOLD}
+Calcul des khi carrés
+${EBOLD}
+$ECENTER
+$BR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([" ", "${BBOLD}$VecteurContexte[0]${EBOLD}","${BBOLD}$VecteurContexte[0]${EBOLD}", " "], align => CENTER, separation=>0).
+AlignedRow(["${BBOLD}$VecteurContexte[1]${EBOLD}", "${BBOLD}$X01VecteurGroupe[$CompteurAffichageX[0]]${EBOLD}","${BBOLD}$X01VecteurGroupe[$CompteurAffichageX[1]]${EBOLD}", "${BBOLD}Total${EBOLD}"], align => CENTER, separation=>0).
+  AlignedRow(["$Y01VecteurModalite[0]","$AffichageEffectif1k[0]", "$AffichageEffectif2k[0]", "${BBOLD}$AffichageEffectif3k[0]${EBOLD}"], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[1]","$AffichageEffectif1k[1]", "$AffichageEffectif2k[1]", "${BBOLD}$AffichageEffectif3k[1]${EBOLD}"], align => CENTER, separation=>0).
+ AlignedRow(["${BBOLD}Total${EBOLD}","${BBOLD}$AffichageEffectif1k[3]${EBOLD}", "${BBOLD}$AffichageEffectif2k[3]${EBOLD}", "${BBOLD}$AffichageEffectif3k[3]${EBOLD}"], align => CENTER, separation=>0).
+EndTable()
+\}
+$PAR ${BBOLD}Étape 4 : Formuler la règle de décision ${EBOLD}
+$BR $SPACE $SPACE $SPACE  La règle de décision est : L'hypothèse nulle est rejetée si  \(\displaystyle{\chi^2}\) > $Khi2c.
+$BR $SPACE $SPACE $SPACE La décision est : $Decision1.
+$PAR ${BBOLD}Étape 5 : Conclure ${EBOLD}
+$BR $SPACE $SPACE $SPACE Au niveau de confiance de $NiveauConfiance %, les variables ${BITALIC}$X01Nom${EITALIC} et ${BITALIC}$Y01Nom${EITALIC} sont $Conclusion1.
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

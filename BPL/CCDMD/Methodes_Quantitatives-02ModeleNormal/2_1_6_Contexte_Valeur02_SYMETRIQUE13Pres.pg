@@ -1,0 +1,517 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Distributions normales)
+## KEYWORDS('cote Z', 'loi normale', 'table')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl",
+"PGcourse.pl", "PGstatisticsmacros.pl", "PGnumericalmacros.pl", "unionTables.pl");
+
+COMMENT("La solution a été programmée avec la TABLE D'AIRE COMPRISE ENTRE 0 ET a P(0 < Z < a). La réponse doit être donnée avec DEUX DÉCIMALES. La question est formulée avec 4 présentations différentes. Il y a 6 contextes. Niveau de difficulté: Moyen. Cas 10 : La question porte sur la probabilité: P(-a < Z < a), avec un NIVEAU DE CONFIANCE STANDARD (90 %, 95%, 99 %).");
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+
+#Choisir le contexte
+$TypeContexte = random(0,5);
+
+#Choisir le niveau de confiance
+# Standard (90%, 95%, 99%) = 0
+# Non standard = 1
+$ChoisirNiveau = random(0,1);
+$ChoisirNiveau = 0;
+
+#Choisir le type de présentation de la question
+$QuestionPresentationType = random(0,3);
+
+
+if ($ChoisirNiveau == 0)
+{$NiveauConfiance = list_random(90,95,99);
+if ( $NiveauConfiance == 90)
+{$CoteN1 = Compute("1.645");}
+elsif ( $NiveauConfiance == 95)
+{$CoteN1 = Compute("1.96");}
+elsif ( $NiveauConfiance == 99)
+{$CoteN1 = Compute("2.575");}
+}
+else
+{$NiveauConfiance = list_random(77,78,79,80,81,82,83,84,85,86,87,89,91,92,93,94,96);
+$NiveauConfianceDivise100 = Compute("($NiveauConfiance/2)/100");
+$CoteZ2t = normal_distr($NiveauConfianceDivise100, mean=>0, deviation=>1);
+$CoteN1 = sprintf("%0.2f","$CoteZ2t");}
+
+
+if ($TypeContexte == 0)
+{#Taille
+$VariableNom = "Taille des Canadiennes et des Canadiens adultes";
+$PopulationNom = "des Canadiens et Canadiennes adultes";
+$UniteNom = "cm";
+$VariableNom2 = "ont une taille";
+$VariableNomR = "a une taille de";
+$VariableNomR2 = "a une taille de";
+$VariableNomQ = "la taille de";
+$MoyenneQ = "la taille moyenne";
+$ComparaisonSup = "La taille de $VecteurNom[$CompteurNom[0]] est supérieure à celle de $VecteurNom[$CompteurNom[1]].";
+$ComparaisonInf = "La taille de $VecteurNom[$CompteurNom[0]] est inférieure à celle de $VecteurNom[$CompteurNom[1]].";
+$ComparaisonSupM = "La taille de $VecteurNom[$CompteurNom[0]] est supérieure à la taille moyenne.";
+$ComparaisonInfM = "La taille de $VecteurNom[$CompteurNom[0]] est inférieure à la taille moyenne.";
+$NomMin = "la taille minimale";
+$NomMax = "la taille maximale";
+
+#0 = masculin
+#1 = féminin
+$VariableGenre = 1;
+$VariableA = "%0.1f";
+$MoyenneXt = random(165, 175, 0.1);
+$MoyenneX = sprintf($VariableA,"$MoyenneXt");
+$EcarttypeXt = random(5, 9, 0.1);
+$EcarttypeX = sprintf($VariableA,"$EcarttypeXt");}
+elsif ($TypeContexte == 1)
+{#poids
+$VariableNom = "Poids des Canadiens et des Canadiennes adultes";
+$PopulationNom = "des Canadiens et Canadiennes adultes";
+$UniteNom = "kg";
+$VariableNom2 = "ont un poids";
+$VariableNomR = "a un poids de";
+$VariableNomR2 = "a un poids de";
+$VariableNomQ = "le poids de";
+$MoyenneQ = "le poids moyen";
+$ComparaisonSup = "Le poids de $VecteurNom[$CompteurNom[0]] est supérieur à celui de $VecteurNom[$CompteurNom[1]].";
+$ComparaisonInf = "Le poids de $VecteurNom[$CompteurNom[0]] est inférieur à celui de $VecteurNom[$CompteurNom[1]].";
+$ComparaisonSupM = "Le poids de $VecteurNom[$CompteurNom[0]] est supérieur au poids moyen.";
+$ComparaisonInfM = "Le poids de $VecteurNom[$CompteurNom[0]] est inférieur au poids moyen.";
+$NomMin = "le poids minimal";
+$NomMax = "le poids maximal";
+
+$VariableGenre = 0;
+$VariableA = "%0.1f";
+$MoyenneXt = random(70, 90, 0.1);
+$MoyenneX = sprintf($VariableA,"$MoyenneXt");
+$EcarttypeXt = random(5, 9, 0.1);
+$EcarttypeX = sprintf($VariableA,"$EcarttypeXt");}
+elsif ($TypeContexte == 2)
+{#forfaits cellulaires
+$VariableNom = "Montant mensuel du forfait cellulaire des Canadiens et des Canadiennes";
+$PopulationNom = "des Canadiens et Canadiennes";
+#$UniteNom = "dollars";
+$UniteNom = "$DOLLAR";
+$UniteNom = "dollars";
+
+$VariableNom2 = "dépensent mensuellement pour leur forfait cellulaire un montant";
+$VariableNomR = "dépense mensuellement pour son $BR forfait cellulaire un montant $BR de";
+$VariableNomR2 = "dépense mensuellement pour son forfait cellulaire un montant de";
+$VariableNomQ = "le montant mensuel du forfait cellulaire de";
+$MoyenneQ = "le montant moyen";
+$ComparaisonSup = "Le montant mensuel de $VecteurNom[$CompteurNom[0]] est supérieur à celui de $VecteurNom[$CompteurNom[1]].";
+$ComparaisonInf = "Le montant mensuel de $VecteurNom[$CompteurNom[0]] est inférieur à celui de $VecteurNom[$CompteurNom[1]].";
+$ComparaisonSupM = "Le montant mensuel de $VecteurNom[$CompteurNom[0]] est supérieur au montant moyen.";
+$ComparaisonInfM = "Le montant mensuel de $VecteurNom[$CompteurNom[0]] est inférieur au montant moyen.";
+$NomMin = "le montant minimal";
+$NomMax = "le montant maximal";
+
+$VariableGenre = 0;
+$VariableA = "%0.2f";
+$MoyenneXt = random(60,80, 0.01);
+$MoyenneX = sprintf($VariableA,"$MoyenneXt");
+$EcarttypeXt = random(11,19, 0.01);
+$EcarttypeX = sprintf($VariableA,"$EcarttypeXt");}
+elsif ($TypeContexte == 3)
+{#Temps pour se rendre au Cégep
+$VariableNom = "Temps pris par les collégiennes et les collégiens pour se rendre au cégep";
+$PopulationNom = "des collégiennes et des collégiens";
+$UniteNom = "min";
+$VariableNom2 = "prennent un temps pour se rendre au cégep";
+$VariableNomR = "prend un temps pour se rendre au cégep $BR de";
+$VariableNomR2 = "prend un temps pour se rendre au cégep de";
+$VariableNomQ = "le temps pris pour se rendre au cégep de";
+$MoyenneQ = "le temps moyen";
+$ComparaisonSup = "Le temps pris pour se rendre au cégep de $VecteurNom[$CompteurNom[0]] est supérieur à celui de $VecteurNom[$CompteurNom[1]].";
+$ComparaisonInf = "Le temps pris pour se rendre au cégep de $VecteurNom[$CompteurNom[0]] est inférieur à celui de $VecteurNom[$CompteurNom[1]].";
+$ComparaisonSupM = "Le temps pris pour se rendre au cégep de $VecteurNom[$CompteurNom[0]] est supérieur au temps moyen.";
+$ComparaisonInfM = "Le temps pris pour se rendre au cégep de $VecteurNom[$CompteurNom[0]] est inférieur au temps moyen.";
+$NomMin = "le temps minimal";
+$NomMax = "le temps maximal";
+
+$VariableGenre = 0;
+$VariableA = "%0.1f";
+$MoyenneX = random(20, 40,0.1);
+if ($MoyenneX <= 30)
+{$EcarttypeXt = random(3, 6, 0.1);
+$EcarttypeX = sprintf($VariableA,"$EcarttypeXt");}
+else
+{$EcarttypeXt = random(5, 9, 0.1);
+$EcarttypeX = sprintf($VariableA,"$EcarttypeXt");}
+}
+elsif ($TypeContexte == 4)
+{#Distance au Cégep
+$VariableNom = "Dépense hebdomadaire en alimentation des ménages canadiens";
+$PopulationNom = "des ménages canadiens";
+$UniteNom = "dollars";
+$VariableNom2 = "dépensent en alimentation un montant hebdomadaire";
+$VariableNomR = "dépense en alimentation $BR un montant hebdomadaire de";
+$VariableNomR2 = "dépense en alimentation un montant hebdomadaire de";
+$VariableNomQ = "la dépense hebdomadaire en alimentation du ménage de";
+$MoyenneQ = "le montant moyen dépensé";
+$ComparaisonSup = "La dépense hebdomadaire en alimentation du ménage de $VecteurNom[$CompteurNom[0]] est supérieure à celle du ménage de $VecteurNom[$CompteurNom[1]].";
+$ComparaisonInf = "La dépense hebdomadaire en alimentation du ménage de $VecteurNom[$CompteurNom[0]] est inférieure à celle du ménage de $VecteurNom[$CompteurNom[1]].";
+$ComparaisonSupM = "La dépense hebdomadaire en alimentation du ménage de $VecteurNom[$CompteurNom[0]] est supérieure au montant moyen dépensé.";
+$ComparaisonInfM = "La dépense hebdomadaire en alimentation du ménage de $VecteurNom[$CompteurNom[0]] est inférieure au montant moyen dépensé.";
+$NomMin = "la dépense minimale";
+$NomMax = "la dépense maximale";
+
+$VariableGenre = 0;
+$VariableA = "%0.2f";
+$MoyenneX = random(150, 165, 0.01);
+$EcarttypeX = random(11, 19, 0.01);
+}
+elsif ($TypeContexte == 5)
+{#Note au dernier examen
+#La QuestionPresentation utilise le TypeContexte. 
+$VariableNom = "Note au dernier examen";
+$PopulationNom = "de la classe";
+$UniteNom = "%";
+$VariableNom2 = "ont eu une note";
+$VariableNomR = "a eu une note de";
+$VariableNomR2 = "a eu une note de";
+$VariableNomQ = "la note de";
+$MoyenneQ = "la moyenne";
+$ComparaisonSup = "La note de $VecteurNom[$CompteurNom[0]] est supérieure à la note de $VecteurNom[$CompteurNom[1]].";
+$ComparaisonInf = "La note de $VecteurNom[$CompteurNom[0]] est inférieure à la note de $VecteurNom[$CompteurNom[1]].";
+$ComparaisonSupM = "La note de $VecteurNom[$CompteurNom[0]] est supérieure à la moyenne.";
+$ComparaisonInfM = "La note de $VecteurNom[$CompteurNom[0]] est inférieure à la moyenne.";
+$NomMin = "la note minimale";
+$NomMax = "la note maximale";
+
+$VariableGenre = 1;
+$VariableA = "%0.1f";
+$MoyenneX = random(60, 85, 0.1);
+if ($MoyenneX <= 67)
+{$EcarttypeX = random(5, 9, 0.1);}
+elsif ($MoyenneX > 67 && $MoyenneX < 75)
+{$EcarttypeX = random(4, 7, 0.1);}
+else
+{$EcarttypeX = random(2, 5, 0.1);}
+}
+
+
+#Choix de la moyenne et de l'écart type pour les cotes Z
+$Ecarttype1 = 1;
+$Moyenne1 = 0;
+
+$NiveauConfianceD = Compute("($NiveauConfiance/2)");
+
+$PourcentageSol1= Compute("50 - $NiveauConfianceD");
+$PourcentageSol2= Compute("50 + $NiveauConfianceD");
+$PourcentageRep = $NiveauConfiance;
+
+
+#Cas 10: P(-a < Z< a), avec p1 et p2 négatifs
+$CoteZ1 =Compute("-1*$CoteN1") ;
+$CoteZ2 =$CoteN1 ;
+$CoteZrep = $CoteZ2;
+$CoteZ1sol1 = $CoteZ1; 
+$CoteZ2sol1t = Compute("$CoteZ2"); 
+$CoteZ2sol1 =sprintf("%0.2f","$CoteZ2sol1t");
+$ValeurXrep1t= Compute(" $MoyenneX - ($CoteZrep*$EcarttypeX)");
+$ValeurXrep1 = sprintf("%0.2f","$ValeurXrep1t");
+$ValeurXrep2t= Compute(" $MoyenneX + ($CoteZrep*$EcarttypeX)");
+$ValeurXrep2 = sprintf("%0.2f","$ValeurXrep2t");
+$PourcentageSol1 =$NiveauConfiance;
+$CoteZ1sol2 = $CoteZ1;
+$CoteZ2sol2 = 0;
+$PourcentageSol2 = $NiveauConfianceD;
+$PourcentageRep = $NiveauConfiance;
+$CoteZ1A = "${BITALIC}-a${EITALIC}"; 
+$CoteZ2A = "${BITALIC}a${EITALIC}" ; 
+$CoteZ1AA = "-a"; 
+$CoteZ2AA = "a"; 
+$PourcentageAGx = $CoteZ2;
+$PourcentageAGxSens = "right";
+$CoteZ1Bas = $CoteZ1; 
+$CoteZ2Bas = 0;
+$PourcentageAGxBas = $CoteZ1;
+$PourcentageAGxSensBas = "left";
+$ZoneHachuree = 0;
+
+if (($NiveauConfiance == 90)||($NiveauConfiance == 99))
+{$PourcentageExplication = "On calcule la moyenne entre les $BR deux cotes Z les plus près du pourcentage.";}
+else
+{$PourcentageExplication = "Si le pourcentage n'est pas dans la table, $BR on choisit la cote Z la plus près du pourcentage.";}
+
+#Calculer les valeurs en X
+$ValeurX1t= Compute(" $MoyenneX + ($CoteZ1*$EcarttypeX)");
+$ValeurX1 = sprintf("%0.1f","$ValeurX1t");
+$ValeurX2t= Compute(" $MoyenneX + ($CoteZ2*$EcarttypeX)");
+$ValeurX2 = sprintf("%0.1f","$ValeurX2t");
+
+#Tracer le graphique
+$FctNormal = Formula("exp(-1*(((x-$Moyenne1)/$Ecarttype1)^2)/2)/($Ecarttype1*(2*pi)^0.5)")-> reduce;
+$FctNormalZ1 = $FctNormal->eval(x=>$CoteZ1);
+$FctNormalZ2 = $FctNormal->eval(x=>$CoteZ2);
+
+$minX1 = -3.5;
+$maxX1 =3.5;
+$minY1 = -0.1;
+$maxY1t = $FctNormal->eval(x=>$Moyenne1);
+$maxY1 = Compute("$maxY1t + 0.1");
+$maxY1sol1 = Compute("$maxY1t + 0.03");
+$maxY1sol2 = Compute("$maxY1t + 0.06");
+
+#Affichage des noms de l'axe des X
+$lbZx = 3.3;
+$lbXx = 3.3;
+$IntervalleZ1Z2 = Compute("$CoteZ2 - $CoteZ1");
+
+#Ne pas afficher les valeurs X ou Z sur une autre valeur.
+#Le code a été modifié, le premier test se fait à 3.5
+if ($CoteZ2 >=3.5)
+{if ($CoteZ1 >= -0.5 && $CoteZ1 <= 0.5)
+{#Il faut ajuster la hauteur en y car Z1 et Z2 sont trop près des symboles Z, 0
+$lbZy= -0.06;
+$lbZy1= -0.08;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 =-0.02;
+$lbXy2 =-0.02;}
+elsif ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 est trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = 0;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.06;
+$lbXy = 0;
+$lbXy1 =0;
+$lbXy2 =0;}}
+elsif (($CoteZ2 >= -0.5 && $CoteZ2 <= 0.5 && $CoteZ2 != 0)|| ($CoteZ1 >= -0.5 && $CoteZ1 <= 0.5 && $CoteZ1 != 0))
+{if ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 et Z2 sont trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.07;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = -0.01;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.08;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 =-0.02;
+$lbXy2 =-0.02;}}
+elsif (($CoteZ2 == 0)||($CoteZ1 == 0)) 
+{if ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 est trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.08;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = -0.02;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.06;
+$lbXy = 0;
+$lbXy1 =0;
+$lbXy2 =0;}}
+else
+{if ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 est trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = 0;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.06;
+$lbXy = 0;
+$lbXy1 =0;
+$lbXy2 =0;}}
+
+$FctGraphiqueZ = "$FctNormal for x in <-3,3> using color:red and weight:2";
+$FctGraphiqueZ2 = "$FctNormal for x in <$CoteZ1,$CoteZ2> using color:blue and weight:2";
+$graphiqueZ = init_graph($minX1,$minY1,$maxX1, $maxY1,'axes'=>[0,0]);
+$graphiqueZ -> lb('reset');
+$graphiqueZ -> lb(new Label ( $lbXx,$lbXy,X,'black','left','top'));
+if ($CoteZ1 != 0)
+{$graphiqueZ -> lb(new Label ( $CoteZ1,$lbXy1,$ValeurX1AA,'black','center','top'));}
+if ($CoteZ2 != 0)
+{$graphiqueZ -> lb(new Label ( $CoteZ2,$lbXy2,$ValeurX2AA,'black','center','top'));}
+$graphiqueZ -> lb(new Label ( 0,$lbXy,$MoyenneX,'black','center','top'));
+$graphiqueZ->moveTo($CoteZ1,0);
+$graphiqueZ->lineTo($CoteZ1,$FctNormalZ1,'blue',3);
+$graphiqueZ->moveTo($CoteZ2,0);
+$graphiqueZ->lineTo($CoteZ2,$FctNormalZ2,'blue',3);
+$graphiqueZ->moveTo($CoteZ1,0);
+$graphiqueZ->lineTo($CoteZ2,0,'blue',3);
+
+#Afficher le pourcentage sur le graphique
+$Ajustement = 0.01;
+@LigneHaut1 = ($CoteZ2,$maxY1sol2, $CoteZ1,$maxY1sol2,$CoteZ2,$maxY1sol2-$Ajustement,$CoteZ2,$maxY1sol2+$Ajustement,$CoteZ1,$maxY1sol2-$Ajustement,$CoteZ1,$maxY1sol2+$Ajustement,  $PourcentageAGx,$maxY1sol2);
+$graphiqueZ->moveTo($LigneHaut1[0],$LigneHaut1[1]);
+$graphiqueZ->lineTo($LigneHaut1[2],$LigneHaut1[3],'green',3);
+$graphiqueZ->moveTo($LigneHaut1[4],$LigneHaut1[5]);
+$graphiqueZ->lineTo($LigneHaut1[6],$LigneHaut1[7],'green',3);
+$graphiqueZ->moveTo($LigneHaut1[8],$LigneHaut1[9]);
+$graphiqueZ->lineTo($LigneHaut1[10],$LigneHaut1[11],'green',3);
+$graphiqueZ -> lb(new Label ($LigneHaut1[12],$LigneHaut1[13],$PourcentageRep,'black',$PourcentageAGxSens,'top'));
+
+
+add_functions($graphiqueZ, $FctGraphiqueZ,$FctGraphiqueZ2);
+$imageZ = image(insertGraph($graphiqueZ),width =>300,height=>250,tex_size=>360);
+
+
+#Afficher l'aire symétrique 
+
+$FctGraphiqueZsol = "$FctNormal for x in <-3,3> using color:red and weight:2";
+$FctGraphiqueZsol2 = "$FctNormal for x in <$CoteZ1,$CoteZ2> using color:blue and weight:2";
+$GraphiqueZsol = init_graph($minX1,$minY1,$maxX1, $maxY1,'axes'=>[0,0]);
+$GraphiqueZsol -> lb('reset');
+$GraphiqueZsol -> lb(new Label ( $lbZx,$lbZy,Z,'black','left','top'));
+if ($CoteZ1 != 0)
+{$GraphiqueZsol -> lb(new Label ( $CoteZ1,$lbZy1,$CoteZ1,'black','center','top'));
+$GraphiqueZsol -> lb(new Label ( $CoteZ1,$lbXy1,$ValeurX1,'black','center','top'));}
+if ($CoteZ2 != 0)
+{$GraphiqueZsol -> lb(new Label ( $CoteZ2,$lbZy2,$CoteZ2,'black','center','top'));
+$GraphiqueZsol -> lb(new Label ( $CoteZ2,$lbXy2,$ValeurX2,'black','center','top'));}
+$GraphiqueZsol -> lb(new Label ( 0,$lbZy,0,'black','center','top'));
+$GraphiqueZsol -> lb(new Label ( $lbXx,$lbXy,X,'black','left','top'));
+$GraphiqueZsol -> lb(new Label ( 0,$lbXy,$MoyenneX,'black','center','top'));
+$GraphiqueZsol->moveTo($CoteZ1,0);
+$GraphiqueZsol->lineTo($CoteZ1,$FctNormalZ1,'blue',3);
+$GraphiqueZsol->moveTo($CoteZ2,0);
+$GraphiqueZsol->lineTo($CoteZ2,$FctNormalZ2,'blue',3);
+$GraphiqueZsol->moveTo($CoteZ1,0);
+$GraphiqueZsol->lineTo($CoteZ2,0,'blue',3);
+$GraphiqueZsol->moveTo($minX1,$lbZy);
+$GraphiqueZsol->lineTo($maxX1,$lbZy,'gray',2);
+
+
+#Solution aire symétrique
+
+#Cas 10: P(-a < Z< a)
+if ($TypeContexte == 5)
+{$Question = "Déterminer $NomMin (\(\displaystyle{x_{min}}\)) et $NomMax (\(\displaystyle{x_{max}}\)) si $PourcentageRep % de la classe est comprise symétriquement entre ces deux notes.";}
+else
+{$Question = "Déterminer $NomMin (\(\displaystyle{x_{min}}\)) et $NomMax (\(\displaystyle{x_{max}}\)) si $PourcentageRep % de la population est comprise symétriquement entre ces deux valeurs.";}
+
+@SolutionEqn = ("P(\(\displaystyle{x_{min}}\) < X < \(\displaystyle{x_{max}}\)) = $PourcentageRep % 
+$BR Ainsi on cherche une cote Z ${BITALIC}a${EITALIC} telle que
+$BR P(${BITALIC}-a${EITALIC} < Z < ${BITALIC}a${EITALIC}) = $PourcentageRep % (par symétrique)",  "La table du modèle normal donne l'aire $BR comprise entre 0 et une cote Z positive. $BR Il faut ainsi trouver l'aire comprise $BR entre 0 et ${BITALIC}a${EITALIC}.
+$BR
+$BR P(0 < Z < ${BITALIC}a${EITALIC}) = P($CoteZ1A < Z < $CoteZ2A) - P($CoteZ1A < Z < 0) $BR P(0 < Z < ${BITALIC}a${EITALIC}) = $PourcentageSol1 - $PourcentageSol2 $BR P(0 < Z < ${BITALIC} a${EITALIC}) = $PourcentageSol2 
+
+$BR $BR  $PourcentageSol2 % est le pourcentage à chercher $BR dans la table. 
+$BR $PourcentageExplication $BR Donc ${BITALIC} a${EITALIC} = $CoteZrep, $BR \(\displaystyle{x_{min}}\) = $MoyenneX - ($CoteZrep*$EcarttypeX) = $ValeurXrep1 $UniteNom $BR et \(\displaystyle{x_{max}}\) = $MoyenneX + ($CoteZrep*$EcarttypeX) = $ValeurXrep2 $UniteNom.");
+@LigneBas = ($CoteZ2Bas,$maxY1sol1, $CoteZ1Bas,$maxY1sol1,$CoteZ2Bas,$maxY1sol1-$Ajustement,$CoteZ2Bas,$maxY1sol1+$Ajustement,$CoteZ1Bas,$maxY1sol1-$Ajustement,$CoteZ1Bas,$maxY1sol1+$Ajustement,  $PourcentageAGxBas,$maxY1sol1);
+$GraphiqueZsol->moveTo($LigneBas[0],$LigneBas[1]);
+$GraphiqueZsol->lineTo($LigneBas[2],$LigneBas[3],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[4],$LigneBas[5]);
+$GraphiqueZsol->lineTo($LigneBas[6],$LigneBas[7],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[8],$LigneBas[9]);
+$GraphiqueZsol->lineTo($LigneBas[10],$LigneBas[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneBas[12],$LigneBas[13],$PourcentageSol2,'black',$PourcentageAGxSensBas,'top'));
+
+@LigneHaut = ($CoteZ2sol1,$maxY1sol2, $CoteZ1sol1,$maxY1sol2,$CoteZ2sol1,$maxY1sol2-$Ajustement,$CoteZ2sol1,$maxY1sol2+$Ajustement, $CoteZ1sol1,$maxY1sol2-$Ajustement,$CoteZ1sol1,$maxY1sol2+$Ajustement, $CoteZ2sol1,$maxY1sol2);
+$GraphiqueZsol->moveTo($LigneHaut[0],$LigneHaut[1]);
+$GraphiqueZsol->lineTo($LigneHaut[2],$LigneHaut[3],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[4],$LigneHaut[5]);
+$GraphiqueZsol->lineTo($LigneHaut[6],$LigneHaut[7],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[8],$LigneHaut[9]);
+$GraphiqueZsol->lineTo($LigneHaut[10],$LigneHaut[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneHaut[12],$LigneHaut[13],$PourcentageSol1,'black','right','top'));
+
+
+if ($ZoneHachuree == 1)
+{$FctGraphiqueZ3 = "$FctNormal for x in <$CoteZ1H,$CoteZ2H> using color:gray and weight:2";
+if ($CoteZ1H != 0)
+{$GraphiqueZsol -> lb(new Label ( $CoteZ1H,$lbZy2,$CoteZ1H,'black','center','top'));
+$GraphiqueZsol -> lb(new Label ( $CoteZ1H,$lbXy2,$ValeurX1H,'black','center','top'));}
+if ($CoteZ2H != 0)
+{$GraphiqueZsol -> lb(new Label ( $CoteZ2H,$lbZy1,$CoteZ2H,'black','center','top'));
+$GraphiqueZsol -> lb(new Label ( $CoteZ2H,$lbXy1,$ValeurX2H,'black','center','top'));}
+$GraphiqueZsol->moveTo($CoteZ1H,0);
+$GraphiqueZsol->lineTo($CoteZ1H,$FctNormalZ2,'gray',3);
+$GraphiqueZsol->moveTo($CoteZ2H,0);
+$GraphiqueZsol->lineTo($CoteZ2H,$FctNormalZ1,'gray',3);
+add_functions($GraphiqueZsol, $FctGraphiqueZsol,$FctGraphiqueZsol2, $FctGraphiqueZ3);
+$imageZsol = image(insertGraph($GraphiqueZsol),width =>300,height=>250,tex_size=>360);}
+else
+{add_functions($GraphiqueZsol, $FctGraphiqueZ,$FctGraphiqueZ2);
+$imageZsol = image(insertGraph($GraphiqueZsol),width =>300,height=>250,tex_size=>360);}
+
+
+
+if ($QuestionPresentationType == 0)
+{$QuestionPresentation = "Supposons que la variable X = ${BITALIC}$VariableNom${EITALIC} suit un modèle normal dont la moyenne est $MoyenneX $UniteNom et l'écart type est $EcarttypeX $UniteNom";}
+elsif ($QuestionPresentationType == 1)
+{$QuestionPresentation = "Soit X = ${BITALIC}$VariableNom${EITALIC}. Supposons que \(\displaystyle{\rm{X \sim N($MoyenneX \ $UniteNom; ($EcarttypeX \ $UniteNom)^2)}}\)";}
+elsif ($QuestionPresentationType == 2)
+{$QuestionPresentation = "Soit X = ${BITALIC}$VariableNom${EITALIC}. Supposons que \(\displaystyle{\rm{X \sim N(\mu = $MoyenneX \ $UniteNom; \sigma = $EcarttypeX \ $UniteNom)}}\)";}
+else
+{
+if ($TypeContexte == 5)
+{$QuestionPresentation = "L'enseignant s'intéresse à la variable X = ${BITALIC}$VariableNom${EITALIC}. Il pose l'hypothèque que cette variable suit un modèle normal avec une moyenne de $MoyenneX $UniteNom et un écart type de $EcarttypeX $UniteNom";}
+else
+{$QuestionPresentation = "Un chercheur s'intéresse à la variable X = ${BITALIC}$VariableNom${EITALIC}. Il pose l'hypothèque que cette variable suit un modèle normal avec une moyenne de $MoyenneX $UniteNom et un écart type de $EcarttypeX $UniteNom";}
+}
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$QuestionPresentation. 
+
+$PAR $Question
+
+
+$PAR
+$SPACE $SPACE $SPACE Si P( \(\displaystyle{x_{min}}\)  < X <  \(\displaystyle{x_{max}}\) ) = $PourcentageRep %, alors  \(\displaystyle{x_{min}}\)  =  \{ ans_rule(10) \} et  \(\displaystyle{x_{max}}\)  =  \{ ans_rule(10) \}
+
+$PAR
+Note : Arrondir les réponses à deux décimales. 
+
+END_TEXT
+Context()->normalStrings;
+
+#ANS(num_cmp($ValeurXrep, tol => 0.01, tolType => "absolute"));
+ANS(num_cmp($ValeurXrep1, tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($ValeurXrep2, tol => 0.00001, tolType => "absolute"));
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+\{BeginTable(border=>1,tex_border=>"1pt", spacing=>2, padding=>2).
+  AlignedRow(["Calculs","Représentation graphique"], align => CENTER, separation=>0).
+  AlignedRow([$SolutionEqn[0],"$imageZ"], align => LEFT, separation=>0).
+ AlignedRow([$SolutionEqn[1],"$imageZsol"], align => LEFT, separation=>0).
+ 
+EndTable()
+\}
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

@@ -1,0 +1,805 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('diagramme en bâtons', 'diagramme à bandes', 'fréquence absolue', 'fréquence relative', 'graphique', 'modalité', 'tableau', 'variable', 'variable qualitative', 'variable qualitative nominale', 'variable qualitative ordinale')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté : Facile. Choisir le graphique approprié pour représenter le tableau de distribution d'une variable qualitative. Il est possible qu'aucun graphique ne soit approprié. Il y a 4 contextes. Aucune solution n'a été programmée.");
+
+
+TEXT(beginproblem());
+
+
+#Choisir le contexte
+$TypeContexte = random(0,3);
+
+#Choisir les quatre graphiques
+@Choix = shuffle(4);
+#Si choixbon = 0, alors aucun graphique n'est bon
+$ChoixBon= random(0,2);
+
+#Les effectifs en X et Y sont communs à tous les contextes.
+#Variable Y est utilisé
+
+$refreshCachedImages = 1;
+
+if ($TypeContexte == 0)
+{@VecteurContexte = ("X : Sexe", "Opinion", "Répartition des étudiants selon $BR l'opinion sur le nouveau projet de loi", "d'étudiants afin d'avoir leur opinion sur un nouveau projet de loi du gouvernement", "afin d'avoir leur opinion sur un nouveau projet de loi du gouvernement");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("En accord", "En désaccord", "Sans opinion");
+@Y01VecteurModaliteG = ("En accord", "En desaccord", "Sans opinion", "Opinion");
+@Y01VecteurModaliteCode = ("A", "D", "S");
+#Biais sur la série statistique en Y
+$Y01Biais = 0;
+@graphique60T = ("Répartition des étudiants selon", "l'opinion sur le nouveau projet de loi");
+@graphique60T = ("Repartition des etudiants selon", "l'opinion sur le nouveau projet de loi");
+}
+elsif ($TypeContexte == 1)
+{@VecteurContexte = ("X : Sexe", "Appareil", "Répartition des étudiants selon $BR l'appareil électronique utilisé pour faire leurs travaux scolaires", "d'étudiants afin de connaitre l'appareil électronique utilisé pour faire leurs travaux scolaires", "afin de connaitre l'appareil électronique utilisé pour faire leurs travaux scolaires");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("Ordinateur portable", "Tablette", "Autre");
+@Y01VecteurModaliteG = ("Ordinateur portable", "Tablette", "Autre", "Appareil");
+@Y01VecteurModaliteCode = ("O", "T", "A");
+#Biais sur la série statistique en Y
+$Y01Biais = 1;
+@graphique60T = ("Répartition des étudiants selon", "l'appareil utilisé");
+@graphique60T = ("Repartition des etudiants selon", "l'appareil utilise");
+}
+elsif ($TypeContexte == 2)
+{@VecteurContexte = ("X : Sexe", "Lieu de résidence", "Répartition des étudiants selon $BR le lieu de résidence pendant l'année scolaire", "d'étudiants afin de connaitre leur lieu de résidence pendant l'année scolaire", "afin de connaitre leur lieu de résidence pendant l'année scolaire");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("Chez ses parents", "En résidence", "Autre");
+@Y01VecteurModaliteG = ("Chez ses parents", "En residence", "Autre", "Lieu");
+@Y01VecteurModaliteCode = ("P", "R", "A");
+#Biais sur la série statistique en Y
+$Y01Biais = 0;
+@graphique60T = ("Répartition des étudiants selon", "le lieu de résidence");
+@graphique60T = ("Repartition des etudiants selon", "le lieu de residence");
+}
+elsif ($TypeContexte == 3)
+{@VecteurContexte = ("X : Sexe", "Programme d'étude", "Répartition des étudiants selon $BR le programme d'étude", "d'étudiants afin de connaitre leur programme d'étude", "afin de connaitre leur programme d'étude");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("Préuniversitaire", "Technique", "Autre");
+@Y01VecteurModaliteG = ("Preuniversitaire", "Technique", "Autre", "Programme");
+@Y01VecteurModaliteCode = ("P", "T", "A");
+#Biais sur la série statistique en Y
+$Y01Biais = 1;
+
+@graphique60T = ("Répartition des étudiants selon", "le programme d'étude");
+@graphique60T = ("Repartition des etudiants selon", "le programme d'etude");
+}
+
+
+#Calcul des effectifs en X et Y
+if ($Y01Biais == 0)
+{$Z01Effectif11 = random(5,30); 
+$Z01Effectif12 = random(5,30); 
+$Z01Effectif13 = random(5,30);}
+else
+{$Z01Effectif11 = random(5,30); 
+$Z01Effectif12 = random(5,30); 
+$Z01Effectif13 = random(2,5);}
+
+
+if ($Z01Effectif11 == $Z01Effectif12)
+{$Z01Effectif11++;
+$Z01Effectif12--;}
+
+if ($Z01Effectif11 == $Z01Effectif13)
+{$Z01Effectif11++;
+$Z01Effectif13--;}
+
+if ($Z01Effectif12 == $Z01Effectif13)
+{$Z01Effectif13++;
+$Z01Effectif12--;}
+
+
+$Z01EffectifTotal1 = Compute("$Z01Effectif11 + $Z01Effectif12 + $Z01Effectif13");
+
+
+@Z01Reponse = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13, $Z01EffectifTotal1);
+
+#Calcul des pourcentages
+$Z01Pourcentage11t =Compute("$Z01Effectif11/$Z01EffectifTotal1*100");
+$Z01Pourcentage11 = sprintf("%0.1f","$Z01Pourcentage11t");
+$Z01Pourcentage12t =Compute("$Z01Effectif12/$Z01EffectifTotal1*100");
+$Z01Pourcentage12 = sprintf("%0.1f","$Z01Pourcentage12t");
+$Z01Pourcentage13t =Compute("$Z01Effectif13/$Z01EffectifTotal1*100");
+$Z01Pourcentage13 = sprintf("%0.1f","$Z01Pourcentage13t");
+$Z01PourcentageTotal1t = Compute("$Z01Pourcentage11 + $Z01Pourcentage12 + $Z01Pourcentage13");
+$Z01PourcentageTotal1 = sprintf("%0.1f","$Z01PourcentageTotal1t ");
+
+@Z01ReponsePourcentage = ($Z01Pourcentage11, $Z01Pourcentage12, $Z01Pourcentage13, $Z01PourcentageTotal1);
+
+
+#Graphique 60 = Barre verticale
+#Graphique 61 = Histogramme
+#Graphique 62 = Polygone de fréquences
+#Graphique 63 = Barre verticale 
+
+@ChoixA = ("Nombre","d'etu-","diants");
+
+@VecteurCouleur = (red,blue,black, gray);
+@CompteurCouleur = shuffle(4);
+
+@Couleur60 = ($VecteurCouleur[$CompteurCouleur[0]], black);
+
+#Graphique 60
+
+#@x60 = (-2, 14, 2, 5, 8, 10);
+#@x60 = (-3, 15, 3, 6, 9, 11);
+@x60 = (-3, 12, 3, 6, 9, 9);
+
+
+$x60Titre = 6;
+if ($ChoixBon== 1)
+{#Ne pas changer les effectifs de 60
+@Valeur60 = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13);}
+else
+{#Changer un effectif
+$tempEff60 = random(0,2);
+if ($tempEff60 == 0)
+{$Z01Effectif11t = Compute("$Z01Effectif11 - 1");
+$Z01Effectif12t = $Z01Effectif12;
+$Z01Effectif13t = $Z01Effectif13;
+}
+elsif ($tempEff60 == 1)
+{$Z01Effectif12t = Compute("$Z01Effectif12 - 1");
+$Z01Effectif11t = $Z01Effectif11;
+$Z01Effectif13t = $Z01Effectif13;
+}
+else
+{$Z01Effectif13t = Compute("$Z01Effectif13 - 1");
+$Z01Effectif12t = $Z01Effectif12;
+$Z01Effectif11t = $Z01Effectif11;
+}
+@Valeur60 = ($Z01Effectif11t, $Z01Effectif12t, $Z01Effectif13t);}
+
+#Trouver le max
+$Maxy60temp = $Valeur60[0];
+$temp60i = 0;
+do
+{$Maxy60temp1 = max($Maxy60temp,$Valeur60[$temp60i+1]); 
+$Maxy60temp = $Maxy60temp1;
+$temp60i++;}
+ while ($temp60i<2);
+
+if ($Maxy60temp < 7)
+{$Maxy60 = 6;}
+else
+{$Maxy60 = $Maxy60temp;}
+
+if ($Maxy60 <= 10)
+{@y60 = (-1, $Maxy60 +3, 1, 4, 6, 8, 10);
+$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'grid'=>[5,$Maxy60+4]);}
+elsif ($Maxy60 >= 20)
+{@y60 = (-3, $Maxy60 +3, 1, 4, 6, 8, 10);
+$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'grid'=>[5,$Maxy60+6]);}
+else
+{@y60 = (-2, $Maxy60 +3, 1, 4, 6, 8, 10);
+$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'grid'=>[5,$Maxy60+5]);}
+
+#$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'ticks'=>[0,$Maxy60+5]);
+#$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0]);
+
+$graphique60 -> lb('reset');
+
+#Titre et unités sur Y
+if ($Maxy60 > 20)
+{$graphique60 -> lb(new Label ( $x60Titre,$y60[1],$graphique60T[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60Titre,$y60[1]-1.5,$graphique60T[1],'black','center','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-3,$ChoixA[0],'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-4.5,$ChoixA[1],'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-6,$ChoixA[2],'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-7.5,$ChoixA[3],'black','right','top'));
+#Afficher l'unité sur Y
+$graphique60 -> lb(new Label ( 0,5,5,'black','right','middle'));
+$graphique60 -> lb(new Label ( 0,10,10,'black','right','middle'));
+$graphique60 -> lb(new Label ( 0,15,15,'black','right','middle'));
+if ($Maxy60 > 25)
+{$graphique60 -> lb(new Label ( 0,20,20,'black','right','middle'));}
+$graphique60 -> lb(new Label ( 0,$y60[2],$y60[2],'black','right','middle'));
+#Afficher les modalités sur X
+$graphique60 -> lb(new Label ( $x60[2],0,$Y01VecteurModaliteG[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[3],-1,$Y01VecteurModaliteG[1],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[4],0,$Y01VecteurModaliteG[2],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[5]+1, -1,$Y01VecteurModaliteG[3],'black','center','top'));}
+elsif ($Maxy60 <= 10)
+{$graphique60 -> lb(new Label ( $x60Titre,$y60[1]-0.5,$graphique60T[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60Titre,$y60[1]-1.1,$graphique60T[1],'black','center','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-1,$ChoixA[0],'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-1.5,$ChoixA[1],'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-2,$ChoixA[2],'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-2.5,$ChoixA[3],'black','right','top'));
+#Afficher l'unité sur Y
+$graphique60 -> lb(new Label ( 0,$y60[2],$y60[2],'black','right','middle'));
+if ($Maxy60 >  5)
+{$graphique60 -> lb(new Label ( 0,5,5,'black','right','middle'));}
+#Afficher les modalités sur X
+$graphique60 -> lb(new Label ( $x60[2],0,$Y01VecteurModaliteG[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[3],-0.5,$Y01VecteurModaliteG[1],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[4],0,$Y01VecteurModaliteG[2],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[5]+1, -0.5,$Y01VecteurModaliteG[3],'black','center','top'));}
+else
+{$graphique60 -> lb(new Label ( $x60Titre,$y60[1],$graphique60T[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60Titre,$y60[1]-1,$graphique60T[1],'black','center','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-1,$ChoixA[0],'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-2,$ChoixA[1],'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-3,$ChoixA[2],'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-4,$ChoixA[3],'black','right','top'));
+#Afficher l'unité sur Y
+$graphique60 -> lb(new Label ( 0,5,5,'black','right','middle'));
+$graphique60 -> lb(new Label ( 0,10,10,'black','right','middle'));
+if ($Maxy60 >  16)
+{$graphique60 -> lb(new Label ( 0,15,15,'black','right','middle'));}
+$graphique60 -> lb(new Label ( 0,$y60[2],$y60[2],'black','right','middle'));
+#Afficher les modalités sur X
+$graphique60 -> lb(new Label ( $x60[2],0,$Y01VecteurModaliteG[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[3],-1,$Y01VecteurModaliteG[1],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[4],0,$Y01VecteurModaliteG[2],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[5]+1, -1,$Y01VecteurModaliteG[3],'black','center','top'));
+}
+
+$Ajust60 = 0.5;
+$Epaisseur60 = 1;
+
+#Modalité 1 de Y avec 1 de X
+if ($Valeur60[0] != 0)
+{$graphique60->moveTo($x60[2]-$Ajust60,0);
+$graphique60->lineTo($x60[2]-$Ajust60,$Valeur60[0],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[2]+$Ajust60,$Valeur60[0],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[2]+$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[2]-$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60-> fillRegion([$x60[2]-0.1,0.1,$Couleur60[0]]);}
+#Modalité 2 de Y avec 1 de X
+if ($Valeur60[1] != 0)
+{$graphique60->moveTo($x60[3]-$Ajust60,0);
+$graphique60->lineTo($x60[3]-$Ajust60,$Valeur60[1],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[3]+$Ajust60,$Valeur60[1],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[3]+$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[3]-$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60-> fillRegion([$x60[3]-0.1,0.1,$Couleur60[0]]);}
+#Modalité 3 de Y avec 1 de X
+if ($Valeur60[2] != 0)
+{$graphique60->moveTo($x60[4]-$Ajust60,0);
+$graphique60->lineTo($x60[4]-$Ajust60,$Valeur60[2],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[4]+$Ajust60,$Valeur60[2],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[4]+$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[4]-$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60-> fillRegion([$x60[4]-0.1,0.1,$Couleur60[0]]);}
+
+$imageG60 = image(insertGraph($graphique60),width =>280,height=>280,tex_size=>280);
+
+
+#Graphique N61
+
+#@xN61 = (-2, 14, 2, 5, 8, 10);
+#@xN61 = (-3, 15, 3, 6, 9, 11);
+@xN61 = (-3, 12, 3, 6, 9, 9);
+@CouleurN61 = (black, $VecteurCouleur[$CompteurCouleur[1]]);
+
+$xN61Titre = 6;
+
+
+@ValeurN61 = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13);
+
+
+#Trouver le max
+$MaxyN61temp = $ValeurN61[0];
+$tempN61i = 0;
+do
+{$MaxyN61temp1 = max($MaxyN61temp,$ValeurN61[$tempN61i+1]); 
+$MaxyN61temp = $MaxyN61temp1;
+$tempN61i++;}
+ while ($tempN61i<2);
+
+if ($MaxyN61temp < 7)
+{$MaxyN61 = 6;}
+else
+{$MaxyN61 = $MaxyN61temp;}
+
+@ValeurN61 = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13);
+
+
+if ($MaxyN61 <= 10)
+{@yN61 = (-1, $MaxyN61 +3, 1, 4, 6, 8, 10);
+$graphiqueN61 = init_graph($xN61[0],$yN61[0],$xN61[1],$yN61[1],'axes'=>[0,0], 'grid'=>[5,$MaxyN61+4]);}
+elsif ($MaxyN61 >= 20)
+{@yN61 = (-3, $MaxyN61 +3, 1, 4, 6, 8, 10);
+$graphiqueN61 = init_graph($xN61[0],$yN61[0],$xN61[1],$yN61[1],'axes'=>[0,0], 'grid'=>[5,$MaxyN61+6]);}
+else
+{@yN61 = (-2, $MaxyN61 +3, 1, 4, 6, 8, 10);
+$graphiqueN61 = init_graph($xN61[0],$yN61[0],$xN61[1],$yN61[1],'axes'=>[0,0], 'grid'=>[5,$MaxyN61+5]);}
+
+#$graphiqueN61 = init_graph($xN61[0],$yN61[0],$xN61[1],$yN61[1],'axes'=>[0,0], 'ticks'=>[0,$MaxyN61+5]);
+#$graphiqueN61 = init_graph($xN61[0],$yN61[0],$xN61[1],$yN61[1],'axes'=>[0,0]);
+
+$graphiqueN61 -> lb('reset');
+
+#Titre et unités sur Y
+if ($MaxyN61 > 20)
+{$graphiqueN61 -> lb(new Label ( $xN61Titre,$yN61[1],$graphique60T[0],'black','center','top'));
+$graphiqueN61 -> lb(new Label ( $xN61Titre,$yN61[1]-1.5,$graphique60T[1],'black','center','top'));
+#$graphiqueN61 -> lb(new Label ( 0,$yN61[1]-4,"Effectif",'black','right','top'));
+$graphiqueN61 -> lb(new Label ( 0,$yN61[1]-3,$ChoixA[0],'black','right','top'));
+$graphiqueN61 -> lb(new Label ( 0,$yN61[1]-4.5,$ChoixA[1],'black','right','top'));
+$graphiqueN61 -> lb(new Label ( 0,$yN61[1]-6,$ChoixA[2],'black','right','top'));
+$graphiqueN61 -> lb(new Label ( 0,$yN61[1]-7.5,$ChoixA[3],'black','right','top'));
+#Afficher l'unité sur Y
+$graphiqueN61 -> lb(new Label ( 0,5,5,'black','right','middle'));
+$graphiqueN61 -> lb(new Label ( 0,10,10,'black','right','middle'));
+$graphiqueN61 -> lb(new Label ( 0,15,15,'black','right','middle'));
+if ($MaxyN61 > 25)
+{$graphiqueN61 -> lb(new Label ( 0,20,20,'black','right','middle'));}
+$graphiqueN61 -> lb(new Label ( 0,$yN61[2],$yN61[2],'black','right','middle'));
+#Afficher les modalités sur X
+$Y01_hauteury = -1;}
+elsif ($MaxyN61 <= 10)
+{$graphiqueN61 -> lb(new Label ( $xN61Titre,$yN61[1]-0.5,$graphique60T[0],'black','center','top'));
+$graphiqueN61 -> lb(new Label ( $xN61Titre,$yN61[1]-1.1,$graphique60T[1],'black','center','top'));
+$graphiqueN61 -> lb(new Label ( 0,$yN61[1]-1,$ChoixA[0],'black','right','top'));
+$graphiqueN61 -> lb(new Label ( 0,$yN61[1]-1.5,$ChoixA[1],'black','right','top'));
+$graphiqueN61 -> lb(new Label ( 0,$yN61[1]-2,$ChoixA[2],'black','right','top'));
+$graphiqueN61 -> lb(new Label ( 0,$yN61[1]-2.5,$ChoixA[3],'black','right','top'));
+#Afficher l'unité sur Y
+$graphiqueN61 -> lb(new Label ( 0,$yN61[2],$yN61[2],'black','right','middle'));
+if ($MaxyN61 >  5)
+{$graphiqueN61 -> lb(new Label ( 0,5,5,'black','right','middle'));}
+#Afficher les modalités sur X
+$Y01_hauteury = -0.5;}
+else
+{$graphiqueN61 -> lb(new Label ( $xN61Titre,$yN61[1],$graphique60T[0],'black','center','top'));
+$graphiqueN61 -> lb(new Label ( $xN61Titre,$yN61[1]-1,$graphique60T[1],'black','center','top'));
+$graphiqueN61 -> lb(new Label ( 0,$yN61[1]-1,$ChoixA[0],'black','right','top'));
+$graphiqueN61 -> lb(new Label ( 0,$yN61[1]-2,$ChoixA[1],'black','right','top'));
+$graphiqueN61 -> lb(new Label ( 0,$yN61[1]-3,$ChoixA[2],'black','right','top'));
+$graphiqueN61 -> lb(new Label ( 0,$yN61[1]-4,$ChoixA[3],'black','right','top'));
+#Afficher l'unité sur Y
+$graphiqueN61 -> lb(new Label ( 0,5,5,'black','right','middle'));
+$graphiqueN61 -> lb(new Label ( 0,10,10,'black','right','middle'));
+if ($MaxyN61 >  16)
+{$graphiqueN61 -> lb(new Label ( 0,15,15,'black','right','middle'));}
+$graphiqueN61 -> lb(new Label ( 0,$yN61[2],$yN61[2],'black','right','middle'));
+#Afficher les modalités sur X
+$Y01_hauteury= -1;
+}
+
+$graphiqueN61 -> lb(new Label ( $xN61[2],0,$Y01VecteurModaliteG[0],'black','center','top'));
+$graphiqueN61 -> lb(new Label ( $xN61[3],$Y01_hauteury,$Y01VecteurModaliteG[1],'black','center','top'));
+$graphiqueN61 -> lb(new Label ( $xN61[4],0,$Y01VecteurModaliteG[2],'black','center','top'));
+$graphiqueN61 -> lb(new Label ( $xN61[5]+1, $Y01_hauteury,$Y01VecteurModaliteG[3],'black','center','top'));
+
+$AjustN61 = 1.5;
+$EpaisseurN61 = 1;
+
+#Modalité 1 de Y avec 1 de X
+if ($ValeurN61[0] != 0)
+{$graphiqueN61->moveTo($xN61[2]-$AjustN61,0);
+$graphiqueN61->lineTo($xN61[2]-$AjustN61,$ValeurN61[0],$CouleurN61[0],$EpaisseurN61);
+$graphiqueN61->lineTo($xN61[2]+$AjustN61,$ValeurN61[0],$CouleurN61[0],$EpaisseurN61);
+$graphiqueN61->lineTo($xN61[2]+$AjustN61,0,$CouleurN61[0],$EpaisseurN61);
+$graphiqueN61->lineTo($xN61[2]-$AjustN61,0,$CouleurN61[0],$EpaisseurN61);
+$graphiqueN61-> fillRegion([$xN61[2]-0.1,0.1,$CouleurN61[1]]);}
+#Modalité 2 de Y avec 1 de X
+if ($ValeurN61[1] != 0)
+{$graphiqueN61->moveTo($xN61[3]-$AjustN61,0);
+$graphiqueN61->lineTo($xN61[3]-$AjustN61,$ValeurN61[1],$CouleurN61[0],$EpaisseurN61);
+$graphiqueN61->lineTo($xN61[3]+$AjustN61,$ValeurN61[1],$CouleurN61[0],$EpaisseurN61);
+$graphiqueN61->lineTo($xN61[3]+$AjustN61,0,$CouleurN61[0],$EpaisseurN61);
+$graphiqueN61->lineTo($xN61[3]-$AjustN61,0,$CouleurN61[0],$EpaisseurN61);
+$graphiqueN61-> fillRegion([$xN61[3]-0.1,0.1,$CouleurN61[1]]);}
+#Modalité 3 de Y avec 1 de X
+if ($ValeurN61[2] != 0)
+{$graphiqueN61->moveTo($xN61[4]-$AjustN61,0);
+$graphiqueN61->lineTo($xN61[4]-$AjustN61,$ValeurN61[2],$CouleurN61[0],$EpaisseurN61);
+$graphiqueN61->lineTo($xN61[4]+$AjustN61,$ValeurN61[2],$CouleurN61[0],$EpaisseurN61);
+$graphiqueN61->lineTo($xN61[4]+$AjustN61,0,$CouleurN61[0],$EpaisseurN61);
+$graphiqueN61->lineTo($xN61[4]-$AjustN61,0,$CouleurN61[0],$EpaisseurN61);
+$graphiqueN61-> fillRegion([$xN61[4]-0.1,0.1,$CouleurN61[1]]);}
+
+$imageGN61 = image(insertGraph($graphiqueN61),width =>280,height=>280,tex_size=>280);
+
+
+
+#Graphique N62
+
+#@xN62 = (-2, 14, 2, 5, 8, 10);
+#@xN62 = (-3, 15, 3, 6, 9, 11);
+@xN62 = (-3, 12, 3, 6, 9, 9);
+@CouleurN62 = ($VecteurCouleur[$CompteurCouleur[2]], black);
+
+
+
+$xN62Titre = 6;
+@xN62Fermeture = (0,12);
+@ValeurN62 = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13);
+
+#Trouver le max
+$MaxyN62temp = $ValeurN62[0];
+$tempN62i = 0;
+do
+{$MaxyN62temp1 = max($MaxyN62temp,$ValeurN62[$tempN62i+1]); 
+$MaxyN62temp = $MaxyN62temp1;
+$tempN62i++;}
+ while ($tempN62i<2);
+
+if ($MaxyN62temp < 7)
+{$MaxyN62 = 6;}
+else
+{$MaxyN62 = $MaxyN62temp;}
+
+
+@ValeurN62 = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13);
+
+if ($MaxyN62 <= 10)
+{@yN62 = (-1, $MaxyN62 +3, 1, 4, 6, 8, 10);
+$graphiqueN62 = init_graph($xN62[0],$yN62[0],$xN62[1],$yN62[1],'axes'=>[0,0], 'grid'=>[5,$MaxyN62+4]);}
+elsif ($MaxyN62 >= 20)
+{@yN62 = (-3, $MaxyN62 +3, 1, 4, 6, 8, 10);
+$graphiqueN62 = init_graph($xN62[0],$yN62[0],$xN62[1],$yN62[1],'axes'=>[0,0], 'grid'=>[5,$MaxyN62+6]);}
+else
+{@yN62 = (-2, $MaxyN62 +3, 1, 4, 6, 8, 10);
+$graphiqueN62 = init_graph($xN62[0],$yN62[0],$xN62[1],$yN62[1],'axes'=>[0,0], 'grid'=>[5,$MaxyN62+5]);}
+
+#$graphiqueN62 = init_graph($xN62[0],$yN62[0],$xN62[1],$yN62[1],'axes'=>[0,0], 'ticks'=>[0,$MaxyN62+5]);
+#$graphiqueN62 = init_graph($xN62[0],$yN62[0],$xN62[1],$yN62[1],'axes'=>[0,0]);
+
+$graphiqueN62 -> lb('reset');
+
+#Titre et unités sur Y
+if ($MaxyN62 > 20)
+{$graphiqueN62 -> lb(new Label ( $xN62Titre,$yN62[1],$graphique60T[0],'black','center','top'));
+$graphiqueN62 -> lb(new Label ( $xN62Titre,$yN62[1]-1.5,$graphique60T[1],'black','center','top'));
+#$graphiqueN62 -> lb(new Label ( 0,$yN62[1]-4,"Effectif",'black','right','top'));
+$graphiqueN62 -> lb(new Label ( 0,$yN62[1]-3,$ChoixA[0],'black','right','top'));
+$graphiqueN62 -> lb(new Label ( 0,$yN62[1]-4.5,$ChoixA[1],'black','right','top'));
+$graphiqueN62 -> lb(new Label ( 0,$yN62[1]-6,$ChoixA[2],'black','right','top'));
+$graphiqueN62 -> lb(new Label ( 0,$yN62[1]-7.5,$ChoixA[3],'black','right','top'));
+#Afficher l'unité sur Y
+$graphiqueN62 -> lb(new Label ( 0,5,5,'black','right','middle'));
+$graphiqueN62 -> lb(new Label ( 0,10,10,'black','right','middle'));
+$graphiqueN62 -> lb(new Label ( 0,15,15,'black','right','middle'));
+if ($MaxyN62 > 25)
+{$graphiqueN62 -> lb(new Label ( 0,20,20,'black','right','middle'));}
+$graphiqueN62 -> lb(new Label ( 0,$yN62[2],$yN62[2],'black','right','middle'));
+#Afficher les modalités sur X
+$graphiqueN62 -> lb(new Label ( $xN62[2],0,$Y01VecteurModaliteG[0],'black','center','top'));
+$graphiqueN62 -> lb(new Label ( $xN62[3],-1,$Y01VecteurModaliteG[1],'black','center','top'));
+$graphiqueN62 -> lb(new Label ( $xN62[4],0,$Y01VecteurModaliteG[2],'black','center','top'));
+$graphiqueN62 -> lb(new Label ( $xN62[5]+1, -1,$Y01VecteurModaliteG[3],'black','center','top'));}
+elsif ($MaxyN62 <= 10)
+{$graphiqueN62 -> lb(new Label ( $xN62Titre,$yN62[1]-0.5,$graphique60T[0],'black','center','top'));
+$graphiqueN62 -> lb(new Label ( $xN62Titre,$yN62[1]-1.1,$graphique60T[1],'black','center','top'));
+$graphiqueN62 -> lb(new Label ( 0,$yN62[1]-1,$ChoixA[0],'black','right','top'));
+$graphiqueN62 -> lb(new Label ( 0,$yN62[1]-1.5,$ChoixA[1],'black','right','top'));
+$graphiqueN62 -> lb(new Label ( 0,$yN62[1]-2,$ChoixA[2],'black','right','top'));
+$graphiqueN62 -> lb(new Label ( 0,$yN62[1]-2.5,$ChoixA[3],'black','right','top'));
+#Afficher l'unité sur Y
+$graphiqueN62 -> lb(new Label ( 0,$yN62[2],$yN62[2],'black','right','middle'));
+if ($MaxyN62 >  5)
+{$graphiqueN62 -> lb(new Label ( 0,5,5,'black','right','middle'));}
+#Afficher les modalités sur X
+$graphiqueN62 -> lb(new Label ( $xN62[2],0,$Y01VecteurModaliteG[0],'black','center','top'));
+$graphiqueN62 -> lb(new Label ( $xN62[3],-0.5,$Y01VecteurModaliteG[1],'black','center','top'));
+$graphiqueN62 -> lb(new Label ( $xN62[4],0,$Y01VecteurModaliteG[2],'black','center','top'));
+$graphiqueN62 -> lb(new Label ( $xN62[5]+1, -0.5,$Y01VecteurModaliteG[3],'black','center','top'));}
+else
+{$graphiqueN62 -> lb(new Label ( $xN62Titre,$yN62[1],$graphique60T[0],'black','center','top'));
+$graphiqueN62 -> lb(new Label ( $xN62Titre,$yN62[1]-1,$graphique60T[1],'black','center','top'));
+$graphiqueN62 -> lb(new Label ( 0,$yN62[1]-1,$ChoixA[0],'black','right','top'));
+$graphiqueN62 -> lb(new Label ( 0,$yN62[1]-2,$ChoixA[1],'black','right','top'));
+$graphiqueN62 -> lb(new Label ( 0,$yN62[1]-3,$ChoixA[2],'black','right','top'));
+$graphiqueN62 -> lb(new Label ( 0,$yN62[1]-4,$ChoixA[3],'black','right','top'));
+#Afficher l'unité sur Y
+$graphiqueN62 -> lb(new Label ( 0,5,5,'black','right','middle'));
+$graphiqueN62 -> lb(new Label ( 0,10,10,'black','right','middle'));
+if ($MaxyN62 >  16)
+{$graphiqueN62 -> lb(new Label ( 0,15,15,'black','right','middle'));}
+$graphiqueN62 -> lb(new Label ( 0,$yN62[2],$yN62[2],'black','right','middle'));
+#Afficher les modalités sur X
+$graphiqueN62 -> lb(new Label ( $xN62[2],0,$Y01VecteurModaliteG[0],'black','center','top'));
+$graphiqueN62 -> lb(new Label ( $xN62[3],-1,$Y01VecteurModaliteG[1],'black','center','top'));
+$graphiqueN62 -> lb(new Label ( $xN62[4],0,$Y01VecteurModaliteG[2],'black','center','top'));
+$graphiqueN62 -> lb(new Label ( $xN62[5]+1, -1,$Y01VecteurModaliteG[3],'black','center','top'));
+}
+
+$AjustN62 = 0.5;
+$EpaisseurN62 = 1;
+
+
+#Ligne pour modalité 1 de X
+$graphiqueN62->moveTo($xN62Fermeture[0],0);
+$graphiqueN62->lineTo($xN62[2],$ValeurN62[0],$CouleurN62[0],$EpaisseurN62);
+$graphiqueN62->lineTo($xN62[3],$ValeurN62[1],$CouleurN62[0],$EpaisseurN62);
+$graphiqueN62->lineTo($xN62[4],$ValeurN62[2],$CouleurN62[0],$EpaisseurN62);
+$graphiqueN62->lineTo($xN62Fermeture[1],0,$CouleurN62[0],$EpaisseurN62);
+
+$ptN62p1 = closed_circle( $xN62[2],$ValeurN62[0],$CouleurN62[0]);
+$ptN62p2 = closed_circle( $xN62[3],$ValeurN62[1],$CouleurN62[0]);
+$ptN62p3 = closed_circle( $xN62[4],$ValeurN62[2],$CouleurN62[0]);
+$ptN62p4 = closed_circle( $xN62Fermeture[0],0,$CouleurN62[0]);
+$ptN62p5 = closed_circle( $xN62Fermeture[1],0,$CouleurN62[0]);
+
+
+$graphiqueN62->stamps($ptN62p1,$ptN62p2,$ptN62p3,$ptN62p4,$ptN62p5);
+
+$imageGN62 = image(insertGraph($graphiqueN62),width =>280,height=>280,tex_size=>280);
+
+
+@CouleurN63 = ($VecteurCouleur[$CompteurCouleur[3]], black);
+
+#Graphique N63
+
+#@xN63 = (-2, 14, 2, 5, 8, 10);
+#@xN63 = (-3, 15, 3, 6, 9, 11);
+@xN63 = (-3, 12, 3, 6, 9, 9);
+
+
+$xN63Titre = 6;
+if ($ChoixBon== 2)
+{#Ne pas changer les effectifs de N63
+@ValeurN63 = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13);}
+else
+{#Changer un effectif
+$tempEffN63 = random(0,2);
+if ($tempEffN63 == 0)
+{$Z01Effectif11t = Compute("$Z01Effectif11 - 1");
+$Z01Effectif12t = $Z01Effectif12;
+$Z01Effectif13t = $Z01Effectif13;
+}
+elsif ($tempEffN63 == 1)
+{$Z01Effectif12t = Compute("$Z01Effectif12 - 1");
+$Z01Effectif11t = $Z01Effectif11;
+$Z01Effectif13t = $Z01Effectif13;
+}
+else
+{$Z01Effectif13t = Compute("$Z01Effectif13 - 1");
+$Z01Effectif12t = $Z01Effectif12;
+$Z01Effectif11t = $Z01Effectif11;
+}
+@ValeurN63 = ($Z01Effectif11t, $Z01Effectif12t, $Z01Effectif13t);}
+
+#Trouver le max
+$MaxyN63temp = $ValeurN63[0];
+$tempN63i = 0;
+do
+{$MaxyN63temp1 = max($MaxyN63temp,$ValeurN63[$tempN63i+1]); 
+$MaxyN63temp = $MaxyN63temp1;
+$tempN63i++;}
+ while ($tempN63i<2);
+
+if ($MaxyN63temp < 7)
+{$MaxyN63 = 6;}
+else
+{$MaxyN63 = $MaxyN63temp;}
+
+if ($MaxyN63 <= 10)
+{@yN63 = (-1, $MaxyN63 +3, 1, 4, 6, 8, 10);
+$graphiqueN63 = init_graph($xN63[0],$yN63[0],$xN63[1],$yN63[1],'axes'=>[0,0], 'grid'=>[5,$MaxyN63+4]);}
+elsif ($MaxyN63 >= 20)
+{@yN63 = (-3, $MaxyN63 +3, 1, 4, 6, 8, 10);
+$graphiqueN63 = init_graph($xN63[0],$yN63[0],$xN63[1],$yN63[1],'axes'=>[0,0], 'grid'=>[5,$MaxyN63+6]);}
+else
+{@yN63 = (-2, $MaxyN63 +3, 1, 4, 6, 8, 10);
+$graphiqueN63 = init_graph($xN63[0],$yN63[0],$xN63[1],$yN63[1],'axes'=>[0,0], 'grid'=>[5,$MaxyN63+5]);}
+
+#$graphiqueN63 = init_graph($xN63[0],$yN63[0],$xN63[1],$yN63[1],'axes'=>[0,0], 'ticks'=>[0,$MaxyN63+5]);
+#$graphiqueN63 = init_graph($xN63[0],$yN63[0],$xN63[1],$yN63[1],'axes'=>[0,0]);
+
+$graphiqueN63 -> lb('reset');
+
+#Titre et unités sur Y
+if ($MaxyN63 > 20)
+{$graphiqueN63 -> lb(new Label ( $xN63Titre,$yN63[1],$graphique60T[0],'black','center','top'));
+$graphiqueN63 -> lb(new Label ( $xN63Titre,$yN63[1]-1.5,$graphique60T[1],'black','center','top'));
+$graphiqueN63 -> lb(new Label ( 0,$yN63[1]-3,$ChoixA[0],'black','right','top'));
+$graphiqueN63 -> lb(new Label ( 0,$yN63[1]-4.5,$ChoixA[1],'black','right','top'));
+$graphiqueN63 -> lb(new Label ( 0,$yN63[1]-6,$ChoixA[2],'black','right','top'));
+$graphiqueN63 -> lb(new Label ( 0,$yN63[1]-7.5,$ChoixA[3],'black','right','top'));
+#Afficher l'unité sur Y
+$graphiqueN63 -> lb(new Label ( 0,5,5,'black','right','middle'));
+$graphiqueN63 -> lb(new Label ( 0,10,10,'black','right','middle'));
+$graphiqueN63 -> lb(new Label ( 0,15,15,'black','right','middle'));
+if ($MaxyN63 > 25)
+{$graphiqueN63 -> lb(new Label ( 0,20,20,'black','right','middle'));}
+$graphiqueN63 -> lb(new Label ( 0,$yN63[2],$yN63[2],'black','right','middle'));
+#Afficher les modalités sur X
+$graphiqueN63 -> lb(new Label ( $xN63[2],0,$Y01VecteurModaliteG[0],'black','center','top'));
+$graphiqueN63 -> lb(new Label ( $xN63[3],-1,$Y01VecteurModaliteG[1],'black','center','top'));
+$graphiqueN63 -> lb(new Label ( $xN63[4],0,$Y01VecteurModaliteG[2],'black','center','top'));
+$graphiqueN63 -> lb(new Label ( $xN63[5]+1, -1,$Y01VecteurModaliteG[3],'black','center','top'));}
+elsif ($MaxyN63 <= 10)
+{$graphiqueN63 -> lb(new Label ( $xN63Titre,$yN63[1]-0.5,$graphique60T[0],'black','center','top'));
+$graphiqueN63 -> lb(new Label ( $xN63Titre,$yN63[1]-1.1,$graphique60T[1],'black','center','top'));
+$graphiqueN63 -> lb(new Label ( 0,$yN63[1]-1,$ChoixA[0],'black','right','top'));
+$graphiqueN63 -> lb(new Label ( 0,$yN63[1]-1.5,$ChoixA[1],'black','right','top'));
+$graphiqueN63 -> lb(new Label ( 0,$yN63[1]-2,$ChoixA[2],'black','right','top'));
+$graphiqueN63 -> lb(new Label ( 0,$yN63[1]-2.5,$ChoixA[3],'black','right','top'));
+#Afficher l'unité sur Y
+$graphiqueN63 -> lb(new Label ( 0,$yN63[2],$yN63[2],'black','right','middle'));
+if ($MaxyN63 >  5)
+{$graphiqueN63 -> lb(new Label ( 0,5,5,'black','right','middle'));}
+#Afficher les modalités sur X
+$graphiqueN63 -> lb(new Label ( $xN63[2],0,$Y01VecteurModaliteG[0],'black','center','top'));
+$graphiqueN63 -> lb(new Label ( $xN63[3],-0.5,$Y01VecteurModaliteG[1],'black','center','top'));
+$graphiqueN63 -> lb(new Label ( $xN63[4],0,$Y01VecteurModaliteG[2],'black','center','top'));
+$graphiqueN63 -> lb(new Label ( $xN63[5]+1, -0.5,$Y01VecteurModaliteG[3],'black','center','top'));}
+else
+{$graphiqueN63 -> lb(new Label ( $xN63Titre,$yN63[1],$graphique60T[0],'black','center','top'));
+$graphiqueN63 -> lb(new Label ( $xN63Titre,$yN63[1]-1,$graphique60T[1],'black','center','top'));
+$graphiqueN63 -> lb(new Label ( 0,$yN63[1]-1,$ChoixA[0],'black','right','top'));
+$graphiqueN63 -> lb(new Label ( 0,$yN63[1]-2,$ChoixA[1],'black','right','top'));
+$graphiqueN63 -> lb(new Label ( 0,$yN63[1]-3,$ChoixA[2],'black','right','top'));
+$graphiqueN63 -> lb(new Label ( 0,$yN63[1]-4,$ChoixA[3],'black','right','top'));
+#Afficher l'unité sur Y
+$graphiqueN63 -> lb(new Label ( 0,5,5,'black','right','middle'));
+$graphiqueN63 -> lb(new Label ( 0,10,10,'black','right','middle'));
+if ($MaxyN63 >  16)
+{$graphiqueN63 -> lb(new Label ( 0,15,15,'black','right','middle'));}
+$graphiqueN63 -> lb(new Label ( 0,$yN63[2],$yN63[2],'black','right','middle'));
+#Afficher les modalités sur X
+$graphiqueN63 -> lb(new Label ( $xN63[2],0,$Y01VecteurModaliteG[0],'black','center','top'));
+$graphiqueN63 -> lb(new Label ( $xN63[3],-1,$Y01VecteurModaliteG[1],'black','center','top'));
+$graphiqueN63 -> lb(new Label ( $xN63[4],0,$Y01VecteurModaliteG[2],'black','center','top'));
+$graphiqueN63 -> lb(new Label ( $xN63[5]+1, -1,$Y01VecteurModaliteG[3],'black','center','top'));
+}
+
+$AjustN63 = 0.5;
+$EpaisseurN63 = 1;
+
+#Modalité 1 de Y avec 1 de X
+if ($ValeurN63[0] != 0)
+{$graphiqueN63->moveTo($xN63[2]-$AjustN63,0);
+$graphiqueN63->lineTo($xN63[2]-$AjustN63,$ValeurN63[0],$CouleurN63[0],$EpaisseurN63);
+$graphiqueN63->lineTo($xN63[2]+$AjustN63,$ValeurN63[0],$CouleurN63[0],$EpaisseurN63);
+$graphiqueN63->lineTo($xN63[2]+$AjustN63,0,$CouleurN63[0],$EpaisseurN63);
+$graphiqueN63->lineTo($xN63[2]-$AjustN63,0,$CouleurN63[0],$EpaisseurN63);
+$graphiqueN63-> fillRegion([$xN63[2]-0.1,0.1,$CouleurN63[0]]);}
+#Modalité 2 de Y avec 1 de X
+if ($ValeurN63[1] != 0)
+{$graphiqueN63->moveTo($xN63[3]-$AjustN63,0);
+$graphiqueN63->lineTo($xN63[3]-$AjustN63,$ValeurN63[1],$CouleurN63[0],$EpaisseurN63);
+$graphiqueN63->lineTo($xN63[3]+$AjustN63,$ValeurN63[1],$CouleurN63[0],$EpaisseurN63);
+$graphiqueN63->lineTo($xN63[3]+$AjustN63,0,$CouleurN63[0],$EpaisseurN63);
+$graphiqueN63->lineTo($xN63[3]-$AjustN63,0,$CouleurN63[0],$EpaisseurN63);
+$graphiqueN63-> fillRegion([$xN63[3]-0.1,0.1,$CouleurN63[0]]);}
+#Modalité 3 de Y avec 1 de X
+if ($ValeurN63[2] != 0)
+{$graphiqueN63->moveTo($xN63[4]-$AjustN63,0);
+$graphiqueN63->lineTo($xN63[4]-$AjustN63,$ValeurN63[2],$CouleurN63[0],$EpaisseurN63);
+$graphiqueN63->lineTo($xN63[4]+$AjustN63,$ValeurN63[2],$CouleurN63[0],$EpaisseurN63);
+$graphiqueN63->lineTo($xN63[4]+$AjustN63,0,$CouleurN63[0],$EpaisseurN63);
+$graphiqueN63->lineTo($xN63[4]-$AjustN63,0,$CouleurN63[0],$EpaisseurN63);
+$graphiqueN63-> fillRegion([$xN63[4]-0.1,0.1,$CouleurN63[0]]);}
+
+$imageGN63 = image(insertGraph($graphiqueN63),width =>280,height=>280,tex_size=>280);
+
+if ($ChoixBon == 0)
+{#Aucun graphique n'est bon
+$RepPopUp60 = PopUp(["Sélectionner", "A", "B", "C", "D", "AUCUN"], "AUCUN");
+@ImageGraphique60 = ($imageG60, $imageGN61,$imageGN62, $imageGN63);
+@GraphiqueAffichage = shuffle(3);}
+else
+{#Un graphique est bon
+
+if ($ChoixBon == 1)
+{#Le graphique 60 est le bon.
+@ImageGraphique60 = ($imageG60,$imageGN61, $imageGN62, $imageGN63);}
+else
+{#Le graphique 63 est le bon.
+@ImageGraphique60 = ($imageGN63,$imageG60,$imageGN61, $imageGN62);}
+
+$tempN= random(0,2);
+if ($Choix[0] == 0)
+{$RepPopUp60 = PopUp(["Sélectionner", "A", "B", "C", "D", "AUCUN"], "A");
+if ($tempN == 0)
+{@GraphiqueAffichage = (0,1,2,3);}
+elsif ($tempN == 1)
+{@GraphiqueAffichage = (0,2,3,1);}
+else
+{@GraphiqueAffichage = (0,3,2,1);}
+}
+elsif ($Choix[1] == 0)
+{$RepPopUp60 = PopUp(["Sélectionner", "A", "B", "C", "D", "AUCUN"], "B");
+if ($tempN == 0)
+{@GraphiqueAffichage = (1,0,2,3);}
+elsif ($tempN == 1)
+{@GraphiqueAffichage = (1,0,3,2);}
+else
+{@GraphiqueAffichage = (3,0,2,1);}
+}
+elsif ($Choix[2] == 0)
+{$RepPopUp60 = PopUp(["Sélectionner", "A", "B", "C","D", "AUCUN"], "C");
+if ($tempN == 0)
+{@GraphiqueAffichage = (2,1,0,3);}
+elsif ($tempN == 1)
+{@GraphiqueAffichage = (2,3,0,1);}
+else
+{@GraphiqueAffichage = (3,2,0,1);}
+}
+else
+{$RepPopUp60 = PopUp(["Sélectionner", "A", "B", "C","D", "AUCUN"], "D");
+if ($tempN == 0)
+{@GraphiqueAffichage = (3,2,1,0);}
+elsif ($tempN == 1)
+{@GraphiqueAffichage = (1,2,3,0);}
+else
+{@GraphiqueAffichage = (2,3,1,0);}
+}
+
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Voici le tableau de distribution représentant une enquête qui a été menée auprès d'un échantillon d'étudiants $VecteurContexte[4]. $PAR
+
+$BCENTER
+${BBOLD}
+$VecteurContexte[2]
+${EBOLD}
+$ECENTER
+
+$PAR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow(["${BBOLD}$VecteurContexte[1]${EBOLD}", "${BBOLD}Nombre $BR d'étudiants${EBOLD}","${BBOLD}Pourcentage $BR d'étudiants${EBOLD}"], align => CENTER, separation=>0).
+ 
+ AlignedRow(["$Y01VecteurModalite[0]","$Z01Reponse[0]", "$Z01ReponsePourcentage[0]"], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[1]","$Z01Reponse[1]", "$Z01ReponsePourcentage[1]"], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[2]","$Z01Reponse[2]", "$Z01ReponsePourcentage[2]"], align => CENTER, separation=>0).
+  AlignedRow(["${BBOLD}Total${EBOLD}", "${BBOLD}$Z01Reponse[3]${EBOLD}", "${BBOLD}$Z01ReponsePourcentage[3]${EBOLD}"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$BR
+
+$PAR
+${BBOLD}Question : ${EBOLD} Sélectionner le graphique approprié dans le menu déroulant. Si aucun graphique n'est approprié, sélectionner AUCUN dans le menu déroulant. \{$RepPopUp60->menu()\}
+$PAR
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"1pt", spacing=>2, padding=>2).
+  AlignedRow(["Graphique A","Graphique B"], align => CENTER, separation=>0).
+  AlignedRow(["$ImageGraphique60[$GraphiqueAffichage[0]]","$ImageGraphique60[$GraphiqueAffichage[1]]"], align => CENTER, separation=>0).
+  AlignedRow(["Graphique C","Graphique D"], align => CENTER, separation=>0).
+  AlignedRow(["$ImageGraphique60[$GraphiqueAffichage[2]]","$ImageGraphique60[$GraphiqueAffichage[3]]"], align => CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+$BR 
+Si nécessaire, cliquer sur un graphique pour l'agrandir.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepPopUp60->cmp() );
+
+
+ENDDOCUMENT(); 

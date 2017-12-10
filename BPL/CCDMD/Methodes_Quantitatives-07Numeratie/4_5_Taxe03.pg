@@ -1,0 +1,102 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('numeratie')
+
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl","PGchoicemacros.pl");
+
+COMMENT("Niveau de difficulté: Facile. Calculer le prix avant les taxes sur un produit dont le prix avec les taxes est affiché. Il y a 3 contextes. La solution a été programmée. Les prix doivent absolument être arrondis selon à deux décimales.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$temp1 =random(0,2);
+
+
+
+if ($temp1 == 0) 
+{@VecteurContexte = ("d'un vêtement");
+ $PrixInitialt = random(40,85, 0.01);
+}
+elsif ($temp1 == 1) 
+{
+@VecteurContexte = ("d'un billet de cinéma");
+$PrixInitialt = random(9,15, 0.01);
+}
+else
+{
+@VecteurContexte = ("d'un forfait cellulaire");
+$PrixInitialt = random(30,85, 0.01);
+}
+
+$PrixInitial = sprintf("%0.2f","$PrixInitialt");
+
+
+$Taxet = Compute("$PrixInitial * 0.15");
+$Taxe = sprintf("%0.2f","$Taxet ");
+
+$PrixFinalt = Compute("$PrixInitial + $Taxe");
+$PrixFinal = sprintf("%0.2f","$PrixFinalt");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Calculer le prix avant les taxes $VecteurContexte[0] dont le prix après les taxes est de $PrixFinal $. Supposons que les taxes sont de 15 %.
+
+$PAR $SPACE $SPACE $SPACE
+Prix avant les taxes :  \{ ans_rule(10) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($PrixInitial, tol => 0.00001, tolType => "absolute"));
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Le prix avec les taxes se calcule comme suit : 
+$PAR
+Prix (avec les taxes) = Prix (sans les taxes) + Prix (sans les taxes) \(\times\) Pourcentage de taxes
+$BR $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE
+= Prix (sans les taxes) \(\times\) 100 % + Prix (sans les taxes) \(\times\) 15 %
+$BR $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE
+= Prix (sans les taxes) \(\times\) (100 % + 15 %)
+$BR $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE
+= Prix (sans les taxes) \(\times\) 115 %
+$BR $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE
+= Prix (sans les taxes) \(\times\) 1,15
+
+$PAR
+Ainsi : $BR
+ $SPACE $SPACE $SPACE Prix (avec les taxes) = Prix (sans les taxes) \(\times\) 1,15
+$PAR Donc, le calcul du prix sans les taxes devient :
+$BR
+ $SPACE $SPACE $SPACE Prix (sans les taxes) = Prix (avec les taxes) \(\div\) 1,15
+$BR  $SPACE $SPACE $SPACE Prix (sans les taxes) = $PrixFinal $ \(\div\) 1,15
+$BR 
+ $SPACE $SPACE $SPACE Prix (sans les taxes) = $PrixInitial $DOLLAR
+
+
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

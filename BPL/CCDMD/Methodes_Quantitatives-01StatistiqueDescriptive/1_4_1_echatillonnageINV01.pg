@@ -1,0 +1,122 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Échantillonnage)
+## KEYWORDS('aléatoire', 'aléatoire simple', 'grappes', 'sondage', 'stratifié', 'systématique')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("VERSION CLASSE INVERSÉE Technique d'échantillonnage aléatoires.");
+
+TEXT(beginproblem());
+
+@CompteurPopUp = shuffle(4);
+@CompteurPopUp1 = shuffle(4);
+@CompteurPopUp2 = shuffle(4);
+@CompteurPopUp3 = shuffle(4);
+
+@ChoixPopUp = ("Échantillonnage aléatoire simple", "Échantillonnage systématique", "Échantillonnage stratifié", "Échantillonnage par grappes", "Échantillonnage à l'aveuglette", "Échantillonnage de volontaires", "Échantillonnage par quotas", "Échantillonnage au jugé");
+
+$Nombre1 = random(50, 100);
+$Nombre21 = list_random(80,120,140,160,180);
+$Nombre22 = Compute("$Nombre21/20");
+$Nombre23 = Compute("$Nombre21/$Nombre22");
+
+$Nombre31 = random(60,75);
+$Nombre32 = random(150,300);
+$Nombre4 = random(10,25);
+$Nombre5 = random(10,20);
+$Nombre6 = random(30,60);
+$Nombre71 = random(10,60);
+$Nombre72 = random(20, 70);
+$Nombre8 = random(2,7);
+
+@VecteurExemple = (
+"Le service de cafétéria d'un cégep sélectionne au hasard $Nombre1 employés pour qu'ils remplissent un questionnaire sur la qualité de la nourriture.", 
+"Le service de cafétéria utilise les numéros d'employé pour se constituer un échantillon de $Nombre22 employés parmi les $Nombre21 employés. 
+Pour ce faire, il tire au hasard un nombre de 1 à $Nombre22 et choisit les employés dont les numéros sont à des intervalles de $Nombre23 à partir de ce nombre tiré au hasard.", 
+"Il y a $Nombre31 % d'étudiants dans un cégep. Le service de cafétéria sélectionne au hasard, en conservant la proportion d'étudiants, $Nombre32 clients afin qu'ils remplissent un questionnaire sur la rapidité du service.", 
+"La cafétéria d'un cégep se compose de tables de 8 personnes. Le service de cafétéria tire au hasard $Nombre4 tables et sélectionne toutes les personnes assises à ces tables pour leur demander de remplir un questionnaire sur le menu du jour.", 
+"Le service de cafétéria demande aux $Nombre5 clients qui viennent d'acheter un repas de remplir un questionnaire sur la rapidité du service.", 
+"$Nombre6 clients décident de faire partie d’un échantillon pour remplir un questionnaire sur la qualité de la nourriture.",
+"Le service de cafétéria demande à $Nombre71 étudiants et $Nombre72 enseignants de remplir un questionnaire sur le menu du jour.", 
+"Le service de cafétéria choisit $Nombre8 clients pour remplir un questionnaire parce que le service de cafétéria croit que les connaissances de ces clients sont importantes à connaitre.");
+
+
+@CompteurRep = shuffle(4);
+
+@VecteurRepPopUp = (
+PopUp(["Sélectionner la technique",  "$ChoixPopUp[$CompteurPopUp[0]]",  "$ChoixPopUp[$CompteurPopUp[1]]", "$ChoixPopUp[$CompteurPopUp[2]]", "$ChoixPopUp[$CompteurPopUp[3]]"], $ChoixPopUp[$CompteurRep[0]]),
+PopUp(["Sélectionner la technique",  "$ChoixPopUp[$CompteurPopUp1[0]]",  "$ChoixPopUp[$CompteurPopUp1[1]]", "$ChoixPopUp[$CompteurPopUp1[2]]", "$ChoixPopUp[$CompteurPopUp1[3]]"], $ChoixPopUp[$CompteurRep[1]]),
+PopUp(["Sélectionner la technique",  "$ChoixPopUp[$CompteurPopUp2[0]]",  "$ChoixPopUp[$CompteurPopUp2[1]]", "$ChoixPopUp[$CompteurPopUp2[2]]", "$ChoixPopUp[$CompteurPopUp2[3]]"], $ChoixPopUp[$CompteurRep[2]]),
+PopUp(["Sélectionner la technique",  "$ChoixPopUp[$CompteurPopUp3[0]]",  "$ChoixPopUp[$CompteurPopUp3[1]]", "$ChoixPopUp[$CompteurPopUp3[2]]", "$ChoixPopUp[$CompteurPopUp3[3]]"], $ChoixPopUp[$CompteurRep[3]])
+);
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Les techniques d'échantillonnage permettent de sélectionner un échantillon d'unités statistiques parmi la population. La technique peut être aléatoire ou non aléatoire. La technique d’échantillonnage est aléatoire lorsque toutes les unités statistiques ont une chance d’être sélectionnées (elles ont une probabilité non nulle de faire partie de l’échantillon). La technique est non aléatoire lorsque certaines unités statistiques n’ont aucune chance d’être sélectionnées.
+
+Il y a 4 techniques d'échantillonnage aléatoires. 
+
+\{ BeginList("OL", type=>"a") \}
+$ITEM  L’échantillonnage est dit ${BBOLD}aléatoire simple${EBOLD} lorsque les unités statistiques ont toutes la même probabilité d'être sélectionnées. Elles sont donc tirées au hasard, soit par une table de nombres aléatoires, soit par un logiciel générateur de nombres aléatoires, soit par des dés. $BR ${BBOLD}Exemple :${EBOLD} Utiliser un dé pour choisir 1 personne au hasard parmi 6.
+$ITEMSEP 
+$ITEM  L’échantillonnage est dit ${BBOLD}systématique${EBOLD} lorsqu’une unité statistique est sélectionnée au hasard et que les autres sont sélectionnées à intervalle régulier. Cet intervalle régulier est appelé le pas du sondage et il est calculé comme suit : \(\displaystyle{\frac{N}{n}}\).
+$BR ${BBOLD}Exemple :${EBOLD} Pour choisir 10 personnes parmi 500, on numérote les personnes de 1 à 500. Puis on tire au hasard un numéro entre 1 et 50 (pas du sondage) et on choisit les autres numéros en additionnant successivement 50 (pas du sondage) à ce nombre tiré au hasard. Si l'on pige le nombre 2, alors l’échantillon sera constitué des personnes ayant les numéros : $BR
+2, 52, 102, 152, 202, 252, 302, 352, 402, 452.
+$ITEMSEP
+$ITEM L’échantillonnage est dit ${BBOLD}stratifié${EBOLD} lorsque la population est divisée en strates (groupes ayant des caractéristiques communes, comme l’âge, le lieu, la langue parlée à la maison, le revenu) et que les unités statistiques sont sélectionnées au hasard en conservant les proportions des strates dans l’échantillon. 
+$BR ${BBOLD}Exemple :${EBOLD} Supposons que 60 % des étudiants d’un cégep sont inscrits dans une technique et que 40 % sont inscrits au secteur général. Pour former un échantillon de 120 étudiants, on choisira au hasard 72 étudiants du secteur technique (120 \(\displaystyle{\cdot}\) 60 %) et 48 du secteur général (120 \(\displaystyle{\cdot}\) 40 %). 
+
+$ITEMSEP
+$ITEM  L’échantillonnage est dit ${BBOLD}par grappes (ou par amas)${EBOLD} lorsqu’une ou plusieurs grappes (un sous-ensemble de la population qui est jugé représentatif de la population, comme un quartier d’une ville, une zone d’un parc national, un groupe d’un numéro de cours) sont tirées au hasard et que toutes les unités statistiques de la ou des grappes sont sélectionnées. Chaque grappe ne contient pas nécessairement le même nombre d’unités statistiques.
+$BR ${BBOLD}Exemple :${EBOLD} On tire au hasard un groupe de Méthodes quantitatives parmi tous les groupes de Méthodes quantitatives, puis on sélectionne tous les étudiants du groupe tiré au hasard.
+
+\{ EndList("OL") \}
+
+
+$BR ${BBOLD}Exercice :${EBOLD}
+
+Pour chacune des situations suivantes, sélectionner dans le menu déroulant la technique d'échantillonnage utilisée pour former l'échantillon.
+
+\{ BeginList("OL", type=>"a") \}
+$ITEM  $VecteurExemple[$CompteurRep[0]] \{ $VecteurRepPopUp[0]->menu()\} 
+$ITEMSEP 
+$ITEM   $VecteurExemple[$CompteurRep[1]] \{ $VecteurRepPopUp[1]->menu()\} 
+$ITEMSEP
+$ITEM   $VecteurExemple[$CompteurRep[2]] \{ $VecteurRepPopUp[2]->menu()\} 
+$ITEMSEP
+$ITEM  $VecteurExemple[$CompteurRep[3]] \{ $VecteurRepPopUp[3]->menu()\} 
+\{ EndList("OL") \}
+
+
+
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($VecteurRepPopUp[0]->cmp() );
+ANS($VecteurRepPopUp[1]->cmp() );
+ANS($VecteurRepPopUp[2]->cmp() );
+ANS($VecteurRepPopUp[3]->cmp() );
+
+
+ENDDOCUMENT(); 

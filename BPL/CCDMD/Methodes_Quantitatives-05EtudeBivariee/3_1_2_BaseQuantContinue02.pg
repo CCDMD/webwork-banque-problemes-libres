@@ -1,0 +1,436 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('fréquence absolue', 'tableau à double entrée', 'variable', 'variable quantitative continue', 'échelle de rapport')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Moyen. Compléter le tableau de contingence (avec les effectifs) à partir d'une base de données. Une variable est qualitative (2 modalités), l'autre est continue (3 classes). L'ordre d'affichage des modalités de X dans le tableau est aléatoire.  Il y a 4 contextes. La solution n'a pas été programmée. Si un effectif est nul, écrire 0");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$TypeContexte = random(0,3);
+
+
+$n = 30;
+$X01NombreUS = $n; 
+$X01VariableNom = "X"; 
+$Y01NombreUS = $n; 
+$Y01VariableNom = "Y"; 
+$X01ValeurMin = 0;
+$X01ValeurMax = 1;
+
+#Les effectifs en X et Y sont communs à tous les contextes.
+
+
+if ($TypeContexte == 0)
+{@VecteurContexte = ("X : Sexe", "Y : Temps (min)", "Répartition des étudiants selon le sexe et $BR le temps pris pour aller au cégep", "d'étudiantes et d'étudiants afin de connaitre le temps en minutes pris pour aller au cégep le matin");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+
+@Y01VecteurModalite = ("[0, 20.0[", "[20.0, 40.0[", "[40.0, 60.0[");
+@Y01VecteurModaliteValeur = (10, 30, 50);
+@Y01VecteurModaliteClasse = (0, 20, 40, 60);
+
+$Y01ValeurMin = 5;
+$Y01ValeurMax = 59;
+$Y01ValeurPrecision = 0.1;
+$Y01ValeurPrecisionA = "%0.1f";
+
+@graphique60T = ("Répartition des étudiants selon le sexe et", "le temps pris pour aller au cégep");
+}
+elsif ($TypeContexte == 1)
+{@VecteurContexte = ("X : Sexe", "Y : Montant ($DOLLAR)", "Répartition des étudiants selon le sexe et $BR le montant dépensé mensuellement pour le forfait cellulaire", "d'étudiantes et d'étudiants afin de connaitre le montant dépensé mensuellement pour le forfait cellulaire");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+
+@Y01VecteurModalite = ("[0, 40.00[", "[40.00, 80.00[", "[80.00, 120.00[");
+@Y01VecteurModaliteValeur = (20, 60, 100);
+@Y01VecteurModaliteClasse = (0, 40, 80, 120);
+
+$Y01ValeurMin = 25;
+$Y01ValeurMax = 100;
+$Y01ValeurPrecision = 0.01;
+$Y01ValeurPrecisionA = "%0.2f";
+
+@graphique60T = ("Répartition des étudiants selon le sexe et", "le montant dépensé en forfait cellulaire");
+}
+
+elsif ($TypeContexte == 2)
+{@VecteurContexte = ("X : Sexe", "Y : Temps (heures)", "Répartition des étudiants selon le sexe et $BR le temps consacré à l'étude d'un examen final", "d'étudiantes et d'étudiants afin de connaitre le temps pris pour étudier l'examen final d'un cours de la dernière session");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+
+
+@Y01VecteurModalite = ("[0, 2.0[", "[2.0, 4.0[", "[4.0, 6.0[");
+@Y01VecteurModaliteValeur = (1, 3, 5);
+@Y01VecteurModaliteClasse = (0, 2, 4, 6);
+
+$Y01ValeurMin = 0.5;
+$Y01ValeurMax = 5.9;
+$Y01ValeurPrecision = 0.1;
+$Y01ValeurPrecisionA = "%0.1f";
+
+@graphique60T = ("Répartition des étudiants selon le sexe et", "le temps consacré à étudier un examen");
+}
+elsif ($TypeContexte == 3)
+{@VecteurContexte = ("X : Sexe", "Y : Montant ($DOLLAR)", "Répartition des étudiants selon le sexe et $BR le montant dépensé à la cafétéria la semaine dernière", "d'étudiantes et d'étudiants afin de connaitre le montant dépensé à la cafétéria la semaine dernière");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+
+@Y01VecteurModalite = ("[0, 10.00[", "[10.00, 20.00[", "[20.00, 30.00[");
+@Y01VecteurModaliteValeur = (5, 15, 25);
+@Y01VecteurModaliteClasse = (0, 10, 20, 30);
+
+$Y01ValeurMin = 2;
+$Y01ValeurMax = 29;
+$Y01ValeurPrecision = 0.01;
+$Y01ValeurPrecisionA = "%0.2f";
+
+@graphique60T = ("Répartition des étudiants selon le sexe et", "le montant dépensé à la cafétéria");
+}
+
+
+#Variable X
+
+#Les codes doivent être en nombre pour que les effectifs puissent être comptés
+$X01Modalite1 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite2 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite3 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite4 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite5 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite6 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite7 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite8 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite9 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite10 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite11 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite12 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite13 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite14 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite15 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite16 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite17 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite18 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite19 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite20 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite21 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite22 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite23 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite24 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite25 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite26 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite27 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite28 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite29 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite30 = random($X01ValeurMin,$X01ValeurMax);  
+
+@X01VecteurBaseDonnee = ( $X01Modalite1, $X01Modalite2, $X01Modalite3, $X01Modalite4, $X01Modalite5, $X01Modalite6, $X01Modalite7, $X01Modalite8, $X01Modalite9, $X01Modalite10, $X01Modalite11, $X01Modalite12, $X01Modalite13, $X01Modalite14, $X01Modalite15, $X01Modalite16, $X01Modalite17, $X01Modalite18, $X01Modalite19, $X01Modalite20, $X01Modalite21, $X01Modalite22, $X01Modalite23, $X01Modalite24, $X01Modalite25, $X01Modalite26, $X01Modalite27, $X01Modalite28, $X01Modalite29,$X01Modalite30 ); 
+@X01VecteurBaseDonneeCode = ( $X01Modalite1, $X01Modalite2, $X01Modalite3, $X01Modalite4, $X01Modalite5, $X01Modalite6, $X01Modalite7, $X01Modalite8, $X01Modalite9, $X01Modalite10, $X01Modalite11, $X01Modalite12, $X01Modalite13, $X01Modalite14, $X01Modalite15, $X01Modalite16, $X01Modalite17, $X01Modalite18, $X01Modalite19, $X01Modalite20, $X01Modalite21, $X01Modalite22, $X01Modalite23, $X01Modalite24, $X01Modalite25, $X01Modalite26, $X01Modalite27, $X01Modalite28, $X01Modalite29,$X01Modalite30 ); 
+
+#Calcul des effectifs en X et remplissage du vecteur des codes
+$X01Effectif1 = 0; 
+$X01Effectif2 = 0; 
+$X01Effectif3 = 0;
+$X01i = 0;
+do
+{if ($X01VecteurBaseDonnee[$X01i]  == 0) 
+{$X01Effectif1++;
+$X01VecteurBaseDonneeCode[$X01i]  = $X01VecteurModaliteCode[0]}
+elsif ($X01VecteurBaseDonnee[$X01i]  == 1) 
+{$X01Effectif2++;
+$X01VecteurBaseDonneeCode[$X01i]  = $X01VecteurModaliteCode[1]}
+else  
+{$X01Effectif3++;
+$X01VecteurBaseDonneeCode[$X01i]  = $X01VecteurModaliteCode[2]}
+$X01i++}
+ while ($X01i<30);
+
+#Variable Y
+
+$Y01Modalite12 = list_random($Y01VecteurModaliteClasse[1], $Y01VecteurModaliteClasse[2]);
+
+$Y01Modalite1 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision); 
+$Y01Modalite2 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision);
+$Y01Modalite3 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision);
+$Y01Modalite4 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision);
+$Y01Modalite5 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision);
+$Y01Modalite6 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision);
+$Y01Modalite7 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision);
+$Y01Modalite8 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision);
+$Y01Modalite9 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision);
+$Y01Modalite10 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision);
+$Y01Modalite11 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision);
+
+$Y01Modalite13 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision);
+$Y01Modalite14 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision);
+$Y01Modalite15 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision);
+$Y01Modalite16 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision); 
+$Y01Modalite17 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision); 
+$Y01Modalite18 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision); 
+$Y01Modalite19 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision); 
+$Y01Modalite20 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision); 
+$Y01Modalite21 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision); 
+$Y01Modalite22 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision); 
+$Y01Modalite23 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision); 
+$Y01Modalite24 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision); 
+$Y01Modalite25 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision);
+$Y01Modalite26 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision); 
+$Y01Modalite27 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision); 
+$Y01Modalite28 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision); 
+$Y01Modalite29 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision); 
+$Y01Modalite30 = random($Y01ValeurMin,$Y01ValeurMax, $Y01ValeurPrecision); 
+
+
+
+
+@Y01VecteurBaseDonnee = ( $Y01Modalite1, $Y01Modalite2, $Y01Modalite3, $Y01Modalite4, $Y01Modalite5, $Y01Modalite6, $Y01Modalite7, $Y01Modalite8, $Y01Modalite9, $Y01Modalite10, $Y01Modalite11, $Y01Modalite12, $Y01Modalite13, $Y01Modalite14, $Y01Modalite15, $Y01Modalite16, $Y01Modalite17, $Y01Modalite18, $Y01Modalite19, $Y01Modalite20, $Y01Modalite21, $Y01Modalite22, $Y01Modalite23, $Y01Modalite24, $Y01Modalite25, $Y01Modalite26, $Y01Modalite27, $Y01Modalite28, $Y01Modalite29,$Y01Modalite30 ); 
+
+
+
+@Y01VecteurBaseDonneeCode = ( $Y01Modalite1, $Y01Modalite2, $Y01Modalite3, $Y01Modalite4, $Y01Modalite5, $Y01Modalite6, $Y01Modalite7, $Y01Modalite8, $Y01Modalite9, $Y01Modalite10, $Y01Modalite11, $Y01Modalite12, $Y01Modalite13, $Y01Modalite14, $Y01Modalite15, $Y01Modalite16, $Y01Modalite17, $Y01Modalite18, $Y01Modalite19, $Y01Modalite20, $Y01Modalite21, $Y01Modalite22, $Y01Modalite23, $Y01Modalite24, $Y01Modalite25, $Y01Modalite26, $Y01Modalite27, $Y01Modalite28, $Y01Modalite29,$Y01Modalite30 ); 
+
+@Y01VecteurBaseDonneeCode = (sprintf($Y01ValeurPrecisionA,"$Y01Modalite1"), sprintf($Y01ValeurPrecisionA,"$Y01Modalite2"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite3"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite4"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite5"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite6"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite7"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite8"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite9"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite10"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite11"),
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite12"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite13"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite14"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite15"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite16"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite17"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite18"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite19"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite20"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite21"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite22"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite23"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite24"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite25"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite26"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite27"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite28"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite29"), 
+sprintf($Y01ValeurPrecisionA,"$Y01Modalite30"));
+
+#Calcul des effectifs en X et Y
+$Z01Effectif11 = 0; 
+$Z01Effectif12 = 0; 
+$Z01Effectif13 = 0;
+$Z01Effectif21 = 0; 
+$Z01Effectif22 = 0; 
+$Z01Effectif23 = 0;
+$Z01Effectif31 = 0; 
+$Z01Effectif32 = 0; 
+$Z01Effectif33 = 0;
+
+$Z01i = 0;
+do
+{
+if ($X01VecteurBaseDonnee[$Z01i]  == 0) 
+{if ($Y01VecteurBaseDonnee[$Z01i]  <$Y01VecteurModaliteClasse[1]) 
+{$Z01Effectif11++;}
+elsif (($Y01VecteurBaseDonnee[$Z01i]  >= $Y01VecteurModaliteClasse[1]) && ($Y01VecteurBaseDonnee[$Z01i]  < $Y01VecteurModaliteClasse[2])) 
+{$Z01Effectif12++;}
+else  
+{$Z01Effectif13++;}
+$Z01i++}
+elsif ($X01VecteurBaseDonnee[$Z01i]  == 1) 
+{if ($Y01VecteurBaseDonnee[$Z01i]  <$Y01VecteurModaliteClasse[1])  
+{$Z01Effectif21++;}
+elsif (($Y01VecteurBaseDonnee[$Z01i]  >= $Y01VecteurModaliteClasse[1]) && ($Y01VecteurBaseDonnee[$Z01i]  < $Y01VecteurModaliteClasse[2])) 
+{$Z01Effectif22++;}
+else  
+{$Z01Effectif23++;}
+$Z01i++}
+else  
+{if ($Y01VecteurBaseDonnee[$Z01i]  <$Y01VecteurModaliteClasse[1])   
+{$Z01Effectif31++;}
+elsif (($Y01VecteurBaseDonnee[$Z01i]  >= $Y01VecteurModaliteClasse[1]) && ($Y01VecteurBaseDonnee[$Z01i]  < $Y01VecteurModaliteClasse[2])) 
+{$Z01Effectif32++;}
+else  
+{$Z01Effectif33++;}
+$Z01i++}
+}
+ while ($Z01i<$n);
+
+$Z01EffectifTotal1 = Compute("$Z01Effectif11 + $Z01Effectif12 + $Z01Effectif13");
+$Z01EffectifTotal2 = Compute("$Z01Effectif21 + $Z01Effectif22 + $Z01Effectif23");
+$Z01EffectifTotal3 = Compute("$Z01Effectif31 + $Z01Effectif32 + $Z01Effectif33");
+
+@Z01Reponse = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13, $Z01EffectifTotal1, $Z01Effectif21, $Z01Effectif22, $Z01Effectif23, $Z01EffectifTotal2, $Z01Effectif31, $Z01Effectif32, $Z01Effectif33, $Z01EffectifTotal3);
+
+$Z01EffectifTotal1h = Compute("$Z01Effectif11 + $Z01Effectif21");
+$Z01EffectifTotal2h = Compute("$Z01Effectif12 + $Z01Effectif22");
+$Z01EffectifTotal3h = Compute("$Z01Effectif13 + $Z01Effectif23");
+$Z01EffectifTotalh = Compute("$Z01EffectifTotal1h + $Z01EffectifTotal2h+$Z01EffectifTotal3h");
+
+@Z01Reponseh = ($Z01EffectifTotal1h, $Z01EffectifTotal2h, $Z01EffectifTotal3h, $Z01EffectifTotalh);
+
+#Calcul des pourcentages
+$Z01Pourcentage11t =Compute("$Z01Effectif11/$Z01EffectifTotal1*100");
+$Z01Pourcentage11 = sprintf("%0.1f","$Z01Pourcentage11t");
+$Z01Pourcentage12t =Compute("$Z01Effectif12/$Z01EffectifTotal1*100");
+$Z01Pourcentage12 = sprintf("%0.1f","$Z01Pourcentage12t");
+$Z01Pourcentage13t =Compute("$Z01Effectif13/$Z01EffectifTotal1*100");
+$Z01Pourcentage13 = sprintf("%0.1f","$Z01Pourcentage13t");
+$Z01PourcentageTotal1t = Compute("$Z01Pourcentage11 + $Z01Pourcentage12 + $Z01Pourcentage13");
+$Z01PourcentageTotal1 = sprintf("%0.1f","$Z01PourcentageTotal1t ");
+
+
+@Z01ReponsePourcentage = ($Z01Pourcentage11, $Z01Pourcentage12, $Z01Pourcentage13, $Z01PourcentageTotal1, $Z01Pourcentage21, $Z01Pourcentage22, $Z01Pourcentage23, $Z01PourcentageTotal2, $Z01Pourcentage31, $Z01Pourcentage32, $Z01Pourcentage33, $Z01PourcentageTotal3);
+
+$tempAffichageX = random(0,1);
+if ($tempAffichageX == 0)
+{@CompteurAffichageX = (0,2);}
+else
+{@CompteurAffichageX = (2,0);}
+
+
+#@CompteurAffichageY = shuffle(3);
+@CompteurAffichageY = (0,1,2);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Une enquête a été menée auprès d'un échantillon $VecteurContexte[3]. La base de données ci-dessous représente les données recueillies.
+$PAR
+$BCENTER
+\{
+ColumnTable(
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>2).
+  AlignedRow(["${BBOLD} Numéro $BR d'unité statistique ${EBOLD}", "${BBOLD}$VecteurContexte[0]${EBOLD}","${BBOLD}$VecteurContexte[1]${EBOLD}"], align => CENTER, separation=>0).
+ AlignedRow(["1", "$X01VecteurBaseDonneeCode[0]","$Y01VecteurBaseDonneeCode[0]"], align => CENTER, separation=>0).
+ AlignedRow(["2", "$X01VecteurBaseDonneeCode[1]","$Y01VecteurBaseDonneeCode[1]"], align => CENTER, separation=>0).
+ AlignedRow(["3", "$X01VecteurBaseDonneeCode[2]","$Y01VecteurBaseDonneeCode[2]"], align => CENTER, separation=>0).
+ AlignedRow(["4", "$X01VecteurBaseDonneeCode[3]","$Y01VecteurBaseDonneeCode[3]"], align => CENTER, separation=>0).
+ AlignedRow(["5", "$X01VecteurBaseDonneeCode[4]","$Y01VecteurBaseDonneeCode[4]"], align => CENTER, separation=>0).
+ AlignedRow(["6", "$X01VecteurBaseDonneeCode[5]","$Y01VecteurBaseDonneeCode[5]"], align => CENTER, separation=>0).
+ AlignedRow(["7", "$X01VecteurBaseDonneeCode[6]","$Y01VecteurBaseDonneeCode[6]"], align => CENTER, separation=>0).
+AlignedRow(["8", "$X01VecteurBaseDonneeCode[7]","$Y01VecteurBaseDonneeCode[7]"], align => CENTER, separation=>0).
+AlignedRow(["9", "$X01VecteurBaseDonneeCode[8]","$Y01VecteurBaseDonneeCode[8]"], align => CENTER, separation=>0).
+AlignedRow(["10", "$X01VecteurBaseDonneeCode[9]","$Y01VecteurBaseDonneeCode[9]"], align => CENTER, separation=>0).
+AlignedRow(["11", "$X01VecteurBaseDonneeCode[10]","$Y01VecteurBaseDonneeCode[10]"], align => CENTER, separation=>0).
+AlignedRow(["12", "$X01VecteurBaseDonneeCode[11]","$Y01VecteurBaseDonneeCode[11]"], align => CENTER, separation=>0).
+AlignedRow(["13", "$X01VecteurBaseDonneeCode[12]","$Y01VecteurBaseDonneeCode[12]"], align => CENTER, separation=>0).
+AlignedRow(["14", "$X01VecteurBaseDonneeCode[13]","$Y01VecteurBaseDonneeCode[13]"], align => CENTER, separation=>0).
+AlignedRow(["15", "$X01VecteurBaseDonneeCode[14]","$Y01VecteurBaseDonneeCode[14]"], align => CENTER, separation=>0).
+EndTable(), 
+BeginTable(border=>1, tex_border=>"1pt", spacing=>0, padding=>2).
+  AlignedRow(["${BBOLD} Numéro $BR d'unité statistique ${EBOLD}", "${BBOLD}$VecteurContexte[0]${EBOLD}","${BBOLD}$VecteurContexte[1]${EBOLD}"], align => CENTER, separation=>0).
+ AlignedRow(["16", "$X01VecteurBaseDonneeCode[15]","$Y01VecteurBaseDonneeCode[15]"], align => CENTER, separation=>0).
+ AlignedRow(["17", "$X01VecteurBaseDonneeCode[16]","$Y01VecteurBaseDonneeCode[16]"], align => CENTER, separation=>0).
+ AlignedRow(["18", "$X01VecteurBaseDonneeCode[17]","$Y01VecteurBaseDonneeCode[17]"], align => CENTER, separation=>0).
+ AlignedRow(["19", "$X01VecteurBaseDonneeCode[18]","$Y01VecteurBaseDonneeCode[18]"], align => CENTER, separation=>0).
+ AlignedRow(["20", "$X01VecteurBaseDonneeCode[19]","$Y01VecteurBaseDonneeCode[19]"], align => CENTER, separation=>0).
+ AlignedRow(["21", "$X01VecteurBaseDonneeCode[20]","$Y01VecteurBaseDonneeCode[20]"], align => CENTER, separation=>0).
+ AlignedRow(["22", "$X01VecteurBaseDonneeCode[21]","$Y01VecteurBaseDonneeCode[21]"], align => CENTER, separation=>0).
+AlignedRow(["23", "$X01VecteurBaseDonneeCode[22]","$Y01VecteurBaseDonneeCode[22]"], align => CENTER, separation=>0).
+AlignedRow(["24", "$X01VecteurBaseDonneeCode[23]","$Y01VecteurBaseDonneeCode[23]"], align => CENTER, separation=>0).
+AlignedRow(["25", "$X01VecteurBaseDonneeCode[24]","$Y01VecteurBaseDonneeCode[24]"], align => CENTER, separation=>0).
+AlignedRow(["26", "$X01VecteurBaseDonneeCode[25]","$Y01VecteurBaseDonneeCode[25]"], align => CENTER, separation=>0).
+AlignedRow(["27", "$X01VecteurBaseDonneeCode[26]","$Y01VecteurBaseDonneeCode[26]"], align => CENTER, separation=>0).
+AlignedRow(["28", "$X01VecteurBaseDonneeCode[27]","$Y01VecteurBaseDonneeCode[27]"], align => CENTER, separation=>0).
+AlignedRow(["29", "$X01VecteurBaseDonneeCode[28]","$Y01VecteurBaseDonneeCode[28]"], align => CENTER, separation=>0).
+AlignedRow(["30", "$X01VecteurBaseDonneeCode[29]","$Y01VecteurBaseDonneeCode[29]"], align => CENTER, separation=>0).
+EndTable(), 
+indent=>"0", separation=>"60", valign=>"TOP"
+);
+\}
+$ECENTER
+
+
+$PAR
+Code : $X01VecteurModaliteCode[0] = $X01VecteurModalite[0] $SPACE $X01VecteurModaliteCode[1] = $X01VecteurModalite[1]
+
+$PAR
+
+
+${BBOLD}Question : ${EBOLD} Compléter le tableau de contingence suivant : 
+$BCENTER
+${BBOLD}
+$VecteurContexte[2]
+${EBOLD}
+$ECENTER
+
+$BR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([" ", "${BBOLD}$VecteurContexte[0]${EBOLD}","${BBOLD}$VecteurContexte[0]${EBOLD}", " "], align => CENTER, separation=>0).
+AlignedRow(["${BBOLD}$VecteurContexte[1]${EBOLD}", "${BBOLD}$X01VecteurGroupe[$CompteurAffichageX[0]]${EBOLD}","${BBOLD}$X01VecteurGroupe[$CompteurAffichageX[1]]${EBOLD}", "${BBOLD}Total${EBOLD}"], align => CENTER, separation=>0).
+ 
+ AlignedRow(["$Y01VecteurModalite[$CompteurAffichageY[0]]",ans_rule(5), ans_rule(5), ans_rule(5)], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[$CompteurAffichageY[1]]",ans_rule(5), ans_rule(5), ans_rule(5)], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[$CompteurAffichageY[2]]",ans_rule(5), ans_rule(5), ans_rule(5)], align => CENTER, separation=>0).
+  AlignedRow(["${BBOLD}Total${EBOLD}", ans_rule(5), ans_rule(5), ans_rule(5)], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+if ($CompteurAffichageX[0] == 0)
+{ANS(num_cmp($Z01Reponse[0 + $CompteurAffichageY[0]]));
+ANS(num_cmp($Z01Reponse[4 + $CompteurAffichageY[0]]));
+ANS(num_cmp($Z01Reponseh[$CompteurAffichageY[0]]));
+ANS(num_cmp($Z01Reponse[0 + $CompteurAffichageY[1]]));
+ANS(num_cmp($Z01Reponse[4 + $CompteurAffichageY[1]]));
+ANS(num_cmp($Z01Reponseh[$CompteurAffichageY[1]]));
+ANS(num_cmp($Z01Reponse[0 + $CompteurAffichageY[2]]));
+ANS(num_cmp($Z01Reponse[4 + $CompteurAffichageY[2]]));
+ANS(num_cmp($Z01Reponseh[$CompteurAffichageY[2]]));
+ANS(num_cmp($Z01Reponse[3]));
+ANS(num_cmp($Z01Reponse[7]));
+ANS(num_cmp($Z01Reponseh[3]));
+}
+else
+{ANS(num_cmp($Z01Reponse[4 + $CompteurAffichageY[0]]));
+ANS(num_cmp($Z01Reponse[0 + $CompteurAffichageY[0]]));
+ANS(num_cmp($Z01Reponseh[$CompteurAffichageY[0]]));
+ANS(num_cmp($Z01Reponse[4 + $CompteurAffichageY[1]]));
+ANS(num_cmp($Z01Reponse[0 + $CompteurAffichageY[1]]));
+ANS(num_cmp($Z01Reponseh[$CompteurAffichageY[1]]));
+ANS(num_cmp($Z01Reponse[4 + $CompteurAffichageY[2]]));
+ANS(num_cmp($Z01Reponse[0 + $CompteurAffichageY[2]]));
+ANS(num_cmp($Z01Reponseh[$CompteurAffichageY[2]]));
+ANS(num_cmp($Z01Reponse[7]));
+ANS(num_cmp($Z01Reponse[3]));
+ANS(num_cmp($Z01Reponseh[3]));
+}
+
+
+
+ENDDOCUMENT(); 

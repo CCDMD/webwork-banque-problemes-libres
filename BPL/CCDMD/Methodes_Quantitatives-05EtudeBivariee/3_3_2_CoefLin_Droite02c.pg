@@ -1,0 +1,411 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Corrélation et régression linéaire)
+## KEYWORDS('coefficient de corrélation', 'droite', 'méthode des moindres carrés')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl","PGauxiliaryFunctions.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Calculer le coefficient de corrélation linéaire. Il y a 4 contextes. La solution a été programmée. Les calculs ont été faits avec les mesures statistiques arrondies à TROIS DÉCIMALES. Il n'y a AUCUNE TOLÉRANCE sur la réponse.");
+
+
+TEXT(beginproblem());
+
+$refreshCachedImages = 1;
+
+
+#Solution du calcul du a
+# $MoyenneY - ($b\cdot $MoyenneX)
+
+$PrecisionMesureCalculatrice = "%0.3f";
+$PrecisionMesureCoefLin = "%0.3f";
+$PrecisionMesureDroite = "%0.3f";
+
+$n = 7;
+@AffichageBD= shuffle(7);
+
+#Choisir le contexte
+$TypeContexte = random(0,3);
+
+
+if ($TypeContexte == 0)
+{
+@VecteurContexte = ("X : Âge $BR (années)", "Y : Durée du voyage $BR (jours)", "La durée du voyage selon $BR l'âge du voyageur", "de voyageurs afin de connaitre leur âge et la durée de leur dernier voyage à l'étranger");
+$GraphiqueT1 = "La duree du voyage selon";
+$GraphiqueT2 = "l'age du voyageur";
+$AjustTitre = 1;
+$X01ValeurMin = 20;
+$X01ValeurMax = 30;
+$Y01ValeurMin = 7;
+$Y01ValeurMax = 30;
+$PremierX =20;
+$PremierY =5;
+$EcartX = 10;
+$EcartY = 10;
+
+
+$BriserAxeX = 1;
+$BriserAxeY = 1;
+$Ajustement1 = 0.3;
+
+$x61 = Compute("$X01ValeurMin-2");
+$x62 = Compute("$X01ValeurMax + 2");
+$y61 = Compute("$PremierY - 4");
+$y62 = Compute("$Y01ValeurMax + 2");
+$AxeX = Compute("$PremierY - 2");
+$AxeY = Compute("$X01ValeurMin - 1");
+
+$gridX60 = $x62 - $x61;
+$gridY60 = $y62 - $y61;
+$AffichageX60 =Compute("$x62 -0.8");
+$AffichageY60 =Compute("$y62 -0.8");
+$AffichageUniteX60 =Compute("$PremierX");
+$AffichageUniteY60 =Compute("$PremierY");
+
+
+$X01NombreUS = $n; 
+$X01VariableNom = "${BITALIC}Âge du voyageur${EITALIC}"; 
+$X01Modalite1 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite2 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite3 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite4 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite5 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite6 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite7 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite8 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite9 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite10 = random($X01ValeurMin,$X01ValeurMax);
+$Y01NombreUS = $n; 
+$Y01VariableNom = "${BITALIC}Durée du voyage${EITALIC}"; 
+$Y01Modalite1 = random($Y01ValeurMin,$Y01ValeurMax); 
+$Y01Modalite2 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite3 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite4 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite5 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite6 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite7 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite8 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite9 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite10 = random($Y01ValeurMin,$Y01ValeurMax);
+
+}
+elsif ($TypeContexte == 1)
+{
+@VecteurContexte = ("X : Distance $BR (km)", "Y : Temps $BR (min)", "Le temps pris pour aller au cégep selon $BR la distance de la résidence", "d'étudiants afin de connaitre la distance de leur résidence au cégep et le temps pris pour se rendre au cégep le matin");
+$X01ValeurMin = 0;
+$X01ValeurMax = 10;
+$Y01ValeurMin = 0;
+$Y01ValeurMax = 25;
+$PremierX =1;
+$PremierY =5;
+$EcartX = 10;
+$EcartY = 10;
+
+$XTol1 = 0.1;
+$YTol1 = 0.1;
+
+$BriserAxeX = 0;
+$BriserAxeY = 0;
+$Ajustement1 = 0.2;
+
+$GraphiqueT1 = "Le temps selon";
+$GraphiqueT2 = "la distance";
+$AjustTitre = 1;
+
+$x61 = Compute("$X01ValeurMin - 1");
+$x62 = Compute("$X01ValeurMax + 2");
+$y61 = Compute("$Y01ValeurMin - 2");
+$y62 = Compute("$Y01ValeurMax + 2");
+$AxeX = Compute("$Y01ValeurMin");
+$AxeY = Compute("$X01ValeurMin");
+
+$gridX60 = $x62 - $x61;
+$gridY60 = $y62 - $y61;
+$AffichageX60 =Compute("$x62 -0.5");
+$AffichageY60 =Compute("$y62 -0.5");
+$AffichageUniteX60 =Compute("$PremierX");
+$AffichageUniteY60 =Compute("$PremierY");
+
+$X01NombreUS = $n; 
+$X01VariableNom = "${BITALIC}Distance${EITALIC}"; 
+$X01Modalite1 = random(1,3, $XTol1); 
+$X01Modalite2 = random(1, 3, $XTol1);
+$X01Modalite3 = random(3, 5, $XTol1);
+$X01Modalite4 = random(3, 5, $XTol1);
+$X01Modalite5 = random(5, 8, $XTol1);
+$X01Modalite6 = random(5, 8, $XTol1);
+$X01Modalite7 = random(8, 10, $XTol1);
+$X01Modalite8 = random(1,3, $XTol1);
+$X01Modalite9 = random(3,5, $XTol1);
+$X01Modalite10 = random(5,7, $XTol1);
+$Y01NombreUS = $n; 
+$Y01VariableNom = "${BITALIC}Temps${EITALIC}"; 
+$Y01Modalite1 = random(5,15, $YTol1); 
+$Y01Modalite2 = random(5,15, $YTol1); 
+$Y01Modalite3 = random(5,15, $YTol1); 
+$Y01Modalite4 = random(5,15, $YTol1); 
+$Y01Modalite5 = random(15,25, $YTol1); 
+$Y01Modalite6 = random(15,25, $YTol1); 
+$Y01Modalite7 = random(5,15, $YTol1); 
+$Y01Modalite8 = random(15,25, $YTol1); 
+$Y01Modalite9 = random(15,25, $YTol1); 
+$Y01Modalite10 = random(15,25, $YTol1); 
+
+}
+elsif ($TypeContexte == 2)
+{
+@VecteurContexte = ("X : Note au $BR mini-test (%)", "Y : Note à $BR l'examen (%)", "La note à l'examen selon $BR la note au mini-test", "d'étudiants afin de connaitre leur note au mini-test et leur note à l'examen");
+$X01ValeurMin = 40;
+$X01ValeurMax = 100;
+$Y01ValeurMin = 40;
+$Y01ValeurMax = 100;
+$PremierX =40;
+$PremierY =40;
+
+$XTol1 = 1;
+$YTol1 = 1;
+
+$BriserAxeX = 1;
+$BriserAxeY = 1;
+$Ajustement1 = 1;
+
+$GraphiqueT1 = "La note a l'examen selon";
+$GraphiqueT2 = "la note au mini-test";
+$AjustTitre = 3;
+
+$x61 = Compute("$X01ValeurMin - 10");
+$x62 = Compute("$X01ValeurMax");
+$y61 = Compute("$Y01ValeurMin - 10");
+$y62 = Compute("$Y01ValeurMax");
+$AxeX = Compute("$Y01ValeurMin - 5");
+$AxeY = Compute("$X01ValeurMin - 5");
+
+$gridX60 = 14;
+$gridY60 = 14;
+$AffichageX60 =Compute("$x62 -5");
+$AffichageY60 =Compute("$y62 -5");
+$AffichageUniteX60 =Compute("$PremierX");
+$AffichageUniteY60 =Compute("$PremierY");
+
+$X01NombreUS = $n; 
+$X01VariableNom = "${BITALIC}Note au mini-test${EITALIC}"; 
+$X01Modalite1 = random(40, 60, $XTol1); 
+$X01Modalite2 = random(40, 60, $XTol1);
+$X01Modalite3 = random(60, 80, $XTol1);
+$X01Modalite4 = random(60, 80, $XTol1);
+$X01Modalite5 = random(80, 90, $XTol1);
+$X01Modalite6 = random(60, 80, $XTol1);
+$X01Modalite7 = random(80, 90, $XTol1);
+$X01Modalite8 = random(40,60, $XTol1);
+$X01Modalite9 = random(60,80, $XTol1);
+$X01Modalite10 = random(60,80, $XTol1);
+$Y01NombreUS = $n; 
+$Y01VariableNom = "${BITALIC}Note à l'examen${EITALIC}"; 
+$Y01Modalite1 = random(40, 70, $YTol1); 
+$Y01Modalite2 = random(40, 70, $YTol1);
+$Y01Modalite3 = random(50, 70, $YTol1);
+$Y01Modalite4 = random(60, 80, $YTol1);
+$Y01Modalite5 = random(80, 90, $YTol1);
+$Y01Modalite6 = random(60, 80, $YTol1);
+$Y01Modalite7 = random(80, 90, $YTol1);
+$Y01Modalite8 = random(40,70, $YTol1);
+$Y01Modalite9 = random(50,80, $YTol1);
+$Y01Modalite10 = random(60,80, $YTol1);
+}
+elsif ($TypeContexte == 3)
+{
+@VecteurContexte = ("X : Temps $BR (min)", "Y : Note à $BR l'examen (%)", "La note à l'examen selon $BR le temps pris pour faire l'examen", "d'étudiants afin de connaitre leur temps (en minutes) pris pour faire un examen de 2 heures (120 minutes) et leur note à l'examen");
+$X01ValeurMin = 60;
+$X01ValeurMax = 130;
+$Y01ValeurMin = 40;
+$Y01ValeurMax = 100;
+$PremierX =60;
+$PremierY =40;
+
+$XTol1 = 1;
+$YTol1 = 1;
+
+$BriserAxeX = 1;
+$BriserAxeY = 1;
+$Ajustement1 = 1;
+
+$GraphiqueT1 = "La note a l'examen selon";
+$GraphiqueT2 = "le temps pris pour faire l'examen";
+$AjustTitre = 3;
+
+$x61 = Compute("$X01ValeurMin-10");
+$x62 = Compute("$X01ValeurMax");
+$y61 = Compute("$Y01ValeurMin - 10");
+$y62 = Compute("$Y01ValeurMax");
+$AxeX = Compute("$Y01ValeurMin - 5");
+$AxeY = Compute("$X01ValeurMin - 5");
+
+$gridX60 = 16;
+$gridY60 = 14;
+$AffichageX60 =Compute("$x62 -5");
+$AffichageY60 =Compute("$y62 -5");
+$AffichageUniteX60 =Compute("$PremierX");
+$AffichageUniteY60 =Compute("$PremierY");
+
+$X01NombreUS = $n; 
+$X01VariableNom = "${BITALIC}Temps pris pour faire l'examen${EITALIC}"; 
+$X01Modalite1 = random(100, 120, $XTol1); 
+$X01Modalite2 = random(60, 100, $XTol1);
+$X01Modalite3 = random(60, 100, $XTol1);
+$X01Modalite4 = random(90, 120, $XTol1);
+$X01Modalite5 = 120 ;
+$X01Modalite6 = random(60, 100, $XTol1);
+$X01Modalite7 = random(100, 120, $XTol1);
+$X01Modalite8 = 120;
+$X01Modalite9 = random(60,100, $XTol1);
+$X01Modalite10 = random(100,120, $XTol1);
+$Y01NombreUS = $n; 
+$Y01VariableNom = "${BITALIC}Note à l'examen${EITALIC}"; 
+$Y01Modalite1 = random(40, 95, $YTol1); 
+$Y01Modalite2 = random(40, 95, $YTol1);
+$Y01Modalite3 = random(40, 95, $YTol1);
+$Y01Modalite4 = random(40, 95, $YTol1);
+$Y01Modalite5 = random(40, 95, $YTol1);
+$Y01Modalite6 = random(40, 95, $YTol1);
+$Y01Modalite7 = random(40, 95, $YTol1);
+$Y01Modalite8 = random(40,95, $YTol1);
+$Y01Modalite9 = random(40,95, $YTol1);
+$Y01Modalite10 = random(40,95, $YTol1);
+}
+
+@X01VecteurBaseDonnee = ( $X01Modalite1, $X01Modalite2, $X01Modalite3, $X01Modalite4, $X01Modalite5, $X01Modalite6, $X01Modalite7, $X01Modalite8, $X01Modalite9, $X01Modalite10);
+$X01moyenneTemp1 = 0; 
+$X01i = 0;
+do
+{$X01moyenneTemp2 = Compute("$X01VecteurBaseDonnee[$X01i] + $X01moyenneTemp1");
+$X01moyenneTemp1 = $X01moyenneTemp2;
+$X01i++}
+ while ($X01i<$X01NombreUS);
+$X01moyennet = Compute("$X01moyenneTemp1/$X01NombreUS");
+$X01moyenne = sprintf($PrecisionMesureCalculatrice,"$X01moyennet ");
+$X01VarianceTemp1 = 0; 
+$X01i = 0;
+do
+{$X01VarianceTemp2 = Compute("($X01VecteurBaseDonnee[$X01i] - $X01moyenne)^2+ $X01VarianceTemp1");
+$X01VarianceTemp1 =$X01VarianceTemp2;
+$X01i++}
+ while ($X01i<$X01NombreUS);
+$X01EcartypePopulationt = Compute("($X01VarianceTemp1/$X01NombreUS)^0.5");
+$X01EcartypePopulation = sprintf($PrecisionMesureCalculatrice,"$X01EcartypePopulationt");
+$X01EcartypeEchantillont = Compute("($X01VarianceTemp1/($X01NombreUS - 1))^0.5");
+$X01EcartypeEchantillon = sprintf($PrecisionMesureCalculatrice,"$X01EcartypeEchantillont");
+#Variable Y
+@Y01VecteurBaseDonnee = ( $Y01Modalite1, $Y01Modalite2, $Y01Modalite3, $Y01Modalite4, $Y01Modalite5, $Y01Modalite6, $Y01Modalite7, $Y01Modalite8, $Y01Modalite9, $Y01Modalite10);
+$Y01moyenneTemp1 = 0; 
+$Y01i = 0;
+do
+{$Y01moyenneTemp2 = Compute("$Y01VecteurBaseDonnee[$Y01i] + $Y01moyenneTemp1");
+$Y01moyenneTemp1 = $Y01moyenneTemp2;
+$Y01i++}
+ while ($Y01i<$Y01NombreUS);
+$Y01moyennet = Compute("$Y01moyenneTemp1/$Y01NombreUS");
+$Y01moyenne = sprintf($PrecisionMesureCalculatrice,"$Y01moyennet ");
+$Y01VarianceTemp1 = 0; 
+$Y01i = 0;
+do
+{$Y01VarianceTemp2 = Compute("($Y01VecteurBaseDonnee[$Y01i] - $Y01moyenne)^2+ $Y01VarianceTemp1");
+$Y01VarianceTemp1 =$Y01VarianceTemp2;
+$Y01i++}
+ while ($Y01i<$Y01NombreUS);
+$Y01EcartypePopulationt = Compute("($Y01VarianceTemp1/$Y01NombreUS)^0.5");
+$Y01EcartypePopulation = sprintf($PrecisionMesureCalculatrice,"$Y01EcartypePopulationt");
+$Y01EcartypeEchantillont = Compute("($Y01VarianceTemp1/($Y01NombreUS - 1))^0.5");
+$Y01EcartypeEchantillon = sprintf($PrecisionMesureCalculatrice,"$Y01EcartypeEchantillont");
+
+
+#Récupérer les moyennes et écarts types
+$MoyenneX = $X01moyenne;
+$EcarttypeX = $X01EcartypeEchantillon;
+$MoyenneY = $Y01moyenne;
+$EcarttypeY = $Y01EcartypeEchantillon;
+
+#Calculer Somme XY
+$SommeXYTemp1 = 0; 
+$Sommei = 0;
+do
+{
+$SommeXYTemp4 = Compute("$X01VecteurBaseDonnee[$Sommei]"); 
+$SommeXYTemp3 = Compute("$Y01VecteurBaseDonnee[$Sommei]"); 
+$SommeXYTemp2 = Compute("($SommeXYTemp3) * ($SommeXYTemp4) + $SommeXYTemp1");
+$SommeXYTemp1 = $SommeXYTemp2;
+$Sommei++}
+ while ($Sommei<$n);
+$SommeXY = sprintf($PrecisionMesureCalculatrice,"$SommeXYTemp1 ");
+
+
+$CorLint = Compute("($SommeXY - ($n*$MoyenneX*$MoyenneY))/(($n-1)*$EcarttypeX*$EcarttypeY)");
+$CorLinN = Compute("($SommeXY - ($n*$MoyenneX*$MoyenneY))");
+$CorLinD = Compute("(($n-1)*$EcarttypeX*$EcarttypeY)");
+
+$CorLin = sprintf($PrecisionMesureCoefLin,"$CorLint");
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Une enquête a été menée auprès $VecteurContexte[3]. Les séries statistiques ci-dessous représentent les données recueillies. 
+$PAR
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+  AlignedRow(["${BBOLD}$VecteurContexte[0]${EBOLD}","${BBOLD}$VecteurContexte[1]${EBOLD}"], align => CENTER, separation=>0).
+ AlignedRow(["$X01VecteurBaseDonnee[$AffichageBD[0]]","$Y01VecteurBaseDonnee[$AffichageBD[0]]"], align => CENTER, separation=>0).
+ AlignedRow(["$X01VecteurBaseDonnee[$AffichageBD[1]]","$Y01VecteurBaseDonnee[$AffichageBD[1]]"], align => CENTER, separation=>0).
+ AlignedRow(["$X01VecteurBaseDonnee[$AffichageBD[2]]","$Y01VecteurBaseDonnee[$AffichageBD[2]]"], align => CENTER, separation=>0).
+ AlignedRow(["$X01VecteurBaseDonnee[$AffichageBD[3]]","$Y01VecteurBaseDonnee[$AffichageBD[3]]"], align => CENTER, separation=>0).
+ AlignedRow(["$X01VecteurBaseDonnee[$AffichageBD[4]]","$Y01VecteurBaseDonnee[$AffichageBD[4]]"], align => CENTER, separation=>0).
+ AlignedRow(["$X01VecteurBaseDonnee[$AffichageBD[5]]","$Y01VecteurBaseDonnee[$AffichageBD[5]]"], align => CENTER, separation=>0).
+ AlignedRow(["$X01VecteurBaseDonnee[$AffichageBD[6]]","$Y01VecteurBaseDonnee[$AffichageBD[6]]"], align => CENTER, separation=>0).
+EndTable()\}
+$ECENTER
+$PAR ${BBOLD}Question : ${EBOLD} Calculer le coefficient de corrélation linéaire.
+$PAR $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE ${BITALIC} r ${EITALIC} =  \{ans_rule(8)\}
+
+$PAR Note : Faire les calculs en arrondissant toutes les mesures statistiques à trois décimales. 
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($CorLin, tol => 0.000001, tolType => "absolute"));
+#ANS(num_cmp($CorLin));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Le calcul des mesures statistiques se fait à l'aide de la calculatrice en choisissant le mode Régression linéaire. Il y a $n couples de données \(\displaystyle{(X, Y)}\). Voici les mesures statistiques calculés :
+$PAR
+$BCENTER
+\{BeginTable(border=>0,tex_border=>"2pt", spacing=>4, padding=>4).
+ AlignedRow(["\(\displaystyle{n = $n}\) "," $SPACE", " \(\displaystyle{\overline{x} = $MoyenneX}\)"," $SPACE",  "\(\displaystyle{s_{X} = $EcarttypeX}\)"], align => CENTER, separation=>0).
+ AlignedRow(["\(\displaystyle{\sum{XY} = $SommeXY}\)"," $SPACE", "\(\displaystyle{\overline{y} = $MoyenneY}\)"," $SPACE",  "\(\displaystyle{s_{Y} = $EcarttypeY}\) "], align => CENTER, separation=>0).
+EndTable()\}
+$ECENTER
+$PAR
+Alors le calcul du coefficient de corrélation linéaire est le suivant :
+$BR
+$SPACE $SPACE $SPACE $SPACE \(\displaystyle{r = \frac{\sum{XY} - n \cdot\overline{x}\cdot\overline{y}}{(n - 1)\cdot s_{X}\cdot s_{Y} }
+= \frac{$SommeXY - ($n\cdot $MoyenneX\cdot $MoyenneY)}{($n-1)\cdot $EcarttypeX\cdot $EcarttypeY} = \frac{$CorLinN}{$CorLinD} = $CorLin 
+}\) 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+ENDDOCUMENT(); 

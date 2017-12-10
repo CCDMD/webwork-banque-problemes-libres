@@ -1,0 +1,350 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('diagramme en bâtons', 'diagramme à bandes', 'fréquence absolue', 'graphique', 'mesure de dispersion', 'mesure de tendance centrale', 'modalité', 'mode', 'moyenne', 'variable', 'variable quantitative discrète', 'écart type', 'échantillon', 'échelle de rapport')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl","PGauxiliaryFunctions.pl",
+"PGcourse.pl","unionTables.pl","parserPopUp.pl", "PGchoicemacros.pl"
+);
+
+
+COMMENT("Niveau de difficulté : Facile. Calculer les mesures statistiques appropriées à partir du graphique (avec les effectifs uniquement). La variable est discrète (3 valeurs). Il y a 4 contextes. Chaque valeur peut avoir entre 4 et 15 unités statistiques. Aucun effectif n'est nul. La solution n'a pas été programmée. Les réponses doivent absolument être arrondies selon les spécifications de la question.");
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$TypeContexte = random(0,3);
+
+#Définir la précision des mesures statistiques calculées avec la calculatrice
+$PrecisionMesureCalculatrice = "%0.3f";
+
+$refreshCachedImages = 1;
+
+#Les effectifs en X et Y sont communs à tous les contextes.
+#Variable Y est utilisé
+if ($TypeContexte == 0)
+{@VecteurContexte = ("X : Sexe", "Nombre de $BR téléphones cellulaires", "Répartition des étudiants selon $BR le nombre de téléphones cellulaires", "d'étudiants afin de connaitre le nombre de téléphones cellulaires achetés depuis deux ans", "afin de connaitre le nombre de téléphones cellulaires achetés depuis deux ans");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("0", "1", "2 et plus");
+@Y01VecteurModaliteG = ("0", "1", "2 et plus", "Nombre de téléphones cellulaires");
+@Y01VecteurModaliteCode = ("0", "1", "2");
+@Y01VecteurModaliteValeur = (0, 1, 2);
+@graphique60T = ("Répartition des étudiants selon", "le nombre de téléphones cellulaires");
+@graphique60T = ("Repartition des etudiants selon", "le nombre de telephones cellulaires");
+}
+elsif ($TypeContexte == 1)
+{@VecteurContexte = ("X : Sexe", "Nombre $BR de sorties", "Répartition des étudiants selon $BR le nombre de sorties au cinéma", "d'étudiants afin de connaitre le nombre de sorties au cinéma faites durant le mois passé", "afin de connaitre le nombre de sorties au cinéma faites durant le mois passé");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("0", "1", "2 et plus");
+@Y01VecteurModaliteG = ("0", "1", "2 et plus", "Nombre de sorties");
+@Y01VecteurModaliteCode = ("0", "1", "2");
+@Y01VecteurModaliteValeur = (0, 1, 2);
+@graphique60T = ("Répartition des étudiants selon", "le nombre de sorties au cinéma");
+@graphique60T = ("Repartition des etudiants selon", "le nombre de sorties au cinema");
+}
+elsif ($TypeContexte == 2)
+{@VecteurContexte = ("X : Sexe", "Nombre $BR de cafés", "Répartition des étudiants selon $BR le nombre de cafés achetés au café étudiant", "d'étudiants afin de connaitre le nombre de cafés achetés au café étudiant durant une journée scolaire", "étudiantes et étudiants afin de connaitre le nombre de cafés acheté au café étudiant durant une journée scolaire");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("0", "1", "2 et plus");
+@Y01VecteurModaliteG = ("0", "1", "2 et plus", "Nombre de cafes");
+@Y01VecteurModaliteCode = ("0", "1", "2");
+@Y01VecteurModaliteValeur = (0, 1, 2);
+@graphique60T = ("Répartition des étudiants selon", "le nombre de cafés");
+@graphique60T = ("Repartition des etudiants selon", "le nombre de cafes");
+}
+elsif ($TypeContexte == 3)
+{@VecteurContexte = ("X : Sexe", "Nombre $BR de repas", "Répartition des étudiants selon $BR le nombre de repas pris à la cafétéria la semaine dernière", "d'étudiants afin de connaitre le nombre de repas pris à la cafétéria la semaine dernière", "afin de connaitre le nombre de repas pris à la cafétéria la semaine dernière");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("0", "1", "2 et plus");
+@Y01VecteurModaliteG = ("0", "1", "2 et plus", "Nombre de repas");
+@Y01VecteurModaliteCode = ("0", "1", "2");
+@Y01VecteurModaliteValeur = (0, 1, 2);
+@graphique60T = ("Répartition des étudiants selon", "le nombre de repas");
+@graphique60T = ("Repartition des etudiants selon", "le nombre de repas");
+}
+
+
+#Calcul des effectifs en X et Y
+$Z01Effectif11 = random(5,15); 
+$Z01Effectif12 = random(5,15); 
+$Z01Effectif13 = random(5,15);
+
+
+if ($Z01Effectif11 == $Z01Effectif12)
+{$Z01Effectif11++;
+$Z01Effectif12--;}
+
+if ($Z01Effectif11 == $Z01Effectif13)
+{$Z01Effectif11++;
+$Z01Effectif13--;}
+
+if ($Z01Effectif12 == $Z01Effectif13)
+{$Z01Effectif13++;
+$Z01Effectif12--;}
+
+
+$Z01Effectif31 = 0; 
+$Z01Effectif32 = 0; 
+$Z01Effectif33 = 0;
+
+
+$Z01EffectifTotal1 = Compute("$Z01Effectif11 + $Z01Effectif12 + $Z01Effectif13");
+
+@Z01Reponse = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13, $Z01EffectifTotal1);
+
+
+
+#Graphique
+#@x60 = (-2, 14, 2, 5, 8, 10);
+@x60 = (-3, 15, 3, 6, 9, 11);
+@x60 = (-3, 12, 3, 6, 9, 11);
+@VecteurCouleur = (red,blue,black);
+@CompteurCouleur = shuffle(3);
+
+@Couleur60 = ($VecteurCouleur[$CompteurCouleur[0]], black);
+
+$x60Titre = 6;
+
+@Valeur60 = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13);
+
+
+#Trouver le max
+$Maxy60temp = $Valeur60[0];
+$temp60i = 0;
+do
+{$Maxy60temp1 = max($Maxy60temp,$Valeur60[$temp60i+1]); 
+$Maxy60temp = $Maxy60temp1;
+$temp60i++;}
+ while ($temp60i<2);
+
+if ($Maxy60temp < 7)
+{$Maxy60 = 6;}
+else
+{$Maxy60 = $Maxy60temp;}
+
+
+if ($Maxy60 <= 10)
+{@y60 = (-1, $Maxy60 +3, 1, 4, 6, 8, 10);
+$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'grid'=>[5,$Maxy60+4]);}
+elsif ($Maxy60 >= 20)
+{@y60 = (-3, $Maxy60 +3, 1, 4, 6, 8, 10);
+$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'grid'=>[5,$Maxy60+6]);}
+else
+{@y60 = (-2, $Maxy60 +3, 1, 4, 6, 8, 10);
+$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'grid'=>[5,$Maxy60+5]);}
+
+#$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'ticks'=>[0,$Maxy60+5]);
+#$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0]);
+
+$graphique60 -> lb('reset');
+
+#Titre et unités sur Y
+if ($Maxy60 >= 20)
+{$graphique60 -> lb(new Label ( $x60Titre,$y60[1],$graphique60T[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60Titre,$y60[1]-1.5,$graphique60T[1],'black','center','top'));
+#$graphique60 -> lb(new Label ( 0,$y60[1]-4,"Effectif",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-3,"Nombre",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-4.5,"d'etu-",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-6,"diants",'black','right','top'));
+#Afficher l'unité sur Y
+$graphique60 -> lb(new Label ( 0,5,5,'black','right','middle'));
+$graphique60 -> lb(new Label ( 0,10,10,'black','right','middle'));
+$graphique60 -> lb(new Label ( 0,15,15,'black','right','middle'));
+if ($Maxy60 > 25)
+{$graphique60 -> lb(new Label ( 0,20,20,'black','right','middle'));}
+$graphique60 -> lb(new Label ( 0,$y60[2],$y60[2],'black','right','middle'));
+#Afficher les modalités sur X
+$graphique60 -> lb(new Label ( $x60[2],0,$Y01VecteurModaliteG[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[3],0,$Y01VecteurModaliteG[1],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[4],0,$Y01VecteurModaliteG[2],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[3], -1,$Y01VecteurModaliteG[3],'black','center','top'));
+
+}
+elsif ($Maxy60 <= 10)
+{$graphique60 -> lb(new Label ( $x60Titre,$y60[1]-0.5,$graphique60T[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60Titre,$y60[1]-1.1,$graphique60T[1],'black','center','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-1,"Nombre",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-1.5,"d'etu-",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-2,"diants",'black','right','top'));
+#Afficher l'unité sur Y
+$graphique60 -> lb(new Label ( 0,$y60[2],$y60[2],'black','right','middle'));
+if ($Maxy60 >  5)
+{$graphique60 -> lb(new Label ( 0,5,5,'black','right','middle'));}
+#Afficher les modalités sur X
+$graphique60 -> lb(new Label ( $x60[2],0,$Y01VecteurModaliteG[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[3],0,$Y01VecteurModaliteG[1],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[4],0,$Y01VecteurModaliteG[2],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[3], -0.5,$Y01VecteurModaliteG[3],'black','center','top'));
+
+}
+else
+{$graphique60 -> lb(new Label ( $x60Titre,$y60[1],$graphique60T[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60Titre,$y60[1]-1,$graphique60T[1],'black','center','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-1,"Nombre",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-2,"d'etu-",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[1]-3,"diants",'black','right','top'));
+#Afficher l'unité sur Y
+$graphique60 -> lb(new Label ( 0,5,5,'black','right','middle'));
+$graphique60 -> lb(new Label ( 0,10,10,'black','right','middle'));
+if ($Maxy60 >  16)
+{$graphique60 -> lb(new Label ( 0,15,15,'black','right','middle'));}
+
+$graphique60 -> lb(new Label ( 0,$y60[2],$y60[2],'black','right','middle'));
+#Afficher les modalités sur X
+$graphique60 -> lb(new Label ( $x60[2],0,$Y01VecteurModaliteG[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[3],0,$Y01VecteurModaliteG[1],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[4],0,$Y01VecteurModaliteG[2],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[3], -1,$Y01VecteurModaliteG[3],'black','center','top'));
+}
+
+
+$Ajust60 = 0.5;
+$Epaisseur60 = 1;
+
+#Modalité 1 de Y avec 1 de X
+if ($Valeur60[0] != 0)
+{$graphique60->moveTo($x60[2]-$Ajust60,0);
+$graphique60->lineTo($x60[2]-$Ajust60,$Valeur60[0],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[2]+$Ajust60,$Valeur60[0],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[2]+$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[2]-$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60-> fillRegion([$x60[2]-0.1,0.1,$Couleur60[0]]);}
+#Modalité 2 de Y avec 1 de X
+if ($Valeur60[1] != 0)
+{$graphique60->moveTo($x60[3]-$Ajust60,0);
+$graphique60->lineTo($x60[3]-$Ajust60,$Valeur60[1],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[3]+$Ajust60,$Valeur60[1],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[3]+$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[3]-$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60-> fillRegion([$x60[3]-0.1,0.1,$Couleur60[0]]);}
+#Modalité 3 de Y avec 1 de X
+if ($Valeur60[2] != 0)
+{$graphique60->moveTo($x60[4]-$Ajust60,0);
+$graphique60->lineTo($x60[4]-$Ajust60,$Valeur60[2],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[4]+$Ajust60,$Valeur60[2],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[4]+$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[4]-$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60-> fillRegion([$x60[4]-0.1,0.1,$Couleur60[0]]);}
+
+$imageG60 = image(insertGraph($graphique60),width =>350,height=>250,tex_size=>350);
+
+#Déterminer le mode pour Modalité 1 de X
+if ($Z01Effectif11 == $Z01Effectif12)
+{if ($Z01Effectif11 == $Z01Effectif13)
+{#Les trois effectifs sont identiques
+$RepPopUp1 = PopUp(["Sélectionner", "$Z01Effectif11", "$Z01Effectif12", "$Z01Effectif13", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Bimodale", "Trimodale", "Aucun"], "Trimodale");}
+elsif ($Z01Effectif11 >$Z01Effectif13)
+{#Les deux sont plus élevés
+$RepPopUp1 = PopUp(["Sélectionner", "$Z01Effectif11", "$Z01Effectif12", "$Z01Effectif13", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Bimodale", "Trimodale", "Aucun"], "Bimodale");}
+else
+{#13 est le mode
+$RepPopUp1 = PopUp(["Sélectionner", "$Z01Effectif11", "$Z01Effectif12", "$Z01Effectif13", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Bimodale", "Trimodale", "Aucun"], "$Y01VecteurModalite[2]");}
+}
+elsif ($Z01Effectif11 == $Z01Effectif13)
+{#11 = 13 et différent de 12
+if ($Z01Effectif11 >$Z01Effectif12)
+{#Les deux sont plus élevés
+$RepPopUp1 = PopUp(["Sélectionner", "$Z01Effectif11", "$Z01Effectif12", "$Z01Effectif13", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Bimodale", "Trimodale", "Aucun"], "Bimodale");}
+else
+{#12 est le mode
+$RepPopUp1 = PopUp(["Sélectionner", "$Z01Effectif11", "$Z01Effectif12", "$Z01Effectif13", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Bimodale", "Trimodale", "Aucun"], "$Y01VecteurModalite[1]");}
+}
+elsif ($Z01Effectif12 == $Z01Effectif13)
+{#12 = 13 et différent de 11
+if ($Z01Effectif12 >$Z01Effectif11)
+{#Les deux sont plus élevés
+$RepPopUp1 = PopUp(["Sélectionner", "$Z01Effectif11", "$Z01Effectif12", "$Z01Effectif13", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Bimodale", "Trimodale", "Aucun"], "Bimodale");}
+else
+{#11 est le mode
+$RepPopUp1 = PopUp(["Sélectionner", "$Z01Effectif11", "$Z01Effectif12", "$Z01Effectif13", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Bimodale", "Trimodale", "Aucun"], "$Y01VecteurModalite[0]");}
+}
+#Les trois sont différents
+elsif (($Z01Effectif11 > $Z01Effectif12) && ($Z01Effectif11 > $Z01Effectif13))
+{$RepPopUp1 = PopUp(["Sélectionner", "$Z01Effectif11", "$Z01Effectif12", "$Z01Effectif13", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Bimodale", "Trimodale", "Aucun"], "$Y01VecteurModalite[0]");}
+elsif (($Z01Effectif12 > $Z01Effectif11) && ($Z01Effectif12 > $Z01Effectif13))
+{$RepPopUp1 = PopUp(["Sélectionner", "$Z01Effectif11", "$Z01Effectif12", "$Z01Effectif13", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Bimodale", "Trimodale", "Aucun"], "$Y01VecteurModalite[1]");}
+elsif (($Z01Effectif13 > $Z01Effectif12) && ($Z01Effectif13 > $Z01Effectif11))
+{$RepPopUp1 = PopUp(["Sélectionner", "$Z01Effectif11", "$Z01Effectif12", "$Z01Effectif13", "$Y01VecteurModalite[0]", "$Y01VecteurModalite[1]", "$Y01VecteurModalite[2]", "Bimodale", "Trimodale", "Aucun"], "$Y01VecteurModalite[2]");}
+
+
+@Z11VecteurBaseDonnee = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13, $Z01EffectifTotal1);
+#Calculer la moyenne et l'écart type corrigé pour Groupe 1 de X
+$Z11moyenneTemp1 = 0; 
+$Z11i = 0;
+do
+{$Z11moyenneTemp2 = Compute("($Z11VecteurBaseDonnee[$Z11i]*$Y01VecteurModaliteValeur[$Z11i]) + $Z11moyenneTemp1");
+$Z11moyenneTemp1 = $Z11moyenneTemp2;
+$Z11i++}
+ while ($Z11i<3);
+$Z11moyennet = Compute("$Z11moyenneTemp1/$Z11VecteurBaseDonnee[3] ");
+$Z11moyenne = sprintf($PrecisionMesureCalculatrice,"$Z11moyennet ");
+#Variance
+$Z11VarianceTemp1 = 0; 
+$Z11i = 0;
+do
+{$Z11VarianceTemp2 = Compute("(($Y01VecteurModaliteValeur[$Z11i] - $Z11moyenne)^2)*$Z11VecteurBaseDonnee[$Z11i]+ $Z11VarianceTemp1");
+$Z11VarianceTemp1 =$Z11VarianceTemp2;
+$Z11i++}
+ while ($Z11i<3);
+$Z11EcartypePopulationt = Compute("($Z11VarianceTemp1/$Z11VecteurBaseDonnee[3] )^0.5");
+$Z11EcartypePopulation = sprintf($PrecisionMesureCalculatrice,"$Z11EcartypePopulationt");
+$Z11EcartypeEchantillont = Compute("($Z11VarianceTemp1/($Z11VecteurBaseDonnee[3]  - 1))^0.5");
+$Z11EcartypeEchantillon = sprintf($PrecisionMesureCalculatrice,"$Z11EcartypeEchantillont");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Voici le graphique illustrant une enquête qui a été menée auprès d'un échantillon de $Z01EffectifTotal1 étudiants $VecteurContexte[4].$PAR
+$BCENTER
+$imageG60
+$ECENTER
+
+$PAR
+
+${BBOLD}Question : ${EBOLD} Calculer les mesures statistiques ${BBOLD}appropriées${EBOLD}. Arrondir à trois décimales, s'il y a lieu.
+$PAR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow(["${BBOLD}Mesure statistique${EBOLD}", "${BBOLD}Valeur${EBOLD}"], align => CENTER, separation=>0).
+ 
+ AlignedRow(["Mode",$RepPopUp1->menu()], align => CENTER, 
+separation=>0).
+AlignedRow(["Moyenne",ans_rule(5)], align => CENTER, separation=>0).
+ AlignedRow(["Écart type",ans_rule(5)], align => CENTER, separation=>0).
+ EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($RepPopUp1->cmp() );
+ANS(num_cmp($Z11moyenne,tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($Z11EcartypeEchantillon,tol => 0.000001, tolType => "absolute"));
+
+
+
+ENDDOCUMENT(); 

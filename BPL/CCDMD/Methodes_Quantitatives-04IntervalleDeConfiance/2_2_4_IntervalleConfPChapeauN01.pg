@@ -1,0 +1,290 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Estimation par intervalle de confiance)
+## KEYWORDS('estimation ponctuelle', 'intervalle de confiance', 'marge d\'erreur', 'niveau de confiance', 'proportion')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl",
+"PGcourse.pl", "PGstatisticsmacros.pl", "PGnumericalmacros.pl", "unionTables.pl", "parserPopUp.pl","PGchoicemacros.pl", "unionLists.pl");
+
+COMMENT("Niveau de difficulté: Moyen. Il y a 5 contextes. PChapeau ne suit pas un modèle normal. ");
+
+TEXT(beginproblem());
+
+Context()->strings->add(NA=>{}, dne => {alias => "NA"} );
+$refreshCachedImages = 1;
+
+#Choisir le niveau de confiance
+$NiveauConfiance = list_random(90,95,99);
+#$NiveauConfiance = random(80, 99);
+
+#Choisir le contexte du problème
+$TypeContexte = random(0,4);
+
+#Choisir la façon de poser la question. Uniquement 2 est correct.
+$Question1presentationType = 2;
+
+#Facteur de correction
+#0 = Ne jamais mentionner le facteur de correction dans la solution et ne jamais en avoir.
+#1 = Mentionner le facteur de correction dans la solution et ne jamais en avoir.
+#2 = Mentionner le facteur de correction dans la solution et parfois en avoir.
+#3 = Mentionner le facteur de correction dans la solution et toujours en avoir.
+$TypeFC = 2;
+
+#PChapeau suit un modèle normal car la taille de l'échantillon est 
+#supérieure ou égale à 30 et les conditions sont toujours satisfaites
+
+#Afficher les pourcentages à deux décimales ou à une décimale ou au autre
+#Présentement il est arrondi à deux décimales
+$PrecisionPourcentage = "%0.2f";
+
+#Déterminer le contexte, sauf la taille de l'échantillon, c'est plus loin
+if ($TypeContexte == 0)
+{#Pourcentage Retard
+$TaillePopulation = random(2000, 3000);
+$Biais = 0;}
+elsif ($TypeContexte == 1)
+{#Pourcentage Retard
+$TaillePopulation = random(4000, 6000);
+$Biais = 0;}
+elsif ($TypeContexte == 2)
+{#Pourcentage d'étudiants ayant une voiture neuve
+$TaillePopulation = random(2000, 3000);
+$Biais = 0;}
+elsif ($TypeContexte == 3)
+{#Pourcentage d'étudiants qui viennent à pied au cégep
+$TaillePopulation = random(2000, 5000);
+$Biais = 0;}
+elsif ($TypeContexte == 4)
+{#Pièces défectueuses
+$TaillePopulation = random(2000, 5000);
+$Biais = 0;}
+
+#Variable commune
+$PrecisionVariableX = "%0.1f";
+$PrecisionVariableXc = Compute("0.1");
+
+
+$TailleEchantillon = random(40,50); 
+$NombreEchantillont = random(1,4);
+
+
+if ($Biais == 1)
+{#Le pourcentage est élevé
+$NombreEchantillon = Compute("$TailleEchantillon - $NombreEchantillont");
+$Pechantillont = Compute("(($NombreEchantillon)/$TailleEchantillon)*100");
+$Pechantillon = sprintf("%0.1f","$Pechantillont");}
+else
+{#Le pourcentage est élevé
+$NombreEchantillon = $NombreEchantillont;
+$Pechantillont = Compute("(($NombreEchantillon)/$TailleEchantillon)*100");
+$Pechantillon = sprintf("%0.1f","$Pechantillont");}
+
+
+#Déterminer la question du contexte = Besoin de la taille de l'échantillon
+if ($TypeContexte == 0)
+{#Pourcentage Retard
+$Question1contexte = "Un représentant de l'association étudiante veut estimer, parmi les $TaillePopulation étudiants d'un cégep, le pourcentage des étudiants qui sont arrivés en retard à leurs cours de la semaine passée. Il prélève un échantillon (sans remise) de $TailleEchantillon personnes inscrites à ce cégep et il obtient que $Pechantillon % des étudiants de l'échantillon sont arrivés en retard à leurs cours de la semaine passée.";
+$EstimerQuoi1 = "le pourcentage des étudiants qui sont arrivés en retard à leurs cours de la semaine passée";
+$EstimerQuoi2 = "du pourcentage d'étudiants de cet échantillon";}
+elsif ($TypeContexte == 1)
+{#Pourcentage Retard
+$Question1contexte = "Dans une entreprise, le responsable du service des ressources humaines veut estimer, parmi ses $TaillePopulation employés, le pourcentage des employés qui sont arrivés en retard jeudi passé. Il prélève un échantillon (sans remise) de $TailleEchantillon personnes qui travaillent dans cette entreprise et il obtient que $Pechantillon % des employés de l'échantillon sont arrivés en retard jeudi passé.";
+$EstimerQuoi1 = "le pourcentage des employés qui sont arrivés en retard jeudi passé";
+$EstimerQuoi2 = "du pourcentage des employés de cet échantillon";}
+elsif ($TypeContexte == 2)
+{#Pourcentage d'étudiants ayant une voiture neuve
+$Question1contexte = "La responsable du stationnement veut estimer le pourcentage des $TaillePopulation étudiants d'un cégep qui ont acheté une voiture neuve cette année. Elle prélève un échantillon (sans remise) de $TailleEchantillon étudiants de ce cégep et elle obtient que $Pechantillon % des étudiants de l'échantillon ont acheté une voiture neuve cette année.";
+$EstimerQuoi1 = "le pourcentage d'étudiants qui ont acheté une voiture neuve cette année";
+$EstimerQuoi2 = "du pourcentage d'étudiants de cet échantillon";}
+elsif ($TypeContexte == 3)
+{#Pourcentage d'étudiants Skateboard
+$Question1contexte = "Une représentante de l'association étudiante veut estimer le pourcentage des $TaillePopulation étudiants d'un cégep qui viennent en planche à roulettes au cégep. Elle prélève un échantillon (sans remise) de $TailleEchantillon étudiants de ce cégep et elle obtient que $Pechantillon % des étudiants de l'échantillon viennent en planche à roulettes au cégep.";
+$EstimerQuoi1 = "le pourcentage d'étudiants qui viennent en planche à roulettes au cégep";
+$EstimerQuoi2 = "du pourcentage d'étudiants de cet échantillon";}
+elsif ($TypeContexte == 4)
+{#Pièces défectueuses
+$Question1contexte = "Dans une usine, la responsable du service de la qualité de la production veut estimer le pourcentage de pièces défectueuses parmi les $TaillePopulation pièces produites par une machine. Elle prélève un échantillon (sans remise) de $TailleEchantillon pièces produites par la machine et elle obtient que $Pechantillon % des pièces de l'échantillon sont défectueuses.";
+$EstimerQuoi1 = "le pourcentage de pièces défectueuses produites par la machine";
+$EstimerQuoi2 = "du pourcentage de pièces défectueuses de cet échantillon";}
+
+
+
+#Moyenne et écart type pour les cotes Z
+$Ecarttype1 = 1;
+$Moyenne1 = 0;
+
+#Calcul de la moyenne des X barre et de l'écart type des X barre
+$MoyennePchapeau = sprintf($PrecisionVariableX,"$Pechantillon");
+#Facteur de correction
+if ($BesoinFC == 0)
+{$EcarttypePchapeaut = Compute("($Pechantillon*(100- $Pechantillon)/($TailleEchantillon))^0.5");
+$EcarttypePchapeau = sprintf("%0.2f","$EcarttypePchapeaut");
+if ($TypeFC == 0)
+{#0 = Ne jamais mentionner le facteur de correction dans la solution et ne jamais en avoir.
+$Solution2FC = " \(\displaystyle{\sigma_{\widehat{p}} = \sqrt{\frac{\widehat{p} \cdot (100.0 - \widehat{p})}{n}}}\) $BR \(\displaystyle{ \sigma_{\widehat{p}} = \sqrt{\frac{($Pechantillon\cdot(100.0 - $Pechantillon)}{$TailleEchantillon}} = $EcarttypePchapeau}\) $BR Comme \(p\) est inconnu, \(\widehat{p}\) est utilisé.";}
+else
+{#Expliquer pourquoi il n'y a pas de facteur de correction
+$Solution2FC = " \(\displaystyle{\sigma_{\widehat{p}} = \sqrt{\frac{\widehat{p} \cdot (100.0 - \widehat{p})}{n}}}\) (Comme \(p\) est inconnu, \(\widehat{p}\) est utilisé.) $BR \(\displaystyle{ \sigma_{\widehat{p}} = \sqrt{\frac{$Pechantillon\cdot(100.0 - $Pechantillon)}{$TailleEchantillon}} = $EcarttypePchapeau}\) $BR Le facteur de correction \(\displaystyle{\sqrt{\frac{N - n}{N - 1}}}\) n'est pas utilisé car l'échantillonnage se fait sans remise et \(\displaystyle{ N \ge 20n \ ($TaillePopulation \ge 20 \cdot $TailleEchantillon = $TestCalcul)}\).";}
+}
+else
+{$EcarttypePchapeaut = Compute("(($Pechantillon*(100- $Pechantillon)/($TailleEchantillon))^0.5)*(($TaillePopulation- $TailleEchantillon)/($TaillePopulation-1))^0.5");
+$EcarttypePchapeau = sprintf("%0.2f","$EcarttypePchapeaut");
+$Solution2FC = 
+"Le facteur de correction \(\displaystyle{\sqrt{\frac{N - n}{N - 1}}}\) doit être utilisé car l'échantillonnage se fait sans remise et \(\displaystyle{ N < 20n \ ($TaillePopulation < 20 \cdot $TailleEchantillon = $TestCalcul)}\). $BR \(\displaystyle{\sigma_{\widehat{p}} = \sqrt{\frac{\widehat{p} \cdot (100.0 - \widehat{p})}{n}} \times \sqrt{\frac{N - n}{N - 1}}}\) $BR (Comme \(p\) est inconnu, \(\widehat{p}\) est utilisé.) $BR \(\displaystyle{\sigma_{\widehat{p}} = \sqrt{\frac{$Pechantillon\cdot(100.0 - $Pechantillon)}{$TailleEchantillon}} \times \sqrt{\frac{$TaillePopulation - $TailleEchantillon}{$TaillePopulation - 1}} = $EcarttypePchapeau}\) ";}
+
+
+$MoyenneXc = $MoyennePchapeau;
+$EcarttypeXc = sprintf("%0.2f","$EcarttypePchapeaut");
+$GraphiqueSymboleA = "\{\displaystyle{\widehat{P}}\}";
+$SymboleXA = "\(\displaystyle{\widehat{P}}\)";
+
+if ( $NiveauConfiance == 90)
+{$CoteZ1 = Compute("-1.645");
+$CoteZ2 = Compute("1.645");}
+elsif ( $NiveauConfiance == 95)
+{$CoteZ1 = Compute("-1.96");
+$CoteZ2 = Compute("1.96");}
+elsif ( $NiveauConfiance == 99)
+{$CoteZ1 = Compute("-2.575");
+$CoteZ2 = Compute("2.575");}
+elsif ( $NiveauConfiance == 88)
+{$CoteZ1 = Compute("-1.555");
+$CoteZ2 = Compute("1.555");}
+else
+{$NiveauConfianceDivise = Compute("($NiveauConfiance/2)/100");
+$CoteZ2t = normal_distr($NiveauConfianceDivise, mean=>0, deviation=>1);
+$CoteZ2 = sprintf("%0.2f","$CoteZ2t");
+$CoteZ1t = Compute("-1*$CoteZ2");
+$CoteZ1 = sprintf("%0.2f","$CoteZ1t");}
+
+
+$EcartRept = Compute("$CoteZ2*$EcarttypeXc");
+$EcartRep = sprintf($PrecisionVariableX,"$EcartRept");
+
+$ValeurX2t=Compute("$MoyenneXc + $EcartRep");
+$ValeurX2 = sprintf($PrecisionVariableX,"$ValeurX2t");
+$ValeurX1t=Compute("$MoyenneXc - $EcartRep");
+$ValeurX1 = sprintf($PrecisionVariableX,"$ValeurX1t");
+
+
+#Type question
+if ($Question1presentationType == 0)
+{$Question1presentation = "Construire un intervalle de confiance autour $EstimerQuoi2 afin d'estimer $EstimerQuoi1 avec un niveau de confiance de $NiveauConfiance %.";}
+elsif ($Question1presentationType == 1)
+{$Question1presentation ="Construire un intervalle de confiance afin d'estimer $EstimerQuoi1 avec un niveau de confiance de $NiveauConfiance %.";}
+else
+{$Question1presentation = "Construire un intervalle de confiance afin d'estimer $EstimerQuoi1. Utiliser un niveau de confiance de $NiveauConfiance %.";}
+
+#Solution
+
+#Étape 1: Données du problème
+@CompteurNomParametre = (0,1,2);
+@CompteurNomStatistique = (0,1,2);
+@VecteurNomParametreRep2 = ("Taille \(\displaystyle{(\it{N})}\) = $TaillePopulation", "Pourcentage $NomVariable $BR dans la population \(\displaystyle{(p)}\) = inconnu", "Nombre $NomVariable $BR dans la population \(\displaystyle{(N_1)}\) = inconnu"); 
+@VecteurNomStatistiqueRep2 = ("Taille \(\displaystyle{(\it{n})}\) = $TailleEchantillon", "Pourcentage $NomVariable $BR dans l'échantillon \(\displaystyle{(\widehat{p})}\) = $Pechantillon", "Nombre $NomVariable $BR dans l'échantillon \(\displaystyle{(n_1)}\) = $NombreEchantillon"); 
+
+#Étape 2: Justification que Pchapeau suit un modèle normal
+#Solution Question b
+$Sol2test2 = Compute("$Pechantillon * $TailleEchantillon");
+$Sol2test3 = Compute("(100-$Pechantillon) * $TailleEchantillon");
+
+#Calcul étape 3
+$RisqueErreur = Compute("100.0 - $NiveauConfiance");
+$RisqueErreurDemi = Compute("$RisqueErreur/2");
+$RisqueErreurDemiTable = Compute("$RisqueErreurDemi/100");
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$Question1contexte 
+
+$PAR ${BBOLD}Question :${EBOLD} $Question1presentation
+
+$PAR
+L'intervalle de confiance est \{ ans_rule(10) \} \( \displaystyle{ \le p \le }\) \{ ans_rule(10) \}.
+
+$PAR ${BBOLD}Faire les calculs en arrondissant à deux décimales.${EBOLD} Arrondir la réponse à une décimale.  Écrire ${BBOLD}NA${EBOLD} dans les deux cases si l'estimation est impossible à faire. 
+END_TEXT
+Context()->normalStrings;
+
+$inconnu = Compute("NA");
+ANS($inconnu->cmp );
+ANS($inconnu->cmp );
+
+if ($Biais == 1)
+{#Le pourcentage est élevé
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+1) Identifier les données du problème.
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"1pt", spacing=>2, padding=>2).
+  AlignedRow(["${BBOLD}Paramètres de la population ${EBOLD}","${BBOLD}Statistiques de l'échantillon${EBOLD}"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[0]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[0]]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[1]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[1]]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[2]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[2]]"], align => CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+$PAR
+2) Justifier que la distribution des \(\displaystyle{\widehat{P}}\) (les proportions échantillonnales de taille $TailleEchantillon) suit un modèle normal et calculer \(\displaystyle{\sigma_{\widehat{p}}}\). 
+\{ BeginList("OL", type=>"a") \}
+$ITEM \(\displaystyle{\widehat{P} \sim N(\mu_{\widehat{p}}; {\sigma_{\widehat{p}}}^2)}\) parce que 
+$BR \(\displaystyle{n = $TailleEchantillon \ge 30,}\)
+$BR \(\displaystyle{np = $TailleEchantillon \cdot $Pechantillon = $Sol2test2 \ge 500,}\) 
+$BR \(\displaystyle{n(100-p) = $TailleEchantillon \cdot (100.0 - $Pechantillon) =  $Sol2test3 < 500. }\)
+$ITEMSEP
+$ITEM La troisième condition n'est pas satisfaite. Donc la distribution des \(\displaystyle{\widehat{P}}\) ne suit pas un modèle normal. Par conséquent, l'estimation n'est pas possible.
+\{ EndList("OL") \}
+$PAR
+3) Les calculs sont impossibles parce que la distribution des \(\displaystyle{\widehat{P}}\) ne suit pas un modèle normal.
+
+END_SOLUTION
+Context()->normalStrings;
+}
+else
+{#Le pourcentage est faible
+Context()->texStrings;
+BEGIN_SOLUTION
+
+1) Identifier les données du problème.
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"1pt", spacing=>2, padding=>2).
+  AlignedRow(["${BBOLD}Paramètres de la population ${EBOLD}","${BBOLD}Statistiques de l'échantillon${EBOLD}"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[0]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[0]]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[1]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[1]]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[2]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[2]]"], align => CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+$PAR
+2) Justifier que la distribution des \(\displaystyle{\widehat{P}}\) (les proportions échantillonnales de taille $TailleEchantillon) suit un modèle normal et calculer \(\displaystyle{\sigma_{\widehat{p}}}\). 
+\{ BeginList("OL", type=>"a") \}
+$ITEM \(\displaystyle{\widehat{P} \sim N(\mu_{\widehat{p}}; {\sigma_{\widehat{p}}}^2)}\) parce que 
+$BR \(\displaystyle{n = $TailleEchantillon \ge 30,}\)
+$BR \(\displaystyle{np = $TailleEchantillon \cdot $Pechantillon = $Sol2test2 < 500,}\) 
+$BR \(\displaystyle{n(100-p) = $TailleEchantillon \cdot (100.0 - $Pechantillon) =  $Sol2test3 \ge 500. }\)
+$ITEMSEP
+$ITEM La deuxième condition n'est pas satisfaite. Donc la distribution des \(\displaystyle{\widehat{P}}\) ne suit pas un modèle normal. Par conséquent, l'estimation n'est pas possible.
+\{ EndList("OL") \}
+$PAR
+3) Les calculs sont impossibles parce que la distribution des \(\displaystyle{\widehat{P}}\) ne suit pas un modèle normal.
+
+END_SOLUTION
+Context()->normalStrings;
+}
+ENDDOCUMENT(); 

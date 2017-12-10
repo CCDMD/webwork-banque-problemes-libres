@@ -1,0 +1,311 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('diagramme en bâtons', 'diagramme à bandes', 'fréquence absolue', 'fréquence relative', 'graphique', 'modalité', 'tableau', 'variable', 'variable qualitative', 'variable qualitative nominale', 'variable qualitative ordinale')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl","PGauxiliaryFunctions.pl",
+"PGcourse.pl","unionTables.pl","PGchoicemacros.pl"
+);
+
+
+COMMENT("Niveau de difficulté : Facile. Compléter le tableau de contingence (avec les effectifs et pourcentages) à partir d'un graphique ayant les pourcentages. La variable est qualitative (3 modalités). Il y a 4 contextes. Aucun effectif n'est nul. La solution n'a pas été programmée.");
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$TypeContexte = random(0,3);
+
+#Les effectifs en X et Y sont communs à tous les contextes.
+#Variable Y est utilisé
+
+$refreshCachedImages = 1;
+
+if ($TypeContexte == 0)
+{@VecteurContexte = ("X : Sexe", "Opinion", "Répartition des étudiants selon $BR l'opinion sur le nouveau projet de loi", "d'étudiants afin d'avoir leur opinion sur un nouveau projet de loi du gouvernement", "afin d'avoir leur opinion sur un nouveau projet de loi du gouvernement");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("En accord", "En désaccord", "Sans opinion");
+@Y01VecteurModaliteG = ("En accord", "En desaccord", "Sans opinion", "Opinion");
+@Y01VecteurModaliteCode = ("A", "D", "S");
+#Biais sur la série statistique en Y
+$Y01Biais = 0;
+@graphique60T = ("Répartition des étudiants selon", "l'opinion sur le nouveau projet de loi");
+@graphique60T = ("Repartition des etudiants selon", "l'opinion sur le nouveau projet de loi");
+}
+elsif ($TypeContexte == 1)
+{@VecteurContexte = ("X : Sexe", "Appareil", "Répartition des étudiants selon $BR l'appareil électronique utilisé pour faire leurs travaux scolaires", "d'étudiants afin de connaitre l'appareil électronique utilisé pour faire leurs travaux scolaires");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("Ordinateur portable", "Tablette", "Autre");
+@Y01VecteurModaliteG = ("Ordinateur portable", "Tablette", "Autre", "Appareil");
+@Y01VecteurModaliteCode = ("O", "T", "A");
+#Biais sur la série statistique en Y
+$Y01Biais = 1;
+@graphique60T = ("Répartition des étudiants selon", "l'appareil utilisé");
+@graphique60T = ("Repartition des etudiants selon", "l'appareil utilise");
+}
+elsif ($TypeContexte == 2)
+{@VecteurContexte = ("X : Sexe", "Lieu de résidence", "Répartition des étudiants selon $BR le lieu de résidence pendant l'année scolaire", "d'étudiants afin de connaitre leur lieu de résidence pendant l'année scolaire", "afin de connaitre leur lieu de résidence pendant l'année scolaire");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("Chez ses parents", "En résidence", "Autre");
+@Y01VecteurModaliteG = ("Chez ses parents", "En residence", "Autre", "Lieu");
+@Y01VecteurModaliteCode = ("P", "R", "A");
+#Biais sur la série statistique en Y
+$Y01Biais = 0;
+@graphique60T = ("Répartition des étudiants selon", "le lieu de résidence");
+@graphique60T = ("Repartition des etudiants selon", "le lieu de residence");
+}
+elsif ($TypeContexte == 3)
+{@VecteurContexte = ("X : Sexe", "Programme d'étude", "Répartition des étudiants selon $BR le programme d'étude", "d'étudiants afin de connaitre leur programme d'étude", "afin de connaitre leur programme d'étude");
+@X01VecteurModalite = ("Féminin", "Masculin");
+@X01VecteurModaliteG = ("Feminin", "Masculin");
+@X01VecteurModaliteCode = ("F", "M");
+@X01VecteurGroupe = ("Nombre$BR de filles","Pourcentage$BR de filles", "Nombre$BR de garçons", "Pourcentage$BR de garçons");
+@Y01VecteurModalite = ("Préuniversitaire", "Technique", "Autre");
+@Y01VecteurModaliteG = ("Preuniversitaire", "Technique", "Autre", "Programme");
+@Y01VecteurModaliteCode = ("P", "T", "A");
+#Biais sur la série statistique en Y
+$Y01Biais = 1;
+
+@graphique60T = ("Répartition des étudiants selon", "le programme d'étude");
+@graphique60T = ("Repartition des etudiants selon", "le programme d'etude");
+}
+
+
+#Calcul des effectifs en X et Y
+if ($Y01Biais == 0)
+{$Z01Pourcentage11t =random(20,40, 0.1);
+$Z01Pourcentage11 = sprintf("%0.1f","$Z01Pourcentage11t");
+$Z01Pourcentage13t =random(10,40, 0.1);
+$Z01Pourcentage13 = sprintf("%0.1f","$Z01Pourcentage13t");
+$Z01Pourcentage12t = Compute("100 - $Z01Pourcentage13 - $Z01Pourcentage11");
+$Z01Pourcentage12 = sprintf("%0.1f","$Z01Pourcentage12t");
+$Z01PourcentageTotal1t = Compute("$Z01Pourcentage11 + $Z01Pourcentage12 + $Z01Pourcentage13");
+$Z01PourcentageTotal1 = sprintf("%0.1f","$Z01PourcentageTotal1t ");
+
+}
+else
+{$Z01Pourcentage11t =random(30,60, 0.1);
+$Z01Pourcentage11 = sprintf("%0.1f","$Z01Pourcentage11t");
+$Z01Pourcentage13t =random(5,10, 0.1);
+$Z01Pourcentage13 = sprintf("%0.1f","$Z01Pourcentage13t");
+$Z01Pourcentage12t = Compute("100 - $Z01Pourcentage13 - $Z01Pourcentage11");
+$Z01Pourcentage12 = sprintf("%0.1f","$Z01Pourcentage12t");
+$Z01PourcentageTotal1t = Compute("$Z01Pourcentage11 + $Z01Pourcentage12 + $Z01Pourcentage13");
+$Z01PourcentageTotal1 = sprintf("%0.1f","$Z01PourcentageTotal1t ");
+#Calcul des pourcentages
+}
+
+
+
+@Z01ReponsePourcentage = ($Z01Pourcentage11, $Z01Pourcentage12, $Z01Pourcentage13, $Z01PourcentageTotal1);
+
+
+#Choisir un nombre fictif d'Unité statistique
+
+$n1 = random(12,40);
+$n2 = random(12,40);
+
+if ($n1 == $n2)
+{$n1++;
+$n2--;}
+
+
+$Z01Effectif11t = Compute("($Z01Pourcentage11*$n1)/100");
+$Z01Effectif11 = sprintf("%0.0f","$Z01Effectif11t ");
+$Z01Effectif12t = Compute("($Z01Pourcentage12*$n1)/100");
+$Z01Effectif12 = sprintf("%0.0f","$Z01Effectif12t ");
+$Z01Effectif13t = Compute("($Z01Pourcentage13*$n1)/100");
+$Z01Effectif13 = sprintf("%0.0f","$Z01Effectif13t ");
+
+
+$Z01EffectifTotal1 = Compute("$Z01Effectif11 + $Z01Effectif12 + $Z01Effectif13");
+
+@Z01Reponse = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13, $Z01EffectifTotal1);
+
+
+#Graphique
+#@x60 = (-2, 14, 2, 5, 8, 10);
+#@x60 = (-3, 15, 3, 6, 9, 11);
+@x60 = (-3, 12, 3, 6, 9, 9);
+$TempCouleur = random(0,2);
+if ($TempCouleur == 0)
+{@Couleur60 = (blue, black);}
+elsif  ($TempCouleur == 1)
+{@Couleur60 = (red, black);}
+else
+{@Couleur60 = (black, black);}
+
+$x60Titre = 6;
+
+@Valeur60 = ($Z01Pourcentage11, $Z01Pourcentage12, $Z01Pourcentage13);
+
+
+#Trouver le max
+$Maxy60temp = $Valeur60[0];
+$temp60i = 0;
+do
+{$Maxy60temp1 = max($Maxy60temp,$Valeur60[$temp60i+1]); 
+$Maxy60temp = $Maxy60temp1;
+$temp60i++;}
+ while ($temp60i<2);
+
+if ($Maxy60temp < 7)
+{$Maxy60 = 6;}
+else
+{$Maxy60 = $Maxy60temp;}
+
+
+
+
+if ($Maxy60 <= 30)
+{#MinY, MaxY, Unité, affichage Nom Variable X, affichage T1, T2, Y1, Y2, Y3, Y4
+@y60 = (-5, 35, 5, -2, 34, 32.5, 32, 30, 28, 26,24);
+#Haut, bas
+@Boite60 = (25, 20, 24, 22);
+@Ajust601 = ($x60[1]-4.5, 23.1, 0.3, 0.5, 0.1);
+@Ajust602 = ($x60[1]-4.5, 21.5, 0.3, 0.5, 0.1);
+$Fill60 = 1;
+$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'grid'=>[5,8]);}
+elsif (($Maxy60 > 30) && ($Maxy60 <= 60))
+{@y60 = (-10, 70, 10, -5, 68, 65, 64, 61, 58,55);
+#Haut, bas
+@Boite60 = (55, 43, 52.2, 47.2); 
+@Ajust601 = ($x60[1]-4.5, 51, 0.3, 0.7, 0.1);
+@Ajust602 = ($x60[1]-4.5, 46, 0.3, 0.7, 0.1);
+$Fill60 = 1;
+$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'grid'=>[5,8]);}
+else
+{@y60 = (-10, 110, 10, -5, 107, 103, 103, 98,92, 86);
+#Haut, bas, modalité1, modalité2
+@Boite60 = (90, 70, 86, 77); 
+@Ajust601 = ($x60[1]-4.5, 84, 0.3, 1,0.2);
+@Ajust602 = ($x60[1]-4.5, 75, 0.3, 1, 0.2);
+$Fill60 = 1;
+$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'grid'=>[5,12]);}
+
+$graphique60 -> lb('reset');
+$graphique60 -> lb(new Label ( $x60[2],0,$Y01VecteurModaliteG[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[3],$y60[3],$Y01VecteurModaliteG[1],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[4],0,$Y01VecteurModaliteG[2],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[5]+1, $y60[3],$Y01VecteurModaliteG[3],'black','center','top'));
+
+#Affichage Titre 1, 2, axe y
+$graphique60 -> lb(new Label ( $x60Titre,$y60[4],$graphique60T[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60Titre,$y60[5],$graphique60T[1],'black','center','top'));
+$graphique60 -> lb(new Label ( 0,$y60[6],"Pour-",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[7],"centage",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[8],"d'etu-",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[9],"diants",'black','right','top'));
+
+#Unité Y
+$graphique60 -> lb(new Label ( 0,$y60[2],$y60[2],'black','right','middle'));
+
+
+
+#Afficher Pourcentage
+$graphique60 -> lb(new Label ( $x60[2],$Valeur60[0],"$Valeur60[0] %",$Couleur60[0],'center','bottom'));
+$graphique60 -> lb(new Label ( $x60[3],$Valeur60[1],"$Valeur60[1] %",$Couleur60[0],'center','bottom'));
+$graphique60 -> lb(new Label ( $x60[4],$Valeur60[2],"$Valeur60[2] %",$Couleur60[0],'center','bottom'));
+
+
+$Ajust60 = 0.5;
+$Epaisseur60 = 1;
+
+#Modalité 1 de Y avec 1 de X
+if ($Valeur60[0] != 0)
+{$graphique60->moveTo($x60[2]-$Ajust60,0);
+$graphique60->lineTo($x60[2]-$Ajust60,$Valeur60[0],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[2]+$Ajust60,$Valeur60[0],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[2]+$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[2]-$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60-> fillRegion([$x60[2]-0.1,$Fill60,$Couleur60[0]]);}
+#Modalité 2 de Y avec 1 de X
+if ($Valeur60[1] != 0)
+{$graphique60->moveTo($x60[3]-$Ajust60,0);
+$graphique60->lineTo($x60[3]-$Ajust60,$Valeur60[1],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[3]+$Ajust60,$Valeur60[1],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[3]+$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[3]-$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60-> fillRegion([$x60[3]-0.1,$Fill60,$Couleur60[0]]);}
+#Modalité 3 de Y avec 1 de X
+if ($Valeur60[2] != 0)
+{$graphique60->moveTo($x60[4]-$Ajust60,0);
+$graphique60->lineTo($x60[4]-$Ajust60,$Valeur60[2],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[4]+$Ajust60,$Valeur60[2],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[4]+$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[4]-$Ajust60,0,$Couleur60[0],$Epaisseur60);
+$graphique60-> fillRegion([$x60[4]-0.1,$Fill60,$Couleur60[0]]);}
+
+
+$imageG60 = image(insertGraph($graphique60),width =>350,height=>250,tex_size=>350);
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Voici le graphique illustrant une enquête qui a été menée auprès d'un échantillon de $Z01EffectifTotal1 étudiants $VecteurContexte[4].
+$PAR
+$BCENTER
+$imageG60
+$ECENTER
+
+$PAR
+
+${BBOLD}Question : ${EBOLD} Compléter les cases manquantes du tableau de distribution suivant. Arrondir, s'il y a lieu, les pourcentages à une décimale et écrire la somme des pourcentages même si elle n'est pas exactement de 100.0 %.
+$BCENTER
+${BBOLD}
+$VecteurContexte[2]
+${EBOLD}
+$ECENTER
+
+$PAR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow(["${BBOLD}$VecteurContexte[1]${EBOLD}", "${BBOLD}Nombre $BR d'étudiants${EBOLD}","${BBOLD}Pourcentage $BR d'étudiants${EBOLD}"], align => CENTER, separation=>0).
+ 
+ AlignedRow(["$Y01VecteurModalite[0]",ans_rule(5), ans_rule(5)], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[1]",ans_rule(5), ans_rule(5)], align => CENTER, separation=>0).
+ AlignedRow(["$Y01VecteurModalite[2]",ans_rule(5), ans_rule(5)], align => CENTER, separation=>0).
+  AlignedRow(["${BBOLD}Total${EBOLD}", ans_rule(5), ans_rule(5)], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+
+
+ANS(num_cmp($Z01Reponse[0]));
+ANS(num_cmp($Z01ReponsePourcentage[0], tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($Z01Reponse[1]));
+ANS(num_cmp($Z01ReponsePourcentage[1], tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($Z01Reponse[2]));
+ANS(num_cmp($Z01ReponsePourcentage[2], tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($Z01Reponse[3]));
+ANS(num_cmp($Z01ReponsePourcentage[3], tol => 0.00001, tolType => "absolute"));
+
+
+
+
+ENDDOCUMENT(); 

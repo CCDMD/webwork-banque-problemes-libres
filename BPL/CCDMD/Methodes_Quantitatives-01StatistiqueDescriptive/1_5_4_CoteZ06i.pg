@@ -1,0 +1,344 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Distributions normales)
+## KEYWORDS('cote Z', 'table')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl","PGauxiliaryFunctions.pl",
+"PGcourse.pl","unionTables.pl", "PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté : Facile. Calculer la note d'un étudiant étant donnée la cote Z. La cote Z peut être nulle, positive ou négative. La solution a été programmée et illustrée par un pictogramme. La réponse doit absolument être arrondie selon les spécifications de la question.");
+
+
+TEXT(beginproblem());
+
+@VecteurNom = ("Félix", "Ève", "Gabrielle", "Xavier", "Marc", "Léa", "Thomas", "Florence");
+@VecteurChoix = shuffle(8);
+
+$refreshCachedImages = 1;
+
+#Cote Z nulle
+$MoyenneN10t = random(65,80, 0.1);
+$MoyenneN10 = sprintf("%0.1f","$MoyenneN10t");
+$EcarttypeN10t = random(1,5, 0.1);
+$EcarttypeN10 = sprintf("%0.1f","$EcarttypeN10t");
+$ValMaxN10 = Compute("$MoyenneN10 + (3*$EcarttypeN10)");
+$ValMinN10 = Compute("$MoyenneN10 - (3*$EcarttypeN10)");
+$NoteN10t = $MoyenneN10;
+$NoteN10 = sprintf("%0.1f","$NoteN10t");
+$NumN10t = Compute("$NoteN10 - $MoyenneN10");
+$NumN10 = sprintf("%0.1f","$NumN10t");
+$ReponseN10t = Compute("($NoteN10 - $MoyenneN10)/($EcarttypeN10)");
+$ReponseN10 =sprintf("%0.2f","$ReponseN10t ");
+$EN10t = Compute("$ReponseN10 * $EcarttypeN10");
+$EN10 = sprintf("%0.1f","$EN10t");
+
+#Cote Z positive
+$MoyenneN20t = random(65,80, 0.1);
+$MoyenneN20 = sprintf("%0.1f","$MoyenneN20t");
+$EcarttypeN20t = random(1,5, 0.1);
+$EcarttypeN20 = sprintf("%0.1f","$EcarttypeN20t");
+$ValMaxN20 = Compute("$MoyenneN20 + (3*$EcarttypeN20)");
+$ValMinN20 = Compute("$MoyenneN20 + (0.2*$EcarttypeN20)");
+$NoteN20t = random($ValMinN20, $ValMaxN20, 0.1);
+$NoteN20 = sprintf("%0.1f","$NoteN20t");
+$NumN20t = Compute("$NoteN20 - $MoyenneN20");
+$NumN20 = sprintf("%0.1f","$NumN20t");
+$ReponseN20t = Compute("($NoteN20 - $MoyenneN20)/($EcarttypeN20)");
+$ReponseN20 =sprintf("%0.2f","$ReponseN20t ");
+$EN20t = Compute("$ReponseN20 * $EcarttypeN20");
+$EN20 = sprintf("%0.1f","$EN20t");
+
+
+#Cote Z négative
+$MoyenneN30t = random(65,80, 0.1);
+$MoyenneN30 = sprintf("%0.1f","$MoyenneN30t");
+$EcarttypeN30t = random(1,5, 0.1);
+$EcarttypeN30 = sprintf("%0.1f","$EcarttypeN30t");
+$ValMaxN30 = Compute("$MoyenneN30 - (0.2*$EcarttypeN30)");
+$ValMinN30 = Compute("$MoyenneN30 - (3*$EcarttypeN30)");
+$NoteN30t = random($ValMinN30, $ValMaxN30, 0.1);
+$NoteN30 = sprintf("%0.1f","$NoteN30t");
+$NumN30t = Compute("$NoteN30 - $MoyenneN30");
+$NumN30 = sprintf("%0.1f","$NumN30t");
+$ReponseN30t = Compute("($NoteN30 - $MoyenneN30)/($EcarttypeN30)");
+$ReponseN30 =sprintf("%0.2f","$ReponseN30t ");
+$EN30t = Compute("$ReponseN30 * $EcarttypeN30");
+$EN30 = sprintf("%0.1f","$EN30t");
+
+
+@VecteurMoyenne = ($MoyenneN10, $MoyenneN20, $MoyenneN30);
+@VecteurNote = ($NoteN10, $NoteN20, $NoteN30);
+@VecteurNum = ($NumN10, $NumN20, $NumN30);
+@VecteurE = ($EN10, $EN20, $EN30);
+@VecteurEcarttype = ($EcarttypeN10, $EcarttypeN20, $EcarttypeN30);
+@VecteurReponse = ($ReponseN10, $ReponseN20, $ReponseN30);
+@VecteurExplication = ("Une cote Z nulle signifie que la note est sur la moyenne.", "Une cote Z positive signifie que la note est au-dessus de la moyenne.", "Une cote Z négative signifie que la note est au-dessous de la moyenne.");
+@VecteurChoix2 = shuffle(3);
+
+
+#Graphique
+
+@VecteurCouleur = (red,blue, black);
+#@CompteurCouleur = shuffle(3);
+if ($VecteurReponse[$VecteurChoix2[0]] == 0)
+{@CompteurCouleur = (1,1,2);}
+else
+{@CompteurCouleur = (0,1,2);}
+
+
+@Couleur60 = (red,blue, black);
+$ValMaxN10e = Compute("$VecteurMoyenne[$VecteurChoix2[0]] +(1*$VecteurEcarttype[$VecteurChoix2[0]])");
+$ValMaxN10e1 = Compute("$VecteurMoyenne[$VecteurChoix2[0]] +(3*$VecteurEcarttype[$VecteurChoix2[0]])");
+$ValMaxN10e2 = Compute("$VecteurMoyenne[$VecteurChoix2[0]] -(3*$VecteurEcarttype[$VecteurChoix2[0]])");
+
+@VecteurBaseDonnee = ($ValMaxN10e, $VecteurMoyenne[$VecteurChoix2[0]] , $VecteurNote[$VecteurChoix2[0]] );
+@ListeCroissante = num_sort(@VecteurBaseDonnee);
+
+$Xmint = Compute("$ListeCroissante[0] - 1");
+$Xmint2 = floor("$Xmint");
+$Xmint3= Compute("($Xmint2)/2");
+$Xmint4 = floor("$Xmint3");
+$Xmint5 = Compute("($Xmint4)*2");
+if ($Xmint5 == $Xmint2)
+{#$Xmint2 est pair
+$Xmin = Compute("$Xmint2 - 1");}
+else
+{#$Xmint2 est impair
+$Xmin = $Xmint2;}
+
+$Xmaxt = Compute("$ListeCroissante[2] + 1");
+$Xmaxt2 = ceil("$Xmaxt");
+$Xmaxt3= Compute("($Xmaxt2)/2");
+$Xmaxt4 = floor("$Xmaxt3");
+$Xmaxt5 = Compute("($Xmaxt4)*2");
+if ($Xmaxt5 == $Xmaxt2)
+{#$Xmaxt2 est pair
+$Xmax = Compute("$Xmaxt2 + 1");}
+else
+{#$Xmaxt2 est impair
+$Xmax = $Xmaxt2;}
+
+
+
+$EcartX60 = Compute("$Xmax-$Xmin");
+
+@x60 = ($Xmin, $Xmax, $Xmax -2, ($Xmax + $Xmin)/2);
+@y60 = (-5, 30);
+
+$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'grid'=>[$EcartX60 ,7]);
+$graphique60 -> lb('reset');
+$graphique60 -> lb(new Label ( $x60[2],-2,Note,'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[3],27,"Illustration graphique de la cote Z",'black','center','bottom'));
+$graphique60 -> lb(new Label ( 50,0,50,'black','center','top'));
+$graphique60 -> lb(new Label ( 52,0,52,'black','center','top'));
+$graphique60 -> lb(new Label ( 54,0,54,'black','center','top'));
+$graphique60 -> lb(new Label ( 56,0,56,'black','center','top'));
+$graphique60 -> lb(new Label ( 58,0,58,'black','center','top'));
+$graphique60 -> lb(new Label ( 60,0,60,'black','center','top'));
+$graphique60 -> lb(new Label ( 62,0,62,'black','center','top'));
+$graphique60 -> lb(new Label ( 64,0,64,'black','center','top'));
+$graphique60 -> lb(new Label ( 66,0,66,'black','center','top'));
+$graphique60 -> lb(new Label ( 68,0,68,'black','center','top'));
+$graphique60 -> lb(new Label ( 70,0,70,'black','center','top'));
+$graphique60 -> lb(new Label ( 72,0,72,'black','center','top'));
+$graphique60 -> lb(new Label ( 74,0,74,'black','center','top'));
+$graphique60 -> lb(new Label ( 76,0,76,'black','center','top'));
+$graphique60 -> lb(new Label ( 78,0,78,'black','center','top'));
+$graphique60 -> lb(new Label ( 80,0,80,'black','center','top'));
+$graphique60 -> lb(new Label ( 82,0,82,'black','center','top'));
+$graphique60 -> lb(new Label ( 84,0,84,'black','center','top'));
+$graphique60 -> lb(new Label ( 86,0,86,'black','center','top'));
+$graphique60 -> lb(new Label ( 88,0,88,'black','center','top'));
+$graphique60 -> lb(new Label ( 90,0,90,'black','center','top'));
+$graphique60 -> lb(new Label ( 92,0,92,'black','center','top'));
+$graphique60 -> lb(new Label ( 94,0,94,'black','center','top'));
+$graphique60 -> lb(new Label ( 96,0,96,'black','center','top'));
+$graphique60 -> lb(new Label ( 98,0,98,'black','center','top'));
+
+$Epaisseur60 = 1;
+
+#Note 1
+#Calcul pour l'Écart type
+$x60et1a = Compute("$VecteurMoyenne[$VecteurChoix2[0]] + $VecteurEcarttype[$VecteurChoix2[0]]");
+$x60et1m = Compute("$VecteurMoyenne[$VecteurChoix2[0]] + (0.5*$VecteurEcarttype[$VecteurChoix2[0]])");
+$graphique60 -> lb(new Label ( $VecteurNote[$VecteurChoix2[0]],5,
+$VecteurNote[$VecteurChoix2[0]],$Couleur60[$CompteurCouleur[1]],'center','top'));
+$graphique60 -> lb(new Label ( $VecteurMoyenne[$VecteurChoix2[0]],5,
+$VecteurMoyenne[$VecteurChoix2[0]],$Couleur60[$CompteurCouleur[1]],'center','top'));
+$graphique60 -> lb(new Label ( $x60et1m,10,
+$VecteurEcarttype[$VecteurChoix2[0]],$Couleur60[$CompteurCouleur[0]],'center','top'));
+#Ligne 
+$graphique60->moveTo($VecteurNote[$VecteurChoix2[0]],5);
+$graphique60->lineTo($VecteurMoyenne[$VecteurChoix2[0]],5,$Couleur60[$CompteurCouleur[1]],$Epaisseur60);
+$pt60p1 = closed_circle( $VecteurNote[$VecteurChoix2[0]],5,$Couleur60[$CompteurCouleur[1]]);
+$pt60p2 = closed_circle( $VecteurMoyenne[$VecteurChoix2[0]],5,$Couleur60[$CompteurCouleur[1]]);
+$graphique60->moveTo($VecteurMoyenne[$VecteurChoix2[0]],10);
+$graphique60->lineTo($x60et1a,10,$Couleur60[$CompteurCouleur[0]],$Epaisseur60);
+$pt60p3 = closed_circle( $VecteurMoyenne[$VecteurChoix2[0]],10,$Couleur60[$CompteurCouleur[0]]);
+$pt60p4 = closed_circle( $x60et1a,10,$Couleur60[$CompteurCouleur[0]]);
+$graphique60->stamps($pt60p1,$pt60p2,$pt60p3, $pt60p4);
+
+
+#Ligne cote Z
+if ($VecteurReponse[$VecteurChoix2[0]] == 0)
+{#Ne rien faire
+}
+else
+{#Afficher les écarts en cote Z
+
+$ValeurN3n = Compute("$VecteurMoyenne[$VecteurChoix2[0]] - (3*$VecteurEcarttype[$VecteurChoix2[0]])");
+$ValeurN2n = Compute("$VecteurMoyenne[$VecteurChoix2[0]] - (2*$VecteurEcarttype[$VecteurChoix2[0]])");
+$ValeurN1n = Compute("$VecteurMoyenne[$VecteurChoix2[0]] - (1*$VecteurEcarttype[$VecteurChoix2[0]])");
+$ValeurN1p = Compute("$VecteurMoyenne[$VecteurChoix2[0]] + (1*$VecteurEcarttype[$VecteurChoix2[0]])");
+$ValeurN2p = Compute("$VecteurMoyenne[$VecteurChoix2[0]] + (2*$VecteurEcarttype[$VecteurChoix2[0]])");
+$ValeurN3p = Compute("$VecteurMoyenne[$VecteurChoix2[0]] + (3*$VecteurEcarttype[$VecteurChoix2[0]])");
+
+$ValeurN3nM = Compute("$VecteurMoyenne[$VecteurChoix2[0]] - (2.5*$VecteurEcarttype[$VecteurChoix2[0]])");
+$ValeurN2nM = Compute("$VecteurMoyenne[$VecteurChoix2[0]] - (1.5*$VecteurEcarttype[$VecteurChoix2[0]])");
+$ValeurN1nM = Compute("$VecteurMoyenne[$VecteurChoix2[0]] - (0.5*$VecteurEcarttype[$VecteurChoix2[0]])");
+$ValeurN1pM = Compute("$VecteurMoyenne[$VecteurChoix2[0]] + (0.5*$VecteurEcarttype[$VecteurChoix2[0]])");
+$ValeurN2pM = Compute("$VecteurMoyenne[$VecteurChoix2[0]] + (1.5*$VecteurEcarttype[$VecteurChoix2[0]])");
+$ValeurN3pM = Compute("$VecteurMoyenne[$VecteurChoix2[0]] + (2.5*$VecteurEcarttype[$VecteurChoix2[0]])");
+
+$graphique60->moveTo($VecteurNote[$VecteurChoix2[0]],15);
+$graphique60->lineTo($VecteurMoyenne[$VecteurChoix2[0]],15,$Couleur60[$CompteurCouleur[0]],$Epaisseur60);
+$pt60p1Z = closed_circle( $VecteurNote[$VecteurChoix2[0]],15,$Couleur60[$CompteurCouleur[0]]);
+$pt60p2Z = closed_circle( $VecteurMoyenne[$VecteurChoix2[0]],15,$Couleur60[$CompteurCouleur[0]]);
+$graphique60->stamps($pt60p1Z, $pt60p2Z);
+
+
+
+if ($VecteurNote[$VecteurChoix2[0]] < $ValeurN2n)
+{$temp1 = Compute("$VecteurReponse[$VecteurChoix2[0]] +2");
+$graphique60 -> lb(new Label ( ($VecteurNote[$VecteurChoix2[0]] + $ValeurN2n)/2, 15,
+$temp1,$Couleur60[$CompteurCouleur[0]],'center','bottom'));
+$pt60pZ2n = closed_circle( $ValeurN2n,15,$Couleur60[$CompteurCouleur[0]]);
+$graphique60 -> lb(new Label ( $ValeurN2nM,15,
+-1,$Couleur60[$CompteurCouleur[0]],'center','bottom'));
+$pt60pZ1n = closed_circle( $ValeurN1n,15,$Couleur60[$CompteurCouleur[0]]);
+$graphique60 -> lb(new Label ( $ValeurN1nM,15,
+-1,$Couleur60[$CompteurCouleur[0]],'center','bottom'));
+$graphique60->stamps($pt60pZ1n, $pt60pZ2n);
+
+$graphique60 -> lb(new Label ( ($VecteurNote[$VecteurChoix2[0]] +$VecteurMoyenne[$VecteurChoix2[0]])/2 , 18,
+"Distance en ecarts types",$Couleur60[$CompteurCouleur[0]],'center','top'));
+}
+
+elsif (($VecteurNote[$VecteurChoix2[0]] >= $ValeurN2n) && ($VecteurNote[$VecteurChoix2[0]] < $ValeurN1n))
+{$temp1 = Compute("$VecteurReponse[$VecteurChoix2[0]] +1");
+$graphique60 -> lb(new Label ( ($VecteurNote[$VecteurChoix2[0]] + $ValeurN1n)/2, 15,
+$temp1,$Couleur60[$CompteurCouleur[0]],'center','bottom'));
+$pt60pZ1n = closed_circle( $ValeurN1n,15,$Couleur60[$CompteurCouleur[0]]);
+$graphique60 -> lb(new Label ( $ValeurN1nM,15,
+-1,$Couleur60[$CompteurCouleur[0]],'center','bottom'));
+$graphique60->stamps($pt60pZ1n);
+$graphique60 -> lb(new Label ( ($VecteurNote[$VecteurChoix2[0]] +$VecteurMoyenne[$VecteurChoix2[0]])/2 , 18,
+"Distance en ecarts types",$Couleur60[$CompteurCouleur[0]],'center','top'));
+}
+
+elsif (($VecteurNote[$VecteurChoix2[0]] >= $ValeurN1n) && ($VecteurNote[$VecteurChoix2[0]] < $VecteurMoyenne[$VecteurChoix2[0]]))
+{$temp1 = Compute("$VecteurReponse[$VecteurChoix2[0]]");
+$graphique60 -> lb(new Label ( ($VecteurNote[$VecteurChoix2[0]] + $VecteurMoyenne[$VecteurChoix2[0]])/2, 15,
+$temp1,$Couleur60[$CompteurCouleur[0]],'center','bottom'));
+$graphique60 -> lb(new Label ( $VecteurMoyenne[$VecteurChoix2[0]] , 18,
+"Distance en ecarts types",$Couleur60[$CompteurCouleur[0]],'right','top'));
+}
+
+elsif (($VecteurNote[$VecteurChoix2[0]] > $VecteurMoyenne[$VecteurChoix2[0]]) && ($VecteurNote[$VecteurChoix2[0]] <= $ValeurN1p ))
+{$temp1 = Compute("$VecteurReponse[$VecteurChoix2[0]]");
+$graphique60 -> lb(new Label ( ($VecteurNote[$VecteurChoix2[0]] + $VecteurMoyenne[$VecteurChoix2[0]])/2, 15,
+$temp1,$Couleur60[$CompteurCouleur[0]],'center','bottom'));
+$graphique60 -> lb(new Label ( $VecteurMoyenne[$VecteurChoix2[0]] , 18,
+"Distance en ecarts types",$Couleur60[$CompteurCouleur[0]],'left','top'));
+}
+elsif (($VecteurNote[$VecteurChoix2[0]] > $ValeurN1p) && ($VecteurNote[$VecteurChoix2[0]] <= $ValeurN2p))
+{$temp1 = Compute("$VecteurReponse[$VecteurChoix2[0]] -1");
+$graphique60 -> lb(new Label ( ($VecteurNote[$VecteurChoix2[0]] + $ValeurN1p)/2, 15,
+$temp1,$Couleur60[$CompteurCouleur[0]],'center','bottom'));
+$pt60pZ1n = closed_circle( $ValeurN1p,15,$Couleur60[$CompteurCouleur[0]]);
+$graphique60 -> lb(new Label ( $ValeurN1pM,15,
+1,$Couleur60[$CompteurCouleur[0]],'center','bottom'));
+$graphique60->stamps($pt60pZ1n);
+$graphique60 -> lb(new Label ( ($VecteurNote[$VecteurChoix2[0]] +$VecteurMoyenne[$VecteurChoix2[0]])/2 , 18,
+"Distance en ecarts types",$Couleur60[$CompteurCouleur[0]],'center','top'));
+}
+elsif (($VecteurNote[$VecteurChoix2[0]] > $ValeurN2p) && ($VecteurNote[$VecteurChoix2[0]] <= $ValeurN3p))
+{$temp1 = Compute("$VecteurReponse[$VecteurChoix2[0]] -2");
+$graphique60 -> lb(new Label ( ($VecteurNote[$VecteurChoix2[0]] + $ValeurN2p)/2, 15,
+$temp1,$Couleur60[$CompteurCouleur[0]],'center','bottom'));
+$pt60pZ2n = closed_circle( $ValeurN2p,15,$Couleur60[$CompteurCouleur[0]]);
+$graphique60 -> lb(new Label ( $ValeurN2pM,15,
+1,$Couleur60[$CompteurCouleur[0]],'center','bottom'));
+$pt60pZ1n = closed_circle( $ValeurN1p,15,$Couleur60[$CompteurCouleur[0]]);
+$graphique60 -> lb(new Label ( $ValeurN1pM,15,
+1,$Couleur60[$CompteurCouleur[0]],'center','bottom'));
+$graphique60->stamps($pt60pZ1n, $pt60pZ2n);
+
+$graphique60 -> lb(new Label ( ($VecteurNote[$VecteurChoix2[0]] +$VecteurMoyenne[$VecteurChoix2[0]])/2 , 18,
+"Distance en ecarts types",$Couleur60[$CompteurCouleur[0]],'center','top'));
+}
+
+
+
+
+#Fin afficher les écarts en cote Z
+}
+
+$imageG60 = image(insertGraph($graphique60),width =>350,height=>250,tex_size=>350);
+
+Context()->texStrings;
+BEGIN_TEXT
+$VecteurNom[$VecteurChoix[0]] a eu une cote Z de $VecteurReponse[$VecteurChoix2[0]] au dernier examen. Calculer sa note, si la moyenne de la classe a été de $VecteurMoyenne[$VecteurChoix2[0]] % et l'écart type, de $VecteurEcarttype[$VecteurChoix2[0]] %.
+$PAR
+$SPACE $SPACE $SPACE Note de $VecteurNom[$VecteurChoix[0]] =  \{ans_rule(5)\}
+$BR 
+${BBOLD}Note : ${EBOLD}Arrondir la note à une décimale. 
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($VecteurNote[$VecteurChoix2[0]], tol => 0.00001, tolType => "absolute"));
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La cote Z se calcule comme suit : 
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle{Z = \frac{X - \mu}{\sigma}}\)
+$PAR
+Isolons la variale X :
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle{Z \cdot \sigma = X - \mu}\)
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle{Z \cdot \sigma + \mu= X}\)
+$PAR
+Ainsi :
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle{X = \mu + Z \cdot \sigma}\)
+$PAR
+Dans cet exercice, les valeurs sont les suivantes : \(\displaystyle{Z = $VecteurReponse[$VecteurChoix2[0]], \mu = $VecteurMoyenne[$VecteurChoix2[0]], \sigma = $VecteurEcarttype[$VecteurChoix2[0]]}\). Ainsi le calcul devient :
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle{X = \mu + Z \cdot \sigma = $VecteurMoyenne[$VecteurChoix2[0]] + ($VecteurReponse[$VecteurChoix2[0]] \cdot $VecteurEcarttype[$VecteurChoix2[0]])  = $VecteurMoyenne[$VecteurChoix2[0]] + $VecteurE[$VecteurChoix2[0]] = $VecteurNote[$VecteurChoix2[0]]}\)
+
+
+$PAR
+Voici l'illustration graphique :
+$BCENTER
+$imageG60
+$ECENTER
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

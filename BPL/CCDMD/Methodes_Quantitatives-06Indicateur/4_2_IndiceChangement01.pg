@@ -1,0 +1,266 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('indicateur', 'indice')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl","PGchoicemacros.pl");
+
+COMMENT("Niveau de difficulté: Facile. 2 indices élémentaires (à base 100) à calculer par changement de bases. Il y a 3 contextes. La période de référence est la première. La solution a été programmée.");
+
+
+TEXT(beginproblem());
+
+#Choisir la période de référence
+$CompteurReference = random(1,4);
+$CompteurReference1 = 0;
+
+#Choisir le contexte
+$temp1 =random(0,2);
+
+
+if ($temp1 == 0) 
+{@VecteurContexte = ("Québec $BR Poulet $BR (dollars par $BR kilogramme)", "1 kilogramme de poulets");
+$ValeurMin = 2;
+$ValeurMax = 2.5;
+@Interpretation = ("Le prix du poulet", "du prix du poulet", "une quantité de poulets");}
+elsif ($temp1 == 1) 
+{@VecteurContexte = ("Québec $BR Essence $BR (dollars par $BR litre)", "1 litre d'essence");
+$ValeurMin = 1.1;
+$ValeurMax = 1.5;
+@Interpretation = ("Le prix de l'essence","du prix de l'essence", "une quantité d'essence");}
+elsif ($temp1 == 2) 
+{@VecteurContexte = ("Québec $BR Tomate $BR (dollars par $BR kilogramme)", "1 kilogramme de tomates");
+$ValeurMin = 1.1;
+$ValeurMax = 3;
+@Interpretation = ("Le prix des tomates", "du prix des tomates", "une quantité de tomates");}
+
+@VecteurModalite = ("Janvier 2015", "Juillet 2015", "Janvier 2016", "Juillet 2016", "Janvier 2017" );
+@VecteurModaliteMinuscule = ("janvier 2015", "juillet 2015", "janvier 2016", "juillet 2016", "janvier 2017" );
+
+$Effectif1t = random($ValeurMin,$ValeurMax,0.01);
+$Effectif2t = random($ValeurMin,$ValeurMax,0.01);
+$Effectif3t = random($ValeurMin,$ValeurMax,0.01);
+$Effectif4t = random($ValeurMin,$ValeurMax,0.01);
+$Effectif5t = random($ValeurMin,$ValeurMax,0.01);
+
+$Effectif1 = sprintf("%0.2f","$Effectif1t ");
+$Effectif2 = sprintf("%0.2f","$Effectif2t ");
+$Effectif3 = sprintf("%0.2f","$Effectif3t ");
+$Effectif4 = sprintf("%0.2f","$Effectif4t ");
+$Effectif5 = sprintf("%0.2f","$Effectif5t ");
+
+
+@VecteurEffectif = ($Effectif1, $Effectif2, $Effectif3, $Effectif4, $Effectif5);
+@AffichageEffectif = ($Effectif1, $Effectif2, $Effectif3, $Effectif4, $Effectif5);
+
+
+$Indice1t = Compute("($VecteurEffectif[0]/$VecteurEffectif[$CompteurReference])*100");
+$Indice2t = Compute("($VecteurEffectif[1]/$VecteurEffectif[$CompteurReference])*100");
+$Indice3t = Compute("($VecteurEffectif[2]/$VecteurEffectif[$CompteurReference])*100");
+$Indice4t = Compute("($VecteurEffectif[3]/$VecteurEffectif[$CompteurReference])*100");
+$Indice5t = Compute("($VecteurEffectif[4]/$VecteurEffectif[$CompteurReference])*100");
+
+
+$Indice1 = sprintf("%0.1f","$Indice1t ");
+$Indice2 = sprintf("%0.1f","$Indice2t ");
+$Indice3 = sprintf("%0.1f","$Indice3t ");
+$Indice4 = sprintf("%0.1f","$Indice4t ");
+$Indice5 = sprintf("%0.1f","$Indice5t ");
+
+@VecteurIndice = ($Indice1, $Indice2, $Indice3, $Indice4, $Indice5);
+
+
+
+$IndiceN21t = Compute("($VecteurEffectif[0]/$VecteurEffectif[$CompteurReference1])*100");
+$IndiceN22t = Compute("($VecteurEffectif[1]/$VecteurEffectif[$CompteurReference1])*100");
+$IndiceN23t = Compute("($VecteurEffectif[2]/$VecteurEffectif[$CompteurReference1])*100");
+$IndiceN24t = Compute("($VecteurEffectif[3]/$VecteurEffectif[$CompteurReference1])*100");
+$IndiceN25t = Compute("($VecteurEffectif[4]/$VecteurEffectif[$CompteurReference1])*100");
+
+
+$IndiceN21 = sprintf("%0.1f","$IndiceN21t ");
+$IndiceN22 = sprintf("%0.1f","$IndiceN22t ");
+$IndiceN23 = sprintf("%0.1f","$IndiceN23t ");
+$IndiceN24 = sprintf("%0.1f","$IndiceN24t ");
+$IndiceN25 = sprintf("%0.1f","$IndiceN25t ");
+
+@VecteurIndiceN2 = ($IndiceN21, $IndiceN22, $IndiceN23, $IndiceN24, $IndiceN25);
+
+$temp2 =random(0,2);
+
+#Deux indices à calculer
+if ($CompteurReference == 0) 
+{ if ($temp2 == 0)
+{@AffichageIndice = ("$Indice1", ans_rule(5), ans_rule(5),"$Indice4","$Indice5" ); 
+@CompteurRepIndice = (1, 2);
+$ExempleCI = 3; }
+elsif ($temp2 == 1)
+{@AffichageIndice = ("$Indice1", ans_rule(5),"$Indice3", ans_rule(5),"$Indice5" ); 
+@CompteurRepIndice = (1, 3);
+$ExempleCI = 2;}
+else
+{@AffichageIndice = ("$Indice1", "$Indice2", ans_rule(5),  ans_rule(5),"$Indice5" ); 
+@CompteurRepIndice = (2, 3);
+$ExempleCI = 1;}}
+elsif ($CompteurReference == 1)  
+{if ($temp2 == 0)
+{@AffichageIndice = (ans_rule(5),"$Indice2", ans_rule(5),"$Indice4", "$Indice5"); 
+@CompteurRepIndice = (0, 2);
+$ExempleCI = 3;}
+elsif ($temp2 == 1)
+{@AffichageIndice = (ans_rule(5),"$Indice2", "$Indice3", ans_rule(5), "$Indice5"); 
+@CompteurRepIndice = (0, 3);
+$ExempleCI = 2;}
+else
+{@AffichageIndice = (ans_rule(5),"$Indice2", "$Indice3","$Indice4", ans_rule(5)); 
+@CompteurRepIndice = (0, 4);
+$ExempleCI = 2;}}
+elsif ($CompteurReference == 2)  
+{
+if ($temp2 == 0)
+{@AffichageIndice = (ans_rule(5),"$Indice2", "$Indice3", ans_rule(5), "$Indice5"); 
+@CompteurRepIndice = (0, 3);
+$ExempleCI = 2;}
+elsif ($temp2 == 1)
+{@AffichageIndice = ("$Indice1", ans_rule(5), "$Indice3", ans_rule(5), "$Indice5"); 
+@CompteurRepIndice = (1, 3);
+$ExempleCI = 2;}
+else
+{@AffichageIndice = ("$Indice1", ans_rule(5), "$Indice3", "$Indice4", ans_rule(5)); 
+@CompteurRepIndice = (1,4);
+$ExempleCI = 3;}
+}
+elsif ($CompteurReference == 3)  
+{
+if ($temp2 == 0)
+{@AffichageIndice = ("$Indice1", ans_rule(5), "$Indice3","$Indice4", ans_rule(5)); 
+@CompteurRepIndice = (1, 4);
+$ExempleCI = 2;}
+elsif ($temp2 == 1)
+{@AffichageIndice = ("$Indice1", "$Indice2", ans_rule(5),"$Indice4", ans_rule(5)); 
+@CompteurRepIndice = (2, 4);
+$ExempleCI = 1;}
+else
+{@AffichageIndice = ( ans_rule(5),"$Indice2", "$Indice3","$Indice4", ans_rule(5)); 
+@CompteurRepIndice = (0, 4);
+$ExempleCI = 2;}
+}
+else 
+{
+if ($temp2 == 0)
+{@AffichageIndice = (ans_rule(5),"$Indice2", "$Indice3", ans_rule(5), "$Indice5"); 
+@CompteurRepIndice = (0, 3);
+$ExempleCI = 2;}
+elsif ($temp2 == 1)
+{@AffichageIndice = ("$Indice1", ans_rule(5), "$Indice3", ans_rule(5), "$Indice5"); 
+@CompteurRepIndice = (1, 3);
+$ExempleCI = 2;}
+else
+{@AffichageIndice = ("$Indice1",  "$Indice2",ans_rule(5), ans_rule(5), "$Indice5"); 
+@CompteurRepIndice = (2, 3);
+$ExempleCI = 1;}
+}
+
+#Interprétation
+if ($VecteurIndice[$CompteurRepIndice[0]] > $VecteurIndice[$CompteurReference])
+{$InterABSIndice = Compute("$VecteurIndice[$CompteurRepIndice[0]]");
+$InterABSIndiceP = sprintf("%0.1f","$InterABSIndice");
+$InterABSIndiceE = sprintf("%0.2f","$InterABSIndice");
+$InterDiffIndice = Compute("$VecteurIndice[$CompteurRepIndice[0]] - 100");
+$InterDiffIndiceP = sprintf("%0.1f","$InterDiffIndice");
+$InterDiffIndiceE = sprintf("%0.2f","$InterDiffIndice");
+$InterDiffTexte = "une augmentation de $InterDiffIndiceP %";}
+elsif ($VecteurIndice[$CompteurRepIndice[0]] < $VecteurIndice[$CompteurReference])
+{$InterABSIndice = Compute("$VecteurIndice[$CompteurRepIndice[0]]");
+$InterABSIndiceP = sprintf("%0.1f","$InterABSIndice");
+$InterABSIndiceE = sprintf("%0.2f","$InterABSIndice");
+$InterDiffIndice = Compute("100 - $VecteurIndice[$CompteurRepIndice[0]]");
+$InterDiffIndiceP = sprintf("%0.1f","$InterDiffIndice");
+$InterDiffIndiceE = sprintf("%0.2f","$InterDiffIndice");
+$InterDiffTexte = "une diminution de $InterDiffIndiceP %";}
+else
+{$InterABSIndice = Compute("$VecteurIndice[$CompteurRepIndice[0]]");
+$InterABSIndiceP = sprintf("%0.1f","$InterABSIndice");
+$InterABSIndiceE = sprintf("%0.2f","$InterABSIndice");
+$InterDiffIndice = Compute("100 - $VecteurIndice[$CompteurRepIndice[0]]");
+$InterDiffIndiceP = sprintf("%0.1f","$InterDiffIndice");
+$InterDiffIndiceE = sprintf("%0.2f","$InterDiffIndice");
+$InterDiffTexte = "le prix n'a ni augmenté ni diminué";}
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Le tableau suivant résume les prix pour $VecteurContexte[1] acheté lors des périodes de $VecteurModaliteMinuscule[0] à $VecteurModaliteMinuscule[4]. 
+$PAR
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+ AlignedRow(["${BBOLD} Période ${EBOLD}","${BBOLD} $VecteurContexte[0] ${EBOLD}", "${BBOLD} Indice $BR ($VecteurModaliteMinuscule[$CompteurReference1] = 100)", "${BBOLD} Indice $BR ($VecteurModaliteMinuscule[$CompteurReference] = 100) ${EBOLD}"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[0]","$AffichageEffectif[0]", "$VecteurIndiceN2[0]", "$AffichageIndice[0]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[1]","$AffichageEffectif[1]","$VecteurIndiceN2[1]", "$AffichageIndice[1]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[2]","$AffichageEffectif[2]","$VecteurIndiceN2[2]", "$AffichageIndice[2]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[3]","$AffichageEffectif[3]", "$VecteurIndiceN2[3]","$AffichageIndice[3]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[4]","$AffichageEffectif[4]","$VecteurIndiceN2[4]", "$AffichageIndice[4]"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$ECENTER
+$BR
+
+${BBOLD}Question :${EBOLD} Calculer les indices manquants dans le tableau, en les arrondissant à une décimale.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($VecteurIndice[$CompteurRepIndice[0]], tol => 0.1, tolType => "absolute"));
+ANS(num_cmp($VecteurIndice[$CompteurRepIndice[1]], tol => 0.1, tolType => "absolute"));
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+
+${BITALIC}Calcul avec les anciens indices : ${EITALIC}
+La période de référence devient $VecteurModaliteMinuscule[$CompteurReference]. Les nouveaux indices sont calculés avec l'indice de l'ancienne période de référence :
+$PAR
+$SPACE $SPACE $SPACE  \(\displaystyle {\rm{I_{période} = \frac{Ancien\ indice\ de\ la\ période}{Ancien\ indice\ de\ la\ nouvelle\ référence} \times 100}}\) 
+$PAR
+Voici les calculs pour les nouveaux indice des périodes $VecteurModaliteMinuscule[$CompteurRepIndice[0]] et $VecteurModaliteMinuscule[$CompteurRepIndice[1]] :
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle {\rm{I_{$VecteurModaliteMinuscule[$CompteurRepIndice[0]]} = \frac{$VecteurIndiceN2[$CompteurRepIndice[0]]}{$VecteurIndiceN2[$CompteurReference]} \times 100 = \frac{$VecteurIndiceN2[$CompteurRepIndice[0]] \times 100}{$VecteurIndiceN2[$CompteurReference]}} =  $VecteurIndice[$CompteurRepIndice[0]]}\) 
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle {\rm{I_{$VecteurModaliteMinuscule[$CompteurRepIndice[1]]} = \frac{$VecteurIndiceN2[$CompteurRepIndice[1]]}{$VecteurIndiceN2[$CompteurReference]} \times 100 = \frac{$VecteurIndiceN2[$CompteurRepIndice[1]] \times 100}{$VecteurIndiceN2[$CompteurReference]}} =  $VecteurIndice[$CompteurRepIndice[1]]}\) 
+$PAR
+
+$PAR
+${BITALIC}Calcul avec les prix :${EITALIC}
+La période de référence devient $VecteurModaliteMinuscule[$CompteurReference]. Les nouveaux indices sont calculés avec les prix en utilisant le prix de la nouvelle période de référence :
+$PAR
+$SPACE $SPACE $SPACE  \(\displaystyle {\rm{I_{période} = \frac{Valeur\ de\ la\ période}{Valeur\ de\ la\ nouvelle\ référence} \times 100}}\) 
+$PAR
+Voici les calculs pour les nouveaux indice des périodes $VecteurModaliteMinuscule[$CompteurRepIndice[0]] et $VecteurModaliteMinuscule[$CompteurRepIndice[1]] :
+$PAR
+$SPACE $SPACE $SPACE  \(\displaystyle {\rm{I_{$VecteurModaliteMinuscule[$CompteurRepIndice[0]]} = \frac{$VecteurEffectif[$CompteurRepIndice[0]]}{$VecteurEffectif[$CompteurReference]} \times 100 = \frac{$VecteurEffectif[$CompteurRepIndice[0]] \times 100}{$VecteurEffectif[$CompteurReference]}} =  $VecteurIndice[$CompteurRepIndice[0]]}\) 
+$PAR
+$SPACE $SPACE $SPACE  \(\displaystyle {\rm{I_{$VecteurModaliteMinuscule[$CompteurRepIndice[1]]} = \frac{$VecteurEffectif[$CompteurRepIndice[1]]}{$VecteurEffectif[$CompteurReference]} \times 100 = \frac{$VecteurEffectif[$CompteurRepIndice[1]] \times 100}{$VecteurEffectif[$CompteurReference]}} =  $VecteurIndice[$CompteurRepIndice[1]]}\) 
+
+
+
+
+\{ EndList("UL") \}
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

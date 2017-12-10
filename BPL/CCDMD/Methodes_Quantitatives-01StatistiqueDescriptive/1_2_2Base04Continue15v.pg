@@ -1,0 +1,240 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('fréquence absolue', 'fréquence relative', 'modalité', 'tableau', 'variable', 'variable quantitative continue')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl"
+);
+
+COMMENT("Niveau de difficulté : Moyen. Effectuer un tableau de distribution d'une variable quantitative continue (4 contextes) avec trois classes à partir d'une distribution de 15 unités statistiques. La solution a été programmée. Les nombres sont des nombres décimaux.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$temp1 =random(0,2);
+
+
+
+
+if ($temp1 == 0) 
+{@VecteurContexte = ("personnes","Taille (cm)", "Répartition d'étudiantes et d'étudiants $BR selon leur taille",
+"d'étudiantes et d'étudiants afin de connaitre leur taille en centimètres");
+@VecteurModalite = ("[140, 160[", "[160, 180[", "[180, 200[");
+@ValeurClasse = (140, 160, 180, 200);
+$ValeurMin = 140;
+$ValeurMax = 199;
+}
+elsif ($temp1 == 1)  {
+@VecteurContexte = ("personnes", "Poids (kg)", "Répartition des étudiantes et des étudiants $BR selon leur poids", "d'étudiantes et d'étudiants afin de connaitre leur poids en kilogrammes");
+@VecteurModalite = ("[40, 60[", "[60, 80[", "[80, 100[");
+@ValeurClasse = (40, 60, 80, 100);
+$ValeurMin = 40;
+$ValeurMax = 99;
+}
+elsif ($temp1 == 2)  {
+@VecteurContexte = ("personnes", "Temps (min)", "Répartition des étudiantes et des étudiants $BR selon le temps pris pour se rendre au Cégep", "d'étudiantes et d'étudiants afin de connaitre le temps en minutes pris pour se rendre au Cégep le matin");
+@VecteurModalite = ("[0, 20[", "[20, 40[", "[40, 60[");
+@ValeurClasse = (0, 20, 40, 60);
+$ValeurMin = 0;
+$ValeurMax = 59;
+}
+elsif ($temp1 == 3)  {
+@VecteurContexte = ("personnes", "Montant ($DOLLAR)", "Répartition des étudiantes et des étudiants $BR selon le montant dépensé pour leur forfait cellulaire", "d'étudiantes et d'étudiants afin de connaitre le montant dépensé pour leur forfait cellulaire");
+@VecteurModalite = ("[0, 40[", "[40, 80[", "[80, 120[");
+@ValeurClasse = (0, 40, 80, 120);
+$ValeurMin = 0;
+$ValeurMax = 119;
+}
+
+
+$tModalite1 = random($ValeurMin,$ValeurMax, 0.1); 
+$tModalite2 = random($ValeurMin,$ValeurMax, 0.1);
+$tModalite3 = random($ValeurMin,$ValeurMax, 0.1);
+$tModalite4 = random($ValeurMin,$ValeurMax, 0.1);
+$tModalite5 = random($ValeurMin,$ValeurMax, 0.1);
+$tModalite6 = random($ValeurMin,$ValeurMax, 0.1);
+$tModalite7 = random($ValeurMin,$ValeurMax, 0.1);
+$tModalite8 = random($ValeurMin,$ValeurMax, 0.1);
+$tModalite9 = random($ValeurMin,$ValeurMax, 0.1);
+$tModalite10 = random($ValeurMin,$ValeurMax, 0.1);
+$tModalite11 = random($ValeurMin,$ValeurMax, 0.1);
+$temp22 = random(0,2);
+if ($temp22 == 0)
+{$tModalite12 = random($ValeurMin,$ValeurMax, 0.1);
+$tModalite13 = list_random($ValeurClasse[1], $ValeurClasse[2]);
+$tModalite14 = random($ValeurMin,$ValeurMax, 0.1);
+$tModalite15 = random($ValeurMin,$ValeurMax, 0.1);
+}
+elsif ($temp22 == 1)
+{$tModalite12 = random($ValeurMin,$ValeurMax, 0.1);
+$tModalite14 = list_random($ValeurClasse[1], $ValeurClasse[2]);
+$tModalite13 = random($ValeurMin,$ValeurMax, 0.1);
+$tModalite15 = random($ValeurMin,$ValeurMax, 0.1);
+}
+else
+{$tModalite13 = random($ValeurMin,$ValeurMax, 0.1);
+$tModalite12 = list_random($ValeurClasse[1], $ValeurClasse[2]);
+$tModalite14 = random($ValeurMin,$ValeurMax, 0.1);
+$tModalite15 = random($ValeurMin,$ValeurMax, 0.1);}
+
+$Modalite1 = sprintf("%0.1f","$tModalite1");
+$Modalite2 = sprintf("%0.1f","$tModalite2");
+$Modalite3 = sprintf("%0.1f","$tModalite3");
+$Modalite4 = sprintf("%0.1f","$tModalite4");
+$Modalite5 = sprintf("%0.1f","$tModalite5");
+$Modalite6 = sprintf("%0.1f","$tModalite6");
+$Modalite7 = sprintf("%0.1f","$tModalite7");
+$Modalite8 = sprintf("%0.1f","$tModalite8");
+$Modalite9 = sprintf("%0.1f","$tModalite9");
+$Modalite10 = sprintf("%0.1f","$tModalite10");
+$Modalite11 = sprintf("%0.1f","$tModalite11");
+$Modalite12 = sprintf("%0.1f","$tModalite12");
+$Modalite13 = sprintf("%0.1f","$tModalite13");
+$Modalite14 = sprintf("%0.1f","$tModalite14");
+$Modalite15 = sprintf("%0.1f","$tModalite15");
+
+
+@VecteurBaseDonnee = ( $Modalite1, $Modalite2, $Modalite3, $Modalite4, $Modalite5, $Modalite6, $Modalite7, $Modalite8, $Modalite9, $Modalite10, $Modalite11, $Modalite12, $Modalite13, $Modalite14, $Modalite15); 
+
+$Effectif1 = 0; 
+$Effectif2 = 0; 
+$Effectif3 = 0;
+$i = 0;
+do
+{if ($VecteurBaseDonnee[$i]  >= $ValeurClasse[0] && $VecteurBaseDonnee[$i]  < $ValeurClasse[1]) 
+{$Effectif1++;}
+elsif ($VecteurBaseDonnee[$i]  >= $ValeurClasse[1] && $VecteurBaseDonnee[$i]  < $ValeurClasse[2]) 
+{$Effectif2++;}
+else  
+{$Effectif3++;}
+$i++}
+ while ($i<15);
+
+$EffectifTotal = Compute("$Effectif1 + $Effectif2 + $Effectif3");
+@VecteurEffectif = ($Effectif1, $Effectif2, $Effectif3);
+
+
+#Calcul des pourcentages
+$Pourcentage1t =Compute("$Effectif1/$EffectifTotal*100");
+$Pourcentage1 = sprintf("%0.1f","$Pourcentage1t ");
+$Pourcentage2t = Compute("$Effectif2/$EffectifTotal*100");
+$Pourcentage2 = sprintf("%0.1f","$Pourcentage2t ");
+$Pourcentage3t = Compute("$Effectif3/$EffectifTotal*100");
+$Pourcentage3 = sprintf("%0.1f","$Pourcentage3t ");
+$PourcentageTotalt = Compute("$Pourcentage1 + $Pourcentage2 + $Pourcentage3");
+$PourcentageTotal = sprintf("%0.1f","$PourcentageTotalt ");
+
+
+
+if ($PourcentageTotal == 100.0)
+{}
+else
+{
+if ($VecteurBaseDonnee[0]  >= $ValeurClasse[0] && $VecteurBaseDonnee[0]  < $ValeurClasse[1])
+{$Modalite1 = $ValeurClasse[1];
+$VecteurBaseDonnee[0] = sprintf("%0.1f","$Modalite1");
+$Effectif1--; 
+$Effectif2++;}
+elsif ($VecteurBaseDonnee[0]  >= $ValeurClasse[1] && $VecteurBaseDonnee[0]  < $ValeurClasse[2])
+{$Modalite1 = $ValeurClasse[2];
+$VecteurBaseDonnee[0] = sprintf("%0.1f","$Modalite1");
+$Effectif2--; 
+$Effectif3++;}
+else
+{$Modalite1 = $ValeurClasse[0];
+$VecteurBaseDonnee[0] = sprintf("%0.1f","$Modalite1");
+$Effectif3--; 
+$Effectif1++; }
+#Calcul des pourcentages
+$Pourcentage1t =Compute("$Effectif1/$EffectifTotal*100");
+$Pourcentage1 = sprintf("%0.1f","$Pourcentage1t ");
+$Pourcentage2t = Compute("$Effectif2/$EffectifTotal*100");
+$Pourcentage2 = sprintf("%0.1f","$Pourcentage2t ");
+$Pourcentage3t = Compute("$Effectif3/$EffectifTotal*100");
+$Pourcentage3 = sprintf("%0.1f","$Pourcentage3t ");
+$PourcentageTotalt = Compute("$Pourcentage1 + $Pourcentage2 + $Pourcentage3");
+$PourcentageTotal = sprintf("%0.1f","$PourcentageTotalt ");
+}
+
+
+@VecteurPourcentage = ($Pourcentage1, $Pourcentage2, $Pourcentage3);
+@RepEffectif = ($Effectif1, $Effectif2, $Effectif3);
+@RepPourcentage = ($Pourcentage1, $Pourcentage2, $Pourcentage3);
+@Reponse = ($Effectif1, $Effectif2, $Effectif3, $Pourcentage1, $Pourcentage2, $Pourcentage3);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Une enquête a été menée auprès $VecteurContexte[3]. La base de données ci-dessous représente les données recueillies.
+$PAR
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([$VecteurBaseDonnee[0],$VecteurBaseDonnee[1],$VecteurBaseDonnee[2], $VecteurBaseDonnee[3],$VecteurBaseDonnee[4] ], align => CENTER, separation=>0).
+ AlignedRow([$VecteurBaseDonnee[5],$VecteurBaseDonnee[6],$VecteurBaseDonnee[7], $VecteurBaseDonnee[8],$VecteurBaseDonnee[9] ], align => CENTER, separation=>0).
+ AlignedRow([$VecteurBaseDonnee[10],$VecteurBaseDonnee[11],$VecteurBaseDonnee[12], $VecteurBaseDonnee[13],$VecteurBaseDonnee[14] ], align => CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+$BR
+
+${BBOLD}Question : ${EBOLD} Compléter les cases manquantes du tableau de distribution suivant. Arrondir, s'il y a lieu, les pourcentages à une décimale. 
+$BR
+$BR
+$BCENTER
+${BBOLD}
+$VecteurContexte[2]
+${EBOLD}
+$ECENTER
+
+$BR
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+  AlignedRow(["${BBOLD}$VecteurContexte[1]${EBOLD}","${BBOLD}Nombre d'étudiantes $BR et d'étudiants${EBOLD}", "${BBOLD}Pourcentage d'étudiantes $BR et d'étudiants${EBOLD}"], align => CENTER, separation=>0).
+ AlignedRow(["$VecteurModalite[0]",ans_rule(5), ans_rule(5)], align => CENTER, separation=>0).
+ AlignedRow(["$VecteurModalite[1]",ans_rule(5), ans_rule(5)], align => CENTER, separation=>0).
+ AlignedRow(["$VecteurModalite[2]",ans_rule(5), ans_rule(5)], align => CENTER, separation=>0).
+  AlignedRow(["${BBOLD}Total${EBOLD}","${BBOLD}$EffectifTotal ${EBOLD}", "${BBOLD}$PourcentageTotal${EBOLD}"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$BR
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($Reponse[0], tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($Reponse[3], tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($Reponse[1], tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($Reponse[4], tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($Reponse[2], tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($Reponse[5], tol => 0.00001, tolType => "absolute"));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Pourcentage de la classe "$VecteurModalite[0]" : 
+\(\displaystyle{ \frac{$Effectif1}{$EffectifTotal} \times 100 =  \frac{$Effectif1 \times 100}{$EffectifTotal} = $Pourcentage1}\)
+$BR
+$BR
+Pourcentage de la classe "$VecteurModalite[1]" : 
+\(\displaystyle{ \frac{$Effectif2}{$EffectifTotal} \times 100 =  \frac{$Effectif2 \times 100}{$EffectifTotal} = $Pourcentage2}\)
+$BR
+$BR
+Pourcentage de la classe "$VecteurModalite[2]" : 
+\(\displaystyle{ \frac{$Effectif3}{$EffectifTotal} \times 100 =  \frac{$Effectif3 \times 100}{$EffectifTotal} = $Pourcentage3}\)
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

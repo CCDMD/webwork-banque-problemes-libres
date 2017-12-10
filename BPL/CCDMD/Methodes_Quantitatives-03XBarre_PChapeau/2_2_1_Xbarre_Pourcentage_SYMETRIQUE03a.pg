@@ -1,0 +1,1371 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Distributions normales)
+## KEYWORDS('cote Z', 'distribution d\'une moyenne', 'loi normale', 'table')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl",
+"PGcourse.pl", "PGstatisticsmacros.pl", "PGnumericalmacros.pl", "unionTables.pl", "parserPopUp.pl","PGchoicemacros.pl");
+
+COMMENT("La solution a été programmée avec la TABLE D'AIRE COMPRISE ENTRE 0 ET a: P(0 < Z < a). Niveau de difficulté: Facile. Il y a 5 contextes. Cas 3a: Xbarre suit un modèle normal. Il y a un facteur de correction. L'ordre de présentation dans le tableau n'est pas aléatoire. La question porte sur l'une des probabilités suivantes: P(0 < Z < a), P(a < Z < 0), P(Z < a) avec a négatif ou positif, P(Z > a) avec a négatif ou positif. Les réponses doivent absolument être arrondies selon les spécifications de la question.");
+
+
+TEXT(beginproblem());
+
+
+Context()->strings->add(NA=>{}, dne => {alias => "NA"} );
+$refreshCachedImages = 1;
+
+#Choisir la question 
+$TypeCas = random(0,5);
+
+#Choisir le contexte du problème
+$TypeContexte = random(0,4);
+
+#Choisir si Xbarre suit un modèle normal
+#0: La taille de l'échantillon est supérieure ou égale à 30
+#1: X suit un modèle normal
+#2: Xbarre ne suit pas un modèle normal
+$XbarreSuitNormal = 0; 
+
+#Choisir s'il y a un Facteur de correction
+#0 = Ne jamais mentionner le facteur de correction dans la solution et ne jamais en avoir.
+#1 = Mentionner le facteur de correction dans la solution et ne jamais en avoir.
+#2 = Mentionner le facteur de correction dans la solution et parfois en avoir.
+#3 = Mentionner le facteur de correction dans la solution et toujours en avoir.
+$TypeFC = 3;
+
+#Choisir la possibilité que des questions soient sur X ou sur Xbarre
+#0: question sur X, si possible
+#100: question sur Xbarre, si possible
+$TypeCasQtemp = list_random(0,100);
+$TypeCasQtemp = 100;
+
+#Choisir si l'affichage des statistiques et des paramètres dans le tableau est aléatoire.
+$ChoixAleatoireNom = random(0,1);
+$ChoixAleatoireNom = 0;
+
+if ($ChoixAleatoireNom == 0)
+{@CompteurNomParametre = (0,1,2);
+@CompteurNomStatistique = (0,1,2);}
+else
+{@CompteurNomParametre = shuffle(3);
+@CompteurNomStatistique = shuffle(3);}
+
+
+#Afficher les pourcentages à deux décimales ou à une décimale ou au autre
+#Présentement il est arrondi à deux décimales
+$PrecisionPourcentage = "%0.2f";
+
+
+if ($TypeContexte == 0)
+{#Taille
+$VariableNom = "Taille des étudiants d'un cégep";
+$PopulationNom = "des étudiants d'un cégep";
+$PopulationNom2 = "étudiants d'un cégep";
+$PopulationNom3 = "étudiants de ce cégep";
+$UniteNom = "cm";
+$VariableNom2 = "a une taille";
+$VariableNomR = "ont une taille";
+$VariableNomQ100 = "ont une taille moyenne";
+#0 = masculin
+#1 = féminin
+$VariableGenre = 1;
+$MoyenneXt = random(160, 170, 0.1);
+$MoyenneX = sprintf("%0.1f","$MoyenneXt");
+$EcarttypeXt = random(5, 10, 0.1);
+$EcarttypeX = sprintf("%0.1f","$EcarttypeXt");
+$EcarttypeXPopulation = $EcarttypeX;
+$EcarttypeXEchantillon = $EcarttypeX;
+$MoyenneXPopulation = $MoyenneX;
+$MoyenneXEchantillon = $MoyenneX;
+$PrecisionVariableX = "%0.1f";
+$PrecisionVariableXc = Compute("0.1");
+$TaillePopulation = random(2000, 3000);
+$ContexteQuestion0 = "Les $TaillePopulation $PopulationNom2 ont une taille moyenne de $MoyenneX $UniteNom avec un écart type de $EcarttypeX $UniteNom.";
+$ContexteQuestion1 = "La taille des $TaillePopulation $PopulationNom2 suit un modèle normal dont la moyenne est $MoyenneX $UniteNom et l'écart type est $EcarttypeX $UniteNom.";
+$ContexteQuestion2 = "On s'intéresse à la taille des étudiants."; 
+}
+elsif ($TypeContexte == 1)
+{#âge
+$VariableNom = "Âge des employés d'une entreprise";
+$PopulationNom = "des employés d'une entreprise";
+$PopulationNom2 = "employés d'une entreprise";
+$PopulationNom3 = "employés de cet entreprise";
+$UniteNom = "ans";
+$VariableNom2 = "a un âge";
+$VariableNomR = "ont un âge";
+$VariableNomQ100 = "ont un âge moyen";
+#0 = masculin
+#1 = féminin
+$VariableGenre = 0;
+$MoyenneXt = random(25, 55, 0.1);
+$MoyenneX = sprintf("%0.1f","$MoyenneXt");
+if ($MoyenneXt <= 30)
+{$EcarttypeXt = random(2, 5, 0.1);}
+elsif (($MoyenneXt > 30) && ($MoyenneXt <= 45))
+{$EcarttypeXt = random(5, 8, 0.1);}
+else
+{$EcarttypeXt = random(5, 10, 0.1);}
+$EcarttypeX = sprintf("%0.1f","$EcarttypeXt");
+$EcarttypeXPopulation = $EcarttypeX;
+$EcarttypeXEchantillon = $EcarttypeX;
+$MoyenneXPopulation = $MoyenneX;
+$MoyenneXEchantillon = $MoyenneX;
+$PrecisionVariableX = "%0.1f";
+$PrecisionVariableXc = Compute("0.1");
+$TaillePopulation = random(2000, 3000);
+$ContexteQuestion0 = "Les $TaillePopulation $PopulationNom2 ont un âge moyen de $MoyenneX $UniteNom avec un écart type de $EcarttypeX $UniteNom.";
+$ContexteQuestion1 = "L'âge des $TaillePopulation $PopulationNom2 suit un modèle normal dont la moyenne est $MoyenneX $UniteNom et l'écart type est $EcarttypeX $UniteNom.";
+$ContexteQuestion2 = "On s'intéresse à l'âge des employés d'une entreprise."; 
+}
+elsif ($TypeContexte == 2)
+{#forfaits cellulaires
+$VariableNom = "Montant mensuel du forfait cellulaire des étudiants d'un cégep";
+$PopulationNom = "des étudiants d'un cégep";
+$PopulationNom2 = "étudiants d'un cégep";
+$PopulationNom3 = "étudiants de ce cégep";
+$UniteNom = "dollars";
+$VariableNom2 = "dépense mensuellement pour son forfait cellulaire un montant";
+$VariableNomR = "dépensent mensuellement pour leur $BR forfait cellulaire un montant $BR";
+$VariableNomQ100 = "dépensent mensuellement pour leur $BR forfait cellulaire un montant moyen";
+#0 = masculin
+#1 = féminin
+$VariableGenre = 0;
+$MoyenneXt = random(70,90, 0.1);
+$MoyenneX = sprintf("%0.2f","$MoyenneXt");
+$EcarttypeXt = random(10,20, 0.01);
+$EcarttypeX = sprintf("%0.2f","$EcarttypeXt");
+$EcarttypeXPopulation = $EcarttypeX;
+$EcarttypeXEchantillon = $EcarttypeX;
+$MoyenneXPopulation = $MoyenneX;
+$MoyenneXEchantillon = $MoyenneX;
+$PrecisionVariableX = "%0.2f";
+$PrecisionVariableXc = Compute("0.01");
+$TaillePopulation = random(2000, 3000);
+$ContexteQuestion0 = "Les $TaillePopulation $PopulationNom2 
+dépensent mensuellement pour leur forfait cellulaire un montant moyen de $MoyenneX $UniteNom avec un écart type de $EcarttypeX $UniteNom.";
+$ContexteQuestion1 = "La dépense mensuelle pour un forfait cellulaire des $TaillePopulation $PopulationNom2 suit un modèle normal dont la moyenne est $MoyenneX $UniteNom et l'écart type est $EcarttypeX $UniteNom.";
+$ContexteQuestion2 = "On s'intéresse à la dépense mensuelle pour un forfait cellulaire des étudiants d'un cégep."; 
+}
+elsif ($TypeContexte == 3)
+{#Temps pour se rendre au Cégep
+$VariableNom = "Temps pris par les étudiants pour se rendre au cégep";
+$PopulationNom = "des étudiants d'un cégep";
+$PopulationNom2 = "étudiants d'un cégep";
+$PopulationNom3 = "étudiants de ce cégep";
+$UniteNom = "min";
+$VariableNom2 = "prend un temps pour se rendre au cégep";
+$VariableNomR = "prennent un temps pour se rendre au cégep $BR";
+$VariableNomQ100 = "ont un temps moyen $BR pour se rendre au cégep";
+#0 = masculin
+#1 = féminin
+$VariableGenre = 0;
+$MoyenneX = random(21, 40, 0.1);
+if ($MoyenneX <= 30)
+{$EcarttypeXt = random(3, 6, 0.1);
+$EcarttypeX = sprintf("%0.1f","$EcarttypeXt");}
+else
+{$EcarttypeXt = random(5, 10, 0.1);
+$EcarttypeX = sprintf("%0.1f","$EcarttypeXt");}
+$EcarttypeXPopulation = $EcarttypeX;
+$EcarttypeXEchantillon = $EcarttypeX;
+$MoyenneXPopulation = $MoyenneX;
+$MoyenneXEchantillon = $MoyenneX;
+$PrecisionVariableX = "%0.1f";
+$PrecisionVariableXc = Compute("0.1");
+$TaillePopulation = random(2000, 3000);
+$ContexteQuestion0 = "Les $TaillePopulation $PopulationNom2 
+prennent un temps moyen pour se rendre au cégep de $MoyenneX $UniteNom avec un écart type de $EcarttypeX $UniteNom.";
+$ContexteQuestion1 = "Le temps pris pour se rendre au cégep des $TaillePopulation $PopulationNom2 suit un modèle normal dont la moyenne est $MoyenneX $UniteNom et l'écart type est $EcarttypeX $UniteNom.";
+$ContexteQuestion2 = "On s'intéresse au temps pris par les étudiants pour se rendre à leur cégep."; 
+}
+elsif ($TypeContexte == 4)
+{#Manuels scolaires
+$VariableNom = "Montant d'achat de manuels scolaires pour une session des étudiants d'un cégep";
+$PopulationNom = "des étudiants d'un cégep";
+$PopulationNom2 = "étudiants d'un cégep";
+$PopulationNom3 = "étudiants de ce cégep";
+$UniteNom = "dollars";
+$VariableNom2 = "dépense pour les manuels scolaires un montant";
+$VariableNomR = "dépensent pour leurs $BR manuels scolaires un montant $BR";
+$VariableNomQ100 = "dépensent pour leurs $BR manuels scolaires un montant moyen";
+#0 = masculin
+#1 = féminin
+$VariableGenre = 0;
+$MoyenneXt = random(220,280, 0.1);
+$MoyenneX = sprintf("%0.2f","$MoyenneXt");
+$EcarttypeXt = random(30,50, 0.01);
+$EcarttypeX = sprintf("%0.2f","$EcarttypeXt");
+$EcarttypeXPopulation = $EcarttypeX;
+$EcarttypeXEchantillon = $EcarttypeX;
+$MoyenneXPopulation = $MoyenneX;
+$MoyenneXEchantillon = $MoyenneX;
+$PrecisionVariableX = "%0.2f";
+$PrecisionVariableXc = Compute("0.01");
+$TaillePopulation = random(2000, 3000);
+$ContexteQuestion0 = "Les $TaillePopulation $PopulationNom2 
+dépensent pour leurs manuels scolaires un montant moyen de $MoyenneX $UniteNom avec un écart type de $EcarttypeX $UniteNom.";
+$ContexteQuestion1 = "La dépense pour l'achat de manuels scolaires des $TaillePopulation $PopulationNom2 suit un modèle normal dont la moyenne est $MoyenneX $UniteNom et l'écart type est $EcarttypeX $UniteNom.";
+$ContexteQuestion2 = "On s'intéresse à la dépense pour l'achat de manuels scolaires par des étudiants d'un cégep."; 
+}
+
+#Déterminer la taille de l'échantillon et si Besoin du FC
+if ($XbarreSuitNormal == 0)
+{#0: La taille de l'échantillon est supérieure ou égale à 30
+if ($TypeFC == 0 || $TypeFC == 1)
+{#Pas de FC
+$TailleMinFCt = Compute("($TaillePopulation/20) - 1");
+$TailleMinFC = floor($TailleMinFCt);
+$TailleEchantillon = random(30, $TailleMinFC);
+$TestCalcul = Compute("20*$TailleEchantillon");
+#La variable TestCalcul est réutilisée plus loin
+$BesoinFC = 0;}
+elsif ($TypeFC == 2)
+{#Possiblement FC
+$TailleAutreFCt = Compute("($TaillePopulation/10)");
+$TailleAutreFC = ceil($TailleAutreFCt);
+$TailleEchantillon = random(30, $TailleAutreFC);
+$TestCalcul = Compute("20*$TailleEchantillon");
+#La variable TestCalcul est réutilisée plus loin
+if ($TaillePopulation >= $TestCalcul)
+{$BesoinFC = 0;}
+else
+{$BesoinFC = 1;}}
+else
+{#Toujours FC
+$TailleMinFCt = Compute("($TaillePopulation/20)");
+$TailleMinFC = ceil($TailleMinFCt);
+$TailleAutreFCt = Compute("($TaillePopulation/10)");
+$TailleAutreFC = ceil($TailleAutreFCt);
+$TailleEchantillon = random($TailleMinFC, $TailleAutreFC);
+$TestCalcul = Compute("20*$TailleEchantillon");
+#La variable TestCalcul est réutilisée plus loin
+$BesoinFC = 1;}}
+elsif ($XbarreSuitNormal == 1)
+{#1: X suit un modèle normal
+$TailleEchantillon = random(10, 29);
+$TestCalcul = Compute("20*$TailleEchantillon");
+#La variable TestCalcul est réutilisée plus loin
+if ($TaillePopulation >= $TestCalcul)
+{$BesoinFC = 0;
+$VariableTesting1 = 0;}
+else
+{$BesoinFC = 1;
+$VariableTesting1 = 1;}}
+else
+{#2: Xbarre ne suit pas un modèle normal
+$TailleEchantillon = random(10,29);
+$BesoinFC = 0;}
+
+#Moyenne et écart type pour les cotes Z
+$Ecarttype1 = 1;
+$Moyenne1 = 0;
+
+if ($XbarreSuitNormal == 0)
+{#0: La taille de l'échantillon est supérieure ou égale à 30
+$TaillePopulationRep = Compute("$TaillePopulation");
+$TaillePopulationRep2 = Compute("$TaillePopulation");
+$TailleEchantillonRep = Compute("$TailleEchantillon");
+$TailleEchantillonRep2 = Compute("$TailleEchantillon");
+$EcarttypeXPopulationRep = Compute("$EcarttypeX");
+$EcarttypeXPopulationRep2 = Compute("$EcarttypeX");
+$EcarttypeXEchantillonRep = Compute("NA");
+$EcarttypeXEchantillonRep2 = "inconnue";
+$MoyenneXPopulationRep = Compute("$MoyenneX");
+$MoyenneXPopulationRep2 = Compute("$MoyenneX");
+$MoyenneXEchantillonRep = Compute("NA");
+$MoyenneXEchantillonRep2 = "inconnue";
+
+$ContexteQuestion = "$ContexteQuestion0 On sélectionne des échantillons sans remise de $TailleEchantillon $PopulationNom3.";
+}
+elsif ($XbarreSuitNormal == 1)
+{#1: X suit un modèle normal
+$TaillePopulationRep = Compute("$TaillePopulation");
+$TaillePopulationRep2 = Compute("$TaillePopulation");
+$TailleEchantillonRep = Compute("$TailleEchantillon");
+$TailleEchantillonRep2 = Compute("$TailleEchantillon");
+$EcarttypeXPopulationRep = Compute("$EcarttypeX");
+$EcarttypeXPopulationRep2 = Compute("$EcarttypeX");
+$EcarttypeXEchantillonRep = Compute("NA");
+$EcarttypeXEchantillonRep2 = "inconnue";
+$MoyenneXPopulationRep = Compute("$MoyenneX");
+$MoyenneXPopulationRep2 = Compute("$MoyenneX");
+$MoyenneXEchantillonRep = Compute("NA");
+$MoyenneXEchantillonRep2 = "inconnue";
+
+$ContexteQuestion = "$ContexteQuestion1 On sélectionne des échantillons sans remise de $TailleEchantillon $PopulationNom3.";
+}
+else
+{#2: Xbarre ne suit pas un modèle normal
+$TaillePopulationRep = Compute("NA");
+$TaillePopulationRep2 = "inconnue";
+$TailleEchantillonRep = Compute("$TailleEchantillon");
+$TailleEchantillonRep2 = Compute("$TailleEchantillon");
+$EcarttypeXEchantillonRep = Compute("$EcarttypeX");
+$EcarttypeXEchantillonRep2 = Compute("$EcarttypeX");
+$EcarttypeXPopulationRep = Compute("NA");
+$EcarttypeXPopulationRep2 = "inconnue";
+$MoyenneXEchantillonRep = Compute("$MoyenneX");
+$MoyenneXEchantillonRep2 = Compute("$MoyenneX");
+$MoyenneXPopulationRep = Compute("NA");
+$MoyenneXPopulationRep2 = "inconnue";
+$ContexteQuestion = "$ContexteQuestion2 On sélectionne un échantillon de $TailleEchantillon $PopulationNom2 et on calcule une moyenne de $MoyenneX $UniteNom et un écart type de $EcarttypeX $UniteNom.";
+}
+
+#Calcul de la moyenne des X barre et de l'écart type des X barre
+$MoyenneXbarre = sprintf($PrecisionVariableX,"$MoyenneX");
+#Facteur de correction
+if ($BesoinFC == 0)
+{$EcarttypeXbarret = Compute("$EcarttypeX/(($TailleEchantillon)^0.5)");
+$EcarttypeXbarre = sprintf("%0.2f","$EcarttypeXbarret");
+if ($TypeFC == 0)
+{#0 = Ne jamais mentionner le facteur de correction dans la solution et ne jamais en avoir.
+$Solution2FC = "Alors \(\displaystyle{\mu_{\overline{X}} = \mu = $MoyenneXbarre }\) et \(\displaystyle{\sigma_{\overline{X}} = \frac{\sigma}{\sqrt{n}} =\frac{$EcarttypeX}{\sqrt{$TailleEchantillon}} = $EcarttypeXbarre}\)";}
+else
+{#Expliquer pourquoi il n'y a pas de facteur de correction
+$Solution2FC = "Alors \(\displaystyle{\mu_{\overline{X}} = \mu = $MoyenneXbarre }\) et le facteur de correction \(\displaystyle{\sqrt{\frac{N - n}{N - 1}}}\) n'est pas nécessaire pour calculer \(\displaystyle{\sigma_{\overline{X}}}\) (l'écart type des  \(\displaystyle{\overline{X}}\)), car l'échantillonnage se fait sans remise et \(\displaystyle{ N \ge 20n \ ($TaillePopulation \ge 20 \times $TailleEchantillon = $TestCalcul)}\). Le calcul de l'écart type des \(\displaystyle{\overline{X}}\) est :$BR
+\(\displaystyle{\sigma_{\overline{X}} = \frac{\sigma}{\sqrt{n}} =\frac{$EcarttypeX}{\sqrt{$TailleEchantillon}} = $EcarttypeXbarre}\)";}
+}
+else
+{$EcarttypeXbarret = Compute("($EcarttypeX/(($TailleEchantillon)^0.5))*(($TaillePopulation- $TailleEchantillon)/($TaillePopulation-1))^0.5");
+$EcarttypeXbarre = sprintf("%0.2f","$EcarttypeXbarret");
+$Solution2FC = "Alors \(\displaystyle{\mu_{\overline{X}} = \mu = $MoyenneXbarre }\) et le facteur de correction \(\displaystyle{\sqrt{\frac{N - n}{N - 1}}}\) est nécessaire pour calculer \(\displaystyle{\sigma_{\overline{X}}}\) (l'écart type des  \(\displaystyle{\overline{X}}\)), car l'échantillonnage se fait sans remise et \(\displaystyle{ N < 20n \ ($TaillePopulation < 20 \times $TailleEchantillon = $TestCalcul)}\). Le calcul de l'écart type des \(\displaystyle{\overline{X}}\) devient :$BR
+\(\displaystyle{\sigma_{\overline{X}} = \frac{\sigma}{\sqrt{n}} \times \sqrt{\frac{N - n}{N - 1}} =\frac{$EcarttypeX}{\sqrt{$TailleEchantillon}} \times \sqrt{\frac{$TaillePopulation - $TailleEchantillon}{$TaillePopulation - 1}} = $EcarttypeXbarre}\)";}
+
+if ($XbarreSuitNormal == 1)
+{#la question porte sur Xbarre ou sur X
+if ($TypeCasQtemp == 0) 
+{#la question porte sur X
+$MoyenneXc = $MoyenneX;
+$EcarttypeXc = $EcarttypeX;
+$GraphiqueSymboleA = "X";
+$SymboleXA = "X";
+$TypeCasQ = Compute("$TypeCas");
+$Question3SolutionOui = 1;}
+else
+{#la question porte sur Xbarre
+$MoyenneXc = $MoyenneXbarre;
+$EcarttypeXc = $EcarttypeXbarre;
+$GraphiqueSymboleA = "\{\displaystyle{\overline{X}}\}";
+$SymboleXA = "\(\displaystyle{\overline{X}}\)";
+$TypeCasQ = Compute("$TypeCas+100");
+$Question3SolutionOui = 1;}}
+elsif ($XbarreSuitNormal == 2)
+{#la question porte sur Xbarre, mais ce cas n'est pas utilisé
+$MoyenneXc = $MoyenneXbarre;
+$EcarttypeXc = $EcarttypeXbarre;
+$GraphiqueSymboleA = "\{\displaystyle{\overline{X}}\}";
+$SymboleXA = "\(\displaystyle{\overline{X}}\)";
+$TypeCasQ = Compute("$TypeCas+100");
+$Question3SolutionOui = 0;}
+else
+{#la question porte sur Xbarre
+$MoyenneXc = $MoyenneXbarre;
+$EcarttypeXc = $EcarttypeXbarre;
+$GraphiqueSymboleA = "\{\displaystyle{\overline{X}}\}";
+$SymboleXA = "\(\displaystyle{\overline{X}}\)";
+$TypeCasQ = Compute("$TypeCas+100");
+$Question3SolutionOui = 1;}
+
+$ValeurXmax = Compute(" $MoyenneXc + (3*$EcarttypeXc)"); 
+$ValeurXmin = Compute(" $MoyenneXc - (3*$EcarttypeXc)"); 
+$ValeurMoyennePositive = Compute("$MoyenneXc + 2*$PrecisionVariableXc");
+$ValeurMoyenneNegative = Compute("$MoyenneXc - 2*$PrecisionVariableXc");
+$ValeurXmaxExterieure = Compute(" $MoyenneXc + (4*$EcarttypeXc)"); 
+$ValeurXminExterieure = Compute(" $MoyenneXc - (4*$EcarttypeXc)"); 
+
+#Choisir le type d'exercice
+if ($TypeCas ==0)
+{#Cas 1: P(0 < Z< p)
+$CoteZ1P= 0;
+$CoteZ1= 0;
+$ValeurX1 = sprintf($PrecisionVariableX,"$MoyenneXc");
+$ValeurX2t=random($ValeurMoyennePositive, $ValeurXmax, $PrecisionVariableXc);
+$ValeurX2 = sprintf($PrecisionVariableX,"$ValeurX2t");
+$CoteZ2P = Compute("($ValeurX2- $MoyenneXc)/$EcarttypeXc");
+$CoteZ2 = sprintf("%0.2f","$CoteZ2P");
+$CoteZ1sol1 = 0; 
+$CoteZ2sol1t = Compute("1*$CoteZ2"); 
+$CoteZ2sol1 =sprintf("%0.2f","$CoteZ2sol1t");
+$PourcentageSol1t = normal_prob($CoteZ1,$CoteZ2 , mean=>$Moyenne1, deviation=>$Ecarttype1);
+$PourcentageSol1tt = Compute("$PourcentageSol1t*100");
+$PourcentageSol1 = sprintf($PrecisionPourcentage,"$PourcentageSol1tt");
+$PourcentageRep = $PourcentageSol1;
+$ZoneHachuree = 0;}
+elsif ($TypeCas ==1)
+{#Cas 2: P(p < Z< 0)
+$ValeurX1t=random($ValeurXmin,$ValeurMoyenneNegative, $PrecisionVariableXc);
+$ValeurX1 = sprintf($PrecisionVariableX,"$ValeurX1t");
+$CoteZ1P = Compute("($ValeurX1- $MoyenneXc)/$EcarttypeXc");
+$CoteZ1 = sprintf("%0.2f","$CoteZ1P");
+$ValeurX2 = sprintf($PrecisionVariableX,"$MoyenneXc");
+$CoteZ2P = 0;
+$CoteZ2= 0;
+$CoteZ1sol1 = 0; 
+$CoteZ2sol1t = Compute("-1*$CoteZ1"); 
+$CoteZ2sol1 =sprintf("%0.2f","$CoteZ2sol1t");
+$PourcentageSol1t = normal_prob($CoteZ1,$CoteZ2 , mean=>$Moyenne1, deviation=>$Ecarttype1);
+$PourcentageSol1tt = Compute("$PourcentageSol1t*100");
+$PourcentageSol1 = sprintf($PrecisionPourcentage,"$PourcentageSol1tt");
+$PourcentageRep = $PourcentageSol1;
+$ZoneHachuree = 1;
+$CoteZ1H =$CoteZ1sol1;
+$CoteZ2H =$CoteZ2sol1;
+$ValeurX1Ht= Compute(" $MoyenneX + ($CoteZ1H*$EcarttypeX)");
+$ValeurX1H = sprintf("%0.1f","$ValeurX1Ht");
+$ValeurX2Ht= Compute(" $MoyenneX + ($CoteZ2H*$EcarttypeX)");
+$ValeurX2H = sprintf("%0.1f","$ValeurX2Ht");}
+elsif ($TypeCas ==2)
+{#Cas 3: P( Z< p), avec p positif
+$CoteZ1P = -infty;
+$CoteZ1 =-4 ;
+$ValeurX1 = sprintf($PrecisionVariableX,"$ValeurXminExterieure");
+$ValeurX2t=random($ValeurMoyennePositive, $ValeurXmax, $PrecisionVariableXc);
+$ValeurX2 = sprintf($PrecisionVariableX,"$ValeurX2t");
+$CoteZ2P = Compute("($ValeurX2- $MoyenneXc)/$EcarttypeXc");
+$CoteZ2 = sprintf("%0.2f","$CoteZ2P");
+$CoteZ1sol1 = 0; 
+$CoteZ2sol1t = Compute("$CoteZ2"); 
+$CoteZ2sol1 =sprintf("%0.2f","$CoteZ2sol1t");
+$PourcentageSol1t = normal_prob(0,$CoteZ2 , mean=>$Moyenne1, deviation=>$Ecarttype1);
+$PourcentageSol1tt = Compute("$PourcentageSol1t*100");
+$PourcentageSol1 = sprintf($PrecisionPourcentage,"$PourcentageSol1tt");
+$CoteZ1sol2 = -4;
+$CoteZ2sol2 = 0;
+$PourcentageSol2tt = 50.0;
+$PourcentageSol2 = sprintf($PrecisionPourcentage,"$PourcentageSol2tt");
+$ZoneHachuree = 0;
+$PourcentageReptt = Compute("$PourcentageSol2 + $PourcentageSol1");
+$PourcentageRep = sprintf($PrecisionPourcentage,"$PourcentageReptt");}
+elsif ($TypeCas ==3)
+{#Cas 4: P( Z< p), avec p négatif
+$CoteZ1P = -infty;
+$CoteZ1 =-4 ;
+$ValeurX1 = sprintf($PrecisionVariableX,"$ValeurXminExterieure");
+$ValeurX2t=random($ValeurXmin,$ValeurMoyenneNegative, $PrecisionVariableXc);
+$ValeurX2 = sprintf($PrecisionVariableX,"$ValeurX2t");
+$CoteZ2P = Compute("($ValeurX2- $MoyenneXc)/$EcarttypeXc");
+$CoteZ2 = sprintf("%0.2f","$CoteZ2P");
+$CoteZ1sol1 = 0; 
+$CoteZ2sol1t = Compute("-1*$CoteZ2"); 
+$CoteZ2sol1 =sprintf("%0.2f","$CoteZ2sol1t");
+$PourcentageSol1t = normal_prob(0,$CoteZ2sol1 , mean=>$Moyenne1, deviation=>$Ecarttype1);
+$PourcentageSol1tt = Compute("$PourcentageSol1t*100");
+$PourcentageSol1 = sprintf($PrecisionPourcentage,"$PourcentageSol1tt");
+$CoteZ1sol2 = 4;
+$CoteZ2sol2 = 0;
+$PourcentageSol2tt = 50.0;
+$PourcentageSol2 = sprintf($PrecisionPourcentage,"$PourcentageSol2tt");
+$ZoneHachuree = 1;
+$CoteZ1H =$CoteZ2sol1;
+$CoteZ2H =4;
+$ValeurX1Ht= Compute(" $MoyenneX + ($CoteZ1H*$EcarttypeX)");
+$ValeurX1H = sprintf("%0.1f","$ValeurX1Ht");
+$ValeurX2Ht= Compute(" $MoyenneX + ($CoteZ2H*$EcarttypeX)");
+$ValeurX2H = sprintf("%0.1f","$ValeurX2Ht");
+$PourcentageReptt = Compute("$PourcentageSol2 - $PourcentageSol1");
+$PourcentageRep = sprintf($PrecisionPourcentage,"$PourcentageReptt");}
+elsif ($TypeCas ==4)
+{#Cas 5: P( Z> p), avec p positif
+$ValeurX1t=random($ValeurMoyennePositive, $ValeurXmax, $PrecisionVariableXc);
+$ValeurX1 = sprintf($PrecisionVariableX,"$ValeurX1t");
+$CoteZ1P = Compute("($ValeurX1- $MoyenneXc)/$EcarttypeXc");
+$CoteZ1 = sprintf("%0.2f","$CoteZ1P");
+$ValeurX2 = sprintf($PrecisionVariableX,"$ValeurXmaxExterieure");
+$CoteZ2P = infty;
+$CoteZ2 = 4;
+$CoteZ1sol1 = 0; 
+$CoteZ2sol1t = Compute("$CoteZ1"); 
+$CoteZ2sol1 =sprintf("%0.2f","$CoteZ2sol1t");
+$PourcentageSol1t = normal_prob(0,$CoteZ2sol1 , mean=>$Moyenne1, deviation=>$Ecarttype1);
+$PourcentageSol1tt = Compute("$PourcentageSol1t*100");
+$PourcentageSol1 = sprintf($PrecisionPourcentage,"$PourcentageSol1tt");
+$CoteZ1sol2 = 4;
+$CoteZ2sol2 = 0;
+$PourcentageSol2tt = 50.0;
+$PourcentageSol2 = sprintf($PrecisionPourcentage,"$PourcentageSol2tt");
+$ZoneHachuree = 0;
+$PourcentageReptt = Compute("$PourcentageSol2 - $PourcentageSol1");
+$PourcentageRep = sprintf($PrecisionPourcentage,"$PourcentageReptt");}
+elsif ($TypeCas ==5)
+{#Cas 6: P( Z> p), avec p négatif
+$ValeurX1t=random($ValeurXmin,$ValeurMoyenneNegative, $PrecisionVariableXc);
+$ValeurX1 = sprintf($PrecisionVariableX,"$ValeurX1t");
+$CoteZ1P = Compute("($ValeurX1- $MoyenneXc)/$EcarttypeXc");
+$CoteZ1 = sprintf("%0.2f","$CoteZ1P");
+$ValeurX2 = sprintf($PrecisionVariableX,"$ValeurXmaxExterieure");
+$CoteZ2P = infty;
+$CoteZ2 = 4;
+$CoteZ1sol1 = 0; 
+$CoteZ2sol1t = Compute("$CoteZ1"); 
+$CoteZ2sol1 =sprintf("%0.2f","$CoteZ2sol1t");
+$CoteZ2sol1Tt = Compute("-1*$CoteZ1"); 
+$CoteZ2sol1T =sprintf("%0.2f","$CoteZ2sol1Tt");
+$PourcentageSol1t = normal_prob($CoteZ2sol1,0, mean=>$Moyenne1, deviation=>$Ecarttype1);
+$PourcentageSol1tt = Compute("$PourcentageSol1t*100");
+$PourcentageSol1 = sprintf($PrecisionPourcentage,"$PourcentageSol1tt");
+$CoteZ1sol2 = 4;
+$CoteZ2sol2 = 0;
+$PourcentageSol2tt = 50.0;
+$PourcentageSol2 = sprintf($PrecisionPourcentage,"$PourcentageSol2tt");
+$PourcentageReptt = Compute("$PourcentageSol2 + $PourcentageSol1");
+$PourcentageRep = sprintf($PrecisionPourcentage,"$PourcentageReptt");
+#C'est trop confondant d'avoir une zone hachurée 
+$ZoneHachuree = 0;
+$CoteZ1H =0;
+$CoteZ2H =$CoteZ2sol1;
+$ValeurX1Ht= Compute(" $MoyenneX + ($CoteZ1H*$EcarttypeX)");
+$ValeurX1H = sprintf("%0.1f","$ValeurX1Ht");
+$ValeurX2Ht= Compute(" $MoyenneX + ($CoteZ2H*$EcarttypeX)");
+$ValeurX2H = sprintf("%0.1f","$ValeurX2Ht");}
+elsif ($TypeCas ==6)
+{#Cas 7: P(p1 < Z< p2), avec p1 et p2 négatifs
+$temp1 =random($ValeurXmin,$ValeurMoyenneNegative, $PrecisionVariableXc);
+$temp2 =random($ValeurXmin,$ValeurMoyenneNegative, $PrecisionVariableXc);
+if ($temp2 < $temp1)
+{$ValeurX1t = $temp2;
+$ValeurX2t = $temp1;}
+elsif ($temp2 > $temp1)
+{$ValeurX1t = $temp1;
+$ValeurX2t = $temp2;}
+else
+{$ValeurX1t = Compute(" $MoyenneXc - (2*$EcarttypeXc)"); 
+$ValeurX2t = Compute("$MoyenneXc - (1*$EcarttypeXc)");}
+
+$ValeurX1 = sprintf($PrecisionVariableX,"$ValeurX1t");
+$CoteZ1P = Compute("($ValeurX1- $MoyenneXc)/$EcarttypeXc");
+$CoteZ1 = sprintf("%0.2f","$CoteZ1P");
+$ValeurX2 = sprintf($PrecisionVariableX,"$ValeurX2t");
+$CoteZ2P = Compute("($ValeurX2- $MoyenneXc)/$EcarttypeXc");
+$CoteZ2 = sprintf("%0.2f","$CoteZ2P");
+$CoteZ1sol1 = 0; 
+$CoteZ2sol1t = Compute("-1*$CoteZ2"); 
+$CoteZ2sol1 =sprintf("%0.2f","$CoteZ2sol1t");
+$PourcentageSol1t = normal_prob(0,$CoteZ2sol1 , mean=>$Moyenne1, deviation=>$Ecarttype1);
+$PourcentageSol1tt = Compute("$PourcentageSol1t*100");
+$PourcentageSol1 = sprintf($PrecisionPourcentage,"$PourcentageSol1tt");
+$CoteZ1sol2 = 0; 
+$CoteZ2sol2t = Compute("-1*$CoteZ1"); 
+$CoteZ2sol2 =sprintf("%0.2f","$CoteZ2sol2t");
+$PourcentageSol2t = normal_prob(0,$CoteZ2sol2 , mean=>$Moyenne1, deviation=>$Ecarttype1);
+$PourcentageSol2tt = Compute("$PourcentageSol2t*100");
+$PourcentageSol2 = sprintf($PrecisionPourcentage,"$PourcentageSol2tt");
+$PourcentageReptt = Compute("$PourcentageSol2 - $PourcentageSol1");
+$PourcentageRep = sprintf($PrecisionPourcentage,"$PourcentageReptt");
+$ZoneHachuree = 1;
+$CoteZ1H =$CoteZ2sol1;
+$CoteZ2H =$CoteZ2sol2;
+$ValeurX1Ht= Compute(" $MoyenneX + ($CoteZ1H*$EcarttypeX)");
+$ValeurX1H = sprintf("%0.1f","$ValeurX1Ht");
+$ValeurX2Ht= Compute(" $MoyenneX + ($CoteZ2H*$EcarttypeX)");
+$ValeurX2H = sprintf("%0.1f","$ValeurX2Ht");}
+elsif ($TypeCas ==7)
+{#Cas 8: P(p1 < Z< p2), avec p1 et p2 positifs
+$temp1 =random($ValeurMoyennePositive, $ValeurXmax, $PrecisionVariableXc);
+$temp2 =random($ValeurMoyennePositive, $ValeurXmax, $PrecisionVariableXc);
+
+if ($temp2 < $temp1)
+{$ValeurX1t = $temp2;
+$ValeurX2t = $temp1;}
+elsif ($temp2 > $temp1)
+{$ValeurX1t = $temp1;
+$ValeurX2t = $temp2;}
+else
+{$ValeurX1t = Compute(" $MoyenneXc + (1*$EcarttypeXc)"); 
+$ValeurX2t = Compute("$MoyenneXc + (2*$EcarttypeXc)");}
+$ValeurX1 = sprintf($PrecisionVariableX,"$ValeurX1t");
+$CoteZ1P = Compute("($ValeurX1- $MoyenneXc)/$EcarttypeXc");
+$CoteZ1 = sprintf("%0.2f","$CoteZ1P");
+$ValeurX2 = sprintf($PrecisionVariableX,"$ValeurX2t");
+$CoteZ2P = Compute("($ValeurX2- $MoyenneXc)/$EcarttypeXc");
+$CoteZ2 = sprintf("%0.2f","$CoteZ2P");
+$CoteZ1sol1 = 0; 
+$CoteZ2sol1t = Compute("$CoteZ1"); 
+$CoteZ2sol1 =sprintf("%0.2f","$CoteZ2sol1t");
+$PourcentageSol1t = normal_prob(0,$CoteZ2sol1 , mean=>$Moyenne1, deviation=>$Ecarttype1);
+$PourcentageSol1tt = Compute("$PourcentageSol1t*100");
+$PourcentageSol1 = sprintf($PrecisionPourcentage,"$PourcentageSol1tt");
+$CoteZ1sol2 = 0; 
+$CoteZ2sol2t = Compute("$CoteZ2"); 
+$CoteZ2sol2 =sprintf("%0.2f","$CoteZ2sol2t");
+$PourcentageSol2t = normal_prob(0,$CoteZ2sol2 , mean=>$Moyenne1, deviation=>$Ecarttype1);
+$PourcentageSol2tt = Compute("$PourcentageSol2t*100");
+$PourcentageSol2 = sprintf($PrecisionPourcentage,"$PourcentageSol2tt");
+$PourcentageReptt = Compute("$PourcentageSol2 - $PourcentageSol1");
+$PourcentageRep = sprintf($PrecisionPourcentage,"$PourcentageReptt");
+$ZoneHachuree = 0;}
+elsif ($TypeCas ==8)
+{#Cas 9: P(p1 < Z< p2), avec p1 négatif et p2 positif
+$ValeurX1t=random($ValeurXmin,$ValeurMoyenneNegative, $PrecisionVariableXc);
+$ValeurX1 = sprintf($PrecisionVariableX,"$ValeurX1t");
+$CoteZ1P = Compute("($ValeurX1- $MoyenneXc)/$EcarttypeXc");
+$CoteZ1 = sprintf("%0.2f","$CoteZ1P");
+$ValeurX2t=random($ValeurMoyennePositive, $ValeurXmax, $PrecisionVariableXc);
+$ValeurX2 = sprintf($PrecisionVariableX,"$ValeurX2t");
+$CoteZ2P = Compute("($ValeurX2- $MoyenneXc)/$EcarttypeXc");
+$CoteZ2 = sprintf("%0.2f","$CoteZ2P");
+$CoteZ1sol1 = 0; 
+$CoteZ2sol1t = Compute("$CoteZ1"); 
+$CoteZ2sol1 =sprintf("%0.2f","$CoteZ2sol1t");
+$CoteZ2sol1Tt = Compute("-1*$CoteZ1"); 
+$CoteZ2sol1T =sprintf("%0.2f","$CoteZ2sol1Tt");
+$PourcentageSol1t = normal_prob($CoteZ2sol1,0, mean=>$Moyenne1, deviation=>$Ecarttype1);
+$PourcentageSol1tt = Compute("$PourcentageSol1t*100");
+$PourcentageSol1 = sprintf($PrecisionPourcentage,"$PourcentageSol1tt");
+$CoteZ1sol2 = 0; 
+$CoteZ2sol2t = Compute("$CoteZ2"); 
+$CoteZ2sol2 =sprintf("%0.2f","$CoteZ2sol2t");
+$PourcentageSol2t = normal_prob(0,$CoteZ2sol2 , mean=>$Moyenne1, deviation=>$Ecarttype1);
+$PourcentageSol2tt = Compute("$PourcentageSol2t*100");
+$PourcentageSol2 = sprintf($PrecisionPourcentage,"$PourcentageSol2tt");
+$PourcentageReptt = Compute("$PourcentageSol2 + $PourcentageSol1");
+$PourcentageRep = sprintf($PrecisionPourcentage,"$PourcentageReptt");
+#C'est trop confondant d'avoir une zone hachurée 
+$ZoneHachuree = 0;}
+
+
+#Tracer le graphique
+$FctNormal = Formula("exp(-1*(((x-$Moyenne1)/$Ecarttype1)^2)/2)/($Ecarttype1*(2*pi)^0.5)")-> reduce;
+$FctNormalZ1 = $FctNormal->eval(x=>$CoteZ1);
+$FctNormalZ2 = $FctNormal->eval(x=>$CoteZ2);
+
+$minX1 = -3.5;
+$maxX1 =3.5;
+$minY1 = -0.1;
+$maxY1t = $FctNormal->eval(x=>$Moyenne1);
+$maxY1 = Compute("$maxY1t + 0.1");
+$maxY1sol1 = Compute("$maxY1t + 0.03");
+$maxY1sol2 = Compute("$maxY1t + 0.06");
+
+#Affichage des noms de l'axe des X
+$lbZx = 3.3;
+$lbXx = 3.3;
+$IntervalleZ1Z2 = Compute("$CoteZ2 - $CoteZ1");
+
+#Ne pas afficher les valeurs X ou Z sur une autre valeur.
+if ($CoteZ2 >=2.5)
+{if ($CoteZ1 >= -0.5 && $CoteZ1 <= 0.5)
+{#Il faut ajuster la hauteur en y car Z1 et Z2 sont trop près des symboles Z, 0
+$lbZy= -0.06;
+$lbZy1= -0.08;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 =-0.02;
+$lbXy2 =-0.02;}
+elsif ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 est trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = 0;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.06;
+$lbXy = 0;
+$lbXy1 =0;
+$lbXy2 =0;}}
+elsif (($CoteZ2 >= -0.5 && $CoteZ2 <= 0.5 && $CoteZ2 != 0)|| ($CoteZ1 >= -0.5 && $CoteZ1 <= 0.5 && $CoteZ1 != 0))
+{if ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 et Z2 sont trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.07;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = -0.01;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.08;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 =-0.02;
+$lbXy2 =-0.02;}}
+elsif (($CoteZ2 == 0)||($CoteZ1 == 0)) 
+{if ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 est trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.08;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = -0.02;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.06;
+$lbXy = 0;
+$lbXy1 =0;
+$lbXy2 =0;}}
+else
+{if ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 est trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = 0;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.06;
+$lbXy = 0;
+$lbXy1 =0;
+$lbXy2 =0;}}
+
+$Ajustement = 0.01;
+
+$FctGraphiqueZ = "$FctNormal for x in <-3,3> using color:red and weight:2";
+$FctGraphiqueZ2 = "$FctNormal for x in <$CoteZ1,$CoteZ2> using color:blue and weight:2";
+$graphiqueZ = init_graph($minX1,$minY1,$maxX1, $maxY1,'axes'=>[0,0]);
+$graphiqueZ -> lb('reset');
+if ($CoteZ1 != 0)
+{$graphiqueZ -> lb(new Label ( $CoteZ1,$lbXy1,$ValeurX1,'black','center','top'));}
+if ($CoteZ2 != 0)
+{$graphiqueZ -> lb(new Label ( $CoteZ2,$lbXy2,$ValeurX2,'black','center','top'));}
+$graphiqueZ -> lb(new Label ( 0,$lbXy,$MoyenneX,'black','center','top'));
+$graphiqueZ->moveTo($CoteZ1,0);
+$graphiqueZ->lineTo($CoteZ1,$FctNormalZ1,'blue',3);
+$graphiqueZ->moveTo($CoteZ2,0);
+$graphiqueZ->lineTo($CoteZ2,$FctNormalZ2,'blue',3);
+$graphiqueZ->moveTo($CoteZ1,0);
+$graphiqueZ->lineTo($CoteZ2,0,'blue',3);
+#Afficher % à trouver
+$graphiqueZ->moveTo($CoteZ1,$maxY1sol2);
+$graphiqueZ->lineTo($CoteZ2,$maxY1sol2,'green',3);
+$graphiqueZ->moveTo($CoteZ1,$maxY1sol2 - $Ajustement);
+$graphiqueZ->lineTo($CoteZ1,$maxY1sol2+ $Ajustement,'green',3);
+$graphiqueZ->moveTo($CoteZ2,$maxY1sol2- $Ajustement);
+$graphiqueZ->lineTo($CoteZ2,$maxY1sol2+$Ajustement,'green',3);
+$graphiqueZ -> lb(new Label ( ($CoteZ1 + $CoteZ2)/2,$maxY1sol2,"?",'black','center','top'));
+if ($TypeCasQ >= 100)
+{#Afficher la barre
+$graphiqueZ->moveTo(3.28,-0.01);
+$graphiqueZ->lineTo(3.4,-0.01,'black',1);
+$graphiqueZ -> lb(new Label ( $lbXx,-0.01,X,'black','left','top'));}
+else
+{$graphiqueZ -> lb(new Label ( $lbXx,$lbXy,X,'black','left','top'));}
+add_functions($graphiqueZ, $FctGraphiqueZ,$FctGraphiqueZ2);
+$imageZ = image(insertGraph($graphiqueZ),width =>300,height=>250,tex_size=>360);
+
+#Afficher l'aire symétrique
+
+#Afficher l'axe des Z sous l'axe des X
+
+$FctGraphiqueZsol = "$FctNormal for x in <-3,3> using color:red and weight:2";
+$FctGraphiqueZsol2 = "$FctNormal for x in <$CoteZ1,$CoteZ2> using color:blue and weight:2";
+$GraphiqueZsol = init_graph($minX1,$minY1,$maxX1, $maxY1,'axes'=>[0,0]);
+$GraphiqueZsol -> lb('reset');
+$GraphiqueZsol -> lb(new Label ( $lbZx,$lbZy,Z,'black','left','top'));
+if ($CoteZ1 != 0)
+{$GraphiqueZsol -> lb(new Label ( $CoteZ1,$lbZy1,$CoteZ1,'black','center','top'));
+$GraphiqueZsol -> lb(new Label ( $CoteZ1,$lbXy1,$ValeurX1,'black','center','top'));}
+if ($CoteZ2 != 0)
+{$GraphiqueZsol -> lb(new Label ( $CoteZ2,$lbZy2,$CoteZ2,'black','center','top'));
+$GraphiqueZsol -> lb(new Label ( $CoteZ2,$lbXy2,$ValeurX2,'black','center','top'));}
+$GraphiqueZsol -> lb(new Label ( 0,$lbZy,0,'black','center','top'));
+$GraphiqueZsol -> lb(new Label ( 0,$lbXy,$MoyenneX,'black','center','top'));
+$GraphiqueZsol->moveTo($CoteZ1,0);
+$GraphiqueZsol->lineTo($CoteZ1,$FctNormalZ1,'blue',3);
+$GraphiqueZsol->moveTo($CoteZ2,0);
+$GraphiqueZsol->lineTo($CoteZ2,$FctNormalZ2,'blue',3);
+$GraphiqueZsol->moveTo($CoteZ1,0);
+$GraphiqueZsol->lineTo($CoteZ2,0,'blue',3);
+$GraphiqueZsol->moveTo($minX1,$lbZy);
+$GraphiqueZsol->lineTo($maxX1,$lbZy,'gray',2);
+if ($TypeCasQ >= 100)
+{#Afficher la barre
+$GraphiqueZsol->moveTo(3.28,-0.01);
+$GraphiqueZsol->lineTo(3.4,-0.01,'black',1);
+$GraphiqueZsol -> lb(new Label ( $lbXx,-0.01,X,'black','left','top'));}
+else
+{$GraphiqueZsol -> lb(new Label ( $lbXx,$lbXy,X,'black','left','top'));}
+
+if ($TypeCasQ >= 100)
+{$EcarttypeUtilise = "\(\displaystyle{\sigma_{\overline{X}} = $EcarttypeXbarre}\)";
+$EcarttypeUtiliseA = $EcarttypeXbarre;}
+else
+{$EcarttypeUtilise = "\(\displaystyle{\sigma = $EcarttypeX}\)";
+$EcarttypeUtiliseA = $EcarttypeX;}
+
+#Solution table d'aire symétrique
+if ($TypeCas ==0)
+{#Cas 1: P(0 < Z< p)
+if ($VariableGenre == 0)
+{$Question = "compris entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom";}
+else
+{$Question = "comprise entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom";}
+$QuestionF = "comprise entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom";
+if ($TypeCasQ >= 100)
+{$QcReponse = "$PourcentageRep% des échantillons de $BR taille $TailleEchantillon $VariableNomQ100 $BR $Question.";}
+else
+{$QcReponse =  "$PourcentageRep% $PopulationNom $BR $VariableNomR $Question.";}
+$TypeCasA = "P($ValeurX1 < $SymboleXA < $ValeurX2)";
+@SolutionEqn = ("P($ValeurX1 < $SymboleXA < $ValeurX2) = ?", "Il faut d'abord convertir les valeurs de $SymboleXA en cote Z. 
+$BR
+$BR 
+\(\displaystyle {\rm{Z_{$ValeurX1}} = \frac{$ValeurX1 - $MoyenneX}{$EcarttypeUtiliseA} =  $CoteZ1 }\)
+$BR
+\(\displaystyle {\rm{Z_{$ValeurX2}} = \frac{$ValeurX2 - $MoyenneX}{$EcarttypeUtiliseA} =  $CoteZ2 }\)
+$BR
+$BR
+${BBOLD}L'écart type utilisé est : $EcarttypeUtilise.${EBOLD} $BR
+Le calcul devient :
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = P($CoteZ1 < Z < $CoteZ2)
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = $PourcentageRep 
+$BR $QcReponse");
+@LigneBas = ($CoteZ2sol1,$maxY1sol1, $CoteZ1sol1,$maxY1sol1,$CoteZ2sol1,$maxY1sol1-$Ajustement,$CoteZ2sol1,$maxY1sol1+$Ajustement, $CoteZ1sol1,$maxY1sol1-$Ajustement,$CoteZ1sol1,$maxY1sol1+$Ajustement, $CoteZ2sol1,$maxY1sol1);
+$GraphiqueZsol->moveTo($LigneBas[0],$LigneBas[1]);
+$GraphiqueZsol->lineTo($LigneBas[2],$LigneBas[3],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[4],$LigneBas[5]);
+$GraphiqueZsol->lineTo($LigneBas[6],$LigneBas[7],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[8],$LigneBas[9]);
+$GraphiqueZsol->lineTo($LigneBas[10],$LigneBas[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneBas[12],$LigneBas[13],$PourcentageSol1,'black','right','top'));
+}
+elsif ($TypeCas ==1)
+{#Cas 2: P(p < Z< 0)
+if ($VariableGenre == 0)
+{$Question = "compris entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom";}
+else
+{$Question = "comprise entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom";}
+$QuestionF = "comprise entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom";
+if ($TypeCasQ >= 100)
+{$QcReponse = "$PourcentageRep% des échantillons de $BR taille $TailleEchantillon $VariableNomQ100 $BR $Question.";}
+else
+{$QcReponse =  "$PourcentageRep% $PopulationNom $BR $VariableNomR $Question.";}
+$TypeCasA = "P($ValeurX1 < $SymboleXA < $ValeurX2)";
+@SolutionEqn = ("P($ValeurX1 < $SymboleXA < $ValeurX2) = ?", "Il faut d'abord convertir les valeurs de $SymboleXA en cote Z. 
+$BR
+$BR 
+\(\displaystyle {\rm{Z_{$ValeurX1}} = \frac{$ValeurX1 - $MoyenneX}{$EcarttypeUtiliseA} =  $CoteZ1 }\)
+$BR
+\(\displaystyle {\rm{Z_{$ValeurX2}} = \frac{$ValeurX2 - $MoyenneX}{$EcarttypeUtiliseA} =  $CoteZ2 }\)
+$BR
+$BR
+${BBOLD}L'écart type utilisé est : $EcarttypeUtilise.${EBOLD} $BR
+Le calcul devient :
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = P($CoteZ1 < Z < $CoteZ2)
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = P($CoteZ1sol1 < Z < $CoteZ2sol1), par symétrie
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = $PourcentageRep
+$BR $QcReponse");
+@LigneBas = ($CoteZ2sol1,$maxY1sol1, $CoteZ1sol1,$maxY1sol1,$CoteZ2sol1,$maxY1sol1-$Ajustement,$CoteZ2sol1,$maxY1sol1+$Ajustement, $CoteZ1sol1,$maxY1sol1-$Ajustement,$CoteZ1sol1,$maxY1sol1+$Ajustement, $CoteZ2sol1,$maxY1sol1);
+$GraphiqueZsol->moveTo($LigneBas[0],$LigneBas[1]);
+$GraphiqueZsol->lineTo($LigneBas[2],$LigneBas[3],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[4],$LigneBas[5]);
+$GraphiqueZsol->lineTo($LigneBas[6],$LigneBas[7],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[8],$LigneBas[9]);
+$GraphiqueZsol->lineTo($LigneBas[10],$LigneBas[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneBas[12],$LigneBas[13],$PourcentageSol1,'black','right','top'));
+}
+elsif ($TypeCas ==2)
+{#Cas 3: P( Z< p), avec p positif
+if ($VariableGenre == 0)
+{$Question = "inférieur à $ValeurX2 $UniteNom";}
+else
+{$Question = "inférieure à $ValeurX2 $UniteNom";}
+$QuestionF = "inférieure à $ValeurX2 $UniteNom";
+if ($TypeCasQ >= 100)
+{$QcReponse = "$PourcentageRep% des échantillons de $BR taille $TailleEchantillon $VariableNomQ100 $BR $Question.";}
+else
+{$QcReponse =  "$PourcentageRep% $PopulationNom $BR $VariableNomR $Question.";}
+$TypeCasA = "P($SymboleXA < $ValeurX2)";
+@SolutionEqn = ("P($SymboleXA < $ValeurX2) = ?", "Il faut d'abord convertir la valeur de $SymboleXA en cote Z. 
+$BR
+$BR
+\(\displaystyle {\rm{Z_{$ValeurX2}} = \frac{$ValeurX2 - $MoyenneX}{$EcarttypeUtiliseA} =  $CoteZ2 }\)
+$BR
+$BR
+${BBOLD}L'écart type utilisé est : $EcarttypeUtilise.${EBOLD} $BR
+Le calcul devient :
+$BR P($SymboleXA < $ValeurX2) = P(Z < $CoteZ2sol1)  
+$BR P($SymboleXA < $ValeurX2) = 50.0 + P(0 < Z < $CoteZ2sol1)  
+$BR P($SymboleXA < $ValeurX2) = $PourcentageSol2 + $PourcentageSol1  
+$BR P($SymboleXA < $ValeurX2) = $PourcentageRep 
+$BR $QcReponse");
+@LigneBas = ($CoteZ2sol1,$maxY1sol1, $CoteZ1sol1,$maxY1sol1,$CoteZ2sol1,$maxY1sol1-$Ajustement,$CoteZ2sol1,$maxY1sol1+$Ajustement, $CoteZ1sol1,$maxY1sol1-$Ajustement,$CoteZ1sol1,$maxY1sol1+$Ajustement, $CoteZ2sol1,$maxY1sol1);
+$GraphiqueZsol->moveTo($LigneBas[0],$LigneBas[1]);
+$GraphiqueZsol->lineTo($LigneBas[2],$LigneBas[3],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[4],$LigneBas[5]);
+$GraphiqueZsol->lineTo($LigneBas[6],$LigneBas[7],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[8],$LigneBas[9]);
+$GraphiqueZsol->lineTo($LigneBas[10],$LigneBas[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneBas[12],$LigneBas[13],$PourcentageSol1,'black','right','top'));
+@LigneHaut = ($CoteZ2sol2,$maxY1sol2, $CoteZ1sol2,$maxY1sol2,$CoteZ2sol2,$maxY1sol2-$Ajustement,$CoteZ2sol2,$maxY1sol2+$Ajustement, $CoteZ1sol2,$maxY1sol2-$Ajustement,$CoteZ1sol2,$maxY1sol2+$Ajustement, $CoteZ2sol2,$maxY1sol2);
+$GraphiqueZsol->moveTo($LigneHaut[0],$LigneHaut[1]);
+$GraphiqueZsol->lineTo($LigneHaut[2],$LigneHaut[3],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[4],$LigneHaut[5]);
+$GraphiqueZsol->lineTo($LigneHaut[6],$LigneHaut[7],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[8],$LigneHaut[9]);
+$GraphiqueZsol->lineTo($LigneHaut[10],$LigneHaut[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneHaut[12],$LigneHaut[13],$PourcentageSol2,'black','right','top'));
+}
+elsif ($TypeCas ==3)
+{#Cas 4: P( Z< p), avec p négatif
+if ($VariableGenre == 0)
+{$Question = "inférieur à $ValeurX2 $UniteNom";}
+else
+{$Question = "inférieure à $ValeurX2 $UniteNom";}
+$QuestionF = "inférieure à $ValeurX2 $UniteNom";
+if ($TypeCasQ >= 100)
+{$QcReponse = "$PourcentageRep% des échantillons de $BR taille $TailleEchantillon $VariableNomQ100 $BR $Question.";}
+else
+{$QcReponse =  "$PourcentageRep% $PopulationNom $BR $VariableNomR $Question.";}
+$TypeCasA = "P($SymboleXA < $ValeurX2)";
+@SolutionEqn = ("P($SymboleXA < $ValeurX2) = ?", "Il faut d'abord convertir la valeur de $SymboleXA en cote Z. 
+$BR
+$BR
+\(\displaystyle {\rm{Z_{$ValeurX2}} = \frac{$ValeurX2 - $MoyenneX}{$EcarttypeUtiliseA} =  $CoteZ2 }\)
+$BR
+$BR
+${BBOLD}L'écart type utilisé est : $EcarttypeUtilise.${EBOLD} $BR
+Le calcul devient :
+$BR P($SymboleXA < $ValeurX2) = P(Z < $CoteZ2)  
+$BR P($SymboleXA < $ValeurX2) = P(Z > $CoteZ2sol1), par symétrie.  
+$BR P($SymboleXA < $ValeurX2) = 50.0 - P(0 < Z < $CoteZ2sol1)  
+$BR P($SymboleXA < $ValeurX2) = $PourcentageSol2 - $PourcentageSol1  
+$BR P($SymboleXA < $ValeurX2) = $PourcentageRep
+$BR $QcReponse");
+@LigneBas = ($CoteZ2sol1,$maxY1sol1, $CoteZ1sol1,$maxY1sol1,$CoteZ2sol1,$maxY1sol1-$Ajustement,$CoteZ2sol1,$maxY1sol1+$Ajustement, $CoteZ1sol1,$maxY1sol1-$Ajustement,$CoteZ1sol1,$maxY1sol1+$Ajustement, $CoteZ2sol1,$maxY1sol1);
+$GraphiqueZsol->moveTo($LigneBas[0],$LigneBas[1]);
+$GraphiqueZsol->lineTo($LigneBas[2],$LigneBas[3],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[4],$LigneBas[5]);
+$GraphiqueZsol->lineTo($LigneBas[6],$LigneBas[7],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[8],$LigneBas[9]);
+$GraphiqueZsol->lineTo($LigneBas[10],$LigneBas[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneBas[12],$LigneBas[13],$PourcentageSol1,'black','right','top'));
+@LigneHaut = ($CoteZ2sol2,$maxY1sol2, $CoteZ1sol2,$maxY1sol2,$CoteZ2sol2,$maxY1sol2-$Ajustement,$CoteZ2sol2,$maxY1sol2+$Ajustement, $CoteZ1sol2,$maxY1sol2-$Ajustement,$CoteZ1sol2,$maxY1sol2+$Ajustement, $CoteZ2sol2,$maxY1sol2);
+$GraphiqueZsol->moveTo($LigneHaut[0],$LigneHaut[1]);
+$GraphiqueZsol->lineTo($LigneHaut[2],$LigneHaut[3],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[4],$LigneHaut[5]);
+$GraphiqueZsol->lineTo($LigneHaut[6],$LigneHaut[7],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[8],$LigneHaut[9]);
+$GraphiqueZsol->lineTo($LigneHaut[10],$LigneHaut[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneHaut[12],$LigneHaut[13],$PourcentageSol2,'black','left','top'));
+}
+elsif ($TypeCas ==4)
+{#Cas 5: P( Z> p), avec p positif
+if ($VariableGenre == 0)
+{$Question = "supérieur à $ValeurX1 $UniteNom";}
+else
+{$Question = "supérieure à $ValeurX1 $UniteNom";}
+$QuestionF = "supérieure à $ValeurX1 $UniteNom";
+if ($TypeCasQ >= 100)
+{$QcReponse = "$PourcentageRep% des échantillons de $BR taille $TailleEchantillon $VariableNomQ100 $BR $Question.";}
+else
+{$QcReponse =  "$PourcentageRep% $PopulationNom $BR $VariableNomR $Question.";}
+$TypeCasA = "P($SymboleXA > $ValeurX1)";
+@SolutionEqn = ("P($SymboleXA > $ValeurX1) = ?", "Il faut d'abord convertir les valeurs de $SymboleXA en cote Z. 
+$BR
+$BR 
+\(\displaystyle {\rm{Z_{$ValeurX1}} = \frac{$ValeurX1 - $MoyenneX}{$EcarttypeUtiliseA} =  $CoteZ1 }\)
+$BR
+$BR
+${BBOLD}L'écart type utilisé est : $EcarttypeUtilise.${EBOLD} $BR
+Le calcul devient :
+$BR P($SymboleXA > $ValeurX1) = P(Z > $CoteZ1)  
+$BR P($SymboleXA > $ValeurX1) = 50.0 - P(0 < Z < $CoteZ1)  
+$BR P($SymboleXA > $ValeurX1) = $PourcentageSol2 - $PourcentageSol1  
+$BR P($SymboleXA > $ValeurX1) = $PourcentageRep
+$BR $QcReponse");
+@LigneBas = ($CoteZ2sol1,$maxY1sol1, $CoteZ1sol1,$maxY1sol1,$CoteZ2sol1,$maxY1sol1-$Ajustement,$CoteZ2sol1,$maxY1sol1+$Ajustement, $CoteZ1sol1,$maxY1sol1-$Ajustement,$CoteZ1sol1,$maxY1sol1+$Ajustement, $CoteZ2sol1,$maxY1sol1);
+$GraphiqueZsol->moveTo($LigneBas[0],$LigneBas[1]);
+$GraphiqueZsol->lineTo($LigneBas[2],$LigneBas[3],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[4],$LigneBas[5]);
+$GraphiqueZsol->lineTo($LigneBas[6],$LigneBas[7],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[8],$LigneBas[9]);
+$GraphiqueZsol->lineTo($LigneBas[10],$LigneBas[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneBas[12],$LigneBas[13],$PourcentageSol1,'black','right','top'));
+@LigneHaut = ($CoteZ2sol2,$maxY1sol2, $CoteZ1sol2,$maxY1sol2,$CoteZ2sol2,$maxY1sol2-$Ajustement,$CoteZ2sol2,$maxY1sol2+$Ajustement, $CoteZ1sol2,$maxY1sol2-$Ajustement,$CoteZ1sol2,$maxY1sol2+$Ajustement, $CoteZ2sol2,$maxY1sol2);
+$GraphiqueZsol->moveTo($LigneHaut[0],$LigneHaut[1]);
+$GraphiqueZsol->lineTo($LigneHaut[2],$LigneHaut[3],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[4],$LigneHaut[5]);
+$GraphiqueZsol->lineTo($LigneHaut[6],$LigneHaut[7],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[8],$LigneHaut[9]);
+$GraphiqueZsol->lineTo($LigneHaut[10],$LigneHaut[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneHaut[12],$LigneHaut[13],$PourcentageSol2,'black','left','top'));
+}
+elsif ($TypeCas ==5)
+{#Cas 6: P( Z> p), avec p négatif
+if ($VariableGenre == 0)
+{$Question = "supérieur à $ValeurX1 $UniteNom";}
+else
+{$Question = "supérieure à $ValeurX1 $UniteNom";}
+$QuestionF = "supérieure à $ValeurX1 $UniteNom";
+if ($TypeCasQ >= 100)
+{$QcReponse = "$PourcentageRep% des échantillons de $BR taille $TailleEchantillon $VariableNomQ100 $BR $Question.";}
+else
+{$QcReponse =  "$PourcentageRep% $PopulationNom $BR $VariableNomR $Question.";}
+$TypeCasA = "P($SymboleXA > $ValeurX1)";
+@SolutionEqn = ("P($SymboleXA > $ValeurX1) = ?", "Il faut d'abord convertir les valeurs de $SymboleXA en cote Z. 
+$BR
+$BR 
+\(\displaystyle {\rm{Z_{$ValeurX1}} = \frac{$ValeurX1 - $MoyenneX}{$EcarttypeUtiliseA} =  $CoteZ1 }\)
+$BR
+$BR
+${BBOLD}L'écart type utilisé est : $EcarttypeUtilise.${EBOLD} $BR
+Le calcul devient :
+$BR P($SymboleXA > $ValeurX1) = P(Z > $CoteZ1)  
+$BR P($SymboleXA > $ValeurX1) = 50.0 + P($CoteZ1 < Z < 0)  
+$BR P($SymboleXA > $ValeurX1) = 50.0 + P(0 < Z < $CoteZ2sol1T), par symétrie.  
+$BR P($SymboleXA > $ValeurX1) = $PourcentageSol2 + $PourcentageSol1  
+$BR P($SymboleXA > $ValeurX1) = $PourcentageRep
+$BR $QcReponse");
+@LigneBas = ($CoteZ2sol1,$maxY1sol1, $CoteZ1sol1,$maxY1sol1,$CoteZ2sol1,$maxY1sol1-$Ajustement,$CoteZ2sol1,$maxY1sol1+$Ajustement, $CoteZ1sol1,$maxY1sol1-$Ajustement,$CoteZ1sol1,$maxY1sol1+$Ajustement, $CoteZ2sol1,$maxY1sol1);
+$GraphiqueZsol->moveTo($LigneBas[0],$LigneBas[1]);
+$GraphiqueZsol->lineTo($LigneBas[2],$LigneBas[3],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[4],$LigneBas[5]);
+$GraphiqueZsol->lineTo($LigneBas[6],$LigneBas[7],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[8],$LigneBas[9]);
+$GraphiqueZsol->lineTo($LigneBas[10],$LigneBas[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneBas[12],$LigneBas[13],$PourcentageSol1,'black','left','top'));
+@LigneHaut = ($CoteZ2sol2,$maxY1sol2, $CoteZ1sol2,$maxY1sol2,$CoteZ2sol2,$maxY1sol2-$Ajustement,$CoteZ2sol2,$maxY1sol2+$Ajustement, $CoteZ1sol2,$maxY1sol2-$Ajustement,$CoteZ1sol2,$maxY1sol2+$Ajustement, $CoteZ2sol2,$maxY1sol2);
+$GraphiqueZsol->moveTo($LigneHaut[0],$LigneHaut[1]);
+$GraphiqueZsol->lineTo($LigneHaut[2],$LigneHaut[3],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[4],$LigneHaut[5]);
+$GraphiqueZsol->lineTo($LigneHaut[6],$LigneHaut[7],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[8],$LigneHaut[9]);
+$GraphiqueZsol->lineTo($LigneHaut[10],$LigneHaut[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneHaut[12],$LigneHaut[13],$PourcentageSol2,'black','left','top'));
+}
+elsif ($TypeCas ==6)
+{#Cas 7: P(p1 < Z< p2), avec p1 et p2 négatifs
+if ($VariableGenre == 0)
+{$Question = "compris entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom";}
+else
+{$Question = "comprise entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom";}
+$QuestionF = "comprise entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom";
+if ($TypeCasQ >= 100)
+{$QcReponse = "$PourcentageRep% des échantillons de $BR taille $TailleEchantillon $VariableNomQ100 $BR $Question.";}
+else
+{$QcReponse =  "$PourcentageRep% $PopulationNom $BR $VariableNomR $Question.";}
+$TypeCasA = "P($ValeurX1 < $SymboleXA < $ValeurX2)";
+@SolutionEqn = ("P($ValeurX1 < $SymboleXA < $ValeurX2) = ?", "Il faut d'abord convertir les valeurs de $SymboleXA en cote Z. 
+$BR
+$BR 
+\(\displaystyle {\rm{Z_{$ValeurX1}} = \frac{$ValeurX1 - $MoyenneX}{$EcarttypeUtiliseA} =  $CoteZ1 }\)
+$BR
+\(\displaystyle {\rm{Z_{$ValeurX2}} = \frac{$ValeurX2 - $MoyenneX}{$EcarttypeUtiliseA} =  $CoteZ2 }\)
+$BR
+$BR
+${BBOLD}L'écart type utilisé est : $EcarttypeUtilise.${EBOLD} $BR
+Le calcul devient :
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = P($CoteZ1 < Z < $CoteZ2)
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = P($CoteZ2sol1 < Z < $CoteZ2sol2), par symétrie
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = P(0 < Z < $CoteZ2sol2) - P(0 < Z < $CoteZ2sol1)
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = $PourcentageSol2 - $PourcentageSol1
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = $PourcentageRep
+$BR $QcReponse");
+@LigneBas = ($CoteZ2sol1,$maxY1sol1, $CoteZ1sol1,$maxY1sol1,$CoteZ2sol1,$maxY1sol1-$Ajustement,$CoteZ2sol1,$maxY1sol1+$Ajustement, $CoteZ1sol1,$maxY1sol1-$Ajustement,$CoteZ1sol1,$maxY1sol1+$Ajustement, $CoteZ2sol1,$maxY1sol1);
+$GraphiqueZsol->moveTo($LigneBas[0],$LigneBas[1]);
+$GraphiqueZsol->lineTo($LigneBas[2],$LigneBas[3],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[4],$LigneBas[5]);
+$GraphiqueZsol->lineTo($LigneBas[6],$LigneBas[7],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[8],$LigneBas[9]);
+$GraphiqueZsol->lineTo($LigneBas[10],$LigneBas[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneBas[12],$LigneBas[13],$PourcentageSol1,'black','right','top'));
+@LigneHaut = ($CoteZ2sol2,$maxY1sol2, $CoteZ1sol2,$maxY1sol2,$CoteZ2sol2,$maxY1sol2-$Ajustement,$CoteZ2sol2,$maxY1sol2+$Ajustement, $CoteZ1sol2,$maxY1sol2-$Ajustement,$CoteZ1sol2,$maxY1sol2+$Ajustement, $CoteZ2sol2,$maxY1sol2);
+$GraphiqueZsol->moveTo($LigneHaut[0],$LigneHaut[1]);
+$GraphiqueZsol->lineTo($LigneHaut[2],$LigneHaut[3],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[4],$LigneHaut[5]);
+$GraphiqueZsol->lineTo($LigneHaut[6],$LigneHaut[7],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[8],$LigneHaut[9]);
+$GraphiqueZsol->lineTo($LigneHaut[10],$LigneHaut[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneHaut[12],$LigneHaut[13],$PourcentageSol2,'black','right','top'));
+}
+elsif ($TypeCas ==7)
+{#Cas 8: P(p1 < Z< p2), avec p1 et p2 positifs
+if ($VariableGenre == 0)
+{$Question = "compris entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom";}
+else
+{$Question = "comprise entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom";}
+$QuestionF = "comprise entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom";
+if ($TypeCasQ >= 100)
+{$QcReponse = "$PourcentageRep% des échantillons de $BR taille $TailleEchantillon $VariableNomQ100 $BR $Question.";}
+else
+{$QcReponse =  "$PourcentageRep% $PopulationNom $BR $VariableNomR $Question.";}
+$TypeCasA = "P($ValeurX1 < $SymboleXA < $ValeurX2)";
+@SolutionEqn = ("P($ValeurX1 < $SymboleXA < $ValeurX2) = ?", "Il faut d'abord convertir les valeurs de $SymboleXA en cote Z. 
+$BR
+$BR 
+\(\displaystyle {\rm{Z_{$ValeurX1}} = \frac{$ValeurX1 - $MoyenneX}{$EcarttypeUtiliseA} =  $CoteZ1 }\)
+$BR
+\(\displaystyle {\rm{Z_{$ValeurX2}} = \frac{$ValeurX2 - $MoyenneX}{$EcarttypeUtiliseA} =  $CoteZ2 }\)
+$BR
+$BR
+${BBOLD}L'écart type utilisé est : $EcarttypeUtilise.${EBOLD} $BR
+Le calcul devient :
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = P($CoteZ1 < Z < $CoteZ2)
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = P(0 < Z < $CoteZ2sol2) - P(0 < Z < $CoteZ2sol1)
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = $PourcentageSol2 - $PourcentageSol1
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = $PourcentageRep
+$BR $QcReponse");
+@LigneBas = ($CoteZ2sol1,$maxY1sol1, $CoteZ1sol1,$maxY1sol1,$CoteZ2sol1,$maxY1sol1-$Ajustement,$CoteZ2sol1,$maxY1sol1+$Ajustement, $CoteZ1sol1,$maxY1sol1-$Ajustement,$CoteZ1sol1,$maxY1sol1+$Ajustement, $CoteZ2sol1,$maxY1sol1);
+$GraphiqueZsol->moveTo($LigneBas[0],$LigneBas[1]);
+$GraphiqueZsol->lineTo($LigneBas[2],$LigneBas[3],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[4],$LigneBas[5]);
+$GraphiqueZsol->lineTo($LigneBas[6],$LigneBas[7],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[8],$LigneBas[9]);
+$GraphiqueZsol->lineTo($LigneBas[10],$LigneBas[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneBas[12],$LigneBas[13],$PourcentageSol1,'black','right','top'));
+@LigneHaut = ($CoteZ2sol2,$maxY1sol2, $CoteZ1sol2,$maxY1sol2,$CoteZ2sol2,$maxY1sol2-$Ajustement,$CoteZ2sol2,$maxY1sol2+$Ajustement, $CoteZ1sol2,$maxY1sol2-$Ajustement,$CoteZ1sol2,$maxY1sol2+$Ajustement, $CoteZ2sol2,$maxY1sol2);
+$GraphiqueZsol->moveTo($LigneHaut[0],$LigneHaut[1]);
+$GraphiqueZsol->lineTo($LigneHaut[2],$LigneHaut[3],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[4],$LigneHaut[5]);
+$GraphiqueZsol->lineTo($LigneHaut[6],$LigneHaut[7],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[8],$LigneHaut[9]);
+$GraphiqueZsol->lineTo($LigneHaut[10],$LigneHaut[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneHaut[12],$LigneHaut[13],$PourcentageSol2,'black','right','top'));
+}
+elsif ($TypeCas ==8)
+{#Cas 9: P(p1 < Z< p2), avec p1 négatif et p2 positif
+if ($VariableGenre == 0)
+{$Question = "compris entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom";}
+else
+{$Question = "comprise entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom";}
+$QuestionF = "comprise entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom";
+if ($TypeCasQ >= 100)
+{$QcReponse = "$PourcentageRep% des échantillons de $BR taille $TailleEchantillon $VariableNomQ100 $BR $Question.";}
+else
+{$QcReponse =  "$PourcentageRep% $PopulationNom $BR $VariableNomR $Question.";}
+$TypeCasA = "P($ValeurX1 < $SymboleXA < $ValeurX2)";
+@SolutionEqn = ("P($ValeurX1 < $SymboleXA < $ValeurX2) = ?", "Il faut d'abord convertir les valeurs de $SymboleXA en cote Z. 
+$BR
+$BR 
+\(\displaystyle {\rm{Z_{$ValeurX1}} = \frac{$ValeurX1 - $MoyenneX}{$EcarttypeUtiliseA} =  $CoteZ1 }\)
+$BR
+\(\displaystyle {\rm{Z_{$ValeurX2}} = \frac{$ValeurX2 - $MoyenneX}{$EcarttypeUtiliseA} =  $CoteZ2 }\)
+$BR
+$BR
+${BBOLD}L'écart type utilisé est : $EcarttypeUtilise.${EBOLD} $BR
+Le calcul devient :
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = P($CoteZ1 < Z < $CoteZ2)
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = P($CoteZ1 < Z < 0) + P(0 < Z < $CoteZ2)
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = P(0 < Z < $CoteZ2sol1T) + P(0 < Z < $CoteZ2sol2)
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = $PourcentageSol1 + $PourcentageSol2
+$BR
+P($ValeurX1 < $SymboleXA < $ValeurX2) = $PourcentageRep 
+$BR $QcReponse");
+@LigneBas = ($CoteZ2sol1,$maxY1sol1, $CoteZ1sol1,$maxY1sol1,$CoteZ2sol1,$maxY1sol1-$Ajustement,$CoteZ2sol1,$maxY1sol1+$Ajustement, $CoteZ1sol1,$maxY1sol1-$Ajustement,$CoteZ1sol1,$maxY1sol1+$Ajustement, $CoteZ2sol1,$maxY1sol1);
+$GraphiqueZsol->moveTo($LigneBas[0],$LigneBas[1]);
+$GraphiqueZsol->lineTo($LigneBas[2],$LigneBas[3],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[4],$LigneBas[5]);
+$GraphiqueZsol->lineTo($LigneBas[6],$LigneBas[7],'green',3);
+$GraphiqueZsol->moveTo($LigneBas[8],$LigneBas[9]);
+$GraphiqueZsol->lineTo($LigneBas[10],$LigneBas[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneBas[12],$LigneBas[13],$PourcentageSol1,'black','left','top'));
+@LigneHaut = ($CoteZ2sol2,$maxY1sol2, $CoteZ1sol2,$maxY1sol2,$CoteZ2sol2,$maxY1sol2-$Ajustement,$CoteZ2sol2,$maxY1sol2+$Ajustement, $CoteZ1sol2,$maxY1sol2-$Ajustement,$CoteZ1sol2,$maxY1sol2+$Ajustement, $CoteZ2sol2,$maxY1sol2);
+$GraphiqueZsol->moveTo($LigneHaut[0],$LigneHaut[1]);
+$GraphiqueZsol->lineTo($LigneHaut[2],$LigneHaut[3],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[4],$LigneHaut[5]);
+$GraphiqueZsol->lineTo($LigneHaut[6],$LigneHaut[7],'green',3);
+$GraphiqueZsol->moveTo($LigneHaut[8],$LigneHaut[9]);
+$GraphiqueZsol->lineTo($LigneHaut[10],$LigneHaut[11],'green',3);
+$GraphiqueZsol -> lb(new Label ($LigneHaut[12],$LigneHaut[13],$PourcentageSol2,'black','right','top'));
+}
+
+if ($ZoneHachuree == 1)
+{
+$FctGraphiqueZ3 = "$FctNormal for x in <$CoteZ1H,$CoteZ2H> using color:gray and weight:2";
+if ($CoteZ1H != 0)
+{$GraphiqueZsol -> lb(new Label ( $CoteZ1H,$lbZy2,$CoteZ1H,'black','center','top'));
+$GraphiqueZsol -> lb(new Label ( $CoteZ1H,$lbXy2,$ValeurX1H,'black','center','top'));}
+if ($CoteZ2H != 0)
+{$GraphiqueZsol -> lb(new Label ( $CoteZ2H,$lbZy1,$CoteZ2H,'black','center','top'));
+$GraphiqueZsol -> lb(new Label ( $CoteZ2H,$lbXy1,$ValeurX2H,'black','center','top'));}
+$GraphiqueZsol->moveTo($CoteZ1H,0);
+$GraphiqueZsol->lineTo($CoteZ1H,$FctNormalZ2,'gray',3);
+$GraphiqueZsol->moveTo($CoteZ2H,0);
+$GraphiqueZsol->lineTo($CoteZ2H,$FctNormalZ1,'gray',3);
+add_functions($GraphiqueZsol, $FctGraphiqueZsol,$FctGraphiqueZsol2, $FctGraphiqueZ3);
+$imageZsol = image(insertGraph($GraphiqueZsol),width =>300,height=>250,tex_size=>360);
+}
+else
+{add_functions($GraphiqueZsol, $FctGraphiqueZ,$FctGraphiqueZ2);
+$imageZsol = image(insertGraph($GraphiqueZsol),width =>300,height=>250,tex_size=>360);
+}
+
+$QuestionPresentationType = random(0,2);
+if ($QuestionPresentationType == 0)
+{if ($TypeCasQ >= 100)
+{$QuestionPresentation3 = "Si possible, déterminer le pourcentage d'échantillons dont la moyenne est $QuestionF."}
+else
+{$QuestionPresentation3 = "Si possible, déterminer :"}
+}
+else
+{$QuestionPresentation3 = "Si possible, déterminer :"}
+
+#Question a
+@VecteurNomParametre = ("\(\displaystyle{\it{N}}\)", "\(\displaystyle{\mu}\)", "\(\displaystyle{\sigma}\)"); 
+@VecteurNomStatistique = ("\(\displaystyle{\it{n}}\)", "\(\displaystyle{\overline{x}}\)", "\(\displaystyle{\it{s}}\)"); 
+#Solution a
+@VecteurNomParametreRep2 = ("Taille \(\displaystyle{(\it{N})}\) = $TaillePopulationRep2", "Moyenne \(\displaystyle{(\mu)}\) = $MoyenneXPopulationRep2", "Écart type \(\displaystyle{(\sigma)}\) = $EcarttypeXPopulationRep2"); 
+@VecteurNomStatistiqueRep2 = ("Taille \(\displaystyle{(\it{n})}\) = $TailleEchantillonRep2", "Moyenne \(\displaystyle{(\overline{x})}\) = $MoyenneXEchantillonRep2", "Écart type corrigé \(\displaystyle{(\it{s})}\) = $EcarttypeXEchantillonRep2"); 
+#Réponse a
+@VecteurNomParametreRep = ($TaillePopulationRep, $MoyenneXPopulationRep,$EcarttypeXPopulationRep);
+@VecteurNomStatistiqueRep = ($TailleEchantillonRep, $MoyenneXEchantillonRep,$EcarttypeXEchantillonRep);
+@VecteurNomParametreAffichage = (ans_rule(10), ans_rule(10), ans_rule(10)); 
+@VecteurNomStatistiqueAffichage = (ans_rule(10), ans_rule(10), ans_rule(10)); 
+#Tolérance, si nécessaire.
+#@Reponse = ($NombreUS, $moyenne, $EcartypePopulation, $EcartypeEchantillon);
+#@ReponseTol = (0.000001, 0.01, 0.01, 0.01);
+#@CompteurRep = shuffle(3);
+
+#Solution Question b
+if ($XbarreSuitNormal == 0)
+{#Oui, la taille de l'échantillon est supérieure ou égale à 30
+$RepPopUpQ2 = PopUp(["Choisir", "Oui", "Non"], "Oui");
+$Reponse2 = "La distribution des moyennes échantillonnales de $TailleEchantillon
+$PopulationNom2 suit un modèle normal parce que la taille de l'échantillon, qui vaut $TailleEchantillon, est supérieure ou égale à 30. Autrement dit, \(\displaystyle{\overline{X} \sim N(\mu_{\overline{X}}; {\sigma_{\overline{X}}}^2)}\) parce que \(\displaystyle{n = $TailleEchantillon \ge 30. }\)";}
+elsif ($XbarreSuitNormal == 1)
+{#Oui, X suit un modèle normal
+$RepPopUpQ2 = PopUp(["Choisir", "Oui", "Non"], "Oui");
+$Reponse2 = "La distribution des moyennes échantillonnales de $TailleEchantillon
+$PopulationNom2 suit un modèle normal parce que la variable X suit un modèle normal. Autrement dit, \(\displaystyle{\overline{X} \sim N(\mu_{\overline{X}}; {\sigma_{\overline{X}}}^2)}\) parce que \(\displaystyle{X \sim N(\mu; \sigma^2}).\)";}
+else
+{#Non.
+$RepPopUpQ2 = PopUp(["Choisir", "Oui", "Non"], "Non");
+$Reponse2 = "La distribution des moyennes échantillonnales de $TailleEchantillon
+$PopulationNom2 ne suit pas un modèle normal parce que la variable X ne suit pas un modèle normal et la taille de l'échantillon, qui vaut $TailleEchantillon, est strictement inférieure à 30. Autrement dit \(\displaystyle{\overline{X} \nsim N(\mu_{\overline{X}}; {\sigma_{\overline{X}}}^2)}\) parce que \(\displaystyle{X \nsim N(\mu; \sigma^2})\) et \(\displaystyle{n = $TailleEchantillon < 30. }\)";}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$ContexteQuestion
+$PAR 
+
+$PAR
+a) Compléter le tableau suivant. Si une valeur est inconnue, écrire ${BBOLD}NA${EBOLD}.
+$BR
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"1pt", spacing=>2, padding=>2).
+  AlignedRow(["${BBOLD}Paramètres de la population ${EBOLD}","${BBOLD}Statistiques de l'échantillon${EBOLD}"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametre[$CompteurNomParametre[0]] = $VecteurNomParametreAffichage[$CompteurNomParametre[0]]","$VecteurNomStatistique[$CompteurNomStatistique[0]] = $VecteurNomStatistiqueAffichage[$CompteurNomStatistique[0]]"], align => LEFT, separation=>0).
+AlignedRow(["$VecteurNomParametre[$CompteurNomParametre[1]] = $VecteurNomParametreAffichage[$CompteurNomParametre[1]]","$VecteurNomStatistique[$CompteurNomStatistique[1]] = $VecteurNomStatistiqueAffichage[$CompteurNomStatistique[1]]"], align => LEFT, separation=>0).
+AlignedRow(["$VecteurNomParametre[$CompteurNomParametre[2]] = $VecteurNomParametreAffichage[$CompteurNomParametre[2]]","$VecteurNomStatistique[$CompteurNomStatistique[2]] = $VecteurNomStatistiqueAffichage[$CompteurNomStatistique[2]]"], align => LEFT, separation=>0).
+ EndTable()
+\}
+$ECENTER
+$PAR
+b) La distribution des moyennes échantillonnales suit-elle un modèle normal ? \{$RepPopUpQ2->menu()\}
+$BR
+$SPACE $SPACE Si oui, calculer et arrondir la moyenne à une décimale et l'écart type à deux décimales. 
+$BR 
+$SPACE $SPACE Si non, écrire ${BBOLD}NA${EBOLD}. $BR 
+$SPACE $SPACE $SPACE $SPACE
+\(\displaystyle{\mu_{\overline{X}}}\) =  \{ ans_rule(10) \}
+$SPACE et $SPACE 
+\(\displaystyle{\sigma_{\overline{X}}}\) =  \{ ans_rule(10) \}
+$PAR
+c) Si possible, déterminer : 
+$BR $SPACE $SPACE $SPACE $SPACE $TypeCasA =  \{ ans_rule(10) \}
+$BR $SPACE $SPACE Si le calcul est impossible à faire, écrire ${BBOLD}NA${EBOLD}.
+$BR $SPACE $SPACE Si le calcul est possible à faire, arrondir le pourcentage à deux décimales.
+END_TEXT
+Context()->normalStrings;
+
+#ANS(num_cmp($PourcentageRep, tol => 0.01, tolType => "absolute"));
+
+
+
+ANS($VecteurNomParametreRep[0]->cmp);
+ANS($VecteurNomParametreRep[1]->cmp);
+ANS($VecteurNomParametreRep[2]->cmp);
+ANS($VecteurNomStatistiqueRep[0]->cmp );
+ANS($VecteurNomStatistiqueRep[1]->cmp );
+ANS($VecteurNomStatistiqueRep[2]->cmp );
+#ANS($VecteurNomStatistiqueRep[$CompteurNomParametre[0]]->cmp );
+#ANS($VecteurNomStatistiqueRep[$CompteurNomParametre[1]]->cmp );
+#ANS($VecteurNomStatistiqueRep[$CompteurNomParametre[2]]->cmp );
+ANS($RepPopUpQ2->cmp() );
+if ($XbarreSuitNormal == 2)
+{$inconnu = Compute("NA");
+ANS($inconnu->cmp );
+ANS($inconnu->cmp );
+ANS($inconnu->cmp );}
+else
+{ANS(num_cmp($MoyenneXbarre, tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($EcarttypeXbarre, tol => 0.000001, tolType => "absolute"));
+ANS(num_cmp($PourcentageRep, tol => 0.000001, tolType => "absolute"));}
+
+
+if ($Question3SolutionOui == 0)
+{Context()->texStrings;
+BEGIN_SOLUTION
+a) Voici le tableau complété :
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"1pt", spacing=>2, padding=>2).
+  AlignedRow(["${BBOLD}Paramètres de la population ${EBOLD}","${BBOLD}Statistiques de l'échantillon${EBOLD}"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[0]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[0]]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[1]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[1]]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[2]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[2]]"], align => CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+$PAR
+b) $Reponse2 
+$PAR
+c) Le calcul n'est pas possible.
+END_SOLUTION
+Context()->normalStrings;}
+else
+{Context()->texStrings;
+BEGIN_SOLUTION
+a) Voici le tableau complété :
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"1pt", spacing=>2, padding=>2).
+  AlignedRow(["${BBOLD}Paramètres de la population ${EBOLD}","${BBOLD}Statistiques de l'échantillon${EBOLD}"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[0]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[0]]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[1]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[1]]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[2]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[2]]"], align => CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+$PAR
+b) $Reponse2 $Solution2FC
+$PAR
+c) Voici les détails du calcul du pourcentage :
+\{BeginTable(border=>1,tex_border=>"1pt", spacing=>2, padding=>2).
+  AlignedRow(["Calculs","Représentation graphique"], align => CENTER, separation=>0).
+  AlignedRow([$SolutionEqn[0],"$imageZ"], align => LEFT, separation=>0).
+ AlignedRow([$SolutionEqn[1],"$imageZsol"], align => LEFT, separation=>0).
+ EndTable()
+\}
+END_SOLUTION
+Context()->normalStrings;}
+
+ENDDOCUMENT(); 

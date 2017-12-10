@@ -1,0 +1,308 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('indicateur', 'pourcentage de variation', 'variation relative')
+
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl","PGchoicemacros.pl");
+
+COMMENT("Niveau de difficulté: Moyen. 1 pourcentage de variation et 2 valeurs à calculer à partir de valeurs entières. Il y a 3 contextes. La solution a été programmée. Les réponses doivent absolument être arrondies selon les spécifications de la question.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$temp1 =random(0,2);
+
+
+
+
+
+if ($temp1 == 0) 
+{@VecteurContexte = ("les ventes (en nombre de véhicules) d'un concessionnaire automobile", "Type de ventes");
+
+@VecteurModalite = ("Automobiles neuves", "Automobiles usagées", "Camions neufs", "Camions usagés");
+@VecteurModaliteT = ("Automobiles\ neuves", "Automobiles\ usagées", "Camions\ neufs", "Camions\ usagés");
+@VecteurModaliteM = ("d'automobiles neuves vendues", "d'automobiles usagées vendues", "de camions neufs vendus", "de camions usagés vendus");
+@VecteurModaliteM2 = ("automobiles", "automobiles", "camions", "camions");
+ 
+$Effectif1 = random(400,700);
+$Effectif2 = random(100, 200);
+$Effectif3 = random(300,500);
+$Effectif4 = random(100,200);
+$Effectif5 = random(10,20);
+
+$Effectif6 = random(400,700);
+$Effectif7 = random(100, 200);
+$Effectif8 = random(300,500);
+$Effectif9 = random(100,200);
+$Effectif10 = random(10,20);
+
+
+$TypeVariation = "des ventes"; 
+
+}
+elsif ($temp1 == 1) 
+
+{@VecteurContexte = ("les ventes (en nombre d'appareils informatiques) d'un dépositaire informatique", "Type de ventes");
+
+@VecteurModalite = ("Ordinateurs neufs", "Ordinateurs usagés", "Tablettes neuves", "Tablettes usagées");
+@VecteurModaliteT = ("Ordinateurs\ neufs", "Ordinateurs\ usagés", "Tablettes\ neuves", "Tablettes\ usagées");
+@VecteurModaliteM = ("d'ordinateurs neufs vendus", "d'ordinateurs usagés vendus", "de tablettes neuves vendues", "de tablettes usagées vendues");
+@VecteurModaliteM2 = ("ordinateurs", "ordinateurs", "tablettes", "tablettes");
+ 
+$Effectif1 = random(70,100);
+$Effectif2 = random(50, 80);
+$Effectif3 = random(100,150);
+$Effectif4 = random(40,50);
+$Effectif5 = random(10,20);
+
+$Effectif6 = random(70,100);
+$Effectif7 = random(50, 80);
+$Effectif8 = random(100,150);
+$Effectif9 = random(40,50);
+$Effectif10 = random(10,20);
+
+
+$TypeVariation = "des ventes"; 
+
+}
+elsif ($temp1 == 2) 
+{
+
+@VecteurContexte = ("les ventes (en nombre de boites) d'une entreprise de fabrication de biscuits", "Type de boites");
+
+@VecteurModalite = ("Biscuits au chocolat", "Biscuits au beurre", "Biscuits aux amandes", "Biscuits aux raisins");
+@VecteurModaliteT = ("Biscuits\ au\ chocolat", "Biscuits\ au\ beurre", "Biscuits\ aux\ amandes", "Biscuits\ aux\ raisins");
+@VecteurModaliteM = ("de boites de biscuits au chocolat vendues", "de boites de biscuits au beurre vendues", "de boites de biscuits aux amandes vendues", "de boites de biscuits aux raisins vendues");
+@VecteurModaliteM2 = ("boites", "boites", "boites", "boites"); 
+
+$Effectif1 = random(2500,3000);
+$Effectif2 = random(6000, 7000);
+$Effectif3 = random(5000,6000);
+$Effectif4 = random(5000,5500);
+$Effectif5 = random(10,20);
+
+$Effectif6 = random(2500,3000);
+$Effectif7 = random(6000, 7000);
+$Effectif8 = random(5000,6000);
+$Effectif9 = random(5000,5500);
+$Effectif10 = random(10,20);
+
+
+$TypeVariation = "des ventes"; 
+
+}
+
+
+$TypePeriode = random(0,1);
+
+if ($TypePeriode == 0)
+{@VecteurPeriode = ("Premier trimestre", "Deuxième trimestre", "Troisième trimestre", "Quatrième trimestre" );
+@VecteurPeriodeT = ("Premier\ trimestre", "Deuxième\ trimestre", "Troisième\ trimestre", "Quatrième\ trimestre" );
+@VecteurPeriodeM = ("premier trimestre", "deuxième trimestre", "troisième trimestre", "quatrième trimestre" );
+$CompteurPeriode1 = random(0,2);
+$CompteurPeriode2 = Compute("$CompteurPeriode1 + 1");
+}
+else
+{@VecteurPeriode = ("Premier semestre", "Deuxième semestre" );
+@VecteurPeriodeT = ("Premier\ semestre", "Deuxième\ semestre" );
+@VecteurPeriodeM = ("premier semestre", "deuxième semestre" );
+$CompteurPeriode1 = 0;
+$CompteurPeriode2 = 1;
+}
+
+$TypeVariation = "des ventes"; 
+
+
+
+@VecteurEffectif1 = ($Effectif1, $Effectif2, $Effectif3, $Effectif4, $Effectif5);
+@VecteurEffectif2 = ($Effectif6, $Effectif7, $Effectif8, $Effectif9, $Effectif10);
+
+$CompteurReference = random(1,4);
+
+$Numerateur1 = Compute("(($VecteurEffectif2[0] - $VecteurEffectif1[0]))");
+$Numerateur2 = Compute("(($VecteurEffectif2[1] - $VecteurEffectif1[1]))");
+$Numerateur3 = Compute("(($VecteurEffectif2[2] - $VecteurEffectif1[2]))");
+$Numerateur4 = Compute("(($VecteurEffectif2[3] - $VecteurEffectif1[3]))");
+$Numerateur5 = Compute("(($VecteurEffectif2[4] - $VecteurEffectif1[4]))");
+
+@VecteurNumerateur = ($Numerateur1, $Numerateur2, $Numerateur3, $Numerateur4, $Numerateur5);
+
+
+$Pourcentage1t = Compute("(($VecteurEffectif2[0] - $VecteurEffectif1[0])/$VecteurEffectif1[0])*100");
+$Pourcentage2t = Compute("(($VecteurEffectif2[1] - $VecteurEffectif1[1])/$VecteurEffectif1[1])*100");
+$Pourcentage3t = Compute("(($VecteurEffectif2[2] - $VecteurEffectif1[2])/$VecteurEffectif1[2])*100");
+$Pourcentage4t = Compute("(($VecteurEffectif2[3] - $VecteurEffectif1[3])/$VecteurEffectif1[3])*100");
+$Pourcentage5t = Compute("(($VecteurEffectif2[4] - $VecteurEffectif1[4])/$VecteurEffectif1[4])*100");
+
+
+$Pourcentage1 = sprintf("%0.1f","$Pourcentage1t ");
+$Pourcentage2 = sprintf("%0.1f","$Pourcentage2t ");
+$Pourcentage3 = sprintf("%0.1f","$Pourcentage3t ");
+$Pourcentage4 = sprintf("%0.1f","$Pourcentage4t ");
+$Pourcentage5 = sprintf("%0.1f","$Pourcentage5t ");
+
+@VecteurPourcentage = ($Pourcentage1, $Pourcentage2, $Pourcentage3, $Pourcentage4, $Pourcentage5);
+
+$Pourcentage1V = Compute("$Pourcentage1 + 100");
+$Pourcentage2V = Compute("$Pourcentage2 + 100");
+$Pourcentage3V = Compute("$Pourcentage3 + 100");
+$Pourcentage4V = Compute("$Pourcentage4 + 100");
+@VecteurPourcentageV = ($Pourcentage1V, $Pourcentage2V, $Pourcentage3V, $Pourcentage4V);
+
+$Pourcentage1V2 = Compute("$Pourcentage1V/100");
+$Pourcentage2V2 = Compute("$Pourcentage2V/100");
+$Pourcentage3V2 = Compute("$Pourcentage3V/100");
+$Pourcentage4V2 = Compute("$Pourcentage4V/100");
+@VecteurPourcentageV2 = ($Pourcentage1V2, $Pourcentage2V2, $Pourcentage3V2, $Pourcentage4V2);
+
+
+#1 Pourcentage à calculer
+#1 valeur finale
+#1 valeur initiale
+
+$temp2 =random(0,4);
+if ($temp2 == 0)
+{
+@AffichageEffectif1 = (ans_rule(5), $Effectif2, $Effectif3, $Effectif4);
+$CompteurRepEffectif1 = 0;
+@AffichageEffectif2 = ($Effectif6, $Effectif7, ans_rule(5), $Effectif9);
+$CompteurRepEffectif2 = 2;
+@AffichagePourcentage = ("$Pourcentage1", ans_rule(5), "$Pourcentage3","$Pourcentage4"); 
+$CompteurRepPourcentage = 1;
+}
+elsif ($temp2 == 1)
+{
+@AffichageEffectif1 = ( $Effectif1,ans_rule(5), $Effectif3, $Effectif4);
+$CompteurRepEffectif1 = 1;
+@AffichageEffectif2 = ($Effectif6, $Effectif7, $Effectif8, ans_rule(5));
+$CompteurRepEffectif2 = 3;
+@AffichagePourcentage = ("$Pourcentage1", "$Pourcentage2",ans_rule(5), "$Pourcentage4"); 
+$CompteurRepPourcentage = 2;
+}
+elsif ($temp2 == 2)
+{
+@AffichageEffectif1 = ( $Effectif1, $Effectif2,ans_rule(5), $Effectif4);
+$CompteurRepEffectif1 = 2;
+@AffichageEffectif2 = (ans_rule(5), $Effectif7, $Effectif8, $Effectif9);
+$CompteurRepEffectif2 = 0;
+@AffichagePourcentage = ("$Pourcentage1", "$Pourcentage2", "$Pourcentage3",ans_rule(5)); 
+$CompteurRepPourcentage = 3;
+}
+elsif ($temp2 == 3)
+{
+@AffichageEffectif1 = ( $Effectif1, $Effectif2, $Effectif3, ans_rule(5));
+$CompteurRepEffectif1 = 3;
+@AffichageEffectif2 = ( $Effectif6,ans_rule(5), $Effectif8, $Effectif9);
+$CompteurRepEffectif2 = 1;
+@AffichagePourcentage = (ans_rule(5), "$Pourcentage2", "$Pourcentage3","$Pourcentage4"); 
+$CompteurRepPourcentage = 0;
+}
+elsif ($temp2 == 4)
+{
+@AffichageEffectif1 = ( $Effectif1, $Effectif2, $Effectif3, ans_rule(5));
+$CompteurRepEffectif1 = 3;
+@AffichageEffectif2 = ( $Effectif6, $Effectif7,ans_rule(5), $Effectif9);
+$CompteurRepEffectif2 = 2;
+@AffichagePourcentage = ( "$Pourcentage1",ans_rule(5), "$Pourcentage3","$Pourcentage4"); 
+$CompteurRepPourcentage = 1;
+}
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Voici $VecteurContexte[0] pour le $VecteurPeriodeM[$CompteurPeriode1] et le $VecteurPeriodeM[$CompteurPeriode2] : 
+$PAR
+
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+ AlignedRow(["${BBOLD} $VecteurContexte[1] ${EBOLD}","${BBOLD} $VecteurPeriode[$CompteurPeriode1] ${EBOLD}", "${BBOLD} $VecteurPeriode[$CompteurPeriode2]
+ ${EBOLD}", "${BBOLD} Pourcentage $BR de variation ${EBOLD}"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[0]","$AffichageEffectif1[0]","$AffichageEffectif2[0]", "$AffichagePourcentage[0]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[1]","$AffichageEffectif1[1]", "$AffichageEffectif2[1]","$AffichagePourcentage[1]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[2]","$AffichageEffectif1[2]", "$AffichageEffectif2[2]","$AffichagePourcentage[2]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[3]","$AffichageEffectif1[3]", "$AffichageEffectif2[3]", "$AffichagePourcentage[3]"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$ECENTER
+$BR
+${BBOLD}Question : ${EBOLD} Compléter les cases manquantes en arrondissant les pourcentages à une décimale et les nombres à l'unité.    
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($VecteurEffectif1[$CompteurRepEffectif1], tol => 0.0001, tolType => "absolute"));
+ANS(num_cmp($VecteurEffectif2[$CompteurRepEffectif2], tol => 0.0001, tolType => "absolute"));
+ANS(num_cmp($VecteurPourcentage[$CompteurRepPourcentage], tol => 0.0001, tolType => "absolute"));
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+Le pourcentage de variation  se calcule comme suit : 
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle {\rm{Pourcentage\ de\ variation = \frac{Valeur\ finale\ de\ la\ période - Valeur\ initiale\ de\ la\ période}{Valeur\ initiale\ de\ la\ période} \times 100}}\) 
+$BR
+$PAR
+La valeur initiale se calcule comme suit : 
+$PAR
+$SPACE $SPACE $SPACE\(\displaystyle {\rm{Valeur\ initiale = \frac{Valeur\ finale}{100\ %\ +\ Pourcentage\ de\ variation\ %}}}\) 
+$BR
+$PAR
+La valeur finale se calcule comme suit : 
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle {\rm{Valeur\ finale = Valeur\ initiale \times (100\ %\ +\ Pourcentage\ de\ variation\ %)}}\) 
+$PAR
+$BR
+${BBOLD}Calcul de la valeur initiale${EBOLD} $BR Le nombre $VecteurModaliteM[$CompteurRepEffectif1] pour le $VecteurPeriodeM[$CompteurPeriode1] se calcule comme suit : 
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle {\rm{Valeur\ initiale = \frac{Valeur\ finale}{100\ %\ +\ Pourcentage\ de\ variation\ %}}}\)
+$PAR
+$SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE 
+\(\displaystyle {= \frac{$VecteurEffectif2[$CompteurRepEffectif1]}{100\ %\ +$VecteurPourcentage[$CompteurRepEffectif1]\ %} =
+\frac{$VecteurEffectif2[$CompteurRepEffectif1]}{$VecteurPourcentageV[$CompteurRepEffectif1]\ %} = 
+\frac{$VecteurEffectif2[$CompteurRepEffectif1]}{$VecteurPourcentageV2[$CompteurRepEffectif1]}  
+= $VecteurEffectif1[$CompteurRepEffectif1]}\) 
+$PAR
+Le nombre $VecteurModaliteM[$CompteurRepEffectif1] pour le $VecteurPeriodeM[$CompteurPeriode1] était de $VecteurEffectif1[$CompteurRepEffectif1] $VecteurModaliteM2[$CompteurRepEffectif1].  
+
+$PAR
+${BBOLD}Calcul de la valeur finale${EBOLD} $BR Le nombre $VecteurModaliteM[$CompteurRepEffectif2] pour le $VecteurPeriodeM[$CompteurPeriode2] se calcule comme suit : 
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle {\rm{Valeur\ finale = Valeur\ initiale \times (100\ %\ +\ Pourcentage\ de\ variation\ %)}}\) 
+$BR $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE
+\(\displaystyle { = \rm{$VecteurEffectif1[$CompteurRepEffectif2]} \times (100\ %\ +$VecteurPourcentage[$CompteurRepEffectif2]\ %) = $VecteurEffectif1[$CompteurRepEffectif2] \times ($VecteurPourcentageV[$CompteurRepEffectif2]\ %) = $VecteurEffectif1[$CompteurRepEffectif2] \times $VecteurPourcentageV2[$CompteurRepEffectif2] = $VecteurEffectif2[$CompteurRepEffectif2]}\) 
+$PAR
+Le nombre $VecteurModaliteM[$CompteurRepEffectif2] pour le $VecteurPeriodeM[$CompteurPeriode2] était de $VecteurEffectif2[$CompteurRepEffectif2] $VecteurModaliteM2[$CompteurRepEffectif2].  
+
+$PAR
+${BBOLD}Calcul du pourcentage de variation${EBOLD}$BR  Le pourcentage de variation $TypeVariation $VecteurModaliteM[$CompteurRepPourcentage] entre le $VecteurPeriodeM[$CompteurPeriode1] et le $VecteurPeriodeM[$CompteurPeriode2] est :
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle {\rm{Pourcentage\ de\ variation = \frac{Valeur\ finale\ de\ la\ période - Valeur\ initiale\ de\ la\ période}{Valeur\ initiale\ de\ la\ période} \times 100}}\) 
+$BR $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE 
+\(\displaystyle {= \frac{$VecteurEffectif2[$CompteurRepPourcentage] - $VecteurEffectif1[$CompteurRepPourcentage]}{$VecteurEffectif1[$CompteurRepPourcentage]} \times 100 = \frac{$VecteurNumerateur[$CompteurRepPourcentage]}{$VecteurEffectif1[$CompteurRepPourcentage]} \times 100
+= $VecteurPourcentage[$CompteurRepPourcentage]}\) 
+
+$PAR
+Le nombre $VecteurModaliteM[$CompteurRepPourcentage] a varié de $VecteurPourcentage[$CompteurRepPourcentage] % entre le $VecteurPeriodeM[$CompteurPeriode1] et le $VecteurPeriodeM[$CompteurPeriode2].
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

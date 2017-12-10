@@ -1,0 +1,413 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('courbe des pourcentages cumulés (ogive)', 'mesure de tendance centrale', 'modalité', 'médiane', 'pourcentage cumulé', 'variable', 'variable quantitative continue', 'échantillon', 'échelle de rapport')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl","PGauxiliaryFunctions.pl",
+"PGcourse.pl","unionTables.pl", "PGchoicemacros.pl"
+);
+
+
+COMMENT("Niveau de difficulté : Facile. Déterminer la médiane en utilisant l'ogive. La variable est continue (4 classes). Il y a 4 contextes. La solution a été programmée. Le 50 % du pourcentage cumulé est affiché. La réponse doit être exacte.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$TypeContexte = random(0,3);
+
+$refreshCachedImages = 1;
+
+#On voit le 50 % dans la colonne des pourcentages cumulés
+#0 = Non
+#1 = Oui
+$Voir50 = random(0,1);
+$Voir50  = 1;
+
+#Déterminer quelle valeur sera la médiane. Si on voit le 50 %, alors la médiane sera la moyenne avec la valeur suivante
+if ($Voir50 == 1)
+{$PositionMediane = random(0,2);}
+else
+{$PositionMediane = random(0,3);}
+
+#Les effectifs en X et Y sont communs à tous les contextes.
+#Variable Y est utilisé
+if ($TypeContexte == 0)
+{@VecteurContexte = ("X : Sexe", "Temps (min)", "Répartition des étudiants selon $BR le temps pris pour aller au cégep", "d'étudiantes et d'étudiants afin de connaitre le temps (en minutes) pris pour aller au cégep le matin", "afin de connaitre le temps (en minutes) pris pour aller au cégep le matin");
+$Y01UniteS = "minute";
+$Y01UniteP = "minutes";
+$Y01Interpretation1 = "50 % des étudiants ont pris";
+$Y01Interpretation2 = "pour se rendre au cégep.";
+
+@Y01VecteurModalite = ("[0, 20[", "[20, 40[", "[40, 60[","[60, 80[" );
+@Y01VecteurModaliteValeur = (10, 30, 50, 70);
+@Y01VecteurModaliteClasse = (0, 20, 40, 60, 80);
+@Y01VecteurModaliteG = (10, 30, 50, "Temps", 0, 70);
+$Y01tolerance = 1;
+@graphique60T = ("Répartition cumulée des étudiants selon", "le temps pris pour aller au cégep");
+@graphique60T = ("Repartition cumulee des etudiants selon", "le temps pris pour aller au cegep");
+}
+elsif ($TypeContexte == 1)
+{@VecteurContexte = ("X : Sexe", "Montant ($DOLLAR)", "Répartition des étudiants selon $BR le montant dépensé en épicerie la semaine dernière", "d'étudiantes et d'étudiants afin de connaitre le montant dépensé en épicerie la semaine dernière", "afin de connaitre le montant dépensé en épicerie la semaine dernière");
+$Y01UniteS = "$DOLLAR";
+$Y01UniteP = "$DOLLAR";
+$Y01Interpretation1 = "50 % des étudiants ont dépensé";
+$Y01Interpretation2 ="en épicerie la semaine dernière.";
+
+@Y01VecteurModalite = ("[0, 40[", "[40, 80[", "[80, 120[", "[90, 120[" );
+@Y01VecteurModaliteValeur = (20, 60, 100);
+@Y01VecteurModaliteClasse = (0, 40, 80, 120, 160);
+@Y01VecteurModaliteG = (20, 60, 100, "Montant", 0, 140);
+$Y01tolerance = 1;
+@graphique60T = ("Répartition cumulée des étudiants selon", "le montant dépensé en épicerie");
+@graphique60T = ("Repartition cumulee des etudiants selon", "le montant depense en epicerie");
+}
+
+elsif ($TypeContexte == 2)
+{@VecteurContexte = ("X : Sexe", "Temps (heures)", "Répartition des étudiants selon $BR le temps consacré à l'étude d'un examen final", "d'étudiantes et d'étudiants afin de connaitre le temps (en heures) pris pour étudier l'examen final d'un cours de la dernière session", "afin de connaitre le temps (en heures) pris pour étudier l'examen final d'un cours de la dernière session");
+$Y01UniteS = "heure";
+$Y01UniteP = "heures";
+$Y01Interpretation1 = "50 % des étudiants ont pris";
+$Y01Interpretation2 = "pour étudier l'examen final.";
+
+@Y01VecteurModalite = ("[0, 2[", "[2, 4[", "[4, 6[", "[6, 8[");
+@Y01VecteurModaliteValeur = (1, 3, 5, 7);
+@Y01VecteurModaliteClasse = (0, 2, 4, 6, 8);
+@Y01VecteurModaliteG = (1, 3, 5, "Temps", 0, 7);
+$Y01tolerance = 0.3;
+@graphique60T = ("Répartition cumulée des étudiants selon", "le temps consacré à étudier un examen");
+@graphique60T = ("Repartition cumulee des etudiants selon", "le temps consacre a etudier un examen");
+}
+elsif ($TypeContexte == 3)
+{@VecteurContexte = ("X : Sexe", "Montant ($DOLLAR)", "Répartition des étudiants selon $BR le montant dépensé à la cafétéria la semaine dernière", "d'étudiantes et d'étudiants afin de connaitre le montant dépensé à la cafétéria la semaine dernière", "afin de connaitre le montant dépensé à la cafétéria la semaine dernière");
+$Y01UniteS = "$DOLLAR";
+$Y01UniteP = "$DOLLAR";
+$Y01Interpretation1 = "50 % des étudiants ont dépensé";
+$Y01Interpretation2 = "à la cafétéria la semaine dernière.";
+
+@Y01VecteurModalite = ("[0, 10[", "[10, 20[", "[20, 30[", "[30, 40[");
+@Y01VecteurModaliteValeur = (5, 15, 25, 35);
+@Y01VecteurModaliteClasse = (0, 10, 20, 30, 40);
+@Y01VecteurModaliteG = (5, 15, 25, "Montant", 0, 35);
+$Y01tolerance = 1;
+@graphique60T = ("Répartition cumulée des étudiants selon", "le montant dépensé à la cafétéria");
+@graphique60T = ("Repartition cumulee des etudiants selon", "le montant depense a la cafeteria");
+}
+
+
+if ($Voir50 == 1)
+{#On voit le 50 %
+if ($PositionMediane == 0)
+{#eff11 = 50%
+$Z01PourcentageC1 = sprintf("%0.1f","50.0");
+$Z01PourcentageC2Min = Compute("$Z01PourcentageC1 +1");
+$Z01PourcentageC2t = random($Z01PourcentageC2Min,90); 
+$Z01PourcentageC2 = sprintf("%0.1f","$Z01PourcentageC2t ");
+$Z01PourcentageC3Min = Compute("$Z01PourcentageC2t +1");
+$Z01PourcentageC3t = random($Z01PourcentageC3Min,95); 
+$Z01PourcentageC3 = sprintf("%0.1f","$Z01PourcentageC3t ");
+$Z01PourcentageC4 = sprintf("%0.1f","100.0");
+$Z11mediane = $Y01VecteurModaliteClasse[1];
+$Z11medianeA = 2;
+}
+elsif ($PositionMediane == 1)
+{#eff12 = 50%
+$Z01PourcentageC1t = random(10, 45);
+$Z01PourcentageC1 = sprintf("%0.1f","$Z01PourcentageC1t ");
+$Z01PourcentageC2 = sprintf("%0.1f","50.0");
+$Z01PourcentageC3Min = Compute("$Z01PourcentageC2 +1");
+$Z01PourcentageC3t = random($Z01PourcentageC3Min,95); 
+$Z01PourcentageC3 = sprintf("%0.1f","$Z01PourcentageC3t ");
+$Z01PourcentageC4 = sprintf("%0.1f","100.0");
+$Z11mediane = $Y01VecteurModaliteClasse[2];
+$Z11medianeA = 4;
+}
+elsif ($PositionMediane == 2)
+{#Entre eff13 = 50%
+$Z01PourcentageC1t = random(10, 40);
+$Z01PourcentageC1 = sprintf("%0.1f","$Z01PourcentageC1t ");
+$Z01PourcentageC2Min = Compute("$Z01PourcentageC1t +1");
+$Z01PourcentageC2t = random($Z01PourcentageC2Min,45); 
+$Z01PourcentageC2 = sprintf("%0.1f","$Z01PourcentageC2t ");
+$Z01PourcentageC3 = sprintf("%0.1f","50.0 ");
+$Z01PourcentageC4 = sprintf("%0.1f","100.0");
+$Z11mediane = $Y01VecteurModaliteClasse[3];
+$Z11medianeA = 6;
+}
+
+
+}
+else
+{#On ne voit pas le 50 %
+if ($PositionMediane == 0)
+{#eff11
+
+
+$Z01PourcentageC1t = random(51, 80);
+$Z01PourcentageC1 = sprintf("%0.1f","$Z01PourcentageC1t ");
+$Z01PourcentageC2Min = Compute("$Z01PourcentageC1t +1");
+$Z01PourcentageC2t = random($Z01PourcentageC2Min,90); 
+$Z01PourcentageC2 = sprintf("%0.1f","$Z01PourcentageC2t ");
+$Z01PourcentageC3Min = Compute("$Z01PourcentageC2t +1");
+$Z01PourcentageC3t = random($Z01PourcentageC3Min,95); 
+$Z01PourcentageC3 = sprintf("%0.1f","$Z01PourcentageC3t ");
+$Z01PourcentageC4 = sprintf("%0.1f","100.0");
+
+$medianeCompteur = 1;
+}
+elsif ($PositionMediane == 1)
+{#eff12 
+$Z01PourcentageC1t = random(10, 49);
+$Z01PourcentageC1 = sprintf("%0.1f","$Z01PourcentageC1t ");
+$Z01PourcentageC2Min = Compute("51");
+$Z01PourcentageC2t = random($Z01PourcentageC2Min,90); 
+$Z01PourcentageC2 = sprintf("%0.1f","$Z01PourcentageC2t ");
+$Z01PourcentageC3Min = Compute("$Z01PourcentageC2t +1");
+$Z01PourcentageC3t = random($Z01PourcentageC3Min,95); 
+$Z01PourcentageC3 = sprintf("%0.1f","$Z01PourcentageC3t ");
+$Z01PourcentageC4 = sprintf("%0.1f","100.0");
+$medianeCompteur = 2;
+}
+elsif ($PositionMediane == 2)
+{#eff13 
+$Z01PourcentageC1t = random(10, 40);
+$Z01PourcentageC1 = sprintf("%0.1f","$Z01PourcentageC1t ");
+$Z01PourcentageC2Min = Compute("$Z01PourcentageC1t +1");
+$Z01PourcentageC2t = random($Z01PourcentageC2Min,45); 
+$Z01PourcentageC2 = sprintf("%0.1f","$Z01PourcentageC2t ");
+$Z01PourcentageC3Min = Compute("51");
+$Z01PourcentageC3t = random($Z01PourcentageC3Min,95); 
+$Z01PourcentageC3 = sprintf("%0.1f","$Z01PourcentageC3t ");
+$Z01PourcentageC4 = sprintf("%0.1f","100.0");
+
+$medianeCompteur = 3;
+}
+elsif ($PositionMediane == 3)
+{#eff14
+$Z01PourcentageC1t = random(10, 30);
+$Z01PourcentageC1 = sprintf("%0.1f","$Z01PourcentageC1t ");
+$Z01PourcentageC2Min = Compute("$Z01PourcentageC1t +1");
+$Z01PourcentageC2t = random($Z01PourcentageC2Min,40); 
+$Z01PourcentageC2 = sprintf("%0.1f","$Z01PourcentageC2t ");
+$Z01PourcentageC3Min = Compute("$Z01PourcentageC2t +1");
+$Z01PourcentageC3t = random($Z01PourcentageC3Min,49); 
+$Z01PourcentageC3 = sprintf("%0.1f","$Z01PourcentageC3t ");
+$Z01PourcentageC4 = sprintf("%0.1f","100.0");
+$medianeCompteur = 4;
+}
+
+@Z01ReponsePourcentageC = (0, $Z01PourcentageC1, $Z01PourcentageC2, $Z01PourcentageC3,$Z01PourcentageC4);
+
+#Calcul de la médiane
+#Interpolation linéaire
+$MedianePente = Compute("($Z01ReponsePourcentageC[$medianeCompteur] - $Z01ReponsePourcentageC[$medianeCompteur-1])/($Y01VecteurModaliteClasse[$medianeCompteur] -$Y01VecteurModaliteClasse[$medianeCompteur-1])");
+
+$Z11medianet =  Compute("$Y01VecteurModaliteClasse[$medianeCompteur-1] +((50-$Z01ReponsePourcentageC[$medianeCompteur-1])/$MedianePente)");
+$Z11mediane = sprintf("%0.1f","$Z11medianet ");
+
+
+$MedianePenteA = Compute("($Z01ReponsePourcentageC[$medianeCompteur] - $Z01ReponsePourcentageC[$medianeCompteur-1])/(2)");
+
+$Z11medianeA = Compute("(2*($medianeCompteur-1)) +((50-$Z01ReponsePourcentageC[$medianeCompteur-1])/$MedianePenteA)");
+
+}
+
+
+
+#Interprétation de la médiane
+if ($Z11mediane < 2)
+{$medianeInterpretation = "$Y01Interpretation1 $Z11mediane $Y01UniteS ou moins $Y01Interpretation2";}
+else
+{$medianeInterpretation = "$Y01Interpretation1 $Z11mediane $Y01UniteP ou moins $Y01Interpretation2";}
+
+
+
+#Graphique
+
+@VecteurCouleur = (red,blue,red);
+@CompteurCouleur = shuffle(3);
+@Couleur60 = ($VecteurCouleur[$CompteurCouleur[0]], black);
+
+#Dans le calcul de la médiane, la variable suivante a été utilisée
+@x60 = (-2, 10, 2, 4, 6, 8, 10);
+@x60Fermeture = (0, 8);
+
+
+$x60Titre = 5;
+
+@Valeur60 = ($Z01PourcentageC1, $Z01PourcentageC2, $Z01PourcentageC3, $Z01PourcentageC4);
+
+
+@y60 = (-10, 120, 10, -5, 117, 113, 113, 108,102, 96);
+
+$graphique60 = init_graph($x60[0],$y60[0],$x60[1],$y60[1],'axes'=>[0,0], 'grid'=>[24,13]);
+$graphique60 -> lb('reset');
+$graphique60 -> lb(new Label ( 0,0,$Y01VecteurModaliteClasse[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[2],0,$Y01VecteurModaliteClasse[1],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[3],0,$Y01VecteurModaliteClasse[2],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[4],0,$Y01VecteurModaliteClasse[3],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[5],0,$Y01VecteurModaliteClasse[4],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60[4]+1, $y60[3],$Y01VecteurModaliteG[3],'black','center','top'));
+
+#Affichage Titre 1, 2, axe y
+$graphique60 -> lb(new Label ( $x60Titre,$y60[4],$graphique60T[0],'black','center','top'));
+$graphique60 -> lb(new Label ( $x60Titre,$y60[5],$graphique60T[1],'black','center','top'));
+$graphique60 -> lb(new Label ( 0,$y60[6],"Pour-",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[7],"centage",'black','right','top'));
+$graphique60 -> lb(new Label ( 0,$y60[8],"cumule",'black','right','top'));
+
+#Unité Y
+$graphique60 -> lb(new Label ( 0,$y60[2],$y60[2],'black','right','middle'));
+
+#Afficher Pourcentage
+$graphique60 -> lb(new Label ( 0,0,"0 %",$Couleur60[0],'right','bottom'));
+$graphique60 -> lb(new Label ( $x60[2],$Valeur60[0],"$Valeur60[0] %",$Couleur60[0],'right','bottom'));
+$graphique60 -> lb(new Label ( $x60[3],$Valeur60[1],"$Valeur60[1] %",$Couleur60[0],'right','bottom'));
+$graphique60 -> lb(new Label ( $x60[4],$Valeur60[2],"$Valeur60[2] %",$Couleur60[0],'right','bottom'));
+$graphique60 -> lb(new Label ( $x60[5],$Valeur60[3],"$Valeur60[3] %",$Couleur60[0],'right','bottom'));
+
+
+$Epaisseur60 = 1;
+
+#Ligne pour modalité 1 de X
+$graphique60->moveTo($x60Fermeture[0],0);
+$graphique60->lineTo($x60[2],$Valeur60[0],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[3],$Valeur60[1],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[4],$Valeur60[2],$Couleur60[0],$Epaisseur60);
+$graphique60->lineTo($x60[5],$Valeur60[3],$Couleur60[0],$Epaisseur60);
+
+$pt60p1 = closed_circle( $x60[2],$Valeur60[0],$Couleur60[0]);
+$pt60p2 = closed_circle( $x60[3],$Valeur60[1],$Couleur60[0]);
+$pt60p3 = closed_circle( $x60[4],$Valeur60[2],$Couleur60[0]);
+$pt60p4 = closed_circle( $x60Fermeture[0],0,$Couleur60[0]);
+$pt60p5 = closed_circle( $x60Fermeture[1],100,$Couleur60[0]);
+
+
+$graphique60->stamps($pt60p1,$pt60p2,$pt60p3,$pt60p4,$pt60p5);
+
+$imageG60 = image(insertGraph($graphique60),width =>450,height=>350,tex_size=>450);
+
+#Solution
+#Graphique
+
+@Couleur60Sol = ($VecteurCouleur[$CompteurCouleur[0]], black);
+
+@x60Sol = (-2, 10, 2, 4, 6, 8, 10);
+@x60SolFermeture = (0, 8);
+
+
+$x60SolTitre = 5;
+
+@Valeur60Sol = ($Z01PourcentageC1, $Z01PourcentageC2, $Z01PourcentageC3, $Z01PourcentageC4);
+
+
+@y60Sol = (-10, 120, 10, -5, 117, 113, 113, 108,102, 96);
+
+$graphique60Sol = init_graph($x60Sol[0],$y60Sol[0],$x60Sol[1],$y60Sol[1],'axes'=>[0,0], 'grid'=>[24,13]);
+$graphique60Sol -> lb('reset');
+$graphique60Sol -> lb(new Label ( 0,0,$Y01VecteurModaliteClasse[0],'black','center','top'));
+$graphique60Sol -> lb(new Label ( $x60Sol[2],0,$Y01VecteurModaliteClasse[1],'black','center','top'));
+$graphique60Sol -> lb(new Label ( $x60Sol[3],0,$Y01VecteurModaliteClasse[2],'black','center','top'));
+$graphique60Sol -> lb(new Label ( $x60Sol[4],0,$Y01VecteurModaliteClasse[3],'black','center','top'));
+$graphique60Sol -> lb(new Label ( $x60Sol[5],0,$Y01VecteurModaliteClasse[4],'black','center','top'));
+$graphique60Sol -> lb(new Label ( $x60Sol[4]+1, $y60Sol[3],$Y01VecteurModaliteG[3],'black','center','top'));
+
+#Affichage Titre 1, 2, axe y
+$graphique60Sol -> lb(new Label ( $x60SolTitre,$y60Sol[4],$graphique60T[0],'black','center','top'));
+$graphique60Sol -> lb(new Label ( $x60SolTitre,$y60Sol[5],$graphique60T[1],'black','center','top'));
+$graphique60Sol -> lb(new Label ( 0,$y60Sol[6],"Pour-",'black','right','top'));
+$graphique60Sol -> lb(new Label ( 0,$y60Sol[7],"centage",'black','right','top'));
+$graphique60Sol -> lb(new Label ( 0,$y60Sol[8],"cumule",'black','right','top'));
+
+#Unité Y
+$graphique60Sol -> lb(new Label ( 0,$y60Sol[2],$y60Sol[2],'black','right','middle'));
+
+#Afficher Pourcentage
+$graphique60Sol -> lb(new Label ( 0,0,"0 %",$Couleur60[0],'right','bottom'));
+$graphique60Sol -> lb(new Label ( $x60Sol[2],$Valeur60Sol[0],"$Valeur60Sol[0] %",$Couleur60Sol[0],'right','bottom'));
+$graphique60Sol -> lb(new Label ( $x60Sol[3],$Valeur60Sol[1],"$Valeur60Sol[1] %",$Couleur60Sol[0],'right','bottom'));
+$graphique60Sol -> lb(new Label ( $x60Sol[4],$Valeur60Sol[2],"$Valeur60Sol[2] %",$Couleur60Sol[0],'right','bottom'));
+$graphique60Sol -> lb(new Label ( $x60Sol[5],$Valeur60Sol[3],"$Valeur60Sol[3] %",$Couleur60Sol[0],'right','bottom'));
+
+#Solution
+$graphique60Sol -> lb(new Label ( 0,50,"50",$Couleur60Sol[1],'right','middle'));
+$graphique60Sol -> lb(new Label ( $Z11medianeA,0,$Z11mediane,$Couleur60Sol[1],'center','bottom'));
+
+$Epaisseur60Sol = 1;
+
+#Ligne pour modalité 1 de X
+$graphique60Sol->moveTo($x60SolFermeture[0],0);
+$graphique60Sol->lineTo($x60Sol[2],$Valeur60Sol[0],$Couleur60Sol[0],$Epaisseur60Sol);
+$graphique60Sol->lineTo($x60Sol[3],$Valeur60Sol[1],$Couleur60Sol[0],$Epaisseur60Sol);
+$graphique60Sol->lineTo($x60Sol[4],$Valeur60Sol[2],$Couleur60Sol[0],$Epaisseur60Sol);
+$graphique60Sol->lineTo($x60Sol[5],$Valeur60Sol[3],$Couleur60Sol[0],$Epaisseur60Sol);
+$graphique60Sol->moveTo(0,50);
+$graphique60Sol->lineTo($Z11medianeA,50,$Couleur60Sol[1],$Epaisseur60Sol);
+$graphique60Sol->lineTo($Z11medianeA,0,$Couleur60Sol[1],$Epaisseur60Sol);
+
+$pt60Solp1 = closed_circle( $x60Sol[2],$Valeur60Sol[0],$Couleur60Sol[0]);
+$pt60Solp2 = closed_circle( $x60Sol[3],$Valeur60Sol[1],$Couleur60Sol[0]);
+$pt60Solp3 = closed_circle( $x60Sol[4],$Valeur60Sol[2],$Couleur60Sol[0]);
+$pt60Solp4 = closed_circle( $x60SolFermeture[0],0,$Couleur60Sol[0]);
+$pt60Solp5 = closed_circle( $x60SolFermeture[1],100,$Couleur60Sol[0]);
+$pt60SolMediane = closed_circle( $Z11medianeA,50,$Couleur60Sol[1]);
+
+
+$graphique60Sol->stamps($pt60Solp1,$pt60Solp2,$pt60Solp3,$pt60Solp4,$pt60Solp5, $pt60SolMediane );
+
+$imageG60Sol = image(insertGraph($graphique60Sol),width =>350,height=>250,tex_size=>350);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Voici l'ogive illustrant une enquête qui a été menée auprès d'un échantillon $VecteurContexte[3].
+$PAR
+$BCENTER
+$imageG60
+$ECENTER
+
+$PAR
+
+${BBOLD}Question : ${EBOLD} À partir de l'ogive, déterminer la médiane.
+$PAR $SPACE $SPACE $SPACE Médiane = \{ans_rule(5)\}
+
+END_TEXT
+Context()->normalStrings;
+
+
+
+if ($Voir50 == 1)
+{#Aucune tolérance
+ANS(num_cmp($Z11mediane));}
+else
+{ANS(num_cmp($Z11mediane, tol => 2));}
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La médiane est la valeur centrale d'une série statistique ordonnée. Cette valeur centrale divise la série statistique en deux parties égales : il y a autant d'unités statistiques qui ont une valeur inférieure ou égale à la médiane que d'unités statistiques qui ont une valeur supérieure ou égale à la médiane. 
+$PAR
+Pour la déterminer en utilisant l'ogive, il faut choisir la valeur (sur l'axe des X) qui correspond au 50 % sur l'axe des pourcentages cumulés (l'axe des Y). 
+$PAR
+$BCENTER
+$imageG60Sol
+$ECENTER
+$PAR ${BBOLD} Interprétation de la médiane :${EBOLD} $medianeInterpretation
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

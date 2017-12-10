@@ -1,0 +1,75 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Distributions normales)
+## KEYWORDS('cote Z', 'table')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl","PGchoicemacros.pl");
+
+COMMENT("Niveau de difficulté : Facile. Calculer la cote Z de la note d'un étudiant. La solution a été programmée. La réponse doit absolument être arrondie selon les spécifications de la question.");
+
+
+TEXT(beginproblem());
+
+@VecteurNom = ("Félix", "Ève", "Gabrielle", "Xavier", "Marc", "Léa", "Thomas", "Florence");
+@VecteurChoix = shuffle(8);
+
+$Moyenne1t = random(65,80, 0.1);
+$Moyenne1 = sprintf("%0.1f","$Moyenne1t");
+
+$Ecarttype1t = random(1,5, 0.1);
+$Ecarttype1 = sprintf("%0.1f","$Ecarttype1t");
+$ValMax = Compute("$Moyenne1 + (3*$Ecarttype1)");
+$ValMin = Compute("$Moyenne1 - (3*$Ecarttype1)");
+
+$Note1t = random($ValMin, $ValMax, 0.1);
+$Note1 = sprintf("%0.1f","$Note1t");
+
+$Num1t = Compute("$Note1 - $Moyenne1");
+$Num1 = sprintf("%0.1f","$Num1t");
+
+$Reponset = Compute("($Note1 - $Moyenne1)/($Ecarttype1)");
+$Reponse =sprintf("%0.2f","$Reponset ");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+$VecteurNom[$VecteurChoix[0]] a eu $Note1 % au dernier examen. Calculer sa cote Z, si la moyenne de la classe a été de $Moyenne1 % et l'écart type, de $Ecarttype1 %.
+$PAR
+$SPACE $SPACE $SPACE Cote Z =  \{ans_rule(5)\}
+$BR 
+$BR ${BBOLD}Note : ${EBOLD}Arrondir la cote Z à deux décimales. 
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($Reponse, tol => 0.000001, tolType => "absolute"));
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+La cote Z se calcule comme suit : 
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle{Z = \frac{X - \mu}{\sigma}}\)
+$PAR
+Dans cet exercice, les valeurs sont les suivantes : \(\displaystyle{X = $Note1, \mu = $Moyenne1, \sigma = $Ecarttype1}\). Ainsi le calcul devient :
+$PAR
+$SPACE $SPACE $SPACE \(\displaystyle{Z = \frac{X - \mu}{\sigma} = \frac{$Note1 - $Moyenne1}{$Ecarttype1} = \frac{$Num1}{$Ecarttype1}
+ = $Reponse}\)
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

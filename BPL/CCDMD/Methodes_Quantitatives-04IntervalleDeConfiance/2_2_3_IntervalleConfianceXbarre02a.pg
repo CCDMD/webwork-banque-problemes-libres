@@ -1,0 +1,572 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Estimation par intervalle de confiance)
+## KEYWORDS('estimation ponctuelle', 'intervalle de confiance', 'marge d\'erreur', 'moyenne', 'niveau de confiance')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl",
+"PGcourse.pl", "PGstatisticsmacros.pl", "PGnumericalmacros.pl", "unionTables.pl", "parserPopUp.pl","PGchoicemacros.pl", "unionLists.pl");
+
+COMMENT("Niveau de difficulté: Moyen. Il y a 6 contextes. Xbarre suit toujours un modèle normal. Il y a une tolérance sur les réponses. La solution a été programmée et illustrée. Cas 1: Le niveau de confiance est STANDARD (90 %, 95 %, 99 %). Il n'y a AUCUN facteur de correction. L'écart type des Xbarres doit être arrondi à deux décimales. La réponse doit absolument être arrondie selon les spécifications de la question.");
+
+TEXT(beginproblem());
+
+Context()->strings->add(NA=>{}, dne => {alias => "NA"} );
+$refreshCachedImages = 1;
+
+#Choisir le niveau de confiance
+$NiveauConfiance = list_random(90,95,99);
+#$NiveauConfiance = list_random(77,78,79,80,81,82,83,84,85,86,87,88,89,91,92,93,94,96);
+
+#Choisir le contexte du problème
+$TypeContexte = random(0,5);
+#$TypeContexte =4;
+
+#Choisir la façon de poser la question.
+$Question1presentationType = random(0,2);
+
+#Facteur de correction
+#0 = Ne jamais mentionner le facteur de correction dans la solution et ne jamais en avoir.
+#1 = Mentionner le facteur de correction dans la solution et ne jamais en avoir.
+#2 = Mentionner le facteur de correction dans la solution et parfois en avoir.
+#3 = Mentionner le facteur de correction dans la solution et toujours en avoir.
+$TypeFC = 1;
+
+
+#Xbarre suit un modèle normal car la taille de l'échantillon est supérieure ou égale à 30
+
+#Afficher les pourcentages à deux décimales ou à une décimale ou au autre
+#Présentement il est arrondi à deux décimales
+$PrecisionPourcentage = "%0.2f";
+
+#Déterminer le contexte, sauf la taille de l'échantillon, c'est plus loin
+if ($TypeContexte == 0)
+{#Taille
+$VariableNom = "la taille d'un étudiant";
+$PopulationNom2 = "étudiants";
+$UniteNom = "cm";
+$UniteNomS = "cm";
+$Conclusion = "la taille moyenne de tous les étudiants de ce cégep est située";
+$Conclusion2 = "La taille moyenne de tous les étudiants de ce cégep";
+$MoyenneXt = random(160, 170, 0.1);
+$MoyenneX = sprintf("%0.1f","$MoyenneXt");
+$EcarttypeXt = random(5, 10, 0.1);
+$EcarttypeX = sprintf("%0.1f","$EcarttypeXt");
+$PrecisionVariableX = "%0.1f";
+$PrecisionVariableXc = Compute("0.1");
+$TaillePopulation = random(2000, 3000);
+$ArrondiA = "Arrondir les réponses à une décimale.";}
+elsif ($TypeContexte == 1)
+{#âge
+$VariableNom = "l'âge d'un employé";
+$PopulationNom2 = "employés";
+$UniteNom = "ans";
+$UniteNomS = "an";
+$Conclusion = "l'âge moyen de tous les employés de cette entreprise est situé";
+$Conclusion2 = "L'âge moyen de tous les employés de cette entreprise";
+$MoyenneXt = random(25, 55, 0.1);
+$MoyenneX = sprintf("%0.1f","$MoyenneXt");
+if ($MoyenneXt <= 30)
+{$EcarttypeXt = random(2, 5, 0.1);}
+elsif (($MoyenneXt > 30) && ($MoyenneXt <= 45))
+{$EcarttypeXt = random(5, 8, 0.1);}
+else
+{$EcarttypeXt = random(5, 10, 0.1);}
+$EcarttypeX = sprintf("%0.1f","$EcarttypeXt");
+$PrecisionVariableX = "%0.1f";
+$PrecisionVariableXc = Compute("0.1");
+$TaillePopulation = random(4000, 7000);
+$ArrondiA = "Arrondir les réponses à une décimale.";}
+elsif ($TypeContexte == 2)
+{#forfait cellulaire
+$VariableNom = "la dépense mensuelle consacrée au forfait cellulaire par un étudiant";
+$PopulationNom2 = "étudiants";
+$UniteNom = "dollars";
+$UniteNomS = "dollar";
+$Conclusion = "la dépense mensuelle moyenne de tous les étudiants de ce cégep pour leur forfait cellulaire est située";
+$Conclusion2 = "La dépense mensuelle moyenne de tous les étudiants de ce cégep pour leur forfait cellulaire";
+$MoyenneXt = random(70,90, 0.1);
+$MoyenneX = sprintf("%0.2f","$MoyenneXt");
+$EcarttypeXt = random(10,20, 0.01);
+$EcarttypeX = sprintf("%0.2f","$EcarttypeXt");
+$PrecisionVariableX = "%0.2f";
+$PrecisionVariableXc = Compute("0.01");
+$TaillePopulation = random(2000, 3000);
+$ArrondiA = "Arrondir les réponses à deux décimales.";}
+elsif ($TypeContexte == 3)
+{#Temps pour se rendre au Cégep
+$VariableNom = "le temps pris par un étudiant pour se rendre au cégep";
+$PopulationNom2 = "étudiants";
+$UniteNom = "min";
+$UniteNomS = "min";
+$Conclusion = "le temps moyen que prennent tous les étudiants de ce cégep pour se rendre à leur cégep est situé";
+$Conclusion2 = "Le temps moyen que prennent tous les étudiants de ce cégep pour se rendre à leur cégep";
+$MoyenneX = random(21, 40);
+if ($MoyenneX <= 30)
+{$EcarttypeXt = random(3, 6, 0.1);
+$EcarttypeX = sprintf("%0.1f","$EcarttypeXt");}
+else
+{$EcarttypeXt = random(5, 10, 0.1);
+$EcarttypeX = sprintf("%0.1f","$EcarttypeXt");}
+$PrecisionVariableX = "%0.1f";
+$PrecisionVariableXc = Compute("0.1");
+$TaillePopulation = random(2000, 3000);
+$ArrondiA = "Arrondir les réponses à une décimale.";}
+elsif ($TypeContexte == 4)
+{#Salaire dans une entreprise
+$VariableNom = "le salaire hebdomadaire d'un employé";
+$PopulationNom2 = "employés";
+$UniteNom = "dollars";
+$UniteNomS = "dollar";
+$Conclusion = "le salaire hebdomadaire moyen de tous les employés de cette entreprise est situé";
+$Conclusion2 = "Le salaire hebdomadaire moyen de tous les employés de cette entreprise";
+$MoyenneXt = random(500,1400, 0.01);
+$MoyenneX = sprintf("%0.2f","$MoyenneXt");
+$EcarttypeXt = random(120,150, 0.01);
+$EcarttypeX = sprintf("%0.2f","$EcarttypeXt");
+$PrecisionVariableX = "%0.2f";
+$PrecisionVariableXc = Compute("0.01");
+$TaillePopulation = random(4000, 7000);
+$ArrondiA = "Arrondir les réponses à deux décimales.";}
+elsif ($TypeContexte == 5)
+{#Dépense en imprimerie d'un enseignant
+$VariableNom = "la dépense en imprimerie d'un enseignant";
+$Conclusion = "la dépense moyenne en imprimerie de tous les enseignants de ce cégep est située";
+$Conclusion2 = "la dépense moyenne en imprimerie de tous les enseignants de ce cégep";
+$PopulationNom2 = "enseignants";
+$UniteNom = "dollars";
+$UniteNomS = "dollar";
+$MoyenneXt = random(100,400, 0.01);
+$MoyenneX = sprintf("%0.2f","$MoyenneXt");
+$EcarttypeXt = random(10, 30, 0.01);
+$EcarttypeX = sprintf("%0.2f","$EcarttypeXt");
+$PrecisionVariableX = "%0.2f";
+$PrecisionVariableXc = Compute("0.01");
+$TaillePopulation = random(700, 1000);
+$ArrondiA = "Arrondir les réponses à deux décimales.";}
+
+
+#Variables communes
+$MoyenneXEchantillon = $MoyenneX; 
+$EcarttypeXEchantillon = $EcarttypeX;
+
+#Déterminer la taille de l'échantillon et si Besoin du FC
+#0: La taille de l'échantillon est supérieure ou égale à 30
+if ($TypeFC == 0 || $TypeFC == 1)
+{#Pas de FC
+$TailleMinFCt = Compute("($TaillePopulation/20) - 1");
+$TailleMinFC = floor($TailleMinFCt);
+$TailleEchantillon = random(30, $TailleMinFC);
+$TestCalcul = Compute("20*$TailleEchantillon");
+#La variable TestCalcul est réutilisée plus loin
+$BesoinFC = 0;}
+elsif ($TypeFC == 2)
+{#Possiblement FC
+$TailleAutreFCt = Compute("($TaillePopulation/10)");
+$TailleAutreFC = ceil($TailleAutreFCt);
+$TailleEchantillon = random(30, $TailleAutreFC);
+$TestCalcul = Compute("20*$TailleEchantillon");
+#La variable TestCalcul est réutilisée plus loin
+if ($TaillePopulation >= $TestCalcul)
+{$BesoinFC = 0;}
+else
+{$BesoinFC = 1;}}
+else
+{#Toujours FC
+$TailleMinFCt = Compute("($TaillePopulation/20)");
+$TailleMinFC = ceil($TailleMinFCt);
+$TailleAutreFCt = Compute("($TaillePopulation/10)");
+$TailleAutreFC = ceil($TailleAutreFCt);
+$TailleEchantillon = random($TailleMinFC, $TailleAutreFC);
+$TestCalcul = Compute("20*$TailleEchantillon");
+#La variable TestCalcul est réutilisée plus loin
+$BesoinFC = 1;}
+
+#Déterminer la question du contexte = Besoin de la taille de l'échantillon
+if ($TypeContexte == 0)
+{$Question1contexte = "Le responsable du service des équipements du cégep veut estimer la taille moyenne des $TaillePopulation étudiants d'un cégep. Il prélève un échantillon (sans remise) de $TailleEchantillon étudiants de ce cégep et il calcule une taille moyenne de $MoyenneXEchantillon cm avec un écart type de $EcarttypeXEchantillon cm.";
+$EstimerQuoi1 = "la taille moyenne de tous les étudiants de ce cégep";
+$EstimerQuoi2 = "de la taille moyenne des étudiants de cet échantillon";}
+elsif ($TypeContexte == 1)
+{$Question1contexte = "Dans une entreprise, le responsable du service des ressources humaines veut estimer l'âge moyen des $TaillePopulation employés. Il prélève un échantillon (sans remise) de $TailleEchantillon personnes qui travaillent dans cette entreprise et il obtient un âge moyen de $MoyenneXEchantillon ans avec un écart type de $EcarttypeXEchantillon ans.";
+$EstimerQuoi1 = "l'âge moyen de tous les employés de cette entreprise";
+$EstimerQuoi2 = "de l'âge moyen des employés de cet échantillon";}
+elsif ($TypeContexte == 2)
+{$Question1contexte = "Une représentante d'une compagnie cellulaire veut estimer le montant moyen dépensé mensuellement par les $TaillePopulation étudiants d'un cégep pour leur forfait cellulaire. Elle prélève un échantillon (sans remise) de $TailleEchantillon étudiants de ce cégep et elle calcule une dépense moyenne de $MoyenneXEchantillon dollars avec un écart type de $EcarttypeXEchantillon dollars.";
+$EstimerQuoi1 = "la dépense moyenne de tous les étudiants pour leur forfait cellulaire";
+$EstimerQuoi2 = "de la dépense moyenne des étudiants de cet échantillon";}
+elsif ($TypeContexte == 3)
+{$Question1contexte = "Le directeur des études du cégep veut estimer le temps moyen pris par les $TaillePopulation étudiants d'un cégep pour se rendre à leur cégep. Il prélève un échantillon (sans remise) de $TailleEchantillon étudiants de ce cégep et il obtient un temps moyen de $MoyenneXEchantillon min avec un écart type de $EcarttypeXEchantillon min.";
+$EstimerQuoi1 = "le temps moyen que prennent tous les étudiants de ce cégep pour se rendre à leur cégep";
+$EstimerQuoi2 = "du temps moyen des étudiants de cet échantillon";}
+elsif ($TypeContexte == 4)
+{$Question1contexte = "Dans une entreprise, le responsable du service des ressources humaines veut estimer le salaire hebdomadaire moyen des $TaillePopulation employés. Il prélève un échantillon (sans remise) de $TailleEchantillon personnes qui travaillent dans cette entreprise et il obtient un salaire hebdomadaire moyen de $MoyenneXEchantillon dollars avec un écart type de $EcarttypeXEchantillon dollars.";
+$EstimerQuoi1 = "le salaire hebdomadaire moyen de tous les employés de cette entreprise";
+$EstimerQuoi2 = "du salaire hebdomadaire moyen des employés de cet échantillon";}
+elsif ($TypeContexte == 5)
+{$Question1contexte = "La responsable du service d'imprimerie du cégep veut estimer ses dépenses pour la prochaine session. Elle prélève un échantillon (sans remise) de $TailleEchantillon enseignants parmi les $TaillePopulation enseignants du cégep. Elle calcule une moyenne de $MoyenneXEchantillon dollars avec un écart type de $EcarttypeXEchantillon dollars.";
+$EstimerQuoi1 = "la moyenne des dépenses en imprimerie de tous les enseignants de ce cégep";
+$EstimerQuoi2 = "de la moyenne des dépenses en imprimerie des enseignants de cet échantillon";}
+
+#Moyenne et écart type pour les cotes Z
+$Ecarttype1 = 1;
+$Moyenne1 = 0;
+
+#Calcul de la moyenne des X barre et de l'écart type des X barre
+$MoyenneXbarre = sprintf($PrecisionVariableX,"$MoyenneX");
+#Facteur de correction
+if ($BesoinFC == 0)
+{$EcarttypeXbarret = Compute("$EcarttypeX/(($TailleEchantillon)^0.5)");
+$EcarttypeXbarre = sprintf("%0.2f","$EcarttypeXbarret");
+if ($TypeFC == 0)
+{#0 = Ne jamais mentionner le facteur de correction dans la solution et ne jamais en avoir.
+$Solution2FC = " \(\displaystyle{\sigma_{\overline{X}} = \frac{\sigma}{\sqrt{n}} = \frac{s}{\sqrt{n}} = \frac{$EcarttypeX}{\sqrt{$TailleEchantillon}} = $EcarttypeXbarre}\) $BR Comme \(\sigma\) est inconnu, ${BITALIC}s${EITALIC} est utilisé.";}
+else
+{#Expliquer pourquoi il n'y a pas de facteur de correction
+$Solution2FC = "\(\displaystyle{\sigma_{\overline{X}} = \frac{\sigma}{\sqrt{n}} = \frac{s}{\sqrt{n}} = \frac{$EcarttypeX}{\sqrt{$TailleEchantillon}} = $EcarttypeXbarre}\)
+$BR Comme \(\sigma\) est inconnu, ${BITALIC}s${EITALIC} est utilisé.$BR Le facteur de correction \(\displaystyle{\sqrt{\frac{N - n}{N - 1}}}\) n'est pas utilisé car l'échantillonnage se fait sans remise et \(\displaystyle{ N \ge 20n \ ($TaillePopulation \ge 20 \times $TailleEchantillon = $TestCalcul)}\).";}
+}
+else
+{$EcarttypeXbarret = Compute("($EcarttypeX/(($TailleEchantillon)^0.5))*(($TaillePopulation- $TailleEchantillon)/($TaillePopulation-1))^0.5");
+$EcarttypeXbarre = sprintf("%0.2f","$EcarttypeXbarret");
+$Solution2FC = " \(\displaystyle{\sigma_{\overline{X}} = \frac{s}{\sqrt{n}} \times \sqrt{\frac{N - n}{N - 1}} =\frac{$EcarttypeX}{\sqrt{$TailleEchantillon}} \times \sqrt{\frac{$TaillePopulation - $TailleEchantillon}{$TaillePopulation - 1}} = $EcarttypeXbarre}\)
+$BR Comme \(\sigma\) est inconnu, ${BITALIC}s${EITALIC} est utilisé. $BR Le facteur de correction \(\displaystyle{\sqrt{\frac{N - n}{N - 1}}}\) doit être utilisé car l'échantillonnage se fait sans remise et \(\displaystyle{ N < 20n \ ($TaillePopulation < 20 \times $TailleEchantillon = $TestCalcul)}\).";}
+
+
+$MoyenneXc = $MoyenneXbarre;
+$EcarttypeXc = $EcarttypeXbarre;
+$GraphiqueSymboleA = "\{\displaystyle{\overline{X}}\}";
+$SymboleXA = "\(\displaystyle{\overline{X}}\)";
+
+
+if ( $NiveauConfiance == 90)
+{$CoteZ1 = Compute("-1.645");
+$CoteZ2 = Compute("1.645");}
+elsif ( $NiveauConfiance == 95)
+{$CoteZ1 = Compute("-1.96");
+$CoteZ2 = Compute("1.96");}
+elsif ( $NiveauConfiance == 99)
+{$CoteZ1 = Compute("-2.575");
+$CoteZ2 = Compute("2.575");}
+elsif ( $NiveauConfiance == 88)
+{$CoteZ1 = Compute("-1.555");
+$CoteZ2 = Compute("1.555");}
+else
+{$NiveauConfianceDivise = Compute("($NiveauConfiance/2)/100");
+$CoteZ2t = normal_distr($NiveauConfianceDivise, mean=>0, deviation=>1);
+$CoteZ2 = sprintf("%0.2f","$CoteZ2t");
+$CoteZ1t = Compute("-1*$CoteZ2");
+$CoteZ1 = sprintf("%0.2f","$CoteZ1t");}
+
+$EcartRept = Compute("$CoteZ2*$EcarttypeXc");
+$EcartRep = sprintf($PrecisionVariableX,"$EcartRept");
+
+$ValeurX2t=Compute("$MoyenneXc + $EcartRep");
+$ValeurX2 = sprintf($PrecisionVariableX,"$ValeurX2t");
+$ValeurX1t=Compute("$MoyenneXc - $EcartRep");
+$ValeurX1 = sprintf($PrecisionVariableX,"$ValeurX1t");
+
+
+#Tracer le graphique
+$FctNormal = Formula("exp(-1*(((x-$Moyenne1)/$Ecarttype1)^2)/2)/($Ecarttype1*(2*pi)^0.5)")-> reduce;
+$FctNormalZ1 = $FctNormal->eval(x=>$CoteZ1);
+$FctNormalZ2 = $FctNormal->eval(x=>$CoteZ2);
+
+$minX1 = -3.5;
+$maxX1 =3.5;
+$minY1 = -0.1;
+$maxY1t = $FctNormal->eval(x=>$Moyenne1);
+$maxY1 = Compute("$maxY1t + 0.1");
+$maxY1sol1 = Compute("$maxY1t + 0.03");
+$maxY1sol2 = Compute("$maxY1t + 0.06");
+
+#Affichage des noms de l'axe des X
+$lbZx = 3.3;
+$lbXx = 3.3;
+$IntervalleZ1Z2 = Compute("$CoteZ2 - $CoteZ1");
+
+#Ne pas afficher les valeurs X ou Z sur une autre valeur.
+if ($CoteZ2 >=2.5)
+{if ($CoteZ1 >= -0.5 && $CoteZ1 <= 0.5)
+{#Il faut ajuster la hauteur en y car Z1 et Z2 sont trop près des symboles Z, 0
+$lbZy= -0.06;
+$lbZy1= -0.08;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 =-0.02;
+$lbXy2 =-0.02;}
+elsif ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 est trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = 0;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.06;
+$lbXy = 0;
+$lbXy1 =0;
+$lbXy2 =0;}}
+elsif (($CoteZ2 >= -0.5 && $CoteZ2 <= 0.5 && $CoteZ2 != 0)|| ($CoteZ1 >= -0.5 && $CoteZ1 <= 0.5 && $CoteZ1 != 0))
+{if ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 et Z2 sont trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.07;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = -0.01;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.08;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 =-0.02;
+$lbXy2 =-0.02;}}
+elsif (($CoteZ2 == 0)||($CoteZ1 == 0)) 
+{if ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 est trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.08;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = -0.02;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.06;
+$lbXy = 0;
+$lbXy1 =0;
+$lbXy2 =0;}}
+else
+{if ($IntervalleZ1Z2 <0.7)
+{#Il faut ajuster la hauteur en y car  Z1 est trop près de 0
+$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.08;
+$lbXy = 0;
+$lbXy1 = 0;
+$lbXy2 =-0.02;}
+else
+{$lbZy= -0.06;
+$lbZy1= -0.06;
+$lbZy2= -0.06;
+$lbXy = 0;
+$lbXy1 =0;
+$lbXy2 =0;}}
+
+$Ajustement = 0.01;
+
+$FctGraphiqueZ = "$FctNormal for x in <-3,3> using color:red and weight:2";
+$FctGraphiqueZ2 = "$FctNormal for x in <$CoteZ1,$CoteZ2> using color:blue and weight:2";
+$graphiqueZ = init_graph($minX1,$minY1,$maxX1, $maxY1,'axes'=>[0,0]);
+$graphiqueZ -> lb('reset');
+$graphiqueZ -> lb(new Label ( 0,$lbXy,"mu = ?",'black','center','top'));
+$graphiqueZ->moveTo($CoteZ1,0);
+$graphiqueZ->lineTo($CoteZ1,$FctNormalZ1,'blue',3);
+$graphiqueZ->moveTo($CoteZ2,0);
+$graphiqueZ->lineTo($CoteZ2,$FctNormalZ2,'blue',3);
+$graphiqueZ->moveTo($CoteZ1,0);
+$graphiqueZ->lineTo($CoteZ2,0,'blue',3);
+#Afficher % à trouver
+$graphiqueZ->moveTo($CoteZ1,$maxY1sol2);
+$graphiqueZ->lineTo($CoteZ2,$maxY1sol2,'green',3);
+$graphiqueZ->moveTo($CoteZ1,$maxY1sol2 - $Ajustement);
+$graphiqueZ->lineTo($CoteZ1,$maxY1sol2+ $Ajustement,'green',3);
+$graphiqueZ->moveTo($CoteZ2,$maxY1sol2- $Ajustement);
+$graphiqueZ->lineTo($CoteZ2,$maxY1sol2+$Ajustement,'green',3);
+$graphiqueZ -> lb(new Label ( ($CoteZ1 + $CoteZ2)/2,$maxY1sol2,"$NiveauConfiance %",'black','center','top'));
+#Afficher X barre
+$graphiqueZ->moveTo(3.28,-0.01);
+$graphiqueZ->lineTo(3.4,-0.01,'black',1);
+$graphiqueZ -> lb(new Label ( $lbXx,-0.01,X,'black','left','top'));
+
+#Afficher l'axe des Z
+$graphiqueZ->moveTo($minX1,$lbZy);
+$graphiqueZ->lineTo($maxX1,$lbZy,'gray',2);
+#Afficher 0
+$graphiqueZ -> lb(new Label (0,$lbZy,0,'black','center','top'));
+#Afficher le symbole Z
+if ($CoteZ2 > 2.5)
+{$graphiqueZ -> lb(new Label ( $lbXx,$lbZy-0.02,Z,'black','center','top'));}
+else
+{$graphiqueZ -> lb(new Label ( $lbXx,$lbZy,Z,'black','center','top'));}
+#Afficher les cotes Z
+$graphiqueZ -> lb(new Label ( $CoteZ2,$lbZy2,"$CoteZ2",'black','center','top'));
+$graphiqueZ -> lb(new Label ( $CoteZ1,$lbZy2,"$CoteZ1",'black','center','top'));
+#Afficher sur X
+$graphiqueZ -> lb(new Label ( $CoteZ1,$lbXy1,"mu - E",'black','center','top'));
+$graphiqueZ -> lb(new Label ( $CoteZ2,$lbXy2,"mu + E",'black','center','top'));
+#Afficher E et les lignes sur le graphique
+$hautNew = Compute("$maxY1sol2 /4");
+@LigneHaut2 = ($CoteZ2,$hautNew, 0,$hautNew,$CoteZ2,($hautNew)-$Ajustement,$CoteZ2,($hautNew)+$Ajustement,0,($hautNew)-$Ajustement,0,($hautNew)+$Ajustement, $CoteZ2 /2 ,$hautNew);
+$graphiqueZ->moveTo($LigneHaut2[0],$LigneHaut2[1]);
+$graphiqueZ->lineTo($LigneHaut2[2],$LigneHaut2[3],'gray',3);
+$graphiqueZ->moveTo($LigneHaut2[4],$LigneHaut2[5]);
+$graphiqueZ->lineTo($LigneHaut2[6],$LigneHaut2[7],'gray',3);
+$graphiqueZ->moveTo($LigneHaut2[8],$LigneHaut2[9]);
+$graphiqueZ->lineTo($LigneHaut2[10],$LigneHaut2[11],'gray',3);
+$graphiqueZ -> lb(new Label ($LigneHaut2[12],$LigneHaut2[13],"E",'black','right','top'));
+
+
+
+add_functions($graphiqueZ, $FctGraphiqueZ,$FctGraphiqueZ2);
+$imageZ = image(insertGraph($graphiqueZ),width =>300,height=>250,tex_size=>360);
+
+#Type question
+if ($Question1presentationType == 0)
+{$Question1presentation = "Construire un intervalle de confiance autour $EstimerQuoi2 afin d'estimer $EstimerQuoi1 avec un niveau de confiance de $NiveauConfiance %.";}
+elsif ($Question1presentationType == 1)
+{$Question1presentation ="Construire un intervalle de confiance afin d'estimer $EstimerQuoi1 avec un niveau de confiance de $NiveauConfiance %.";}
+else
+{$Question1presentation = "Construire un intervalle de confiance afin d'estimer $EstimerQuoi1. Utiliser un niveau de confiance de $NiveauConfiance %.";}
+
+#Solution
+
+#Étape 1: Données du problème
+$TaillePopulationRep2 = Compute("$TaillePopulation");
+$TailleEchantillonRep2 = Compute("$TailleEchantillon");
+$EcarttypeXPopulationRep2 = "inconnu";
+$EcarttypeXEchantillonRep2 = Compute("$EcarttypeX");
+$MoyenneXPopulationRep2 = "inconnue";
+$MoyenneXEchantillonRep2 = Compute("$MoyenneX");
+@VecteurNomParametre = ("\(\displaystyle{\it{N}}\)", "\(\displaystyle{\mu}\)", "\(\displaystyle{\sigma}\)"); 
+@CompteurNomParametre = (0,1,2);
+@VecteurNomStatistique = ("\(\displaystyle{\it{n}}\)", "\(\displaystyle{\overline{x}}\)", "\(\displaystyle{\it{s}}\)"); 
+@CompteurNomStatistique = (0,1,2);
+@VecteurNomParametreRep2 = ("Taille \(\displaystyle{(\it{N})}\) = $TaillePopulationRep2", "Moyenne \(\displaystyle{(\mu)}\) = $MoyenneXPopulationRep2", "Écart type \(\displaystyle{(\sigma)}\) = $EcarttypeXPopulationRep2"); 
+@VecteurNomStatistiqueRep2 = ("Taille \(\displaystyle{(\it{n})}\) = $TailleEchantillonRep2", "Moyenne \(\displaystyle{(\overline{x})}\) = $MoyenneXEchantillonRep2", "Écart type corrigé \(\displaystyle{(\it{s})}\) = $EcarttypeXEchantillonRep2"); 
+
+#Étape 2: Justification que Xbarre suit un modèle normal
+#Solution Question b
+$Reponse2 = "La distribution des moyennes échantillonnales de $TailleEchantillon
+$PopulationNom2 suit un modèle normal parce que la taille de l'échantillon, qui vaut $TailleEchantillon, est supérieure ou égale à 30. Autrement dit, \(\displaystyle{\overline{X} \sim N(\mu_{\overline{X}}; {\sigma_{\overline{X}}}^2)}\) parce que \(\displaystyle{n = $TailleEchantillon \ge 30. }\)";
+
+#Calcul étape 3
+$RisqueErreur = Compute("100.0 - $NiveauConfiance");
+$RisqueErreurDemi = Compute("$RisqueErreur/2");
+$RisqueErreurDemiTable = Compute("$RisqueErreurDemi/100");
+
+#Autre conclusion
+$fois20 = Compute("($NiveauConfiance*20)/100");
+if ($EcartRep < 2)
+{#Singulier
+$Conclusion3 = "$Conclusion2 est de $MoyenneX $UniteNom avec une marge d'erreur de $EcartRep $UniteNomS et un niveau de confiance de $NiveauConfiance % (la marge d'erreur est donc adéquate $fois20 fois sur 20).";
+$EcartUnite = "$EcartRep $UniteNomS"; }
+else 
+{#pluriel
+$Conclusion3 = "$Conclusion2 est de $MoyenneX $UniteNom avec une marge d'erreur de $EcartRep $UniteNom et un niveau de confiance de $NiveauConfiance % (la marge d'erreur est donc adéquate $fois20 fois sur 20).";
+$EcartUnite = "$EcartRep $UniteNom";}
+
+if ($NiveauConfiance>98)
+{$Chance = "chance";}
+else
+{$Chance = "chances";}
+
+Context()->texStrings;
+BEGIN_TEXT
+$Question1contexte 
+$PAR ${BBOLD}Question :${EBOLD} $Question1presentation
+
+$BR
+\{ BeginList("OL", type=>"a") \}
+$ITEM Donner l'estimation ponctuelle : \{ ans_rule(10) \}
+$ITEM Donner le risque d'erreur : \{ ans_rule(10) \}
+$ITEM Donner la marge d'erreur : \{ ans_rule(10) \}
+$ITEM Donner l'intervalle de confiance : 
+ \{ ans_rule(10) \} \( \displaystyle{ \le \mu \le }\) \{ ans_rule(10) \}
+
+\{ EndList("OL") \}
+$BR ${BBOLD}Faire les calculs en arrondissant à deux décimales.${EBOLD} $ArrondiA
+END_TEXT
+Context()->normalStrings;
+
+#ANS(num_cmp($ValeurX1, tol => 0.1, tolType => "absolute"));
+#ANS(num_cmp($ValeurX2, tol => 0.1, tolType => "absolute"));
+
+ANS(num_cmp($MoyenneX, tol => 0.0001, tolType => "absolute"));
+ANS(num_cmp($RisqueErreur, tol => 0.0001, tolType => "absolute"));
+ANS(num_cmp($EcartRep, tol => 0.0001, tolType => "absolute"));
+ANS(num_cmp($ValeurX1, tol => 0.0001, tolType => "absolute"));
+ANS(num_cmp($ValeurX2, tol => 0.0001, tolType => "absolute"));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+1) Identifier les données du problème.
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"1pt", spacing=>2, padding=>2).
+  AlignedRow(["${BBOLD}Paramètres de la population ${EBOLD}","${BBOLD}Statistiques de l'échantillon${EBOLD}"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[0]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[0]]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[1]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[1]]"], align => CENTER, separation=>0).
+AlignedRow(["$VecteurNomParametreRep2[$CompteurNomParametre[2]]","$VecteurNomStatistiqueRep2[$CompteurNomStatistique[2]]"], align => CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+La variable X étudiée est $VariableNom.
+$PAR
+2) Justifier que la distribution des \(\displaystyle{\overline{X}}\) (les moyennes échantillonnales de taille $TailleEchantillon) suit un modèle normal et calculer \(\displaystyle{\sigma_{\overline{X}}}\). 
+\{ BeginList("OL", type=>"a") \}
+$ITEM \(\displaystyle{\overline{X} \sim N(\mu_{\overline{X}}; {\sigma_{\overline{X}}}^2)}\) parce que \(\displaystyle{n = $TailleEchantillon \ge 30. }\)
+$ITEM $Solution2FC 
+$ITEM Notons que \(\displaystyle{\mu_{\overline{X}} = \mu = \ ? }\); c'est ce que l'on veut estimer.
+\{ EndList("OL") \}
+$PAR
+\{
+ColumnTable(
+"3) Calculer la cote Z associé au risque d'erreur \(\alpha\).".
+$BR. 
+"\(\displaystyle{ \alpha = (100.0 \ % - $NiveauConfiance \ %) = $RisqueErreur \ %}\)".
+$BR. 
+"\(\displaystyle{ \alpha/2 = ($RisqueErreur  \ %)/2 = $RisqueErreurDemi \ % = $RisqueErreurDemiTable}\)".
+$BR.
+"Alors \(\displaystyle{P(z > z_{$RisqueErreurDemiTable}) = $RisqueErreurDemiTable}\)".
+$BR.
+"Et \(\displaystyle{z_{$RisqueErreurDemiTable} = $CoteZ2}\)".
+$PAR.
+"4) Calculer la marge d'erreur.".
+$BR. 
+"\(\displaystyle{E = z_{$RisqueErreurDemiTable}\cdot\sigma_{\overline{X}}}\)". 
+$BR.
+" \(\displaystyle{E = $CoteZ2 \cdot $EcarttypeXc = $EcartRep}\)".
+$PAR. 
+"5) Construire l'intervalle de confiance.".
+$BR.
+"\(\displaystyle{\overline{x} - E \le \mu \le \overline{x} - E}\)".
+$BR.
+"\(\displaystyle{$MoyenneXc - $EcartRep \le \mu \le $MoyenneXc + $EcartRep}\)".
+$BR.
+"\(\displaystyle{$ValeurX1 \le \mu \le $ValeurX2}\)",
+BeginTable(border=>1, tex_border=>"1pt", spacing=>1, padding=>1).
+AlignedRow(["$imageZ"], align=>LEFT, separation=>0).
+EndTable(),
+indent=>"0", separation=>"60", valign=>"TOP"
+);
+\}
+$PAR
+6) Interpréter l'intervalle de confiance.
+$PAR
+Au niveau de confiance de $NiveauConfiance %, $Conclusion entre $ValeurX1 $UniteNom et $ValeurX2 $UniteNom.
+$PAR
+${BITALIC}Autre formulation :${EITALIC} $Conclusion3
+$PAR ${BITALIC}Estimation ponctuelle :${EITALIC} $MoyenneX $UniteNom.
+$PAR ${BITALIC}Risque d'erreur :${EITALIC} 100.0 % - $NiveauConfiance % = $RisqueErreur %. $BR Il y a donc $RisqueErreur % de $Chance que la marge d'erreur soit inadéquate.
+$PAR ${BITALIC}Marge d'erreur :${EITALIC} $EcartUnite.
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

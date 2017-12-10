@@ -1,0 +1,232 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Distributions normales)
+## KEYWORDS('cote Z', 'table')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl","PGchoicemacros.pl");
+
+COMMENT("Niveau de difficulté : Moyen. Calculer la note et deux cotes Z. Aucune contrainte sur les valeurs. La solution a été programmée. Elle n'a pas été illustrée. Les réponses doivent absolument être arrondies selon les spécifications de la question.");
+
+
+TEXT(beginproblem());
+
+@VecteurNom = ("Félix", "Ève", "Gabrielle", "Xavier", "Marc", "Léa", "Thomas", "Florence");
+@VecteurChoix = shuffle(8);
+
+#Cote Z nulle
+$MoyenneN10t = random(65,80, 0.1);
+$MoyenneN10 = sprintf("%0.1f","$MoyenneN10t");
+$EcarttypeN10t = random(1,5, 0.1);
+$EcarttypeN10 = sprintf("%0.1f","$EcarttypeN10t");
+$ValMaxN10 = Compute("$MoyenneN10 + (3*$EcarttypeN10)");
+$ValMinN10 = Compute("$MoyenneN10 - (3*$EcarttypeN10)");
+$NoteN10t = random($ValMinN10, $ValMaxN10, 0.1);
+$NoteN10 = sprintf("%0.1f","$NoteN10t");
+$NumN10t = Compute("$NoteN10 - $MoyenneN10");
+$NumN10 = sprintf("%0.1f","$NumN10t");
+$ReponseN10t = Compute("($NoteN10 - $MoyenneN10)/($EcarttypeN10)");
+$ReponseN10 =sprintf("%0.2f","$ReponseN10t ");
+$EN10t = Compute("$ReponseN10 * $EcarttypeN10");
+$EN10 = sprintf("%0.1f","$EN10t");
+
+#Cote Z positive
+$MoyenneN20t = random(65,80, 0.1);
+$MoyenneN20 = sprintf("%0.1f","$MoyenneN20t");
+$EcarttypeN20t = random(1,5, 0.1);
+$EcarttypeN20 = sprintf("%0.1f","$EcarttypeN20t");
+$ValMaxN20 = Compute("$MoyenneN20 + (3*$EcarttypeN20)");
+$ValMinN20 = Compute("$MoyenneN20 - (3*$EcarttypeN20)");
+$NoteN20t = random($ValMinN20, $ValMaxN20, 0.1);
+$NoteN20 = sprintf("%0.1f","$NoteN20t");
+$NumN20t = Compute("$NoteN20 - $MoyenneN20");
+$NumN20 = sprintf("%0.1f","$NumN20t");
+$ReponseN20t = Compute("($NoteN20 - $MoyenneN20)/($EcarttypeN20)");
+$ReponseN20 =sprintf("%0.2f","$ReponseN20t ");
+$EN20t = Compute("$ReponseN20 * $EcarttypeN20");
+$EN20 = sprintf("%0.1f","$EN20t");
+
+
+#Cote Z négative
+$MoyenneN30t = random(65,80, 0.1);
+$MoyenneN30 = sprintf("%0.1f","$MoyenneN30t");
+$EcarttypeN30t = random(1,5, 0.1);
+$EcarttypeN30 = sprintf("%0.1f","$EcarttypeN30t");
+$ValMaxN30 = Compute("$MoyenneN30 + (3*$EcarttypeN30)");
+$ValMinN30 = Compute("$MoyenneN30 - (3*$EcarttypeN30)");
+$NoteN30t = random($ValMinN30, $ValMaxN30, 0.1);
+$NoteN30 = sprintf("%0.1f","$NoteN30t");
+$NumN30t = Compute("$NoteN30 - $MoyenneN30");
+$NumN30 = sprintf("%0.1f","$NumN30t");
+$ReponseN30t = Compute("($NoteN30 - $MoyenneN30)/($EcarttypeN30)");
+$ReponseN30 =sprintf("%0.2f","$ReponseN30t ");
+$EN30t = Compute("$ReponseN30 * $EcarttypeN30");
+$EN30 = sprintf("%0.1f","$EN30t");
+
+@VecteurMoyenne = ($MoyenneN10, $MoyenneN20, $MoyenneN30);
+@VecteurNote = ($NoteN10, $NoteN20, $NoteN30);
+@VecteurNum = ($NumN10, $NumN20, $NumN30);
+@VecteurE = ($EN10, $EN20, $EN30);
+@VecteurEcarttype = ($EcarttypeN10, $EcarttypeN20, $EcarttypeN30);
+@VecteurReponse = ($ReponseN10, $ReponseN20, $ReponseN30);
+@VecteurExplication = ("Une cote Z nulle signifie que la note est sur la moyenne.", "Une cote Z positive signifie que la note est au-dessus de la moyenne.", "Une cote Z négative signifie que la note est au-dessous de la moyenne.");
+@VecteurChoix2 = shuffle(3);
+
+#Une note et deux cote z manquantes ou 3 pourcentages
+$temp2 =random(0,2);
+if ($temp2 == 0) 
+{
+$temp1 =random(0,3);
+#Ne pas avoir la cote Z = 0 dans Note, car trop facile
+if ($temp1 == 0) 
+{@VecteurChoix2 = (0,1,2);}
+elsif ($temp1 == 1) 
+{@VecteurChoix2 = (2,1,0);}
+elsif ($temp1 == 2) 
+{@VecteurChoix2 = (0,2,1);}
+else
+{@VecteurChoix2 = (1,2,0);}
+
+@AffichageL1 = ("$VecteurNom[$VecteurChoix[0]]","$VecteurNote[$VecteurChoix2[0]]", "$VecteurMoyenne[$VecteurChoix2[0]]","$VecteurEcarttype[$VecteurChoix2[0]]", ans_rule(5)); 
+@AffichageL2 = ("$VecteurNom[$VecteurChoix[1]]", ans_rule(5), "$VecteurMoyenne[$VecteurChoix2[1]]","$VecteurEcarttype[$VecteurChoix2[1]]", $VecteurReponse[$VecteurChoix2[1]]); 
+@AffichageL3 = ("$VecteurNom[$VecteurChoix[2]]","$VecteurNote[$VecteurChoix2[2]]", "$VecteurMoyenne[$VecteurChoix2[2]]","$VecteurEcarttype[$VecteurChoix2[2]]", ans_rule(5)); 
+
+@RepL =( $VecteurReponse[$VecteurChoix2[0]], $VecteurNote[$VecteurChoix2[1]], $VecteurReponse[$VecteurChoix2[2]]);
+@TolL = (0.01, 0.1, 0.01);
+
+@SolL1 = (" \(\displaystyle{X = $VecteurNote[$VecteurChoix2[0]]}\)", " \(\displaystyle{\mu = $VecteurMoyenne[$VecteurChoix2[0]]}\)", " \(\displaystyle{\sigma = $VecteurEcarttype[$VecteurChoix2[0]]}\)", "\(\displaystyle{Z = \frac{X - \mu}{\sigma} = \frac{$VecteurNote[$VecteurChoix2[0]] - $VecteurMoyenne[$VecteurChoix2[0]]}{$VecteurEcarttype[$VecteurChoix2[0]]} = \frac{$VecteurNum[$VecteurChoix2[0]]}{$VecteurEcarttype[$VecteurChoix2[0]]}
+ = $VecteurReponse[$VecteurChoix2[0]]}\)");
+@SolL2 = (" \(\displaystyle{Z = $VecteurReponse[$VecteurChoix2[1]]}\)", " \(\displaystyle{\mu = $VecteurMoyenne[$VecteurChoix2[1]]}\)", " \(\displaystyle{\sigma = $VecteurEcarttype[$VecteurChoix2[1]]}\)", "\(\displaystyle{X = \mu + Z \cdot \sigma = $VecteurMoyenne[$VecteurChoix2[1]] + ($VecteurReponse[$VecteurChoix2[1]] \cdot $VecteurEcarttype[$VecteurChoix2[1]])  = $VecteurMoyenne[$VecteurChoix2[1]] + $VecteurE[$VecteurChoix2[1]] = $VecteurNote[$VecteurChoix2[1]]}\)");
+@SolL3 = (" \(\displaystyle{X = $VecteurNote[$VecteurChoix2[2]]}\)", " \(\displaystyle{\mu = $VecteurMoyenne[$VecteurChoix2[2]]}\)", " \(\displaystyle{\sigma = $VecteurEcarttype[$VecteurChoix2[2]]}\)", "\(\displaystyle{Z = \frac{X - \mu}{\sigma} = \frac{$VecteurNote[$VecteurChoix2[2]] - $VecteurMoyenne[$VecteurChoix2[2]]}{$VecteurEcarttype[$VecteurChoix2[2]]} = \frac{$VecteurNum[$VecteurChoix2[2]]}{$VecteurEcarttype[$VecteurChoix2[2]]}
+ = $VecteurReponse[$VecteurChoix2[2]]}\)");
+}
+elsif ($temp2 == 1)  
+{
+$temp1 =random(0,3);
+#Ne pas avoir la cote Z = 0 dans Note, car trop facile
+if ($temp1 == 0) 
+{@VecteurChoix2 = (0,1,2);}
+elsif ($temp1 == 1) 
+{@VecteurChoix2 = (2,1,0);}
+elsif ($temp1 == 2) 
+{@VecteurChoix2 = (0,2,1);}
+else
+{@VecteurChoix2 = (1,2,0);}
+
+@AffichageL2 = ("$VecteurNom[$VecteurChoix[0]]","$VecteurNote[$VecteurChoix2[0]]", "$VecteurMoyenne[$VecteurChoix2[0]]","$VecteurEcarttype[$VecteurChoix2[0]]", ans_rule(5)); 
+@AffichageL1 = ("$VecteurNom[$VecteurChoix[1]]", ans_rule(5), "$VecteurMoyenne[$VecteurChoix2[1]]","$VecteurEcarttype[$VecteurChoix2[1]]", $VecteurReponse[$VecteurChoix2[1]]); 
+@AffichageL3 = ("$VecteurNom[$VecteurChoix[2]]","$VecteurNote[$VecteurChoix2[2]]", "$VecteurMoyenne[$VecteurChoix2[2]]","$VecteurEcarttype[$VecteurChoix2[2]]", ans_rule(5)); 
+
+@RepL =( $VecteurNote[$VecteurChoix2[1]], $VecteurReponse[$VecteurChoix2[0]], $VecteurReponse[$VecteurChoix2[2]]);
+@TolL = (0.1, 0.01, 0.01);
+
+@SolL2 = (" \(\displaystyle{X = $VecteurNote[$VecteurChoix2[0]]}\)", " \(\displaystyle{\mu = $VecteurMoyenne[$VecteurChoix2[0]]}\)", " \(\displaystyle{\sigma = $VecteurEcarttype[$VecteurChoix2[0]]}\)", "\(\displaystyle{Z = \frac{X - \mu}{\sigma} = \frac{$VecteurNote[$VecteurChoix2[0]] - $VecteurMoyenne[$VecteurChoix2[0]]}{$VecteurEcarttype[$VecteurChoix2[0]]} = \frac{$VecteurNum[$VecteurChoix2[0]]}{$VecteurEcarttype[$VecteurChoix2[0]]}
+ = $VecteurReponse[$VecteurChoix2[0]]}\)");
+@SolL1 = (" \(\displaystyle{Z = $VecteurReponse[$VecteurChoix2[1]]}\)", " \(\displaystyle{\mu = $VecteurMoyenne[$VecteurChoix2[1]]}\)", " \(\displaystyle{\sigma = $VecteurEcarttype[$VecteurChoix2[1]]}\)", "\(\displaystyle{X = \mu + Z \cdot \sigma = $VecteurMoyenne[$VecteurChoix2[1]] + ($VecteurReponse[$VecteurChoix2[1]] \cdot $VecteurEcarttype[$VecteurChoix2[1]])  = $VecteurMoyenne[$VecteurChoix2[1]] + $VecteurE[$VecteurChoix2[1]] = $VecteurNote[$VecteurChoix2[1]]}\)");
+@SolL3 = (" \(\displaystyle{X = $VecteurNote[$VecteurChoix2[2]]}\)", " \(\displaystyle{\mu = $VecteurMoyenne[$VecteurChoix2[2]]}\)", " \(\displaystyle{\sigma = $VecteurEcarttype[$VecteurChoix2[2]]}\)", "\(\displaystyle{Z = \frac{X - \mu}{\sigma} = \frac{$VecteurNote[$VecteurChoix2[2]] - $VecteurMoyenne[$VecteurChoix2[2]]}{$VecteurEcarttype[$VecteurChoix2[2]]} = \frac{$VecteurNum[$VecteurChoix2[2]]}{$VecteurEcarttype[$VecteurChoix2[2]]}
+ = $VecteurReponse[$VecteurChoix2[2]]}\)");
+}
+
+
+
+elsif ($temp2 == 2) 
+{
+$temp1 =random(0,3);
+#Ne pas avoir la cote Z = 0 dans Note, car trop facile
+if ($temp1 == 0) 
+{@VecteurChoix2 = (0,1,2);}
+elsif ($temp1 == 1) 
+{@VecteurChoix2 = (2,1,0);}
+elsif ($temp1 == 2) 
+{@VecteurChoix2 = (0,2,1);}
+else
+{@VecteurChoix2 = (1,2,0);}
+
+@AffichageL1 = ("$VecteurNom[$VecteurChoix[0]]","$VecteurNote[$VecteurChoix2[0]]", "$VecteurMoyenne[$VecteurChoix2[0]]","$VecteurEcarttype[$VecteurChoix2[0]]", ans_rule(5)); 
+@AffichageL3 = ("$VecteurNom[$VecteurChoix[1]]", ans_rule(5), "$VecteurMoyenne[$VecteurChoix2[1]]","$VecteurEcarttype[$VecteurChoix2[1]]", $VecteurReponse[$VecteurChoix2[1]]); 
+@AffichageL2 = ("$VecteurNom[$VecteurChoix[2]]","$VecteurNote[$VecteurChoix2[2]]", "$VecteurMoyenne[$VecteurChoix2[2]]","$VecteurEcarttype[$VecteurChoix2[2]]", ans_rule(5)); 
+
+@RepL =( $VecteurReponse[$VecteurChoix2[0]], $VecteurReponse[$VecteurChoix2[2]], $VecteurNote[$VecteurChoix2[1]]);
+@TolL = (0.01, 0.01, 0.1);
+
+@SolL1 = (" \(\displaystyle{X = $VecteurNote[$VecteurChoix2[0]]}\)", " \(\displaystyle{\mu = $VecteurMoyenne[$VecteurChoix2[0]]}\)", " \(\displaystyle{\sigma = $VecteurEcarttype[$VecteurChoix2[0]]}\)", "\(\displaystyle{Z = \frac{X - \mu}{\sigma} = \frac{$VecteurNote[$VecteurChoix2[0]] - $VecteurMoyenne[$VecteurChoix2[0]]}{$VecteurEcarttype[$VecteurChoix2[0]]} = \frac{$VecteurNum[$VecteurChoix2[0]]}{$VecteurEcarttype[$VecteurChoix2[0]]}
+ = $VecteurReponse[$VecteurChoix2[0]]}\)");
+@SolL3 = (" \(\displaystyle{Z = $VecteurReponse[$VecteurChoix2[1]]}\)", " \(\displaystyle{\mu = $VecteurMoyenne[$VecteurChoix2[1]]}\)", " \(\displaystyle{\sigma = $VecteurEcarttype[$VecteurChoix2[1]]}\)", "\(\displaystyle{X = \mu + Z \cdot \sigma = $VecteurMoyenne[$VecteurChoix2[1]] + ($VecteurReponse[$VecteurChoix2[1]] \cdot $VecteurEcarttype[$VecteurChoix2[1]])  = $VecteurMoyenne[$VecteurChoix2[1]] + $VecteurE[$VecteurChoix2[1]] = $VecteurNote[$VecteurChoix2[1]]}\)");
+@SolL2 = (" \(\displaystyle{X = $VecteurNote[$VecteurChoix2[2]]}\)", " \(\displaystyle{\mu = $VecteurMoyenne[$VecteurChoix2[2]]}\)", " \(\displaystyle{\sigma = $VecteurEcarttype[$VecteurChoix2[2]]}\)", "\(\displaystyle{Z = \frac{X - \mu}{\sigma} = \frac{$VecteurNote[$VecteurChoix2[2]] - $VecteurMoyenne[$VecteurChoix2[2]]}{$VecteurEcarttype[$VecteurChoix2[2]]} = \frac{$VecteurNum[$VecteurChoix2[2]]}{$VecteurEcarttype[$VecteurChoix2[2]]}
+ = $VecteurReponse[$VecteurChoix2[2]]}\)");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Voici les résultats au dernier examen de trois étudiants de différentes classes. Compléter le tableau.
+
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+ AlignedRow(["${BBOLD} Nom de l'étudiant ${EBOLD}","${BBOLD} Note (%) ${EBOLD}", "${BBOLD} Moyenne $BR de la classe ${EBOLD}", "${BBOLD} Écart type $BR de la classe ${EBOLD}", "${BBOLD} Cote Z ${EBOLD}"], align => CENTER, separation=>0).
+  AlignedRow(["$AffichageL1[0]","$AffichageL1[1]","$AffichageL1[2]","$AffichageL1[3]","$AffichageL1[4]"], align => CENTER, separation=>0).
+AlignedRow(["$AffichageL2[0]","$AffichageL2[1]","$AffichageL2[2]","$AffichageL2[3]","$AffichageL2[4]"], align => CENTER, separation=>0).
+AlignedRow(["$AffichageL3[0]","$AffichageL3[1]","$AffichageL3[2]","$AffichageL3[3]","$AffichageL3[4]"], align => CENTER, separation=>0).
+
+
+EndTable()
+\}
+$ECENTER
+
+${BBOLD}Note : ${EBOLD}Arrondir les cotes Z à deux décimales et la note à une décimale. 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($RepL[0], tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($RepL[1], tol => 0.00001, tolType => "absolute"));
+ANS(num_cmp($RepL[2], tol => 0.00001, tolType => "absolute"));
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+ AlignedRow(["La cote Z se calcule comme suit : 
+$PAR
+\(\displaystyle{Z = \frac{X - \mu}{\sigma}}\)", "La note X se calcule comme suit : 
+$PAR
+\(\displaystyle{X = \mu + Z \cdot \sigma}\)
+$PAR"], align => CENTER, separation=>0).
+
+
+EndTable()
+\}
+$ECENTER
+
+$PAR
+Pour chacun des étudiants, il faut utiliser les valeurs correspondants à leur groupe.
+$PAR
+Pour $AffichageL1[0], les valeurs sont les suivantes : $SolL1[0], $SolL1[1],$SolL1[2]. Ainsi le calcul devient : $PAR
+$SolL1[3]
+$PAR
+Pour $AffichageL2[0], les valeurs sont les suivantes : $SolL2[0], $SolL2[1],$SolL2[2]. Ainsi le calcul devient : $PAR
+$SolL2[3]
+$PAR
+Pour $AffichageL3[0], les valeurs sont les suivantes : $SolL3[0], $SolL3[1],$SolL3[2]. Ainsi le calcul devient : $PAR
+$SolL3[3]
+$PAR
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

@@ -1,0 +1,178 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Corrélation et régression linéaire)
+## KEYWORDS('nuage de points')
+
+## DBsubject(Statistique)
+## DBchapter(Corrélation et régression linéaire)
+## KEYWORDS('nuage de points')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl","PGauxiliaryFunctions.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. La solution a été programmée. Aucun contexte");
+
+
+TEXT(beginproblem());
+
+$refreshCachedImages = 1;
+
+$n = 7;
+@AffichageBD= shuffle(7);
+
+@X01Choix = shuffle(8);
+@Y01Choix = shuffle(8);
+
+$X01ValeurMin = 1;
+$X01ValeurMax = 9;
+$Y01ValeurMin = 1;
+$Y01ValeurMax = 9;
+
+
+$X01NombreUS = $n; 
+$X01VariableNom = "${BITALIC}X${EITALIC}"; 
+$X01Modalite1 = Compute("$X01ValeurMin + $X01Choix[0]");
+$X01Modalite2 = Compute("$X01ValeurMin + $X01Choix[1]");
+$X01Modalite3 = Compute("$X01ValeurMin + $X01Choix[2]");
+$X01Modalite4 = Compute("$X01ValeurMin + $X01Choix[3]");
+$X01Modalite5 = Compute("$X01ValeurMin + $X01Choix[4]");
+$X01Modalite6 = Compute("$X01ValeurMin + $X01Choix[5]");
+$X01Modalite7 = Compute("$X01ValeurMin + $X01Choix[6]");
+$X01Modalite8 = Compute("$X01ValeurMin + $X01Choix[7]");
+
+$Y01Modalite1 = Compute("$Y01ValeurMin + $Y01Choix[0]");
+$Y01Modalite2 = Compute("$Y01ValeurMin + $Y01Choix[1]");
+$Y01Modalite3 = Compute("$Y01ValeurMin + $Y01Choix[2]");
+$Y01Modalite4 = Compute("$Y01ValeurMin + $Y01Choix[3]");
+$Y01Modalite5 = Compute("$Y01ValeurMin + $Y01Choix[4]");
+$Y01Modalite6 = Compute("$Y01ValeurMin + $Y01Choix[5]");
+$Y01Modalite7 = Compute("$Y01ValeurMin + $Y01Choix[6]");
+$Y01Modalite8 = Compute("$Y01ValeurMin + $Y01Choix[7]");
+
+
+$Y01NombreUS = $n; 
+$Y01VariableNom = "${BITALIC}Y${EITALIC}"; 
+
+
+@X01VecteurBaseDonnee = ( $X01Modalite1, $X01Modalite2, $X01Modalite3, $X01Modalite4, $X01Modalite5, $X01Modalite6, $X01Modalite7, $X01Modalite8, $X01Modalite9, $X01Modalite10);
+@Y01VecteurBaseDonnee = ( $Y01Modalite1, $Y01Modalite2, $Y01Modalite3, $Y01Modalite4, $Y01Modalite5, $Y01Modalite6, $Y01Modalite7, $Y01Modalite8, $Y01Modalite9, $Y01Modalite10);
+
+$x61 = -1;
+$x62 = Compute("9");
+$y61 = Compute("-1");
+$y62 = Compute("9");
+$gridX60 = $x62 - $x61;
+$gridY60 = $y62 - $y61;
+$AffichageX60 =Compute("$x62 -0.5");
+$AffichageY60 =Compute("$y62 -0.5");
+$AffichageUniteX60 =Compute("1");
+$AffichageUniteY60 =Compute("1");
+
+$ColeurPoints = "red";
+$ColeurCoord = "black";
+#Graphique
+$graphique60 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0],'grid'=>[$gridX60,$gridY60]);
+$graphique60 -> lb('reset');
+$graphique60 -> lb(new Label ( $AffichageX60,0,'X','black','left','top'));
+$graphique60 -> lb(new Label ( 0,$AffichageY60,'Y','black','right','top'));
+$graphique60 -> lb(new Label ( $AffichageUniteX60,0,'1','black','center','top'));
+$graphique60 -> lb(new Label ( 5,0,'5','black','center','top'));
+$graphique60 -> lb(new Label ( 0,$AffichageUniteY60,'1','black','right','middle'));
+$graphique60 -> lb(new Label ( 0,5,'5','black','right','middle'));
+
+$graphique60 -> lb(new Label ( ($x62 + $x61)/2,$y62-0.2,"Y selon X",'black','center','top'));
+
+
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[0],$Y01VecteurBaseDonnee[0] ,"($X01VecteurBaseDonnee[0],$Y01VecteurBaseDonnee[0])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[1],$Y01VecteurBaseDonnee[1] ,"($X01VecteurBaseDonnee[1],$Y01VecteurBaseDonnee[1])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[2],$Y01VecteurBaseDonnee[2] ,"($X01VecteurBaseDonnee[2],$Y01VecteurBaseDonnee[2])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[3],$Y01VecteurBaseDonnee[3] ,"($X01VecteurBaseDonnee[3],$Y01VecteurBaseDonnee[3])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[4],$Y01VecteurBaseDonnee[4] ,"($X01VecteurBaseDonnee[4],$Y01VecteurBaseDonnee[4])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[5],$Y01VecteurBaseDonnee[5] ,"($X01VecteurBaseDonnee[5],$Y01VecteurBaseDonnee[5])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[6],$Y01VecteurBaseDonnee[6] ,"($X01VecteurBaseDonnee[6],$Y01VecteurBaseDonnee[6])",$ColeurCoord,'left','top'));
+
+$pt601 = closed_circle( $X01VecteurBaseDonnee[0],$Y01VecteurBaseDonnee[0], $ColeurPoints);
+$pt602 = closed_circle( $X01VecteurBaseDonnee[1],$Y01VecteurBaseDonnee[1], $ColeurPoints);
+$pt603 = closed_circle( $X01VecteurBaseDonnee[2],$Y01VecteurBaseDonnee[2], $ColeurPoints);
+$pt604 = closed_circle( $X01VecteurBaseDonnee[3],$Y01VecteurBaseDonnee[3], $ColeurPoints);
+$pt605 = closed_circle( $X01VecteurBaseDonnee[4],$Y01VecteurBaseDonnee[4], $ColeurPoints);
+$pt606 = closed_circle( $X01VecteurBaseDonnee[5],$Y01VecteurBaseDonnee[5], $ColeurPoints);
+$pt607 = closed_circle( $X01VecteurBaseDonnee[6],$Y01VecteurBaseDonnee[6], $ColeurPoints);
+$graphique60->stamps($pt601,$pt602,$pt603,$pt604,$pt605,$pt606, $pt607 );
+if ($n> 7)
+{$pt608 = closed_circle( $X01VecteurBaseDonnee[7],$Y01VecteurBaseDonnee[7], $ColeurPoints);
+$pt609 = closed_circle( $X01VecteurBaseDonnee[8],$Y01VecteurBaseDonnee[8], $ColeurPoints);
+$pt610 = closed_circle( $X01VecteurBaseDonnee[9],$Y01VecteurBaseDonnee[9], $ColeurPoints);
+$graphique60->stamps($pt608,$pt609, $pt610 );
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[7],$Y01VecteurBaseDonnee[7] ,"($X01VecteurBaseDonnee[7],$Y01VecteurBaseDonnee[7])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[8],$Y01VecteurBaseDonnee[8] ,"($X01VecteurBaseDonnee[8],$Y01VecteurBaseDonnee[8])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[9],$Y01VecteurBaseDonnee[9] ,"($X01VecteurBaseDonnee[9],$Y01VecteurBaseDonnee[9])",$ColeurCoord,'left','top'));
+}
+$imageG60 = image(insertGraph($graphique60),width =>400,height=>350,tex_size=>460);
+
+
+
+$Choix = random(0,1);
+
+if ($Choix == 0)
+{$RepPopUp60 = PopUp(["Sélectionner la réponse", "Oui", "Non"], "Oui");
+$solution = "Le nuage de points représente les données. Tous les couples apparaissent dans le nuage de points.";
+}
+elsif ($Choix == 1)
+{$RepPopUp60 = PopUp(["Sélectionner la réponse", "Oui", "Non"], "Non");
+$Compteurtemp1 = random(2,5);
+$temp2 = random(0,1);
+if ($temp2 == 0)
+{$temp1 = $X01VecteurBaseDonnee[7];
+$X01VecteurBaseDonnee[$Compteurtemp1] = $temp1;}
+else
+{$temp1 = $Y01VecteurBaseDonnee[7];
+$Y01VecteurBaseDonnee[$Compteurtemp1] = $temp1;}
+$solution = "Le nuage de points ne représente pas les données car le couple de données ($X01VecteurBaseDonnee[$Compteurtemp1], $Y01VecteurBaseDonnee[$Compteurtemp1]) n'est pas dans le nuage de points. Tous les autres couples apparaissent dans le nuage de points. ";
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Les séries statistiques ci-dessous représentent les données d'un échantillon. 
+$PAR
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([$Y01VariableNom, $Y01VecteurBaseDonnee[0],$Y01VecteurBaseDonnee[1],$Y01VecteurBaseDonnee[2], $Y01VecteurBaseDonnee[3], $Y01VecteurBaseDonnee[4], $Y01VecteurBaseDonnee[5], $Y01VecteurBaseDonnee[6]], align => CENTER, separation=>0).
+AlignedRow([$X01VariableNom, $X01VecteurBaseDonnee[0],$X01VecteurBaseDonnee[1],$X01VecteurBaseDonnee[2], $X01VecteurBaseDonnee[3], $X01VecteurBaseDonnee[4], $X01VecteurBaseDonnee[5], $X01VecteurBaseDonnee[6]], align => CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+
+$PAR
+${BBOLD}Question :${EBOLD} Le nuage de points suivant correspond-il aux données ? \{$RepPopUp60->menu()\}
+$PAR
+$BCENTER
+$imageG60
+$ECENTER
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($RepPopUp60->cmp() );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$solution 
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 

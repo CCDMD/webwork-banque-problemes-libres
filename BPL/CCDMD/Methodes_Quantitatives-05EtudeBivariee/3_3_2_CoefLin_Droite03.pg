@@ -1,0 +1,335 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Corrélation et régression linéaire)
+## KEYWORDS('coefficient de corrélation', 'droite', 'méthode des moindres carrés')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl", "PGgraphmacros.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl", "parserPopUp.pl","PGchoicemacros.pl"
+);
+
+COMMENT("Niveau de difficulté: Facile. Calculer et interpréter le coefficient de corrélation linéaire. Les classes pour l'intensité sont: 0 (nulle), ]0;0,2] (fable), ]0,2;0,6] (moyenne), ]0,6;0,9] (forte) ]0,9;1[ (très forte), 1 (parfaite). Il n'y a pas de contexte. La solution a été programmée. Les calculs ont été faits avec les mesures statistiques arrondies à TROIS DÉCIMALES. Il n'y a AUCUNE TOLÉRANCE sur la réponse.");
+
+
+TEXT(beginproblem());
+
+$refreshCachedImages = 1;
+
+
+$PrecisionMesureCalculatrice = "%0.3f";
+$PrecisionMesureCoefLin = "%0.3f";
+$PrecisionMesureDroite = "%0.3f";
+$n = 7;
+$X01ValeurMin = 0;
+$X01ValeurMax = 10;
+$Y01ValeurMin = 0;
+$Y01ValeurMax = 10;
+$X01NombreUS = $n; 
+$X01VariableNom = "X"; 
+$X01Modalite1 = random($X01ValeurMin,$X01ValeurMax); 
+$X01Modalite2 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite3 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite4 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite5 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite6 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite7 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite8 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite9 = random($X01ValeurMin,$X01ValeurMax);
+$X01Modalite10 = random($X01ValeurMin,$X01ValeurMax);
+$Y01NombreUS = $n; 
+$Y01VariableNom = "Y"; 
+$Y01Modalite1 = random($Y01ValeurMin,$Y01ValeurMax); 
+$Y01Modalite2 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite3 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite4 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite5 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite6 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite7 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite8 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite9 = random($Y01ValeurMin,$Y01ValeurMax);
+$Y01Modalite10 = random($Y01ValeurMin,$Y01ValeurMax);
+
+@X01VecteurBaseDonnee = ( $X01Modalite1, $X01Modalite2, $X01Modalite3, $X01Modalite4, $X01Modalite5, $X01Modalite6, $X01Modalite7, $X01Modalite8, $X01Modalite9, $X01Modalite10);
+$X01moyenneTemp1 = 0; 
+$X01i = 0;
+do
+{$X01moyenneTemp2 = Compute("$X01VecteurBaseDonnee[$X01i] + $X01moyenneTemp1");
+$X01moyenneTemp1 = $X01moyenneTemp2;
+$X01i++}
+ while ($X01i<$X01NombreUS);
+$X01moyennet = Compute("$X01moyenneTemp1/$X01NombreUS");
+$X01moyenne = sprintf($PrecisionMesureCalculatrice,"$X01moyennet ");
+$X01VarianceTemp1 = 0; 
+$X01i = 0;
+do
+{$X01VarianceTemp2 = Compute("($X01VecteurBaseDonnee[$X01i] - $X01moyenne)^2+ $X01VarianceTemp1");
+$X01VarianceTemp1 =$X01VarianceTemp2;
+$X01i++}
+ while ($X01i<$X01NombreUS);
+$X01EcartypePopulationt = Compute("($X01VarianceTemp1/$X01NombreUS)^0.5");
+$X01EcartypePopulation = sprintf($PrecisionMesureCalculatrice,"$X01EcartypePopulationt");
+$X01EcartypeEchantillont = Compute("($X01VarianceTemp1/($X01NombreUS - 1))^0.5");
+$X01EcartypeEchantillon = sprintf($PrecisionMesureCalculatrice,"$X01EcartypeEchantillont");
+#Variable Y
+@Y01VecteurBaseDonnee = ( $Y01Modalite1, $Y01Modalite2, $Y01Modalite3, $Y01Modalite4, $Y01Modalite5, $Y01Modalite6, $Y01Modalite7, $Y01Modalite8, $Y01Modalite9, $Y01Modalite10);
+$Y01moyenneTemp1 = 0; 
+$Y01i = 0;
+do
+{$Y01moyenneTemp2 = Compute("$Y01VecteurBaseDonnee[$Y01i] + $Y01moyenneTemp1");
+$Y01moyenneTemp1 = $Y01moyenneTemp2;
+$Y01i++}
+ while ($Y01i<$Y01NombreUS);
+$Y01moyennet = Compute("$Y01moyenneTemp1/$Y01NombreUS");
+$Y01moyenne = sprintf($PrecisionMesureCalculatrice,"$Y01moyennet ");
+$Y01VarianceTemp1 = 0; 
+$Y01i = 0;
+do
+{$Y01VarianceTemp2 = Compute("($Y01VecteurBaseDonnee[$Y01i] - $Y01moyenne)^2+ $Y01VarianceTemp1");
+$Y01VarianceTemp1 =$Y01VarianceTemp2;
+$Y01i++}
+ while ($Y01i<$Y01NombreUS);
+$Y01EcartypePopulationt = Compute("($Y01VarianceTemp1/$Y01NombreUS)^0.5");
+$Y01EcartypePopulation = sprintf($PrecisionMesureCalculatrice,"$Y01EcartypePopulationt");
+$Y01EcartypeEchantillont = Compute("($Y01VarianceTemp1/($Y01NombreUS - 1))^0.5");
+$Y01EcartypeEchantillon = sprintf($PrecisionMesureCalculatrice,"$Y01EcartypeEchantillont");
+
+
+#Récupérer les moyennes et écarts types
+$MoyenneX = $X01moyenne;
+$EcarttypeX = $X01EcartypeEchantillon;
+$MoyenneY = $Y01moyenne;
+$EcarttypeY = $Y01EcartypeEchantillon;
+
+#Calculer Somme XY
+$SommeXYTemp1 = 0; 
+$Sommei = 0;
+do
+{
+$SommeXYTemp4 = Compute("$X01VecteurBaseDonnee[$Sommei]"); 
+$SommeXYTemp3 = Compute("$Y01VecteurBaseDonnee[$Sommei]"); 
+$SommeXYTemp2 = Compute("($SommeXYTemp3) * ($SommeXYTemp4) + $SommeXYTemp1");
+$SommeXYTemp1 = $SommeXYTemp2;
+$Sommei++}
+ while ($Sommei<$n);
+$SommeXY = sprintf($PrecisionMesureCalculatrice,"$SommeXYTemp1 ");
+
+
+$CorLint = Compute("($SommeXY - ($n*$MoyenneX*$MoyenneY))/(($n-1)*$EcarttypeX*$EcarttypeY)");
+$CorLinN = Compute("($SommeXY - ($n*$MoyenneX*$MoyenneY))");
+$CorLinD = Compute("(($n-1)*$EcarttypeX*$EcarttypeY)");
+
+$CorLin = sprintf($PrecisionMesureCoefLin,"$CorLint");
+
+
+
+if ($CorLin == 0)
+{#Corrélation linéaire nulle
+$CorLinIntensite = "nulle";
+$RepPopUp60 = PopUp(["Sélectionner", "Nulle", "Positive et faible", "Positive et moyenne", "Positive et forte", "Positive et très forte", "Positive et parfaite", "Négative et faible", "Négative et moyenne", "Négative et forte","Négative et très forte", "Négative et parfaite"], 
+"Nulle");
+}
+elsif ($CorLin > 0 && $CorLin <= 0.2)
+{#Corrélation linéaire faible
+$CorLinIntensite = "positive et faible";
+$RepPopUp60 = PopUp(["Sélectionner", "Nulle", "Positive et faible", "Positive et moyenne", "Positive et forte", "Positive et très forte", "Positive et parfaite", "Négative et faible", "Négative et moyenne", "Négative et forte","Négative et très forte", "Négative et parfaite"], 
+"Positive et faible");
+}
+elsif ($CorLin > 0.2 && $CorLin <= 0.6)
+{#Corrélation linéaire moyenne
+$CorLinIntensite = "positive et moyenne";
+$RepPopUp60 = PopUp(["Sélectionner", "Nulle", "Positive et faible", "Positive et moyenne", "Positive et forte", "Positive et très forte", "Positive et parfaite", "Négative et faible", "Négative et moyenne", "Négative et forte","Négative et très forte", "Négative et parfaite"], 
+"Positive et moyenne");
+}
+elsif ($CorLin > 0.6 && $CorLin <= 0.9)
+{#Corrélation linéaire forte
+$CorLinIntensite = "positive et forte";
+$RepPopUp60 = PopUp(["Sélectionner", "Nulle", "Positive et faible", "Positive et moyenne", "Positive et forte", "Positive et très forte", "Positive et parfaite", "Négative et faible", "Négative et moyenne", "Négative et forte","Négative et très forte", "Négative et parfaite"], 
+"Positive et forte");
+}
+elsif ($CorLin > 0.9 && $CorLin <1)
+{#Corrélation linéaire très forte
+$CorLinIntensite = "positive et très forte";
+$RepPopUp60 = PopUp(["Sélectionner", "Nulle", "Positive et faible", "Positive et moyenne", "Positive et forte", "Positive et très forte", "Positive et parfaite", "Négative et faible", "Négative et moyenne", "Négative et forte","Négative et très forte", "Négative et parfaite"], 
+"Positive et très forte");
+}
+elsif ($CorLin == 1)
+{#Corrélation linéaire parfaite
+$CorLinIntensite = "positive et parfaite";
+$RepPopUp60 = PopUp(["Sélectionner", "Nulle", "Positive et faible", "Positive et moyenne", "Positive et forte", "Positive et très forte", "Positive et parfaite", "Négative et faible", "Négative et moyenne", "Négative et forte","Négative et très forte", "Négative et parfaite"], 
+"Positive et parfaite");
+}
+elsif ($CorLin < 0 && $CorLin >= -0.2)
+{#Corrélation linéaire faible
+$CorLinIntensite = "négative et faible";
+$RepPopUp60 = PopUp(["Sélectionner", "Nulle", "Positive et faible", "Positive et moyenne", "Positive et forte", "Positive et très forte", "Positive et parfaite", "Négative et faible", "Négative et moyenne", "Négative et forte","Négative et très forte", "Négative et parfaite"], 
+"Négative et faible");}
+elsif ($CorLin < -0.2 && $CorLin >= -0.6)
+{#Corrélation linéaire moyenne
+$CorLinIntensite = "négative et moyenne";
+$RepPopUp60 = PopUp(["Sélectionner", "Nulle", "Positive et faible", "Positive et moyenne", "Positive et forte", "Positive et très forte", "Positive et parfaite", "Négative et faible", "Négative et moyenne", "Négative et forte","Négative et très forte", "Négative et parfaite"], 
+"Négative et moyenne");}
+elsif ($CorLin < -0.6 && $CorLin >= -0.9)
+{#Corrélation linéaire forte
+$CorLinIntensite = "négative et forte";
+$RepPopUp60 = PopUp(["Sélectionner", "Nulle", "Positive et faible", "Positive et moyenne", "Positive et forte", "Positive et très forte", "Positive et parfaite", "Négative et faible", "Négative et moyenne", "Négative et forte","Négative et très forte", "Négative et parfaite"], 
+"Négative et forte");}
+elsif ($CorLin < -0.9 && $CorLin >-1)
+{#Corrélation linéaire très forte
+$CorLinIntensite = "négative et très forte";
+$RepPopUp60 = PopUp(["Sélectionner", "Nulle", "Positive et faible", "Positive et moyenne", "Positive et forte", "Positive et très forte", "Positive et parfaite", "Négative et faible", "Négative et moyenne", "Négative et forte","Négative et très forte", "Négative et parfaite"], 
+"Négative et très forte");}
+elsif ($CorLin == -1)
+{#Corrélation linéaire parfaites
+$CorLinIntensite = "négative et parfaite";
+$RepPopUp60 = PopUp(["Sélectionner", "Nulle", "Positive et faible", "Positive et moyenne", "Positive et forte", "Positive et très forte", "Positive et parfaite", "Négative et faible", "Négative et moyenne", "Négative et forte","Négative et très forte", "Négative et parfaite"], 
+"Négative et parfaite");}
+ 
+ 
+
+if ($CorLin == 0)
+{$InterpretationCorLin = "Il n'y a aucune corrélation linéaire entre la variable $X01VariableNom et la variable $Y01VariableNom."}
+elsif ($CorLin < 0)
+{$InterpretationCorLin = "Il y a une corrélation linéaire $CorLinIntensite entre la variable $X01VariableNom et la variable $Y01VariableNom. Le fait que la corrélation soit négative indique la tendance suivante : plus la variable $X01VariableNom est élevée, moins la variable $Y01VariableNom est élevée."}
+elsif ($CorLin > 0)
+{$InterpretationCorLin = "Il y a une corrélation linéaire $CorLinIntensite entre la variable $X01VariableNom et la variable $Y01VariableNom. Le fait que la corrélation soit positive indique la tendance suivante : plus la variable $X01VariableNom est élevée, plus la variable $Y01VariableNom est élevée."}
+
+
+$bt = Compute("($CorLin *$EcarttypeY)/$EcarttypeX");
+$b = sprintf($PrecisionMesureDroite,"$bt");
+$at = Compute("$MoyenneY - ($b*$MoyenneX)");
+$a = sprintf($PrecisionMesureDroite,"$at");
+
+
+$fR = Formula("$a + ($b*x)")-> reduce;
+
+$f60 = Formula("$a + ($b*x)")-> reduce;
+
+$x61 = -1;
+$x62 = Compute("$X01ValeurMax + 1");
+$y61 = Compute("$Y01ValeurMin - 1");
+$y62 = Compute("$Y01ValeurMax + 1");
+$gridX60 = $x62 - $x61;
+$gridY60 = $y62 - $y61;
+$AffichageX60 =Compute("$x62 -0.5");
+$AffichageY60 =Compute("$y62 -0.5");
+$AffichageUniteX60 =Compute("1");
+$AffichageUniteY60 =Compute("1");
+
+$ColeurPoints = "red";
+$ColeurCoord = "black";
+#Graphique
+$f60graphique = "$f60 for x in <$x61,$x62> using color:green and weight:2";
+$graphique60 = init_graph($x61,$y61,$x62,$y62,'axes'=>[0,0],'grid'=>[$gridX60,$gridY60]);
+$graphique60 -> lb('reset');
+$graphique60 -> lb(new Label ( $AffichageX60,0,'X','black','left','top'));
+$graphique60 -> lb(new Label ( 0,$AffichageY60,'Y','black','right','top'));
+$graphique60 -> lb(new Label ( $AffichageUniteX60,0,'1','black','center','top'));
+$graphique60 -> lb(new Label ( 0,$AffichageUniteY60,'1','black','right','middle'));
+
+$graphique60 -> lb(new Label ( ($x62 + $x61)/2,$y62-0.2,"Y selon X",'black','center','top'));
+
+
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[0],$Y01VecteurBaseDonnee[0] ,"($X01VecteurBaseDonnee[0],$Y01VecteurBaseDonnee[0])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[1],$Y01VecteurBaseDonnee[1] ,"($X01VecteurBaseDonnee[1],$Y01VecteurBaseDonnee[1])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[2],$Y01VecteurBaseDonnee[2] ,"($X01VecteurBaseDonnee[2],$Y01VecteurBaseDonnee[2])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[3],$Y01VecteurBaseDonnee[3] ,"($X01VecteurBaseDonnee[3],$Y01VecteurBaseDonnee[3])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[4],$Y01VecteurBaseDonnee[4] ,"($X01VecteurBaseDonnee[4],$Y01VecteurBaseDonnee[4])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[5],$Y01VecteurBaseDonnee[5] ,"($X01VecteurBaseDonnee[5],$Y01VecteurBaseDonnee[5])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[6],$Y01VecteurBaseDonnee[6] ,"($X01VecteurBaseDonnee[6],$Y01VecteurBaseDonnee[6])",$ColeurCoord,'left','top'));
+
+$pt601 = closed_circle( $X01VecteurBaseDonnee[0],$Y01VecteurBaseDonnee[0], $ColeurPoints);
+$pt602 = closed_circle( $X01VecteurBaseDonnee[1],$Y01VecteurBaseDonnee[1], $ColeurPoints);
+$pt603 = closed_circle( $X01VecteurBaseDonnee[2],$Y01VecteurBaseDonnee[2], $ColeurPoints);
+$pt604 = closed_circle( $X01VecteurBaseDonnee[3],$Y01VecteurBaseDonnee[3], $ColeurPoints);
+$pt605 = closed_circle( $X01VecteurBaseDonnee[4],$Y01VecteurBaseDonnee[4], $ColeurPoints);
+$pt606 = closed_circle( $X01VecteurBaseDonnee[5],$Y01VecteurBaseDonnee[5], $ColeurPoints);
+$pt607 = closed_circle( $X01VecteurBaseDonnee[6],$Y01VecteurBaseDonnee[6], $ColeurPoints);
+$graphique60->stamps($pt601,$pt602,$pt603,$pt604,$pt605,$pt606, $pt607 );
+if ($n> 7)
+{$pt608 = closed_circle( $X01VecteurBaseDonnee[7],$Y01VecteurBaseDonnee[7], $ColeurPoints);
+$pt609 = closed_circle( $X01VecteurBaseDonnee[8],$Y01VecteurBaseDonnee[8], $ColeurPoints);
+$pt610 = closed_circle( $X01VecteurBaseDonnee[9],$Y01VecteurBaseDonnee[9], $ColeurPoints);
+$graphique60->stamps($pt608,$pt609, $pt610 );
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[7],$Y01VecteurBaseDonnee[7] ,"($X01VecteurBaseDonnee[7],$Y01VecteurBaseDonnee[7])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[8],$Y01VecteurBaseDonnee[8] ,"($X01VecteurBaseDonnee[8],$Y01VecteurBaseDonnee[8])",$ColeurCoord,'left','top'));
+$graphique60 -> lb(new Label ( $X01VecteurBaseDonnee[9],$Y01VecteurBaseDonnee[9] ,"($X01VecteurBaseDonnee[9],$Y01VecteurBaseDonnee[9])",$ColeurCoord,'left','top'));
+}
+#add_functions($graphique60, $f60graphique);
+$imageG60 = image(insertGraph($graphique60),width =>300,height=>250,tex_size=>360);
+
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Les séries statistiques ci-dessous représentent les données d'un échantillon. 
+$PAR
+$BCENTER
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+AlignedRow([$Y01VariableNom, $Y01VecteurBaseDonnee[0],$Y01VecteurBaseDonnee[1],$Y01VecteurBaseDonnee[2], $Y01VecteurBaseDonnee[3], $Y01VecteurBaseDonnee[4], $Y01VecteurBaseDonnee[5], $Y01VecteurBaseDonnee[6]], align => CENTER, separation=>0).
+AlignedRow([$X01VariableNom, $X01VecteurBaseDonnee[0],$X01VecteurBaseDonnee[1],$X01VecteurBaseDonnee[2], $X01VecteurBaseDonnee[3], $X01VecteurBaseDonnee[4], $X01VecteurBaseDonnee[5], $X01VecteurBaseDonnee[6]], align => CENTER, separation=>0).
+EndTable()
+\}
+$ECENTER
+${BBOLD}Répondre aux questions suivantes : ${EBOLD}
+\{ BeginList("OL", type=>"a") \}
+$ITEM Calculer le coefficient de corrélation linéaire.
+$BR
+${BITALIC} r ${EITALIC} =  \{ans_rule(8)\}
+$ITEMSEP
+$ITEM Interpréter le coefficient de corrélation linéaire. $BR La corrélation linéaire entre les variables est \{$RepPopUp60->menu()\}.
+\{ EndList("OL") \}
+Note : Faire les calculs en arrondissant toutes les mesures statistiques à trois décimales. 
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($CorLin, tol => 0.000001, tolType => "absolute"));
+#ANS(num_cmp($CorLin));
+ANS($RepPopUp60->cmp() );
+#ANS(num_cmp($a, tol => 0.01, tolType => "absolute"));
+#ANS(num_cmp($b, tol => 0.01, tolType => "absolute"));
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Le calcul des mesures statistiques se fait à l'aide de la calculatrice en choisissant le mode Régression linéaire. Il y a $n couples de données \(\displaystyle{(X, Y)}\). Voici les mesures statistiques calculés :
+$PAR
+$BCENTER
+\{BeginTable(border=>0,tex_border=>"2pt", spacing=>4, padding=>4).
+ AlignedRow(["\(\displaystyle{n = $n}\) "," $SPACE", " \(\displaystyle{\overline{x} = $MoyenneX}\)"," $SPACE",  "\(\displaystyle{s_{X} = $EcarttypeX}\)"], align => CENTER, separation=>0).
+ AlignedRow(["\(\displaystyle{\sum{XY} = $SommeXY}\)"," $SPACE", "\(\displaystyle{\overline{y} = $MoyenneY}\)"," $SPACE",  "\(\displaystyle{s_{Y} = $EcarttypeY}\) "], align => CENTER, separation=>0).
+EndTable()\}
+$ECENTER
+$PAR
+Alors le calcul du coefficient de corrélation linéaire est le suivant :
+$BR
+$SPACE $SPACE $SPACE $SPACE \(\displaystyle{r = \frac{\sum{XY} - n \cdot\overline{x}\cdot\overline{y}}{(n - 1)\cdot s_{X}\cdot s_{Y} }
+= \frac{$SommeXY - ($n\cdot $MoyenneX\cdot $MoyenneY)}{($n-1)\cdot $EcarttypeX\cdot $EcarttypeY} = \frac{$CorLinN}{$CorLinD} = $CorLin 
+}\) 
+$PAR ${BBOLD}Interprétation du coefficient de corrélation linéaire : ${EBOLD} $InterpretationCorLin
+$PAR
+
+Les données sont illustrées par le nuage de points suivant : 
+ $PAR
+
+$BCENTER
+$imageG60
+$ECENTER
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+ENDDOCUMENT(); 

@@ -1,0 +1,103 @@
+##DESCRIPTION
+## Voir le commentaire
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Statistique)
+## DBchapter(Statistique descriptive)
+## KEYWORDS('mesure de tendance centrale', 'moyenne', 'variable quantitative continue')
+
+## Author('Jean-Philippe Villeneuve')
+## Institution('Cégep de Rimouski')
+## Level(2)
+## Language(fr)
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl","unionTables.pl","unionLists.pl","PGchoicemacros.pl");
+
+COMMENT("Niveau de difficulté : Moyen. Calculer une moyenne pondérée. La solution a été programmée. Il y a 3 contextes. La réponse doit absolument être arrondie selon les spécifications de la question.");
+
+
+TEXT(beginproblem());
+
+#Choisir le contexte
+$temp1 =random(0,2);
+if ($temp1 == 0) 
+{@VecteurModalite = ("Examens", "Travail synthèse", "Devoirs");}
+elsif ($temp1 == 1) 
+{@VecteurModalite = ("Examens", "Travail synthèse", "Laboratoires");}
+elsif ($temp1 == 2) 
+{@VecteurModalite = ("Examens",  "Devoirs", "Laboratoires");}
+
+$Effectif1 = random(50,100,0.1);
+$Effectif2 = random(10,100, 0.1);
+$Effectif3 = random(5,100, 0.1);
+@VecteurEffectif = ($Effectif1, $Effectif2, $Effectif3);
+
+$Pourcentage1 = random(40,60, 5);
+$Pourcentage2 = random(5,15, 5);
+$Pourcentage3 = Compute("100 - $Pourcentage1 - $Pourcentage2");
+$PourcentageTotal = 100.0; 
+$Pourcentage1A = sprintf("%0.1f","$Pourcentage1 ");
+$Pourcentage2A = sprintf("%0.1f","$Pourcentage2 ");
+$Pourcentage3A = sprintf("%0.1f","$Pourcentage3 ");
+@VecteurPourcentage = ($Pourcentage1A, $Pourcentage2A, $Pourcentage3A);
+
+
+@VecteurModaliteCompteur = shuffle(3);
+
+$Reponset = Compute("$VecteurEffectif[$VecteurModaliteCompteur[0]]*$VecteurPourcentage[$VecteurModaliteCompteur[0]]/100 + $VecteurEffectif[$VecteurModaliteCompteur[1]]*$VecteurPourcentage[$VecteurModaliteCompteur[1]]/100 + $VecteurEffectif[$VecteurModaliteCompteur[2]]*$VecteurPourcentage[$VecteurModaliteCompteur[2]]/100");
+
+$Reponse =sprintf("%0.1f","$Reponset ");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Voici les résultats finaux d'un étudiant :
+$PAR
+
+\{BeginTable(border=>1,tex_border=>"2pt", spacing=>4, padding=>4).
+ AlignedRow(["${BBOLD} Type $BR d'évaluation ${EBOLD}","${BBOLD} Pourcentage de $BR la note finale ${EBOLD}", "${BBOLD} Résultat $BR (sur 100) ${EBOLD}"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[$VecteurModaliteCompteur[0]]","$VecteurPourcentage[$VecteurModaliteCompteur[0]]", "$VecteurEffectif[$VecteurModaliteCompteur[0]]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[$VecteurModaliteCompteur[1]]","$VecteurPourcentage[$VecteurModaliteCompteur[1]]", "$VecteurEffectif[$VecteurModaliteCompteur[1]]"], align => CENTER, separation=>0).
+  AlignedRow(["$VecteurModalite[$VecteurModaliteCompteur[2]]","$VecteurPourcentage[$VecteurModaliteCompteur[2]]", "$VecteurEffectif[$VecteurModaliteCompteur[2]]"], align => CENTER, separation=>0).
+
+EndTable()
+\}
+$ECENTER
+$PAR
+${BBOLD}Question : ${EBOLD} Calculer la note finale de l'étudiant. $BR
+$BR
+${BBOLD} Note : ${EBOLD} Arrondir la réponse à une décimale. $BR
+$BR $SPACE $SPACE $SPACE La note finale de l'étudiant est :  \{ans_rule(5)\}
+$BR 
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($Reponse, tol => 0.00001, tolType => "absolute"));
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Il faut multiplier les résultats par leur poids. 
+$PAR
+Note finale = \(\displaystyle{
+$VecteurEffectif[$VecteurModaliteCompteur[0]] \times $VecteurPourcentage[$VecteurModaliteCompteur[0]]\ % + 
+$VecteurEffectif[$VecteurModaliteCompteur[1]] \times $VecteurPourcentage[$VecteurModaliteCompteur[1]]\ % + $VecteurEffectif[$VecteurModaliteCompteur[2]] \times $VecteurPourcentage[$VecteurModaliteCompteur[2]]\ %}\)
+$PAR
+$SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE = \(\displaystyle{
+$VecteurEffectif[$VecteurModaliteCompteur[0]] \times \frac{$VecteurPourcentage[$VecteurModaliteCompteur[0]]}{100} + 
+$VecteurEffectif[$VecteurModaliteCompteur[1]] \times \frac{$VecteurPourcentage[$VecteurModaliteCompteur[1]]}{100} + $VecteurEffectif[$VecteurModaliteCompteur[2]] \times \frac{$VecteurPourcentage[$VecteurModaliteCompteur[2]]}{100} }\)
+$PAR
+$SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE = $Reponse
+
+$BR
+
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT(); 
