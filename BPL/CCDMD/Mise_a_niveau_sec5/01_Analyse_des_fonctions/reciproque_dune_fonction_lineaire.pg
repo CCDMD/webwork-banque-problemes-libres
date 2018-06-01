@@ -1,0 +1,144 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Analyse des fonctions 
+#     type de question - Réciproque d'une fonction linéaire
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Fonction, relation et opérations sur les fonctions)
+## KEYWORDS('fonction', 'réciproque')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs du coefficient et de la constante
+
+do 
+{
+   $a=random(2,9);
+   $b=random(1,9);
+   $gcd=gcd($a, $b);
+}
+until ($gcd = 1);
+
+#créer  les signes à insérer dans la question et dans la réponse
+$choix=non_zero_random(-1,1);
+if ($choix==1)
+{
+   $signe="+";
+   $signeinv="-";
+}
+else
+{
+   $signe="-";
+   $signeinv="+";
+}
+
+# déclarer la lettre qui seront la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real");
+$lettrex="x";
+$lettrey= "y";
+
+# créer la réponse
+$reponse=Formula("(($lettrex $signeinv $b)/$a)");        
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Déterminer la réciproque de la fonction suivante: 
+<br/><br/>
+\(f($lettrex) =  $a $lettrex  $signe $b\)
+<br/><br/>
+
+\(f^{-1}($lettrex) = \)   \{ans_rule(20)\} 
+
+<br/><br/>
+Note: utiliser la barre oblique / pour séparer le numérateur du dénominateur d'une fraction.  <br/><br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Pour trouver la fonction réciproque, il faut d'abord intervertir x et y dans l'équation de départ. Par la suite, isoler y dans l'équation obtenue.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($reponse->cmp);
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Déterminer la réciproque de la fonction suivante: 
+<br/><br/>
+<i>f($lettrex) =  $a$lettrex  $signe $b </i>
+<br/><br/>
+
+<i> f <sup> -1</sup> ($lettrex) = </i>  _________________
+
+<br/><br/>
+Nota: utiliser la barre oblique / pour séparer le numérateur du dénominateur d'une fraction. <br/> <br/> 
+
+
+L'équation <i> $a$lettrex  $signe $b </i>  définit la fonction <i> f($lettrex) </i>.  Pour trouver la fonction réciproque <i>  f<sup> -1</sup> ($lettrex) </i>, il faut:<br/>
+<br/>
+1. intervertir <i>x</i> et <i>y</i> dans l'équation précédente, comme suit: <i> $lettrex = $a$lettrey  $signe $b </i> <br/>
+2. isoler <i>y</i> dans l'équation obtenue en 1.
+<br/><br/>
+
+\(  $a$lettrey $signe $b =  $lettrex \) <br/><br/>
+\(  $a$lettrey =  $lettrex $signeinv $b\) <br/><br/>
+\(  $lettrey =  \dfrac{$lettrex $signeinv $b}{$a} \) <br/><br/><br/>
+
+Par conséquent, \( f^{-1} ($lettrex)  =  \dfrac{$lettrex $signeinv $b}{$a} \) <br/><br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

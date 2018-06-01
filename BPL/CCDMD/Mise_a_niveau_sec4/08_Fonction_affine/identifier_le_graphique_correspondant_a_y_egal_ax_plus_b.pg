@@ -1,0 +1,254 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Fonctions affines
+#     type de question - Identifier le graphique correspondant à y = ax + b donné (choix multiple)
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Fonction affine et droite)
+## KEYWORDS('droite', 'fonction affine et linéaire', 'forme ax+b', 'graphique', 'identification', 'ordonnée à l\'origine', 'pente', 'point', 'taux de variation', 'équation d\'une droite')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+
+DOCUMENT();  
+
+loadMacros(
+"PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+);
+
+TEXT(beginproblem());
+
+
+# créer les nombres formant les ensembles des diverses réponses
+
+$a = random(2,5);
+$b = random(1,5);
+$var=random(4,8);
+$c = $b + $var;
+
+$lettre = "x";
+
+# déterminer laquelle des 5 choix d'équation sera la bonne réponse
+$reponse=random(1,5);
+
+
+if ($reponse==1)
+{
+   # alors l'équation réponse est le graphique 1
+  $equation = "$a$lettre + $c";
+  $m = $a;
+  $cte= $c;
+  $signe="positive";
+  $pente = "ascendante";
+}
+elsif ($reponse==2)
+{
+   # alors l'équation réponse est le graphique 2
+  $equation = "-$a$lettre + $c";
+  $m = -$a;
+  $cte = $c;
+  $signe="négative";
+  $pente = "descendante";
+}
+elsif ($reponse==3)
+{
+   # alors l'équation réponse est le graphique 3
+  $equation = "$b";
+  $m = 0;
+  $cte = $b;
+  $signe="nulle";
+  $pente = "nulle";
+}
+elsif ($reponse==4)
+{
+   # alors l'équation réponse est le graphique 4
+  $equation = "$a$lettre + $b";
+  $m = $a;
+  $cte = $b;
+  $signe="positive";
+  $pente = "ascendante";
+}
+else
+{
+   # alors l'équation réponse est le graphique 5
+  $equation = "-$a$lettre + $b";
+  $m = "-$a";
+  $cte = $b;
+  $signe="négative";
+  $pente = "descendante";
+}
+
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# créer le graphique de la parabole à afficher dans la question
+$gxneg=-10;
+$gxpos=10;
+$gyneg=-10;
+$gypos=10;
+
+$graphique1=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique1, "$a*x + $c for x in <$gxneg,$gxpos> using color:blue and weight:2 ");
+
+$graphique2=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique2, "-$a*x + $c for x in <$gxneg,$gxpos> using color:blue and weight:2 ");
+
+$graphique3=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique3, "$b for x in <$gxneg,$gxpos> using color:blue and weight:2 ");
+
+$graphique4=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique4, "$a*x + $b for x in <$gxneg,$gxpos> using color:blue and weight:2 ");
+
+$graphique5=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique5, "-$a*x + $b for x in <$gxneg,$gxpos> using color:blue and weight:2 ");
+
+
+$gx=5;
+$gy=5;
+
+
+# ajouter les graduations pour mieux situer les points sur chacun des 5 graphiques
+
+@graph=($graphique1,$graphique2,$graphique3,$graphique4,$graphique5);
+
+for ($j=0; $j<=4; $j++)
+{
+
+   for ($i = 0; $i <= 2; $i++)
+     {
+        $graph[$j]->lb(new       Label($gx*$i+$gx+0.2,-0.15,$gx*$i+$gx,'black','center','top'));
+        $graph[$j]->moveTo($gx*$i+$gx+0.2,-0.15); 
+      }
+   for ($i = 0; $i <= 2; $i++)
+     {
+        $graph[$j]->lb(new Label(-$gx*$i-$gx-0.2,-0.15,-$gx*$i-$gx,'black','center','top'));
+        $graph[$j]->moveTo(-$gx*$i-$gx-0.2,-0.15); 
+      }
+   for ($i = 0; $i <= 2; $i++)
+     {
+        $graph[$j]->lb(new Label(-0.5,$gy*$i+$gy,$gy*$i+$gy,'black','right','top'));
+        $graph[$j]->moveTo(-0.5, $gy*$i+$gy); 
+      }
+   for ($i = 0; $i <=2; $i++)
+     {
+        $graph[$j]->lb(new Label(-0.5,-$gy*$i-$gy+0.4,-$gy*$i-$gy,'black','right','top'));
+        $graph[$j]->moveTo(-0.5, -$gy*$i-$gy+0.4); 
+      }
+}
+
+# déterminer quel graphique représente le graphique de la réponse
+$graphiquereponse=$graph[($reponse-1)];
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>
+Identifier le graphique correspondant à l'équation  <strong>y = $equation </strong>: <br/><br/>
+réponse = Graphique \{ans_rule(4)\}   (choisir entre 1, 2, 3, 4  ou 5)
+<br/><br/>
+
+<table border=1>
+  <tr>
+    <td>\{ image(insertGraph($graphique1), width=>250, height=>250, tex_size=>500) \} &nbsp; </td><td> &nbsp; \{ image(insertGraph($graphique2), width=>250, height=>250, tex_size=>500) \}</td><td>  &nbsp; \{ image(insertGraph($graphique3), width=>250, height=>250, tex_size=>500) \}</td>
+  </tr>
+  <tr>
+    <td align=center>Graphique 1<br/> &nbsp;</td>
+    <td align=center>Graphique 2<br/> &nbsp;</td>
+    <td align=center>Graphique 3<br/> &nbsp;</td>
+  </tr>
+  <tr>
+    <td>\{ image(insertGraph($graphique4), width=>250, height=>250, tex_size=>500) \}  &nbsp; </td><td>  &nbsp; \{ image(insertGraph($graphique5), width=>250, height=>250, tex_size=>500) \}</td><td></td>
+  </tr>
+  <tr>
+    <td align=center>Graphique 4</td>
+    <td align=center>Graphique 5</td>
+    <td></td>
+  </tr>
+</table>
+<br/><br/>
+  </td></tr>
+</table>
+END_TEXT
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Dans une équation linéaire de style y = ax + b, la constante b représente l'endroit où la droite coupe l'axe des y. En effet, lorsque x = 0, y est alors égal à b, et la coordonnée du graphique à x = 0 sera donc (0 , b).";
+break;
+case '2':text="Dans une équation linéaire de style y = ax + b,  le coefficient a de la variable x représente l'angle de la droite sur le graphique. Un coefficient positif donne une droite ascendante, alors qu'un coefficient négatif donne une droite descendante. Plus la valeur du coefficient est élevée (en valeur absolue), plus la pente est abrupte (ascendante ou descendante). De plus, un coefficient de 1 donne une pente ascendante à 45<sup>o</sup> (et celui de -1 en donne une à -45<sup>o</sup>).";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS(strict_num_cmp($reponse, .0));
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+
+<p>&nbsp;<u>Solution</u></p>
+
+<br/>Identifier le graphique correspondant à l'équation  <strong>y = $equation </strong><br/>
+
+<br/><br/>
+
+Étudier tout d'abord l'équation linéaire fournie, de style y = ax + b: <br/><br/>
+
+ &nbsp; &nbsp; y = $equation
+<br/><br/>
+
+<ul>
+  <li>  Le coefficient du x, soit <strong>$m</strong>, est de valeur $signe, donc la pente est $pente.</li>
+  <li>  La constante b, soit <strong>$cte</strong>, donne l'endroit où la droite coupera l'axe des y, soit à (0, <strong>$cte</strong>) .</li>
+</ul>
+<br/><br/>
+
+Le seul graphique qui a une droite de pente <strong>$m</strong>, en plus de croiser l'axe des y à l'ordonnée à l'origine, soit le point (0, $cte), est le graphique suivant: 
+<br/><br/>
+
+\{ image(insertGraph($graphiquereponse), width=>250, height=>250, tex_size=>500) \}<br/><br/>
+
+Pour être certain de votre réponse, vous pouvez évaluer f(1) à l'aide de l'équation donnée <strong> y = $equation </strong>, et vérifier lequel des graphiques contient le point (1, f(1)).
+<br/>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

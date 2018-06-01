@@ -1,0 +1,153 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Polynômesalgébrique de la forme (ax^2-bx)/cx
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('division', 'division polynomiale', 'propriétés des exposants', 'reste de la division')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs des deux coefficients
+
+$a= random(2,5);
+
+do { $b= random (2,9);}
+until ($a != $b);
+
+$c=random(2,9);
+$ac=$a*$c;
+$bc=$b*$c;
+
+# créer les signes à insérer dans l'équation
+
+$choixa=random(0,1);
+if (choixa==1)
+{
+   $signe="+";
+   $bsigne=$b; 
+}
+else
+{
+   $signe="-";
+   $bsigne=-1*$b; 
+}
+
+
+# varier la lettre représentant la variable
+
+$choixlettre=random(0,2);
+if ($choixlettre==0) {$lettre="x";}
+else {$lettre="y";}
+
+# déclarer les lettres qui seront les variables non-définies (variables réelles)
+Context()->variables->are(x=>"Real", y=>"Real",z=>"Real");
+
+# créer la réponse
+$reponse=Formula("( ($a*$lettre) $signe $b ) ");
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Effectuer la division  suivante (ne pas factoriser):  <br/><br/>
+\( \dfrac{ { {$ac}{$lettre^2} } $signe { {$bc}{$lettre} } }{ {$c}{$lettre} } \) 
+<br/><br/>
+
+\{ans_rule(10)\}<br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Lors d'une division d'un polynôme par un monôme, il faut diviser chacun des termes du polynôme par le monôme.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($reponse->cmp);
+
+BEGIN_SOLUTION
+Effectuer la division  suivante (ne pas factoriser):  <br/><br/>
+\(  \dfrac{ { {$ac}{$lettre^2} } $signe { {$bc}{$lettre} } }{ {$c}{$lettre} } \)
+<br/><br/>
+
+<u>Solution</u>
+<br/><br/>
+
+Lors d'une division d'un polynôme par un monôme, il faut diviser chacun des termes du polynôme par le monôme $c$lettre.
+
+<br/><br/>
+
+<table>
+  <tr>
+    <td>\(  \dfrac{ { { {$ac}}{$lettre^2} } $signe { {  {$bc} }{$lettre} } }{ { \textbf {$c} } \textbf  {$lettre} } \)</td>
+    <td>&nbsp; = &nbsp;</td>
+    
+    <td>\(  \dfrac{ {$ac}{$lettre^2} }{ {$c}{$lettre} } $signe \dfrac{ {$bc}{$lettre}} { {$c}{$lettre} } \)</td>
+    <td>&nbsp; = &nbsp;</td>
+    <td>\( {$a}{$lettre} $signe {$b} \)</td>
+  <tr>
+</table>
+<br/>
+Une autre façon de procéder est de sortir le facteur commun du numérateur et simplifier ensuite celui-ci avec le dénominateur présent:
+<br/>
+<table>
+  <tr>
+    <td>\(  \dfrac{ { { {$ac}}{$lettre^2} } $signe { { {$bc} }{$lettre} } }{ { {$c} }{$lettre} } \)</td>
+    <td>&nbsp; = &nbsp;</td>
+    <td>\(  \dfrac{ \textbf {{$c}{$lettre}}{ ( {$a}{$lettre} $signe {$b} ) } }{ \textbf {{$c}{$lettre}} } \)</td>
+    <td>&nbsp; = &nbsp;</td>
+    <td>\( {$a}{$lettre} $signe {$b} \)</td>
+  <tr>
+</table>
+<br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

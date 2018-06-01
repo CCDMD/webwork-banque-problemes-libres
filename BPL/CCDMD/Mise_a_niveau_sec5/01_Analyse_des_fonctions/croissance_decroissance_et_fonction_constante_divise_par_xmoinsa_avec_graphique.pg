@@ -1,0 +1,190 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Analyse des fonctions 
+#     type de question - Croissance et  décroissance d'une fonction de forme cte/ (x-a) avec graphique
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Fonction, relation et opérations sur les fonctions)
+## KEYWORDS('croissance et décroissance', 'fonction', 'graphique')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+);
+
+TEXT(beginproblem());
+
+# déterminer les valeurs de a et c dans l'équation 
+$a=	random(2,7);
+$c=$a*random(2,8);
+
+# déterminer le signe présent dans l'équation, 
+# ainsi que les zones de croissance et de décroissance selon ce signe
+
+$choixsigne=	non_zero_random(-1,1);
+
+if($choixsigne ==1) 
+  {
+    $croissance="aucun";
+    $decroissance="("."-infini".","."$a".")"."U"."("."$a".","."infini".")";
+  }
+else 
+ {
+    $croissance="("."-infini".","."$a".")"."U"."("."$a".","."infini".")";
+    $decroissance="aucun";
+ }
+
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+
+#créer le graphique de cette fonction, afin de pouvoir l'afficher dans la solution
+
+$gxpos=15;
+$gxneg=-15; 
+$gypos=12; 
+$gyneg=-12; 
+
+$graphique=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique, "(  ($choixsigne * $c)/($lettre - $a) ) for x in <$gxneg,$a> using color:blue and weight:2 ");
+add_functions($graphique, "(  ($choixsigne * $c)/($lettre - $a) ) for x in <$a,$gxpos> using color:blue and weight:2 ");
+
+$gx = 5;
+$gy= 5;
+
+for ($i = 0; $i <= int( ($gxpos /$gx) +1); $i++)
+  {
+     $graphique->lb(new Label($gx*$i+$gx+0.2,-0.15,$gx*$i+$gx,'black','center','top'));
+     $graphique->moveTo($gx*$i+$gx+0.2,-0.15); 
+   }
+for ($i = 0; $i <= int( ($gxpos /$gx) +1); $i++)
+  {
+     $graphique->lb(new Label(-$gx*$i-$gx-0.2,-0.15,-$gx*$i-$gx,'black','center','top'));
+     $graphique->moveTo(-$gx*$i-$gx-0.2,-0.15); 
+   }
+for ($i = 0; $i <=  int( ($gypos /$gy) +1); $i++)
+  {
+     $graphique->lb(new Label(-0.5,$gy*$i+$gy,$gy*$i+$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, $gy*$i+$gy); 
+   }
+for ($i = 0; $i <=  int( (-$gyneg/$gy) +1); $i++)
+  {
+     $graphique->lb(new Label(-0.5,-$gy*$i-$gy+0.4,-$gy*$i-$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, -$gy*$i-$gy+0.4); 
+   }
+
+foreach my $i (1..$gxpos) {  $graphique->h_ticks(0,"black",$i); }
+foreach my $i ($gxneg..-1) {  $graphique->h_ticks(0,"black",$i); }
+foreach my $i (1..$gypos) {  $graphique->v_ticks(0,"black",$i*5); }
+foreach my $i ($gyneg..-1) {  $graphique->v_ticks(0,"black",$i*5); }
+
+$graphique->moveTo($a,$gypos);
+$graphique->lineTo($a,$gyneg,'black',1,'dashed');
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Soit la fonction suivante:  &nbsp; &nbsp;</br>
+
+\{ image(insertGraph($graphique), width=>250, height=>250, tex_size=>500) \}
+<br/><br/>
+
+La fonction ci-dessus est croissante sur l'intervalle  &nbsp;&nbsp;  \{ans_rule(15)\}     
+<br/><br/>
+La fonction ci-dessus est décroissante sur l'intervalle &nbsp;&nbsp;   \{ans_rule(15)\}     
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini).<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels entier, entrer: <b>R</b>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: <b>aucun </b>.<br/>
+
+  </td></tr>
+</table>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Une fonction est croissante si la courbe que décrit la fonction monte. Une fonction est décroissance si la courbe que décrit la fonction descend.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+$showPartialCorrectAnswers = 0;
+
+ANS(str_cmp($croissance,'remove_whitespace'));
+
+ANS(str_cmp($decroissance,'remove_whitespace'));
+
+
+BEGIN_SOLUTION
+<br/> <u>Solution</u> <br/>
+
+<br/>Soit la fonction suivante:  &nbsp; &nbsp;</b>
+<br/><br/>
+
+La fonction ci-dessus est croissante sur l'intervalle &nbsp;&nbsp; _________________
+<br/><br/>
+La fonction ci-dessus est décroissante sur l'intervalle &nbsp;&nbsp; ________________
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels entier, entrer: <b>R</b><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: <b>aucun </b><br/><br/>
+
+
+Une fonction est croissante si la courbe que décrit la fonction monte. Une fonction est décroissance si la courbe que décrit la fonction descend. Par conséquent, avec le graphique donné dans la question :<br/><br/>
+
+\{ image(insertGraph($graphique), width=>250, height=>250, tex_size=>500) \}
+
+<br/><br/>
+<ul>
+  <li>La fonction est croissante sur l'intervalle   <strong>$croissance </strong> </li>
+  <li>La fonction est décroissante sur l'intervalle  <strong>$decroissance </strong></li>
+</ul>
+
+END_SOLUTION
+
+ENDDOCUMENT();

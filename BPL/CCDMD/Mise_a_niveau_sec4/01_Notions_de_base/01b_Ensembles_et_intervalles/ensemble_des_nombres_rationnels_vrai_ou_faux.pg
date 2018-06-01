@@ -1,0 +1,108 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de Base - Ensembles et intervalles
+#     type de question - ensemble des nombres rationnels (vrai ou faux ?)
+##ENDDESCRIPTION
+
+## DBsubject(Logique et théorie des ensembles)
+## DBchapter(Théorie des ensembles)
+## KEYWORDS('Z (ensemble de nombres)')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+"parserRadioButtons.pl",
+);
+
+TEXT(beginproblem());
+
+
+# créer le nombre qui représentera le pourcentage
+$nb1=random(15,35);
+
+
+# créer l'énoncé de pourcentage
+$a = "$nb1"."%";
+
+
+# assigner les réponses à chaque bouton radio &agrave; choisir en choix de r&eacute;ponse
+$radio = RadioButtons(["Vrai","Faux"],"Vrai",);
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Le nombre $a appartient à l'ensemble des nombres rationnels.<br/><br/>
+
+\{ $radio->buttons() \}
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text=" N'oubliez pas qu'un pourcentage est le résultat d'une division de deux entiers (ex.: 18% = 18 / 100). ";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( $radio->cmp() );
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+
+<p>&nbsp;<u>Solution</u></p>
+
+<br/>Vrai ou faux ?  Le nombre $a appartient à l'ensemble des nombres rationnels.<br/><br/>
+Le nombre $a appartient à l'ensemble des nombres rationnels, puisque $a =  $nb1 / 100.<br/><br/>
+
+Donc la réponse est <b>Vrai</b>.<br/><br/>
+
+Pour mieux comprendre la réponse, voici les ensembles de nombres: <br/>
+\{ image( 'nombres_reels.jpg', width=>550, height=>300) \}<br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

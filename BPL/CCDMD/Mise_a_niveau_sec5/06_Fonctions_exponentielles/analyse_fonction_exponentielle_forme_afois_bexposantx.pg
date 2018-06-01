@@ -1,0 +1,309 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions exponentielles
+#     type de question - analyse d'une fonction exponentielle de forme a(b^x)
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Fonction exponentielle et logarithmique)
+## KEYWORDS('fonction exponentielle', 'abscisse à l\'origine', 'domaine', 'image', 'ordonnée à l\'origine', 'signe', 'zéro')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+##############################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+# déterminer les composantes de l'équation exponentielle
+$choixa=random(1,3);
+
+if ($choixa == 1) 
+{
+  $a=random(2,6);
+  $aa = $a;
+}
+elsif ($choixa==2) 
+{
+  $a=2;
+  $aa = $a;
+}
+else 
+{
+  $b = random(2,6);
+  $a="1/$b" ;
+  $aa = 1/$b; 
+}
+
+$d= random(2,5);
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# déterminer le signe devant le coefficient
+$choixsigned=non_zero_random(-1,1);
+if ($choixsigned == 1) {$signed = ""; $signeinvd="-"; }
+else  {$signed="-"; $signeinvd = "";}
+
+# déterminer le zéro, l'ordonnée et le domaine de l'équation
+
+$zero = "aucun";
+$ordonnee=$choixsigned*$d;
+$domaine="R";
+
+
+# déterminer l'image de l'équation, ainsi que ses limites négatives et positives
+if ($choixsigned==1) 
+{
+  $image="(0,infini)";
+  $reppos="R"; 
+  $repneg="aucun"; 
+}
+else  
+{
+  $image="(-infini,0)";
+  $reppos="aucun"; 
+  $repneg="R"; 
+}
+
+
+#créer le graphique de cette fonction, afin de pouvoir l'afficher dans la solution
+$gxneg=  -5;
+$gxpos= 5;
+$gyneg= -5;
+$gypos= 5;
+
+
+$graphique=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique, "( $choixsigned*$d*($a^$lettre) ) for x in <$gxneg,$gxpos> using color:blue and weight:2 ");
+
+$gx=2;
+$gy=2;
+
+
+for ($i = 0; $i <= int( ($gxpos /$gx) +1); $i++)
+  {
+     $graphique->lb(new Label($gx*$i+$gx+0.2,-0.15,$gx*$i+$gx,'black','center','top'));
+     $graphique->moveTo($gx*$i+$gx+0.2,-0.15); 
+   }
+for ($i = 0; $i <= int( ($gxpos /$gx) +1); $i++)
+  {
+     $graphique->lb(new Label(-$gx*$i-$gx-0.2,-0.15,-$gx*$i-$gx,'black','center','top'));
+     $graphique->moveTo(-$gx*$i-$gx-0.2,-0.15); 
+   }
+for ($i = 0; $i <= int( 1+(-$gyneg/$gy)); $i++)
+  {
+     $graphique->lb(new Label(-0.5,-$gy*$i-$gy+0.4,-$gy*$i-$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, -$gy*$i-$gy+0.4); 
+  }
+for ($i = 0; $i <= int( 1+($gypos/$gy)); $i++)
+  {
+     $graphique->lb(new Label(-0.5,$gy*$i+$gy,$gy*$i+$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, $gy*$i+$gy); 
+   }
+
+
+$graphique->stamps( closed_circle(0,$ordonnee,'blue') );
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Pour la fonction suivante:   \( f($lettre) = $signed $d($a)^{$lettre}\)
+<br/><br/>
+
+a) Quelle est l'ordonnée à l'origine de cette fonction ? &nbsp;&nbsp; \{ans_rule(10)\} 
+<br/> &nbsp; &nbsp; (s'il n'y en a pas, écrire <strong>aucun</strong>)
+
+<br/><br/>
+
+b) Donner tous les zéros de cette fonction. &nbsp;&nbsp; \{ans_rule(10)\} 
+<br/><br>
+
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+<br/><br/>
+
+c) Le domaine de cette fonction est &nbsp;&nbsp;    \{ans_rule(15)\}   
+<br/><br/>
+
+
+
+d) L'image de cette fonction est &nbsp;&nbsp; \{ans_rule(15)\}     
+<br/><br/>
+
+
+
+e) La fonction ci-dessous est négative sur l'intervalle:  &nbsp;&nbsp;   \{ans_rule(20)\}     
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp La fonction ci-dessous est positive sur l'intervalle:  &nbsp;&nbsp;   \{ans_rule(20)\}     
+<br/><br/>
+Note pour les réponses c, d et e:</br></br>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/>
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels, entrer: <b>R</b><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer:<b> aucun </b>.
+<br/><br/>
+
+  </td></tr>
+</table>
+END_TEXT
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Le zéro d'une fonction représente la valeur de x lorsque f(x) est égal à zéro. Il faut donc prendre les intersections avec l'axe des x. ";
+break;
+case '2':text="L'ordonnée à l'origine d'une fonction est la valeur de f(x) lorsque x est égal à zéro, il faut donc résoudre f(0).";
+break;
+case '3':text="Le domaine représente l'ensemble des nombres qui peuvent être insérés dans x pour obtenir un nombre réel pour y.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+$showPartialCorrectAnswers = 0;
+
+ANS(strict_num_cmp($ordonnee, .0));
+
+ANS(str_cmp($zero,'remove_whitespace'));
+
+ANS(str_cmp($domaine,'remove_whitespace'));
+
+ANS(str_cmp($image,'remove_whitespace'));
+
+ANS(str_cmp($repneg,'remove_whitespace'));
+
+ANS(str_cmp($reppos,'remove_whitespace'));
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u></p>
+<br/>Pour la fonction suivante:     \( f($lettre) = $signed $d($a)^{$lettre}\)
+<br/><br/>
+
+a) Quelle est l'ordonnée à l'origine de cette fonction ? &nbsp;&nbsp; ______________
+<br/> &nbsp; &nbsp; (s'il n'y en a pas, écrire <strong>aucun</strong>)
+
+<br/><br/>
+
+b) Donner tous les zéros de cette fonction. &nbsp;&nbsp; ______________
+<br/><br>
+
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+<br/><br/>
+
+c) Le domaine de cette fonction est &nbsp;&nbsp;   ______________
+<br/><br/>
+
+
+
+
+d) L'image de cette fonction est &nbsp;&nbsp;  ______________
+<br/><br/>
+
+
+
+e) La fonction ci-dessous est négative sur l'intervalle:  &nbsp;&nbsp; ____________
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp La fonction ci-dessous est positive sur l'intervalle:  &nbsp;&nbsp; ______________
+<br/><br/>
+Note pour les réponses c, d et e: </br></br>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/>
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels, entrer: <b>R</b><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer:<b> aucun </b>.</br></br></br>
+
+a) L'ordonnée à l'origine est la valeur de <strong>f($lettre)</strong> lorsque <strong>$lettre</strong> est égal à zéro.  Il faut donc évaluer <strong>f(0)</strong> et nous obtiendrons l'intersection avec l'axe des y.<br/><br/>
+&nbsp; &nbsp;  <i> f($lettre) = $signed$d($a)<sup>$lettre</sup></i> <br/>
+&nbsp; &nbsp;  <i> f(0) = $signed$d($a)<sup>0</sup></i><br/>
+&nbsp; &nbsp;  <i> f(0) = $signed$d(1)</i> <br/>
+&nbsp; &nbsp;  <i> f(0) = $signed$d</i> <br/>
+
+D'où l'ordonnée à l'origine qui est <strong>$ordonnee</strong> .
+<br/><br/>
+
+Pour répondre plus facilement aux prochaines questions, traçons le graphique de la fonction <i> f($lettre) = $signed$d($a)<sup>$lettre</sup></i> :<br/><br/>
+\{ image(insertGraph($graphique), width=>250, height=>250, tex_size=>500) \}
+<br/>
+
+b) Le zéro d'une fonction est la valeur de <strong>$lettre</strong> lorsque <strong>f($lettre)</strong> est égal à zéro. C'est donc les intersections avec l'axe des x. <br/><br/>
+
+&nbsp; &nbsp; &nbsp; Ici, il n'y a pas d'intersection avec l'axe des x, donc la réponse est <strong> $zero</strong> 
+<br/><br/>
+
+
+c) Le domaine de la fonction représente l'ensemble des nombres que peut prendre la variable $lettre afin de donner un f($lettre) qui est un nombre réel.<br/><br/>
+ 
+
+&nbsp; &nbsp; &nbsp;À partir du graphique, nous trouvons que le domaine est l'ensemble des nombres réels.  <br/><br/> 
+
+&nbsp; &nbsp; &nbsp;Donc, la réponse est <strong> $domaine</strong><br/><br/>
+
+d) L'image (codomaine) de cette fonction représente toutes les valeurs possibles de y pour cette fonction. <br/><br/>
+
+&nbsp; &nbsp; &nbsp;La réponse est donc:  <strong>$image</strong>. 
+<br/><br/>
+
+
+e) La fonction est  <strong>négative</strong> pour toutes les valeurs de x qui donnent un <strong>y situé sous l'axe des x</strong>.  La fonction est <strong>positive</strong> pour toutes les valeurs de <strong>x qui donnent un y situé au-dessus de l'axe des x</strong>. 
+<br/><br/>
+&nbsp; &nbsp; &nbsp;Par conséquent:
+<ul>
+  <li>la fonction est négative sur l'intervalle: <strong>$repneg</strong></li>
+  <li>la fonction est positive sur l'intervalle: <strong>$reppos</strong> </li>
+</ul>
+<br/>
+
+<br/><br/>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

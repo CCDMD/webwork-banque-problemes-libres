@@ -1,0 +1,184 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Résolution d'équations et inéquations quadratique
+#     type de question - Résoudre une équation de style x^2 = ax+b
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Équations et inéquations algébriques)
+## KEYWORDS('forme factorisée', 'nombre de solutions', 'résolution d\'une équation', 'solution', 'équation linéaire', 'équation quadratique')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs de la constante et des deux coefficients 
+
+do
+{
+  $n1= non_zero_random(-10,10); 
+  $n2 = non_zero_random(-10,10);
+  $b = $n1 + $n2;
+}
+until (($b != 0) && ($b != -1));
+
+$c=$n1*$n2;
+
+
+# déterminer les deux signes à mettre dans l'équation
+if ($b < 0) 
+{
+   $signe1 = " ";
+   $signe1inv= "- ";
+}
+else 
+{
+   $signe1="-";
+   $signe1inv="+"
+}
+
+
+if ($c < 0) 
+{
+   $signe2 = "+";
+   $signe2inv= "-";
+}
+else 
+{
+   $signe2="-";
+   $signe2inv= "+";
+}
+
+
+# déclarer la lettre qui seront la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+
+# créer les réponses
+$rep1 =-1*$n1;
+$rep2=-1*$n2;
+
+
+# créer les valeurs intermédiaires
+$babs=abs($b);
+$cabs=abs($c);
+$n1abs=abs($n1);
+$n2abs=abs($n2);
+
+
+if ($n1<0) {$sn1="-";}
+else {$sn1="+";}
+
+if ($n2<0) {$sn2="-";}
+else {$sn2="+";}
+
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Résoudre l'équation suivante: \($lettre^2 = $signe1 $babs $lettre $signe2 $cabs\).
+<br/><br/>
+
+\($lettre =\)  \{ans_rule(5)\}<br/><br/>
+Inscrire la réponse dans la case réponse ci-dessus.<br/>
+S'il y a deux réponses possibles, les inscrire en les séparant d'une virgule.<br/>
+S'il n'y a aucune réponse possible, inscrire <strong> aucun</strong>.
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Ramener tous les termes du même côté du signe égal, afin d'obtenir zéro de l'autre côté, et factoriser l'équation quadratique résultante sous forme de deux parenthèses. x sera alors équivalent aux valeurs qui permettront d'obtenir zéro dans chacune de ces parenthèses.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(List($rep1, $rep2)->cmp);
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Résoudre l'équation suivante:  $lettre<sup>2</sup> = $signe1$babs$lettre $signe2 $cabs
+<br/><br/>
+
+$lettre = _____<br/><br/>
+
+Inscrire la réponse dans la case réponse ci-dessus.<br/>
+S'il y a deux réponses possibles, les inscrire en les séparant d'une virgule.<br/>
+S'il n'y a aucune réponse possible, inscrire <strong> aucun</strong>.
+<br/><br/>
+
+Ramener tout d'abord tous les termes du même côté du signe égal, afin d'obtenir une équation quadratique égale à zéro:<br/>
+
+<ul>
+   <li>  $lettre<sup>2</sup> = $signe1$babs$lettre $signe2 $cabs</li>
+   <li> $lettre<sup>2</sup> <strong>$signe1inv $babs$lettre $signe2inv $cabs</strong>= 0</li>    
+</ul>
+<br/><br/>
+
+Factoriser ensuite l'équation quadratique ainsi obtenue, sous forme de deux parenthèses:<br/>
+
+<ul>
+   <li> $lettre<sup>2</sup> $signe1inv $babs$lettre $signe2inv $cabs= 0</li>
+   <li> ($lettre $sn1 $n1abs)($lettre $sn2 $n2abs)= 0</li>
+</ul>
+<br/><br/>
+
+
+Les valeurs de $lettre sont celles qui permettent d'obtenir zéro dans chacune de ces parenthèses:
+<br/>
+
+<ul>
+   <li> $lettre $sn1 $n1abs = 0   donc: $lettre = $rep1  </li>
+   <li> $lettre $sn2 $n2abs = 0  donc: $lettre = $rep2</li>
+</ul>
+<br/><br/>
+Donc les réponses possibles pour $lettre sont:  <strong>$rep1 , $rep2</strong> (ou $rep2 , $rep1)
+<br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

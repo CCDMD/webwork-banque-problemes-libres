@@ -1,0 +1,179 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions quadratiques
+#     type de question - trouver la règle générale d'une fonction quadratique avec les zéros et un point fournis
+##ENDDESCRIPTION
+
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Fonction quadratique et parabole)
+## KEYWORDS('fonction quadratique', 'forme factorisée a(x-x1)(x-x2)', 'forme générale ax^2+bx+c', 'zéro')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+
+TEXT(beginproblem());
+
+# déterminer la valeur des deux n de l'équation quadratique ainsi que la valeur 
+# des coefficients a et b et de la constante c pour l'équation quadratique
+
+do {
+  $n1=non_zero_random(-8,8);
+  $n2=non_zero_random(-8,8);
+   $a = random(2,5);
+   $b = ($n1 + $n2)*$a;
+   $c=($n1*$n2)*$a;
+}  until  (($n1 != $n2) &($c > 0) && ($b != 0) ) ;
+
+
+#créer  les signes à insérer dans la question et dans la réponse
+if ($b<0) {$signe="-"; $s = -1;}
+else { $signe="+"; $s = 1;}
+
+# déclarer la lettre qui seront la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+
+# déterminer les autres valeurs requises dans la solution
+$babs = abs($b);
+$bdiva = $babs/$a;
+$cdiva= $c/$a;
+
+$zero1= $n1*(-1);
+$zero2=$n2*(-1);
+
+# déterminer le point qui appartient à l'équation quadratique, à fournir dans la question
+do { $x1 = non_zero_random(-6,6);} until (($x1 != $zero1) & ($x1 != $zero2));
+$y1 = $a*$x1*$x1 + $s*$babs*$x1 + $c; 
+
+$x1zero1 = $x1-$zero1;
+$x1zero2= $x1-$zero2;
+$x1zero1zero2 = $x1zero1*$x1zero2;
+$n1abs= abs($n1);
+$n2abs=abs($n2);
+
+if ($n1<0) { $n1s= "-";}  else {$n1s="+";}
+if ($n2<0) { $n2s= "-";}  else {$n2s="+";}
+
+
+# créer la réponse
+$reponse=Formula("( $a $lettre*$lettre $signe $babs*$lettre + $c)");        
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Déterminer la règle sous forme générale de la fonction quadratique qui a les caractéristiques suivantes:<br/>    
+<ul>
+  <li> les zéros sont: $zero1 et $zero2</li>
+  <li> la fonction passe par le point ($x1, $y1)
+</ul><br/>
+
+\( f ($lettre) =\)   \{ans_rule(20)\} 
+
+<br/><br/>
+Note: Donner votre réponse sous la forme générale simplifiée. S'il y a des fractions, les donner sous une forme simplifiée et utiliser la barre oblique / pour en séparer le numérateur du dénominateur. Écrire les exposants sous la forme x^2 (pour indiquer x<sup>2</sup>).
+
+<br/><br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Puisque la fonction quadratique f(x) = ax<sup>2</sup> + bx + c admet deux zéros, celle-ci peut s'écrire sous la forme  f(x) = a(x-x<sub>1</sub>)(x-x<sub>2</sub>) où x<sub>1</sub> et x<sub>2</sub> sont les zéros de la fonction.";
+break;
+case '2':text="Remplacer les valeurs connues dans la forme f(x) = a(x-x<sub>1</sub>)(x-x<sub>2</sub>) pour trouver la valeur de la constante a.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($reponse->cmp);
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Déterminer la règle sous forme générale de la fonction quadratique qui a les caractéristiques suivantes:<br/>    
+<ul>
+  <li> les zéros sont: $zero1 et $zero2</li>
+  <li> la fonction passe par le point ($x1, $y1)
+</ul><br/>
+
+<i> f ($lettre) = </i>  _____________________
+
+<br/><br/>
+Nota: Donner votre réponse sous la forme générale simplifiée. S'il y a des fractions, les donner sous une forme simplifiée et utiliser la barre oblique / pour en séparer le numérateur du dénominateur. Écrire les exposants sous la forme x^2 (pour indiquer x<sup>2</sup>).
+<br/><br/>
+
+
+Puisque la parabole admet deux zéros, la fonction quadratique peut s'écrire sous la forme <i> f($lettre) = a($lettre - $lettre<sub>1</sub>)($lettre - $lettre<sub>2</sub>)</i><br/> où $lettre<sub>1</sub> et $lettre<sub>2</sub> sont les zéros de la fonction. Nous obtenons:<br/><br/>
+
+
+<i> f($lettre) = a($lettre - $lettre<sub>1</sub>)($lettre - $lettre<sub>2</sub>)</i><br/>
+<i> f($lettre) = a($lettre - ($zero1))($lettre - ($zero2))</i>  en remplaçant $lettre<sub>1</sub> et $lettre<sub>2</sub> par les valeurs données ($zero1 et $zero2)<br/>
+<i> $y1 = a($x1 - ($zero1))($x1 - ($zero2))</i>  en remplaçant <i>$lettre</i> et <i>f($lettre)</i> par les coordonnées du point donné P($x1,$y1)<br/>
+<i> $y1 = a($x1zero1)($x1zero2)</i> <br/>
+<i> $y1 = a($x1zero1zero2)</i> <br/>
+<i> $y1 / $x1zero1zero2 = a</i> <br/>
+D'où a = <strong> $a </strong> 
+<br/><br/>
+
+
+Puisque nous devons présenter la réponse sous la forme générale, revenons à l'équation: <br/><br/>
+<i> f(x) = a($lettre - $lettre<sub>1</sub>)($lettre - $lettre<sub>2</sub>)</i><br/>
+<i> f(x) = $a($lettre $n1s $n1abs)($lettre $n2s $n2abs)</i>  en remplaçant <strong>a</strong> par la valeur trouvée et en simplifant la notation<br/>
+<i> f(x) = $a($lettre<sup>2</sup> $signe $bdiva$lettre + $cdiva)</i>  en effectuant le produit des deux facteurs <br/>
+ <i> f(x) = $a$lettre<sup>2</sup> $signe $babs$lettre + $c </i> en distribuant la valeur de a = $a <br/>
+D'où  <i>f($lettre) =  <strong>$a$lettre<sup>2</sup> $signe $babs$lettre + $c</strong></i>
+<br/><br/>
+
+
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

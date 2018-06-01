@@ -1,0 +1,179 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Fonctions affines
+#     type de question - Donner l'équation de la droite perpendiculaire à la fonction linéaire donnée
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Fonction affine et droite)
+## KEYWORDS('droite', 'fonction affine et linéaire', 'forme ax+b', 'pente', 'perpendiculaire', 'point', 'position relative de deux droites', 'équation d\'une droite')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# définir les valeurs de la pente -1/a  de l'équation de la question
+$a = random(2,8);
+
+# déterminer le signe de la pente dans l'équation de la question
+$choixa=random(0,1);
+if ($choixa==0) 
+{
+  $signea="";
+  $signevaleura=1;
+}
+else 
+{
+  $signea="-";
+  $signevaleura=-1;
+
+}
+
+$ainv= -1*$signevaleura*$a;
+
+# déterminer la coordonnée à l'origine de l'équation de la question
+
+do {$b = random(2,10);}
+until ($a != $b);
+
+# déterminer l'ordonnée  de l'équation réponse
+do {$c = random(1,10);}
+until ($b != $c);
+
+# déterminer le signe devant la constante b dans l'équation de la question
+$choix=random(0,1);
+if ($choix==0) 
+{
+  $signe="+";
+  $signedec=1;
+  $signeaff=" ";
+}
+else 
+{
+  $signe="-";
+  $signedec=-1;
+  $signeaff="-";
+}
+
+# déterminer les deux coordonnées du point à insérer dans l'équation de la question
+$d = random (1,10);
+$e = ($ainv*$d) + ($signedec*$c);
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real",y=>"Real");
+$lettrex="x";
+$lettrey="y";
+
+# déterminer les valeurs intermédiaires pour la solution
+$amultd = $ainv*$d;
+$amultdabs=abs($amultd);
+
+if($amultd<0) {$signeb="+";}
+else {$signeb="-";}
+
+$reponse = "$ainv$lettrex $signe $c";
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Quelle est l'équation de la droite perpendiculaire à la droite d'équation  <b> \( $lettrey = $signea\dfrac{1}{$a}$lettrex $signe $b \) </b> et qui passe par le point ($d,$e) ?
+<br/><br/>
+
+$lettrey = \{ans_rule(20)\} 
+<br/>
+
+  </td></tr>
+</table>
+END_TEXT
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Lorsque deux droites sont perpendiculaires entres elles, le produit de leurs pentes donne -1.";
+break;
+case '2':text="Pour trouver l'équation d'une droite lorsqu'on connait la pente (a) et les coordonnées d'un point (x1,y1), il faut remplacer les éléments connus dans la forme y = a x + b pour trouver la valeur de b. ";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(fun_cmp($reponse));
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u></p>
+<br/>Quelle est l'équation de la droite perpendiculaire à la droite d'équation  <b> \( $lettrey = $signea\dfrac{1}{$a}$lettrex $signe $b \) </b> et qui passe par le point ($d,$e) ?
+<br/><br/>
+
+$lettrey = __________
+<br/><br/>
+
+
+
+<u>Étape 1: la pente de l'équation de droite cherchée</u>
+<br/>
+
+Puisque les droites sont perpendiculaires,le produit de leurs pentes est égal à -1.  L'équation de la droite donnée étant  <strong> \( $lettrey = $signea\dfrac{1}{$a}$lettrex $signe $b \)</strong>, nous déduisons que sa pente est <strong> \( $signea\dfrac{1}{$a} \)</strong>. Par conséquent:
+<br/><br/>
+ &nbsp; &nbsp; \( a1 \cdot a2 = -1 \)   &nbsp; puisque les droites sont perpendiculaires <br/>
+ &nbsp; &nbsp; \( $signea\dfrac{1}{$a} \cdot a2 = -1 \)   &nbsp; en remplaçant a1 par la pente de la droite donnée<br/>
+ &nbsp; &nbsp; \( a2  = (-1)( $signea\dfrac{$a}{1}) \) <br/>
+ &nbsp; &nbsp; \( a2  =  $ainv \) <br/><br/>
+Par conséquent, la pente de la droite cherchée est <strong> $ainv </strong> et la forme de l'équation de cette droit est <strong> $lettrey = $ainv$lettrex + b</strong>.
+<br/><br/>
+
+<u>Étape 2: trouver l'ordonnée à l'origine (soit b)</u>
+<br/>
+Puisque le point ($d, $e) appartient à la droite dont nous cherchons l'équation, donc:<br/>
+  &nbsp; &nbsp; $lettrey = $ainv$lettrex + b <br/>
+  &nbsp; &nbsp; <strong>$e</strong> = $ainv<strong>($d)</strong> + b<br/>
+  &nbsp; &nbsp; $e = <strong>$amultd</strong> + b<br/>
+  &nbsp; &nbsp; $e <strong>$signeb $amultdabs</strong> = b<br/>
+  &nbsp; &nbsp; <strong>$signeaff$c</strong> = b <br/><br/>
+
+L'équation de la droite cherchée est donc:  <strong>$lettrey = $ainv$lettrex $signe $c</strong>
+
+<br/>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

@@ -1,0 +1,146 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions logarithmes
+#     type de question - Intervalle où l'expression du log est définie  (moyen)
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Fonction exponentielle et logarithmique)
+## KEYWORDS('domaine', 'fonction logarithmique', 'logarithme', 'propriétés des logarithmes')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+# déterminer les composantes de l'équation logarithmique
+$a = random (1,10);
+$b= random(2,10);
+
+do
+{
+   $a2 = random(2,10);
+   $c2 = random(2,9);
+}  until ($a2 != $c2);
+    
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context("Interval");
+Context()->variables->are(x=>"Real");
+Context()->strings->add(aucun=>{}, aucune => {alias => "aucun"} );
+
+$lettre="x";
+
+# déterminer les autres valeurs requises pour la solution
+$gcd= gcd($a2,$c2);
+if ($c2/$a2 == int($c2/$a2)) {
+    $frac = Compute("$c2/$a2");
+    $note= "$lettre < $frac";}
+elsif ($gcd == 1) {$frac = Compute("$c2/$a2"); $note="";}
+else { $cfrac = $c2/$gcd;
+          $afrac= $a2/$gcd;
+          $frac = Compute("$cfrac/$afrac");
+          $note= "$lettre < \frac{$cfrac}{$afrac}";
+        }
+
+#déterminer la réponse
+$reponse=Compute("(-$a,$frac)");
+
+
+BEGIN_TEXT
+<h1>Question : </h1>
+$PAR Déterminer l'intervalle pour lequel l'expression logarithmique suivante est définie.
+\[ \log_{$b}($lettre +$a) +  \log_{$b}($c2-$a2 $lettre)\]
+$PAR
+\{ans_rule(15)\}   
+$PAR
+Donner votre réponse sous forme d'intervalles en utilisant \((\) ou \()\) lorsque la valeur de la borne est exclue et \([\) ou \(]\) lorsqu'elle est incluse.$BR
+Utiliser $BBOLD inf$EBOLD pour \(\infty\) et \(\cup\) (soit le u majuscule) pour l'union.$BR
+Par exemple, pour \((-\infty,-3)\cup[4,\infty)\), entrer : (-inf, -3) U [4, inf)$BR
+Pour l'ensemble des réels, entrer : $BBOLD R$EBOLD $BR
+Lorsqu'il n'y a aucune solution, entrer : $BBOLD aucun$EBOLD.
+END_TEXT
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="L'expression logarithmique log<sub>b</sub>x est définie si x > 0. Pour une expression de la forme log<sub>b</sub>(x-a), il faut résoudre l'inéquation x-a > 0 pour trouver quand celle-ci est définie.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS($reponse->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR Déterminer l'intervalle pour lequel l'expression logarithmique suivante est définie.
+\[ \log_{$b}($lettre +$a) +  \log_{$b}($c2-$a2 $lettre)\]
+$PAR
+réponse : ______________   
+$PAR
+Donner votre réponse sous forme d'intervalles en utilisant \((\) ou \()\) lorsque la valeur de la borne est exclue et \([\) ou \(]\) lorsqu'elle est incluse.$BR
+Utiliser $BBOLD inf$EBOLD pour \(\infty\) et \(\cup\) (soit le u majuscule) pour l'union.$BR
+Par exemple, pour \((-\infty,-3)\cup[4,\infty)\), entrer : (-inf, -3) U [4, inf)$BR
+Pour l'ensemble des réels, entrer : $BBOLD R$EBOLD $BR
+Lorsqu'il n'y a aucune solution, entrer : $BBOLD aucun$EBOLD.
+$PAR
+$PAR
+Soit la forme de base pour le logarithme, \(\log_b x\). Par définition, l'argument \(x\) d'un \(\log\) doit être plus grand que 0, donc \(x > 0\). 
+Par conséquent, l'expression \(\log_{$b}($lettre +$a) +  \log_{$b}($c2-$a2 $lettre)\) sera définie si :  
+$PAR
+a) \($lettre + $a > 0\) $BR
+   \($lettre > -$a\)$BR
+$PAR
+et si :
+$PAR
+b) \($c2- $a2 $lettre > 0\) $BR
+   \(-$a2 $lettre > -$c2\)$BR
+    \($a2 $lettre < $c2\)$BR
+    \($lettre < \frac{$c2}{$a2}\)$BR
+    \($note\)
+$PAR
+Il est souvent utile de faire une représentation visuelle de l'ensemble solution pour qu'il soit plus facile d'exprimer la réponse sous forme d'intervalle. 
+Soit \(A= -$a\) et \(B = $frac\) :
+$PAR
+\{ image(("intervalle_ouverte_ouverte.jpg"), width=>301, height=>43) \}
+$PAR
+Par conséquent, l'expression \(\log_{$b}($lettre +$a) +  \log_{$b}($c2-$a2 $lettre)\) est définie sur l'intervalle : \($reponse\)
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

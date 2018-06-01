@@ -1,0 +1,127 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions logarithmes
+#     type de question - résoudre l'équation logarithmique
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Fonction exponentielle et logarithmique)
+## KEYWORDS('base', 'fonction exponentielle', 'logarithme', 'propriétés des logarithmes', 'solution', 'équation exponentielle')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+"parserRadioButtons.pl",
+  "PGchoicemacros.pl",
+);
+TEXT(beginproblem());
+
+# définir les valeurs de la base et du log et des quatre réponses possibles, 
+# en s'assurant qu'aucune des réponses ne soit identique à une autre réponse offerte
+
+do
+{
+   $b = random (2,7);
+   $exp = random(2,5);
+   $rep1 = $exp**$b;
+   $rep2 = '$exp/$b';
+   $rep3 = $exp*$b;
+   $rep4 = "$b/$exp";
+
+} until ( ($rep1 != $rep2) & ($rep1 != $rep3) & ($rep1 != $rep4) & ($rep2 != $rep3) & ($rep2 != $rep4) & ($rep3 != $rep4) );
+
+
+# déterminer les autres valeurs requises pour la solution
+$lettre="x";
+
+# déterminer la réponse à afficher pour la fraction
+$gcd= gcd($exp,$b);
+$rep11 = $b**$exp;
+##if ($exp/$b == int($exp/$b)) {$rep11 = $b**$exp;}
+##elsif ($gcd == 1) {$rep11 = "$b**$exp";}
+##else { $exp2 = $exp/$gcd;
+##          $b2= $b/$gcd;
+##          $rep11="$b2**$exp";
+##        }
+
+# assigner une réponse par bouton radio &agrave; choisir en choix de r&eacute;ponse
+$radio= new_multiple_choice();
+$radio -> qa ("x",$rep11);
+$radio ->extra ($rep2,$rep3,$rep4);
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>
+Trouver la valeur de \($lettre\) si &nbsp;  \($exp = \log_{$b}$lettre\).
+<br/><br/>
+
+\{ $radio -> print_a() \}
+<br/><br/>
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Utiliser la définition du logarithme : P = log<sub>b</sub> N &#8660; N= b<sup>P</sup>  (P est l'exposant qu'il faut donner à la base b pour obtenir N).  Par exemple,  3 = log<sub>2</sub>8, ( 3 est l'exposant qu'il faut donner à la base 2 pour obtenir 8), donc une expression équivalente est  2 <sup>3</sup> = 8.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+$showPartialCorrectAnswers = 0;
+
+ANS( checkbox_cmp( $radio->correct_ans() ) );
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+
+<p>&nbsp;<u>Solution</u></p>
+
+Trouver la valeur de \($lettre\) si &nbsp;  \($exp = \log_{$b}$lettre\).
+<br/><br/><br/>
+
+Utiliser la définition du logarithme : P = log<sub>b</sub> N &#8660; N= b<sup>P</sup>  (P est l'exposant qu'il faut donner à la base b pour obtenir N).<br/><br/>
+
+&nbsp; &nbsp; <i>$exp = log<sub>$b</sub>$lettre <br/>
+&nbsp; &nbsp; donc:  <i>$b<sup>$exp</sup> = $lettre  = $rep4<br/>
+
+<br/> 
+END_SOLUTION
+
+ENDDOCUMENT();

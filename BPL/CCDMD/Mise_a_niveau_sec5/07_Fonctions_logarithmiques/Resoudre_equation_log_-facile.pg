@@ -1,0 +1,142 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions logarithmes
+#     type de question - Résoudre une équation logarithmique (facile)
+##ENDDESCRIPTION
+
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Fonction exponentielle et logarithmique)
+## KEYWORDS('base', 'domaine', 'exposant', 'logarithme', 'solution', 'équation logarithmique')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs des coefficients et constantes des deux formes
+
+
+do {
+  $a=random(1,10);
+  $b=random(2,6);
+  $exp=random(2,5);
+}  until ($b != $exp);
+
+
+# déclarer la lettre qui seront la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# créer les valeurs intermédiaires requises pour la solution
+$bexp=$b**$exp;
+$bexpplusa= $bexp + $a;
+$intervalle= Interval("($a, inf)");
+
+# créer la réponse
+$reponse=Compute("( $bexpplusa)");        
+
+
+
+BEGIN_TEXT
+<h1>Question:</h1><br/>
+Résoudre l'équation logarithmique suivante à l'aide des exposants. 
+$PAR  
+\[\log_{$b}($lettre - $a) = $exp\]
+$PAR
+\(x = \)  \{ans_rule(20)\} 
+
+<br/><br/>
+Note: Dans votre réponse, vous pouvez utiliser des expressions de la forme \(a^b\) où \(a\) et \(b\) sont des constantes.
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="L'expression logarithmique log<sub>b</sub><i>x</i> est définie si <i>x</i>> 0. Pour une expression de la forme log<sub>b</sub>(<i>x-a</i>), il faut résoudre l'inéquation <i>x-a</i> > 0 pour trouver quand celle-ci est définie.";
+break;
+case '2':text="Utiliser la définition du logarithme: P = log<sub>b</sub> N ⇔ N = b<sup>P</sup> (P est l'exposant qu'il faut donner à la base b pour obtenir N). Par exemple, log<sub>2</sub>8 = 3 , car 3 est l'exposant qu'il faut donner à la base 2 pour obtenir 8, donc une expression equivalente est 2<sup>3</sup> = 8.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($reponse->cmp);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+Résoudre l'équation logarithmique suivante à l'aide des exposants. 
+$PAR  
+\[\log_{$b}($lettre - $a) = $exp\]
+$PAR
+\(x = \)  ____________________
+
+<br/><br/>
+Note: Dans votre réponse, vous pouvez utiliser des expressions de la forme \(a^b\) où \(a\) et \(b\) sont des constantes.
+$PAR
+$PAR
+D'abord, il faut déterminer l'intervalle pour lequel l'équation logarithmique est définie. Soit la forme de base pour le logarithme, \(\log_b x\). Par définition, l'argument \(x\) d'un log doit être plus grand que 0, donc \(x > 0\).
+$PAR
+Par conséquent, l'équation \(\log_{$b}($lettre - $a) = $exp\) sera définie si \($lettre - $a > 0\). Il suffit de résoudre ceci.
+$PAR
+\($lettre - $a > 0\)$BR
+\($lettre > $a\)
+$PAR
+Il est souvent utile de faire une représentation visuelle de l'ensemble solution pour qu'il soit plus facile d'exprimer la réponse sous forme d'intervalle. Avec \(A= $a\), nous obtenons :
+$PAR
+\{ image(("intervalle_infini_droite_1.jpg"), width=>301, height=>43) \}
+$PAR
+Par conséquent, l'expression \(\log_{$b}($lettre - $a) = $exp\) est définie sur l'intervalle \($intervalle\); donc la réponse devra être incluse dans cet intervalle!
+$PAR
+Résolvons maintenant l'équation \(\log_{$b}($lettre - $a) = $exp\)
+$PAR
+\(\log_{$b}($lettre - $a) = $exp\)
+$PAR
+\($lettre - $a = $b^$exp = $bexp\) en utilisant la définition du logarithme ( $exp est l'exposant qu'il faut donner à la base $b pour obtenir \(($lettre - $a)\)).
+$PAR
+\($lettre = $bexp + $a = $bexpplusa\)
+$PAR
+D'où \(x = $bexpplusa\)
+(puisque cette valeur est dans l'intervalle où l'équation est définie).
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

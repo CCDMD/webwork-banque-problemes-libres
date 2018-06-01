@@ -1,0 +1,130 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Polynômes
+#     type de question - Factoriser  un trinôme carré parfait une expression quadratique de style x^2 + bx -c (moyen)
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('facteur', 'factorisation', 'mise en évidence double', 'méthode somme-produit', 'trinôme')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer lles coefficients ainsi que la constante de l'équation
+
+do
+{
+  $m=random(-9,-2);
+  $n=random(2,9);
+  $b= $m+$n;
+}
+until ($b > 1);
+
+$c=$m*$n;
+
+# écrire la lettre x sous forme de variable afin de pouvoir l'accoler à ses coefficients dans l'affichage des expressions algébriques 
+$x = "x";
+
+# déclarer les lettres qui seront les variables non-définies (variables réelles)
+Context()->variables->are(x=>"Real");
+
+# créer la réponse 
+$reponse=Formula("($x + $m)($x + $n)");
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Factoriser l'expression algébrique suivante :
+<br/><br/>
+\($x^2+$b$x $c = \)
+<br/><br/>
+
+\{ans_rule(10)\}
+<br/><br/>N.B.: Donner la réponse sous forme de deux parenthèses.
+  </td></tr>
+
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="À partir de l'expression quadratique x<sup>2</sup> + bx + c fournie, trouver deux nombres qui donnent le coefficient b lorsqu'ils sont additionnés et qui donnent la constante c lorsqu'ils sont multipliés. Ces deux nombres formeront les constantes ajoutées à x dans chacune des deux parenthèses résultantes.  Par exemple, avec x<sup>2</sup> + 3x + 2, seuls les chiffres 1 et 2 donnent 3 lorsqu'ils sont additionnés et 2 lorsqu'ils sont multipliés; la réponse est donc (x+1)(x+2)  ou (x+2)(x+1), l'ordre des parenthèses n'étant pas important.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS($reponse->cmp);
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Factoriser l'expression algébrique suivante : <br/>
+
+$x<sup>2</sup> + $b$x  $c = 
+
+<br/><br/>N.B.: Donner la réponse sous forme de deux parenthèses.
+<br/><br/>
+
+<strong> Mise en évidence</strong><br/><br/>
+On cherche deux nombres dont le produit donne <strong>$c</strong>, et dont la somme donne <strong>$b</strong>, c'est-à-dire:<br/><br/>
+
+<ul><li><strong>$m</strong> x <strong>$n</strong> = $c</li>
+      <li><strong>$m</strong> + <strong>$n</strong> = $b</li>
+</ul>
+<br/>
+
+Il ne reste qu'à insérer les nombres <strong>$m</strong> et <strong>$n</strong> dans les parenthèses, comme suit: <br/>
+ &nbsp; &nbsp;  ( $x <strong>$m</strong> )( $x + <strong>$n</strong> )
+<br/><br/>
+
+ 
+Note: il est facile et fortement conseillé de vérifier votre réponse en effectuant le produit des deux facteurs obtenus  afin de s'assurer que vous obtenez bien l'expression de départ.
+<br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

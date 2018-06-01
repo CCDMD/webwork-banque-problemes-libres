@@ -1,0 +1,119 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de base - Priorit&eacute; des op&eacute;rations
+#     type de question - Simplification d'une expression de la forme (a^n * x^m * y^p)^1/q
+##ENDDESCRIPTION
+## DBsubject(Nombres)
+## DBchapter(Exposants et radicaux)
+## KEYWORDS('exposant', 'exposant entier', 'exposant fractionnaire', 'multiplication', 'propriétés des exposants', 'simplification')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs de la formule
+$a=random(2,6);
+$b=random(2,5);
+$c=random(2,5);
+$d=random(2,5);
+$e=random(2,5);
+$ap=$b*$c;
+$xp=$b*$d;
+$yp=$b*$e;
+$pp=$b;
+
+
+# déclarer les lettres qui seront les variables non-définies (variables réelles)
+Context()->variables->are(x=>"Real",y=>"Real");
+
+# créer la réponse ainsi que les réponses intermédiaires pour la solution
+$arep=$a**$c;
+$reponse=Formula("($arep)*(x^$d)*(y^$e)");
+
+
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+
+Simplifier l'expression suivante: \( \left($a^{$ap} x^{$xp} y^{$yp}\right)^{1/$pp}\).
+<br/><br/>
+Note: Votre réponse doit être donnée sous forme exponentielle avec un exposant positif (ex.:  9x^2 ).<br/><br/>
+\{ans_rule(10)\}<br/>
+  </td></tr>
+</table>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Un exposant affecté à un groupe de variables multipliées entre elles, peut être distribué à chacune de ces variables, incluant son coefficient. Exemple: (2x<sup>3</sup>y<sup>4</sup>)<sup>2</sup> = (2<sup>2</sup> x<sup>3x2</sup>y<sup>4x2</sup>) = 4x<sup>6</sup>y<sup>8</sup>. ";
+break;
+case '2':text="Lorsqu'une variable est munie d'un exposant, et que le tout est aussi muni d'un exposant, , on peut alors multiplier les deux exposants entre eux, et attribuer ce produit à la variable en guise de réponse. Exemple: (x<sup>2</sup>)<sup>3</sup> = (x<sup>2x3</sup>) = x<sup>6</sup>";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($reponse->cmp);
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+Simplifier l'expression suivante: ( $a<sup>$ap</sup>x<sup>$xp</sup>y<sup>$yp</sup> )<sup>1/$pp</sup>
+<br/><br/>
+Distribuer tout d'abord l'exposant de la parenthèse à chacun de ses termes multipliés.<br/>
+&nbsp;&nbsp;&nbsp; ( $a<sup>$ap</sup>x<sup>$xp</sup>y<sup>$yp</sup> )<sup>1/$pp</sup> = ($a<sup>$ap</sup>)<sup>1/$pp</sup> (x<sup>$xp</sup>)<sup>1/$pp</sup> (y<sup>$yp</sup>)<sup>1/$pp</sup> <br/><br/>
+
+Ensuite, multiplier les exposants entre eux, étant donné qu'une variable munie d'un exposant et dont le tout est élevé à un autre exposant est équivalent à cette variable élevée au produit de ces deux exposants. <br/>
+&nbsp;&nbsp;&nbsp; = ($a<sup>$ap</sup>)<sup>1/$pp</sup> (x<sup>$xp</sup>)<sup>1/$pp</sup> (y<sup>$yp</sup>)<sup>1/$pp</sup> <br/>
+&nbsp;&nbsp;&nbsp; = $a<sup>($ap)(1/$pp)</sup>  x<sup>($xp)(1/$pp)</sup> y<sup>($yp)(1/$pp)</sup> <br/>
+&nbsp;&nbsp;&nbsp; = $a<sup>$c</sup>x<sup>$d</sup>y<sup>$e</sup><br/><br/>
+
+Enfin, si le coefficient est muni d'un exposant, il est préférable de l'appliquer afin d'en retirer la forme exponentielle et simplifier l'expression.<br/>
+&nbsp;&nbsp;&nbsp; $a<sup>$c</sup>x<sup>$d</sup>y<sup>$e</sup> =  $arep x<sup>$d</sup>y<sup>$e</sup><br/><br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

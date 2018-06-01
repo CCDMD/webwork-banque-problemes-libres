@@ -1,0 +1,198 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Résolution d'équations et inéquations linéaires
+#     type de question - Résoudre une inéquation de style x/a+b >= (x+c)/d
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Équations et inéquations algébriques)
+## KEYWORDS('intervalle', 'inéquation', 'inéquation linéaire', 'règles des signes', 'résolution d\'inéquation', 'solution')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# définir les variables, afin que la réponse x donne un entier qui n'est pas égal à zéro
+
+$c=non_zero_random(2,5);
+$ddivisec=(random(2,5))*(non_zero_random(-1,1));
+$d=$c*$ddivisec;
+
+do {$a=non_zero_random(-5,5);}
+until (($a !=$c)&&($a !=1) && ($a!=-1));
+
+do
+{
+   $b=non_zero_random(-5,5);
+   $x=( (($a*$b*$c)-($a*$d))/($c-$a) ); 
+   $reste=$x - int($x);
+}
+until (($x != 0) && ($reste==0));
+
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# déterminer les détails supplémentaires pour la solution
+$bfoisc=$b*$c;
+$cfoisa= $c*$a;
+$cmoinsa=$c-$a;
+$dplusbfoisc=$d + $bfoisc;
+$num=$dplusbfoisc*$cfoisa;
+$den=$cmoinsa;
+
+#si la fraction résultant donne un entier, la réponse est programmée pour un entier, sinon, elle est programmée pour rester sous forme fractionnaire
+$numden=$num/$den;
+
+if (($numden -int($numden) ) ==0)   {$rep= "$numden";}
+else {$rep = "$num/$den";}
+
+
+if (($numden) < 0)  
+{ 
+   $reponse = "("."-"."infini".",".$rep."]";
+    $signedex= "\leq";
+    $note="Étant donné que la fraction transférée <strong>$cmoinsa / $cfoisa</strong> est négative, le signe de l'inéquation a été modifié à &#8804;.";
+    $mot="petite";
+}
+else 
+{ 
+   $reponse = "[".$rep.","."infini".")";
+   $signedex= "\geq";
+   $note=" ";
+   $mot="grande";
+}
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Résoudre l'inéquation <b> \( \dfrac{$lettre}{$a} - $b \geq \dfrac{$lettre + $d}{$c} \) </b> .
+<br/><br/>
+
+\($lettre \in\) \{ans_rule(15)\} 
+
+<br/><br/>
+Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+Pour l'ensemble des réels entier, entrer: (-infini, infini)<br/>
+Lorsqu'il n'y a aucune solution, entrer: aucun <br/>
+
+  </td></tr>
+</table>
+END_TEXT
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Regrouper d'un côté les termes en x et de l'autre côté les constantes.";
+break;
+case '2':text="N'oubliez pas que  - x &#8804; 4 est équivalent à x &#8805; -4 ! ";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(str_cmp($reponse,'remove_whitespace'));
+
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u></p>
+<br/>Résoudre l'inéquation <b> \( \dfrac{$lettre}{$a} - $b \geq \dfrac{$lettre + $d}{$c} \) </b> .<br/><br/>
+
+Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+Pour l'ensemble des réels entier, entrer: (-infini, infini)<br/>
+Lorsqu'il n'y a aucune solution, entrer: aucun <br/>
+
+<br/><br/>
+
+<table>
+  <tr>
+    <td align=right> \( \dfrac{$lettre}{$a} - $b \)</td>
+    <td> &nbsp; \( \geq \) &nbsp; </td>
+    <td> \(  \dfrac{$lettre + $d}{$c} \) </td>
+  </tr>
+  <tr><td>&nbsp;</td></tr>
+  <tr>
+    <td align=right>  \( { \left( \dfrac{1}{$a} \right) }{$lettre}  - $b  \)</td>
+    <td> &nbsp; \( \geq \) &nbsp; </td>
+    <td> \(  { \left( \dfrac{1}{$c} \right) }{$lettre} + $ddivisec \)  </td>
+  </tr>
+  <tr>
+    <td align=right>\( { \left( \dfrac{1}{$a} \right) }{$lettre} - { \left( \dfrac{1}{$c} \right) }{$lettre}   \) </td>
+    <td> &nbsp; \( \geq \) &nbsp; </td>
+    <td>  \( $ddivisec + $b \)  </td>
+  </tr>
+  <tr>
+    <td align=right>\( { \left( \dfrac{1}{$a} -  \dfrac{1}{$c} \right) }{$lettre}   \) </td>
+    <td> &nbsp; \( \geq \) &nbsp; </td>
+    <td>  \( $dplus$bfoisc \) </td>
+  </tr>
+  <tr>
+    <td align=right> \( { \left( \dfrac{$c - $a}{$cfoisa} \right) }{$lettre} \)  </td>
+    <td> &nbsp; \( \geq \) &nbsp; </td>
+    <td> \( $dplus$bfoisc \) </td>
+  </tr>
+  <tr>
+    <td align=right> \( { \left( \dfrac{$cmoinsa}{$cfoisa} \right) }{$lettre} \)  </td>
+    <td> &nbsp; \( \geq \) &nbsp; </td>
+    <td> \( $dplusbfoisc \) </td>
+  </tr>  <tr>
+    <td align=right> \( $lettre  \)</td>
+    <td> &nbsp;  ­\( $signedex  \) &nbsp; </td>
+    <td> \( $dplusbfoisc \times  \dfrac{$cfoisa}{$cmoinsa}  = \dfrac{$num}{$den}  \)</td>
+  </tr>
+</table> 
+<br/>
+
+$note<br/><br/>
+Étant donné que la valeur de $lettre doit être plus $mot ou égale à $num / $den, l'intervalle de réponse possible sera:<br/><br/>
+$reponse
+<br/>
+
+END_SOLUTION
+
+
+ENDDOCUMENT();

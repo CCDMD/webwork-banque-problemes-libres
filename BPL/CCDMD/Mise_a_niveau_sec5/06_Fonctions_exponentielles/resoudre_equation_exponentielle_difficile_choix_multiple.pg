@@ -1,0 +1,149 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions exponentielles
+#     type de question - Résoudre une équation exponentielle (difficile) - choix multiple
+##ENDDESCRIPTION
+
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Fonction exponentielle et logarithmique)
+## KEYWORDS('base', 'changement de base', 'propriétés des exposants', 'solution', 'équation exponentielle')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+############################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"parserRadioButtons.pl",
+  "PGchoicemacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+# déterminer les variables pour les différentes fonctions à afficher
+do {
+   $n= random(2,4);
+   $b= random(2,6);
+   $c=random(2,6);
+   $d=random(2,6);
+} until ( ($c != $d) & ($n*$c/$d != $n/$c/$d) & ($n*$c/$d != 1/$n) & ($n*$c/$d != $c/$d/$n) & ($n/$c/$d != 1/$n) & ($n/$c/$d != $c/$d/$n) & (1/$n != $c/$d/$n));
+
+# déclarer la variable
+$lettre = "x";
+$a=$b**$n;
+
+$gcd1 = gcd($c,$d);
+if ($gcd1 == 1)  { $c2= $c;  $d2=$d; }
+else { $c2= $c/$gcd1;  $d2=$d/$gcd1; }
+
+if ($c2 ==1) {$e = $d2;}
+else  {$e = "$c2/$d2";}
+
+ 
+$gcd2 = gcd($c2*$n,$d2);
+if ($gcd2 == 1)  { $f1num= $c2*$n;  $f1den=$d2; }
+else { $f1num= $c2/$gcd2;  $f1den=$d2/$gcd2; }
+if ($f1den ==1) {$f1frac = $f1num;}
+else {$f1frac="$f1num/$f1den";}
+
+$gcd3 = gcd($n,$c2*$d2);
+if ($gcd3 == 1)  { $f2num= $n;  $f2den=$c2*$d2; }
+else { $f2num= $n/$gcd3;  $f2den=$c2*$d2/$gcd3; }
+if ($f2den ==1) {$f2frac = $f2num;}
+else {$f2frac="$f2num/$f2den";}
+
+$gcd4 = gcd($c2,$d2*$n);
+if ($gcd4 == 1)  { $f4num= $c2;  $f4den=$d2*$n; }
+else { $f4num= $c2/$gcd4;  $f4den=$d2*$n/$gcd4; }
+if ($f4den ==1) {$f4frac = $f4num;}
+else {$f4frac="$f4num/$f4den";}
+
+# attribuer les différentes fonctions à proposer, dont la bonne réponse
+$f1="$f1frac";
+$f2="$f2frac";
+$f3="­1/$n";
+$f4="$f4frac";
+
+
+# afficher la bonne réponse, ainsi que les autres réponses possibles
+$radio= new_multiple_choice();
+$radio -> qa ("x",$f4,);
+$radio ->extra ($f1,$f2,$f3);
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>
+Trouver la valeur de <i>$lettre</i> si  \(  $a^$lettre = $b^{\frac{$c}{$d}}\).
+<br/>
+\{ $radio -> print_a() \}
+<br/><br/>
+
+  </td></tr>
+</table>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Tout d'abord, placer la valeur de gauche ($a) dans la même base que l'expression de droite ($b), c'est à dire dans la base $b. Puisque vous aurez la même base des deux côtés, vous pourrez poser l'égalité des exposants et isoler x. "
+
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS( checkbox_cmp( $radio->correct_ans() ) );
+
+BEGIN_SOLUTION
+<br/> <u>Solution</u> <br/>
+Trouver la valeur de <i>$lettre</i> si   \(  $a^$lettre = $b^{\frac{$c}{$d}} \).
+<br/><br/>
+
+Afin de pouvoir mieux comparer les deux expressions exponentielles, il est préférable que ces deux exposants aient la même base. Transformons alors la base la plus grande afin d'obtenir la valeur de l'autre base et les rendre identiques: <br/><br/>
+
+ &nbsp; &nbsp; &nbsp;  \(  $a^$lettre = $b^{\frac{$c}{$d}} \)  <br/><br/>
+ &nbsp; &nbsp; &nbsp;  \(  $b^{$n($lettre)} = $b^{\frac{$c}{$d}} \) <br/><br/>
+ 
+Lorsque les bases sont identiques des deux côtés de l'équation, alors leurs puissances sont équivalentes:<br/><br/>
+
+&nbsp; &nbsp; &nbsp;  \(  $n($lettre) = \frac{$c}{$d} \)  <br/><br/>
+&nbsp; &nbsp; &nbsp;   \( $lettre = \dfrac {\frac{$c}{$d} }{$n} \)  <br/><br/>
+
+
+D'où la réponse  <strong>  \( $lettre = $f4frac  \) </strong>
+
+END_SOLUTION
+
+ENDDOCUMENT();

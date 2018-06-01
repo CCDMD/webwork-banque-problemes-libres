@@ -1,0 +1,260 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de base - Priorit&eacute; des op&eacute;rations
+#     type de question - Simplifier une expression (pratique des lois des exposants)
+##ENDDESCRIPTION
+## DBsubject(Nombres)
+## DBchapter(Exposants et radicaux)
+## KEYWORDS('exposant', 'exposant entier', 'fraction', 'multiplication', 'propriétés des exposants', 'simplification')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs de l'opération, selon certaines conditions
+
+$a=non_zero_random(-5,5);
+$b=non_zero_random(-5,5);
+$c=non_zero_random(-5,5);
+$d=non_zero_random(-5,5);
+$e=non_zero_random(-5,5);
+$f=non_zero_random(-5,5);
+
+$xp=($a*$c)-$e;
+$yp=($b*$c)+$d-$f;
+$xpinv=-1*$xp;
+$ypinv=-1*$yp;
+
+# déclarer la lettre "x" qui sera la variable non-définie ici (variable réelle)
+Context()->variables->are(x=>"Real",y=>"Real");
+
+# créer la réponse
+$rep=Formula("(x^$xp)(y^$yp)");
+
+if ( ($xp>0) && ($yp>0) ) 
+{ $reponse = "x^".$xp."y^".$yp; }
+elsif ( ($xp>0) && ($yp<0) ) 
+{ $reponse = "x^".$xp." / y^".$ypinv; }
+elsif ( ($xp<0) && ($yp>0) ) 
+{ $reponse = "y^".$yp." / x^".$xpinv; }
+else 
+{ $reponse = "1 / x^".$xpinv."y^".$ypinv; }
+
+
+#créer les réponses intermédiaires
+$ac= $a*$c;
+$bc= $b*$c;
+$bcd=($b*$c) + $d;
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+
+Simplifier l'expression suivante:  <br/><br/>
+
+<table>
+  <tr>
+    <td> \( \dfrac{{({x^{$a}y^{$b}})^{$c}}y^{$d}}{x^{$e}y^{$f}} = \) </td>
+    <td> \{ans_rule(10)\} </td>
+  </tr>
+</table>
+<br/>
+ Note: Inscrire les exposants sous la forme  x^2, et séparer le numérateur du dénominateur avec la barre oblique /.
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Respecter la priorité des opérations selon PEDMAS (soient: parenthèses, exposants, divisions et multiplications, additions et soustractions).";
+break;
+case '2':text="Un exposant assigné à une parenthèse qui contient une multiplication de termes, peut être distribué à chacun des termes de cette parenthèse; si ces termes ont déjà un exposant, multiplier leur exposant à celui-ci. ";
+break;
+case '3':text="Lorsque deux variables identiques munies d'exposant sont divisées, leurs exposants sont alors soustraits et cette différence est appliquée sous forme d'exposant à la variable dans la réponse. Si cette différence donne un exposant négatif, changer la variable de place au sein de la fraction (si elle est au numérateur, la mettre au dénominateur, et vice-versa) et lui attribuer la valeur positive de l'exposant (soit sa valeur absolue).";
+break;
+case '4':text="Lorsque deux variables identiques munies d'exposant sont multipliées, leurs exposants sont alors additionnés et cette somme est appliquée sous forme d'exposant à la variable dans la réponse. Si cette somme donne un exposant négatif, changer la variable de place au sein de la fraction (si elle est au numérateur, la mettre au dénominateur, et vice-versa) et lui attribuer la valeur positive de l'exposant (soit sa valeur absolue).";
+break;
+case '5':text="Une variable munie d'un exposant 0 est équivalent à la constante 1.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<button type="button" name="4" onclick="hint(this)">Astuce 4</button>&nbsp;
+<button type="button" name="5" onclick="hint(this)">Astuce 5</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+ANS($rep->cmp);
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+Simplifier l'expression suivante:  <br/><br/>
+
+<table>
+  <tr>
+    <td> \( \frac{{({x^{$a}y^{$b}})^{$c}}y^{$d}}{x^{$e}y^{$f}}  \) </td>
+  </tr>
+</table>
+<br/>
+ Note: Inscrire les exposants sous la forme  x^2, et séparer le numérateur du dénominateur avec la barre oblique /
+<br/><br/>
+
+1. Effectuer la parenthèse en premier: pour pouvoir la retirer, distribuer l'exposant de la parenthèse à chaque terme de la parenthèse.  Si ces variables sont déjà munies d'un exposant, multiplier celui-ci à l'exposant redistribué pour trouver le nouvel exposant assigné à la variable.
+<br/> <br/>
+
+<table>
+  <tr>
+    <td align=center> <strong>(x<sup>$a</sup>y<sup>$b</sup>)<sup>$c</sup> </strong> y<sup>$d</sup></td>
+    <td></td>
+    <td align=center> (x<sup>($a)($c)</sup>y<sup>($b)($c)</sup>) y<sup>$d</sup></td>
+    <td></td>
+    <td align=center>x<sup><strong>$ac</strong></sup>y<sup><strong>$bc</strong></sup>y<sup>$d</sup></td>
+  </tr>
+  <tr>
+    <td align=center> ___________</td>
+    <td> &nbsp; = &nbsp;</td>
+    <td align=center>___________</td>
+    <td> &nbsp; = &nbsp;</td>
+    <td align=center>___________</td>
+  </tr>
+  <tr>
+    <td align=center>x<sup>$e</sup>y<sup>$f</sup></td>
+    <td></td>
+    <td align=center>x<sup>$e</sup>y<sup>$f</sup></td>
+    <td></td>
+    <td align=center>x<sup>$e</sup>y<sup>$f</sup></td>
+  </tr>
+</table>
+<br/>
+
+2. Regrouper les deux variables identiques y multipliées au numérateur en additionnant leurs exposants, et assigner cette somme en tant qu'exposant à la forme finale de cette variable.
+<br/><br/>
+<table>
+  <tr>
+    <td align=center> x<sup>$ac</sup><strong>y<sup><strong>$bc</strong></sup>y<sup>$d</sup></strong></td>
+    <td></td>
+    <td align=center>x<sup>$ac</sup>y<sup><strong>($bc + $d)</strong></sup></td>
+    <td></td>
+    <td align=center>x<sup>$ac</sup>y<sup><strong>$bcd</strong></sup></td>
+  </tr>
+  <tr>
+    <td align=center> ___________</td>
+    <td> &nbsp; = &nbsp;</td>
+    <td align=center> ___________</td>
+    <td> &nbsp; = &nbsp;</td>
+    <td align=center> ___________</td>
+  </tr>
+  <tr>
+    <td align=center>x<sup>$e</sup>y<sup>$f</sup></td>
+    <td></td>
+    <td align=center>x<sup>$e</sup>y<sup>$f</sup></td>
+    <td></td>
+    <td align=center>x<sup>$e</sup>y<sup>$f</sup></td>
+  </tr>
+</table>
+<br/>
+
+3. Effectuer la division des deux variables x en soustrayant leurs exposants.
+<br/><br/>
+<table>
+  <tr>
+    <td align=center> <strong>x<sup>$ac</sup></strong>y<sup>$bcd</sup></td>
+    <td></td>
+    <td align=center> x<sup>($ac- $e)</sup>y<sup>$bcd</sup></td>
+    <td></td>
+    <td align=center> x<sup>$xp</sup>y<sup>$bcd</sup></td>
+  </tr>
+  <tr>
+    <td align=center> ___________</td>
+    <td> &nbsp; = &nbsp;</td>
+    <td align=center> ___________</td>
+    <td> &nbsp; = &nbsp;</td>
+    <td align=center> ___________</td>
+  </tr>
+  <tr>
+    <td align=center><strong>x<sup>$e</sup></strong>y<sup>$f</sup></td>
+    <td></td>
+    <td align=center>y<sup>$f</sup></td>
+    <td></td>
+    <td align=center>y<sup>$f</sup></td>
+  </tr>
+</table>
+<br/><br/>
+
+4. Faire de même pour la division des deux variables y, en soustrayant leurs exposants.
+<br/><br/>
+<table>
+  <tr>
+    <td align=center> x<sup>$xp</sup><strong>y<sup>$bcd</sup></strong></td>
+    <td></td>
+    <td>&nbsp; = &nbsp; x<sup>$xp</sup>y<sup>($bcd-  $f)</sup></td>
+    <td></td>
+    <td>&nbsp; = &nbsp;   x<sup>$xp</sup>y<sup>$yp</sup></td>
+  </tr>
+  <tr>
+    <td align=center> ______</td>
+    <td> </td>
+    <td></td>
+    <td> </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td align=center>y<sup>$f</sup></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+<br/>
+
+5. Dans cette réponse, si une variable est munie d'un exposant négatif, inverser sa position dans la fraction (c'est-à-dire placer la variable au dénominateur si elle était au numérateur, ou vice versa) afin de pouvoir lui attribuer la forme positive de l'exposant (soit sa valeur absolue). Si une variable est munie d'un exposant de valeur 0, remplacer celle-ci par la constante 1.
+<br/><br/>
+
+Donc la réponse à inscrire pour  x<sup>$xp</sup>y<sup>$yp</sup> &nbsp; est: <strong>$reponse </strong>
+<br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

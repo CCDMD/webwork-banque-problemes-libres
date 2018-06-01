@@ -1,0 +1,177 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Polynômes
+#     type de question - Multiplication algébrique de la forme (ax+b)(cx+d)
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('développement', 'multiplication', 'polynôme', 'propriétés des exposants', 'simplification')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs des coefficients et des constantes
+
+$a= random(2,6);
+$b=random(2,6);
+$c=random(2,9);
+$d=random(2,9);
+
+# créer les signes à mettre dans chacune des deux parenthèses de la question, ainsi que les signes qui en découlent à chacun des coefficients de la réponse 
+
+$choixa= random(0,1);
+
+if ($choixa==0)
+{
+   $signep1="+";
+   $signec= 1;
+}
+else
+{
+   $signep1="-";
+   $signec= -1;
+}
+
+$choixb= random(0,1);
+if ($choixb==0)
+{
+   $signep2="+";
+   $signed= 1;
+}
+else
+{
+   $signep2="-";
+   $signed= -1;
+}
+
+# créer les réponses intermédiaires
+$ab=$a*$b;
+$cs= $c*$signec;
+$ds= $d*$signed;
+$cd= $cs*$ds;
+$x1= $a*$ds;
+$x2= $b*$cs;
+$xtotal= $x1+$x2;
+
+# écrire la lettre x sous forme de variable afin de pouvoir l'accoler à ses coefficients dans l'affichage des expressions algébriques 
+$x="x";
+
+# créer la réponse 
+$repx2=$ab;
+$repx=$xtotal;
+$repc=$cd;
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Effectuer la multiplication suivante en écrivant les coefficients adéquats devant chaque variable, ainsi que la constante à la fin:  <br/>
+<br/><br/>
+\( ($a$x $signep1 $c)($b$x $signep2 $d) = \)
+
+\{ans_rule(2)\} \(x^2\; +\) &nbsp;  \{ans_rule(2)\} \(x\; +\) &nbsp;  \{ans_rule(2)\}
+<br/><br/>
+Nota: Si l'opération doit être une soustraction au lieu d'une addition, rajouter un signe négatif au coefficient de la variable (ex.:    3$x<sup>2</sup> +  <strong>-2</strong>$x).  Si la variable ou la constante n'existe pas, inscrire le chiffre zéro (soit 0 ).
+  </td></tr>
+
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Lorsque deux expressions algébriques renfermant des additions et/ou soustractions sont multipliées entre elles, il faut s'assurer de multiplier chaque terme de la première expression avec chaque terme de la seconde expression  et de simplifier le tout.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS(strict_num_cmp($repx2, .0));
+ANS(strict_num_cmp($repx, .0));
+ANS(strict_num_cmp($repc, .0));
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Effectuer la multiplication suivante en écrivant les coefficients adéquats devant chaque variable, ainsi que la constante à la fin:  <br/>
+<br/><br/>
+($a$x $signep1 $c)($b$x $signep2 $d) = <br/><br/>
+
+___x<sup>2</sup>  &nbsp; + &nbsp;  ___x &nbsp; + &nbsp;  ___
+<br/><br/>
+
+Nota: Si l'opération doit être une soustraction au lieu d'une addition, rajouter un signe négatif au coefficient de la variable (ex.:    3$x<sup>2</sup> +  <strong>-2</strong>$x).  Si la variable ou la constante n'existe pas, inscrire le chiffre zéro (soit 0 ).
+
+<br/><br/>
+
+Multiplier chaque terme de la première parenthèse avec chaque terme de la seconde parenthèse:<br/><br/>
+<table>
+  <tr>
+    <td>($a$x )($b$x )</td>
+    <td>= $ab$x<sup>2</sup></td>
+  </tr>
+  <tr>
+    <td>($a$x )( $signep2 $d)</td>
+    <td>= $x1$x</td>
+  </tr>
+  <tr>
+    <td>( $signep1 $c)($b )</td>
+    <td>= $x2$x</td>
+  </tr>
+  <tr>
+    <td>( $signep1 $c )( $signep2 $d)</td>
+    <td>= $cd</td>
+  </tr>
+</table>
+<br/>
+
+Joindre toutes les réponses obtenues:<br/><br/>
+
+$ab$x<sup>2</sup> + (  $x1$x +   $x2$x ) + $cd 
+= <strong><u>$repx2</u></strong>$x<sup>2</sup>  + <strong><u>$repx</u></strong>$x  +  <strong><u>$repc</u></strong> 
+<br/>
+END_SOLUTION
+
+ENDDOCUMENT();

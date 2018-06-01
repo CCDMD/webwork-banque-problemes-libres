@@ -1,0 +1,152 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Polynômes
+#     type de question - Factorisation: double mise en évidence
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('facteur', 'factorisation', 'mise en évidence double', 'polynôme')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les coefficients, la constante de l'équation,  ainsi que les exposants des variables
+
+do 
+{
+  $a=random(2,7);
+  $b=random(2,7);
+ $pgcd1=gcd($a,$b);
+}
+until ($pgcd1 ==1);
+
+do 
+{
+  $c=random(2,5);
+  $d=random(2,5);
+ $pgcd2=gcd($c,$d);
+}
+until ($pgcd2 ==1);
+
+$expa= random(2,4);
+$expb=random(2,4);
+$expc=random(2,4);
+$expd=random(2,4);
+
+# créer les réponses intermédiaires
+$afoisc=$a*$c;
+$bfoisc=$b*$c;
+$afoisd=$a*$d;
+$bfoisd=$b*$d;
+$expac=$expa+$expc;
+$expbd=$expb+$expd;
+
+# écrire les lettres x et y sous forme de variable afin de pouvoir les accoler à leurs coefficients dans l'affichage des expressions algébriques 
+$x = "x";
+$y = "y";
+
+# déclarer les lettres qui seront les variables non-définies (variables réelles)
+Context()->variables->are(x=>"Real",y=>"Real");
+
+# créer la réponse 
+$reponse=Formula("( ($a*($x^$expa)) - ($b*($y^$expb)) )( ($c*($x^$expc)) + ($d*($y^$expd)) )");
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Factoriser l'expression algébrique suivante:
+<br/><br/>
+\($afoisc$x^$expac - $bfoisc$x^$expc$y^$expb + $afoisd$x^$expa$y^$expd - $bfoisd$y^$expbd = \)
+\{ans_rule(10)\}
+<br/><br/>
+N.B.: Donner la réponse sous forme de deux parenthèses, <br/>
+et écrire les exposants sous la forme x^2 (pour indiquer x<sup>2</sup>).<br/>
+  </td></tr>
+
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Commencer par mettre en évidence le facteur commun aux deux premiers termes et faire de même pour les deux derniers termes. Par la suite faire une double mise en évidence. ";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS($reponse->cmp);
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Factoriser l'expression algébrique suivante :
+<br/><br/>
+$afoisc$x<sup>$expac</sup> - $bfoisc$x<sup>$expc</sup>$y<sup>$expb</sup> + $afoisd$x<sup>$expa</sup>$y<sup>$expd</sup> - $bfoisd$y<sup>$expbd</sup>
+<br/><br/>
+N.B.: Donner la réponse sous forme de deux parenthèses, et écrire les exposants sous la forme x^2 (pour indiquer x<sup>2</sup>).<br/><br/>
+
+
+<table>
+  <tr>
+     <td>$afoisc$x<sup>$expac</sup> - $bfoisc$x<sup>$expc</sup>$y<sup>$expb</sup> + $afoisd$x<sup>$expa</sup>$y<sup>$expd</sup> - $bfoisd$y<sup>$expbd</sup></td>
+     <td> =  $c$x<sup>$expc</sup>($a$x<sup>$expa</sup> - $b$y<sup>$expb</sup>) + $d$y<sup>$expd</sup>($a$x<sup>$expa</sup> - $b$y<sup>$expb</sup>)</td>
+     <td> &nbsp; &nbsp; en faisant une mise en évidence des facteurs communs</td>
+  </tr>
+  <tr>
+     <td></td>
+     <td> = ($c$x<sup>$expc</sup> + $d$y<sup>$expd</sup>)($a$x<sup>$expa</sup> - $b$y<sup>$expb</sup>)</td>
+     <td> &nbsp; &nbsp; en faisant une double mise en évidence</td>
+  </tr>
+</table>
+<br/>
+ 
+Note: il est facile et fortement conseillé de vérifier votre réponse en effectuant le produit des deux facteurs obtenus afin de s'assurer que vous obtenez bien l'expression de départ.
+<br/><br/>
+
+<br/>
+END_SOLUTION
+
+ENDDOCUMENT();

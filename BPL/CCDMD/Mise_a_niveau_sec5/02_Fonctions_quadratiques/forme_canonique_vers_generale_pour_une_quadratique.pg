@@ -1,0 +1,171 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions quadratiques
+#     type de question - De la forme canonique à la forme générale pour une quadratique)
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Fonction quadratique et parabole)
+## KEYWORDS('fonction quadratique', 'forme canonique a(x-h)^2+k', 'forme générale ax^2+bx+c')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs des coefficients et constantes des deux formes
+
+$a=random(2,7);
+do {
+  $knum=random(2,7);
+  $kdenum=random(2,7);
+  $mult1=gcd($knum,$kdenum);
+}  until ($mult1==1);
+
+
+$h=random(2,7);
+$deuxh=2*$h;
+$hcarre=$h*$h;
+$ahcarre=$a*$h*$h;
+
+#créer  les signes à insérer dans la question et dans la réponse
+$choix1=non_zero_random(-1,1);
+if ($choix1==1) {$signe1="+";  $signeaff1="";}
+else { $signe1="-";  $signeaff1="-"; }
+
+$choix2=non_zero_random(-1,1);
+if ($choix2==1) { $signe2="+";} 
+else { $signe2="-";}
+
+
+# déclarer la lettre qui seront la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# créer les valeurs intermédiaires requises pour la solution
+$b = $a*2*$h;
+$bcarre = $b*$b;
+$cnum1=$a*$h*$h*$kdenum;
+$cnum=$cnum1 + $choix2*$knum;
+
+if ($cnum>0) { $signec="+";} 
+else { $signec="-";}
+
+$cnumaff=abs($cnum);
+$mult2=gcd($cnum,$kdenum);
+$cnumsimp=$cnumaff/$mult2;
+$cdenumsimp=$kdenum/$mult2;
+$bcarrediv4a=$bcarre/(4*$a);
+
+# créer la réponse
+$reponse=Formula("( $a $lettre*$lettre $signe1 $b $lettre $signec ($cnumsimp / $cdenumsimp) )");        
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+Écrire la fonction quadratique    
+\( f($lettre) = $a($lettre $signe1 $h)^2 $signe2 \frac{$knum}{$kdenum} \)  sous la forme générale simplifiée.
+<br/><br/>
+
+\( f ($lettre) =\)   \{ans_rule(20)\} 
+
+<br/><br/>
+Note: écrire x^2 pour représenter x<sup>2</sup>, et utiliser la barre oblique / pour séparer le numérateur du dénominateur d'une fraction. 
+
+<br/><br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="La forme générale d'une fonction quadratique est : f(x) = ax<sup>2</sup> + bx + c.";
+break;
+case '2':text="Élever le binôme au carré et simplifier.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($reponse->cmp);
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Écrire la fonction quadratique    
+\( f($lettre) = $a($lettre $signe1 $h)^2 $signe2 \dfrac{$knum}{$kdenum} \)  sous la forme générale
+<br/><br/>
+
+<i> f ($lettre) = </i>  ___________________
+
+<br/><br/>
+Nota: Pour représenter les puissances, utiliser le symbole  ^. Par exemple, 3x<sup>2</sup> s'écrirait 3(x^2)  
+<br/><br/>
+
+
+\( f($lettre) = $a($lettre $signe1 $h)^2 $signe2 \dfrac{$knum}{$kdenum}  \)   <br/><br/>
+
+\( f($lettre) = $a($lettre $signe1 $h)($lettre $signe1 $h) $signe2 \dfrac{$knum}{$kdenum}  \)  <br/><br/>
+
+\( f($lettre) =$a($lettre^2 $signe1 $deuxh$lettre + $hcarre) $signe2 \dfrac{$knum}{$kdenum}  \) <br/><br/>
+
+\( f($lettre) = $a$lettre^2 $signe1 $b$lettre + $ahcarre $signe2 \dfrac{$knum}{$kdenum} \)<br/><br/>
+
+\( f($lettre) = $a$lettre^2 $signe1 $b$lettre + \dfrac{$ahcarre($kdenum)}{$kdenum}  $signe2 \dfrac{$knum}{$kdenum} \)<br/><br/>
+
+\( f($lettre) = $a$lettre^2 $signe1 $b$lettre + $signec \dfrac{$cnumaff}{$kdenum} \)<br/><br/>
+
+
+
+
+D'où, la fonction <i> f($lettre)</i> s'écrit sous la forme canonique:<br/><br/>
+
+\( f($lettre) = $a$lettre^2 $signe1 $b$lettre + $signec \dfrac{$cnumsimp}{$cdenumsimp} \)
+
+END_SOLUTION
+
+ENDDOCUMENT();

@@ -1,0 +1,271 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Géométrie
+#     type de question - Valeur du rapport trigonométrique pour un tan (angle en degre) 
+##ENDDESCRIPTION
+## DBsubject(Géométrie)
+## DBchapter(Trigonométrie)
+## KEYWORDS('angle', 'cercle trigonométrique', 'conversion', 'coordonnées', 'tangente', 'degré', 'rapport trigonométrique')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les possibilités d'angles à insérer dans la question
+
+$choixpi0=random(0,2);
+if ($choixpi0==0) {$anglepi0="0";}
+elsif ($choixpi0==1) {$anglepi0="-360";}
+else {$anglepi0="360";}
+
+$choixpidiv6=random(0,2);
+if ($choixpidiv6==0) {$anglepidiv6="30";}
+elsif ($choixpidiv6==1) {$anglepidiv6="-330";}
+else {$anglepidiv6="390";}
+
+$choixpidiv4=random(0,2);
+if ($choixpidiv4==0) {$anglepidiv4="45";}
+elsif ($choixpidiv4==1) {$anglepidiv4="-315";}
+else {$anglepidiv4="405";}
+
+$choixpidiv3=random(0,2);
+if ($choixpidiv3==0) {$anglepidiv3="60";}
+elsif ($choixpidiv3==1) {$anglepidiv3="420";}
+else {$anglepidiv3="-300";}
+
+$choixpi=random(0,1);
+if ($choixpi==0) {$anglepi="180";}
+else {$anglepi="-180";}
+
+$choixpi2div3=random(0,2);
+if ($choixpi2div3==0) {$anglepi2div3="120";}
+elsif ($choixpi2div3==1) {$anglepi2div3="480";}
+else {$anglepi2div3="-240";}
+
+$choixpi5div6=random(0,2);
+if ($choixpi5div6==0) {$anglepi5div6="150";}
+elsif ($choixpi5div6==1) {$anglepi5div6="-210";}
+else {$anglepi5div6="510";}
+
+# déterminer lequel des angles ci-dessus sera affiché dans la question, 
+# ainsi que les valeurs de sin et de cos qui y sont apparentés dans la solution
+$choixangle=random(0,6);
+
+if ($choixangle == 0) 
+   {
+      $angle=$anglepi0; 
+      $rep="0";
+      $sin="0";
+      $cos="1";
+   }
+elsif ($choixangle == 1) 
+   {
+      $angle=$anglepidiv6;  
+      $rep="1/(3^(1/2))";
+      $sin="1/2";
+      $cos="(3^(1/2))/2";
+   }
+elsif ($choixangle == 2) 
+   {
+      $angle=$anglepidiv4;  
+      $rep="1";
+      $sin="(2^(1/2))/2";
+      $cos="(2^(1/2))/2";
+   }
+elsif ($choixangle == 3) 
+   {
+      $angle=$anglepidiv3;  
+      $rep="3^(1/2)";
+      $sin="(3^(1/2))/2";
+      $cos="1/2";
+   }
+elsif ($choixangle == 4) 
+   {
+      $angle=$anglepi;  
+      $rep="0";
+      $sin="0";
+      $cos="-1";
+   }
+elsif ($choixangle == 5) 
+   {
+      $angle=$anglepi2div3;
+      $rep="-3^(1/2)";
+      $sin="(3^(1/2))/2";
+      $cos="-1/2";
+   }
+else
+   {
+      $angle=$anglepi5div6;  
+      $rep="-1/(3^(1/2))";
+      $sin="1/2";
+      $cos="(3^(1/2))/2";
+   }
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Donner la valeur du rapport trigonométrique suivant sans utiliser la calculatrice:
+<br/><br/>
+
+tan($angle<sup>o</sup>) = \{ans_rule(20)\} 
+
+<br/><br/>
+Note: 
+Si votre réponse renferme une fraction, utiliser la barre oblique / pour séparer son numérateur de son dénominateur.<br/>
+Si votre réponse renferme un radical (ex.:\( \sqrt{3} \) ), l'inscrire comme suit: 3^(1/2). <br/>
+ &nbsp; &nbsp; &nbsp; <br/>
+Si votre réponse renferme un radical en fraction (ex.:  \( \frac{\sqrt{2}}{2}  \) ), l'inscrire comme suit: ( 2^(1/2) )/2. 
+<br/><br/>
+  </td></tr>
+</table>
+END_TEXT
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Lorsque la mesure de l'angle est positive, la rotation doit se faire dans le sens antihoraire. Lorsque la mesure de l'angle est négative, la rotation doit se faire dans le sens horaire.";
+break;
+case '2':text="Chaque point sur le cercle trigonométrique s'écrit: P(θ) = (cosθ, sinθ) = (X,Y).";
+break;
+case '3':text="La tangente d'un angle est le rapport entre le sinus et le cosinus. Par conséquent tan(θ)=sin(θ)/cos(θ) =  y/x dans P(θ)=(x,y).";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(fun_cmp($rep));
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u></p>
+<br/>Donner la valeur du rapport trigonométrique suivant sans utiliser la calculatrice:
+<br/><br/>
+
+tan($angle<sup>o</sup>) = __________
+
+<br/><br/>
+Note: 
+Si votre réponse renferme une fraction, utiliser la barre oblique / pour séparer son numérateur de son dénominateur.<br/>
+Si votre réponse renferme un radical (ex.:\( \sqrt{3} \) ), l'inscrire comme suit: 3^(1/2) <br/>
+ &nbsp; &nbsp; &nbsp; <br/>
+Si votre réponse renferme un radical en fraction (ex.:  \( \frac{\sqrt{2}}{2}  \) ), l'inscrire comme suit: ( 2^(1/2) )/2  
+<br/><br/>
+
+
+Considérant que la question posée fait référence au rapport trigonométrique de la <strong>tangente</strong>, nous cherchons le rapport entre le sinus et le cosinus. Par conséquent, nous cherchons le rapport entre la valeur du <strong>y (ordonnée)</strong> et la valeur du <strong>x (abscisse)</strong> sur le cercle trigonométrique pour le point <strong>P($angle<sup>o</sup>)</strong>.
+<br/><br/>
+
+Nous avons :
+<br/><br/>
+<table>
+  <tr>
+    <td> </td>
+    <td align=center>sin($angle<sup>o</sup>) </td>
+    <td></td>
+    <td align=center>$sin </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>tan($angle<sup>o</sup>) = </td>
+    <td align=center valign=top>________ </td>
+    <td> = </td>
+    <td align=center valign=top>________ </td>
+    <td>= $rep </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td align=center>cos($angle<sup>o</sup>)</td>
+    <td></td>
+    <td align=center> $cos</td>
+    <td></td>
+  </tr>
+</table>
+<br/><br/><br/>
+
+Pour vous aider, voici d'abord les coordonnées complètes pour certains angles remarquables sur le cercle trigonométrique:
+<br/><br/>
+
+<strong>(1,0)</strong>: L'angle principal correspondant au point (1,0) est <strong>0<sup>o</sup></strong>. <br/><br/>
+ &nbsp; &nbsp; &nbsp; Nous avons également: <strong>-360<sup>o</sup>, 360<sup>o</sup> et 720<sup>o</sup></strong>
+<br/><br/>
+
+<strong>(0,1)</strong>: L'angle principal correspondant au point (0,1) est <strong>90<sup>o</sup></strong>. <br/><br/>
+ &nbsp; &nbsp; &nbsp; Nous avons également: <strong>-270<sup>o</sup></strong> (en faisant 90<sup>o</sup> - 360<sup>o</sup>)  et <strong>450<sup>o</sup></strong>
+ (en faisant 90<sup>o</sup> + 360<sup>o</sup>)<br/><br/>
+
+<strong>(-1,0)</strong>: L'angle principal correspondant au point (-1,0) est <strong>180<sup>o</sup></strong>. <br/><br/>
+ &nbsp; &nbsp; &nbsp; Nous avons également: <strong>-180<sup>o</sup></strong> (en faisant 180<sup>o</sup> - 360<sup>o</sup>)
+<br/><br/>
+
+<strong>\(  \left( \frac{\sqrt{3}}{2}, \frac{1}{2} \right) \)</strong>: L'angle principal correspondant à ce point est <strong>30<sup>o</sup></strong>. <br/><br/>
+ &nbsp; &nbsp; &nbsp; Nous avons également: <strong>-330<sup>o</sup></strong> (en faisant 30<sup>o</sup> - 360<sup>o</sup>) et <strong>390<sup>o</sup></strong> (en faisant 30<sup>o</sup> + 360<sup>o</sup>)
+<br/><br/>
+
+<strong>\(  \left( \frac{1}{2}, \frac{\sqrt{3}}{2} \right) \)</strong>: L'angle principal correspondant à ce point est <strong>60<sup>o</sup></strong>. <br/><br/>
+ &nbsp; &nbsp; &nbsp; Nous avons également: <strong>-300<sup>o</sup></strong> (en faisant 60<sup>o</sup> - 360<sup>o</sup>) et <strong>420<sup>o</sup></strong> (en faisant 60<sup>o</sup> + 360<sup>o</sup>)
+<br/><br/>
+
+<strong>\(  \left( \frac{\sqrt{2}}{2}, \frac{\sqrt{2}}{2} \right) \)</strong>: L'angle principal correspondant à ce point est <strong>45<sup>o</sup></strong>. <br/><br/>
+ &nbsp; &nbsp; &nbsp; Nous avons également: <strong>-315<sup>o</sup></strong> (en faisant 45<sup>o</sup> - 360<sup>o</sup>) et <strong>405<sup>o</sup></strong> (en faisant 45<sup>o</sup> + 360<sup>o</sup>)
+<br/><br/><br/>
+
+<strong>\(  \left( - \frac{1}{2}, \frac{\sqrt{3}}{2} \right) \)</strong>: L'angle principal correspondant à ce point est <strong>120<sup>o</sup></strong>. <br/><br/>
+ &nbsp; &nbsp; &nbsp; Nous avons également: <strong>-240<sup>o</sup></strong> (en faisant 120 <sup>o</sup> - 360<sup>o</sup>) et <strong>480<sup>o</sup></strong> (en faisant 120<sup>o</sup> + 360<sup>o</sup>)
+<br/><br/>
+
+<strong>\(  \left(- \frac{\sqrt{3}}{2}  , \frac{1}{2} \right) \)</strong>: L'angle principal correspondant à ce point est <strong>150<sup>o</sup></strong>. <br/><br/>
+ &nbsp; &nbsp; &nbsp; Nous avons également: <strong>-210<sup>o</sup></strong> (en faisant 150<sup>o</sup> - 360<sup>o</sup>) et <strong> 510<sup>o</sup></strong> (en faisant 150<sup>o</sup> + 360<sup>o</sup>)
+<br/><br/>
+
+
+<br/>
+
+De plus, voici le cercle trigonométrique:
+<br/><br/>
+\{ image( "cercle_trigonometrique_2.jpg", width=>596, height=>422) \}
+<br/>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

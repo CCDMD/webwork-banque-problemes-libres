@@ -1,0 +1,137 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section fractions algébriques
+#     type de question - Simplifier la fraction algébrique de polynômes, de style (a-bx)/(-ac + bcx) (facile)
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('division', 'factorisation', 'mise en évidence simple', 'simplification', 'variable')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs des coefficients et constantes
+
+$choixb=random(0,1);
+if ($choixb==0) {$b=random(2,5);}
+else {$b=random(-5,-2);}
+
+do {$a=random(2,6);}
+until ($a != abs($b));
+
+
+do 
+{
+   $choix=random(0,1);
+   if ($choix==0) {$c=random(2,6);}
+   else {$c=random(-6,-2);}
+   $d=$b*$c;
+}
+until ($a != $d);
+
+#créer  les signes au numérateur et au dénominateur
+if ($b<0){$signenum=" ";}
+else{$signenum="+";}
+
+if (($c*$b)>0) {$signeden="+";}
+else{$signeden=" ";}
+
+# créer les réponses intermédiaires
+$ca=$a*$c;
+
+# déclarer la lettre qui seront la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real");
+$x="x";
+
+# créer la réponse
+$reponse=Formula("(1/$c)");        
+
+
+
+
+BEGIN_TEXT
+
+<h1>Question:</h1><br/>
+Simplifier l'expression suivante: 
+<br/><br/>
+\(  \dfrac{$a $signenum $b$x}{$ca $signeden $d$x} \)
+<br/><br/>
+
+\{ans_rule(20)\} 
+
+<br/><br/>
+Note: utiliser la barre oblique / pour séparer le numérateur du dénominateur d'une fraction.
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Factoriser l'expression algébrique au numérateur, ainsi que celle au dénominateur, lorsque possible, afin de faciliter le processus de division.";
+break;
+case '2':text="Lorsque la factorisation met en évidence deux termes identiques multipliés au numérateur et au dénominateur, ces deux termes peuvent être annulés (car leur division donne 1), ce qui simplifie le résultat de la division.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($reponse->cmp);
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Simplifier l'expression suivante: 
+<br/><br/>
+\(  \dfrac{$a $signenum $b$x}{$ca $signeden $d$x} \)
+<br/><br/>
+Nota: utiliser la barre oblique / pour séparer le numérateur du dénominateur d'une fraction) 
+<br/><br/>
+
+
+Factorisez les expressions algébriques présentes ( lorsque c'est possible) avant d'effectuer la division, afin d'isoler un facteur du numérateur au sein du dénominateur; simplifier ensuite la fraction en divisant ce facteur commun au numérateur et au dénominateur:
+
+\(  \dfrac{$a $signenum $b$x}{$ca $signeden $d$x}   = \dfrac{($a $signenum $b$x)}{$c($a $signeden $b$x)}  =  \dfrac{1}{$c} \)
+<br/><br/>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

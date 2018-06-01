@@ -1,0 +1,368 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Fonctions quadratiques
+#     type de question - Analyse d'une fonction quadratique de forme y = ax^2 + bx + c
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Fonction, relation et opérations sur les fonctions)
+## KEYWORDS('abscisse à l\'origine', 'domaine', 'fonction', 'graphique', 'ordonnée à l\'origine', 'signe', 'zéro')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+# définir les valeurs des deux x et de la constante c
+$x1 = random(2,9);
+$choix1=non_zero_random(-1,1);
+$sx1 = $x1*$choix1;
+
+
+if ($choix1==1) {$signex1="+";}
+else {$signex1="-";}
+
+do 
+{
+   $x2 = random(2,9);
+   $choix2=non_zero_random(-1,1);
+   $sx2 = $x2*$choix2;
+   $c = $sx1*$sx2;
+}
+until ( ($c < 30) && ($c > -30) );
+
+
+if ($choix2==1) {$signex2="+";}
+else {$signex2="-";}
+
+
+# déterminer les valeurs du coefficient b de la fonction quadratique,
+#  à partir des deux x 
+
+$b = $sx1 + $sx2;
+
+$absb=abs($b);
+$absc= abs($c);
+$absx1= abs($sx1);
+$absx2= ($sx2);
+$invsx1= -1*$sx1;
+$invsx2=-1*$sx2;
+
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+
+# déterminer les deux fonctions à inscrire dans les parenthèses (factorisation)
+if ($sx1 < 0) {$signeinvsx1="$lettre"." - "."$invsx1";}
+else {$signeinvsx1="$lettre"." + "."$sx1";}
+
+if ($sx2 < 0) {$signeinvsx2="$lettre"." - "."$invsx2";}
+else {$signeinvsx2="$lettre"." + "."$sx2";}
+
+
+# déterminer les signes dans la fonction quadratique selon les valeurs de b et c
+if ($c < 0) { $csigne="- $absc";}
+else  { $csigne="+ $absc";}
+
+if ( ($b > 0) && ($b == 1)) {$bsigne="+ ";}
+elsif ( ($b > 0) && ($b != 1)) {$bsigne="+ $b";}
+elsif ( ($b < 0) && ($b == -1)) {$bsigne="- ";}
+elsif ( ($b < 0) && ($b != -1)) {$bsigne="- $absb";}
+else  {$bsigne=" ";}
+
+
+
+# déterminer les restrictions du domaine de la fonction (R sans ...)
+$domaine="aucun";
+
+# déterminer l'intervalle où la fonction est négative, et celle où elle est positive
+if ($invsx1<$invsx2)
+{
+   $zero1=$invsx1;
+   $zero2=$invsx2;
+}
+else
+{
+   $zero1=$invsx2;
+   $zero2=$invsx1;
+}
+
+$pos1 = "-infini";
+
+if ($sx1==$sx2)
+{
+  $neg1 = "aucun";
+  $neg2 = "aucun"; 
+  $pos2 = "infini";
+  $pos3 = "aucun";
+  $pos4 = "aucun"; 
+}
+else
+{
+  $neg1 = "$zero1";
+  $neg2 = "$zero2"; 
+  $pos2 = "$zero1";
+  $pos3 = "$zero2";
+  $pos4 = "infini"; 
+}
+
+
+$negatif= "("."$zero1".","."$zero2".")";
+$positif= "("."$pos1".","."$pos2".") U ("."$pos3".","."$pos4".")";
+
+# référer les images à utiliser dans la solution
+
+$image1="parabole_deux_zeros.jpg";
+$image2="parabole_un_zero.jpg";
+$image3="parabole_aucun_zero.jpg";
+
+#créer le graphique de cette fonction, afin de pouvoir l'afficher dans la solution
+$ymin= ( (4*$c)-($b*$b) )/4;
+$largeur=abs($zero2-$zero1)/2;
+
+if ($zero1 >0) {$gxneg=-1.5;}
+else {$gxneg=$zero1 - $largeur;}
+
+if ($zero2 < 0) {$gxpos= 1.5;}
+else {$gxpos=$zero2 + $largeur;}
+
+if ($ymin > 0) {$gyneg = -5;}
+else {$gyneg=$ymin - abs($ymin/2);}
+
+if($ymin >0) {$gypos= $ymin + abs($ymin/2);}
+else {$gypos=10;}
+
+$graphique=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique, "x^2 $bsigne*x $csigne for x in <$gxneg,$gxpos> using color:blue and weight:2 ");
+
+
+$gx=2; 
+$gy= 5;
+
+for ($i = 0; $i <= int( ($gxpos /2) +1); $i++)
+  {
+     $graphique->lb(new       Label($gx*$i+$gx+0.2,-0.15,$gx*$i+$gx,'black','center','top'));
+     $graphique->moveTo($gx*$i+$gx+0.2,-0.15); 
+   }
+for ($i = 0; $i <= int( ($gxpos /2) +1); $i++)
+  {
+     $graphique->lb(new Label(-$gx*$i-$gx-0.2,-0.15,-$gx*$i-$gx,'black','center','top'));
+     $graphique->moveTo(-$gx*$i-$gx-0.2,-0.15); 
+   }
+for ($i = 0; $i <= 1; $i++)
+  {
+     $graphique->lb(new Label(-0.5,$gy*$i+$gy,$gy*$i+$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, $gy*$i+$gy); 
+   }
+for ($i = 0; $i <= int( 1+(-$gyneg/10)); $i++)
+  {
+     $graphique->lb(new Label(-0.5,-$gy*$i-$gy+0.4,-$gy*$i-$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, -$gy*$i-$gy+0.4); 
+   }
+
+
+$graphique->stamps( closed_circle($zero1,0,'blue') );
+$graphique->stamps( closed_circle($zero2,0,'blue') );
+
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Pour la fonction suivante:  &nbsp; &nbsp; \( f($lettre) = $lettre^2 $bsigne $lettre $csigne\)
+<br/><br/>
+
+a) Quelle est l'ordonnée à l'origine de cette fonction ? &nbsp;&nbsp; \{ans_rule(10)\} 
+
+<br/><br/>
+
+b) Donner tous les zéros de cette fonction. &nbsp;&nbsp; \{ans_rule(10)\} 
+<br/><br>
+
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+<br/><br/>
+
+c) Le domaine de cette fonction est &nbsp;&nbsp;\(\mathbb{R}\) sauf   { \{ans_rule(15)\}    } 
+
+<br/><br/>
+
+&nbsp; &nbsp; &nbsp;&nbsp Si le domaine a une seule restriction, inscrire cette restriction. <br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si le domaine a plus d'une restriction, énumérer ces restrictions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si le domaine n'a aucune restriction, inscrire <strong>aucun</strong>.
+<br/><br/>
+
+d) La fonction ci-dessus est négative sur l'intervalle:  &nbsp;&nbsp;  \{ans_rule(20)\} 
+<br/><br/>
+&nbsp;&nbsp; &nbsp;&nbsp; La fonction ci-dessus est positive sur l'intervalle:  &nbsp;&nbsp;  \{ans_rule(20)\} 
+
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est excluse et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini).<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels entier, entrer: (-infini, infini).<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: aucun. <br/>
+
+  </td></tr>
+</table>
+END_TEXT
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Le zéro d'une fonction représente la valeur de x lorsque f(x) est égal à zéro. Il faut donc remplacer f(x) par zéro et isoler x pour en trouver la valeur résultante. Dans le cas d'une équation quadratique, il peut être plus facile de factoriser en deux parenthèses, et de poser l'égalité de chaque facteur à zéro pour résoudre et trouver chaque zéro. ";
+break;
+case '2':text="L'ordonnée d'une fonction est la valeur de f(x) lorsque x est égal à zéro, il faut donc résoudre f(0). ";
+break;
+case '3':text="Le domaine représente l'ensemble des nombres qui peuvent être insérés dans x pour obtenir un nombre réel pour y.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+$showPartialCorrectAnswers = 0;
+
+ANS(strict_num_cmp($c, .0));
+
+ANS(List($invsx1,$invsx2)->cmp);
+
+ANS(str_cmp($domaine,'remove_whitespace'));
+
+ANS(str_cmp($negatif,'remove_whitespace'));
+
+ANS(str_cmp($positif,'remove_whitespace'));
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u></p>
+<br/>Pour la fonction suivante:  &nbsp; &nbsp; <b> f($lettre) = $lettre<sup>2</sup> $bsigne$lettre $csigne </b>
+<br/><br/>
+
+a) Quelle est l'ordonnée à l'origine de cette fonction ? &nbsp;&nbsp; _________ 
+
+<br/><br/>
+
+b) Donner tous les zéros de cette fonction. &nbsp;&nbsp; _________
+<br/><br>
+
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+<br/><br/>
+
+c) Le domaine de cette fonction est &nbsp;&nbsp; R sauf   { _________   } 
+
+<br/><br/>
+
+&nbsp; &nbsp; &nbsp;&nbsp Si le domaine a une seule restriction, inscrire cette restriction. <br/>
+&nbsp; &nbsp &nbsp;&nbsp; Si le domaine a plus d'une restriction, énumérer ces restrictions en les séparant d'une virgule..<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Si le domaine n'a aucune restriction, inscrire <strong>aucun</strong>.
+<br/><br/>
+
+
+d) La fonction ci-dessus est négative sur l'intervalle &nbsp;&nbsp __________________
+
+<br/><br/>La fonction ci-dessus est positive sur l'intervalle &nbsp;&nbsp  __________________
+
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est excluse et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels entier, entrer: (-infini, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: aucun <br/><br/><br/>
+
+
+
+a) L'ordonnée à l'origine est la valeur de <strong>f($lettre)</strong> lorsque <strong>$lettre</strong> est égal à zéro. Donc:<br/>
+  &nbsp; &nbsp; f($lettre) = $lettre<sup>2</sup> $bsigne$lettre $csigne <br/>
+  &nbsp; &nbsp; f(0) = (0)<sup>2</sup> $bsigne(0) $csigne <br/>
+  &nbsp; &nbsp; f(0) = 0 + 0 $csigne<br/>
+  &nbsp; &nbsp; f(0) = <strong>$c</strong><br/><br/>
+
+b) Le zéro d'une fonction est la valeur de <strong>$lettre</strong> lorsque <strong>f($lettre)</strong> est égal à zéro.  Pour une fonction quadratique, factoriser tout d'abord la fonction, et égaliser chaque contenu entre parenthèse à zéro afin d'en trouver facilement les zéros. Donc:<br/>
+  &nbsp; &nbsp; 0 =  $lettre<sup>2</sup> $bsigne$lettre $csigne <br/>
+  &nbsp; &nbsp; 0 = ($signeinvsx1)($signeinvsx2)<br/>
+  &nbsp; &nbsp; 0 = $signeinvsx1  &nbsp;&nbsp; ou &nbsp;&nbsp; 0 = $signeinvsx2  <br/>
+  &nbsp; &nbsp; $lettre = $invsx1 &nbsp;&nbsp; ou &nbsp;&nbsp; $lettre = $invsx2<br/>
+  &nbsp; &nbsp; Donc les zéros de cette fonction sont = <strong>$invsx1 , $invsx2</strong><br/><br/>
+
+
+c) Le domaine de la fonction représente l'ensemble des nombres que peut prendre la variable $lettre afin de donner un f($lettre) qui est un nombre réel.<br/>
+  <ul> 
+      <li>Ici, le domaine de cette fonction est R, car acune valeur de $lettre donnerait une valeur de f($lettre) qui n'est pas un nombre réel. En effet, il n'y a pas de division par 0, ni l'intérieur d'une racine paire qui pourrait être négative. Donc la réponse pour cette question est:  R sauf  { <strong>aucun</strong> }</li>
+  </ul><br/>
+
+d) Puisque le coefficient de $lettre<sup>2</sup> est positif (soit 1) la parabole est tournée vers le haut. La fonction f($lettre) sera donc négative pour toute valeur de x qui est située entre les deux zéros de l'équation. Si la fonction a moins de deux zéros, elle n'aura pas de valeur négative possible.  <br/><br/>
+
+<table width = 800 cellpadding=5>
+  <tr>
+    <td align=center>\{ image( $image1, width=>200, height=>250) \} </td>
+    <td align=center>\{ image( $image2, width=>200, height=>250) \}</td>
+    <td align=center>\{ image( $image3, width=>200, height=>250) \} </td>
+  </tr>
+  <tr>
+    <td>Lorsque la fonction quadratique a deux zéros, seuls les valeurs de x entre ces deux zéros donnent une fonction négative.</td>
+    <td>Lorsque la fonction quadratique a un seul zéro (à l'endroit où elle touche l,axe des x), aucune valeur de x donne une fonction négative. </td>
+    <td>Lorsque la fonction quadratique n'a pas de zéros (car elle ne touche pas l'axe des x), aucune valeur de x donne une fonction négative. </td>
+  </tr>
+</table>
+
+<br/><br/>
+Donc pour la fonction quadratique f($lettre) = $lettre<sup>2</sup> $bsigne$lettre $csigne :
+  <ul> 
+      <li>La fonction ci-dessus est négative sur l'intervalle  <strong>($neg1,$neg2)</strong> .</li>
+
+      <li>La fonction ci-dessus est positive sur l'intervalle  <strong>($pos1,$pos2)U($pos3,$pos4)</strong> .</li>
+  </ul>
+<br/><br/>
+\{ image(insertGraph($graphique), width=>250, height=>250, tex_size=>500) \}
+
+END_SOLUTION
+
+ENDDOCUMENT();

@@ -1,0 +1,135 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de base - Priorit&eacute; des op&eacute;rations
+#     type de question - Simplification d'une expression de la forme (ax^n) / (bx^m)
+##ENDDESCRIPTION
+## DBsubject(Nombres)
+## DBchapter(Exposants et radicaux)
+## KEYWORDS('division', 'exposant', 'fraction', 'propriétés des exposants', 'simplification')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs de l'opération, selon certaines conditions
+
+
+$a=random(2,6);
+$facteur=random(2,6);
+$fa=$a*$facteur;
+
+do {   
+        $exp1=random(2,7);   
+        $exp2=random(2,7);
+      }  
+until ($exp1-1 > $exp2);
+
+$exp3=$exp1-$exp2;
+
+# déclarer la lettre "x" qui sera la variable non-définie ici (variable réelle)
+Context()->variables->are(x=>"Real");
+
+# créer la réponse
+$rep=Formula("($facteur*(x^$exp3))");
+
+
+BEGIN_TEXT
+<h1>Question:</h1><br/>
+
+Simplifier l'expression suivante:  <br/><br/>
+
+<table>
+  <tr>
+    <td> \( \dfrac{$fa x^{$exp1}}{$a x^{$exp2}}  =\)</td>
+    <td> \{ans_rule(10)\} </td>
+  </tr>
+</table>
+<br/>
+ Note: Inscrire la réponse sous la forme  suivante: 2x^2
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Lorsque deux variables identiques munies d'exposants sont divisées, leurs exposants sont soustraits. Donc, x<sup>m</sup> / x<sup>n</sup> =  x<sup>m-n</sup>.";
+break;
+case '2':text="Ne pas oublier qu'une variable munie d'un exposant de valeur 0 est équivalent à la constante 1. ";
+break;
+case '3':text="Lorsqu'une variable finale est munie d'un exposant négatif, simplement inverser sa position dans la fraction (si la variable est au numérateur, la mettre au dénominateur ou vice-versa), et lui attribuer l'exposant dans sa forme positive (soit la valeur absolue de l'exposant). ";
+break;
+case '4':text="Il ne faut pas oublier de diviser les coefficients accompagnant deux termes algébriques divisés. ";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<button type="button" name="4" onclick="hint(this)">Astuce 4</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($rep->cmp);
+
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+Simplifier l'expression suivante:  <br/><br/>
+
+<table>
+  <tr>
+    <td> \( \dfrac{$fa x^{$exp1}}{$a x^{$exp2}}  \)</td>
+  </tr>
+</table>
+<br/>
+ Note: Inscrire la réponse sous la forme  suivante: 2x^2.
+ 
+
+<br/><br/>
+
+Soustraire les exposants des variables <strong>x</strong> divisées, et diviser les coefficients de ces deux variables divisées:
+<br/><br/>
+
+ \( \dfrac{$fa x^{$exp1}}{$a x^{$exp2}}  \)  &nbsp; = &nbsp;  \( \dfrac{$fa}{$a}  \cdot x^{{$exp1}-{$exp2}}  \) &nbsp; = &nbsp; \( $facteur x^{$exp3} \) 
+
+<br/> 
+
+END_SOLUTION
+
+ENDDOCUMENT();

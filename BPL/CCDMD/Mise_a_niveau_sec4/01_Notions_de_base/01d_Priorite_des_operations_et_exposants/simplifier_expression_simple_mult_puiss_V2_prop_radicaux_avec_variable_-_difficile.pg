@@ -1,0 +1,129 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de base - Priorit&eacute; des op&eacute;rations
+#     type de question - Simplification d'une expression de la forme racine x ième de (a^n * x^m * y^p)
+##ENDDESCRIPTION
+## DBsubject(Nombres)
+## DBchapter(Exposants et radicaux)
+## KEYWORDS('exposant', 'exposant entier', 'multiplication', 'propriétés des exposants', 'propriétés des radicaux', 'racine n-ème', 'racine paire', 'simplification')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs des trois exposants présents
+
+do {
+       $a=random(2,12);
+       $b=random(2,12);
+       $c=random(2,12);
+     }  
+until (($a != $b) && ($b != $c) && ($a != $c) );
+
+$facteur=random(3,7);
+$fa=$a*$facteur;
+$fb=$b*$facteur;
+$fc=$c*$facteur;
+@rang=("troisième", "quatrième", "cinquième","sixième", "septième");
+$racine=$rang[$facteur-3];
+
+# déclarer les lettres qui seront les variables non-définies (variables réelles)
+Context()->variables->are(x=>"Real",y=>"Real",z=>"Real");
+
+# créer la réponse ainsi que les réponses intermédiaires pour la solution
+$reponse=Formula("(x^$a)*(y^$b)*(z^$c)");
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+
+Simplifier l'expression suivante: &nbsp;  racine $racine de \( (x^{$fa}y^{$fb}z^{$fc})\).
+<br/><br/>
+Note: Inscrire les exposants sous la forme x^2.<br/>
+
+\{ans_rule(10)\}<br/>
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Écrire d'abord la racine sous forme d'un exposant fractionnaire. ";
+break;
+case '2':text="Lorsqu'une variable est munie d'un exposant, et que le tout est muni d'un autre exposant,  multiplier alors les deux exposants; ce produit formera le nouvel exposant de la variable.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($reponse->cmp);
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+Simplifier l'expression suivante:  <br/>
+&nbsp;  racine $racine de ( x<sup>$fa</sup>y<sup>$fb</sup>z<sup>$fc</sup> )
+<br/><br/>
+Écrire d'abord la racine sous forme d'un exposant fractionnaire:<br/><br/>
+racine $racine de ( x<sup>$fa</sup>y<sup>$fb</sup>z<sup>$fc</sup> ) &nbsp; = &nbsp; ( x<sup>$fa</sup>y<sup>$fb</sup>z<sup>$fc</sup> )<sup>1/$facteur</sup>
+<br/><br/>
+
+Ensuite, distribuer l'exposant de la parenthèse à chacun des termes de la parenthèse; si ceux-ci sont déjà munis d'exposant, multiplier ces derniers avec l'exposant à distribuer: <br/><br/>
+<table>
+  <tr>
+    <td>( x<sup>$fa</sup>y<sup>$fb</sup>z<sup>$fc</sup> )<sup>1/$facteur</sup>  </td>
+    <td>&nbsp; = &nbsp;  x<sup>($fa)(1/$facteur)</sup>y<sup>($fb)(1/$facteur)</sup>z<sup>($fc)(1/$facteur)</sup></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>&nbsp; = &nbsp; x<sup>$a</sup>y<sup>$b</sup>z<sup>$c</sup></td>
+  </tr>
+</table>
+<br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

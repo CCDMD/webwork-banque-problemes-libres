@@ -1,0 +1,220 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions de valeur absolue et définies par partie
+#     type de question - Résoudre |x-a| <=  b
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Équations et inéquations algébriques)
+## KEYWORDS('intervalle', 'inéquation avec valeur absolue', 'solution')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les constantes ainsi que la pente de l'inéquation
+
+$a=non_zero_random(-5,5);
+$b=random(1,6);
+
+
+#créer les valeurs intermédiaires
+$l=$a - $b;
+$r=$a + $b;
+
+# déclarer la lettre qui seront la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+#créer la réponse
+$reponse= "["."$l".","."$r"."]";
+
+#créer le graphique de cette fonction, afin de pouvoir l'afficher dans la solution
+$gxneg=-8;
+$gxpos=8;
+$gyneg=-8;
+$gypos= 8;
+
+$graphique=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique, "(|$lettre - $a|) for x in <$gxneg,$gxpos> using color:red and weight:2 ");
+add_functions($graphique, "$b for x in <$gxneg,$gxpos> using color:green and weight:2 ");
+
+$gx=2; 
+$gy=2;
+
+for ($i = 0; $i <= int( ($gxpos /$gx) +1); $i++)
+  {
+     $graphique->lb(new Label($gx*$i+$gx,-0.15,$gx*$i+$gx,'black','center','top'));
+     $graphique->moveTo($gx*$i+$gx,-0.15); 
+   }
+for ($i = 0; $i <= int( ($gxpos /$gx) +1); $i++)
+  {
+     $graphique->lb(new Label(-$gx*$i-$gx,-0.15,-$gx*$i-$gx,'black','center','top'));
+     $graphique->moveTo(-$gx*$i-$gx,-0.15); 
+   }
+for ($i = 0; $i <= int( ($gypos /$gy) +1); $i++)
+  {
+     $graphique->lb(new Label(-0.5,$gy*$i+$gy+0.5,$gy*$i+$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, $gy*$i+$gy+0.5); 
+   }
+for ($i = 0; $i <= int( ($gypos/$gy)+1); $i++)
+  {
+     $graphique->lb(new Label(-0.5,-$gy*$i-$gy+0.5,-$gy*$i-$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, -$gy*$i-$gy+0.5); 
+   }
+
+foreach my $i (1..$gxpos) {  $graphique->h_ticks(0,"black",$i); }
+foreach my $i ($gxneg..-1) {  $graphique->h_ticks(0,"black",$i); }
+foreach my $i (1..$gypos) {  $graphique->v_ticks(0,"black",$i); }
+foreach my $i ($gyneg..-1) {  $graphique->v_ticks(0,"black",$i); }
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+<h1>Question:</h1><br/>
+
+Résoudre l'inéquation :   \(| $lettre - $a | \leq $b\)
+<br/><br/>
+
+\{ans_rule(10)\} 
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini).<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels entier, entrer:<b> R </b>.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: <b>aucun </b>. <br/>
+<br/><br/>
+
+</td>
+<br/>
+
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Pour déterminer la réponse de  <i>| $lettre - a | &#8804; b</i>, il faut résoudre <i>$lettre-a &#8804; b</i> et  <i>-b &#8804; x-a</i>.";
+break;
+case '2':text="Rappel: <i>| $lettre - a |</i>  mesure la distance entre <i>x</i> et <i>a</i>.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(str_cmp($reponse,'remove_whitespace'));
+
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+Résoudre l'inéquation :   \(| $lettre - $a | \leq $b\)
+
+<br/><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels entier, entrer:<b> R </b><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: <b>aucun </b> <br/>
+<br/><br/>
+
+
+Le graphique en ROUGE est celui de la fonction <i>y = | $lettre - $a | </i>  et la ligne VERTE est celui de <i>y = $b </i>. Nous voulons savoir dans cette question quand la valeur absolue est SOUS ou DIRECTEMENT SUR la ligne verte. <br/><br/>
+
+\{ image(insertGraph($graphique), width=>250, height=>250, tex_size=>500) \}
+<br/><br/>
+
+1. Résoudre d'abord  <strong>$lettre - $a  &#8804; $b </strong><br/><br/>
+
+<table>
+  <tr>
+    <td align=right>$lettre - $a  </td>
+    <td>&nbsp;  &#8804; &nbsp;</td>
+    <td> $b </td>
+  </tr>
+  <tr>
+    <td align=right> $lettre </td>
+    <td>&nbsp;  &#8804; &nbsp;</td>
+    <td> $b + $a </td>
+  </tr>
+  <tr>
+    <td align=right> $lettre</td>
+    <td>&nbsp;  &#8804; &nbsp;</td>
+    <td> $r</td>
+  </tr>
+</table>
+d'où $lettre &#8804;  $r
+<br/><br/>
+
+2. Résoudre par la suite <strong>-$b &#8804; $lettre - $a </strong><br/>
+
+<table>
+  <tr>
+    <td align=right>-$b  </td>
+    <td>&nbsp;  &#8804; &nbsp;</td>
+    <td> $lettre - $a </td>
+  </tr>
+  <tr>
+    <td align=right> -$b + $a</td>
+    <td>&nbsp;  &#8804; &nbsp;</td>
+    <td> $lettre </td>
+  </tr>
+  <tr>
+    <td align=right> $l</td>
+    <td>&nbsp;  &#8804; &nbsp;</td>
+    <td> $lettre</td>
+  </tr>
+</table>
+d'où $l &#8804; $lettre
+<br/><br/>
+
+Puisque $l &#8804; $lettre  et que $lettre &#8804; $r , nous obtenons la réponse:  <strong>$reponse</strong>
+<br/><br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();
+

@@ -1,0 +1,148 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de Base - Ensembles et intervalles
+#     type de question - intervalle fini: donner la représentation visuelle de la forme ]A,B[
+##ENDDESCRIPTION
+
+## DBsubject('Mise à niveau secondaire 4')
+## DBchapter('Notions de base')
+## DBsection('Ensembles et intervalles')
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## KEYWORDS('fran&ccedil;ais', 'entier', 'intervalle', 'ensembles')
+
+###########################################################################
+
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+"parserRadioButtons.pl",
+);
+
+TEXT(beginproblem());
+
+
+# créer les deux points A et B
+$a=random(-10,0);
+$b=random(1,10);
+
+# créer les quatre séries de parenthèses possibles à assigner aux points pour l'intervalle à soumettre en question
+$parenthese1g="]";
+$parenthese1d= "[";
+$parenthese2g="[";
+$parenthese2d="[";
+$parenthese3g="[";
+$parenthese3d="]";
+$parenthese4g="]";
+$parenthese4d="]";
+
+
+# créer les quatre possibilités de parenthèses (ouvertes ou fermées) pour l'intervalle A,B
+$choix=random(0,3);
+
+if ($choix==0)
+  {    
+     $parenthesegauche=$parenthese1g;
+     $parenthesedroite=$parenthese1d;
+     $reponse="1"; 
+  }
+elsif ($choix==2)
+  {    
+     $parenthesegauche=$parenthese2g;
+     $parenthesedroite=$parenthese2d;
+     $reponse="2"; 
+  }
+elsif ($choix==3)
+  {    
+     $parenthesegauche=$parenthese3g;
+     $parenthesedroite=$parenthese3d;
+     $reponse="3"; 
+  }
+else
+  {    
+     $parenthesegauche=$parenthese4g;
+     $parenthesedroite=$parenthese4d;
+     $reponse="4"; 
+  }
+
+
+#créer les énoncés en mettant les bonnes parenthèses dans l'énoncé
+$intervalleAB="$parenthesegauche"."A,B"."$parenthesedroite";
+$intervalle="$parenthesegauche"."$a".","."$b"."$parenthesedroite";
+
+# assigner chacun de ces trois nombres d&eacute;cimaux &agrave; c&ocirc;t&eacute; d'un bouton radio &agrave; choisir en choix de r&eacute;ponse
+$radio = RadioButtons(["Représentation 1","Représentation 2","Représentation 3","Représentation 4"],"Représentation $reponse");
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>Soit l'intervalle <b>$intervalleAB</b>  =  <b>$intervalle</b>;  <br>
+choisir la représentation visuelle correspondante: <br/><br/>
+\{ image( "intervalle_fini.jpg", width=>200, height=>200) \}<br/><br/>
+
+\{ $radio->buttons() \}
+  </td></tr>
+</table>
+END_TEXT
+
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Un point vide est utilisé pour représenter un crochet ouvert et un point plein est utilisé pour représenter un crochet fermé.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( $radio->cmp() );
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+
+<p>&nbsp;<u>Solution</u></p>
+
+Soit l'intervalle <b>$intervalleAB</b>  =  <b>$intervalle</b>;  <br>
+choisir la représentation visuelle correspondante: <br/><br/>
+\{ image( "intervalle_fini.jpg", width=>200, height=>200) \}<br/><br/>
+Un point vide est utilisé pour représenter un crochet ouvert et un point plein est utilisé pour représenter un crochet fermé. <br/><br/>
+Donc pour <b>$intervalleAB</b>  =  <b>$intervalle</b>, la représentation visuelle correspondante est celle du numéro $reponse.<br/><br>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

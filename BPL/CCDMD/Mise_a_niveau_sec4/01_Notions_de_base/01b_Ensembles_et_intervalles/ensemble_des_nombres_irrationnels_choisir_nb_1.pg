@@ -1,0 +1,118 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Notions de Base - Ensembles et intervalles
+#     type de question - ensemble des nombres, choisir ceux qui sont irrationnels
+##ENDDESCRIPTION
+
+## DBsubject(Logique et théorie des ensembles)
+## DBchapter(Théorie des ensembles)
+## KEYWORDS('Z (ensemble de nombres)')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+
+###########################################################################
+
+
+DOCUMENT();  
+
+loadMacros(
+"PGstandard.pl",
+"PGchoicemacros.pl",
+);
+
+TEXT(beginproblem());
+
+# création de la variable qui présentera tous les choix de réponses (bonnes et mauvaises) sous forme de choix multiple
+$mc = new_checkbox_multiple_choice();
+
+
+# créer les réponses
+
+$decimale= random(1,9) + (random(1,9))/10;
+$nb= $nb1+random(2,8);
+$pi=$nb."&#960;";
+$num=random(1,5);
+$den=random ($num,9);
+$fraction=$num."/".$den;
+$racine=random(3,7,2);
+$racinerep=sqrt($racine);
+$nbperiodique= "1.6666...";
+
+# afficher les réponses possibles
+$mc -> qa (" ", $pi, "racine carrée de $racine",);
+$mc -> extra($decimale, $fraction,$nbperiodique,);
+
+
+BEGIN_TEXT
+<br/>Parmi les nombres suivants, lesquels sont des nombres irrationnels ? <br/>
+
+\{ $mc -> print_a() \}
+
+END_TEXT
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text=" &#960; = 3.14159... et 3 &#960; = 3 x 3.14159... ";
+break;
+case '2':text=" Un nombre périodique peut s'écrire sous la forme d'une fraction. ";
+break;
+case '3':text=" Un nombre irrationnel est un nombre dont la représentation décimale est infinie non périodique. ";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+ANS( checkbox_cmp( $mc->correct_ans() ) );
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+
+<p>&nbsp;<u>Solution</u></p>
+
+<br/>Parmi les nombres suggérés ceux qui sont des nombre irrationnels sont les suivants: <br/>
+
+- le nombre $pi appartient à l'ensemble des nombres irrationnels, car $pi = $nb x 3.14159 ...<br/>
+- la racine carrée de $racine = $racinerep...  Par conséquent, c'est un nombre irrationnel. <br/><br/>
+
+Note:  <br/>
+Attention, tous les nombres périodiques, comme $nbperiodique, peuvent être présentés sous la forme d'une fraction (ici, la fraction 5/9). Par conséquent, ils sont inclus dans l'ensemble des nombres rationnels.<br/><br/>
+
+Pour mieux comprendre la réponse, voici les ensembles de nombres:
+\{ image( 'nombres_reels.jpg', width=>550, height=>300) \}<br/>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();

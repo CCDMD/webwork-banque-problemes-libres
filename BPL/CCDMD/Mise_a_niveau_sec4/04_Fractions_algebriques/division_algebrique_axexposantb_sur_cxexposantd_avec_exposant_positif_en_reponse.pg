@@ -1,0 +1,129 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section fractions algébriques
+#     type de question - Division algébrique de la forme ax^b / cx^d avec exposant positif dans la réponse
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('division', 'propriétés des exposants', 'simplification', 'équivalence')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+);
+
+
+TEXT(beginproblem());
+
+# créer les valeurs des coefficients, avec celui du dénominateur qui est un multiple de celui du numérateur
+
+$c= random(2,8);
+$mult=random(2,6);
+$a=$c*$mult;
+
+# créer les valeurs des deux exposants
+$exp1=random(4,8);
+$exp2=random(2,($exp1-1));
+
+# créer l'exposant réponse
+$exp=$exp1-$exp2;
+
+# déclarer la lettre qui seront la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real");
+$x="x";
+
+# créer la réponse
+$reponse=Formula("($mult$x^$exp)");        
+
+
+
+BEGIN_TEXT
+<h1>Question:</h1><br/>
+Effectuer la division suivante:  <br/>
+<br/><br/>
+\(  \dfrac{{$a}{x^$exp1} }{ {$c}{x^$exp2} }\)
+<br/><br/>
+\{ans_rule(10)\}<br/><br/>
+
+Note: Écrire les exposants sous la forme x^2 (pour indiquer x<sup>2</sup>).<br/>
+
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Lorsque deux variables identiques munies d'exposants sont divisées, leurs exposants sont soustraits. Donc,x<sup>m</sup> / x<sup>n</sup> = x<sup>(m - n)</sup>.";
+break;
+case '2':text="Ne pas oublier qu'une variable munie d'un exposant de valeur 0 est équivalent à la constante 1.";
+break;
+case '3':text="Lorsqu'une variable finale est munie d'un exposant négatif, simplement inverser sa position dans la fraction (si la variable est au numérateur, la mettre au dénominateur ou vice-versa), et lui attribuer l'exposant dans sa forme positive (soit la valeur absolue de l'exposant).";
+break;
+case '4':text="Il ne faut pas oublier de diviser les coefficients accompagnant deux termes algébriques divisés.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<button type="button" name="4" onclick="hint(this)">Astuce 4</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+
+ANS($reponse->cmp);
+
+BEGIN_SOLUTION
+$PAR <u>Solution</u> $PAR
+
+Effectuer la division suivante: <br/>
+\(  \dfrac{$a$x^$exp1 }{$c$x^$exp2 } \)<br/><br/>
+
+Nota: Écrire les exposants sous la forme x^2 (pour indiquer x<sup>2</sup>)<br/>
+<br/><br/>
+
+Simplifier tous les termes présents. Ici, le numérateur $a et le dénominateur $c peuvent être simplifiés.  Les variables x peuvent aussi être simplifiés. Lors d'une division de variables, il suffit de soustraire leurs exposants pour obtenir l'exposant final. <br/><br/>
+
+<table>
+  <tr>
+    <td>\(  \dfrac{$a x^$exp1}{$c x^$exp2} \)</td>
+    <td>&nbsp; = &nbsp;  \(  \dfrac{ ($a)(x^$exp1)}{($c)($x^$exp2)} \)</td>
+    <td>&nbsp; = &nbsp;  \(  \dfrac{ ($mult)(x^$exp1)}{($x^$exp2)} \)</td>
+    <td>&nbsp; = &nbsp;  \(  ($mult)(x^{$exp1-$exp2}) \)</td>
+    <td>&nbsp; = &nbsp;  \(  ($mult)(x^$exp) \) =  \(  {$mult}{x^$exp} \)</td>
+  </tr>
+</table>
+<br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

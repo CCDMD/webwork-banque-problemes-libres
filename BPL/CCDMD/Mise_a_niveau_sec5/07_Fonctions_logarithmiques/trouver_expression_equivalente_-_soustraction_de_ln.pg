@@ -1,0 +1,134 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions logarithmiques
+#     type de question - Trouver une expression équivalente (avec une soustraction de ln)
+##ENDDESCRIPTION
+
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Fonction exponentielle et logarithmique)
+## KEYWORDS('base e', 'fonction logarithmique', 'logarithme', 'propriétés des logarithmes')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+"parserRadioButtons.pl",
+  "PGchoicemacros.pl",
+);
+
+
+
+TEXT(beginproblem());
+
+# déterminer les valeurs à insérer dans chaque fonction exponentielle à afficher
+
+$a= random(2,6);
+
+do {
+  $b= random(2,6);
+  $c= random(2,4);
+  $d= random(2,5);
+  $e= -$b*$c + $d;
+} until (($b*$c != $d) & ($e < 5) & ($e > 0) );
+
+$f = $a**$e;
+$g="1/$f";
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real",y=>"Real");
+$lettrex="x";
+$lettrey="y";
+
+# attribuer les différentes fonctions à proposer, dont la bonne réponse
+$choixa="\( \displaystyle \ln($lettrex^$a - $b$lettrey)  \)   <br/>";
+$choixb="\( \displaystyle \ln($a$lettrex - $b$lettrexy)  \)   <br/>";
+$choixc="­\( \displaystyle \ln \left( \dfrac{$lettrex^$a}{$b$lettrey} \right) \)  <br/>";
+$choixd="\( \displaystyle \dfrac{\ln($lettrex^$a)}{\ln($b$lettrey)}  \)  <br/> ";
+
+# afficher la bonne réponse, ainsi que les autres réponses possibles
+$radio= new_multiple_choice();
+$radio -> qa ("x",$choixc,);
+$radio ->extra ($choixa,$choixb,$choixd);
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>
+Trouver l'expression équivalente à \($a \ln($lettrex) - \ln($b$lettrey)\).
+<br/><br/>
+
+\{ $radio -> print_a() \}
+<br/>
+  </td></tr>
+</table>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Le coefficient d'un logarithme peut aussi être apposé comme puissance à la variable de ce logarithme, ce qui permet d'isoler le logarithme. Par exemple, 2 ln x est équivalent à  ln x<sup>2<\sup>.";
+break;
+case '2':text="Lorsque deux logarithmes sont soustraits, il est possible d'écrire le tout sous forme d'un seul logarithme naturel, en divisant les deux variables des logarithmes originaux soustraits. Par exemple,  ln 3x - ln 2y  est équivalent à ln (3x / 2y). Si les deux logarithmes sont additionnés, les deux variables du logarithme résultant seront plutôt multipliées.";
+break;default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS( checkbox_cmp( $radio->correct_ans() ) );
+
+BEGIN_SOLUTION
+<br/> <u>Solution</u> <br/>
+Trouver l'expression équivalente à \($a \ln($lettrex) - \ln($b$lettrey)\).
+<br/><br/><br/>
+
+
+Il est possible de regrouper deux logarithmes en un seul logarithme si ceux-ci sont isolés, c'est-à-dire qu'ils ne sont pas impliqués dans d'autres opérations. Or le premier logarithme est multiplié par un coefficient. Toutefois, un tel coefficient peut être transféré sous forme de puissance à la variable de ce logarithme, comme suit:
+<br/><br/>
+
+&nbsp; &nbsp; \($a \ln($lettrex) - \ln($b$lettrey)\) <br/>
+&nbsp; &nbsp; \(\ln($lettrex^{$a}) - \ln($b$lettrey)\) <br/><br/>
+
+Ces deux logarithmes peuvent maintenant être regroupés en un seul en multipliant leur contenu si ces deux logarithmes sont additionnés, ou en divisant leur contenu s'ils sont soustraits.<br/><br/>
+
+&nbsp; &nbsp; \(\ln($lettrex^{$a}) - \ln($b$lettrey)\) <br/>
+&nbsp; &nbsp; \(\ln\left(\frac{$lettrex^{$a}}{$b$lettrey}\right)\) <br/><br/>
+
+Cette transformation est égale au choix de réponse suivant: <strong> $choixc </strong>
+<br/><br/>
+
+END_SOLUTION
+
+ENDDOCUMENT();

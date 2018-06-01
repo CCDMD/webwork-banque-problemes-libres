@@ -1,0 +1,140 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions exponentielles
+#     type de question - Résoudre une équation exponentielle (difficile)
+##ENDDESCRIPTION
+
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Fonction exponentielle et logarithmique)
+## KEYWORDS('base', 'changement de base', 'propriétés des exposants', 'solution', 'équation exponentielle')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+############################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+);
+
+
+TEXT(beginproblem());
+# définir les valeurs de a, e et f dans l'équation
+
+$a=random(2,5);
+do 
+{
+  $b=random(2,6);
+  $c=random(2,4);
+  $exp1=random(2,5);
+} until ( ($b != $c) & ($b != $c*$c) & ($exp1 !=$c ));
+
+$exp1b= $exp1*$b;
+
+
+if (($c/$exp1b) == int($c/$exp1b)) { $d=$c/$exp1b;}
+else 
+{
+   $gcd=gcd($c,$exp1b);
+   if ($gcd==1){$d="$c/$exp1b";}
+   else { $dnum=$c/$gcd;
+             $dden=$exp1b/$gcd;
+             $d="$dnum/$dden";
+           } 
+ }
+
+$aexp1= $a**$exp1;
+$e = $a**$c;
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+# déterminer la réponse
+$rep= Formula("$d");
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px">
+  <tr><td>
+
+<h1>Question : </h1>
+<br/>
+Trouver la valeur de \($lettre \) si \(  {$aexp1}^{$b$lettre} = {$e} \)
+<br/><br/>
+
+\($lettre =\) \{ans_rule(10)\} 
+<br/> 
+Note: Si la réponse est une fraction, simplifer cette fraction et l'inscrire en séparant son numérateur de son dénominateur avec la barre oblique /.  <br/><br/>
+  </td></tr>
+</table>
+END_TEXT
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Tout d'abord, placer la valeur de droite ($e) dans la même base que l'expression de gauche ($aexp1), c'est à dire dans la base $a. Puisque vous aurez la même base des deux côtés, vous pourrez poser l'égalité des exposants et isoler x.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS($rep->cmp);
+
+
+SOLUTION(EV3(<<'END_SOLUTION'));
+<p><u>Solution</u></p>
+Trouver la valeur de <i>$lettre</i> si \(  {$aexp1}^{$b$lettre} = {$e} \)
+<br/><br/>
+
+<i>$lettre</i> =  ________
+<br/> 
+Note: Si la réponse est une fraction, simplifer cette fraction et l'inscrire en séparant son numérateur de son dénominateur avec la barre oblique /. 
+<br/><br/><br/>
+
+Tout d'abord, nous pouvons déterminer que les valeurs $aexp1 et $e s'expriment en base <strong>$a</strong>. Par conséquent: <br/><br/>
+
+&nbsp; &nbsp;  \(  \left( {$a^$exp1} \right) ^{$b$lettre} = $a^$c \) &nbsp; &nbsp;  puisque \( $aexp1 = $a^$exp1 \) et que \( $e = $a^$c \)  <br/><br/>
+
+&nbsp; &nbsp;  \( {$a}^{($exp1)($b$lettre)} = $a^$c \) &nbsp; &nbsp;  avec les lois des exposants <br/><br/>
+
+&nbsp; &nbsp;  \( {$a}^{$exp1b$lettre} = $a^$c \) &nbsp; &nbsp; <br/><br/>
+
+&nbsp; &nbsp;  \( $exp1b$lettre = $c \) &nbsp; &nbsp; puisque les bases sont égales<br/><br/>
+
+&nbsp; &nbsp;  \( $lettre = \dfrac{$c}{$exp1b}  \) &nbsp; &nbsp;<br/><br/><br/>
+
+D'où la réponse:  x = <strong>$d</strong>
+<br/><br/>
+END_SOLUTION
+
+ENDDOCUMENT();

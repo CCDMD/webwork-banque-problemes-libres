@@ -1,0 +1,217 @@
+#DESCRIPTION
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     section Mise à niveau secondaire 5 - Fonctions avec racines carrées
+#     type de question -Résoudre l'inéquation ayant une racine carrée (très facile)
+##ENDDESCRIPTION
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Équations et inéquations algébriques)
+## KEYWORDS('factorisation', 'forme factorisée', 'formule quadratique', 'intervalle', 'inéquation', 'inéquation quadratique', 'tableau de signes', 'équation avec radical')
+
+## Author('Diane Bergeron et Louise Pellerin')
+## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Taxonomie('Roxane Rodrigue')
+###########################################################################
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+  "PGgraphmacros.pl",
+);
+
+TEXT(beginproblem());
+
+# créer les valeurs de l'équation
+
+$denum=random(2,5);
+
+do {
+  $n1=random(1,7);
+  $b=$denum*$denum;
+  $n2= $b + $n1;
+} until ($n2 >$n1);
+
+
+# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
+Context()->variables->are(x=>"Real");
+$lettre="x";
+
+#déterminer les autres valeurs requises pour la solution
+$c= -$n1*$n2;
+$cabs=abs($c);
+$gcd=gcd($cabs,$b);
+if ($gcd != 1) {$cnum=$cabs/$gcd; $cdenum=$b/$gcd;}
+else  {$cnum=$cabs; $cdenum=$b;}
+
+if ($cdenum==1) {$cte= $cnum;}
+else {$cte = "$cnum/$cdenum";}
+
+$xsommet=-$b/2;
+$ysommet=$xsommet*$xsommet + $b*$xsommet - $cabs;
+
+
+# déterminer la réponse
+if ($cte >$n1) {$rep= "(-infini,-$n2) U ($n1,$cte ]";}
+else {$rep=  "(-infini,-$n2)";}
+
+
+#créer le graphique de la fonction quadratique résultante, afin de pouvoir l'afficher dans la solution
+$gxneg= -$n2-5;
+$gxpos= $n1+5;
+$gyneg=$ysommet - 5;
+$gypos=30;
+
+$graphique=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
+add_functions($graphique, "(x^2  + $b$lettre - $cabs) for x in <$gxneg,$gypos> using color:blue and weight:2 ");
+
+$gx=5; 
+$gy= 10;
+
+for ($i = 0; $i <= int( ($gxpos /$gx) +1); $i++)
+  {
+     $graphique->lb(new       Label($gx*$i+$gx+0.2,-0.15,$gx*$i+$gx,'black','center','top'));
+     $graphique->moveTo($gx*$i+$gx+0.2,-0.15); 
+   }
+for ($i = 0; $i <= int( (-$gxneg/$gx) +1); $i++)
+  {
+     $graphique->lb(new Label(-$gx*$i-$gx-0.2,-0.15,-$gx*$i-$gx,'black','center','top'));
+     $graphique->moveTo(-$gx*$i-$gx-0.2,-0.15); 
+   }
+for ($i = 0; $i <= int( 1+($gypos/$gy)); $i++)
+  {
+     $graphique->lb(new Label(-0.5,$gy*$i+$gy,$gy*$i+$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, $gy*$i+$gy); 
+   }
+for ($i = 0; $i <= int( 1+(-$gyneg/$gy)); $i++)
+  {
+     $graphique->lb(new Label(-0.5,-$gy*$i-$gy+0.4,-$gy*$i-$gy,'black','right','top'));
+     $graphique->moveTo(-0.5, -$gy*$i-$gy+0.4); 
+   }
+
+
+$graphique->stamps( closed_circle(-$n2,0,'blue') );
+$graphique->stamps( closed_circle($n1,0,'blue') );
+
+
+
+BEGIN_TEXT
+<table cellpadding="10px" width="850px" >
+  <tr><td>
+
+<h1>Question:</h1><br/>
+
+Résoudre l'expression suivante:   \(   \frac{1}{$denum} x \gt \sqrt {\frac{$cnum}{$cdenum} - $lettre} \)<br/><br/>
+
+\(x\in\)  \{ans_rule(20)\} <br/>
+<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels, entrer: <b>R</b><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: <b>aucun </b><br/>
+
+  </td></tr>
+</table>
+<br/>
+END_TEXT
+
+
+BEGIN_HINT
+<script>
+function hint(hint){
+var text ="";
+var hintName =hint.name;
+switch(hintName){
+case '1':text="Trouver l'intervalle dans lequel la solution doit être incluse.";
+break;
+case '2':text="Isoler une racine carrée d'un côté de l'inégalité et élever au carré de chaque côté de l'inégalité.  Isoler x pour en trouver l'ensemble solution";
+break;
+case '3':text="Retrouver la forme x<sup>2</sup>+bx +c > 0 et factoriser.";
+break;
+case '4':text="La racine carrée d'une valeur négative est non-définie.";
+break;
+default:text=""
+}document.getElementById("hintspace").style.display='block';
+document.getElementById("hinttext").innerHTML=text;
+document.getElementById("hintName").innerHTML="Astuce "+hintName;
+}
+function resetHint(){document.getElementById("hintspace").style.display='none';document.getElementById("hinttext").innerHTML="";}
+</script>
+
+<button type="button" name="1" onclick="hint(this)">Astuce 1</button>&nbsp;
+<button type="button" name="2" onclick="hint(this)">Astuce 2</button>&nbsp;
+<button type="button" name="3" onclick="hint(this)">Astuce 3</button>&nbsp;
+<button type="button" name="4" onclick="hint(this)">Astuce 4</button>&nbsp;
+<div id="hintspace" style="width:800px;display:none;border:1px solid darkblue;">
+<table width="100%" border="0" cellspacing="0">
+  <tr style="background-color:#8888dd;">
+    <td valign="top" align="left"  width="50%">
+      <text id="hintName" style="color:white;padding-left:15px;"></text>
+    </td>
+    <td valign="top" align="right" width="50%">
+      <text style="color:white;cursor:pointer; padding-right:5px;" onclick="resetHint()" >Fermer [x]</text>
+    </td>
+  </tr>
+  <tr style="background-color:#b0c4de;">
+    <td id="hinttext" colspan="2"style="color:black;padding:15px;"></td>
+  </tr>
+</table>
+</div>
+END_HINT
+
+ANS(str_cmp($rep,'remove_whitespace')); 
+
+
+BEGIN_SOLUTION
+
+Résoudre l'expression suivante:   \(   \frac{1}{$denum} x \gt \sqrt {\frac{$cnum}{$cdenum} - $lettre} \)<br/>
+
+\(x\in\)  ___________ <br/>
+<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
+&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
+&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
+&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels, entrer: <b>R</b><br/>
+&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: <b>aucun </b>
+<br/><br/><br/>
+
+$PAR <u>Solution</u> $PAR
+
+Tout d'abord, déterminons l'intervalle dans lequel la solution doit être incluse:<br/><br/>
+\(  \sqrt {\frac{$cnum}{$cdenum} - $lettre} \)<br/> &nbsp; est définie si :<br/>
+&nbsp; &nbsp;   \(\frac{$cnum}{$cdenum} - $lettre \ge 0 \)<br/>
+&nbsp; &nbsp;  donc si \( -$lettre \ge -\frac{$cnum}{$cdenum} \)<br/>
+&nbsp; &nbsp;  donc si \( $lettre \le \frac{$cnum}{$cdenum} \)<br/>
+<br/>
+Par conséquent, on cherche un ensemble solution de l'inéquation dans l'intervalle ]-&#8734;, $cte ]<br/><br/>
+
+
+De façon générale, pour résoudre des équations intégrant une ou des racine(s) carrée(s), il faut d'abord isoler une racine carrée d'un côté de l'inéquation et  élever au carré de chaque côté de l'inégalité:<br/><br/>
+
+ \(  \frac{1}{$denum} x \gt \sqrt {\frac{$cnum}{$cdenum} - $lettre} \)<br/>
+ \( ( \frac{1}{$denum} x)^2 \gt (\sqrt {\frac{$cnum}{$cdenum} - $lettre})^2 \)<br/>
+ \(  \frac{1}{$b} x^2 \gt \frac{$cnum}{$cdenum} - $lettre \)<br/>
+ \(  \frac{x^2}{$b} \gt \frac{$cnum}{$cdenum} - $lettre \)<br/>
+ \(  x^2 \gt $b(\frac{$cnum}{$cdenum} - $lettre) \)<br/>
+ \(  x^2 \gt $cabs - $b$lettre \)<br/>
+ \(  x^2  + $b$lettre - $cabs \gt 0 \)<br/>
+ \(  (x + $n2)($lettre - $n1) \gt 0 \)<br/><br/>
+
+
+Voici le graphique de la parabole  \( f(x) =   x^2  + $b$lettre - $cabs = (x + $n2)($lettre - $n1) \), avec les zéros à x = -$n2  et x = $n1. <br/><br/>
+\{ image(insertGraph($graphique), width=>250, height=>250, tex_size=>500) \}
+
+<br/><br/>
+Nous cherchons ici à résoudre \( (x + $n2)($lettre - $n1) > 0 \), ce qui veut dire quand cette parabole est au-dessus de l'axe des x (vous pouvez également faire un tableau des signes). Nous trouvons la solution de cette dernière inéquation comme suit: <br/>
+ <i>x</i>  &#8712; ] - &#8734;, -$n2 )   U   ( $n1,&#8734;[.<br/><br/>
+
+Puisque \(x\in\) ]-&#8734;, $cte], l'ensemble solution de l'inéquation  est donc:<strong>$rep</strong>
+<br/><br/>
+
+
+END_SOLUTION
+
+ENDDOCUMENT();
