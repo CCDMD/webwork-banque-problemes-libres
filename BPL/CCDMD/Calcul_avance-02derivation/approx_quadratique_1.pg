@@ -7,6 +7,9 @@
 ## Date : avril 2017
 ## Language(fr)
 
+# Modif. avril 2018 (par É. Gaul) : Augmenté la tolérance pour la
+# reconnaissance plus facile du polynôme Q(x, y) par la AnswerChecker
+ 
 
 ########################################################################
 
@@ -33,7 +36,11 @@ $showPartialCorrectAnswers = 1;
 
 Context("Numeric");
 Context()->variables->add(y => 'Real');
-
+Context()->flags->set(
+      tolerance    => .001,       # the relative or absolute tolerance
+      tolType      => 'relative',  # or 'absolute'
+    );
+    
 $a = random(2,5);
 $b = random(2,5);
 while($a == $b) {
@@ -71,10 +78,10 @@ $fyy0 = $fyy -> eval(x=>$x0,y=>$y0);
 $fxy0 = $fxy -> eval(x=>$x0,y=>$y0);
 
 $L = Formula("$z0 + $fx0*(x - $x0) + $fy0*(y - $y0)");
-$Q = Formula("$fxx0*(x-$x0)^2/2 + $fxy0*(x-$x0)*(y-$y0) + $fyy0*(y-$y0)^2/2") + $L;
+$Quad = Formula("$fxx0*(x-$x0)^2/2 + $fxy0*(x-$x0)*(y-$y0) + $fyy0*(y-$y0)^2/2") + $L;
 
 $L1 = $L -> eval(x=>$x1,y=>$y1);
-$Q1 = $Q -> eval(x=>$x1,y=>$y1);
+$Q1 = $Quad -> eval(x=>$x1,y=>$y1);
 $f1 = $f -> eval(x=>$x1,y=>$y1);
 
 
@@ -94,30 +101,35 @@ $f1 = $f -> eval(x=>$x1,y=>$y1);
 #[`[$L]`]  
 #[`[$Q]`]  
 
+$varstring = join(',',Context()->variables->names);
+
 BEGIN_PGML
+
+[$Quad]
+
 Soit la fonction [`f(x, y) = [$f]`].
 
-*(a)* Trouver la fonction [`L(x, y)`] représentant l'approximation linéaire de [`f(x, y)`]
+(a) Trouver la fonction [`L(x, y)`] représentant l'approximation linéaire de [`f(x, y)`]
 au point [`([$x0], [$y0])`] :
 
     [`L(x, y) = `] [_________________________________________________]{$L}
 
-*(b)* Trouver la fonction [`Q(x, y)`] représentant l'approximation quadratique de [`f(x, y)`]
+(b) Trouver la fonction [`Q(x, y)`] représentant l'approximation quadratique de [`f(x, y)`]
 au point [`([$x0], [$y0])`] :
 
-    [`Q(x, y) = `] [__________________________________________________________________________________________________]{$Q}
+    [`Q(x, y) = `] [__________________________________________________________________________________________________]{"$Quad"}
     
-*(c)* Utiliser [`L(x, y)`] pour approximer [`f(x, y)`] au point [`([$x1], [$y1])`] :
+(c) Utiliser [`L(x, y)`] pour approximer [`f(x, y)`] au point [`([$x1], [$y1])`] :
 
-    [`f([$x1], [$y1]) \approx `] [_______________]{num_cmp($L1, reltol=>0.001) } (Utiliser le maximum de chiffres significatifs.)
+    [`f([$x1], [$y1]) \approx `] [_______________]{num_cmp($L1, reltol=>0.001) } (en utilisant maximum de chiffres significatifs)
 
-*(d)* Utiliser [`Q(x, y)`] pour approximer [`f(x, y)`] au point [`([$x1], [$y1])`] :
+(d) Utiliser [`Q(x, y)`] pour approximer [`f(x, y)`] au point [`([$x1], [$y1])`] :
 
-    [`f([$x1], [$y1]) \approx `] [_______________]{num_cmp($Q1, reltol=>0.001) } (Utiliser le maximum de chiffres significatifs.)
+    [`f([$x1], [$y1]) \approx `] [_______________]{num_cmp($Q1, reltol=>0.001) } (en utilisant maximum de chiffres significatifs)
 
-*(e)* Calculer précisément [`f([$x1], [$y1])`] :
+(e) Calculer précisément [`f([$x1], [$y1])`] :
 
-    [`f([$x1], [$y1]) = `] [_______________]{num_cmp($f1, reltol=>0.001) } (Utiliser le maximum de chiffres significatifs.)
+    [`f([$x1], [$y1]) = `] [_______________]{num_cmp($f1, reltol=>0.001) } (en utilisant maximum de chiffres significatifs)
     
 Constater laquelle des deux approximations, linéaire ou quadratique, est la plus précise.
 END_PGML
