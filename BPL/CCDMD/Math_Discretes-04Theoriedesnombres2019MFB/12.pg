@@ -1,0 +1,79 @@
+## DBsubject(Théorie des nombres)
+## DBchapter(Théorie des nombres élémentaire)
+## KEYWORDS('PGCD', 'PPCM', 'algorithme d\'Euclide')
+## Traduction et adaptation (Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##########################################SOURCE################
+## Institution(SDSU)
+## Author(Thomas Schmidt','Michael E. O'Sullivan)
+## MLT(FindLCM)
+## MLTleader(1)
+##########################################SOURCE################
+## Level(1)
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl"
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 0;
+
+$a = random(17,299);
+$b = random(32,899);
+
+$answer = Compute(lcm($a,$b));
+$PGCD=gcd($a,$b);
+sub lcm {
+	my $x = shift;
+	my $y = shift;
+
+	return abs($x*$y)/gcd($x,$y);
+}
+
+sub gcd {
+	my $n = shift;
+	my $d = shift;
+	my $r = ($n % $d);
+
+	while ($r > 0) {
+		$n = $d;
+		$d = $r;
+		$r = ($n % $d);
+	}
+	return $d;	
+}
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Déterminer le plus petit commun multiple de $a et $b. $BR
+$BR
+\(\mathrm{PPCM}($a,$b) =\) \{ans_rule(5)\}
+END_TEXT
+Context()->normalStrings;
+
+
+
+ANS($answer->cmp());
+
+
+
+Context()->texStrings;
+SOLUTION(EV3(<<'END_SOLUTION'));
+$PAR Solution : $PAR
+Nous utiliserons l'égalité suivante : $PAR
+\(PPCM(a,b)\cdot PGCD(a,b) = |a\cdot b|.\)$PAR 
+En utilisant l'algorithme d'Euclide, nous trouvons \(PGCD($a,$b)={$PGCD} \),$PAR
+ainsi \(PPCM($a,$b) = \frac{|$a\cdot $b|}{$PGCD}= $answer\).
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

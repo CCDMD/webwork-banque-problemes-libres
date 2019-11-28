@@ -1,0 +1,160 @@
+## DBsubject(Mathématiques discrètes)
+## DBchapter(Relation de récurrence)
+## KEYWORDS('degré 1','degré 2','solution particulière')
+## Auteure (Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(2)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+    "PGstandard.pl",
+    "MathObjects.pl",
+    "PGcourse.pl",
+    "PGchoicemacros.pl",
+);
+
+
+
+TEXT(beginproblem());
+
+
+$a = random(2,6);
+    do 
+    {
+    $a0 = random(1,6);
+    }until ($a!=$a0);
+
+
+$b = random(2,4);
+    do 
+    {
+    $c = random(1,6);
+    } until ($b!=$c);
+
+$x=(1-$b);
+$d=$x/(1-$b);
+##Dans ce cas particulier d=1 est remplacé dans la solution pour un meilleur affichage.
+$e=-$b*$d/(1-$b);
+$b0=$c+$e;
+
+
+$A = random(2,8);
+    do {
+    $B = random(2,6);
+    $C=random(2,8);
+    $D=random(2,9);
+     } until (($B!=$A)&&($B!=$D)&&($C!=$A)&&($C!=$D));
+     
+$m=$A+$B;
+$n=$A*$B;
+$B0=$C+$D;
+$B1=$C*$A+$D*$B;
+
+
+
+
+$mc = new_checkbox_multiple_choice();
+
+$mc -> qa (
+"  1.
+\( a_n=a_{n-1}+$a\) si \( n>0\) et \( a_0=$a0\)", 
+"\( a_n=$a0+$a n \)"             
+);
+
+$mc -> extra(
+"\( a_n=$a0 n+$a0 \)","\( a_n=$a n \)","\( a_n=$a^n+$a0 \)"
+);
+
+$mc -> makeLast("Aucune de ces suites");
+
+
+
+
+
+$mc2 = new_checkbox_multiple_choice();
+
+$mc2 -> qa (
+" 3. 
+\( a_n=$b a_{n-1}+$x n\) si \( n>0\) et \( a_0=$b0\)", 
+"\( a_n=$c\cdot $b^n+n +$e\)"             
+);
+
+$mc2 -> extra(
+"\( a_n=$c\cdot $c^n+ n +$e \)","\( a_n=$c\cdot $b^n+$e \)","\( a_n=$c\cdot $c^n+n\)"
+);
+
+$mc2 -> makeLast("Aucune de ces suites");
+
+
+
+$mc3 = new_checkbox_multiple_choice();
+
+$mc3 -> qa (
+" 2. 
+\( a_n=$m a_{n-1}-$n a_{n-2}\) si \( n>1\) , \( a_0=$B0\) et \( a_1=$B1\)", 
+"\( a_n=$C\cdot $A^n+$D \cdot $B^n\)"             
+);
+
+$mc3 -> extra(
+"\( a_n=$A\cdot $C^n+$B \cdot $D^n \)","\(   a_n=$C\cdot $B^n+$D \cdot $A^n  \)","\(  a_n=$A\cdot $C^n+$A \cdot $D^n\)"
+);
+
+$mc3 -> makeLast("Aucune de ces suites");
+
+
+
+
+
+
+$a3 = random(1,6);
+$a4 = random(1,6);
+$a5 = random(1,6);
+$a6 = random(1,6);
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Parmi les suites \( \lbrace a_n \rbrace \), déterminer celle qui est la solution particulière de la récurrence donnée.
+$PAR
+
+$BR
+\{ $mc -> print_q() \}
+$BR
+\{ $mc -> print_a() \}
+$PAR
+
+
+$BR
+\{ $mc3 -> print_q() \}
+$BR
+\{ $mc3 -> print_a() \}
+$PAR 
+
+
+$BR
+\{ $mc2 -> print_q() \}
+$BR
+\{ $mc2 -> print_a() \}
+
+
+
+END_TEXT
+Context()->normalStrings;
+
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 0;
+
+
+
+ANS( checkbox_cmp( $mc->correct_ans() ) );
+
+ANS( checkbox_cmp( $mc3->correct_ans() ) );
+
+ANS( checkbox_cmp( $mc2->correct_ans() ) );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

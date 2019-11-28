@@ -1,0 +1,77 @@
+## DBsubject(Mathématiques discrètes)
+## DBchapter(Combinatoire et dénombrement)
+## KEYWORDS('arrangement','avec restriction','principe du complément','principe du produit','sans répétition')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(2)
+
+
+DOCUMENT(); 
+
+loadMacros(
+    "PGstandard.pl",
+    "MathObjects.pl",
+    "PGcourse.pl"
+);
+
+TEXT(beginproblem());
+Context("Numeric"); 
+
+Context()->flags->set(
+  tolType => "absolute",
+);
+
+
+$a=random(6,11);
+$n=random(15,25);
+$b=$n-$a;
+$j=random(1,2);
+
+if ($j==1)
+{
+$L="un président, un vice président, un trésorier et un préposé au café";
+$c=4;
+}
+else
+{
+$L="un président, un vice président et un préposé au café";
+$c=3;
+}
+
+
+
+
+$rrep1=P($n,$c);
+$rrep2=$c*P($a,1)*P($b,$c-1);
+$rrep3=P($n,$c)-P($b,$c);
+$rep1=Compute("$rrep1");
+$rep2=Compute("$rrep2");
+$rep3=Compute("$rrep3");
+
+
+
+Context()->texStrings;
+
+BEGIN_TEXT
+$PAR 
+Dans votre équipe de travail, vous êtes \($a \) femmes et \( $b\) hommes. Vous désirez former un comité composé de \($c \) personnes dont $L.
+$PAR
+Combien de choix sont possibles?
+$PAR
+Réponse : \{ans_rule(10)\} comités différents.
+$PAR
+Si le comité doit avoir exactement une femme, combien de choix sont possibles?
+$PAR
+Réponse : \{ans_rule(10)\} comités différents.
+$PAR
+S'il doit y avoir au moins une femme dans le comité, combien de choix sont possibles?
+$PAR
+Réponse : \{ans_rule(10)\} comités différents.
+END_TEXT
+Context()->normalStrings;
+
+ANS( $rep1->cmp() );
+ANS( $rep2->cmp() );
+ANS( $rep3->cmp() );
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

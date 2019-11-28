@@ -1,0 +1,96 @@
+## DBsubject(Mathématiques discrètes)
+## DBchapter(Relation de récurrence)
+## KEYWORDS('degré 2','homogène','linéaire','résolution','solution particulière')
+## Auteure (Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(1)
+
+DOCUMENT();
+
+loadMacros(
+    "PGstandard.pl",
+    "MathObjects.pl",
+    "parserMultiAnswer.pl",
+    "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+ Context()->variables->add(n=>"Real");
+
+@a = ();
+@c = ();
+do {
+	foreach my $i ( 1..2 ) {
+		$a[$i] = non_zero_random(1,9);
+		$c[$i] = non_zero_random(-3,3);	
+	}
+   
+} until ( $a[1] != $a[2] );
+#Les 2 racines distinctes sont les $a[i] et les $c[i] seront les constantes de la solution particulière.
+
+
+#Calcul des coefficients du polynôme caractéristique
+
+$f=Formula("(x-$a[1])(x-$a[2])")->reduce;
+
+$b[1]=$f->eval(x=>0);
+$b[2]=$f->D('x')->eval(x=>0);
+
+
+
+$Poly=Formula("x^2+$b[2]*x+$b[1]")->reduce;
+
+#Les coefficients de la solution particulière sont fixés arbitrairement et nous calculons les conditions intiales en conséquant.
+
+#La relation de récurrence 
+
+
+
+$Solution=Formula(" $c[1]*($a[1])**n+ $c[2]*($a[2])**n");
+$d[0]=$Solution->eval(n=>0);
+$d[1]=$Solution->eval(n=>1);
+
+
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Soit la récurrence \( a_n=-$b[2]a_{n-1}-$b[1]a_{n-2}\) si \( n>1\) où \( a_0=$d[0]\) et \( a_1=$d[1] \).
+
+$PAR
+Le polynôme caractéristique associé à cette récurrence est donné par \( P(x)=$Poly \), dont les racines sont \( $a[1] \) et \( $a[2] \).
+$PAR
+La solution générale de cette récurrence est donnée par \[ a_n=c_1($a[1])^n+ c_2($a[2])^n. \]
+$PAR 
+À l'aide des conditions initiales, déterminer la solution particulière de cette récurrence.
+$PAR
+La solution particulière est donnée par \( a_n=\)\{ ans_rule(20) \}.
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( $Solution->cmp() );
+Context()->texStrings;
+BEGIN_SOLUTION
+${PAR}SOLUTION :${PAR}
+
+Il reste à trouver la valeur des deux constantes \( c_i\) en résolvant le système d'équations linéaires suivant.
+\[c_1($a[1])^0+ c_2($a[2])^0  =a_0=$d[0]\]
+\[c_1($a[1])^1+ c_2($a[2])^1 =a_1=$d[1]\]
+Ces constantes sont \( c_1=$c[1] \) et \( c_2=$c[2] \), et la solution particulière est donnée par \[a_n= $Solution \].
+
+
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+
+ENDDOCUMENT();

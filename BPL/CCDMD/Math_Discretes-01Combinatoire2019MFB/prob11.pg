@@ -1,0 +1,54 @@
+## DBsubject(Mathématiques discrètes)
+## DBchapter(Combinatoire et dénombrement)
+## KEYWORDS('arrangement','sans répétition')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##Level(1)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+    "PGstandard.pl",
+    "MathObjects.pl",
+    "PGchoicemacros.pl",
+    "PGcourse.pl"
+);
+
+TEXT(beginproblem());
+Context("Numeric"); 
+
+Context()->flags->set(
+  tolType => "absolute",
+);
+
+{
+$a=random(6,14);
+$b=random(5,11);
+redo if ($b>$a);
+}
+
+@L=("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O");
+@slice = NchooseK(15,$a) ;
+@L1 = @L[@slice];
+
+$rrep1=P($a,$b);
+$rep1=Compute("$rrep1");
+
+
+
+Context()->texStrings;
+
+BEGIN_TEXT
+$PAR 
+Combien de mots de \( $b\) lettres peut-on écrire avec les lettres \(@L1\) en n'utilisant une lettre qu'une seule fois?
+$PAR
+Réponse : \{ans_rule(10)\} mots différents.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $rep1->cmp() );
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

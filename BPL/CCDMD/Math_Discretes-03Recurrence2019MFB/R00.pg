@@ -1,0 +1,103 @@
+## DBsubject(Mathématiques discrètes)
+## DBchapter(Relation de récurrence)
+## KEYWORDS('degré 4 ou plus','homogène','linéaire')
+## Auteure (Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(4)
+
+
+DOCUMENT();
+
+loadMacros(
+    "PGstandard.pl",
+    "MathObjects.pl",
+    "parserMultiAnswer.pl",
+    "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+ Context()->variables->add(n=>"Real");
+
+@a = ();
+@c = ();
+do {
+	foreach my $i ( 1..5 ) {
+		$a[$i] = non_zero_random(-9,9);
+		$c[$i] = non_zero_random(-3,3);	
+	}
+   
+} until ( $a[1] != $a[2] && $a[1] != $a[3] &&$a[1] != $a[4] &&$a[1] != $a[5] && $a[2] != $a[3] && $a[2] != $a[4] &&$a[2] != $a[5] &&$a[3] != $a[4] && $a[3] != $a[5] &&$a[4] != $a[5]);
+#Les 5 racines distinctes sont les $a[i] et les $c[i] seront les constantes de la solution particulière.
+
+$N=random(66,82);
+
+#Calcul des coefficients du polynôme caractéristique
+
+$f=Formula("(x-$a[1])(x-$a[2])(x-$a[3])(x-$a[4])(x-$a[5])")->reduce;
+
+$b[1]=$f->eval(x=>0);
+$b[2]=$f->D('x')->eval(x=>0);
+$temp1=$f->D('x','x')->eval(x=>0);
+$b[3]=$temp1/2;
+$temp2=$f->D('x','x','x')->eval(x=>0);
+$b[4]=$temp2/6;
+$temp3=$f->D('x','x','x','x')->eval(x=>0);
+$b[5]=$temp3/24;
+
+	
+
+
+$Poly=Formula(" x^5+$b[5]*x^4+$b[4]*x^3+$b[3]*x^2+$b[2]*x+$b[1]")->reduce;
+
+#Les coefficients de la solution particulière sont fixés arbitrairement et nous calculons les conditions initiales en conséquent.
+
+#La relation de récurrence 
+
+
+
+$Solution=Formula(" $c[1]*($a[1])**n+ $c[2]*($a[2])**n+ $c[3]*($a[3])**n+ $c[4]*($a[4])**n+ $c[5]*($a[5])**n");
+$d[0]=$Solution->eval(n=>0);
+$d[1]=$Solution->eval(n=>1);
+$d[2]=$Solution->eval(n=>2);
+$d[3]=$Solution->eval(n=>3);
+$d[4]=$Solution->eval(n=>4);
+
+
+$rep=$Solution->eval(n=>$N);
+
+
+##Pouvant être utile 
+##Le polynôme caractéristique : \( $Poly \) 
+##Les racines \( a1=$a[1] \  a2=$a[2] \ a3=$a[3] \ a4=$a[4] \  a5=$a[5]  \).
+##La solution particulière\( \ $Solution\ \)
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$PAR
+
+Considérons la récurrence \[ a_n=-$b[5]a_{n-1}-$b[4]a_{n-2}-$b[3]a_{n-3}-$b[2]a_{n-4}-$b[1]a_{n-5}\]
+pour \( n \geq 5 \) et qui satisfait aux conditions initiales suivantes :
+$BR\( a_0=$d[0] \)
+$BR\( a_1=$d[1] \)
+$BR\( a_2=$d[2] \)
+$BR\( a_3=$d[3] \)
+$BR\( a_4=$d[4] \)
+$BR
+$BR
+À l'aide de cette récurrence, calculer \(a_{$N}\) en gardant quatre chiffres significatifs.
+$BR
+
+\(a_{$N}\)=\{ ans_rule(15) \} 
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( $rep->cmp() );
+
+
+
+ENDDOCUMENT();

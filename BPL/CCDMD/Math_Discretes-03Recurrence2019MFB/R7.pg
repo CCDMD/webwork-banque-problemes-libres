@@ -1,0 +1,88 @@
+## DBsubject(Mathématiques discrètes)
+## DBchapter(Relation de récurrence)
+## KEYWORDS('degré 1','homogène','linéaire','résolution','solution particulière')
+## Auteure (Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(1)
+
+DOCUMENT();
+
+loadMacros(
+    "PGstandard.pl",
+    "MathObjects.pl",
+    "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+ Context()->variables->add(n=>"Real");
+
+
+		$a[1] = non_zero_random(1,9,2);
+		$c[1] = non_zero_random(-3,3);	
+	
+   
+
+#La racine est $a[1] et $c[1] sera la constante de la solution particulière.
+
+
+#Calcul des coefficients du polynôme caractéristique
+
+$f=Formula("(x-$a[1])")->reduce;
+
+$b[1]=$f->eval(x=>0);
+
+
+
+
+$Poly=Formula("x+$b[1]")->reduce;
+
+#Le coefficient de la solutions particulière est fixé arbitrairement et nous calculons la condition intiale en conséquant.
+
+#La relation de recurrence 
+
+
+$Solution=Formula(" $c[1]*($a[1])**n");
+$d[0]=$Solution->eval(n=>0);
+
+
+
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre la récurrence : \( a_n=-$b[1]a_{n-1}\) si \( n>0\) où \( a_0=$d[0]\).
+
+$PAR
+La solution est donnée par \( a_n=\)\{ ans_rule(20) \}.
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( $Solution->cmp() );
+Context()->texStrings;
+BEGIN_SOLUTION
+${PAR}SOLUTION :${PAR}
+Le polynôme caractéristique associé à cette récurrence est donné par \( P(x)=$Poly \), dont la racine est \( $a[1] \).
+$BR
+La solution générale de cette récurrence est donnée par \[ a_n=c_1($a[1])^n. \]
+$PAR
+Il reste à trouver la valeur de la constante \( c_1\) en résolvant l'équation suivante :
+\[c_1($a[1])^0=a_0=$d[0]\]
+
+La constante est \( c_1=$c[1] \) et la solution particulière est donnée par \[a_n= $Solution \].
+
+
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+
+ENDDOCUMENT();

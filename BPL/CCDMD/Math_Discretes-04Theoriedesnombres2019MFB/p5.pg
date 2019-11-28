@@ -1,0 +1,89 @@
+## DBsubject(Théorie des nombres)
+## DBchapter(Théorie des nombres élémentaire)
+## KEYWORDS('arithmétique modulaire', 'congruence', 'inverse multiplicatif', 'modulo')
+## Auteure (Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(2)
+
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+
+);
+
+
+$a0=random(2,22);
+$n0=random(4,8);
+
+@P=(5,7,11,13,17,23);
+
+$c1=random(0,6);
+    do
+    {
+        $c2=random(0,6);
+    }until ($c1!=$c2);
+    
+$n1=$P[$c1];
+$n2=$P[$c2];
+$m0=$n0-1;
+$m1=$n1-1;
+$m2=$n2-1;
+$x=$a0 %$n0;
+
+$a1=random(2,$m1);
+    do 
+    {
+    $b1 = random(2,$m1);
+    } until ( $b1 !=$a1 );
+
+$a2=random(2,$m2);
+    do
+    {
+    $b2 = random(2,$m2);
+    $d=random(1,$m2);
+    } until ( $b2 !=$a2 && $d!=$b2 && $d!=$a2);
+
+$ans[0] = Compute( $x );
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre les équations suivantes.
+$PAR
+\($a0 \equiv x \) mod \( $n0 \) où \( x \in  \lbrace 0,1,...,$m0 \rbrace \)
+$BR
+\(x =\) \{ ans_rule(5) \}
+$PAR
+$SPACE$SPACE$SPACE 
+$PAR
+\($a1 x \equiv $b1  \) mod \( $n1 \) où \( x \in \lbrace 0,1,...,$m1 \rbrace \)
+$BR
+\(x =\) \{ ans_rule(5) \}
+$PAR
+$SPACE$SPACE$SPACE 
+$PAR
+\($a2 x +$d \equiv $b2  \) mod \( $n2 \) où \( x \in \lbrace 0,1,...,$m2 \rbrace \)
+$BR
+\(x =\) \{ ans_rule(5) \}
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( $ans[0]->cmp() );
+
+ANS($ans[0]->cmp( checker=>sub {     my ($correct, $student, $ansHash) = @_;  
+   return (($student*$a1)%$n1 == $b1 && $student <= $m1);} ) );
+   
+ANS($ans[0]->cmp( checker=>sub {     my ($correct, $student, $ansHash) = @_;     
+   return (($student*$a2+$d)%$n2 == $b2 && $student <= $m2);} ) );
+
+ENDDOCUMENT(); 

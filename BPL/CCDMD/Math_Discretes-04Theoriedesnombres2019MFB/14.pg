@@ -1,0 +1,92 @@
+## DBsubject(Théorie des nombres)
+## DBchapter(Théorie des nombres élémentaire)
+## KEYWORDS('PGCD', 'algorithme d\'Euclide', 'combinaison linéaire', 'théorème de Bachet-Bezout')
+## Auteure (Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##########################################SOURCE################
+## Level(2)
+
+
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl"
+);
+
+############################
+# Remarque : version différente d'un problème similaire,
+# dans ce problème le PGCD est minimalement un nombre supérieur à 3 et
+# les variantes sont générées aléatoirement et non listées.
+
+TEXT(beginproblem());
+
+
+$showPartialCorrectAnswers = 0;
+
+
+Context('Matrix');
+   
+ 
+$M = Matrix([
+[0,1]
+]);
+
+$c=random(3,6);
+$a = random($c,999,$c);
+$b = random($c,888,$c);
+
+$rep = Compute(gcd($a,$b));
+$PGCD=gcd($a,$b);
+
+sub gcd {
+	my $n = shift;
+	my $d = shift;
+	my $r = ($n % $d);
+
+	while ($r > 0) {
+		$n = $d;
+		$d = $r;
+		$r = ($n % $d);
+	}
+	return $d;	
+}
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BR
+a) Déterminer le plus grand commun diviseur de $a et $b. $BR
+$BR
+\(\mathrm{PGCD}($a,$b) =\) \{ans_rule(5)\}
+$PAR
+b) Trouver \( x, \ \  y  \in \mathbb{Z} \) tels que \( \mathrm{PGCD}($a,$b)=$a x+$b y \).
+$PAR
+\( [x  \ \ y] = \) \{ $M->ans_array() \}
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+
+
+ANS($rep->cmp());
+
+ANS( $M->cmp(checker => sub {
+      my ( $correct, $student, $self ) = @_;
+      $stu = Matrix($student);
+      $AA=$stu->element(1,1);
+      $BB=$stu->element(1,2);
+
+          return floor($AA) *$a+floor($BB)* $b== $PGCD;
+    }
+) );
+
+
+
+
+ENDDOCUMENT();

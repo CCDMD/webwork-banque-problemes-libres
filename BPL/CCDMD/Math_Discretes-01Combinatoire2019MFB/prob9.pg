@@ -1,0 +1,65 @@
+## DBsubject(Mathématiques discrètes)
+## DBchapter(Combinatoire et dénombrement)
+## KEYWORDS('avec répétitions','combinaison')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(3)
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+    "PGstandard.pl",
+    "MathObjects.pl",
+    "PGchoicemacros.pl",
+    "PGcourse.pl"
+);
+
+TEXT(beginproblem());
+Context("Numeric"); 
+
+Context()->flags->set(
+  tolType => "absolute",
+);
+
+
+$a=random(6,14);
+$b=random(3,5);
+$i=random(0,2);
+$n=$b+1;
+$j=random(1,2);
+
+if ($j==1)
+{
+@L=("Smarties","friandises","chaussettes");
+@C=( " rouges,"," brunes,", " blanches,"," vertes,"," mauves,", " jaunes,"," bleues,");
+}
+else
+{
+@L=("crayons","jujubes","trombones");
+@C=( " rouges,"," bruns, ", " blancs,"," verts,", " mauves,", " jaunes,"," bleus,");
+}
+
+@slice = NchooseK(7,$b) ;
+@Cslice = @C[@slice];
+
+$rrep1=C($a+$n-1,$a);
+$rep1=Compute("$rrep1");
+
+
+
+Context()->texStrings;
+
+BEGIN_TEXT
+$PAR 
+Vous avez, dans un sac, des $L[$i] aux couleurs suivantes : @Cslice et orange. Vous pigez une poignée de \( $a \) $L[$i]. Combien de poignées diférentes pouvez-vous obtenir?
+$PAR
+Réponse : \{ans_rule(10)\} poignées différentes de $L[$i].
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $rep1->cmp() );
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

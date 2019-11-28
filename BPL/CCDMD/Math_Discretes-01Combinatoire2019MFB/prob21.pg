@@ -1,0 +1,79 @@
+## DBsubject(Mathématiques discrètes)
+## DBchapter(Combinatoire et dénombrement)
+## KEYWORDS('avec répétition', 'arrangement','principe de la somme', 'principe d\'inclusion-exclusion' )
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(3)
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+    "PGstandard.pl",
+    "MathObjects.pl",
+    "PGchoicemacros.pl",
+    "PGcourse.pl"
+);
+
+TEXT(beginproblem());
+Context("Numeric"); 
+
+Context()->flags->set(
+  tolType => "absolute",
+);
+
+
+$b=random(8,15);
+$a=random(2,$b-1);
+$j=random(1,2);
+$i=random(1,2);
+if ($j==1)
+{
+@L=("débutant par deux", "terminant par un","débutant par deux", "débutant par un");
+}
+else
+{
+@L=("terminant par deux", "débutant par un","terminant par deux", "terminant par un") ;
+}
+
+if ($i==1)
+{
+$c=0;
+$d=1;
+}
+else
+{
+$c=1;
+$d=0;
+}
+
+
+$rrep1=2**($b-2)+2**($b-1);
+$rep1=Compute("$rrep1");
+$rrep2=2**($b-2)+2**($b-1)-2**($b-3);
+$rep2=Compute("$rrep2");
+
+
+Context()->texStrings;
+
+BEGIN_TEXT
+$PAR 
+Combien y a-t-il de chaînes binaires de \( $b\) bits $L[2] \($c\) ou $L[3] \($d\)?
+$PAR
+Réponse : \{ans_rule(10)\} chaînes binaires.
+$PAR 
+Combien y a-t-il de chaînes binaires de \( $b\) bits $L[0] \($d\) ou $L[1] \($c\)?
+$PAR
+Réponse : \{ans_rule(10)\} chaînes binaires.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $rep1->cmp() );
+ANS( $rep2->cmp() );
+
+
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

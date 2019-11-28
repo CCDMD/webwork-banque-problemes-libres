@@ -1,0 +1,93 @@
+## DBsubject(Mathématiques discrètes)
+## DBchapter(Relation de récurrence)
+## KEYWORDS('degré 2','homogène','linéaire','résolution','solution particulière')
+## Auteure (Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(2)
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserMultiAnswer.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+ Context()->variables->add(n=>"Real");
+
+$a[1]=non_zero_random(1,9);
+@c = ();
+do {
+	foreach my $i ( 1..2 ) {
+
+		$c[$i] = random(1,10);	
+	}
+   
+} until ( $c[1] != $c[2] );
+#La racine double est $a[1] et les $c[i] seront les constantes de la solution particulière.
+
+
+#Calcul des coefficients du polynôme caractéristique
+
+$f=Formula("(x-$a[1])(x-$a[1])")->reduce;
+
+$b[1]=$f->eval(x=>0);
+$b[2]=$f->D('x')->eval(x=>0);
+
+
+
+$Poly=Formula("x^2+$b[2]*x+$b[1]")->reduce;
+
+#Les coefficients de la solution particulière sont fixés arbitrairement et nous calculons les conditions intiales en conséquant.
+
+#La relation de recurrence 
+
+
+
+$Solution=Formula(" $c[1]*($a[1])**n+ $c[2]*n*($a[1])**n");
+$d[0]=$Solution->eval(n=>0);
+$d[1]=$Solution->eval(n=>1);
+
+
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre la récurrence \( a_n=-$b[2]a_{n-1}-$b[1]a_{n-2}\) si \( n>1\) où \( a_0=$d[0]\) et \( a_1=$d[1] \).
+
+$PAR
+La solution est donnée par \( a_n=\)\{ ans_rule(20) \}.
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( $Solution->cmp() );
+Context()->texStrings;
+BEGIN_SOLUTION
+${PAR}SOLUTION :${PAR}
+Le polynôme caractéristique associé à cette récurrence est donné par \( P(x)=$Poly=(x-$a[1])^2 \), dont la racine multiple est \( $a[1] \).
+$BR
+Puisque la racine est multiple, la solution générale de cette récurrence est donnée par \[ a_n=c_1($a[1])^n+ c_2n($a[1])^n. \]
+$PAR
+Il reste à trouver la valeur des deux constantes \( c_i\) en résolvant le système d'équations linéaires suivant.
+\[c_1($a[1])^0+ c_2\cdot 0\cdot($a[1])^0 =a_0=$d[0]\]
+\[c_1($a[1])^1+ c_2\cdot 1\cdot($a[1])^1 =a_1=$d[1]\]
+Ces constantes sont \( c_1=$c[1] \) et \( c_2=$c[2] \), et la solution particulière est donnée par \[a_n= $Solution \].
+
+
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+
+ENDDOCUMENT();

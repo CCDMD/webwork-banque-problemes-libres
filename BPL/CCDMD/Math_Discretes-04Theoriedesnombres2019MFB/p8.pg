@@ -1,0 +1,55 @@
+## DBsubject(Théorie des nombres)
+## DBchapter(Théorie des nombres élémentaire)
+## KEYWORDS('arithmétique modulaire', 'congruence', 'inverse multiplicatif', 'modulo', 'système de congruences', 'théorème des restes chinois')
+## Auteure (Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(4)
+## KEYWORDS()
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+
+    "PGstandard.pl",
+    "MathObjects.pl",
+    "PGcourse.pl",
+
+);
+
+
+$n1=random(17,30);
+$n2=$n1+1;
+$m1=$n1-1;
+
+$M=Compute("$n1*$n2-1");
+
+
+$a1=random(2,$m1);
+    do 
+    {
+    $a2 = random(2,$n1);
+    } until ( $a2 !=$a1 );
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Dans une école, un directeur tente de répartir les étudiants dans des classes. Quand il regroupe les étudiants par classes de \($n1\), il reste \($a1\) étudiants
+et quand il les regroupe par classes de \($n2\), il reste \($a2\) étudiants. Combien y a-t-il d'étudiants, au minimum, dans cette école.
+$PAR
+
+Réponse : \{ ans_rule(5) \} étudiants.
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($M->cmp( checker=>sub {     my ($correct, $student, $ansHash) = @_;  
+   return (($student)%$n1 == $a1 &&  ($student)%$n2 == $a2 &&  $student <= $M);} ) );
+   
+
+
+ENDDOCUMENT(); 

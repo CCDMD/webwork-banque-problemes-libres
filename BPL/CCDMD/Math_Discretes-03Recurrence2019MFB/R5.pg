@@ -1,0 +1,95 @@
+## DBsubject(Mathématiques discrètes)
+## DBchapter(Relation de récurrence)
+## KEYWORDS('degré 3','homogène','linéaire','résolution','solution particulière')
+## Auteure (Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(3)
+
+DOCUMENT();
+
+loadMacros(
+    "PGstandard.pl",
+    "MathObjects.pl",
+    "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+ Context()->variables->add(n=>"Real");
+
+@a = ();
+@c = ();
+do {
+	foreach my $i ( 1..3 ) {
+		$a[$i] = non_zero_random(1,6);
+		$c[$i] = non_zero_random(-3,3);	
+	}
+   
+} until ( $a[1] != $a[2] && $a[1] != $a[3]   && $a[2] != $a[3] );
+#Les 3 racines distinctes sont les $a[i] et les $c[i] seront les constantes de la solution particulière.
+
+
+#Calcul des coefficients du polynôme caractéristique
+
+$f=Formula("(x-$a[1])(x-$a[2])(x-$a[3])")->reduce;
+
+$b[1]=$f->eval(x=>0);
+$b[2]=$f->D('x')->eval(x=>0);
+$temp1=$f->D('x','x')->eval(x=>0);
+$b[3]=$temp1/2;
+
+
+	
+
+
+$Poly=Formula("x^3+$b[3]*x^2+$b[2]*x^1+$b[1]")->reduce;
+
+#Les coefficients de la solutions particulière sont fixés arbitrairement et nous calculons les conditions initiales en conséquent.
+
+#La relation de récurrence 
+
+
+
+$Solution=Formula(" $c[1]*($a[1])**n+ $c[2]*($a[2])**n+ $c[3]*($a[3])**n");
+$d[0]=$Solution->eval(n=>0);
+$d[1]=$Solution->eval(n=>1);
+$d[2]=$Solution->eval(n=>2);
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre la récurrence suivante : \( a_n=-$b[3]a_{n-1}-$b[2]a_{n-2}-$b[1]a_{n-3}\) si \( n>2\) où \( a_0=$d[0]\) ,  \( a_1=$d[1] \) et \( \ a_2=$d[2] \).
+
+$PAR
+La solution est donnée par \( a_n=\)\{ ans_rule(20) \}.
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( $Solution->cmp() );
+Context()->texStrings;
+BEGIN_SOLUTION
+${PAR}SOLUTION :${PAR}
+Le polynôme caractéristique associé à cette récurrence est donné par \( P(x)=$Poly \), dont les racines sont \( $a[1] \), \( $a[2] \) et \( $a[3] \).
+$BR
+La solution générale de cette récurrence est donnée par \[ a_n=c_1($a[1])^n+ c_2($a[2])^n+ c_3($a[3])^n. \]
+$PAR
+Il reste  à trouver la valeur des trois constantes \( c_i\) en résolvant le système d'équations linéaires suivant :
+\[c_1($a[1])^0+ c_2($a[2])^0+ c_3($a[3])^0 =a_0=$d[0]\]
+\[c_1($a[1])^1+ c_2($a[2])^1+ c_3($a[3])^1 =a_1=$d[1]\]
+\[c_1($a[1])^2+ c_2($a[2])^2+ c_3($a[3])^2 =a_2=$d[2]\]
+Ces constantes sont \( c_1=$c[1] \), \( c_2=$c[2] \) et \( c_3=$c[3] \), et la solution particulière est donnée par \[a_n= $Solution \].
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+
+
+
+ENDDOCUMENT();

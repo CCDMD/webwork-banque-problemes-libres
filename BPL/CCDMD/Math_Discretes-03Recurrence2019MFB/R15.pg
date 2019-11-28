@@ -1,0 +1,106 @@
+## DBsubject(Mathématiques discrètes)
+## DBchapter(Relation de récurrence)
+## KEYWORDS('degré 2','linéaire','résolution','solution particulière')
+## Auteure (Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(3)
+
+DOCUMENT();
+
+loadMacros(
+    "PGstandard.pl",
+    "MathObjects.pl",
+    "parserMultiAnswer.pl",
+    "PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Matrix');
+ Context()->variables->add(n=>"Real");
+
+@a = ();
+@c = ();
+do {
+	foreach my $i ( 1..2 ) {
+		$a[$i] = non_zero_random(1,9);
+		$c[$i] = non_zero_random(-3,3);	
+	}
+   
+} until ( $a[1] != $a[2] && (1-$a[1]-$a[2]+$a[1]*$a[2]!=0) );
+#Les 2 racines distinctes sont les $a[i] et les $c[i] seront les constantes de la solution particulière.
+
+$e=1-$a[1]-$a[2]+$a[1]*$a[2];
+$d=random(2,4);
+$cc=$d*$e;
+
+#La partie non homogène cc est posée pour éviter trop de fractions.
+
+#Calcul des coefficients du polynôme caractéristique
+
+$f=Formula("(x-$a[1])(x-$a[2])")->reduce;
+
+$b[1]=$f->eval(x=>0);
+$b[2]=$f->D('x')->eval(x=>0);
+
+
+
+$Poly=Formula("x^2+$b[2]*x+$b[1]")->reduce;
+
+#Les coefficients de la solution particulière sont fixés arbitrairement et nous calculons les conditions intiales en conséquant.
+
+#La relation de recurrence 
+
+
+
+$SolutionG=Formula(" $c[1]*($a[1])**n+ $c[2]*($a[2])**n");
+$SolutionP=Formula(" $c[1]*($a[1])**n+ $c[2]*($a[2])**n+$d");
+$d[0]=$SolutionP->eval(n=>0);
+$d[1]=$SolutionP->eval(n=>1);
+
+
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre la récurrence \( a_n=-$b[2]a_{n-1}-$b[1]a_{n-2}+$cc\) si \( n>1\) où \( a_0=$d[0]\) et \( a_1=$d[1] \).
+
+$PAR
+La solution est donnée par \( a_n=\)\{ ans_rule(20) \}.
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS( $SolutionP->cmp() );
+Context()->texStrings;
+BEGIN_SOLUTION
+${PAR}SOLUTION :${PAR}
+Cette récurrence est linéaire non homogène. Débutons en trouvant la solution générale de la récurrence homogène : \[ a_n=-$b[2]a_{n-1}-$b[1]a_{n-2}\].
+$PAR
+Le polynôme caractéristique associé à cette récurrence est donné par \( P(x)=$Poly \), dont les racines sont \( $a[1] \) et \( $a[2] \).
+$BR
+La solution générale de cette récurrence homogène est donnée par \[ a_n=c_1($a[1])^n+ c_2($a[2])^n. \]
+$PAR
+La solution particulière de cette récurrence non homogène est de la forme \( a_n=k \) où \(k \) est une constante à déterminer.
+$BR
+En substituant \( a_n=k \) dans la récurrence, nous obtenons l'équation \[ k=-$b[2]k-$b[1]k+$cc,\] dont la solution est \(k=\frac{$cc}{1+$b[1]+$b[2]}=$d\).
+$PAR
+La solution générale est donnée par \(c_1($a[1])^n+c_2($a[2])^n+$d\) et il suffit de trouver la valeur des deux constantes \( c_i\) 
+en résolvant le système d'équations linéaires suivant.
+\[c_1($a[1])^0+ c_2($a[2])^0+$d=a_0=$d[0]\]
+\[c_1($a[1])^1+ c_2($a[2])^1+$d=a_1=$d[1]\]
+Ces constantes sont \( c_1=$c[1] \) et \( c_2=$c[2] \), et la solution particulière de cette récurrence non homogène est donnée par \[a_n= $SolutionP \].
+
+
+
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+
+
+ENDDOCUMENT();

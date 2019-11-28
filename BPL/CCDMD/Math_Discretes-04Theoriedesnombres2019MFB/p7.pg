@@ -1,0 +1,81 @@
+## DBsubject(Théorie des nombres)
+## DBchapter(Théorie des nombres élémentaire)
+## KEYWORDS('arithmétique modulaire', 'congruence', 'inverse multiplicatif', 'modulo')
+## Auteure (Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(2)
+
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+
+    "PGstandard.pl",
+    "MathObjects.pl",
+    "PGcourse.pl",
+
+);
+
+
+$a0=random(2,22);
+$n0=random(3,7);
+@P=(5,7,11,13,17,19,23,31,37,41,47);
+$c1=random(0,10);
+    do
+    {
+    $c2=random(0,10);
+    }until ($c1!=$c2);
+    
+$n1=$P[$c1];
+$n2=$P[$c2];
+$m0=$n0-1;
+$m1=$n1-1;
+$m2=$n2-1;
+$x=$a0 %$n0;
+
+$a1=random(2,$m1);
+    do 
+    {
+    $b1 = random(2,$m1);
+    } until ( $b1 !=$a1 );
+
+$a2=random(2,$m2);
+    do 
+    {
+    $b2 = random(2,$m2);
+    $d=random(1,$m2);
+    } until ( $b2 !=$a2 && $d!=$b2 && $d!=$a2);
+
+$ans[0] = Compute( $x );
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+L'inverse de \( a \) \( \bmod \) \( m  \) est l'entier \( \overline{a}\in  \lbrace 0,1,...,m-1 \rbrace \) tel que \( a \cdot \overline{a} \equiv 1 \bmod m.\).
+$PAR
+Trouver l'inverse des entiers suivants.
+$PAR 
+1) \(a \equiv $a1 \bmod \) \( $n1 \) 
+$BR
+\(\overline{a} =\) \{ ans_rule(5) \}
+$PAR
+2) \(a \equiv $a2 \bmod \) \( $n2 \) 
+$BR
+\(\overline{a} =\) \{ ans_rule(5) \}
+$PAR
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+
+ANS($ans[0]->cmp( checker=>sub {     my ($correct, $student, $ansHash) = @_;  
+   return (($student*$a1)%$n1 == 1 && $student <= $m1);} ) );
+   
+   ANS($ans[0]->cmp( checker=>sub {     my ($correct, $student, $ansHash) = @_;     
+   return (($student*$a2)%$n2 == 1 && $student <= $m2);} ) );
+
+ENDDOCUMENT(); 

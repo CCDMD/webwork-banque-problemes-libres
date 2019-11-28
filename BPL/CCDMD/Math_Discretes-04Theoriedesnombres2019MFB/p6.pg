@@ -1,0 +1,64 @@
+## DBsubject(Théorie des nombres)
+## DBchapter(Théorie des nombres élémentaire)
+## KEYWORDS('arithmétique modulaire', 'congruence', 'inverse multiplicatif', 'modulo', 'système de congruences', 'théorème des restes chinois')
+## Auteure (Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(3)
+
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+
+    "PGstandard.pl",
+    "MathObjects.pl",
+    "PGcourse.pl",
+
+    );
+
+############################
+# Remarque : version différente d'un problème similaire,
+# dans cette version les équations sont de la forme mod p où p est un premier
+
+@P=(5,7,11,13,17,23,29,31,37,41,47);
+$c1=random(0,11);
+do{
+$c2=random(0,11);
+}until ($c1!=$c2);
+$n1=$P[$c1];
+$n2=$P[$c2];
+$m1=$n1-1;
+$m2=$n2-1;
+$M=Compute("$n1*$n2-1");
+
+
+$a1=random(2,$m1);
+do {
+$a2 = random(2,$m2);
+} until ( $a2 !=$a1 );
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Résoudre le système d'équations suivant.
+$PAR
+\(x \equiv $a1 \) mod \( $n1 \) 
+$PAR
+\(x \equiv $a2  \) mod \( $n2 \) 
+$PAR
+\(x =\) \{ ans_rule(5) \} où \( x \in \lbrace 0,1,...,$M \rbrace \)
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($M->cmp( checker=>sub {     my ($correct, $student, $ansHash) = @_;  
+   return (($student)%$n1 == $a1 &&  ($student)%$n2 == $a2 &&  $student <= $M);} ) );
+   
+
+
+ENDDOCUMENT(); 

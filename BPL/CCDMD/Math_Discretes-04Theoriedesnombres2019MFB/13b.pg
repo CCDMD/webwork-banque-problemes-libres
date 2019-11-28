@@ -1,0 +1,74 @@
+## DBsubject(Théorie des nombres)
+## DBchapter(Théorie des nombres élémentaire)
+## KEYWORDS('PGCD', 'algorithme d\'Euclide')
+## Traduction et adaptation (Mélisande Fortin Boisvert - Collège de Maisonneuve)
+##########################################SOURCE################
+## Institution(SDSU)
+## Author(Thomas Schmidt','Michael E. O'Sullivan)
+## MLT(FindLCM)
+## MLTleader(1)
+##########################################SOURCE################
+## Level(1)
+
+
+############################
+# Remarque : version différente d'un problème similaire,
+# dans ce problème le PGCD est minimalement un nombre supérieur à 2
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl"
+);
+
+
+
+TEXT(beginproblem());
+
+
+COMMENT("Le PGCD est toujours supérieur à 2.");
+
+
+$showPartialCorrectAnswers = 0;
+$c=random(3,6);
+$a = random($c,999,$c);
+$b = random($c,888,$c);
+
+$answer = Compute(gcd($a,$b));
+$PGCD=gcd($a,$b);
+
+sub gcd {
+	my $n = shift;
+	my $d = shift;
+	my $r = ($n % $d);
+
+	while ($r > 0) {
+		$n = $d;
+		$d = $r;
+		$r = ($n % $d);
+	}
+	return $d;	
+}
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Déterminer le plus grand commun diviseur de $a et $b. $BR
+$BR
+\(\mathrm{PGCD}($a,$b) =\) \{ans_rule(5)\}
+END_TEXT
+Context()->normalStrings;
+
+############################
+# Answer Evaluation
+
+ANS($answer->cmp());
+
+
+
+
+ENDDOCUMENT();

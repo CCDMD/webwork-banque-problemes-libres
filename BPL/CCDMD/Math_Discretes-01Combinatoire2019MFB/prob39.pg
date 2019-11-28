@@ -1,0 +1,83 @@
+### DBsubject(Mathématiques discrètes)
+## DBchapter(Combinatoire et dénombrement)
+## KEYWORDS('avec restriction','combinaison','principe d\'inclusion-exclusion','principe du complément','principe du produit','sans répétition')
+## Auteure(Mélisande Fortin Boisvert - Collège de Maisonneuve)
+## Level(3)
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+    "PGstandard.pl",
+    "MathObjects.pl",
+    "PGchoicemacros.pl",
+    "answerHints.pl",
+    "PGcourse.pl"
+);
+
+TEXT(beginproblem());
+Context("Numeric"); 
+
+Context()->flags->set(
+  tolType => "absolute",
+);
+
+
+$a=random(2,3);
+$b=random(0,3);
+$c=random(2,10);
+$bb=random(0,3);
+$aa=random(3,4);
+
+
+
+
+@S=("coeur", "trèfle", "carreau", "pique");
+@N=("rien", "une", "deux", "trois", "quatre");
+
+
+
+
+$rrep0=4*C(13,$aa)*C(39,5-$aa);
+$rep0=Compute("$rrep0");
+$rrep1=3*C(12,$a)*C(36,4-$a)+C(12,$a-1)*C(36,5-$a);
+$rep1=Compute("$rrep1");
+$temp=C(39,5);
+$rrep2=C(52,5)-$temp;
+$rep2=Compute("$rrep2");
+
+
+Context()->texStrings;
+
+BEGIN_TEXT
+Une main de poker est composée de \(5 \) cartes choisies au hasard parmi un jeu de \(52\) cartes.
+$PAR
+Combien y a-t-il de mains contenant $N[$aa] cartes du même type?
+$BR
+Réponse : \{ans_rule(10)\} mains.
+$PAR
+$BR
+Combien y a-t-il de mains contenant exactement un \($c \) et $N[$a] cartes de $S[$b]?
+$BR
+Réponse : \{ans_rule(10)\} mains.
+$PAR
+$BR
+Combien y a-t-il de mains contenant au moins une carte de $S[$bb]?
+$BR
+Réponse : \{ans_rule(10)\} mains.
+$PAR
+
+\{ 
+knowlLink("Description d'un jeu de 52 cartes", 
+value=>"Les 52 cartes sont réparties en 4 types : pique, carreau, trèfle et coeur. Pour chaque type de carte, on retrouve les 13 cartes suivantes : 
+As, 2, 3, ..., 10, valet, dame et roi. Les figures du jeu de carte sont les personnages : 4 valets, 4 dames et 4 rois.") 
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $rep0->cmp() );
+ANS( $rep1->cmp() );
+ANS( $rep2->cmp() );
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;
