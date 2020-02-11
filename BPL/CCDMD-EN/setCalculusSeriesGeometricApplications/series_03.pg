@@ -1,0 +1,208 @@
+##DESCRIPTION
+##  Geometric Series - Word problems
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Sequences, Summation and Series')
+## KEYWORDS('series', 'geometric series', 'sum', 'sum of a series')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGunion.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl", 
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$D = random(95,295,5);
+$F = 2*$D;
+$P = random(51,59,1);
+$R = (100-$P)/100;
+
+$F = floor($D/(1-$R))+1;
+
+$DN = "$D*($R)**n";
+$NDN = "$D*(1-($R)**(n+1))";
+$TDN = "$D*(1-($R)**(n+1))/(1-$R)";
+
+$PT = random(15,20,1);
+$DPT = $D*(1-$R**($PT+1))/(1-$R);
+
+$popcon = PopUp(["Yes, that was too much drug, he OD'd.","Nope, he is still good to go! Rave on!"],"Nope, he is still good to go! Rave on!");
+
+
+BEGIN_TEXT
+
+Seamus goes to a rave (called the Bouncing Tangent Rave). He brings with him his "medication" pills (a.k.a. lysergic acid diethylamide pills). As soon as he arrives to the party he takes one pill. Then every hour he takes another pill. Each pill contains \($D\) mg of active drug. We can assume that this quantity is absorbed in the body instantly (as soon as a pill is taken). In the body, the drug is metabolized such that at the end of every hour \($P\) per cent is eliminated. $BR$BR
+
+Let \(D_n\) be the quantity of drug in mg in Seamus' body after \(n\) hours (after arriving to the rave and after taking a new pill).$BR$BR
+
+$BBOLD WARNING: Seamus cannot take 2 pills at the same time since $F mg of this drug would be an overdose and be fatal!$EBOLD $BR$BR
+
+When Seamus arrives to the rave he takes a pill and thus the initial quantity of drug in his body is:$BR$BR
+
+\(D_0=\) \{ans_rule(10)\}.$BR$BR
+
+In general after \(n\) hours, when Seamus takes a pill the quantity of drugs in Seamus' body is given by the following rule:$BR$BR
+
+\[\text{(quantity in the body now)} = \text{(quantity from the new pill)}+ (\%\text{ left)}\times\text{(quantity in the body at the previous hour)}\]$BR
+
+So using the notation and information above we have:$BR$BR
+
+\(D_n=\) \{ans_rule(5)\} + \{ans_rule(5)\}\(D_{n-1}\).
+$BR$BR
+Thus after 1 hour:$BR$BR
+\(D_1=\) \{ans_rule(5)\} + \{ans_rule(5)\}\(D_{0}\)$BR$BR
+\(D_1=\) \{ans_rule(5)\} + \{ans_rule(5)\}\{ans_rule(5)\}$BR$BR
+\(D_1=\) \{ans_rule(5)\} + \{ans_rule(12)\}.
+
+$BR$BR
+Thus after 2 hours:$BR$BR
+\(D_2=\) \{ans_rule(5)\} + \{ans_rule(5)\}\(D_{1}\)$BR$BR
+\(D_2=\) \{ans_rule(5)\} + \{ans_rule(5)\} \((\) \{ans_rule(5)\} + \{ans_rule(12)\} \()\)$BR$BR
+\(D_2=\) \{ans_rule(5)\} + \{ans_rule(12)\} + \{ans_rule(12)\}.
+
+$BR$BR
+Thus after 3 hours:$BR$BR
+\(D_3=\) \{ans_rule(5)\} + \{ans_rule(5)\}\(D_{2}\)$BR$BR
+\(D_3=\) \{ans_rule(5)\} + \{ans_rule(5)\} \((\) \{ans_rule(5)\} + \{ans_rule(12)\} + \{ans_rule(12)\} \()\)$BR$BR
+\(D_3=\) \{ans_rule(5)\} + \{ans_rule(12)\} + \{ans_rule(12)\} + \{ans_rule(12)\}.
+
+$BR$BR
+Thus after n hours:$BR$BR
+
+\(D_n=\) \{ans_rule(5)\} + \{ans_rule(12)\} + \{ans_rule(12)\} + \{ans_rule(12)\} + \(\dots\) + \{ans_rule(12)\} (the last box is a term which depends on \(n\)).$BR$BR
+
+Here \(D_n\) is a $BBOLD geometric sum $EBOLD starting at the$BBOLD first$EBOLD term where $BR
+the$BITALIC common ratio$EITALIC is $BR
+\(r=\) \{ans_rule(6)\} and $BR
+the$BITALIC first term$EITALIC is $BR
+\(a=\) \{ans_rule(12)\}.$BR$BR
+
+Thus using sigma notation \(D_n\) can be written as $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \)","\(D_n\)","\( = \)","\(\displaystyle\sum_{k=0}^{n}\)".ans_rule(4)."\((\)".ans_rule(4)."\()^k\)","(the sum in sigma notation)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \)","\(D_n\)","\( = \)", ans_rule(20).$BR.$HR."\(\big( 1- \)".ans_rule(4)."\( \big) \)" ,"(use the geometric sum formula since \(r\neq 1\))."], align=>CENTER, separation=>0).
+
+EndTable()
+\}
+$BR
+
+Compute the quantity of drug in Seamus' body after $PT hours:$BR
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \)","\(D_{$PT}\)","\( = \)", ans_rule(30),"."], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+Did Seamus OD? \{ $popcon->menu() \}$BR$BR
+
+$BBOLD Bonus:$EBOLD Will he ever OD or will he be able to rave on forever?
+$BR
+
+END_TEXT
+
+
+### Last D_n removed
+#\{ 
+#BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+#AlignedRow(["\(\displaystyle \)","\(D_n\)","\( = \)", ans_rule(30),"."], align=>LEFT, separation=>0).
+#EndTable()
+#\}
+#$BR
+
+# Initial amount
+
+ANS(num_cmp($D));
+
+# Recursive Formula
+
+ANS(num_cmp($D));
+ANS(num_cmp($R));
+
+# 1 hour
+
+ANS(num_cmp($D));
+ANS(num_cmp($R));
+
+ANS(num_cmp($D));
+ANS(num_cmp($R));
+ANS(num_cmp($D));
+
+ANS(num_cmp($D));
+ANS(num_cmp($R*$D));
+
+# 2 hours
+ANS(num_cmp($D));
+ANS(num_cmp($R));
+
+ANS(num_cmp($D));
+ANS(num_cmp($R));
+ANS(num_cmp($D));
+ANS(num_cmp($R*$D));
+
+ANS(num_cmp($D));
+ANS(num_cmp($R*$D));
+ANS(num_cmp($R*$R*$D));
+
+# 3 hours
+ANS(num_cmp($D));
+ANS(num_cmp($R));
+
+ANS(num_cmp($D));
+ANS(num_cmp($R));
+ANS(num_cmp($D));
+ANS(num_cmp($R*$D));
+ANS(num_cmp($R*$R*$D));
+
+ANS(num_cmp($D));
+ANS(num_cmp($R*$D));
+ANS(num_cmp($R*$R*$D));
+ANS(num_cmp($R*$R*$R*$D));
+
+# n hours
+ANS(num_cmp($D));
+ANS(num_cmp($R*$D));
+ANS(num_cmp($R*$R*$D));
+ANS(num_cmp($R*$R*$R*$D));
+
+Context()->variables->add(n => ['Real', limits=>[1,20], resolution=>1]);
+
+ANS(Compute("$DN")->cmp);
+
+# geometric sum
+
+ANS(num_cmp($R));
+ANS(num_cmp($D));
+
+ANS(num_cmp($D));
+ANS(num_cmp($R));
+
+ANS(Compute("$NDN")->cmp);
+ANS(num_cmp($R));
+
+#ANS(fun_cmp("$TDN", vars=>["n"]));
+
+ANS(num_cmp($DPT ,tol => 0.00000000001, 
+     tolType => "absolute"));
+
+ANS( $popcon->cmp() );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

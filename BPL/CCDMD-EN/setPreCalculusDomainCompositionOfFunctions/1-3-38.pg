@@ -1,0 +1,529 @@
+## DESCRIPTION
+##  Domain of Functions
+## ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('domain','composition')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",     # Standard macros for PG language
+"MathObjects.pl",
+"PGunion.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"contextLimitedPolynomial.pl",
+"contextAlternateIntervals.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$a = random(2,8);
+$b = random(1,8);
+$c = random(1,8);
+
+#    f(x) = \frac{1}{x-$a} \quad \mathrm{and} \quad
+#    g(x) = \frac{x-$b}{x+$c}.
+
+$f = Compute("1/(x-$a)")->reduce;
+$g = Compute("(x-$b)/(x+$c)")->reduce;
+
+$Composite1_Q_tex = "(f \circ g)(x)";
+$Composite1_tex = "f(g(x))";
+$outer1 = $f;
+$outer1_tex = "f";
+$inside1 = $g;
+$inside1_tex = "g(x)";
+
+$Composite2_Q_tex = "(g \circ f)(x)";
+$Composite2_tex = "g(f(x))";
+$outer2 = $g;
+$outer2_tex = "g";
+$inside2 = $f;
+$inside2_tex = "f(x)";
+
+$Composite3_Q_tex = "(f \circ f)(x)";
+$Composite3_tex = "f(f(x))";
+$outer3 = $f;
+$outer3_tex = "f";
+$inside3 = $f;
+$inside3_tex = "f(x)";
+
+$Composite4_Q_tex = "(g \circ g)(x)";
+$Composite4_tex = "g(g(x))";
+$outer4 = $g;
+$outer4_tex = "g";
+$inside4 = $g;
+$inside4_tex = "g(x)";
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR $BR
+Let \( \displaystyle f(x) = $f \) and \( \displaystyle g(x)=  $g\).  Find \( $Composite1_Q_tex \), \( $Composite2_Q_tex \), \( $Composite3_Q_tex \) and \( $Composite4_Q_tex \), and their respective domains.
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$BBOLD Part A $EBOLD
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Find \( $Composite1_Q_tex \)");
+
+Context("LimitedPolynomial-Strict");
+$Composite1Num = Compute("x+$c");
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$gcd1 = gcd(1-$a,-$b-$a*$c);
+$coeff1a = (1-$a)/$gcd1;
+$coeff1b = (-$b-$a*$c)/$gcd1;
+$Composite1Den = Compute("-$gcd1( -$coeff1a x - $coeff1b)");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $Composite1_Q_tex \)","\( = \)","\( $Composite1_tex \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)","\( $outer1_tex(\)".ans_rule(10)."\( )\)","(write the corresponding function)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(15).$BR.$HR.ans_rule(15),"(evaluate, simplify and factor if possible)"], align=>CENTER, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($inside1->cmp);
+ANS($Composite1Num->cmp() );
+ANS($Composite1Den->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Find when \( $Composite1_Q_tex \) is defined");
+
+Context("Numeric");
+$popOriginal1 = PopUp(["Choose", "f(x)", "g(x)"],$inside1_tex);
+$popComposition1 = PopUp(["Choose", "f(f(x))", "f(g(x))", "g(f(x))", "g(g(x))"],$Composite1_tex);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We know \( $Composite1_Q_tex \) is defined whenever both \{ $popOriginal1->menu() \} and \{ $popComposition1->menu() \} are defined.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popOriginal1->cmp() );
+ANS($popComposition1->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Find the domain of \( $Composite1_Q_tex \)");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$domain_inside1 = Compute("(-inf,-$c)U(-$c,inf)");
+$domain_composite1 = Compute("(-inf,($b+$a*$c)/(1-$a))U(($b+$a*$c)/(1-$a),inf)");
+$IDomain1 = Compute("(-inf,($b+$a*$c)/(1-$a))U(($b+$a*$c)/(1-$a),-$c)U(-$c,inf)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD  $BR
+Express your answer in interval notation. $BR
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+$HR $BR
+
+\( $inside1_tex \) is defined on \{ans_rule(30)\} $BR $BR
+\( $Composite1_tex \) is defined on \{ans_rule(30)\} $BR $BR
+$BR
+Thus, the domain of \( $Composite1_Q_tex \) is \{ans_rule(30)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($domain_inside1->cmp() );
+ANS($domain_composite1->cmp() );
+
+#Domain
+ANS($IDomain1->cmp);
+
+Section::End();
+
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $BR
+$BBOLD Part B $EBOLD 
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+Section::Begin("Find \( $Composite2_Q_tex \)");
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$gcd2num = gcd(1+$a*$b,$b);
+$gcd2den = gcd(1-$a*$c,$c);
+$gcd2 = gcd($gcd2num,$gcd2den);
+$coeff2a = $b/$gcd2num;
+$coeff2b = (1+$a*$b)/$gcd2num;
+$coeff2c = $c/$gcd2den;
+$coeff2d = (1-$a*$c)/$gcd2den;
+$Composite2Num = Compute("-$gcd2num/$gcd2( $coeff2a x - $coeff2b)");
+$Composite2Den = Compute("$gcd2den/$gcd2( $coeff2c x + $coeff2d)");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $Composite2_Q_tex \)","\( = \)","\( $Composite2_tex\)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)","\( $outer2_tex(\)".ans_rule(10)."\( )\)","(write the corresponding function)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(15).$BR.$HR.ans_rule(15),"(evaluate, simplify and factor if possible)"], align=>CENTER, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($inside2->cmp);
+ANS($Composite2Num->cmp() );
+ANS($Composite2Den->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Find when \( $Composite2_Q_tex \) is defined");
+
+Context("Numeric");
+$popOriginal2 = PopUp(["Choose", "f(x)", "g(x)"],$inside2_tex);
+$popComposition2 = PopUp(["Choose", "f(f(x))", "f(g(x))", "g(f(x))", "g(g(x))"],$Composite2_tex);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We know \( $Composite2_Q_tex \) is defined whenever both \{ $popOriginal2->menu() \} and \{ $popComposition2->menu() \} are defined.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popOriginal2->cmp() );
+ANS($popComposition2->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Find the domain of \( $Composite2_Q_tex \)");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$domain_inside2 = Compute("(-inf,$a)U($a,inf)");
+$domain_composite2 = Compute("(-inf,$a-1/$c)U($a-1/$c,inf)");
+$IDomain2 = Compute("(-inf,$a-1/$c)U($a-1/$c,$a)U($a,inf)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD  $BR
+Express your answer in interval notation. $BR
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+$HR $BR
+
+\( $inside2_tex \) is defined on \{ans_rule(30)\} $BR $BR
+\( $Composite2_tex \) is defined on \{ans_rule(30)\} $BR $BR
+$BR
+Thus, the domain of \( $Composite2_Q_tex \) is \{ans_rule(30)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($domain_inside2->cmp() );
+ANS($domain_composite2->cmp() );
+
+#Domain
+ANS($IDomain2->cmp);
+
+Section::End();
+
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $BR
+$BBOLD Part C $EBOLD 
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+Section::Begin("Find \( $Composite3_Q_tex \)");
+
+Context("LimitedPolynomial-Strict");
+$Composite3Num = Compute("x-$a");
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$gcd3 = gcd(1+$a*$a,$a);
+$coeff3a = $a/$gcd3;
+$coeff3b = (1+$a*$a)/$gcd3;
+$Composite3Den = Compute("-$gcd3( $coeff3a x - $coeff3b)");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $Composite3_Q_tex \)","\( = \)","\( $Composite3_tex\)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)","\( $outer3_tex(\)".ans_rule(10)."\( )\)","(write the corresponding function)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(15).$BR.$HR.ans_rule(15),"(evaluate, simplify and factor if possible)"], align=>CENTER, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($inside3->cmp);
+ANS($Composite3Num->cmp() );
+ANS($Composite3Den->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Find when \( $Composite3_Q_tex \) is defined");
+
+Context("Numeric");
+$popOriginal3 = PopUp(["Choose", "f(x)", "g(x)"],$inside3_tex);
+$popComposition3 = PopUp(["Choose", "f(f(x))", "f(g(x))", "g(f(x))", "g(g(x))"],$Composite3_tex);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We know \( $Composite3_Q_tex \) is defined whenever both \{ $popOriginal3->menu() \} and \{ $popComposition3->menu() \} are defined.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popOriginal3->cmp() );
+ANS($popComposition3->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Find the domain of \( $Composite3_Q_tex \)");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$domain_inside3 = Compute("(-inf,$a)U($a,inf)");
+$domain_composite3 = Compute("(-inf,$a+1/$a)U($a+1/$a,inf)");
+$IDomain3 = Compute("(-inf,$a)U($a,$a+1/$a)U($a+1/$a,inf)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD  $BR
+Express your answer in interval notation. $BR
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+$HR $BR
+
+\( $inside3_tex \) is defined on \{ans_rule(30)\} $BR $BR
+\( $Composite3_tex \) is defined on \{ans_rule(30)\} $BR $BR
+$BR
+Thus, the domain of \( $Composite3_Q_tex \) is \{ans_rule(30)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($domain_inside3->cmp() );
+ANS($domain_composite3->cmp() );
+
+#Domain
+ANS($IDomain3->cmp);
+
+Section::End();
+
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $BR
+$BBOLD Part D $EBOLD 
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+Section::Begin("Find \( $Composite4_Q_tex \)");
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$gcd4num = gcd(1-$b,-$b-$b*$c);
+$gcd4den = gcd(1+$c,-$b+$c*$c);
+$gcd4 = gcd($gcd4num,$gcd4den);
+$coeff4a = (1-$b)/$gcd4num;
+$coeff4b = (-$b-$b*$c)/$gcd4num;
+$coeff4c = (1+$c)/$gcd4den;
+$coeff4d = (-$b+$c*$c)/$gcd4den;
+$Composite4Num = Compute("-$gcd4num/$gcd4 ( -$coeff4a x - $coeff4b)");
+$Composite4Den = Compute("$gcd4den/$gcd4 ( $coeff4c x + $coeff4d)");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $Composite4_Q_tex \)","\( = \)","\( $Composite4_tex\)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)","\( $outer4_tex(\)".ans_rule(10)."\( )\)","(write the corresponding function)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(15).$BR.$HR.ans_rule(15),"(evaluate, simplify and factor if possible)"], align=>CENTER, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($inside4->cmp);
+ANS($Composite4Num->cmp() );
+ANS($Composite4Den->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Find when \( $Composite4_Q_tex \) is defined");
+
+Context("Numeric");
+$popOriginal4 = PopUp(["Choose", "f(x)", "g(x)"],$inside4_tex);
+$popComposition4 = PopUp(["Choose", "f(f(x))", "f(g(x))", "g(f(x))", "g(g(x))"],$Composite4_tex);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We know \( $Composite4_Q_tex \) is defined whenever both \{ $popOriginal4->menu() \} and \{ $popComposition4->menu() \} are defined.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popOriginal4->cmp() );
+ANS($popComposition4->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Find the domain of \( $Composite4_Q_tex \)");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$domain_inside4 = Compute("(-inf,-$c)U(-$c,inf)");
+$domain_composite4 = Compute("(-inf,($b - $c**2)/(1+$c))U(($b - $c**2)/(1+$c),inf)");
+$IDomain4 = Compute("(-inf,-$c)U(-$c,($b - $c**2)/(1+$c))U(($b - $c**2)/(1+$c),inf)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD  $BR
+Express your answer in interval notation. $BR
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+$HR $BR
+
+\( $inside4_tex \) is defined on \{ans_rule(30)\} $BR $BR
+\( $Composite4_tex \) is defined on \{ans_rule(30)\} $BR $BR
+$BR
+Thus, the domain of \( $Composite4_Q_tex \) is \{ans_rule(30)\} 
+END_TEXT
+Context()->normalStrings;
+
+ANS($domain_inside4->cmp() );
+ANS($domain_composite4->cmp() );
+
+#Domain
+ANS($IDomain4->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

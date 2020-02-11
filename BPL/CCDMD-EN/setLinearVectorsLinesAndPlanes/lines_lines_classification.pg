@@ -1,0 +1,3827 @@
+##DESCRIPTION
+##  Lines & Planes
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"parserParametricLine.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"contextFraction.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#CASE 1 parallel disjoint
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+do
+{
+    $k_1 = non_zero_random(-9,9,1);
+} until( $k_1!=1 && $k_1 !=-1);
+
+$V1_1 = Vector(random(-9,9,1), random(-9,9,1), non_zero_random(-9,9,1));
+$V2_1 = $k_1*$V1_1;
+
+Context("Point");
+do
+{
+    $P_1 = Point(non_zero_random(-5,5,1), random(-5,5,1), random(-5,5,1));
+    $Q_1 = Point(non_zero_random(-5,5,1), random(-5,5,1), random(-5,5,1));
+} until( $P_1!=$Q_1 );
+
+$rValue_1 = random(2,3,1);
+$tValue_1 = random(4,5,1);
+$PV1_1 = Point($P_1 + $rValue_1*$V1_1);
+$PV2_1 = Point($Q_1 - $tValue_1*$V2_1);
+
+Context("ParametricLine");
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->parens->set("(" => {type => "Vector", close => ")"});
+Context()->variables->add(r => 'Real');
+$r = Formula('r');
+$Line1_1 = ParametricLine(Point($PV1_1) + $r*$V1_1);
+$Line2_1 = ParametricLine(Point($PV2_1),$V2_1);
+
+#Case 2 identical
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+do
+{
+    $k_2 = non_zero_random(-9,9,1);
+} until( $k_2!=1 && $k_2 !=-1);
+
+$V2_2 = Vector(non_zero_random(-9,9,1), non_zero_random(-9,9,1), non_zero_random(-9,9,1));
+$V1_2 = $k_2*$V2_2;
+
+Context("Point");
+
+## Common point
+$P_2 = Point(non_zero_random(-5,5,1), random(-5,5,1), random(-5,5,1));
+
+$rValue_2 = random(2,3,1);
+$tValue_2 = random(4,5,1);
+$PV1_2 = Point($P_2 + $rValue_2*$V1_2);
+$PV2_2 = Point($P_2 - $tValue_2*$V2_2);
+
+Context("ParametricLine");
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->parens->set("(" => {type => "Vector", close => ")"});
+Context()->variables->add(r => 'Real');
+$r = Formula('r');
+$Line1_2 = ParametricLine(Point($PV1_2) + $r*$V1_2);
+$Line2_2 = ParametricLine(Point($PV2_2),$V2_2);
+
+#Case 3 skew
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$V1_3 = Vector(random(1,7,1), random(1,7,1), random(1,7,1));
+
+$V2_3 = Vector(random(1,7,1), random(1,7,1), random(1,7,1));
+while(areParallel $V1_3 $V2_3)
+{
+    $V2_3 = Vector(random(1,7,1), random(1,7,1), random(1,7,1));
+}
+
+Context("Point");
+do
+{
+    $P_3 = Point(non_zero_random(-5,5,1), random(-5,5,1), random(-5,5,1));
+    $Q_3 = Point(non_zero_random(-5,5,1), random(-5,5,1), random(-5,5,1));
+} until($P_3!=$Q_3);
+
+$rValue_3 = random(4,5,1);
+$tValue_3 = random(2,3,1);
+$PV1_3 = Point($P_3 - $rValue_3*$V1_3);
+$PV2_3 = Point($Q_3 + $tValue_3*$V2_3);
+
+Context("ParametricLine");
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->parens->set("(" => {type => "Vector", close => ")"});
+Context()->variables->add(r => 'Real');
+$r = Formula('r');
+$Line1_3 = ParametricLine(Point($PV1_3) + $r*$V1_3);
+$Line2_3 = ParametricLine(Point($PV2_3),$V2_3);
+
+#Case 4 intersecting
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$V1_4 = Vector(random(1,7,1), random(1,7,1), random(1,7,1));
+
+$V2_4 = Vector(random(1,7,1), random(1,7,1), random(1,7,1));
+while(areParallel $V1_4 $V2_4)
+{
+    $V2_4 = Vector(random(1,7,1), random(1,7,1), random(1,7,1));
+}
+
+Context("Point");
+
+## Point of intersection
+$P_4 = Point(non_zero_random(-5,5,1), random(-5,5,1), random(-5,5,1));
+
+$rValue_4 = random(4,5,1);
+$tValue_4 = random(2,3,1);
+$PV1_4 = Point($P_4 + $rValue_4*$V1_4);
+$PV2_4 = Point($P_4 - $tValue_4*$V2_4);
+
+Context("ParametricLine");
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->parens->set("(" => {type => "Vector", close => ")"});
+Context()->variables->add(r => 'Real');
+$r = Formula('r');
+$Line1_4 = ParametricLine(Point($PV1_4) + $r*$V1_4);
+$Line2_4 = ParametricLine(Point($PV2_4),$V2_4);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+For each question below, determine whether the lines are parallel disjoint, identical, skew or intersecting. $BR
+$BR
+$HR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+$case=random(1,5,1);
+
+#1-2-3-4
+if($case == 1)
+{
+$String_11 = 1;
+$String_12 = 2;
+
+$String_21 = 3;
+$String_22 = 4;
+
+$String_31 = 4;
+$String_32 = 5;
+
+$String_41 = 6;
+$String_42 = 7;
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 1: parallel with the line inside the plane
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_11: (x,y,z) = $Line1_1 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_12: (x,y,z) = $Line2_1 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = $PV1_1 - $PV2_1;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_11 \) be the support point of the line \( \ell_$String_11 \). $BR 
+Let \( \vec{v_$String_11} \) be the generator vector of the line \( \ell_$String_11 \). $BR $BR
+Let \( P_$String_12 \) be the support point of the line \( \ell_$String_12 \). $BR
+Let \( \vec{v_$String_12} \) be the generator vector of the line \( \ell_$String_12 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_11 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_11} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_12 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_12} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_12 P_$String_11} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_12 P_$String_11} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_1->cmp);
+ANS($V1_1->cmp);
+ANS($PV2_1->cmp);
+ANS($V2_1->cmp);
+ANS($P2P1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_11} = k \vec{v_$String_12} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("LimitedFraction");
+$KValue = Fraction(1,$k_1);
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v_$String_11} \) ","\( = \)","\( k \vec{v_$String_12} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $V1_1 \) ","\( = \)",ans_rule(2)."\( $V2_1 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+which gives us that $BR $BR
+\( \quad \vec{v_$String_11} \) and \( \vec{v_$String_12} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_11 \) and \( \ell_$String_12 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($KValue->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k_1 \) such that 
+\( \overrightarrow{P_$String_12 P_$String_11} = k_1 \vec{v_$String_11} \).$BR $BR
+
+We \{ $popExist->menu() \} find a scalar \( k_2 \) such that 
+\( \overrightarrow{P_$String_12 P_$String_11} = k_2 \vec{v_$String_12} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Which gives us that $BR $BR
+\( \quad \overrightarrow{P_$String_12 P_$String_11} \) and \( \vec{v_$String_11} \) are \{ $popParallel->menu() \} $BR $BR
+\( \quad \overrightarrow{P_$String_12 P_$String_11} \) and \( \vec{v_$String_12} \) are \{ $popParallel->menu() \} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"parallel disjoint");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_11 \) and the line \( \ell_$String_12 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 2: identical
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_21: (x,y,z) = $Line1_2 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_22: (x,y,z) = $Line2_2 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV1_2 - $PV2_2);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_21 \) be the support point of the line \( \ell_$String_21 \). $BR 
+Let \( \vec{v_$String_21} \) be the generator vector of the line \( \ell_$String_21 \). $BR $BR
+Let \( P_$String_22 \) be the support point of the line \( \ell_$String_22 \). $BR
+Let \( \vec{v_$String_22} \) be the generator vector of the line \( \ell_$String_22 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_21 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_21} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_22 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_22} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_22 P_$String_21} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_22 P_$String_21} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_2->cmp);
+ANS($V1_2->cmp);
+ANS($PV2_2->cmp);
+ANS($V2_2->cmp);
+ANS($P2P1->cmp);
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_21} = k \vec{v_$String_22} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("LimitedFraction");
+$KValue = Fraction($k_2,1);
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v_$String_21} \) ","\( = \)","\( k \vec{v_$String_22} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $V1_2 \) ","\( = \)",ans_rule(2)."\( $V2_2 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+which gives us that $BR $BR
+\( \quad \vec{v_$String_21} \) and \( \vec{v_$String_22} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_21 \) and \( \ell_$String_22 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($KValue->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k_1 \) such that 
+\( \overrightarrow{P_$String_22 P_$String_21} = k_1 \vec{v_$String_21} \).$BR $BR
+
+We \{ $popExist->menu() \} find a scalar \( k_2 \) such that 
+\( \overrightarrow{P_$String_22 P_$String_21} = k_2 \vec{v_$String_22} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"identical");
+
+Context("Vector");
+$NumK = $P2P1->extract(1);
+$DenK1 = $V1_2->extract(1);
+$DenK2 = $V2_2->extract(1);
+
+Context("LimitedFraction");
+$K1Value = Fraction($NumK,$DenK1);
+$K2Value = Fraction($NumK,$DenK2);
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_22 P_$String_21} \) ","\( = \)","\( k_1 \vec{v_$String_21} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $P2P1 \) ","\( = \)",ans_rule(2)."\( $V1_2 \) ","(write the numerical value of \( k_1 \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_22 P_$String_21} \) ","\( = \)","\( k_2 \vec{v_$String_22} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $P2P1 \) ","\( = \)",ans_rule(2)."\( $V2_2 \) ","(write the numerical value of \( k_2 \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+
+which gives us that $BR $BR
+\( \quad \overrightarrow{P_$String_22 P_$String_21} \) and \( \vec{v_$String_21} \) are \{ $popParallel->menu() \} $BR $BR
+\( \quad \overrightarrow{P_$String_22 P_$String_21} \) and \( \vec{v_$String_22} \) are \{ $popParallel->menu() \} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($K1Value->cmp);
+ANS($K2Value->cmp);
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"identical");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_21 \) and the line \( \ell_$String_22 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 3: skew
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_31: (x,y,z) = $Line1_3 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_32: (x,y,z) = $Line2_3 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV1_3 - $PV2_3);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_31 \) be the support point of the line \( \ell_$String_31 \). $BR 
+Let \( \vec{v_$String_31} \) be the generator vector of the line \( \ell_$String_31 \). $BR $BR
+Let \( P_$String_32 \) be the support point of the line \( \ell_$String_32 \). $BR
+Let \( \vec{v_$String_32} \) be the generator vector of the line \( \ell_$String_32 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_31 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_31} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_32 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_32} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_32 P_$String_31} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_32 P_$String_31} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_3->cmp);
+ANS($V1_3->cmp);
+ANS($PV2_3->cmp);
+ANS($V2_3->cmp);
+ANS($P2P1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_31} = k \vec{v_$String_32} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Which gives us that $BR $BR
+\( \quad \vec{v_$String_31} \) and \( \vec{v_$String_32} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_31 \) and \( \ell_$String_32 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popCoplanar = PopUp(["Choose", "coplanar", "equal", "equivalent", "parallel"],"coplanar");
+$popTripleScalar = PopUp(["Choose", "cross product", "dot product", "triple scalar product"],"triple scalar product");
+    
+Context()->texStrings;
+BEGIN_TEXT
+\( \ell_$String_31 \) and \( \ell_$String_32 \) are intersecting if the vectors \( \overrightarrow{P_$String_31 P_$String_32} \), \( \vec{v_$String_31} \) and \( \vec{v_$String_32} \) are \{ $popCoplanar->menu() \}, that is, when their \{ $popTripleScalar->menu() \} \( = 0\). $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popCoplanar->cmp);
+ANS($popTripleScalar->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$CrossProduct = $V1_3 x $V2_3;
+$Triple = $P2P1.$CrossProduct;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_32 P_$String_31} \bullet \big( \vec{v_$String_31} \times \vec{v_$String_32} \big) \) ","\( = \)",ans_rule(15)."\( \bullet \)".ans_rule(15),"(write the components of \( \overrightarrow{P_$String_32 P_$String_31} \) and then find the cross product)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(15),"(find the dot product)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($P2P1->cmp);
+ANS($CrossProduct->cmp);
+ANS($Triple->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"skew");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_31 \) and the line \( \ell_$String_32 \) are \{ $popConclusion->menu() \}. 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part D $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 4: intersecting
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_41: (x,y,z) = $Line1_4 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_42: (x,y,z) = $Line2_4 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV1_4 - $PV2_4);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_41 \) be the support point of the line \( \ell_$String_41 \). $BR 
+Let \( \vec{v_$String_41} \) be the generator vector of the line \( \ell_$String_41 \). $BR $BR
+Let \( P_$String_42 \) be the support point of the line \( \ell_$String_42 \). $BR
+Let \( \vec{v_$String_42} \) be the generator vector of the line \( \ell_$String_42 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_41 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_41} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_42 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_42} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_42 P_$String_41} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_42 P_$String_41} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_4->cmp);
+ANS($V1_4->cmp);
+ANS($PV2_4->cmp);
+ANS($V2_4->cmp);
+ANS($P2P1->cmp);
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_41} = k \vec{v_$String_42} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+Which gives us that $BR $BR
+\( \quad \vec{v_$String_41} \) and \( \vec{v_$String_42} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_41 \) and \( \ell_$String_42 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popCoplanar = PopUp(["Choose", "coplanar", "equal", "equivalent", "parallel"],"coplanar");
+$popTripleScalar = PopUp(["Choose", "cross product", "dot product", "triple scalar product"],"triple scalar product");
+    
+Context()->texStrings;
+BEGIN_TEXT
+\( \ell_$String_41 \) and \( \ell_$String_42 \) are intersecting if the vectors \( \overrightarrow{P_$String_42 P_$String_41} \), \( \vec{v_$String_41} \) and \( \vec{v_$String_42} \) are \{ $popCoplanar->menu() \}, that is, when their \{ $popTripleScalar->menu() \} \( = 0\). $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popCoplanar->cmp);
+ANS($popTripleScalar->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$CrossProduct = $V1_4 x $V2_4;
+$Triple = $P2P1.$CrossProduct;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_42 P_$String_41} \bullet \big( \vec{v_$String_41} \times \vec{v_$String_42} \big) \) ","\( = \)",ans_rule(15)."\( \bullet \)".ans_rule(15),"(write the components of \( \overrightarrow{P_$String_42 P_$String_41} \) and then find the cross product)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(15),"(find the dot product)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($P2P1->cmp);
+ANS($CrossProduct->cmp);
+ANS($Triple->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_41 \) and the line \( \ell_$String_42 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+}
+
+#2-1-4-3
+if($case == 2)
+{
+$String_11 = 3;
+$String_12 = 4;
+
+$String_21 = 1;
+$String_22 = 2;
+
+$String_31 = 7;
+$String_32 = 8;
+
+$String_41 = 5;
+$String_42 = 6;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 2: identical
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_21: (x,y,z) = $Line1_2 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_22: (x,y,z) = $Line2_2 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV1_2 - $PV2_2);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_21 \) be the support point of the line \( \ell_$String_21 \). $BR 
+Let \( \vec{v_$String_21} \) be the generator vector of the line \( \ell_$String_21 \). $BR $BR
+Let \( P_$String_22 \) be the support point of the line \( \ell_$String_22 \). $BR
+Let \( \vec{v_$String_22} \) be the generator vector of the line \( \ell_$String_22 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_21 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_21} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_22 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_22} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_22 P_$String_21} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_22 P_$String_21} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_2->cmp);
+ANS($V1_2->cmp);
+ANS($PV2_2->cmp);
+ANS($V2_2->cmp);
+ANS($P2P1->cmp);
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_21} = k \vec{v_$String_22} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("LimitedFraction");
+$KValue = Fraction($k_2,1);
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v_$String_21} \) ","\( = \)","\( k \vec{v_$String_22} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $V1_2 \) ","\( = \)",ans_rule(2)."\( $V2_2 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+which gives us that $BR $BR
+\( \quad \vec{v_$String_21} \) and \( \vec{v_$String_22} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_21 \) and \( \ell_$String_22 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($KValue->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k_1 \) such that 
+\( \overrightarrow{P_$String_22 P_$String_21} = k_1 \vec{v_$String_21} \).$BR $BR
+
+We \{ $popExist->menu() \} find a scalar \( k_2 \) such that 
+\( \overrightarrow{P_$String_22 P_$String_21} = k_2 \vec{v_$String_22} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"identical");
+
+Context("Vector");
+$NumK = $P2P1->extract(1);
+$DenK1 = $V1_2->extract(1);
+$DenK2 = $V2_2->extract(1);
+
+Context("LimitedFraction");
+$K1Value = Fraction($NumK,$DenK1);
+$K2Value = Fraction($NumK,$DenK2);
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_22 P_$String_21} \) ","\( = \)","\( k_1 \vec{v_$String_21} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $P2P1 \) ","\( = \)",ans_rule(2)."\( $V1_2 \) ","(write the numerical value of \( k_1 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_22 P_$String_21} \) ","\( = \)","\( k_2 \vec{v_$String_22} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $P2P1 \) ","\( = \)",ans_rule(2)."\( $V2_2 \) ","(write the numerical value of \( k_2 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+
+which gives us that $BR $BR
+\( \quad \overrightarrow{P_$String_22 P_$String_21} \) and \( \vec{v_$String_21} \) are \{ $popParallel->menu() \} $BR $BR
+\( \quad \overrightarrow{P_$String_22 P_$String_21} \) and \( \vec{v_$String_22} \) are \{ $popParallel->menu() \} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($K1Value->cmp);
+ANS($K2Value->cmp);
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"identical");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_21 \) and the line \( \ell_$String_22 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 1: parallel with the line inside the plane
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_11: (x,y,z) = $Line1_1 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_12: (x,y,z) = $Line2_1 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = $PV1_1 - $PV2_1;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_11 \) be the support point of the line \( \ell_$String_11 \). $BR 
+Let \( \vec{v_$String_11} \) be the generator vector of the line \( \ell_$String_11 \). $BR $BR
+Let \( P_$String_12 \) be the support point of the line \( \ell_$String_12 \). $BR
+Let \( \vec{v_$String_12} \) be the generator vector of the line \( \ell_$String_12 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_11 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_11} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_12 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_12} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_12 P_$String_11} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_12 P_$String_11} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_1->cmp);
+ANS($V1_1->cmp);
+ANS($PV2_1->cmp);
+ANS($V2_1->cmp);
+ANS($P2P1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_11} = k \vec{v_$String_12} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("LimitedFraction");
+$KValue = Fraction(1,$k_1);
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v_$String_11} \) ","\( = \)","\( k \vec{v_$String_12} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $V1_1 \) ","\( = \)",ans_rule(2)."\( $V2_1 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+which gives us that $BR $BR
+\( \quad \vec{v_$String_11} \) and \( \vec{v_$String_12} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_11 \) and \( \ell_$String_12 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($KValue->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k_1 \) such that 
+\( \overrightarrow{P_$String_12 P_$String_11} = k_1 \vec{v_$String_11} \).$BR $BR
+
+We \{ $popExist->menu() \} find a scalar \( k_2 \) such that 
+\( \overrightarrow{P_$String_12 P_$String_11} = k_2 \vec{v_$String_12} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Which gives us that $BR $BR
+\( \quad \overrightarrow{P_$String_12 P_$String_11} \) and \( \vec{v_$String_11} \) are \{ $popParallel->menu() \} $BR $BR
+\( \quad \overrightarrow{P_$String_12 P_$String_11} \) and \( \vec{v_$String_12} \) are \{ $popParallel->menu() \} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"parallel disjoint");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_11 \) and the line \( \ell_$String_12 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 4: intersecting
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_41: (x,y,z) = $Line1_4 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_42: (x,y,z) = $Line2_4 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV1_4 - $PV2_4);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_41 \) be the support point of the line \( \ell_$String_41 \). $BR 
+Let \( \vec{v_$String_41} \) be the generator vector of the line \( \ell_$String_41 \). $BR $BR
+Let \( P_$String_42 \) be the support point of the line \( \ell_$String_42 \). $BR
+Let \( \vec{v_$String_42} \) be the generator vector of the line \( \ell_$String_42 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_41 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_41} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_42 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_42} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_42 P_$String_41} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_42 P_$String_41} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_4->cmp);
+ANS($V1_4->cmp);
+ANS($PV2_4->cmp);
+ANS($V2_4->cmp);
+ANS($P2P1->cmp);
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_41} = k \vec{v_$String_42} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+Which gives us that $BR $BR
+\( \quad \vec{v_$String_41} \) and \( \vec{v_$String_42} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_41 \) and \( \ell_$String_42 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popCoplanar = PopUp(["Choose", "coplanar", "equal", "equivalent", "parallel"],"coplanar");
+$popTripleScalar = PopUp(["Choose", "cross product", "dot product", "triple scalar product"],"triple scalar product");
+    
+Context()->texStrings;
+BEGIN_TEXT
+\( \ell_$String_41 \) and \( \ell_$String_42 \) are intersecting if the vectors \( \overrightarrow{P_$String_42 P_$String_41} \), \( \vec{v_$String_41} \) and \( \vec{v_$String_42} \) are \{ $popCoplanar->menu() \}, that is, when their \{ $popTripleScalar->menu() \} \( = 0\). $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popCoplanar->cmp);
+ANS($popTripleScalar->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$CrossProduct = $V1_4 x $V2_4;
+$Triple = $P2P1.$CrossProduct;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_42 P_$String_41} \bullet \big( \vec{v_$String_41} \times \vec{v_$String_42} \big) \) ","\( = \)",ans_rule(15)."\( \bullet \)".ans_rule(15),"(write the components of \( \overrightarrow{P_$String_42 P_$String_41} \) and then find the cross product)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(15),"(find the dot product)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($P2P1->cmp);
+ANS($CrossProduct->cmp);
+ANS($Triple->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_41 \) and the line \( \ell_$String_42 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part D $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 3: skew
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_31: (x,y,z) = $Line1_3 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_32: (x,y,z) = $Line2_3 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV1_3 - $PV2_3);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_31 \) be the support point of the line \( \ell_$String_31 \). $BR 
+Let \( \vec{v_$String_31} \) be the generator vector of the line \( \ell_$String_31 \). $BR $BR
+Let \( P_$String_32 \) be the support point of the line \( \ell_$String_32 \). $BR
+Let \( \vec{v_$String_32} \) be the generator vector of the line \( \ell_$String_32 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_31 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_31} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_32 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_32} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_32 P_$String_31} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_32 P_$String_31} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_3->cmp);
+ANS($V1_3->cmp);
+ANS($PV2_3->cmp);
+ANS($V2_3->cmp);
+ANS($P2P1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_31} = k \vec{v_$String_32} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Which gives us that $BR $BR
+\( \quad \vec{v_$String_31} \) and \( \vec{v_$String_32} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_31 \) and \( \ell_$String_32 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popCoplanar = PopUp(["Choose", "coplanar", "equal", "equivalent", "parallel"],"coplanar");
+$popTripleScalar = PopUp(["Choose", "cross product", "dot product", "triple scalar product"],"triple scalar product");
+    
+Context()->texStrings;
+BEGIN_TEXT
+\( \ell_$String_31 \) and \( \ell_$String_32 \) are intersecting if the vectors \( \overrightarrow{P_$String_32 P_$String_31} \), \( \vec{v_$String_31} \) and \( \vec{v_$String_32} \) are \{ $popCoplanar->menu() \}, that is, when their \{ $popTripleScalar->menu() \} \( = 0\). $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popCoplanar->cmp);
+ANS($popTripleScalar->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$CrossProduct = $V1_3 x $V2_3;
+$Triple = $P2P1.$CrossProduct;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_32 P_$String_31} \bullet \big( \vec{v_$String_31} \times \vec{v_$String_32} \big) \) ","\( = \)",ans_rule(15)."\( \bullet \)".ans_rule(15),"(write the components of \( \overrightarrow{P_$String_32 P_$String_31} \) and then find the cross product)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(15),"(find the dot product)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($P2P1->cmp);
+ANS($CrossProduct->cmp);
+ANS($Triple->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"skew");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_31 \) and the line \( \ell_$String_32 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+#################
+}
+
+# 2-4-1-3
+if($case == 3)
+{
+$String_11 = 5;
+$String_12 = 6;
+
+$String_21 = 1;
+$String_22 = 2;
+
+$String_31 = 7;
+$String_32 = 8;
+
+$String_41 = 3;
+$String_42 = 4;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 2: identical
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_21: (x,y,z) = $Line1_2 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_22: (x,y,z) = $Line2_2 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV1_2 - $PV2_2);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_21 \) be the support point of the line \( \ell_$String_21 \). $BR 
+Let \( \vec{v_$String_21} \) be the generator vector of the line \( \ell_$String_21 \). $BR $BR
+Let \( P_$String_22 \) be the support point of the line \( \ell_$String_22 \). $BR
+Let \( \vec{v_$String_22} \) be the generator vector of the line \( \ell_$String_22 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_21 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_21} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_22 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_22} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_22 P_$String_21} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_22 P_$String_21} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_2->cmp);
+ANS($V1_2->cmp);
+ANS($PV2_2->cmp);
+ANS($V2_2->cmp);
+ANS($P2P1->cmp);
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_21} = k \vec{v_$String_22} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("LimitedFraction");
+$KValue = Fraction($k_2,1);
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v_$String_21} \) ","\( = \)","\( k \vec{v_$String_22} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $V1_2 \) ","\( = \)",ans_rule(2)."\( $V2_2 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+which gives us that $BR $BR
+\( \quad \vec{v_$String_21} \) and \( \vec{v_$String_22} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_21 \) and \( \ell_$String_22 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($KValue->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k_1 \) such that 
+\( \overrightarrow{P_$String_22 P_$String_21} = k_1 \vec{v_$String_21} \).$BR $BR
+
+We \{ $popExist->menu() \} find a scalar \( k_2 \) such that 
+\( \overrightarrow{P_$String_22 P_$String_21} = k_2 \vec{v_$String_22} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"identical");
+
+Context("Vector");
+$NumK = $P2P1->extract(1);
+$DenK1 = $V1_2->extract(1);
+$DenK2 = $V2_2->extract(1);
+
+Context("LimitedFraction");
+$K1Value = Fraction($NumK,$DenK1);
+$K2Value = Fraction($NumK,$DenK2);
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_22 P_$String_21} \) ","\( = \)","\( k_1 \vec{v_$String_21} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $P2P1 \) ","\( = \)",ans_rule(2)."\( $V1_2 \) ","(write the numerical value of \( k_1 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_22 P_$String_21} \) ","\( = \)","\( k_2 \vec{v_$String_22} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $P2P1 \) ","\( = \)",ans_rule(2)."\( $V2_2 \) ","(write the numerical value of \( k_2 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+
+which gives us that $BR $BR
+\( \quad \overrightarrow{P_$String_22 P_$String_21} \) and \( \vec{v_$String_21} \) are \{ $popParallel->menu() \} $BR $BR
+\( \quad \overrightarrow{P_$String_22 P_$String_21} \) and \( \vec{v_$String_22} \) are \{ $popParallel->menu() \} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($K1Value->cmp);
+ANS($K2Value->cmp);
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"identical");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_21 \) and the line \( \ell_$String_22 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 4: intersecting
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_41: (x,y,z) = $Line1_4 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_42: (x,y,z) = $Line2_4 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV1_4 - $PV2_4);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_41 \) be the support point of the line \( \ell_$String_41 \). $BR 
+Let \( \vec{v_$String_41} \) be the generator vector of the line \( \ell_$String_41 \). $BR $BR
+Let \( P_$String_42 \) be the support point of the line \( \ell_$String_42 \). $BR
+Let \( \vec{v_$String_42} \) be the generator vector of the line \( \ell_$String_42 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_41 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_41} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_42 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_42} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_42 P_$String_41} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_42 P_$String_41} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_4->cmp);
+ANS($V1_4->cmp);
+ANS($PV2_4->cmp);
+ANS($V2_4->cmp);
+ANS($P2P1->cmp);
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_41} = k \vec{v_$String_42} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+Which gives us that $BR $BR
+\( \quad \vec{v_$String_41} \) and \( \vec{v_$String_42} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_41 \) and \( \ell_$String_42 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popCoplanar = PopUp(["Choose", "coplanar", "equal", "equivalent", "parallel"],"coplanar");
+$popTripleScalar = PopUp(["Choose", "cross product", "dot product", "triple scalar product"],"triple scalar product");
+    
+Context()->texStrings;
+BEGIN_TEXT
+\( \ell_$String_41 \) and \( \ell_$String_42 \) are intersecting if the vectors \( \overrightarrow{P_$String_42 P_$String_41} \), \( \vec{v_$String_41} \) and \( \vec{v_$String_42} \) are \{ $popCoplanar->menu() \}, that is, when their \{ $popTripleScalar->menu() \} \( = 0\). $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popCoplanar->cmp);
+ANS($popTripleScalar->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$CrossProduct = $V1_4 x $V2_4;
+$Triple = $P2P1.$CrossProduct;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_42 P_$String_41} \bullet \big( \vec{v_$String_41} \times \vec{v_$String_42} \big) \) ","\( = \)",ans_rule(15)."\( \bullet \)".ans_rule(15),"(write the components of \( \overrightarrow{P_$String_42 P_$String_41} \) and then find the cross product)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(15),"(find the dot product)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($P2P1->cmp);
+ANS($CrossProduct->cmp);
+ANS($Triple->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_41 \) and the line \( \ell_$String_42 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 1: parallel with the line inside the plane
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_11: (x,y,z) = $Line1_1 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_12: (x,y,z) = $Line2_1 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = $PV1_1 - $PV2_1;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_11 \) be the support point of the line \( \ell_$String_11 \). $BR 
+Let \( \vec{v_$String_11} \) be the generator vector of the line \( \ell_$String_11 \). $BR $BR
+Let \( P_$String_12 \) be the support point of the line \( \ell_$String_12 \). $BR
+Let \( \vec{v_$String_12} \) be the generator vector of the line \( \ell_$String_12 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_11 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_11} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_12 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_12} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_12 P_$String_11} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_12 P_$String_11} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_1->cmp);
+ANS($V1_1->cmp);
+ANS($PV2_1->cmp);
+ANS($V2_1->cmp);
+ANS($P2P1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_11} = k \vec{v_$String_12} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("LimitedFraction");
+$KValue = Fraction(1,$k_1);
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v_$String_11} \) ","\( = \)","\( k \vec{v_$String_12} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $V1_1 \) ","\( = \)",ans_rule(2)."\( $V2_1 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+which gives us that $BR $BR
+\( \quad \vec{v_$String_11} \) and \( \vec{v_$String_12} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_11 \) and \( \ell_$String_12 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($KValue->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k_1 \) such that 
+\( \overrightarrow{P_$String_12 P_$String_11} = k_1 \vec{v_$String_11} \).$BR $BR
+
+We \{ $popExist->menu() \} find a scalar \( k_2 \) such that 
+\( \overrightarrow{P_$String_12 P_$String_11} = k_2 \vec{v_$String_12} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Which gives us that $BR $BR
+\( \quad \overrightarrow{P_$String_12 P_$String_11} \) and \( \vec{v_$String_11} \) are \{ $popParallel->menu() \} $BR $BR
+\( \quad \overrightarrow{P_$String_12 P_$String_11} \) and \( \vec{v_$String_12} \) are \{ $popParallel->menu() \} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"parallel disjoint");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_11 \) and the line \( \ell_$String_12 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part D $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 3: skew
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_31: (x,y,z) = $Line1_3 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_32: (x,y,z) = $Line2_3 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV1_3 - $PV2_3);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_31 \) be the support point of the line \( \ell_$String_31 \). $BR 
+Let \( \vec{v_$String_31} \) be the generator vector of the line \( \ell_$String_31 \). $BR $BR
+Let \( P_$String_32 \) be the support point of the line \( \ell_$String_32 \). $BR
+Let \( \vec{v_$String_32} \) be the generator vector of the line \( \ell_$String_32 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_31 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_31} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_32 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_32} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_32 P_$String_31} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_32 P_$String_31} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_3->cmp);
+ANS($V1_3->cmp);
+ANS($PV2_3->cmp);
+ANS($V2_3->cmp);
+ANS($P2P1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_31} = k \vec{v_$String_32} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Which gives us that $BR $BR
+\( \quad \vec{v_$String_31} \) and \( \vec{v_$String_32} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_31 \) and \( \ell_$String_32 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popCoplanar = PopUp(["Choose", "coplanar", "equal", "equivalent", "parallel"],"coplanar");
+$popTripleScalar = PopUp(["Choose", "cross product", "dot product", "triple scalar product"],"triple scalar product");
+    
+Context()->texStrings;
+BEGIN_TEXT
+\( \ell_$String_31 \) and \( \ell_$String_32 \) are intersecting if the vectors \( \overrightarrow{P_$String_32 P_$String_31} \), \( \vec{v_$String_31} \) and \( \vec{v_$String_32} \) are \{ $popCoplanar->menu() \}, that is, when their \{ $popTripleScalar->menu() \} \( = 0\). $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popCoplanar->cmp);
+ANS($popTripleScalar->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$CrossProduct = $V1_3 x $V2_3;
+$Triple = $P2P1.$CrossProduct;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_32 P_$String_31} \bullet \big( \vec{v_$String_31} \times \vec{v_$String_32} \big) \) ","\( = \)",ans_rule(15)."\( \bullet \)".ans_rule(15),"(write the components of \( \overrightarrow{P_$String_32 P_$String_31} \) and then find the cross product)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(15),"(find the dot product)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($P2P1->cmp);
+ANS($CrossProduct->cmp);
+ANS($Triple->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"skew");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_31 \) and the line \( \ell_$String_32 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+#################
+}
+
+# 4-2-3-1
+if($case == 4)
+{
+$String_11 = 7;
+$String_12 = 8;
+
+$String_21 = 3;
+$String_22 = 4;
+
+$String_31 = 5;
+$String_32 = 6;
+
+$String_41 = 1;
+$String_42 = 2;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 4: intersecting
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_41: (x,y,z) = $Line1_4 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_42: (x,y,z) = $Line2_4 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV1_4 - $PV2_4);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_41 \) be the support point of the line \( \ell_$String_41 \). $BR 
+Let \( \vec{v_$String_41} \) be the generator vector of the line \( \ell_$String_41 \). $BR $BR
+Let \( P_$String_42 \) be the support point of the line \( \ell_$String_42 \). $BR
+Let \( \vec{v_$String_42} \) be the generator vector of the line \( \ell_$String_42 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_41 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_41} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_42 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_42} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_42 P_$String_41} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_42 P_$String_41} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_4->cmp);
+ANS($V1_4->cmp);
+ANS($PV2_4->cmp);
+ANS($V2_4->cmp);
+ANS($P2P1->cmp);
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_41} = k \vec{v_$String_42} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+Which gives us that $BR $BR
+\( \quad \vec{v_$String_41} \) and \( \vec{v_$String_42} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_41 \) and \( \ell_$String_42 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popCoplanar = PopUp(["Choose", "coplanar", "equal", "equivalent", "parallel"],"coplanar");
+$popTripleScalar = PopUp(["Choose", "cross product", "dot product", "triple scalar product"],"triple scalar product");
+    
+Context()->texStrings;
+BEGIN_TEXT
+\( \ell_$String_41 \) and \( \ell_$String_42 \) are intersecting if the vectors \( \overrightarrow{P_$String_42 P_$String_41} \), \( \vec{v_$String_41} \) and \( \vec{v_$String_42} \) are \{ $popCoplanar->menu() \}, that is, when their \{ $popTripleScalar->menu() \} \( = 0\). $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popCoplanar->cmp);
+ANS($popTripleScalar->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$CrossProduct = $V1_4 x $V2_4;
+$Triple = $P2P1.$CrossProduct;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_42 P_$String_41} \bullet \big( \vec{v_$String_41} \times \vec{v_$String_42} \big) \) ","\( = \)",ans_rule(15)."\( \bullet \)".ans_rule(15),"(write the components of \( \overrightarrow{P_$String_42 P_$String_41} \) and then find the cross product)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(15),"(find the dot product)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($P2P1->cmp);
+ANS($CrossProduct->cmp);
+ANS($Triple->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_41 \) and the line \( \ell_$String_42 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 2: identical
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_21: (x,y,z) = $Line1_2 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_22: (x,y,z) = $Line2_2 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV1_2 - $PV2_2);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_21 \) be the support point of the line \( \ell_$String_21 \). $BR 
+Let \( \vec{v_$String_21} \) be the generator vector of the line \( \ell_$String_21 \). $BR $BR
+Let \( P_$String_22 \) be the support point of the line \( \ell_$String_22 \). $BR
+Let \( \vec{v_$String_22} \) be the generator vector of the line \( \ell_$String_22 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_21 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_21} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_22 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_22} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_22 P_$String_21} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_22 P_$String_21} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_2->cmp);
+ANS($V1_2->cmp);
+ANS($PV2_2->cmp);
+ANS($V2_2->cmp);
+ANS($P2P1->cmp);
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_21} = k \vec{v_$String_22} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("LimitedFraction");
+$KValue = Fraction($k_2,1);
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v_$String_21} \) ","\( = \)","\( k \vec{v_$String_22} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $V1_2 \) ","\( = \)",ans_rule(2)."\( $V2_2 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+which gives us that $BR $BR
+\( \quad \vec{v_$String_21} \) and \( \vec{v_$String_22} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_21 \) and \( \ell_$String_22 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($KValue->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k_1 \) such that 
+\( \overrightarrow{P_$String_22 P_$String_21} = k_1 \vec{v_$String_21} \).$BR $BR
+
+We \{ $popExist->menu() \} find a scalar \( k_2 \) such that 
+\( \overrightarrow{P_$String_22 P_$String_21} = k_2 \vec{v_$String_22} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"identical");
+
+Context("Vector");
+$NumK = $P2P1->extract(1);
+$DenK1 = $V1_2->extract(1);
+$DenK2 = $V2_2->extract(1);
+
+Context("LimitedFraction");
+$K1Value = Fraction($NumK,$DenK1);
+$K2Value = Fraction($NumK,$DenK2);
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_22 P_$String_21} \) ","\( = \)","\( k_1 \vec{v_$String_21} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $P2P1 \) ","\( = \)",ans_rule(2)."\( $V1_2 \) ","(write the numerical value of \( k_1 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_22 P_$String_21} \) ","\( = \)","\( k_2 \vec{v_$String_22} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $P2P1 \) ","\( = \)",ans_rule(2)."\( $V2_2 \) ","(write the numerical value of \( k_2 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+
+which gives us that $BR $BR
+\( \quad \overrightarrow{P_$String_22 P_$String_21} \) and \( \vec{v_$String_21} \) are \{ $popParallel->menu() \} $BR $BR
+\( \quad \overrightarrow{P_$String_22 P_$String_21} \) and \( \vec{v_$String_22} \) are \{ $popParallel->menu() \} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($K1Value->cmp);
+ANS($K2Value->cmp);
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"identical");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_21 \) and the line \( \ell_$String_22 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 3: skew
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_31: (x,y,z) = $Line1_3 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_32: (x,y,z) = $Line2_3 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV1_3 - $PV2_3);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_31 \) be the support point of the line \( \ell_$String_31 \). $BR 
+Let \( \vec{v_$String_31} \) be the generator vector of the line \( \ell_$String_31 \). $BR $BR
+Let \( P_$String_32 \) be the support point of the line \( \ell_$String_32 \). $BR
+Let \( \vec{v_$String_32} \) be the generator vector of the line \( \ell_$String_32 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_31 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_31} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_32 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_32} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_32 P_$String_31} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_32 P_$String_31} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_3->cmp);
+ANS($V1_3->cmp);
+ANS($PV2_3->cmp);
+ANS($V2_3->cmp);
+ANS($P2P1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_31} = k \vec{v_$String_32} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Which gives us that $BR $BR
+\( \quad \vec{v_$String_31} \) and \( \vec{v_$String_32} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_31 \) and \( \ell_$String_32 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popCoplanar = PopUp(["Choose", "coplanar", "equal", "equivalent", "parallel"],"coplanar");
+$popTripleScalar = PopUp(["Choose", "cross product", "dot product", "triple scalar product"],"triple scalar product");
+    
+Context()->texStrings;
+BEGIN_TEXT
+\( \ell_$String_31 \) and \( \ell_$String_32 \) are intersecting if the vectors \( \overrightarrow{P_$String_32 P_$String_31} \), \( \vec{v_$String_31} \) and \( \vec{v_$String_32} \) are \{ $popCoplanar->menu() \}, that is, when their \{ $popTripleScalar->menu() \} \( = 0\). $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popCoplanar->cmp);
+ANS($popTripleScalar->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$CrossProduct = $V1_3 x $V2_3;
+$Triple = $P2P1.$CrossProduct;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_32 P_$String_31} \bullet \big( \vec{v_$String_31} \times \vec{v_$String_32} \big) \) ","\( = \)",ans_rule(15)."\( \bullet \)".ans_rule(15),"(write the components of \( \overrightarrow{P_$String_32 P_$String_31} \) and then find the cross product)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(15),"(find the dot product)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($P2P1->cmp);
+ANS($CrossProduct->cmp);
+ANS($Triple->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"skew");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_31 \) and the line \( \ell_$String_32 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part D $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 1: parallel with the line inside the plane
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_11: (x,y,z) = $Line1_1 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_12: (x,y,z) = $Line2_1 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = $PV1_1 - $PV2_1;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_11 \) be the support point of the line \( \ell_$String_11 \). $BR 
+Let \( \vec{v_$String_11} \) be the generator vector of the line \( \ell_$String_11 \). $BR $BR
+Let \( P_$String_12 \) be the support point of the line \( \ell_$String_12 \). $BR
+Let \( \vec{v_$String_12} \) be the generator vector of the line \( \ell_$String_12 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_11 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_11} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_12 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_12} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_12 P_$String_11} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_12 P_$String_11} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_1->cmp);
+ANS($V1_1->cmp);
+ANS($PV2_1->cmp);
+ANS($V2_1->cmp);
+ANS($P2P1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_11} = k \vec{v_$String_12} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("LimitedFraction");
+$KValue = Fraction(1,$k_1);
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v_$String_11} \) ","\( = \)","\( k \vec{v_$String_12} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $V1_1 \) ","\( = \)",ans_rule(2)."\( $V2_1 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+which gives us that $BR $BR
+\( \quad \vec{v_$String_11} \) and \( \vec{v_$String_12} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_11 \) and \( \ell_$String_12 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($KValue->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k_1 \) such that 
+\( \overrightarrow{P_$String_12 P_$String_11} = k_1 \vec{v_$String_11} \).$BR $BR
+
+We \{ $popExist->menu() \} find a scalar \( k_2 \) such that 
+\( \overrightarrow{P_$String_12 P_$String_11} = k_2 \vec{v_$String_12} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Which gives us that $BR $BR
+\( \quad \overrightarrow{P_$String_12 P_$String_11} \) and \( \vec{v_$String_11} \) are \{ $popParallel->menu() \} $BR $BR
+\( \quad \overrightarrow{P_$String_12 P_$String_11} \) and \( \vec{v_$String_12} \) are \{ $popParallel->menu() \} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"parallel disjoint");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_11 \) and the line \( \ell_$String_12 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+#################
+
+}
+
+# 3-1-4-2
+if($case == 5)
+{
+$String_11 = 3;
+$String_12 = 4;
+
+$String_21 = 7;
+$String_22 = 8;
+
+$String_31 = 1;
+$String_32 = 2;
+
+$String_41 = 5;
+$String_42 = 6;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 3: skew
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_31: (x,y,z) = $Line1_3 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_32: (x,y,z) = $Line2_3 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV1_3 - $PV2_3);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_31 \) be the support point of the line \( \ell_$String_31 \). $BR 
+Let \( \vec{v_$String_31} \) be the generator vector of the line \( \ell_$String_31 \). $BR $BR
+Let \( P_$String_32 \) be the support point of the line \( \ell_$String_32 \). $BR
+Let \( \vec{v_$String_32} \) be the generator vector of the line \( \ell_$String_32 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_31 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_31} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_32 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_32} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_32 P_$String_31} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_32 P_$String_31} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_3->cmp);
+ANS($V1_3->cmp);
+ANS($PV2_3->cmp);
+ANS($V2_3->cmp);
+ANS($P2P1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_31} = k \vec{v_$String_32} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Which gives us that $BR $BR
+\( \quad \vec{v_$String_31} \) and \( \vec{v_$String_32} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_31 \) and \( \ell_$String_32 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popCoplanar = PopUp(["Choose", "coplanar", "equal", "equivalent", "parallel"],"coplanar");
+$popTripleScalar = PopUp(["Choose", "cross product", "dot product", "triple scalar product"],"triple scalar product");
+    
+Context()->texStrings;
+BEGIN_TEXT
+\( \ell_$String_31 \) and \( \ell_$String_32 \) are intersecting if the vectors \( \overrightarrow{P_$String_32 P_$String_31} \), \( \vec{v_$String_31} \) and \( \vec{v_$String_32} \) are \{ $popCoplanar->menu() \}, that is, when their \{ $popTripleScalar->menu() \} \( = 0\). $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popCoplanar->cmp);
+ANS($popTripleScalar->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$CrossProduct = $V1_3 x $V2_3;
+$Triple = $P2P1.$CrossProduct;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_32 P_$String_31} \bullet \big( \vec{v_$String_31} \times \vec{v_$String_32} \big) \) ","\( = \)",ans_rule(15)."\( \bullet \)".ans_rule(15),"(write the components of \( \overrightarrow{P_$String_32 P_$String_31} \) and then find the cross product)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(15),"(find the dot product)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($P2P1->cmp);
+ANS($CrossProduct->cmp);
+ANS($Triple->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"skew");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_31 \) and the line \( \ell_$String_32 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 1: parallel with the line inside the plane
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_11: (x,y,z) = $Line1_1 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_12: (x,y,z) = $Line2_1 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = $PV1_1 - $PV2_1;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_11 \) be the support point of the line \( \ell_$String_11 \). $BR 
+Let \( \vec{v_$String_11} \) be the generator vector of the line \( \ell_$String_11 \). $BR $BR
+Let \( P_$String_12 \) be the support point of the line \( \ell_$String_12 \). $BR
+Let \( \vec{v_$String_12} \) be the generator vector of the line \( \ell_$String_12 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_11 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_11} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_12 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_12} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_12 P_$String_11} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_12 P_$String_11} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_1->cmp);
+ANS($V1_1->cmp);
+ANS($PV2_1->cmp);
+ANS($V2_1->cmp);
+ANS($P2P1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_11} = k \vec{v_$String_12} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("LimitedFraction");
+$KValue = Fraction(1,$k_1);
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v_$String_11} \) ","\( = \)","\( k \vec{v_$String_12} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $V1_1 \) ","\( = \)",ans_rule(2)."\( $V2_1 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+which gives us that $BR $BR
+\( \quad \vec{v_$String_11} \) and \( \vec{v_$String_12} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_11 \) and \( \ell_$String_12 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($KValue->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k_1 \) such that 
+\( \overrightarrow{P_$String_12 P_$String_11} = k_1 \vec{v_$String_11} \).$BR $BR
+
+We \{ $popExist->menu() \} find a scalar \( k_2 \) such that 
+\( \overrightarrow{P_$String_12 P_$String_11} = k_2 \vec{v_$String_12} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Which gives us that $BR $BR
+\( \quad \overrightarrow{P_$String_12 P_$String_11} \) and \( \vec{v_$String_11} \) are \{ $popParallel->menu() \} $BR $BR
+\( \quad \overrightarrow{P_$String_12 P_$String_11} \) and \( \vec{v_$String_12} \) are \{ $popParallel->menu() \} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"parallel disjoint");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_11 \) and the line \( \ell_$String_12 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 4: intersecting
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_41: (x,y,z) = $Line1_4 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_42: (x,y,z) = $Line2_4 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV1_4 - $PV2_4);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_41 \) be the support point of the line \( \ell_$String_41 \). $BR 
+Let \( \vec{v_$String_41} \) be the generator vector of the line \( \ell_$String_41 \). $BR $BR
+Let \( P_$String_42 \) be the support point of the line \( \ell_$String_42 \). $BR
+Let \( \vec{v_$String_42} \) be the generator vector of the line \( \ell_$String_42 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_41 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_41} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_42 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_42} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_42 P_$String_41} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_42 P_$String_41} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_4->cmp);
+ANS($V1_4->cmp);
+ANS($PV2_4->cmp);
+ANS($V2_4->cmp);
+ANS($P2P1->cmp);
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_41} = k \vec{v_$String_42} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+Which gives us that $BR $BR
+\( \quad \vec{v_$String_41} \) and \( \vec{v_$String_42} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_41 \) and \( \ell_$String_42 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popCoplanar = PopUp(["Choose", "coplanar", "equal", "equivalent", "parallel"],"coplanar");
+$popTripleScalar = PopUp(["Choose", "cross product", "dot product", "triple scalar product"],"triple scalar product");
+    
+Context()->texStrings;
+BEGIN_TEXT
+\( \ell_$String_41 \) and \( \ell_$String_42 \) are intersecting if the vectors \( \overrightarrow{P_$String_42 P_$String_41} \), \( \vec{v_$String_41} \) and \( \vec{v_$String_42} \) are \{ $popCoplanar->menu() \}, that is, when their \{ $popTripleScalar->menu() \} \( = 0\). $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popCoplanar->cmp);
+ANS($popTripleScalar->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$CrossProduct = $V1_4 x $V2_4;
+$Triple = $P2P1.$CrossProduct;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_42 P_$String_41} \bullet \big( \vec{v_$String_41} \times \vec{v_$String_42} \big) \) ","\( = \)",ans_rule(15)."\( \bullet \)".ans_rule(15),"(write the components of \( \overrightarrow{P_$String_42 P_$String_41} \) and then find the cross product)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(15),"(find the dot product)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($P2P1->cmp);
+ANS($CrossProduct->cmp);
+ANS($Triple->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_41 \) and the line \( \ell_$String_42 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part D $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 2: identical
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_21: (x,y,z) = $Line1_2 \) where \(r\in\mathbb{R}\) $BR $BR
+\( \quad \ell_$String_22: (x,y,z) = $Line2_2 \) where \(t\in\mathbb{R}\) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV1_2 - $PV2_2);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_$String_21 \) be the support point of the line \( \ell_$String_21 \). $BR 
+Let \( \vec{v_$String_21} \) be the generator vector of the line \( \ell_$String_21 \). $BR $BR
+Let \( P_$String_22 \) be the support point of the line \( \ell_$String_22 \). $BR
+Let \( \vec{v_$String_22} \) be the generator vector of the line \( \ell_$String_22 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_$String_21 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_21} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_$String_22 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_$String_22} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_$String_22 P_$String_21} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_$String_22 P_$String_21} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1_2->cmp);
+ANS($V1_2->cmp);
+ANS($PV2_2->cmp);
+ANS($V2_2->cmp);
+ANS($P2P1->cmp);
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_$String_21} = k \vec{v_$String_22} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("LimitedFraction");
+$KValue = Fraction($k_2,1);
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v_$String_21} \) ","\( = \)","\( k \vec{v_$String_22} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $V1_2 \) ","\( = \)",ans_rule(2)."\( $V2_2 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+which gives us that $BR $BR
+\( \quad \vec{v_$String_21} \) and \( \vec{v_$String_22} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_$String_21 \) and \( \ell_$String_22 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($KValue->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k_1 \) such that 
+\( \overrightarrow{P_$String_22 P_$String_21} = k_1 \vec{v_$String_21} \).$BR $BR
+
+We \{ $popExist->menu() \} find a scalar \( k_2 \) such that 
+\( \overrightarrow{P_$String_22 P_$String_21} = k_2 \vec{v_$String_22} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"identical");
+
+Context("Vector");
+$NumK = $P2P1->extract(1);
+$DenK1 = $V1_2->extract(1);
+$DenK2 = $V2_2->extract(1);
+
+Context("LimitedFraction");
+$K1Value = Fraction($NumK,$DenK1);
+$K2Value = Fraction($NumK,$DenK2);
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_22 P_$String_21} \) ","\( = \)","\( k_1 \vec{v_$String_21} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $P2P1 \) ","\( = \)",ans_rule(2)."\( $V1_2 \) ","(write the numerical value of \( k_1 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_$String_22 P_$String_21} \) ","\( = \)","\( k_2 \vec{v_$String_22} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $P2P1 \) ","\( = \)",ans_rule(2)."\( $V2_2 \) ","(write the numerical value of \( k_2 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+
+which gives us that $BR $BR
+\( \quad \overrightarrow{P_$String_22 P_$String_21} \) and \( \vec{v_$String_21} \) are \{ $popParallel->menu() \} $BR $BR
+\( \quad \overrightarrow{P_$String_22 P_$String_21} \) and \( \vec{v_$String_22} \) are \{ $popParallel->menu() \} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($K1Value->cmp);
+ANS($K2Value->cmp);
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"identical");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_21 \) and the line \( \ell_$String_22 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+#################
+
+}
+
+Scaffold::End();
+
+ENDDOCUMENT();
+
+
+
+

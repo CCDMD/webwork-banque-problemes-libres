@@ -1,0 +1,174 @@
+##DESCRIPTION
+##  Integrals - Word problems
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the integral')
+## KEYWORDS('direct applications')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGstandard.pl", 
+"MathObjects.pl", 
+"PGunion.pl",
+"PGcourse.pl"
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+$G=random(201,799,2);
+$g=$G/100;
+$h=random(150,450,100);
+$tmax=random(3,7,1);
+$hmax=$tmax*$g;
+
+$v0 = $tmax*$g;
+
+$a=-$g/2;
+
+$tground=(-$v0-sqrt($v0*$v0-4*$a*$h))/(2*$a);
+
+BEGIN_TEXT
+
+$BBOLD Question: $EBOLD
+
+$PAR
+In the Andromeda galaxy there is a planet called X-$G. 
+At the surface of this planet, the gravity (directed downward) is given by \[$g\,m/s^2.\]
+
+$PAR
+On this planet there is a tower which is \($h\) meters high. From the top of the tower, a cosmic being called Jamob throws a rock upward from the tower (for fun). After \($tmax\) seconds, the rock travels vertically to reach its maximum height before it stops and starts falling back.
+
+$PAR
+Let \(t\geq 0\) be the time in seconds elapsed after throwing the rock. We want to model:$BR$BR
+\(a(t)\) the acceleration in \(m/s^2\) of the rock after \(t\) seconds,$BR
+\(v(t)\) the speed in \(m/s\) of the rock after \(t\) seconds and$BR
+\(s(t)\) the vertical position of the rocks $BITALIC from the surface of the planet $EITALIC after \(t\) seconds.$BR
+
+$PAR
+$BITALIC Solution: $EITALIC
+
+$PAR
+$BBOLD Acceleration:$EBOLD$BR$BR
+The acceleration of the rock is given by$BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["\(a(t)\)","\( = \)",ans_rule(5),"\(m/s^2\)."], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+$PAR
+$BBOLD Speed: $EBOLD$BR$BR
+
+The speed of the rock is given by
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["\(v(t)\) = ","\(\displaystyle \int\)",ans_rule(8),"\(dt\)","(integrate acceleration)"], align=>LEFT, separation=>0).
+AlignedRow(["\(v(t)\) = "," ",ans_rule(8)," ","(general solution)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+$BR$BR
+The initial condition: When \(t=$tmax\), the speed of the rock is \(v($tmax)=\) \{ans_rule(2)\} \(m/s\), thus
+$BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow([ans_rule(2),"\( = \)",ans_rule(8),"\(+C\)","(use the initial condition)"], align=>LEFT, separation=>0).
+AlignedRow(["\(C\)","\( = \)",ans_rule(8)," ","(isolate the constant of integration)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+$BR
+Thus the speed of the rock \(v(t)\) is given by:
+$BR$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["\(v(t)\)","\( = \)",ans_rule(20),"\(m/s\)."], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+
+$PAR
+$BBOLD Position: $EBOLD$BR$BR
+
+The vertical position (from the surface) of the rock is given by
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["\(s(t)\) = ","\(\displaystyle \int\)",ans_rule(15),"\(dt\)","(integrate speed)"], align=>LEFT, separation=>0).
+AlignedRow(["\(s(t)\) = "," ",ans_rule(15)," ","(general solution)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+$BR$BR
+The initial condition: When \(t=0\), the position of the rock is \(s(0)=\) \{ans_rule(3)\} \(m\), thus
+$BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow([ans_rule(3),"\( = \)",ans_rule(3),"\(+C\)","(use the initial condition)"], align=>LEFT, separation=>0).
+AlignedRow(["\(C\)","\( = \)",ans_rule(3)," ","(isolate the constant of integration)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+$BR
+Thus the vertical position of the rock \(s(t)\) is given by:
+$BR$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["\(s(t)\)","\( = \)",ans_rule(30),"\(m\)."], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+$PAR
+$BBOLD When will the rock reach the surface? $EBOLD$BR$BR
+
+The rock will reach the ground (i.e. \(s(t)=0\)) when \(t=\)\{ans_rule(20)\} seconds.
+
+END_TEXT
+
+#Acceleration Stuff
+
+ANS(num_cmp(-$g));
+
+#Speed Stuff
+
+ANS(fun_cmp("-$g", var=>["t","C"]));
+ANS(fun_cmp("-$g*t+C", var=>["t","C"]));
+
+ANS(num_cmp(0));
+
+ANS(num_cmp(0));
+ANS(num_cmp(-$g*$tmax));
+ANS(num_cmp($g*$tmax));
+ANS(fun_cmp("-$g*t+$g*$tmax", var=>["t","C"], limits=>[[-100,100],[-100,100]]));
+
+#Position Stuff
+
+ANS(fun_cmp("-$g*t+$g*$tmax", var=>["t","C"], limits=>[[-100,100],[-100,100]]));
+ANS(fun_cmp("-$g/2*t^2+$g*$tmax*t+C", var=>["t","C"], limits=>[[-100,100],[-100,100]]));
+
+ANS(num_cmp($h));
+
+ANS(num_cmp($h));
+ANS(num_cmp(0));
+ANS(num_cmp($h));
+ANS(fun_cmp("-$g/2*t^2+$g*$tmax*t+$h", var=>["t","C"], limits=>[[-100,100],[-100,100]]));
+
+ANS(num_cmp($tground));
+
+
+ENDDOCUMENT();

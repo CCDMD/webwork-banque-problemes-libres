@@ -1,0 +1,218 @@
+##DESCRIPTION
+##  Continuity on a graph
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('continuity', 'discontinuity', 'domain', 'graph', 'limit', 'left and right limit')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"PGgraphmacros.pl",
+"contextAlternateIntervals.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+Context()->strings->add(yes=>{},Y=>{alias=>"yes"});
+Context()->strings->add(no=>{},N=>{alias=>"no"});
+Context()->strings->add(UND=>{});
+
+$showPartialCorrectAnswers = 1;
+$refreshCachedImages = 1; 
+
+#####################################################################
+
+$a = random(1,3,1);
+$b = random(0,$a-1,1);
+$c = random(-2,$b,1);
+
+###############################################################
+
+$w = 400;  # graph size
+$tw = 500; # graph size in TeX
+
+$graph1 = init_graph(-3,-3,8,8,'axes'=>[0,0],'ticks'=>[11,11],'grid'=>[11,11],'size'=>[500,500]);
+
+$p1 = FEQ("((x-1)^2)+$a for x in [-3,0] using color:blue weight:2");
+$p2 = FEQ("-2*cos(pi*x/2)+$b for x in (0,2) using color:blue weight:2");
+$p3 = FEQ("((x-2)^2)/8+$c for x in (2,7] using color:blue weight:2");
+$p4 = FEQ("$b+1 for x in [2,2] using color:blue weight:2");
+
+plot_functions($graph1,$p1,$p2,$p3,$p4);
+
+$limitM1 = Real("((-1-1)^2)+$a");
+$left0 = Real("((0-1)^2)+$a");
+$right0 = Real("-2*cos(pi*0/2)+$b");
+$limit1 = Real("-2*cos(pi*1/2)+$b");
+$left2 = Real("-2*cos(pi*2/2)+$b");
+$right2 = Real("((2-2)^2)/8+$c");
+$limit6 = Real("((6-2)^2)/8+$c");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$IDomain = Compute("(-inf,7]");
+
+###############################################################
+Context()->texStrings;
+
+BEGIN_TEXT
+
+$PAR
+
+Let \(f(x)\) be the function defined graphically below.
+$PAR
+$BCENTER
+\{image(insertGraph($graph1),width=>$w,height=>$w,tex_size=>$tw)\}
+$ECENTER 
+$BR$BR
+$HR
+$BBOLD Note: $EBOLD $BITALIC You can click on the graph to enlarge the image.$EITALIC
+$HR
+
+$PAR
+$BR
+The domain of the function is \(\text{dom}(f)=\)\{ans_rule(25)\}$BR $BR
+$HR$BR
+
+Fill the following table:
+$BR
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+'\( \quad a \quad \)',
+'\(f(a)\)',
+'\(\displaystyle \lim_{x \rightarrow a^-} f(x) \)',
+'\(\displaystyle \lim_{x \rightarrow a^+} f(x) \)',
+'\(\displaystyle \lim_{x \rightarrow a} f(x) \)',
+'Is \(f(x) \) continuous at \( x = a \) ?'],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\( -1 \)',
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5)],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\( 0 \)',
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5)],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\( 1 \)',
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5)],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\( 2 \)',
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5)],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+  AlignedRow([
+'\( 6 \)',
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5)],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+EndTable();
+\}
+
+$BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+$BR
+Enter $BBOLD YES $EBOLD or $BBOLD NO $EBOLD if \(f(x)\) is continuous at \( x = a \).$BR
+
+END_TEXT
+
+Context()->normalStrings;
+
+#####################################################################
+
+
+Context()->strings->add(yes=>{},Y=>{alias=>"yes"});
+Context()->strings->add(no=>{},N=>{alias=>"no"});
+Context()->strings->add(UND=>{});
+
+#domain
+ANS($IDomain->cmp);
+
+#-1
+ANS($limitM1->cmp);
+ANS($limitM1->cmp);
+ANS($limitM1->cmp);
+ANS($limitM1->cmp);
+ANS(Compute("YES")->cmp);
+
+#0
+ANS($left0->cmp);
+ANS($left0->cmp);
+ANS($right0->cmp);
+ANS(Compute("DNE")->cmp);
+ANS(Compute("NO")->cmp);
+
+#1
+ANS($limit1->cmp);
+ANS($limit1->cmp);
+ANS($limit1->cmp);
+ANS($limit1->cmp);
+ANS(Compute("YES")->cmp);
+
+#2
+ANS(Real("$b+1")->cmp);
+ANS($left2->cmp);
+ANS($right2->cmp);
+ANS(Compute("DNE")->cmp);
+ANS(Compute("NO")->cmp);
+
+#6
+ANS($limit6->cmp);
+ANS($limit6->cmp);
+ANS($limit6->cmp);
+ANS($limit6->cmp);
+ANS(Compute("YES")->cmp);
+
+ENDDOCUMENT();    

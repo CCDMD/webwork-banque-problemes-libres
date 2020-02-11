@@ -1,0 +1,223 @@
+## DESCRIPTION
+## Precalculus: Trigonometry
+## ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Trigonometric Function)
+##KEYWORDS('trigonometric equation', 'trigonometric identity')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"contextFraction.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+@value1=('+ sin(x)' ,'- cos(x)');
+@value2=('-2 cos(x)', '+ 2 sin(x)');
+
+#$tag1 = random(0,1,1);
+$tag1 = 1;
+
+@ans1 = ("1/2","1/6");
+@ans2 = ("2/3","5/6");
+@ans3 = ("4/3",1);
+
+#\( 2\sin t \cos t $value1[$tag1] $value2[$tag1] -1 =0 \) 
+
+$LHS = Compute("2 sin(x) cos(x) $value1[$tag1] $value2[$tag1] ")->reduce;
+$RHS = Compute("1")->reduce;
+$equation = $LHS - $RHS;
+
+if($tag1 == 0)
+{
+    $roots[0] = Compute("$ans1[$tag1]*pi");
+    $roots[1] = Compute("$ans2[$tag1]*pi");
+    $roots[2] = Compute("$ans3[$tag1]*pi");
+}
+else
+{
+    $roots[0] = Compute("$ans3[$tag1]*pi");
+    $roots[1] = Compute("$ans1[$tag1]*pi");
+    $roots[2] = Compute("$ans2[$tag1]*pi");
+}
+
+$solution_set = List($roots[0],$roots[1],$roots[2]);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Solve \( \displaystyle $LHS = $RHS\) where \( 0 \leq x \leq 2 \pi \)
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Solve for \(x\)");
+
+#
+#  Factored form
+#
+if($tag1 == 0)
+{
+    Context("Numeric");
+    $factor1 = Compute("sin(x) - 1");
+    $factor2 = Compute("2 cos(x) + 1");
+    $LHS_F1 = Compute("sin(x)");
+    $LHS_F2 = Compute("cos(x)");
+    $RHS_F1 = Compute("1");
+
+    Context("LimitedFraction");
+    $RHS_F2 = Compute("-1/2");
+}
+else
+{
+    Context("Numeric");
+    $factor1 = Compute("cos(x) + 1");
+    $factor2 = Compute("2 sin(x) - 1");
+    $LHS_F1 = Compute("cos(x)");
+    $RHS_F1 = Compute("-1");
+    $LHS_F2 = Compute("sin(x)");
+
+    Context("LimitedFraction");
+    $RHS_F2 = Compute("1/2");
+}
+
+Context("Numeric");
+
+#check box 2
+$ans_eval2 = $factor1->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2 = $ans_hash2->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+We have 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $LHS \)","\( = \)","\( $RHS \)"], align=>RIGHT, separation=>0, indent=>25).
+
+AlignedRow([ans_rule(30),"\( = \)","\( 0 \)"], align=>RIGHT, separation=>0, indent=>25).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \Big( \)".ans_rule(10)."\( \Big) \Big( \)".ans_rule(10)."\( \Big) \)","\( = \)","\( 0 \)","(factorized)"],       align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Solving for \($LHS_F1\) and \($LHS_F2\) gives us 
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $LHS_F1 = \)",ans_rule(10),"\( \quad \)","and","\( \quad $LHS_F2 = \)",ans_rule(10)], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($equation->cmp);
+
+if($TESTbox2)
+{
+    ANS($factor1->cmp); 
+    ANS($factor2->cmp); 
+}
+else
+{
+    ANS($factor2->cmp); 
+    ANS($factor1->cmp); 
+}
+
+ANS($RHS_F1->cmp);
+ANS($RHS_F2->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+When \( $LHS_F1 = $RHS_F1 \)
+$BR $BR
+Solving for \(x\) gives us \(x = \) \{ans_rule(10)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($roots[0]->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+When \( $LHS_F2 = $RHS_F2 \)
+$BR $BR
+Solving for \(x\) gives us (in ascending order)
+$BR
+\(x_1 = \) \{ans_rule(10)\} and \(x_2 = \) \{ans_rule(10)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($roots[1]->cmp);
+ANS($roots[2]->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Check your solution");
+
+Section::End();
+
+###########################################
+Section::Begin("State the solution");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD $BR
+Enter your answer in a comma-separated list. $BR
+If the solution set is the empty set, write $BBOLD none$EBOLD.
+$BR $HR $BR
+Thus, the solution set is {\{ans_rule(30)\}}.$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($solution_set->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

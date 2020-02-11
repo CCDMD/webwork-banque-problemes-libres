@@ -1,0 +1,236 @@
+##DESCRIPTION
+##  Compute determinant
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('System of Linear Equations')
+## KEYWORDS('determinant', 'elementary operations on the rows')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"MatrixReduce.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+$a11 = non_zero_random(-5,5,1);
+$a12 = non_zero_random(-5,5,1);
+$a13 = non_zero_random(-5,5,1);
+$a21 = non_zero_random(-5,5,1);
+$a22 = random(2,5,1);
+$a23 = random(-5,-2,1);
+$a31 = $a21 + non_zero_random(-1,1,1);
+$r = random(-5,5,1);
+$a32 = $r*$a22;
+$a33 = $r*$a23;
+
+$A = Matrix([[$a11,$a12,$a13],[$a21,$a22,$a23],[$a31,$a32,$a33]]);
+$DetA = $A->det;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Let \( B = $A \)
+$BR $BR
+Find the determinant of the matrix \( B \) by using elementary operations.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+Section::Begin("Perform an elementary operation");
+
+Context("Matrix");
+$M = row_add($A,3,2,-1*$r);
+
+Context("Numeric");
+$popSignPlus = PopUp(["?","+","-"],"+");
+$popSignMinus = PopUp(["?","+","-"],"-");
+
+Context()->texStrings;
+BEGIN_TEXT
+Starting with \(B = $A\), I will create two zeros in Row 3 by using the elementary operation 
+$BBOLD add a multiple of a row to another row$EBOLD.
+$BR $BR
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( M \)","\( = \)","\( \text{R3} \)".$popSignPlus->menu().ans_rule(5)."\( \text{R2} \)"."\( $A \)"],align=>LEFT, separation=>0, indent=>10).
+
+AlignedRow(["","\( = \)",$M->ans_array(2)],align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+if($r > 0)
+{
+    ANS($popSignMinus->cmp());
+    ANS(Compute("$r")->cmp);
+}
+else
+{
+    ANS($popSignPlus->cmp());
+    ANS(Compute("-$r")->cmp);
+}
+
+
+ANS($M->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popCPlus = PopUp(["?", "+1", "-1"],"+1");
+$popCMinus = PopUp(["?", "+1", "-1"],"-1");
+
+$popR1 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"row 1");
+$popR2 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"row 2");
+$popR3 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"row 3");
+$popC1 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"column 1");
+$popC2 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"column 2");
+$popC3 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"column 3");
+
+#check box 4
+$ans_eval4 = $popR1->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TEST_R1 = $ans_hash4->{score};
+
+$ans_eval4 = $popR2->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TEST_R2 = $ans_hash4->{score};
+
+$ans_eval4 = $popR3->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TEST_R3 = $ans_hash4->{score};
+
+$ans_eval4 = $popC1->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TEST_C1 = $ans_hash4->{score};
+
+$ans_eval4 = $popC2->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TEST_C2 = $ans_hash4->{score};
+
+$ans_eval4 = $popC3->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TEST_C3 = $ans_hash4->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+To find the determinant of \(M = $M\), I will expand along \{ $popR1->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+if($TEST_R1)
+{
+    ANS($popR1->cmp);
+}
+elsif($TEST_R2)
+{
+    ANS($popR2->cmp);
+}
+elsif($TEST_R3)
+{
+    ANS($popR3->cmp);
+}
+elsif($TEST_C1)
+{
+    ANS($popC1->cmp);
+}
+elsif($TEST_C2)
+{
+    ANS($popC2->cmp);
+}
+else
+{
+    ANS($popC3->cmp);
+}
+
+Section::End();
+
+if($TEST_R3)
+{
+Section::Begin("Compute the determinant");
+
+Context("Matrix");
+$M1 = Matrix([[$a12,$a13],[$a22,$a23]]);
+
+$Coeff = $M->element(3,1);
+$Entry1 = Compute("$Coeff");
+$DetM1 = $M1->det;
+$Sign1 = $popCPlus;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \det $M \)","\( = \)","\( \big( \)".ans_rule(2)."\( \big) \big( \)".$popCPlus->menu()."\( \big) \)"."\( \det \)".$M1->ans_array(2)], align=>LEFT, separation=>0).
+
+AlignedRow(["","","(write each non-zero term, where each term is of the form \( a_{i j}(-1)^{i j}M_{i j} )\)"], align=>LEFT, separation=>0).
+
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(5)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Entry1->cmp);
+ANS($Sign1->cmp);
+ANS($M1->cmp);
+
+ANS($DetA->cmp);
+
+Section::End();
+}
+else
+{
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+It is best to choose a row or column with the most zeros. Reopen the previous tab and choose a different option. $BR $BR
+Leave the following box empty: \{ans_rule(5)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(str_cmp("ok"));
+
+Section::End();
+}
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

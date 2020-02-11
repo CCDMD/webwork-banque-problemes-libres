@@ -1,0 +1,64 @@
+##DESCRIPTION
+##  Finding Inverse by Gauss-Jordan
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Matrix Algebra')
+## KEYWORDS('reduced row echelon form matrix', 'identity matrix', 'inverse matrix')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"MatrixUnits.pl",
+"MatrixReduce.pl",
+"PGmatrixmacros.pl",
+"contextLimitedPolynomial.pl",
+"PGunion.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->variables->add(k => 'Real');
+$KVar = Formula("k");
+
+$a = non_zero_random(2,8,2);
+do
+{
+    $b = non_zero_random(-9,9,1);
+    $c = non_zero_random(-9,9,1);
+} until($c!=$b);
+
+$bc = $b*$c;
+
+Context("LimitedPolynomial-Strict");
+Context()->variables->add(k => 'Real');
+$Det = Compute("$a k- $bc");
+
+Context("LimitedFraction");
+$k = Fraction($bc,$a);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+The matrix \( A = \{ display_matrix_mm([[$a, $b], [$c, $KVar]], align=>'rr')  \}\) is invertible provided that \{ ans_rule(15) \} \( \ne 0 \). $BR $BR
+$BR
+Thus, the matrix \( A \) is invertible if and only if \(k\ne\) \{ ans_rule(5) \}.
+
+END_TEXT 
+Context()->normalStrings;
+
+ANS($Det->cmp);
+
+ANS($k->cmp(studentsMustReduceFractions=>1));
+
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

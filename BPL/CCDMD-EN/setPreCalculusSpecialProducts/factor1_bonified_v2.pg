@@ -1,0 +1,103 @@
+##DESCRIPTION
+##  Algebra problem: factor
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('difference of cubes','factor','factorization')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$A = random(1,9,1);
+$B = random(1,9,1);
+while (gcd($A,$B) > 1) {$B = random(1,9,1);}
+
+$K = random(1,3,1);
+$L = random(1,3,1);
+while (gcd($K,$L)>1) {$L = random(1,3,1);}
+$twoK = 2*$K;
+$twoL = 2*$L;
+$minpower = $K;
+$maxpower = $L;
+if($K>$L) {
+ $minpower = $L;
+ $maxpower = $K;
+}
+
+$c1 = $A**3;
+$c2 = $B**3;
+$e1 = $K*3;
+$e2 = $L*3;
+
+Context()->variables->add(y=>'Real');
+$equation = Formula("$c1 x^{$e1} - $c2 y^{$e2}")->reduce; 
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>1);
+LimitedPowers::OnlyIntegers(
+minPower => $minpower, maxPower => $maxpower,
+message => "either $minpower or $maxpower",
+);
+Context()->variables->add(y=>'Real');
+$factor1 = Formula("$A x^$K");
+$factor2 = Formula("$B y^$L");
+$factoredform = Compute("($factor1 - $factor2)");
+
+#
+#  Expanded form
+#
+Context("LimitedPolynomial-Strict");
+Context()->variables->add(y=>'Real');
+$coeff1 = $A**2;
+$coeff2 = $A*$B;
+$coeff3 = $B**2;
+$expandedform = Formula("$coeff1 x^$twoK + $coeff2 x^$K y^$L + $coeff3 y^$twoL")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR $BR
+
+Factor \( $equation \) 
+
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equation \)","\( = \)","\( \Big( \)".ans_rule(2)."\( \Big)^3 - \Big( \)".ans_rule(2)."\( \Big)^3 \)","(rewrite as a difference of cubes \( a^3 - b^3 \))" ], align=>LEFT, separation=>0).
+AlignedRow([" ","\( = \)","\( \Big( \)".ans_rule(5)."\( \Big) \Big( \)".ans_rule(15)."\( \Big)\)","(factorized form using \( a^3 - b^3 = (a-b)(a^2+ab+b^2) \))"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($factor1->cmp);
+ANS($factor2->cmp);
+ANS($factoredform->cmp);
+ANS($expandedform->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;
+

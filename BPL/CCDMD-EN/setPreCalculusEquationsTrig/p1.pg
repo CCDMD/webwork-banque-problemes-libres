@@ -1,0 +1,164 @@
+## DESCRIPTION
+## Precalculus: Trigonometry
+## ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Trigonometric Function)
+##KEYWORDS('trigonometric equation', 'trigonometric identity')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"scaffold.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->variables->add(t => 'Real');
+
+$pi = 4*atan2(1,1);
+@values =('\frac{1}{4}','\frac{3}{4}','\frac{1}{2}');
+@NumValues =('1/4','3/4','1/2');
+@SqrtValues =('\frac{1}{2}','\frac{\sqrt{3}}{2}','\frac{\sqrt{2}}{2}');
+$tag1 = random(0,2,1);
+
+@sin_answers1 = ("1/6",  "1/3", "1/4");
+@sin_answers2 = ("5/6", "2/3", "3/4");
+@sin_answers3 = ("7/6", "4/3", "5/4");
+@sin_answers4 = ("11/6", "5/3", "7/4");
+
+$LHS = Compute("(sin(t))^2")->reduce;
+$RHS = "$values[$tag1]";
+
+@roots = num_sort((Compute("$sin_answers1[$tag1]*pi"),Compute("$sin_answers2[$tag1]*pi"),Compute("$sin_answers3[$tag1]*pi"),Compute("$sin_answers4[$tag1]*pi")));
+$solution_set = List($roots[0],$roots[1],$roots[2],$roots[3]);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Solve \( \displaystyle $LHS = $RHS\) where \( 0 \leq t \leq 2 \pi \)
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Solve for \(t\)");
+
+Context("Numeric");
+Context()->variables->add(t => 'Real');
+
+$LHS_S1 = Compute("sin(t)");
+$RHS_S1p = Compute("sqrt($NumValues[$tag1])");
+$RHS_S1m = Compute("-sqrt($NumValues[$tag1])");
+
+$RHS_S1p_tex = "$SqrtValues[$tag1]";
+$RHS_S1m_tex = "-$SqrtValues[$tag1]";
+
+Context()->texStrings;
+BEGIN_TEXT
+We have 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle $LHS \)","\( = \)","\( \displaystyle $RHS \)"], align=>LEFT, separation=>0, indent=>30).
+EndTable()
+\}
+$BR
+Solving for \($LHS_S1\) gives us (in ascending order)
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $LHS_S1 = \)",ans_rule(10),"\( \quad \)","or","\( \quad $LHS_S1 = \)",ans_rule(10)], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($RHS_S1m->cmp);
+ANS($RHS_S1p->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+When \( $LHS_S1 = $RHS_S1m_tex \)
+$BR $BR
+Solving for \(t\) gives us (in ascending order)
+$BR
+\(t_1 = \) \{ans_rule(10)\} and \(t_2 = \) \{ans_rule(10)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($roots[2]->cmp);
+ANS($roots[3]->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+When \( $LHS_S1 = $RHS_S1p_tex \)
+$BR $BR
+Solving for \(t\) gives us (in ascending order)
+$BR
+\(t_1 = \) \{ans_rule(10)\} and \(t_2 = \) \{ans_rule(10)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($roots[0]->cmp);
+ANS($roots[1]->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Check your solution");
+
+Section::End();
+
+###########################################
+Section::Begin("State the solution");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD $BR
+Enter your answer in a comma-separated list. $BR
+If the solution set is the empty set, write $BBOLD none$EBOLD.
+$BR $HR $BR
+Thus, the solution set is {\{ans_rule(30)\}}.$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($solution_set->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line 

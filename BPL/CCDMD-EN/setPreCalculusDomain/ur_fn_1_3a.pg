@@ -1,0 +1,151 @@
+## DESCRIPTION
+##  Domain of Functions
+## ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('domain','sign')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"contextAlternateIntervals.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"parserPopUp.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$r1 = random(4,12,1);
+$r2 = random(1,$r1-1,1);
+$b=$r1-$r2;
+$c=$r1*$r2;
+
+do{
+$a = random(2,9,1);
+$d = random(2,9,1);
+} until($a!=$d);
+
+#\frac{$a x + $d}{x^2+$b x - $c}
+
+$popden = PopUp(["Choose","is less than zero","is less than or equal to zero","is equal to zero","not applicable (the function is always defined)"],"is equal to zero");
+
+Context("Numeric");
+
+$Equation_UndDen = Compute("x^2+$b x - $c")->reduce;;
+$Equation_tex = Compute("{$a x + $d}/{x^2+$b x - $c}")->reduce;
+
+#check box 1
+$ans_eval1 = $Equation_UndDen->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1 = $ans_hash1->{score};
+
+$TermUndefinedDen = "";
+if ($TESTbox1)
+{
+$TermUndefinedDen = $Equation_UndDen;
+}
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>1);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$factoredform = Compute("(x + $r1)(x - $r2)");
+
+$x1 = Compute("-$r1");
+$x2 = Compute("$r2");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$IDomain = Compute("(-inf,$x1)U($x1,$x2)U($x2,inf)");
+
+Context()->texStrings;
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find the domain of the function \( \displaystyle f(x) = $Equation_tex \)
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $HR $BR
+$BITALIC$BBOLD Step 1: Identify when \( f(x) \) is undefined $EBOLD$EITALIC $BR$BR
+$HR $BR
+We know \(f(x) \) is undefined when \{ans_rule(20)\} $BR
+\{ $popden->menu() \}
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR 
+$HR $HR
+$BR$BITALIC$BBOLD Step 2: Find the \(x\)-values where \( f(x) \) is undefined $EBOLD$EITALIC $BR$BR
+$HR $BR
+
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $TermUndefinedDen = 0 \)" ], align=>LEFT, separation=>0, indent=>70).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(15),"\( = 0 \)","(factor)"], align=>RIGHT, separation=>0).
+
+EndTable()
+\}
+$BR 
+The solutions are (in ascending order)
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(x_1 \)","\( = \)",ans_rule(5),$SPACE.$SPACE." and ".$SPACE.$SPACE,"\(x_2 \)","\( = \)",ans_rule(5)], align=>RIGHT, separation=>0).
+EndTable()
+\}
+
+$BR 
+$BR
+$HR $HR
+$BR$BITALIC$BBOLD Step 3: State the domain $EBOLD$EITALIC $BR$BR
+$BBOLD Note: $EBOLD
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. 
+$BR $BR
+$HR $BR
+The domain of \(f(x) \) is  \{ans_rule(40)\} 
+$BR
+$BR
+
+$BR $BR
+
+END_TEXT
+Context()->texStrings;
+
+#Step 1
+ANS($Equation_UndDen->cmp);
+ANS($popden->cmp);
+
+#Step 2
+ANS($factoredform->cmp);
+ANS($x1->cmp);
+ANS($x2->cmp);
+
+#Domain
+ANS($IDomain->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

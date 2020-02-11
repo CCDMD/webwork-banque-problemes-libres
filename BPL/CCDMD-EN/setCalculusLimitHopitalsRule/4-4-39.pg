@@ -1,0 +1,132 @@
+##DESCRIPTION
+##  Limit - Hopital's rule
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('0*inf', 'indeterminate form', 'limit', 'L'Hôpital's rule')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,15,1);
+
+$aT = 0;
+
+Context("Numeric");
+Context()->strings->add(UND=>{});
+Context()->variables->set(x=>{limits=>[9,10]});
+
+$f = Compute("sqrt(x)")->reduce;
+$g = Compute("ln($a x)")->reduce;
+$equation = $f*$g;
+$answer = Compute("0");
+
+$newf = 1/$f;
+$df = $newf->D('x');
+$dg = $g->D('x');
+
+Context("Numeric");
+Context()->variables->set(x=>{limits=>[9,10]});
+Context()->operators->undefine("/","^","**");
+$SimplifiedForm = Compute("-2sqrt(x)");
+
+Context("Numeric");
+Context()->strings->add(UND=>{});
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR 
+Find \( \displaystyle \lim_{x \rightarrow $aT^{+}} $equation \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We have $BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x \rightarrow $aT^{+}} $equation = \) ","\( \big( \) ".ans_rule(5)."\( \big) \cdot \big( \) ".ans_rule(5)."\( \big) \) ","(evaluate the indeterminate form by replacing \(x\) with \( $aT^{+} \))"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x \rightarrow $aT^{+}} \) ",ans_rule(10).$BR.$HR.ans_rule(10),"(rewrite \( $equation \) as a fraction)"],align => "LEFT",separation => 0, indent => 110).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \(x\) with \( $aT^{+} \))"],align => "LEFT",separation => 0, indent => 110).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x \rightarrow $aT^{+}} \) ",ans_rule(10).$BR.$HR.ans_rule(10),"(apply L'Hopital's Rule)"],align => "LEFT",separation => 0, indent => 110).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x \rightarrow $aT^{+}} \) ",ans_rule(10),"(simplify. 'WeBWorK' will accept $BBOLD sqrt(x) $EBOLD but will not accept $BBOLD x^(1/2) $EBOLD)"],align => "LEFT",separation => 0, indent => 110).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5),"(evaluate)"],align => "LEFT",separation => 0, indent => 110).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#sub
+ANS(Compute("0")->cmp);
+ANS(Compute("-inf")->cmp);
+
+#rewrite
+ANS($g->cmp);
+ANS($newf->cmp);
+
+#sub
+ANS(Compute("-inf")->cmp);
+ANS(Compute("inf")->cmp);
+
+#HR
+ANS($dg->cmp);
+ANS($df->cmp);
+
+ANS($SimplifiedForm->cmp);
+
+#answer
+ANS($answer->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,480 @@
+##DESCRIPTION
+##  Compute inverse with adjoint
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Matrix Algebra')
+## KEYWORDS('cofactor', 'adjoint matrix', 'inverse matrix')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+$a11 = non_zero_random(-2,2,2);
+$a12 = non_zero_random(-2,2,2);
+$a13 = non_zero_random(-3,3,2);
+$a21 = non_zero_random(-3,3,1);
+$a22 = non_zero_random(-3,3,2);
+$a23 = non_zero_random(-3,3,1);
+$a31 = non_zero_random(-3,3,2);
+$a32 = non_zero_random(-2,2,2);
+$a33 = non_zero_random(-3,3,1);
+
+$A = Matrix([[$a11,$a12,$a13],[$a21,$a22,$a23],[$a31,$a32,$a33]]);
+$DetA = $A->det;
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find the inverse of \( A = $A \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Section::Begin("Find the matrix of cofactors of \( A \)");
+
+Context("Numeric");
+$popCPlus = PopUp(["?", "+1", "-1"],"+1");
+$popCMinus = PopUp(["?", "+1", "-1"],"-1");
+
+Context("Matrix");
+$M11 = Matrix([[$a22,$a23],[$a32,$a33]]);
+$M12 = Matrix([[$a21,$a23],[$a31,$a33]]);
+$M13 = Matrix([[$a21,$a22],[$a31,$a32]]);
+
+$M21 = Matrix([[$a12,$a13],[$a32,$a33]]);
+$M22 = Matrix([[$a11,$a13],[$a31,$a33]]);
+$M23 = Matrix([[$a11,$a12],[$a31,$a32]]);
+
+$M31 = Matrix([[$a12,$a13],[$a22,$a23]]);
+$M32 = Matrix([[$a11,$a13],[$a21,$a23]]);
+$M33 = Matrix([[$a11,$a12],[$a21,$a22]]);
+
+$DetM11 = $M11->det;
+$Coeff11 = Compute("1*$DetM11");
+$DetM12 = $M12->det;
+$Coeff12 = Compute("-1*$DetM12");
+$DetM13 = $M13->det;
+$Coeff13 = Compute("1*$DetM13");
+
+$DetM21 = $M21->det;
+$Coeff21 = Compute("-1*$DetM21");
+$DetM22 = $M22->det;
+$Coeff22 = Compute("1*$DetM22");
+$DetM23 = $M23->det;
+$Coeff23 = Compute("-1*$DetM23");
+
+$DetM31 = $M31->det;
+$Coeff31 = Compute("1*$DetM31");
+$DetM32 = $M32->det;
+$Coeff32 = Compute("-1*$DetM32");
+$DetM33 = $M33->det;
+$Coeff33 = Compute("1*$DetM33");
+
+$C = Matrix([[$Coeff11,$Coeff12,$Coeff13],[$Coeff21,$Coeff22,$Coeff23],[$Coeff31,$Coeff32,$Coeff33]]);
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(Co(A) \) be the matrix of cofactors of \(A\). $BR $BR
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( C_{11} \)","\( = \)",$popCPlus->menu()."\( \det \)".$M11->ans_array(1),"\( \; C_{12} \)","\( = \)",$popCPlus->menu()."\( \det \)".$M12->ans_array(1),"\( \; C_{13} \)","\( = \)",$popCPlus->menu()."\( \det \)".$M13->ans_array(1)], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(10),"","\( = \)",ans_rule(10),"","\( = \)",ans_rule(10)], align=>LEFT, separation=>0).
+
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+
+AlignedRow(["\( C_{21} \)","\( = \)",$popCPlus->menu()."\( \det \)".$M21->ans_array(1),"\( \; C_{22} \)","\( = \)",$popCPlus->menu()."\( \det \)".$M22->ans_array(1),"\( \; C_{23} \)","\( = \)",$popCPlus->menu()."\( \det \)".$M23->ans_array(1)], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(10),"","\( = \)",ans_rule(10),"","\( = \)",ans_rule(10)], align=>LEFT, separation=>0).
+
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+
+AlignedRow(["\( C_{31} \)","\( = \)",$popCPlus->menu()."\( \det \)".$M31->ans_array(1),"\( \; C_{32} \)","\( = \)",$popCPlus->menu()."\( \det \)".$M32->ans_array(1),"\( \; C_{33} \)","\( = \)",$popCPlus->menu()."\( \det \)".$M33->ans_array(1)], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(10),"","\( = \)",ans_rule(10),"","\( = \)",ans_rule(10)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Then \(Co(A) = \) \{$C->ans_array(5)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($popCPlus->cmp);
+ANS($M11->cmp);
+ANS($popCMinus->cmp);
+ANS($M12->cmp);
+ANS($popCPlus->cmp);
+ANS($M13->cmp);
+
+ANS($Coeff11->cmp);
+ANS($Coeff12->cmp);
+ANS($Coeff13->cmp);
+
+ANS($popCMinus->cmp);
+ANS($M21->cmp);
+ANS($popCPlus->cmp);
+ANS($M22->cmp);
+ANS($popCMinus->cmp);
+ANS($M23->cmp);
+
+ANS($Coeff21->cmp);
+ANS($Coeff22->cmp);
+ANS($Coeff23->cmp);
+
+ANS($popCPlus->cmp);
+ANS($M31->cmp);
+ANS($popCMinus->cmp);
+ANS($M32->cmp);
+ANS($popCPlus->cmp);
+ANS($M33->cmp);
+
+ANS($Coeff31->cmp);
+ANS($Coeff32->cmp);
+ANS($Coeff33->cmp);
+
+ANS($C->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Section::Begin("Find the adjoint matrix of \( A \)");
+
+Context("Matrix");
+$Adj = $C->transpose;
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(adj(A) \) be the adjoint matrix of \(A\). $BR $BR
+We have $BR 
+\( \quad adj(A) = \) \{$Adj->ans_array(5)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($Adj->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Section::Begin("Find the determinant of \(A\)");
+
+Context("Numeric");
+$popR1 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"row 1");
+$popR2 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"row 2");
+$popR3 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"row 3");
+$popC1 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"column 1");
+$popC2 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"column 2");
+$popC3 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"column 3");
+
+#check box 30
+$ans_eval30 = $popR1->cmp();
+$ans_hash30 = $ans_eval30->evaluate($inputs_ref->{ANS_NUM_TO_NAME(30)});
+$TEST_R1 = $ans_hash30->{score};
+
+$ans_eval30 = $popR2->cmp();
+$ans_hash30 = $ans_eval30->evaluate($inputs_ref->{ANS_NUM_TO_NAME(30)});
+$TEST_R2 = $ans_hash30->{score};
+
+$ans_eval30 = $popR3->cmp();
+$ans_hash30 = $ans_eval30->evaluate($inputs_ref->{ANS_NUM_TO_NAME(30)});
+$TEST_R3 = $ans_hash30->{score};
+
+$ans_eval30 = $popC1->cmp();
+$ans_hash30 = $ans_eval30->evaluate($inputs_ref->{ANS_NUM_TO_NAME(30)});
+$TEST_C1 = $ans_hash30->{score};
+
+$ans_eval30 = $popC2->cmp();
+$ans_hash30 = $ans_eval30->evaluate($inputs_ref->{ANS_NUM_TO_NAME(30)});
+$TEST_C2 = $ans_hash30->{score};
+
+$ans_eval30 = $popC3->cmp();
+$ans_hash30 = $ans_eval30->evaluate($inputs_ref->{ANS_NUM_TO_NAME(30)});
+$TEST_C3 = $ans_hash30->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+To find the determinant of \(A\), I will expand along \{ $popR1->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+if($TEST_R1)
+{
+    ANS($popR1->cmp);
+}
+elsif($TEST_R2)
+{
+    ANS($popR2->cmp);
+}
+elsif($TEST_R3)
+{
+    ANS($popR3->cmp);
+}
+elsif($TEST_C1)
+{
+    ANS($popC1->cmp);
+}
+elsif($TEST_C2)
+{
+    ANS($popC2->cmp);
+}
+else
+{
+    ANS($popC3->cmp);
+}
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Matrix");
+if($TEST_R1) 
+{
+    $Expansion = "a_{11}C_{11}+a_{12}C_{12}+a_{13}C_{13}";
+    $M1 = $M11;
+    $M2 = $M12;
+    $M3 = $M13;
+
+    $Entry1 = Compute("$a11");
+    $DetM1 = $M1->det;
+    $Coeff1 = Compute("1*$Entry1*$DetM1");
+    $Sign1 = $popCPlus;
+
+    $Entry2 = Compute("$a12");
+    $DetM2 = $M2->det;
+    $Coeff2 = Compute("-1*$Entry2*$DetM2");
+    $Sign2 = $popCMinus;
+
+    $Entry3 = Compute("$a13");
+    $DetM3 = $M3->det;
+    $Coeff3 = Compute("1*$Entry3*$DetM3");
+    $Sign3 = $popCPlus;
+}
+elsif($TEST_R2)
+{
+    $Expansion = "a_{21}C_{21}+a_{22}C_{22}+a_{23}C_{23}";
+    $M1 = $M21;
+    $M2 = $M22;
+    $M3 = $M23;
+    
+    $Entry1 = Compute("$a21");
+    $DetM1 = $M1->det;
+    $Coeff1 = Compute("-1*$Entry1*$DetM1");
+    $Sign1 = $popCMinus;
+
+    $Entry2 = Compute("$a22");
+    $DetM2 = $M2->det;
+    $Coeff2 = Compute("1*$Entry2*$DetM2");
+    $Sign2 = $popCPlus;
+
+    $Entry3 = Compute("$a23");
+    $DetM3 = $M3->det;
+    $Coeff3 = Compute("-1*$Entry3*$DetM3");
+    $Sign3 = $popCMinus;
+}
+elsif($TEST_R3)
+{
+    $Expansion = "a_{31}C_{31}+a_{32}C_{32}+a_{33}C_{33}";
+    $M1 = $M31;
+    $M2 = $M32;
+    $M3 = $M33;
+
+    $Entry1 = Compute("$a31");
+    $DetM1 = $M1->det;
+    $Coeff1 = Compute("1*$Entry1*$DetM1");
+    $Sign1 = $popCPlus;
+
+    $Entry2 = Compute("$a32");
+    $DetM2 = $M2->det;
+    $Coeff2 = Compute("-1*$Entry2*$DetM2");
+    $Sign2 = $popCMinus;
+
+    $Entry3 = Compute("$a33");
+    $DetM3 = $M3->det;
+    $Coeff3 = Compute("1*$Entry3*$DetM3");
+    $Sign3 = $popCPlus;
+}
+elsif($TEST_C1)
+{
+    $Expansion = "a_{11}C_{11}+a_{21}C_{21}+a_{31}C_{31}";
+    $M1 = $M11;
+    $M2 = $M21;
+    $M3 = $M31;
+
+    $Entry1 = Compute("$a11");
+    $DetM1 = $M1->det;
+    $Coeff1 = Compute("1*$Entry1*$DetM1");
+    $Sign1 = $popCPlus;
+
+    $Entry2 = Compute("$a21");
+    $DetM2 = $M2->det;
+    $Coeff2 = Compute("-1*$Entry2*$DetM2");
+    $Sign2 = $popCMinus;
+
+    $Entry3 = Compute("$a31");
+    $DetM3 = $M3->det;
+    $Coeff3 = Compute("1*$Entry3*$DetM3");
+    $Sign3 = $popCPlus;
+}
+elsif($TEST_C2)
+{
+    $Expansion = "a_{12}C_{12}+a_{22}C_{22}+a_{32}C_{32}";
+    $M1 = $M12;
+    $M2 = $M22;
+    $M3 = $M32;
+
+    $Entry1 = Compute("$a12");
+    $DetM1 = $M1->det;
+    $Coeff1 = Compute("-1*$Entry1*$DetM1");
+    $Sign1 = $popCMinus;
+
+    $Entry2 = Compute("$a22");
+    $DetM2 = $M2->det;
+    $Coeff2 = Compute("1*$Entry2*$DetM2");
+    $Sign2 = $popCPlus;
+
+    $Entry3 = Compute("$a32");
+    $DetM3 = $M3->det;
+    $Coeff3 = Compute("-1*$Entry3*$DetM3");
+    $Sign3 = $popCMinus;
+}
+else #C3 
+{
+    $Expansion = "a_{13}C_{13}+a_{23}C_{23}+a_{33}C_{33}";
+    $M1 = $M13;
+    $M2 = $M23;
+    $M3 = $M33;
+
+    $Entry1 = Compute("$a13");
+    $DetM1 = $M1->det;
+    $Coeff1 = Compute("1*$Entry1*$DetM1");
+    $Sign1 = $popCPlus;
+
+    $Entry2 = Compute("$a23");
+    $DetM2 = $M2->det;
+    $Coeff2 = Compute("-1*$Entry2*$DetM2");
+    $Sign2 = $popCMinus;
+
+    $Entry3 = Compute("$a33");
+    $DetM3 = $M3->det;
+    $Coeff3 = Compute("1*$Entry3*$DetM3");
+    $Sign3 = $popCPlus;
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \det(A) \)","\( = \)","\( $Expansion \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(5)."\( + \)".ans_rule(5)."\( + \)".ans_rule(5),"(write the numerical value of each term \(a_{ij}C_{ij} \) )"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(5)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Coeff1->cmp);
+ANS($Coeff2->cmp);
+ANS($Coeff3->cmp);
+
+ANS($DetA->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Section::Begin("Find the inverse of \( A \)");
+
+Context("Matrix");
+$Ainv = $A->inverse;
+$Adj1 = Matrix($Adj);
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad A^{-1} \)","\( = \)","\( \displaystyle \frac{1}{ \det (A) } adj(A) \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)","\( 1 \)".$BR.$HR.ans_rule(5),$Adj1->ans_array(2)], align=>CENTER, separation=>0, indent=>40).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",$Ainv->ans_array(5)], align=>LEFT, separation=>0, indent=>40).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DetA->cmp);
+ANS($Adj1->cmp);
+ANS($Ainv->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

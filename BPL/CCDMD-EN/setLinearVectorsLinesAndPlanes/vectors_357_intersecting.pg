@@ -1,0 +1,220 @@
+##DESCRIPTION
+##  Lines & Planes
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"parserParametricLine.pl",
+"parserImplicitPlane.pl",
+"answerCustom.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Point");
+$p1 = random(-9,9,1);
+$p2 = random(-9,9,1);
+$p3 = random(-9,9,1);
+$P = Point($p1, $p2, $p3);
+
+$Q = $P;
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$N1 = Vector(random(1,7,1), random(1,7,1), random(1,7,1));
+
+$N2 = Vector(random(1,7,1), random(1,7,1), random(1,7,1));
+while(areParallel $N1 $N2)
+{
+    $N2 = Vector(random(1,7,1), random(1,7,1), random(1,7,1));
+}
+
+Context("ImplicitPlane");
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)+y');
+$plane1 = ImplicitPlane($P,$N1);
+$plane2 = ImplicitPlane($Q,$N2);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Let $BR
+\( \quad \Phi_1: $plane1 \) $BR
+and $BR
+\( \quad \Phi_2: $plane2 \). $BR
+$BR
+${BBOLD}(a)$EBOLD
+Show that the planes \( \Phi_1 \) and \( \Phi_2 \) are intersecting. $BR $BR
+${BBOLD}(b)$EBOLD
+Find the angle (in radian) between the two planes \( \Phi_1 \) and \( \Phi_2 \).
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("Identify the required vectors");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{n_1} \) be the normal vector of the plane \( \Phi_1 \). $BR 
+Let \( \vec{n_2} \) be the normal vector of the plane \( \Phi_2 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_1} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_2} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1->cmp);
+ANS($N2->cmp);
+
+Section::End();
+
+Section::Begin("Check if the planes are parallel");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_1} = k \vec{n_2} \)$BR $BR
+
+which gives us that 
+\( \vec{n_2} \) and \( \vec{n_2} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_1 \) and \( \Phi_2 \) are \{ $popParallel->menu() \}
+$BR $BR
+Thus the plane \( \Phi_1 \) and the plane \( \Phi_2 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("Find the angle");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$DotProduct = $N1.$N2;
+$NormN1 = norm($N1);
+$NormN2 = norm($N2);
+
+$AngleStar = arccos($DotProduct/($NormN1*$NormN2));
+
+$Angle = $AngleStar;
+if($DotProduct < 0) { $Angle = pi - $AngleStar;}
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \theta^{*}\) be the angle between the vectors \( \vec{n_1} \) and \( \vec{n_2} \). $BR $BR
+Let \( \theta \) be the angle between the planes \( \Phi_1 \) and \( \Phi_2 \). $BR $BR $BR
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \cos (\theta^{*} ) \) ","\( = \)","\( \displaystyle \frac{\vec{n_1} \bullet \vec{n_2}}{ \| \vec{n_1} \| \; \| \vec{n_2} \|} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(10).$BR.$HR."\( \Big( \)".ans_rule(5)."\( \Big) \Big( \)".ans_rule(5)."\( \Big) \)","(write the numerical value of \(\vec{n_1} \bullet \vec{n_2}\) , \( \| \vec{n_1} \| \) and \( \| \vec{n_2} \| \))" ], align=>CENTER, separation=>0, indent=>40).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \theta^{*} \) ","\( = \)",ans_rule(25),"(in radian)" ], align=>CENTER, separation=>0, indent=>30).
+
+EndTable()
+\}
+$BR
+and $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \theta \) ","\( = \)",ans_rule(25),"(in radian)" ], align=>CENTER, separation=>0, indent=>30).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($NormN1->cmp);
+ANS($NormN2->cmp);
+ANS($AngleStar->cmp);
+ANS($Angle->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();

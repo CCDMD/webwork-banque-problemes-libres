@@ -1,0 +1,187 @@
+## DESCRIPTION
+## Calculus: Applications to Business and Economics
+## ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('economy', 'critical value')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();
+# This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"contextCurrency.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$c = random(1000,9000,1000);
+$b = random(10,90,2);
+$a = random(.001,.009,.001);
+$x = random(1000,2000,50);
+
+Context("Numeric");
+$equation = Compute("$c + $b x + $a x^3")->reduce;
+$avg_equation = Compute("$equation/x");
+$dequation = $avg_equation->D('x');
+
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+$answer = $dequation->eval(x=>"$x");
+
+$popVariableX = PopUp(["?", "x", "C", "AC", "MAC"],"x");
+$popVariableMAC = PopUp(["?", "x", "C", "AC", "MAC"],"MAC");
+$popVariableAC = PopUp(["?", "x", "C", "AC", "MAC"],"AC");
+
+$popUnit = PopUp(["Choose", "per day", "per week", "per month", "per year", "per motorcycle frame"],"per motorcycle frame");
+$popTime = PopUp(["Choose", "day", "week", "month", "year"],"year");
+
+if($answer > 0 )
+{
+    $popInc = PopUp(["Choose", "decreasing", "increasing"],"increasing");
+    $PositiveAnswer = $answer;
+}
+else
+{
+    $popInc = PopUp(["Choose", "decreasing", "increasing"],"decreasing");
+    $PositiveAnswer = -1*$answer;
+}
+
+Context("Currency");
+$CurrencyAnswer = Currency($PositiveAnswer);
+
+Context("Numeric");
+#check box 4
+$ans_eval4 = $popVariableMAC->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4 = $ans_hash4->{score};
+
+$WantSymbolMAC = "";
+if ($TESTbox4) 
+{
+$WantSymbolMAC = "MAC";
+}
+
+#check box 5
+$ans_eval5 = $popVariableAC->cmp();
+$ans_hash5 = $ans_eval5->evaluate($inputs_ref->{ANS_NUM_TO_NAME(5)});
+$TESTbox5 = $ans_hash5->{score};
+
+$WantSymbolAC = "";
+if ($TESTbox5) 
+{
+$WantSymbolAC = "AC";
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Question $EBOLD $BR $BR
+
+The total yearly cost (in dollars) of producing \(x\) motorcycle frames is given by the formula $BR
+\( \quad C(x) = $equation \) $BR
+Find the marginal average cost at a production level of \($x\) motorcycle frames.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point.
+$HR
+$HR
+$BR
+
+$HR
+$BR$BITALIC$BBOLD Step 1: Define the variables $EBOLD$EITALIC $BR$BR
+Let \(AC\) be the average cost. $BR
+Let \(MAC\) be the marginal average cost.
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 2: Identify what the problem is asking $EBOLD$EITALIC $BR$BR
+We want \{ $popVariableMAC->menu() \} 
+when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 3: Find the appropriate formula $EBOLD$EITALIC $BR$BR
+
+We know \{ $popVariableMAC->menu() \} \( = \displaystyle \frac{dAC}{dx}\) $BR
+where $BR
+\( \quad \) \{ $popVariableAC->menu() \} \( = \displaystyle \frac{C}{x}\)
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR$BITALIC$BBOLD Step 4: Solve for what the problem is asking $EBOLD$EITALIC $BR$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $WantSymbolAC \)","\( = \)",ans_rule(30),"(write the function)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{dAC}{dx} \)","\( = \)",ans_rule(30),"(write the derivative)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+and when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR $BR
+\( \displaystyle $WantSymbolMAC = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( \frac{dAC}{dx} \) $EITALIC)
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 5: Draw a conclusion $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD For the penultimate box, include the dollar sign in your answer. 
+$HR $HR
+$BR
+Thus, at a production level of \{ans_rule(5)\} motorcycle frames per \{ $popTime->menu() \}, the average cost of producing one additional motorcycle frame is \{ $popInc->menu() \} at a rate of \{ans_rule(10)\} \{ $popUnit->menu() \}.
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#Step 2
+ANS($popVariableMAC->cmp);
+ANS($popVariableX->cmp);
+ANS(Compute("$x")->cmp);
+
+#Step 3
+ANS($popVariableMAC->cmp);
+ANS($popVariableAC->cmp);
+
+#Step 4
+ANS($avg_equation->cmp);
+ANS($dequation->cmp);
+
+ANS($popVariableX->cmp);
+ANS(Compute("$x")->cmp);
+ANS($answer->cmp);
+
+#Step 5
+ANS(Compute("$x")->cmp);
+ANS($popTime->cmp);
+ANS($popInc->cmp);
+ANS($CurrencyAnswer->cmp);
+ANS($popUnit->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

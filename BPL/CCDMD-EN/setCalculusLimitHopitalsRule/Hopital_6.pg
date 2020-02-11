@@ -1,0 +1,120 @@
+##DESCRIPTION
+##  Limit - Hopital's rule
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('inf/inf', 'indeterminate form', 'limit', 'L'Hôpital's rule')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,15,1);
+$b = 2;
+$c = random(3,9,1);
+
+#\[ \lim_{ x \rightarrow \infty } \frac{$a x^$b}{e^{$c x}} \]
+
+$aT = "\infty";
+
+Context("Numeric");
+Context()->strings->add(UND=>{});
+$f = Compute("$a x^$b")->reduce;
+$g = Compute("e^{$c x}")->reduce;
+$equation = $f/$g;
+$answer = Compute("0");
+
+$df = $f->D('x');
+$dg = $g->D('x');
+
+$ddf = $df->D('x');
+$ddg = $dg->D('x');
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR 
+Find \( \displaystyle \lim_{x \rightarrow $aT} $equation \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We have $BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x \rightarrow $aT} $equation = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \(x\) with \( $aT \))"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x \rightarrow $aT} \) ",ans_rule(10).$BR.$HR.ans_rule(10),"(apply L'Hopital's Rule)"],align => "LEFT",separation => 0, indent => 70).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \(x\) with \( $aT \))"],align => "LEFT",separation => 0, indent => 70).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x \rightarrow $aT} \) ",ans_rule(10).$BR.$HR.ans_rule(10),"(apply L'Hopital's Rule)"],align => "LEFT",separation => 0, indent => 70).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5),"(evaluate)"],align => "LEFT",separation => 0, indent => 70).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#sub
+ANS(Compute("inf")->cmp);
+ANS(Compute("inf")->cmp);
+
+#HR
+ANS($df->cmp);
+ANS($dg->cmp);
+
+#sub
+ANS(Compute("inf")->cmp);
+ANS(Compute("inf")->cmp);
+
+#HR
+ANS($ddf->cmp);
+ANS($ddg->cmp);
+
+#answer
+ANS($answer->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

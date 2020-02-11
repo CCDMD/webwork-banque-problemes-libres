@@ -1,0 +1,1459 @@
+##DESCRIPTION
+##  Find the rank and number of solutions to a system
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('System of Linear Equations')
+## KEYWORDS('unique solution', 'number of solutions', 'rank', 'graphical representation of a system', 'free variable')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"MatrixUnits.pl",
+"MatrixReduce.pl",
+"PGmatrixmacros.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$a11 = random(2,6,2) * random(-1,1,2);
+$a12 = random(2,5,1) * random(-1,1,2);
+$a13 = random(3,5,2) * random(-1,1,2);
+
+$a21 = random(3,5,2) * random(-1,1,2);
+$a22 = random(2,6,2) * random(-1,1,2);
+$a23 = random(2,6,2) * random(-1,1,2);
+$a31 = random(2,6,1) * random(-1,1,2);
+$a32 = random(3,5,2) * random(-1,1,2);
+$a33 = non_zero_random(-6,6,2);
+
+$case = random(1,3,1);
+if($case == 1)
+{
+    $x = non_zero_random(-5,5,1);
+    $y = non_zero_random(-5,5,1);
+    $z = 0;
+}
+elsif($case == 2) 
+{
+    $x = non_zero_random(-5,5,1);
+    $y = 0;
+    $z = non_zero_random(-5,5,1);
+}
+else
+{
+    $x = 0;
+    $y = non_zero_random(-5,5,1);
+    $z = non_zero_random(-5,5,1);
+}
+
+$b1 = $a11*$x + $a12*$y + $a13*$z;
+$b2 = $a21*$x + $a22*$y + $a23*$z;
+$b3 = $a31*$x + $a32*$y + $a33*$z;
+
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$M = Matrix([[$a11,$a12,$a13,$b1],[$a21,$a22,$a23,$b2],[$a31,$a32,$a33,$b3]]);
+$M = apply_fraction_to_matrix_entries($M); 
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$A = Matrix([[$a11,$a12,$a13],[$a21,$a22,$a23],[$a31,$a32,$a33]]);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$B = Matrix([[$b1], [$b2], [$b3]]);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Given the following augmented matrix $BR
+\( 
+    \{   display_matrix_mm($M, align=>'rrr|r')  \} 
+\) 
+$BR $BR
+
+$BBOLD (a) $EBOLD Find the rank of the matrix of coefficients and the rank of the augmented matrix. $BR $BR
+$BBOLD (b) $EBOLD Determine the number of solutions of the system of linear equations corresponding to the augmented matrix and its geometrical representation.$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+side_labels( @array );
+
+Context("Numeric");
+$popAbove = PopUp(["?", "above", "below", "above and below"],"below");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popRank = PopUp(["Choose", "row echelon form (REF)", "reduced row echelon form (RREF)"],"row echelon form (REF)");
+
+Context()->texStrings;
+BEGIN_TEXT
+To find the rank of matrix, I must first find the \{ $popRank->menu() \} of the matrix. 
+END_TEXT
+Context()->normalStrings;
+
+ANS( $popRank->cmp() );
+
+Section::End();
+
+###########################################
+### R1C1 
+###########################################
+Section::Begin("Create a leading 1");
+
+Context("Numeric");
+$popRow = PopUp(["?", "row 1 column 1", "row 1 column 2", "row 1 column 3", "row 2 column 1", "row 2 column 2","row 2 column 3", "row 3 column 1", "row 3 column 2", "row 3 column 3"],"row 1 column 1");
+
+Context("Numeric");
+$popSwap = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row","there is already a leading 1", "there is a zero and I cannot create a leading 1"],"interchange two rows");
+$popMultiply = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row","there is already a leading 1", "there is a zero and I cannot create a leading 1"],"multiply a row by a non-zero constant");
+$popAdd = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row","there is already a leading 1", "there is a zero and I cannot create a leading 1"],"add a multiple of a row to another row");
+$popLeadingOne = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row","there is already a leading 1", "there is a zero and I cannot create a leading 1"],"there is already a leading 1");
+
+#check box 3
+$ans_eval3 = $popSwap->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTSwap = $ans_hash3->{score};
+
+$ans_eval3 = $popMultiply->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTMultiply = $ans_hash3->{score};
+
+$ans_eval3 = $popAdd->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTAdd = $ans_hash3->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($M, align=>'rrr|r')  \} 
+\) 
+
+$BR $BR
+For this step, the leading 1 should be in \{ $popRow->menu() \} and to create that leading 1, I will \{ $popLeadingOne->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popRow->cmp() );
+
+if($TESTSwap)
+{
+    ANS($popSwap->cmp() );
+}
+elsif($TESTMultiply)
+{
+    ANS($popMultiply->cmp() );
+}
+elsif($TESTAdd)
+{
+    ANS($popAdd->cmp() );
+}
+else
+{
+    ANS($popLeadingOne->cmp() );
+}
+
+Section::End();
+
+Section::Begin(" ");
+
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR1 = $M;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR1 = $A;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR1 = $B;
+
+if($TESTSwap)
+{
+    if($A->element(2,1) == 1 || $A->element(3,1) == 1)
+    {
+Context("Numeric");
+$pop_1_Row1 = PopUp(["?", "R1", "R2","R3"],"R1");
+$pop_1_Row2 = PopUp(["?", "R1", "R2","R3"],"R2");
+$pop_1_Row3 = PopUp(["?", "R1", "R2","R3"],"R3");
+$pop_2_Row1 = PopUp(["?", "R1", "R2","R3"],"R1");
+$pop_2_Row2 = PopUp(["?", "R1", "R2","R3"],"R2");
+$pop_2_Row3 = PopUp(["?", "R1", "R2","R3"],"R3");
+
+#check box 4
+$ans_eval4 = $pop_1_Row2->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TEST_1_Row2 = $ans_hash4->{score};
+
+$ans_eval4 = $pop_1_Row3->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TEST_1_Row3 = $ans_hash4->{score};
+
+#check box 5
+$ans_eval5 = $pop_2_Row2->cmp();
+$ans_hash5 = $ans_eval5->evaluate($inputs_ref->{ANS_NUM_TO_NAME(5)});
+$TEST_2_Row2 = $ans_hash5->{score};
+
+$ans_eval5 = $pop_2_Row3->cmp();
+$ans_hash5 = $ans_eval5->evaluate($inputs_ref->{ANS_NUM_TO_NAME(5)});
+$TEST_2_Row3 = $ans_hash5->{score};
+
+$i = 1;
+if($TEST_1_Row2)
+{ 
+    $i = 2;
+}
+elsif($TEST_1_Row3)
+{ 
+    $i = 3;
+}
+
+$j = 1;
+if($TEST_2_Row2)
+{ 
+    $j = 2;
+}
+elsif($TEST_2_Row3)
+{ 
+    $j = 3;
+}
+
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR1 = row_switch($M,$i,$j);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR1 = row_switch($A,$i,$j);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR1 = row_switch($B,$i,$j);
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($M, align=>'rrr|r')  \} 
+\) 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)",$pop_1_Row1->menu()."\(\Leftrightarrow\)".$pop_2_Row1->menu(),$AR1->ans_array(2),$BR1->ans_array(2)],     align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+if($TEST_1_Row2)
+{
+    ANS($pop_1_Row2->cmp());
+}
+elsif($TEST_1_Row3)
+{
+    ANS($pop_1_Row3->cmp());
+}
+else
+{
+    ANS($pop_1_Row1->cmp());
+}
+
+if($TEST_2_Row2)
+{
+    ANS($pop_2_Row2->cmp());
+}
+elsif($TEST_2_Row3)
+{
+    ANS($pop_2_Row3->cmp());
+}
+else
+{
+    ANS($pop_2_Row1->cmp());
+}
+
+ANS($AR1->cmp);
+ANS($BR1->cmp);
+    }
+    else
+    {
+Context()->texStrings;
+BEGIN_TEXT
+It is best to create a leading 1 before interchanging two rows. Reopen the previous tab and choose a different option to first create a leading 1. $BR $BR
+Leave the following box empty: \{ans_rule(5)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(str_cmp("ok"));
+    }
+}
+elsif($TESTMultiply)
+{
+Context("Numeric");
+$pop_1_Row1 = PopUp(["?", "R1", "R2","R3"],"R1");
+$pop_1_Row2 = PopUp(["?", "R1", "R2","R3"],"R2");
+$pop_1_Row3 = PopUp(["?", "R1", "R2","R3"],"R3");
+
+#check box 5
+$ans_eval5 = $pop_1_Row2->cmp();
+$ans_hash5 = $ans_eval5->evaluate($inputs_ref->{ANS_NUM_TO_NAME(5)});
+$TEST_1_Row2 = $ans_hash5->{score};
+
+$ans_eval5 = $pop_1_Row3->cmp();
+$ans_hash5 = $ans_eval5->evaluate($inputs_ref->{ANS_NUM_TO_NAME(5)});
+$TEST_1_Row3 = $ans_hash5->{score};
+
+$i = 1;
+if($TEST_1_Row2)
+{ 
+    $i = 2;
+}
+elsif($TEST_1_Row3)
+{ 
+    $i = 3;
+}
+
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR1 = row_mult($M,$i,Fraction(1/$M->element($i,1)));
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR1 = row_mult($A,$i,1/$A->element($i,1));
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR1 = row_mult($B,$i,1/$A->element($i,1));
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($M, align=>'rrr|r')  \} 
+\) 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)",ans_rule(5).$pop_1_Row1->menu(),$AR1->ans_array(2),$BR1->ans_array(2)], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS((1/$A->element($i,1))->cmp);
+if($TEST_1_Row2)
+{
+    ANS($pop_1_Row2->cmp());
+}
+elsif($TEST_1_Row3)
+{
+    ANS($pop_1_Row3->cmp());
+}
+else
+{
+    ANS($pop_1_Row1->cmp());
+}
+ANS($AR1->cmp);
+ANS($BR1->cmp);
+}
+elsif($TESTAdd)
+{
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR1 = $M;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR1 = $A;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR1 = $B;
+
+Context("Numeric");
+$pop_1_Row1 = PopUp(["?", "R1", "R2","R3"],"R1");
+$pop_1_Row2 = PopUp(["?", "R1", "R2","R3"],"R2");
+$pop_1_Row3 = PopUp(["?", "R1", "R2","R3"],"R3");
+$pop_2_Row1 = PopUp(["?", "R1", "R2","R3"],"R1");
+$pop_2_Row2 = PopUp(["?", "R1", "R2","R3"],"R2");
+$pop_2_Row3 = PopUp(["?", "R1", "R2","R3"],"R3");
+$popSignPlus = PopUp(["?","+","-"],"+");
+$popSignMinus = PopUp(["?","+","-"],"-");
+
+#check box 4
+$ans_eval4 = $pop_1_Row2->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TEST_1_Row2 = $ans_hash4->{score};
+
+$ans_eval4 = $pop_1_Row3->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TEST_1_Row3 = $ans_hash4->{score};
+
+#check box 5
+$ans_eval5 = $popSignMinus->cmp();
+$ans_hash5 = $ans_eval5->evaluate($inputs_ref->{ANS_NUM_TO_NAME(5)});
+$TESTSignMinus = $ans_hash5->{score};
+
+$ans_eval5 = $popSignPlus->cmp();
+$ans_hash5 = $ans_eval5->evaluate($inputs_ref->{ANS_NUM_TO_NAME(5)});
+$TESTSignPlus = $ans_hash5->{score};
+
+#check box 6
+$ans_eval6 = Compute("")->cmp;
+$ans_hash6 = $ans_eval6->evaluate($inputs_ref->{ANS_NUM_TO_NAME(6)});
+$TESTkValue = $ans_hash6->{score};
+
+#check box 7
+$ans_eval7 = $pop_2_Row2->cmp();
+$ans_hash7 = $ans_eval7->evaluate($inputs_ref->{ANS_NUM_TO_NAME(7)});
+$TEST_2_Row2 = $ans_hash7->{score};
+
+$ans_eval7 = $pop_2_Row3->cmp();
+$ans_hash7 = $ans_eval7->evaluate($inputs_ref->{ANS_NUM_TO_NAME(7)});
+$TEST_2_Row3 = $ans_hash7->{score};
+
+$i = 1;
+if($TEST_1_Row2)
+{ 
+    $i = 2;
+}
+elsif($TEST_1_Row3)
+{
+    $i = 3;
+}
+
+$j = 1;
+if($TEST_2_Row2)
+{ 
+    $j = 2;
+}
+elsif($TEST_2_Row3)
+{
+    $j = 3;
+}
+
+$sign = 1;
+if($TESTSignMinus)
+{
+    $sign = -1;
+}
+
+$k = 100;
+if(!$TESTkValue)
+{
+    $k = $inputs_ref->{ANS_NUM_TO_NAME(6)};
+}
+
+if($k!=0)
+{
+    Context('Fraction')->parens->set("[" => {formMatrix => 1});
+    $MR1 = row_add($M,$i,$j,$sign*$k);
+    
+    Context("Matrix");
+    Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+    Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+    Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+    $AR1 = row_add($A,$i,$j,$sign*$k);
+
+    Context("Matrix");
+    Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+    Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+    Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+    $BR1 = row_add($B,$i,$j,$sign*$k);
+
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($M, align=>'rrr|r')  \} 
+\) 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)",$pop_1_Row1->menu().$popSignPlus->menu().ans_rule(5).$pop_2_Row2->menu(),$AR1->ans_array(2),$BR1->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+if($TEST_1_Row2)
+{
+    ANS($pop_1_Row2->cmp());
+}
+elsif($TEST_1_Row3)
+{
+    ANS($pop_1_Row3->cmp());
+}
+else
+{
+    ANS($pop_1_Row1->cmp());
+}
+
+if($TESTSignMinus)
+{
+    ANS($popSignMinus->cmp());
+}
+else
+{
+    ANS($popSignPlus->cmp());
+}
+
+ANS(Compute("$k")->cmp);
+
+if($TEST_2_Row2)
+{
+    ANS($pop_2_Row2->cmp());
+}
+elsif($TEST_2_Row3)
+{
+    ANS($pop_2_Row3->cmp());
+}
+else
+{
+    ANS($pop_2_Row1->cmp());
+}
+
+ANS($AR1->cmp);
+ANS($BR1->cmp);
+}
+else
+{
+    if($A->element(1,1) != 1 )
+    {
+Context()->texStrings;
+BEGIN_TEXT
+A leading 1 needs to be created in column 1. Reopen the previous tab and choose a different option to first create a leading 1. $BR $BR
+Leave the following box empty: \{ans_rule(5)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(str_cmp("ok"));
+    }
+}
+
+Section::End();
+
+#######################
+#Option to swap rows 
+#######################
+Section::Begin(" ");
+
+Context("Numeric");
+$AR11_Flag = 0;
+
+if($AR1->element(1,1) != 1 && ($AR1->element(2,1) == 1 || $AR1->element(3,1) == 1 ))
+{
+$AR11_Flag = 1;
+
+$popSwap = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row","there is already a leading 1", "there is a zero and I cannot create a leading 1"],"interchange two rows");
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR1, align=>'rrr|r')  \} 
+\) 
+
+$BR $BR
+Now I will \{ $popLeadingOne->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popSwap->cmp() );
+}
+Section::End();
+
+Section::Begin(" ");
+
+if( $AR11_Flag == 1)
+{
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR11 = $MR1;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR11 = $AR1;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR11 = $BR1;
+
+Context("Numeric");
+$j = 3;
+$pop_Row = PopUp(["?", "R1", "R2","R3"],"R3");
+
+if($AR1->element(2,1) == 1)
+{
+    $j = 2;
+    $pop_Row = PopUp(["?", "R1", "R2","R3"],"R2");
+}
+
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR11 = row_switch($MR1,1,$j);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR11 = row_switch($AR1,1,$j);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR11 = row_switch($BR1,1,$j);
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR1, align=>'rrr|r')  \} 
+\) 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)","\( \text{R1} \Leftrightarrow\)".$pop_Row->menu(),$AR11->ans_array(2),$BR11->ans_array(2)],     align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($pop_Row->cmp());
+ANS($AR11->cmp);
+ANS($BR11->cmp);
+}
+Section::End();
+
+###########################################
+Section::Begin("Create 0's");
+
+if($AR11_Flag == 0)
+{
+    $MR1C1 = $MR1;
+    $MR1 = $MR1;
+    $AR1C1 = $AR1;
+    $AR1 = $AR1;
+    $BR1C1 = $BR1;
+    $BR1 = $BR1;
+}
+else
+{
+    $MR1C1 = $MR11;
+    $MR1 = $MR11;
+    $AR1C1 = $AR11;
+    $AR1 = $AR11;
+    $BR1C1 = $BR11;
+    $BR1 = $BR11;
+}
+
+if($AR1->element(1,1) != 1 )
+{
+Context()->texStrings;
+BEGIN_TEXT
+A leading 1 needs to be created in column 1. Fix the previous row operation accordingly or reopen the second tab and choose a different option to first create a leading 1. $BR $BR
+Leave the following box empty: \{ans_rule(5)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(str_cmp("ok"));
+}
+else
+{
+
+Context("Numeric");
+$popColumn = PopUp(["?", "column 1", "column 2", "column 3"],"column 1");
+$popPivot = PopUp(["?", "row 1 column 1", "row 1 column 2", "row 1 column 3", "row 2 column 1", "row 2 column 2","row 2 column 3", "row 3 column 1", "row 3 column 2", "row 3 column 3"],"row 1 column 1");
+
+Context()->texStrings;
+BEGIN_TEXT 
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR1, align=>'rrr|r')  \} 
+\) 
+$BR $BR
+For this step, there should be 0's in \{ $popColumn->menu() \}. I will use the leading 1 in \{ $popPivot->menu() \} to create those 0's \{ $popAbove->menu() \} that leading 1.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popColumn->cmp() );
+ANS($popPivot->cmp() );
+ANS($popAbove->cmp() );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$Mtemp = row_add($MR1, 2, 1, -$MR1->element(2,1));
+$MR1C1 = row_add($Mtemp, 3, 1, -$MR1->element(3,1));
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$Atemp = row_add($AR1, 2, 1, -$AR1->element(2,1));
+$AR1C1 = row_add($Atemp, 3, 1, -$AR1->element(3,1));
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$Btemp = row_add($BR1, 2, 1, -$AR1->element(2,1));
+$BR1C1 = row_add($Btemp, 3, 1, -$AR1->element(3,1));
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR1, align=>'rrr|r')  \} 
+\) 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)","\(  \text{R1} \)".$BR.$BR."\(  \text{R2}   +  \)".ans_rule(5)."\(  \text{R1} \)".$BR.$BR."\(  \text{R3}   +  \)".ans_rule(5)."\(  \text{R1} \)",$AR1C1->ans_array(2),$BR1C1->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS((-$AR1->element(2,1))->cmp);
+ANS((-$AR1->element(3,1))->cmp);
+ANS($AR1C1->cmp);
+ANS($BR1C1->cmp);
+}
+
+Section::End();
+
+###########################################
+### R2C2 
+###########################################
+Section::Begin("Create a leading 1");
+
+Context("Numeric");
+$popRow = PopUp(["?", "row 1 column 1", "row 1 column 2", "row 1 column 3", "row 2 column 1", "row 2 column 2","row 2 column 3", "row 3 column 1", "row 3 column 2", "row 3 column 3"],"row 2 column 2");
+
+Context("Numeric");
+if( $AR1C1->element(2,2) == 1)
+{
+    $popOption = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row","there is already a leading 1", "there is a zero and I cannot create a leading 1"],"there is already a leading 1");
+}
+elsif( $AR1C1->element(3,2) == 1)
+{
+    $popOption = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row","there is already a leading 1", "there is a zero and I cannot create a leading 1"],"interchange two rows");
+}
+elsif( (($AR1C1->element(3,2) - $AR1C1->element(2,2)) == 1 || ($AR1C1->element(3,2) + $AR1C1->element(2,2)) == 1 || (-$AR1C1->element(3,2) + $AR1C1->element(2,2)) == 1) && $AR1C1->element(2,2) != -1)
+{
+    $popOption = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row","there is already a leading 1", "there is a zero and I cannot create a leading 1"],"add a multiple of a row to another row");
+}
+else
+{
+    $popOption = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row","there is already a leading 1", "there is a zero and I cannot create a leading 1"],"multiply a row by a non-zero constant");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR1C1, align=>'rrr|r')  \} 
+\) 
+
+$BR $BR
+For this step, the leading 1 should be in \{ $popRow->menu() \} and to create that leading 1, I will \{ $popOption->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popRow->cmp() );
+ANS($popOption->cmp() );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$SwapOn = 0;
+
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR2 = $MR1C1;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR2 = $AR1C1;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR2 = $BR1C1;
+
+if( $AR1C1->element(2,2) == 1)
+{
+    #leading 1
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR2 = $MR1C1;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR2 = $AR1C1;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR2 = $BR1C1;
+
+}
+elsif( $AR1C1->element(3,2) == 1)
+{
+    #swap
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR2 = row_switch($MR1C1,2,3);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR2 = row_switch($AR1C1,2,3);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR2 = row_switch($BR1C1,2,3);
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR1C1, align=>'rrr|r')  \} 
+\) 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)","\(  \text{R2} \Leftrightarrow \text{R3} \)",$AR2->ans_array(2),$BR2->ans_array(2)],     align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($AR2->cmp);
+ANS($BR2->cmp);
+
+}
+elsif((($AR1C1->element(3,2) - $AR1C1->element(2,2)) == 1) && $AR1C1->element(2,2) != -1)
+{
+Context("Numeric");
+$SwapOn = 1;
+
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR2 = row_add($MR1C1,3,2,-1);
+    
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR2 = row_add($AR1C1,3,2,-1);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR2 = row_add($BR1C1,3,2,-1);
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR1C1, align=>'rrr|r')  \} 
+\) 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)"," \( \text{R3} - \text{R2} \)",$AR2->ans_array(2),$BR2->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($AR2->cmp);
+ANS($BR2->cmp);
+}
+elsif((($AR1C1->element(3,2) + $AR1C1->element(2,2)) == 1 && $AR1C1->element(2,2) > $AR1C1->element(3,2) ) && $AR1C1->element(2,2) != -1)
+{
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR2 = row_add($MR1C1,2,3,1);
+    
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR2 = row_add($AR1C1,2,3,1);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR2 = row_add($BR1C1,2,3,1);
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR1C1, align=>'rrr|r')  \} 
+\) 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)"," \( \text{R2} + \text{R3} \)",$AR2->ans_array(2),$BR2->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($AR2->cmp);
+ANS($BR2->cmp);
+}
+elsif(((-$AR1C1->element(3,2) + $AR1C1->element(2,2)) == 1) && $AR1C1->element(2,2) != -1)
+{
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR2 = row_add($MR1C1,2,3,-1);
+    
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR2 = row_add($AR1C1,2,3,-1);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR2 = row_add($BR1C1,2,3,-1);
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR1C1, align=>'rrr|r')  \} 
+\) 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)"," \( \text{R2} - \text{R3} \)",$AR2->ans_array(2),$BR2->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($AR2->cmp);
+ANS($BR2->cmp);
+}
+elsif((($AR1C1->element(3,2) + $AR1C1->element(2,2)) == 1 && $AR1C1->element(3,2) > $AR1C1->element(2,2)) && $AR1C1->element(2,2) != -1)
+{
+Context("Numeric");
+$SwapOn = 1;
+
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR2 = row_add($MR1C1,3,2,1);
+    
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR2 = row_add($AR1C1,3,2,1);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR2 = row_add($BR1C1,3,2,1);
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR1C1, align=>'rrr|r')  \} 
+\) 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)"," \( \text{R3} + \text{R2} \)",$AR2->ans_array(2),$BR2->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($AR2->cmp);
+ANS($BR2->cmp);
+}
+else
+{
+    #multiply
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR2 = row_mult($MR1C1,2,Fraction(1/$MR1C1->element(2,2)));
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR2 = row_mult($AR1C1,2,1/$AR1C1->element(2,2));
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR2 = row_mult($BR1C1,2,1/$AR1C1->element(2,2));
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR1C1, align=>'rrr|r')  \} 
+\) 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)","\(  \text{R1} \)".$BR.$BR.ans_rule(5)."\(  \text{R2} \)".$BR.$BR."\( \text{R3} \)",$AR2->ans_array(2),$BR2->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS((1/$AR1C1->element(2,2))->cmp);
+ANS($AR2->cmp);
+ANS($BR2->cmp);
+}
+
+Section::End();
+
+#######################
+#Option to swap rows 
+#######################
+Section::Begin(" ");
+
+if($SwapOn == 1)
+{
+Context("Numeric");
+$popSwap = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row","there is already a leading 1", "there is a zero and I cannot create a leading 1"],"interchange two rows");
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR2, align=>'rrr|r')  \} 
+\) 
+
+$BR $BR
+Now I will \{ $popSwap->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popSwap->cmp() );
+}
+Section::End();
+
+Section::Begin(" ");
+
+if($SwapOn == 1)
+{
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR22 = $MR2;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR22 = $AR2;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR22 = $BR2;
+
+Context("Numeric");
+$j = 3;
+$pop_Row = PopUp(["?", "R1", "R2","R3"],"R3");
+
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR22 = row_switch($MR2,2,$j);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR22 = row_switch($AR2,2,$j);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR22 = row_switch($BR2,2,$j);
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR2, align=>'rrr|r')  \} 
+\) 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)","\( \text{R2} \Leftrightarrow\)".$pop_Row->menu(),$AR22->ans_array(2),$BR22->ans_array(2)],     align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($pop_Row->cmp());
+ANS($AR22->cmp);
+ANS($BR22->cmp);
+}
+Section::End();
+
+###########################################
+Section::Begin("Create 0's");
+
+if($SwapOn == 0)
+{
+    $MR2C2 = $MR2;
+    $MR2 = $MR2;
+    $AR2C2 = $AR2;
+    $AR2 = $AR2;
+    $BR2C2 = $BR2;
+    $BR2 = $BR2;
+}
+else
+{
+    $MR2C2 = $MR22;
+    $MR2 = $MR22;
+    $AR2C2 = $AR22;
+    $AR2 = $AR22;
+    $BR2C2 = $BR22;
+    $BR2 = $BR22;
+}
+
+Context("Numeric");
+$popColumn = PopUp(["?", "column 1", "column 2", "column 3"],"column 2");
+$popPivot = PopUp(["?", "row 1 column 1", "row 1 column 2", "row 1 column 3", "row 2 column 1", "row 2 column 2","row 2 column 3", "row 3 column 1", "row 3 column 2", "row 3 column 3"],"row 2 column 2");
+
+Context()->texStrings;
+BEGIN_TEXT 
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR2, align=>'rrr|r')  \} 
+\) 
+$BR
+$BR
+For this step, there should be 0's in \{ $popColumn->menu() \}. I will use the leading 1 in \{ $popPivot->menu() \} to create those 0's \{ $popAbove->menu() \} that leading 1.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popColumn->cmp() );
+ANS($popPivot->cmp() );
+ANS($popAbove->cmp() );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR2C2 = $MR2;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR2C2 = $AR2;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR2C2 = $BR2;
+
+if($AR1C1->element(3,2) != 0 )
+{
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR2C2 = row_add($MR2, 3, 2, -$MR2->element(3,2));
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR2C2 = row_add($AR2, 3, 2, -$AR2->element(3,2));
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR2C2 = row_add($BR2, 3, 2, -$AR2->element(3,2));
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR2, align=>'rrr|r')  \} 
+\) 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)","\(  \text{R1} \)".$BR.$BR."\(  \text{R2} \)".$BR.$BR."\(  \text{R3}   +  \)".ans_rule(5)."\(  \text{R2} \)",$AR2C2->ans_array(2),$BR2C2->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS((-$AR2->element(3,2))->cmp);
+ANS($AR2C2->cmp);
+ANS($BR2C2->cmp);
+}
+
+Section::End();
+
+###########################################
+### R3C3
+###########################################
+Section::Begin("Create a leading 1");
+
+Context("Numeric");
+$popRow = PopUp(["?", "row 1 column 1", "row 1 column 2", "row 1 column 3", "row 2 column 1", "row 2 column 2","row 2 column 3", "row 3 column 1", "row 3 column 2", "row 3 column 3"],"row 3 column 3");
+
+Context("Numeric");
+if( $AR2C2->element(3,3) == 1)
+{
+    $popOption = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row","there is already a leading 1", "there is a zero and I cannot create a leading 1"],"there is already a leading 1");
+}
+else
+{
+    $popOption = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row","there is already a leading 1", "there is a zero and I cannot create a leading 1"],"multiply a row by a non-zero constant");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR2C2, align=>'rrr|r')  \} 
+\) 
+$BR
+$BR
+For this step, the leading 1 should be in \{ $popRow->menu() \} and to create that leading 1, I will \{ $popOption->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popRow->cmp() );
+ANS($popOption->cmp() );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR3 = $MR2C2;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR3 = $AR2C2;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR3 = $BR2C2;
+
+if( $AR2C2->element(3,3) == 1)
+{
+    #leading 1
+}
+elsif( $MR2C2->element(3,3) != 0)
+{
+    #multiply
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR3 = row_mult($MR2C2,3,Fraction(1/$MR2C2->element(3,3)));
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR3 = row_mult($AR2C2,3,1/$AR2C2->element(3,3));
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR3 = row_mult($BR2C2,3,1/$AR2C2->element(3,3));
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} ) )\} 
+    \{   display_matrix_mm($MR2C2, align=>'rrr|r')  \} 
+\) 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)","\(  \text{R1} \)".$BR.$BR."\(  \text{R2} \)".$BR.$BR.ans_rule(5)."\( \text{R3} \)",$AR3->ans_array(2),$BR3->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS((1/$AR2C2->element(3,3))->cmp);
+ANS($AR3->cmp);
+ANS($BR3->cmp);
+}
+
+Section::End();
+
+Section::Begin("Find the rank");
+
+Context("Numeric");
+$rA = Compute("3");
+$rAb = Compute("3");
+$n = Compute("3");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR $BR
+\( 
+    \{   display_matrix_mm($MR3, align=>'rrr|r')  \} 
+\) 
+
+$BR $BR
+Let \( A \) be the matrix of coefficients.$BR 
+Let \( A | b \) be the augmented matrix. $BR
+Let \( n \) be the number of variables. $BR $BR
+We know $BR
+\( \quad \text{rank}(A) = \) \{ ans_rule(2) \} $BR $BR
+\( \quad \text{rank}(A|b) = \) \{ ans_rule(2) \} $BR $BR
+\( \quad n = \) \{ ans_rule(2) \} $BR 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($rA->cmp);
+ANS($rAb->cmp);
+ANS($n->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popSol = PopUp(["?","a unique solution","infinitely many solutions", "no solution"],"a unique solution");
+$popRank = PopUp(["?","<", "=",">"],"=");
+$popN = PopUp(["?","<", "=",">"],"=");
+$popGeo = PopUp(["?","a point","a line","a plane", "N/A"], "a point");
+$popFree = PopUp(["?", "0", "1", "2", "N/A"],"0");
+
+Context()->texStrings;
+BEGIN_TEXT
+We know $BR $BR
+\( \quad r(A) = $rA \) $BR $BR
+\( \quad r(A|b) = $rAb \) $BR $BR
+\( \quad n = $n \) $BR $BR
+
+Since $BR 
+\( \quad \text{rank}(A) \) \{ $popRank->menu() \} \( \text{rank}(A|b) \) \{ $popN->menu() \} \( n \) $BR
+then $BR $BR
+the system of linear equations has \{ $popSol->menu() \}, $BR $BR
+the system of linear equations has \{ $popFree->menu() \} free variable(s) and $BR $BR
+the general solution represents \{ $popGeo->menu() \}. $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popRank->cmp);
+ANS($popN->cmp);
+ANS($popSol->cmp);
+ANS($popFree->cmp);
+ANS($popGeo->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+COMMENT("This problem gives a unique solution.");
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

@@ -1,0 +1,239 @@
+##DESCRIPTION
+##  Derivative - Product Rule with algebra
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation of Functions')
+## KEYWORDS('chain differentiation', 'derivative', 'derivative of the product of functions')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,7,1);
+$b = random(2,8,1);
+$c = random(2,7,1);
+$d = random(2,6,1);
+$n = random(4,7,1);
+$n1 = $n - 1;
+$n2 = $n - 2;
+
+#\[ f(x) = \frac { $a1 - $c1 x^2 } { $b1 + $d1 x^$n1 } \]
+
+Context("Numeric");
+$f = Compute("$a - $c x^2")->reduce;
+$g = Compute("$b + $d x^$n")->reduce;
+$g1 = $g**(-1);
+$g2 = $g**2;
+$df = $f->D('x');
+$dg = $g->D('x');
+$dg1 = $g1->D('x');
+$df_g = ($f->D('x') * $g1)->reduce;
+$f_dg = ($f * $g1->D('x'))->reduce;
+$equation = $f/$g;
+$dequation = $equation->D('x');
+
+$gcdCF = gcd(2*$c,$d*$n);
+$common_factor = Compute("-$gcdCF x $g**(-2)");
+
+Context("LimitedPolynomial-Strict");
+$num1 = 2*$c*$b/$gcdCF;
+$num2 = $c*$d*$n/$gcdCF - 2*$c*$d/$gcdCF;
+$num3 = $a*$d*$n/$gcdCF;
+$other_factor = Formula("$num1 - $num2 x^$n + $num3 x^$n2")->reduce;
+
+$gcd12 = gcd($num1,$num2);
+$gcdOF = gcd($gcd12,$num3);
+$num1a = $num1/$gcdOF;
+$num2a = $num2/$gcdOF;
+$num3a = $num3/$gcdOF;
+$factored_other_factor = Formula("$num1a - $num2a x^$n + $num3a x^$n2")->reduce;
+
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => -1, maxPower => $n,
+message => "either -1 or 0",
+);
+$new_eq = Compute("$f*$g^(-1)");
+
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => $n,
+message => "either 0 or 1",
+);
+$coeff1 = 2*$c/$gcdCF;
+$coeff2 = $d*$n/$gcdCF;
+$formula1 = Compute("$coeff1 $g");
+$formula2 = Compute("$coeff2 x^$n2 $f");
+$expanded_other_factor = Compute("$gcdOF $factored_other_factor");
+$numerator = Compute("-$gcdCF x $expanded_other_factor");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Let \( \displaystyle f(x) = $equation \). 
+Find \(f'(x)\) and simplify.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR$BITALIC$BBOLD Part 1: Rewriting the function $EBOLD$EITALIC $BR$BR
+
+Using laws of exponents, rewrite \( f(x) \) such that it does not contain a quotient. $BR $BR
+\(f(x) =\) \{ans_rule(25)\}
+
+$BR $BR
+$HR
+$BR$BITALIC$BBOLD Part 2: Finding the derivative $EBOLD$EITALIC $BR$BR
+
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f'(x) \)","\( = \)","\( \displaystyle \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \cdot \big( \)".ans_rule(10)."\( \big) + \big( \)".ans_rule(10)."\( \displaystyle \big) \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \)"], align=>LEFT, separation=>0).
+AlignedRow(["","","(apply the product rule)" ], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)","\( \big( \)".ans_rule(10)."\( \big) \big( \)".ans_rule(10)."\( \big) + \big( \)".ans_rule(10)."\( \big) \big( \)".ans_rule(10)."\( \big) \)"], align=>LEFT, separation=>0).
+AlignedRow(["","","(find the derivative)" ], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+$HR
+$BR$BITALIC$BBOLD Part 3: Finding the common factor $EBOLD$EITALIC $BR$BR
+
+Common factor \(=\) \{ans_rule(25)\}
+
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 4: Finding the other factor $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(25).$BR.$HR.ans_rule(25),"\( + \)",ans_rule(25).$BR.$HR.ans_rule(25),"(divide every term of the derivative by the common factor)" ], align=>CENTER, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(25)."\( + \)".ans_rule(25),"(simplify each term)" ], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(15),"(simplified form)"], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+$BR 
+
+END_TEXT
+Context()->texStrings;
+
+if($gcdOF != 1) 
+{
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(2)."\( \big( \)".ans_rule(15)."\( \big) \)","(factor out the common term)"], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+$BR
+END_TEXT
+Context()->texStrings;
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Other factor \(=\) \{ans_rule(15)\}
+
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 5: Writing the factored form of the derivative $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f'(x) \)","\( = \)",ans_rule(40),"(factorized as common factor \( \times \) other factor)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(20).$BR.$HR.ans_rule(20),"(rewrite with only positive exponents)" ], align=>LEFT, separation=>0, indent=>33).
+
+EndTable()
+\}
+$BR
+
+END_TEXT
+Context()->texStrings;
+
+#Part 1
+ANS($new_eq->cmp);
+
+#Part 2
+ANS($f->cmp);
+ANS($g1->cmp);
+ANS($f->cmp);
+ANS($g1->cmp);
+
+#derivative
+ANS($df->cmp);
+ANS($g1->cmp);
+ANS($f->cmp);
+ANS($dg1->cmp);
+
+#Part 3
+ANS($common_factor->cmp);
+
+#Part 4
+ANS($df_g->cmp);
+ANS($common_factor->cmp);
+ANS($f_dg->cmp);
+ANS($common_factor->cmp);
+
+ANS($formula1->cmp);
+ANS($formula2->cmp);
+
+ANS($other_factor->cmp);
+
+if($gcdOF != 1) 
+{
+ANS(Compute("$gcdOF")->cmp);
+ANS($factored_other_factor->cmp);
+}
+
+ANS($expanded_other_factor->cmp);
+
+#Part 5
+ANS($dequation->cmp);
+ANS($numerator->cmp);
+ANS($g2->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

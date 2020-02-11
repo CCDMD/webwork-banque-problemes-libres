@@ -1,0 +1,77 @@
+##DESCRIPTION
+##  Algebra problem: factor
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('difference of squares','factor','factorization')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->variables->add(y => 'Real');
+
+do
+{
+$a = random(2,7,1);
+$b = random(2,7,1);
+} until ($a != $b);
+
+$equation_tex = "($a\sqrt{x}+$b\sqrt{y})($a\sqrt{x}-$b\sqrt{y})";
+
+$factor1 = Compute("$a x^(1/2)");
+$factor2 = Compute("$b y^(1/2)");
+
+#
+#  Expanded form
+#
+Context("LimitedPolynomial-Strict");
+Context()->variables->add(y => 'Real');
+$coeff_x = $a*$a;
+$coeff_y = $b*$b;
+$expandedform = Compute("$coeff_x x - $coeff_y y");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Expand the expression \( \displaystyle $equation_tex \) 
+
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle $equation_tex \)","\( = \)","\( \big( \)".ans_rule(3)."\( \big)^2 - \big( \)".ans_rule(3)."\( \big)^2 \)","(rewrite as a difference of squares \( a^2 - b^2 \))" ], align=>LEFT, separation=>0).
+AlignedRow([" ","\( = \)",ans_rule(20),"(expanded form)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+
+$BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($factor1->cmp);
+ANS($factor2->cmp);
+ANS($expandedform->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

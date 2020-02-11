@@ -1,0 +1,266 @@
+## DESCRIPTION
+## Marginal Profit
+## ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('economy', 'critical value')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"contextCurrency.pl",
+);
+
+TEXT(beginproblem());
+$showpartialcorrectanswers = 1;
+
+$a = random(40, 90, 10);
+$b = random(.1, .9, .1);
+$c = random(200,300,10);
+
+$x = random(20,29,1);
+$xm1 = $x - 1;
+$xp1 = $x + 1;
+$xp2 = $x + 2;
+
+$sign = "th";
+$sign_m1 = "th";
+$sign_p1 = "th";
+$sign_p2 = "th";
+if($x == 20) 
+{
+    $sign_p1 = "st";
+    $sign_p2 = "nd";
+}
+if($x == 21) 
+{
+    $sign = "st"; 
+    $sign_p1 = "nd";
+    $sign_p2 = "rd";
+}
+if($x == 22) 
+{
+    $sign = "nd"; 
+    $sign_m1 = "st";
+    $sign_p1 = "rd";
+}
+if($x == 23) 
+{
+    $sign = "rd"; 
+    $sign_m1 = "nd";
+}
+if($x == 24) 
+{
+    $sign_m1 = "rd";
+}
+
+Context("Numeric");
+$equation = Compute("$a x - $b x^2 - $c")->reduce;
+$dequation = $equation->D('x');
+
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+$answer = $dequation->eval(x=>"$x");
+$P1 = $equation->eval(x=>"$xp1");
+$P2 = $equation->eval(x=>"$x");
+$P3 = $P1 - $P2;
+
+Context("Currency");
+$CurrencyAnswer = Currency($answer);
+$CurrencyAnswerP3 = Currency($P3);
+
+Context("Numeric");
+$popVariableX = PopUp(["?", "x", "P", "MP"],"x");
+$popVariableMP = PopUp(["?", "x", "P", "MP"],"MP");
+$popVariableP = PopUp(["?", "x", "P", "MP"],"P");
+
+$popVariableMPWord = PopUp(["Choose", "profit function", "marginal profit", "production level"],"marginal profit");
+$popItem = PopUp(["Choose", "$xm1$sign_m1", "$x$sign", "$xp1$sign_p1", "$xp2$sign_p2"],"$xp1$sign_p1");
+$popUnit = PopUp(["Choose", "dollars", "dollars per day", "dollars per week", "dollars per month", "dollars per year", "dollars per answering machine"],"dollars");
+$popExact = PopUp(["Choose", "P($xm1)", "P($x)", "P($xp1)", "P($xp2)", "P($xp2)-P($x)", "P($xp1)-P($x)", "P($x)-P($xm1)"],"P($xp1)-P($x)");
+
+#check box 5
+$ans_eval5 = $popVariableMP->cmp();
+$ans_hash5 = $ans_eval5->evaluate($inputs_ref->{ANS_NUM_TO_NAME(5)});
+$TESTbox5 = $ans_hash5->{score};
+
+$WantSymbol = "";
+if ($TESTbox5) 
+{
+$WantSymbol = "MP";
+}
+
+#check box 13
+$ans_eval13 = $popExact->cmp();
+$ans_hash13 = $ans_eval13->evaluate($inputs_ref->{ANS_NUM_TO_NAME(13)});
+$TESTbox13 = $ans_hash13->{score};
+
+$Formula1 = "";
+$Formula2 = "";
+$Formula3 = "";
+if ($TESTbox13) 
+{
+$Formula1 = "P($xp1)";
+$Formula2 = "P($x)";
+$Formula3 = "P($xp1)-P($x)";
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Question $EBOLD $BR $BR
+
+A company manufactures answering machines. The total profit (in dollars) from the sale of \(x\) answering machines is given by the formula $BR
+\( \quad P(x) = $equation \)
+$BR
+(A) Find the approximate profit from the sale of the \( $xp1^{$sign_p1}\) machine.$BR
+(B) Find the exact profit on the \( $xp1^{$sign_p1}\) machine.
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point.
+$HR $HR
+$BR
+$HR $HR
+$BITALIC$BBOLD Part A: Approximate the profit $EBOLD$EITALIC $BR$HR
+$HR
+$BR$BITALIC$BBOLD Step 1: Define the variables $EBOLD$EITALIC $BR$BR
+Let \(MP\) be the marginal profit.
+$BR
+$BR
+$HR
+$BR$BITALIC$BBOLD Step 2: Identify what the problem is asking $EBOLD$EITALIC $BR$BR
+We know the \{ $popVariableMPWord->menu() \} is used to approximate the exact profit of selling the \( (x+1)^{th}\) item. $BR
+This means: $BR
+We want \{ $popVariableMP->menu() \} 
+when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 3: Find the appropriate formula $EBOLD$EITALIC $BR$BR
+
+We know \{ $popVariableMP->menu() \} \( = \displaystyle \frac{dP}{dx}\) 
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR$BITALIC$BBOLD Step 4: Solve for what the problem is asking $EBOLD$EITALIC $BR$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{dP}{dx} \)","\( = \)",ans_rule(30),"(write the derivative)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+and when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR $BR
+\( \displaystyle $WantSymbol = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( \frac{dP}{dx} \) $EITALIC)
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 5: Draw a conclusion $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD For the last box, include the dollar sign in your answer. 
+$HR $HR
+$BR
+Thus, the profit of selling the \{ $popItem->menu() \} answering machine is approximately \{ans_rule(10)\}. 
+
+$BR
+$BR
+$HR
+$HR
+$BITALIC$BBOLD Part B: Exact profit $EBOLD$EITALIC $BR$HR
+$HR
+$BR$BITALIC$BBOLD Step 2: Identify what the problem is asking $EBOLD$EITALIC $BR$BR
+We want the exact profit of the \{ $popItem->menu() \} item. 
+ 
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 3: Find the appropriate formula $EBOLD$EITALIC $BR$BR
+
+We know $BR
+\( \quad \text{exact profit} = \) \{ $popExact->menu() \}
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR 
+$BITALIC$BBOLD Step 4: Solve for what the problem is asking $EBOLD$EITALIC $BR$BR
+$BBOLD Recall: \( P(x) = $equation \) $EBOLD $BR $BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle $Formula1 \)","\( = \)",ans_rule(30)], align=>LEFT, separation=>0).
+
+AlignedRow(["\( \displaystyle $Formula2 \)","\( = \)",ans_rule(30)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR 
+and 
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle $Formula3 \)","\( = \)",ans_rule(30)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 5: Draw a conclusion $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD For the last box, include the dollar sign in your answer. 
+$HR $HR
+$BR
+Thus, the exact profit of selling the \{ $popItem->menu() \} answering machine is \{ans_rule(10)\}. 
+
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#Part A
+ANS($popVariableMPWord->cmp);
+ANS($popVariableMP->cmp);
+ANS($popVariableX->cmp);
+ANS(Compute("$x")->cmp);
+ANS($popVariableMP->cmp);
+
+ANS($dequation->cmp);
+
+ANS($popVariableX->cmp);
+ANS(Compute("$x")->cmp);
+ANS($answer->cmp);
+
+ANS($popItem->cmp);
+ANS($CurrencyAnswer->cmp);
+
+#Part B
+ANS($popItem->cmp);
+ANS($popExact->cmp);
+
+ANS($P1->cmp);
+ANS($P2->cmp);
+ANS($P3->cmp);
+
+ANS($popItem->cmp);
+ANS($CurrencyAnswerP3->cmp);
+
+ENDDOCUMENT();

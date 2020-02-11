@@ -1,0 +1,150 @@
+##DESCRIPTION
+##  Find slope by using implicit Differentiation
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation of Functions')
+## KEYWORDS('implicit differentiation', 'derivative')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$x0 = non_zero_random(-2,2,1);
+$y0 = random(-2,2,1);
+if($x0 == $y0) {$y0 += 1;}
+
+$a = random(2,6,1);
+$b = random(2,4,1);
+$c = -$b*$x0**2 + $a*$y0*$x0**3;
+
+Context("Numeric");
+Context()->variables->add(y => 'Real','dy'=> 'Real','dx'=> 'Real');
+
+$dydx = Compute("dy/dx");
+
+$equationLHS = Compute("$a x^3 y - $b x^2")->reduce;
+$equationRHS = Compute("$c");
+
+$P1 = Compute("$a x^3");
+$dP1 = $P1->D('x');
+
+$P2 = Compute("y");
+$dP2 = $P2->D('y');
+
+$P3 = Compute("$b x^2");
+$dP3 = $P3->D('x');
+
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$dRHS = $equationRHS->D('x');
+
+$dLHS = $dP1*$P2 + $P1*$dP2*$dydx - $dP3;
+
+$dydxterm = $P1*$dP2;
+$constant = -($dP1*$P2 - $dP3);
+$answer = $constant/$dydxterm;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+For the equation given below, evaluate \( \displaystyle\frac{dy}{dx}\) at the point
+\(($x0,$y0)\).$BR $BR
+\( \displaystyle \quad $equationLHS = $equationRHS \)
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR 
+$BBOLD Note: $EBOLD  
+Enter $BBOLD dy/dx $EBOLD for \( \displaystyle \frac{dy}{dx} \) or for \( y' \)$BR
+$HR $BR
+
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d}{dx} \Big( $equationLHS \Big) \)","\( = \)","\( \displaystyle \frac{d}{dx} \Big( $equationRHS \Big) \)","(find the derivative with respect to \( x \))"], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d}{dx} \)".ans_rule(5)."\( \cdot \)".ans_rule(5)."\( + \)".ans_rule(5)."\( \displaystyle \frac{d}{dx} \)".ans_rule(5)."\( - \)".ans_rule(5),"\( = \)",ans_rule(2)], align=>LEFT, separation=>0).
+
+AlignedRow(["(apply the product rule to the first term and find the derivative of the other terms)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(40),"\( = \)",ans_rule(2),"(find the derivative)"], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+$BR $BR
+When \( x = \) \{ans_rule(2) \} and \( y = \) \{ans_rule(2) \} , we have
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(40),"\( = \)",ans_rule(5),"(replace \(x\) and \(y\))"], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \big( \)".ans_rule(10)."\( \big) \displaystyle \frac{dy}{dx} \)","\( = \)",ans_rule(5),"(isolate \(\frac{dy}{dx}\))"], align=>RIGHT, separation=>0, indent=>180).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{dy}{dx} \)","\( = \)",ans_rule(5),"(solve for \(\frac{dy}{dx}\))"], align=>RIGHT, separation=>0, indent=>355).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->texStrings;
+
+ANS($P1->cmp);
+ANS($P2->cmp);
+ANS($P1->cmp);
+ANS($P2->cmp);
+ANS($dP3->cmp);
+ANS($dRHS->cmp);
+
+ANS($dLHS->cmp);
+ANS($dRHS->cmp);
+
+ANS(Compute("$x0")->cmp);
+ANS(Compute("$y0")->cmp);
+
+ANS($dLHS->substitute(x=>$x0,y=>$y0)->cmp);
+ANS($dRHS->cmp);
+
+ANS($dydxterm->substitute(x=>$x0,y=>$y0)->cmp);
+ANS($constant->substitute(x=>$x0,y=>$y0)->cmp);
+ANS($answer->substitute(x=>$x0,y=>$y0)->cmp);
+
+ENDDOCUMENT();

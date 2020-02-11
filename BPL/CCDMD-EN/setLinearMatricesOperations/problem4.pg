@@ -1,0 +1,73 @@
+##DESCRIPTION
+##  Matrix Operations
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Matrix Algebra')
+## KEYWORDS('addition and subtraction', 'scalar nilpotence multiplication')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+$A = Matrix([ 
+[random(-9,9,1),non_zero_random(-9,9,1)],                [non_zero_random(-9,9,1),random(-9,9,1)]
+]);
+
+$B = Matrix([ 
+[non_zero_random(-9,9,1),non_zero_random(-9,9,1)],                [non_zero_random(-9,9,1),non_zero_random(-9,9,1)]
+]);
+
+$C = Matrix([ 
+[random(-9,9,1),non_zero_random(-9,9,1)],                [non_zero_random(-9,9,1),random(-9,9,1)]
+]);
+
+
+$m = random(2,5,1)*random(-1,1,2);
+$C = ($B-$A)*(1/$m);
+
+$C1 = $B-$A;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Solve for \(X\). 
+$BR $BR
+\( $A + $m X = $B \) $BR $BR
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $A + $m X \)","\( = \)","\( $B\)"], align=>LEFT, separation=>0).
+
+AlignedRow(["\( $m X \)","\( = \)",$C1->ans_array(2)], align=>RIGHT, separation=>0).
+
+AlignedRow(["\( X \)","\( = \)",$C->ans_array(2)], align=>RIGHT, separation=>0).
+
+EndTable()
+\}
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $C1->cmp() );
+ANS( $C->cmp() );
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

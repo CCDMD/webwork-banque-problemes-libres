@@ -1,0 +1,211 @@
+##DESCRIPTION
+##  Related Rates
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('economy', 'related rates')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"contextCurrency.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->variables->add(s => 'Real','dx'=> 'Real','ds'=> 'Real','dt'=> 'Real');
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$dxdt = Compute("dx/dt");
+$dsdt = Compute("ds/dt");
+
+$a = random(50000,70000,10000);
+$b = random(300000,450000,10000);
+$c = random(0.0003,0.0010,0.0001);
+
+$cost = random(1000,5000,1000);
+$ratecost = random(100,500,100);
+
+#s = $a - $b e^{-$c x}.
+
+$LHS = Compute("s");
+$dLHS = $LHS->D('s');
+$dLHS_dsdt = $dLHS*$dsdt;
+
+$RHS = Compute("$a - $b e^{-$c x}");
+$dRHS = $RHS->D('x');
+$dRHS_dxdt = $dRHS*$dxdt;
+
+$answer = ($dRHS*$ratecost)->eval(x=>$cost);
+
+if($answer > 0 )
+{
+    $popInc = PopUp(["Choose", "decreasing", "increasing"],"increasing");
+    $PositiveAnswer = $answer
+}
+else
+{
+    $popInc = PopUp(["Choose", "decreasing", "increasing"],"decreasing");
+    $PositiveAnswer = -1*$answer;
+}
+
+Context("Currency");
+$CurrencyAnswer = Currency($PositiveAnswer);
+
+Context("Numeric");
+
+$popTime = PopUp(["Choose", "day", "week", "month", "year"],"week");
+
+#check box 1
+$ans_eval1 = $dsdt->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1 = $ans_hash1->{score};
+
+$WantSymbol = "";
+if ($TESTbox1) 
+{
+$WantSymbol = $dsdt;
+}
+
+#check box 2
+$ans_eval2 = Compute("x")->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2 = $ans_hash2->{score};
+
+#check box 4
+$ans_eval4 = $dxdt->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4 = $ans_hash4->{score};
+
+$VariableSymbol_x = "";
+$VariableSymbol_s = "";
+$VariableSymbol_dxdt = "";
+if ($TESTbox2 && $TESTbox4) 
+{
+$VariableSymbol_x = "x";
+$VariableSymbol_s = "s";
+$VariableSymbol_dxdt = $dxdt;
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Question $EBOLD $BR $BR
+
+A retail store estimates that weekly sales \(s\) and weekly
+advertising costs \(x\) (both in dollars) are related by $BR
+\( \quad $LHS = $RHS \) $BR
+The current weekly advertising costs are $cost dollars and these
+costs are increasing at the rate of $ratecost dollars per week. Find
+the current rate of change of sales.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point. $BR
+
+$BR
+Enter $BBOLD ds/dt $EBOLD for \( \displaystyle \frac{ds}{dt} \) or \( s'\) $BR $BR
+Enter $BBOLD dx/dt $EBOLD for \( \displaystyle \frac{dx}{dt} \) or \( x'\) $BR
+$HR
+$HR
+$BR
+$HR
+$BR$BITALIC$BBOLD Step 1: Identify what the problem is asking $EBOLD$EITALIC $BR$BR
+We want \{ans_rule(5)\} ($BITALIC write the mathematical expression for $BBOLD the current rate of change of sales $EBOLD $EITALIC)
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 2: Find the appropriate formula $EBOLD$EITALIC $BR$BR
+
+We know $BR $BR
+\{ans_rule(4)\} \( = \) \{ans_rule(5)\} ($BITALIC write the mathematical expression for $BBOLD the current weekly advertising costs are $cost dollars $EBOLD $EITALIC) $BR$BR
+\{ans_rule(4)\} \( = \) \{ans_rule(5)\} ($BITALIC write the mathematical expression for $BBOLD the costs are increasing at the rate of $ratecost dollars per week $EBOLD $EITALIC) 
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR$BITALIC$BBOLD Step 3: Solve for what the problem is asking $EBOLD$EITALIC $BR$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d}{dt} \big( $LHS \big) \)","\( = \)","\( \displaystyle \frac{d}{dt} \big( $RHS \big) \)"], align=>LEFT, separation=>0, indent=>35).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),"\( = \)",ans_rule(40)], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["($BITALIC find the derivative with respect to \( t \) $EITALIC)"], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR $BR 
+and when \( $VariableSymbol_x = \) \{ans_rule(5)\} and \( \displaystyle $VariableSymbol_dxdt = \) \{ans_rule(5)\} ($BITALIC write the given conditions $EITALIC)
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),"\( = \)",ans_rule(40),"($BITALIC replace the given conditions $EITALIC)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 4: Draw a conclusion $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD For the penultimate box, include the dollar sign in your answer. 
+$HR $HR
+$BR
+Thus, the sales are \{ $popInc->menu() \} at a rate of \{ans_rule(10)\} per \{ $popTime->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+#Step 1
+ANS($dsdt->cmp);
+
+#Step 2
+ANS(Compute("x")->cmp);
+ANS(Compute("$cost")->cmp);
+ANS($dxdt->cmp);
+ANS(Compute("$ratecost")->cmp);
+
+#Step 3
+#derivative
+ANS($dLHS_dsdt->cmp);
+ANS($dRHS_dxdt->cmp);
+
+#conditions
+ANS(Compute("$cost")->cmp);
+ANS(Compute("$ratecost")->cmp);
+
+ANS($dLHS_dsdt->cmp);
+ANS($answer->cmp);
+
+#Step 4
+ANS($popInc->cmp);
+ANS($CurrencyAnswer->cmp);
+ANS($popTime->cmp);
+
+ENDDOCUMENT();

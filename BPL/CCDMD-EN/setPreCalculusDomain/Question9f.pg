@@ -1,0 +1,241 @@
+## DESCRIPTION
+##  Domain of Functions
+## ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('domain','sign')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"contextAlternateIntervals.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"parserPopUp.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#*************************************************************
+#  Create function of form sqrt( (x^2 - Bx + C)/(x - A) ).
+#    The quadratic is created so that the fraction factors
+#    into (x - A)(x + D^2 - A)/(x - A).
+#
+#    For x != A, f(x) = sqrt(x + D^2 - A). At x = A, this
+#    evaluates to D. Since A is not in the domain, D is
+#    not in the range. The domain is [A-D^2,A) U (A,inf) and
+#    the range is [0,D) U (D,inf) 
+#**************************************************************
+do
+{
+$A = random(1,6,1);
+$D = random(1,6,1);
+$S = Compute("$D^2");
+$B = Compute("$S - 2*$A");
+$C = Compute("$A^2 - $A*$S");
+} until ($B != 0 && $C != 0);
+$Dlower = Compute("$A - $S");
+
+$popnum = PopUp(["Choose","is less than zero","is less than or equal to zero","is equal to zero","not applicable (the function is always defined)"],"is less than zero");
+
+$popden = PopUp(["Choose","is less than zero","is less than or equal to zero","is equal to zero","not applicable (the function is always defined)"],"is equal to zero");
+
+#$Func = Formula("sqrt( (x^2 + $B x + $C)/(x - $A) )")->reduce;
+Context("Numeric");
+
+$Equation_Und = Compute("(x^2 + $B x + $C)/(x - $A)")->reduce;
+$Equation_UndNum = Compute("x^2 + $B x + $C")->reduce;
+$Equation_UndDen = Compute("x - $A")->reduce;
+$Equation_tex = "\sqrt{\frac{x^2 + $B x + $C}{x - $A}}";
+
+#check box 1 & 3
+$ans_eval1 = $Equation_Und->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1num = $ans_hash1->{score};
+
+$ans_eval3 = $Equation_UndDen->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3num = $ans_hash3->{score};
+
+$ans_eval1 = $Equation_UndDen->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1den = $ans_hash1->{score};
+
+$ans_eval3 = $Equation_Und->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3den = $ans_hash3->{score};
+
+$TermUndefinedNum = "";
+$TermUndefinedDen = "";
+if (($TESTbox1num && $TESTbox3num) || ($TESTbox1den && $TESTbox3den) )
+{
+$TermUndefinedNum = $Equation_UndNum;
+$TermUndefinedDen = $Equation_UndDen;
+}
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>1);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$factoredform = Compute("(x - $A)(x - $Dlower)");
+$x1 = Compute("$Dlower");
+$x2 = Compute("$A");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$IDomain = Compute("[$Dlower,$A) U ($A,inf)");
+
+$I1 = Compute("(-inf,$Dlower)");
+$I2 = Compute("($Dlower,$A)");
+$I3 = Compute("($A,inf)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find the domain of the function \( \displaystyle f(x) = $Equation_tex \)
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $HR $BR
+$BITALIC$BBOLD Step 1: Identify when \( f(x) \) is undefined $EBOLD$EITALIC $BR$BR
+$HR $BR
+We know \(f(x) \) is undefined when \{ans_rule(20)\} $BR
+\{ $popnum->menu() \}
+$BR $BR
+We know \(f(x) \) is undefined when \{ans_rule(20)\} $BR
+\{ $popden->menu() \}
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR 
+$HR $HR
+$BR$BITALIC$BBOLD Step 2: Find the \(x\)-values where \( f(x) \) is undefined $EBOLD$EITALIC $BR$BR
+$HR $BR
+
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $TermUndefinedNum = 0 \)" ], align=>LEFT, separation=>0, indent=>40).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(15),"\( = 0 \)","(factor)"], align=>RIGHT, separation=>0).
+
+EndTable()
+\}
+$BR
+When solving for \(x\), we have (in ascending order)
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(x_1 \)","\( = \)",ans_rule(5),$SPACE.$SPACE." and ".$SPACE.$SPACE,"\(x_2 \)","\( = \)",ans_rule(5)], align=>RIGHT, separation=>0).
+EndTable()
+\}
+$BR 
+and
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $TermUndefinedDen \)", "\( = \)", "\(0 \)" ], align=>LEFT, separation=>0).
+AlignedRow(["\( x \)", "\( =  \)",ans_rule(5),"(solve for \( x \)) "], align=>RIGHT, separation=>0).
+
+EndTable()
+\}
+$BR 
+$BR
+$HR $HR
+$BR$BITALIC$BBOLD Step 3: Construct the sign table of \( f(x) \) $EBOLD$EITALIC $BR $BR
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR 
+$BR
+$BBOLD Recall: $EBOLD 
+\( \displaystyle f(x) =  $Equation_tex \)
+$BR 
+$HR $BR
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+"\(x\)",
+ans_rule(10),ans_rule(10),ans_rule(10),"(write the intervals for \(x\), making sure to exclude the enpoints of each interval)"],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+"Sign of \(f(x)\)",
+ans_rule(10),ans_rule(10),ans_rule(10),"(write \(+\), \(-\) or DNE)"],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+EndTable();
+\}
+
+$BR
+$HR $HR
+$BR$BITALIC$BBOLD Step 4: State the domain $EBOLD$EITALIC $BR$BR
+$BBOLD Note: $EBOLD
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. 
+$BR $BR
+$HR $BR
+The domain of \(f(x) \) is  \{ans_rule(40)\} 
+$BR
+$BR
+
+END_TEXT
+Context()->texStrings;
+
+#Step 1
+if($TESTbox1num)
+{
+    ANS($Equation_Und->cmp);
+    ANS($popnum->cmp);
+    ANS($Equation_UndDen->cmp);
+    ANS($popden->cmp);
+}
+else
+{
+    ANS($Equation_UndDen->cmp);
+    ANS($popden->cmp);
+    ANS($Equation_Und->cmp);
+    ANS($popnum->cmp);
+}
+
+#Step 2
+ANS($factoredform->cmp);
+ANS($x1->cmp);
+ANS($x2->cmp);
+ANS($x2->cmp);
+
+#Step3
+ANS($I1->cmp);
+ANS($I2->cmp);
+ANS($I3->cmp);
+
+ANS(str_cmp("DNE"));
+ANS(str_cmp("+"));
+ANS(str_cmp("+"));
+
+#Domain
+ANS($IDomain->cmp);
+
+ENDDOCUMENT();

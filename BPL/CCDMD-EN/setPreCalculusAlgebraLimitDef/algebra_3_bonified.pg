@@ -1,0 +1,114 @@
+#DESCRIPTION
+##  Algebra problem: f(x+h)-f(x)
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('composition')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a1 = random(1,4,1);
+$b1 = random(2,5,1);
+$x1 = random(1,5,1);
+$m1 = $b1/(2*($a1+$b1*$x1)**.5);
+
+Context("Numeric");
+$equation = Formula("sqrt($a1 + $b1 x)");
+
+Context()->variables->add(h => 'Real');
+$fx = $equation->substitute(x => "x"); 
+$fxh = $equation->substitute(x => "x+h"); 
+
+$two_a = 2*$a;
+$answer = $fxh - $fx ;
+$conjugate = $fxh + $fx;
+
+Context("LimitedPolynomial-Strict");
+Context()->variables->add(h => 'Real');
+$LHS = Formula("$a1 + $b1 x + $b1 h");
+$RHS = Formula("$a1 + $b1 x");
+$result = Formula("$b1 h");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Let \( f(x)=$equation\). Calculate the following:
+
+$BR
+$BR 
+\(f(x)= \) \{ans_rule(15) \}
+$BR 
+$BR
+\(f(x+h)= \) \{ans_rule(15) \}
+$BR
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f(x+h)-f(x) \)","\( = \)",ans_rule(20) ], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)","\( \bigg( \)".ans_rule(20)."\( \bigg) \)","\( \Bigg( \)",ans_rule(20).$BR.$HR.ans_rule(20),"\( \Bigg) \)","(rationalize the numerator)" ], align=>LEFT, separation=>0, indent=>115).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)","\( \big( \)".ans_rule(10)."\( \big)^2 - \big( \)".ans_rule(10)."\( \big)^2 \)".$BR.$HR.ans_rule(40),"(expand the numerator using \( (a-b)(a+b) = a^2 - b^2 \))" ], align=>LEFT, separation=>0, indent=>115).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(10)."\(  - \big( \)".ans_rule(10)."\( \big) \)".$BR.$HR.ans_rule(35),"(simplify the numerator using \( (\sqrt{x})^2=x \))" ], align=>LEFT, separation=>0, indent=>115).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(30).$BR.$HR.ans_rule(30),"(fully simplify the numerator)" ], align=>LEFT, separation=>0, indent=>115).
+EndTable()
+\}
+$BR
+$BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($fx->cmp);
+ANS($fxh->cmp);
+ANS($answer->cmp);
+
+ANS($answer->cmp);
+ANS($conjugate->cmp);
+ANS($conjugate->cmp);
+
+ANS($fxh->cmp);
+ANS($fx->cmp);
+ANS($conjugate->cmp);
+
+ANS($LHS->cmp);
+ANS($RHS->cmp);
+ANS($conjugate->cmp);
+
+ANS($result->cmp);
+ANS($conjugate->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

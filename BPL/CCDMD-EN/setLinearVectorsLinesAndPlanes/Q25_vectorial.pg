@@ -1,0 +1,196 @@
+##DESCRIPTION
+##  Lines & Planes
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"parserImplicitPlane.pl",
+"parserParametricPlane.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"parserSolutionFor.pl",
+"answerCustom.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+#  Vectors in the plane with a normal where all components are non-zero
+do
+{
+    $V = non_zero_vector3D();
+    $W = non_zero_vector3D(); 
+    $N = $V x $W;
+    while (areParallel $V $W) 
+    {
+        $W = non_zero_vector3D();
+        $N = $V x $W;
+    }
+} until ($N->extract(1)!=0 && $N->extract(2)!=0 && $N->extract(3)!=0);
+
+$P = non_zero_point3D();
+$Q = Point($P + $V);
+$R = Point($P + $W);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Let \( P=$P, Q=$Q \) and \(R=$R \) be points in \(\mathbb{R}^3\).
+Find the vectorial equation for a plane that contains \( P \), \( Q \), and \( R \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Construct the generator vectors");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{v} = \overrightarrow{PQ}\) and \( \vec{w} = \overrightarrow{PR} \; \) be the generators of the plane. $BR 
+$BR
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v} \) ","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0, indent=>15).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{w} \) ","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0, indent=>15).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($V->cmp);
+ANS($W->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Choose a support point");
+
+Context("ImplicitPlane");
+$Plane = ImplicitPlane($P,$N);
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$EquivalentPoint = SolutionFor("$Plane","$P");
+
+Context("Numeric");
+
+#check box 3
+$ans_eval3 = $EquivalentPoint->cmp;
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3 = $ans_hash3->{score};
+
+Context("Point");
+
+$A = $P;
+
+if($TESTbox3)
+{
+    $A = $inputs_ref->{ANS_NUM_TO_NAME(3)};
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( A \) be the support point of the plane $BR $BR
+
+We have $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( A \) ","\( = \)",ans_rule(15),"(choose either \(P\), \(Q\) or \(R\) and write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($EquivalentPoint->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Construct the vectorial equation");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->variables->are(t=>"Real",s=>"Real");
+
+#  for checking a particular vector parametric plane
+sub mycheck {
+  my ($correct, $student, $ansHash) = @_;
+
+  if ( 
+       ($correct . i == $student . i) && 
+       ($correct . j == $student . j) && 
+       ($correct . k == $student . k) 
+     ) 
+  { return 1; } else { return 0; }
+}
+
+$T = Formula("t");
+$S = Formula("s");
+$Parametric_Plane = $A + $S * $V + $T * $W;
+
+Context()->texStrings;
+BEGIN_TEXT
+Thus the vectorial equation of the plane is $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( (x,y,z) \) ","\( = \)",ans_rule(40),"(write the vectorial equation as \( A + s \vec{v} + t \vec{w}\))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( custom_cmp( $Parametric_Plane, ~~&mycheck, showCoordinateHints=>1 ) );
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();

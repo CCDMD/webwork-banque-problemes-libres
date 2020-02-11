@@ -1,0 +1,302 @@
+##DESCRIPTION
+##  Differentials - Change in Cost, Revenue, Profit
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('differential derivative', 'economy')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"contextCurrency.pl",
+"contextLimitedPolynomial.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,5,1);
+$b = random(2,8,1);
+if($b == $a) {$b += 1;}
+$c = random(2,4,0.1);
+$x1 = random(10,50,5);
+$d = random(100,400,10);
+$d1 = random(10,40,5);
+$x2 = $x1 + $d1;
+
+Context("Currency");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$fixedCost = Currency($d);
+$itemCost = Currency($c);
+
+Context("Numeric");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+#the cost function
+$fixed = Compute("$d");
+$variable = Compute("$c x");
+$cost = Compute("$fixed + $variable");
+
+$popcostformula = PopUp(["Choose", "price + quantity", "price x quantity", "variable costs + fixed costs", "variable costs x fixed costs"],"variable costs + fixed costs");
+$popcostformula1 = PopUp(["Choose", "price = ", "quantity = ", "variable costs = ", "fixed costs = "],"fixed costs = ");
+$popcostformula2 = PopUp(["Choose", "price = ", "quantity = ", "variable costs = ", "fixed costs = "],"variable costs = ");
+
+$ans_eval8 = Compute($fixed)->cmp();
+$ans_hash8 = $ans_eval8->evaluate($inputs_ref->{ANS_NUM_TO_NAME(8)});
+$TESTcost = $ans_hash8->{score};
+
+#the revenue function
+$quantity = Compute("x");
+$price = Compute("$a x^2 + $b x")->reduce;
+
+Context("LimitedPolynomial-Strict");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$revenue = Compute("$a x^3 + $b x^2");
+
+#the profit function
+$profit = Formula("$a x^3 + $b x^2 - $c x - $d");
+
+Context("Numeric");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$poprevenueformula = PopUp(["Choose", "price + quantity", "price x quantity", "variable costs + fixed costs", "variable costs - fixed costs", "fixed costs -  variable costs", "variable costs x fixed costs"],"price x quantity");
+$poprevenueformula1 = PopUp(["Choose", "price = ", "quantity = ", "variable costs = ", "fixed costs = "],"price = ");
+$poprevenueformula2 = PopUp(["Choose", "price = ", "quantity = ", "variable costs = ", "fixed costs = "],"quantity = ");
+$popTime = PopUp(["Choose", "day", "week", "month", "year"],"year");
+$popprofitformula = PopUp(["Choose", "revenue + cost", "revenue - cost", "revenue x cost"], "revenue - cost");
+
+$ans_eval14 = Compute($price)->cmp();
+$ans_hash14 = $ans_eval14->evaluate($inputs_ref->{ANS_NUM_TO_NAME(14)});
+$TESTrevenue = $ans_hash14->{score};
+
+$equation = $price*$quantity - $cost;
+$dequation = $equation->D('x');
+$answerMP = $dequation->eval(x=>"$x1");
+$answerDeltaP = Compute("$answerMP $d1");
+
+$popVariableX = PopUp(["?", "x", "C", "P", "MP", "deltaP"],"x");
+$popVariableDeltaP = PopUp(["?", "x", "C", "P", "MP", "deltaP"],"deltaP");
+$popVariableMP = PopUp(["?", "x", "C", "P", "MP", "deltaP"],"MP");
+
+Context("Currency");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$CurrencyAnswer = Currency($answerDeltaP);
+
+Context("Numeric");
+#check box 1
+$ans_eval1 = $popVariableMP->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1 = $ans_hash1->{score};
+
+$WantSymbol = "";
+if ($TESTbox1) 
+{
+$WantSymbol = "MP";
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Question $EBOLD $BR $BR
+
+	A bisque porcelain company is planning to manufacture and market porcelain dolls. After conducting extensive surveys, the marketing and research department estimates that the price-demand function for the production of \(x\) dolls is given by the formula \( \displaystyle p = $price \). The finance department estimates that, on a yearly basis, the fixed costs will be \( $fixedCost \) and that the variable costs, which are the cost per doll, will be \( $itemCost \). Compute the marginal profit when the demand is $x1 dolls and use this to estimate the change in the total profit if the demand is increased to $x2 dolls. 
+$BR $BR
+Assume that the cost function is linear.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point.
+$HR
+$HR
+$BR
+
+$HR
+$BR$BITALIC$BBOLD Step 1: Define the variables $EBOLD$EITALIC $BR$BR
+Let \(C(x)\) be the cost function for the production of \( x \) dolls. $BR
+Let \(R(x)\) be the revenue function for the production of \( x \) dolls. $BR
+Let \(P(x)\) be the profit function for the production of \( x \) dolls. $BR
+Let \(MP\) be the marginal profit. $BR
+Let \( \Delta P \) be the change in the profit.
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 2: Find the marginal profit $EBOLD$EITALIC $BR$BR
+We want \{ $popVariableMP->menu() \} 
+when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR
+$BR
+We know \{ $popVariableMP->menu() \} \( = \displaystyle \frac{dP}{dx}\) $BR
+and $BR 
+\( \quad P(x) = \) \{ $popprofitformula->menu() \} ($BITALIC formula to find the profit function $EITALIC) $BR
+
+$BR $BR
+
+We know \(C(x) = \) \{ $popcostformula->menu() \} ($BITALIC formula to find the cost function $EITALIC) $BR
+where $BR
+\( \quad \) \{ $popcostformula1->menu() \}\{ans_rule(15)\} $BR
+and $BR
+\( \quad \) \{ $popcostformula2->menu() \}\{ans_rule(15)\} $BR $BR
+\( \therefore C(x) = \)\{ans_rule(20)\} ($BITALIC formula of the cost function $EITALIC)
+$BR $BR
+
+We know \(R(x) = \) \{ $poprevenueformula->menu() \} ($BITALIC formula to find the revenue function $EITALIC) $BR
+where $BR
+\( \quad \) \{ $poprevenueformula1->menu() \}\{ans_rule(15)\} $BR
+and $BR
+\( \quad \) \{ $poprevenueformula2->menu() \}\{ans_rule(15)\} $BR $BR
+\( \therefore R(x) = \)\{ans_rule(20)\} ($BITALIC formula of the revenue function $EITALIC)
+
+$BR $BR
+
+Thus, \(P(x) = \)\{ans_rule(20)\} ($BITALIC formula of the profit function $EITALIC)
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{dP}{dx} \)","\( = \)",ans_rule(30),"(write the derivative)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+and when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR $BR
+\( \displaystyle $WantSymbol = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( \frac{dP}{dx} \) $EITALIC)
+
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 3: Find the change in the profit $EBOLD$EITALIC $BR$BR
+
+We want \{ $popVariableDeltaP->menu() \} 
+when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} is increased to \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR
+$BR
+We know \{ $popVariableDeltaP->menu() \} \( \approx MP \cdot \Delta x\) $BR
+where $BR
+\( \quad \) \( MP =\)\{ans_rule(15)\} $BR
+and $BR
+\( \quad \) \( \Delta x =\)\{ans_rule(15)\} ($BITALIC calculate the change in \(x\) $EITALIC)$BR $BR
+\( \therefore \) \{ $popVariableDeltaP->menu() \}\( \approx \)\{ans_rule(20)\} ($BITALIC calculate the change in the profit $EITALIC)
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 4: Draw a conclusion $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD For the last box, include the dollar sign in your answer. 
+$HR $HR
+$BR
+Thus, the change in the profit if the production is increased from \{ans_rule(5)\} to \{ans_rule(5)\} dolls per \{ $popTime->menu() \} is approximately \{ans_rule(10)\}.
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#Step 2
+ANS($popVariableMP->cmp);
+ANS($popVariableX->cmp);
+ANS(Compute("$x1")->cmp);
+
+#Step 3
+ANS($popVariableMP->cmp);
+ANS($popprofitformula->cmp() );
+
+#cost
+ANS($popcostformula->cmp() );
+
+if ($TESTcost) 
+{
+ANS($popcostformula1->cmp() );
+ANS($fixed->cmp() );
+ANS($popcostformula2->cmp() );
+ANS($variable->cmp() );
+}
+else
+{
+ANS($popcostformula2->cmp() );
+ANS($variable->cmp() );
+ANS($popcostformula1->cmp() );
+ANS($fixed->cmp() );
+}
+ANS($cost->cmp() );
+
+#revenue
+ANS($poprevenueformula->cmp() );
+
+if ($TESTrevenue) 
+{
+ANS($poprevenueformula1->cmp() );
+ANS($price->cmp() );
+ANS($poprevenueformula2->cmp() );
+ANS($quantity->cmp() );
+}
+else
+{
+ANS($poprevenueformula2->cmp() );
+ANS($quantity->cmp() );
+ANS($poprevenueformula1->cmp() );
+ANS($price->cmp() );
+}
+ANS($revenue->cmp() );
+
+ANS($profit->cmp);
+
+ANS($dequation->cmp);
+
+ANS($popVariableX->cmp);
+ANS(Compute("$x1")->cmp);
+ANS($answerMP->cmp);
+
+#Step 3
+ANS($popVariableDeltaP->cmp);
+ANS($popVariableX->cmp);
+ANS(Compute("$x1")->cmp);
+ANS(Compute("$x2")->cmp);
+
+ANS($popVariableDeltaP->cmp);
+ANS($answerMP->cmp);
+ANS(Compute("$d1")->cmp);
+
+ANS($popVariableDeltaP->cmp);
+ANS($answerDeltaP->cmp);
+
+ANS(Compute("$x1")->cmp);
+ANS(Compute("$x2")->cmp);
+ANS($popTime->cmp);
+ANS($CurrencyAnswer->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

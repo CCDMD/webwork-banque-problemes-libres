@@ -1,0 +1,166 @@
+##DESCRIPTION
+##  Find the angle between two vectors
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('R^2', 'angle', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"PGunion.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Point");
+
+do {
+    $a0 = Real(random(1, 10, 1));
+    $a1 = Real(random(1, 10, 1));
+
+    $b0 = Real(random(1, 10, 1));
+    $b1 = Real(random(1, 10, 1));
+
+    $c0 = Real(random(1, 10, 1));
+    $c1 = Real(random(1, 10, 1));
+
+    $a = Point($a0, $a1);
+    $b = Point($b0, $b1);
+    $c = Point($c0, $c1);
+} while ($a0 == $b0 or $a0 == $c0 or $b0 == $c0 or $a1 == $b1 or $a1 == $c1 or $b1 == $c1);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Consider the three points:
+$PAR
+\( A = $a \)
+$PAR
+\( B = $b \)
+$PAR
+\( C = $c \)
+$PAR
+Determine the angle between \( \overrightarrow{AB} \) and \( \overrightarrow{AC} \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Create the required vectors");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$v = Vector($b-$a);
+$w = Vector($c-$a);
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{v} \) and \( \vec{w} \) be two vectors in \( \mathbb{R}^2 \).
+$BR $BR
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v} \) ","\( = \)","\( \overrightarrow{AB} \ \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(15),"(write the components of the vector \( \overrightarrow{AB} \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{w} \) ","\( = \)","\( \overrightarrow{AC} \ \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(15),"(write the components of the vector \( \overrightarrow{AC} \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($v->cmp);
+
+ANS($w->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Find the angle");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$DotProduct = $v.$w;
+$Normv = norm($v);
+$Normw = norm($w);
+
+$Angle = arccos($DotProduct/($Normv*$Normw));
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \cos (\theta ) \) ","\( = \)","\( \displaystyle \frac{\vec{v} \bullet \vec{w}}{ \| \vec{v} \| \; \| \vec{w} \|} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(10).$BR.$HR."\( \Big( \)".ans_rule(5)."\( \Big) \Big( \)".ans_rule(5)."\( \Big) \)","(write the numerical value of \(\vec{v} \bullet \vec{w}\) , \( \| \vec{v} \| \) and \( \| \vec{w} \| \))" ], align=>CENTER, separation=>0, indent=>40).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \theta \) ","\( = \)",ans_rule(25),"(in radian)" ], align=>CENTER, separation=>0, indent=>30).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($Normv->cmp);
+ANS($Normw->cmp);
+ANS($Angle->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();
+
+

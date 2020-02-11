@@ -1,0 +1,119 @@
+##DESCRIPTION
+##  Maclaurin Series
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Sequences, Summation and Series')
+## KEYWORDS('series', 'MacLaurin series')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+  "PGunion.pl",
+);
+
+#####################################################################
+$showPartialCorrectAnswers = 1;
+
+TEXT(beginproblem());
+
+#####################################################################
+Context("Numeric");
+# Let students type "EmptySet" instead of "NONE"
+Context()->constants->add(EmptySet => Set());
+Context()->flags->set(noneWord=>"EmptySet");
+
+$a = random(-5,-2,1);
+
+$series = "e^{$a x}";
+
+Context("Numeric");
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD$BR$BR
+Find the first five non-zero terms of the Maclaurin series for \( $series \) 
+and then use that to write \( $series \) as a Maclaurin series using sigma notation.
+
+$BR
+$PAR
+$BBOLD Solution$EBOLD $BR $BR
+We have $BR $BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f(x) = \) ",ans_rule(15),$SPACE,$SPACE,$SPACE,"\( f(0) = \)",ans_rule(10)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+AlignedRow(["\( f'(x) = \) ",ans_rule(15),$SPACE,$SPACE,$SPACE,"\( f'(0) = \)",ans_rule(10)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+AlignedRow(["\( f''(x) = \) ",ans_rule(15),$SPACE,$SPACE,$SPACE,"\( f''(0) = \)",ans_rule(10)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+AlignedRow(["\( f'''(x) = \) ",ans_rule(15),$SPACE,$SPACE,$SPACE,"\( f'''(0) = \)",ans_rule(10)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+AlignedRow(["\( f^{(4)}(x) = \) ",ans_rule(15),$SPACE,$SPACE,$SPACE,"\( f^{(4)}(0) = \)",ans_rule(10)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR $BR
+Now, the first five non-zero terms of the Maclaurin series for \( $series \) are
+$BR$BR
+\{ans_rule(10)\} \( + \) \{ans_rule(10)\} \( + \) \{ans_rule(10)\} \( + \) \{ans_rule(10)\} \( + \) \{ans_rule(10)\} \(+ \cdots\)
+$BR $BR
+and using sigma notation, we have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle $series = \)","\(\displaystyle \sum_{n=0}^{\infty} \)".ans_rule(50), , "over \(\mathbb{R}\)."], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+#####################################################################
+
+ANS(Compute("exp($a*x)")->cmp());
+ANS(num_cmp(1));
+
+ANS(Compute("($a)*exp($a*x)")->cmp());
+ANS(num_cmp($a));
+
+ANS(Compute("($a)^2*exp($a*x)")->cmp());
+ANS(num_cmp("($a)^2"));
+
+ANS(Compute("($a)^3*exp($a*x)")->cmp());
+ANS(num_cmp("($a)^3"));
+
+ANS(Compute("($a)^4*exp($a*x)")->cmp());
+ANS(num_cmp("($a)^4"));
+
+$ans0 = Compute("1");
+$ans1 = Compute("($a)*x");
+$ans2 = Compute("(($a)^2/2!)*x^2");
+$ans3 = Compute("(($a)^3/3!)*x^3");
+$ans4 = Compute("(($a)^4/4!)*x^4");
+
+#5 terms
+ANS( ($ans0)->cmp());
+ANS( ($ans1)->cmp());
+ANS( ($ans2)->cmp());
+ANS( ($ans3)->cmp());
+ANS( ($ans4)->cmp());
+
+#sigma
+
+#Context()->variables->add(n => 'Real');
+#Context()->variables->set(n => {limits => [1,30,1]});
+Context()->variables->add(n => ['Real', limits=>[1,30], resolution=>1]);
+Context()->variables->set(x=>{limits=>[-10,10]});
+$ansX = Formula("($a*x)^n/n!");
+ANS($ansX->cmp());
+#ANS(fun_cmp("($a*x)^n/n!",vars=>['n','x'], limits=>[[1,2,3,4,5],[-0.1,0.2,-0.3,0.4,-0.5,1,-1]]));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,190 @@
+## DESCRIPTION
+##  Algebra: Fractional equations 
+## ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Equations and Inequations)
+##KEYWORDS('equation with rational fraction', 'solving an equation')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"contextFraction.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+########################################################################
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+########################################################################
+
+Context("Numeric");
+Context()->strings->add(none=>{},EmptySet=>{alias=>"none"});
+
+$pa = random(2,5,1);
+
+$pb = $pa;
+$pc = 2*$pa;
+$pd = $pa*$pb;
+$pf = Compute("(2*$pa-1)*x")->reduce;
+
+$LHS1Num = Compute("1");
+$LHS1Den = Compute("x+$pa");
+$LHS2Num = Compute("1");
+$LHS2Den = Compute("x-$pb");
+$LHS = $LHS1Num/$LHS1Den + $LHS2Num/$LHS2Den;
+$RHSNum = Compute("$pc");
+$RHSDen = Compute("x^2-$pd");
+$RHS = $RHSNum/$RHSDen;
+
+$a = 1;
+$b = $pb-2*$pa;
+$c = $pc-$pa;
+$d = sqrt($b*$b+4*$a*$c);
+
+#forces a fraction 
+Context("LimitedFraction");
+Context()->operators->undefine("+","-","*");
+$roots[0] = Compute("$pc/2");
+
+Context("Numeric");
+$solution_set = List("none");
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Solve \( \displaystyle $LHS = $RHS\) 
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+Context("Numeric");
+$LHSCross = Compute("(x-$pb)+(x+$pa)");
+
+$pbMone = Compute("1-$pb");
+
+#
+#  Expanded form
+#
+Context("LimitedPolynomial-Strict");
+$equation = Compute("x^2 - $b x - $c")->reduce;
+$LHSExpanded = Compute("2x");
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$CommonDenominator = Compute("(x+$pa)(x-$pb)");
+
+###########################################
+Section::Begin("Solve for \(x\)");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle $LHS \)","\( = \)","\( \displaystyle $RHS \)"], align=>LEFT, separation=>0, indent=>85).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5).$BR.$HR.ans_rule(5),"\( + \)",ans_rule(5).$BR.$HR.ans_rule(5),"\( = \) ",ans_rule(10).$BR.$HR.ans_rule(10),"(factor \($RHSDen\))"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(20).$BR.$HR.ans_rule(20),"\( = \) ",ans_rule(20).$BR.$HR.ans_rule(20),"(find a common denominator)"], align=>LEFT, separation=>0, indent=>5).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(20),"\( = \) ",ans_rule(20),"(simplify)"], align=>LEFT, separation=>0, indent=>5).
+EndTable()
+\}
+$BR $BR
+Solving for \(x\) gives us \(x = \) \{ans_rule(10)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($LHS1Num->cmp);
+ANS($LHS1Den->cmp);
+ANS($LHS2Num->cmp);
+ANS($LHS2Den->cmp);
+ANS($RHSNum->cmp);
+ANS($CommonDenominator->cmp);
+
+ANS($LHSCross->cmp);
+ANS($CommonDenominator->cmp);
+ANS($RHSNum->cmp);
+ANS($CommonDenominator->cmp);
+
+ANS($LHSExpanded->cmp);
+ANS($RHSNum->cmp);
+
+ANS($roots[0]->cmp(studentsMustReduceFractions=>1));
+
+Section::End();
+
+###########################################
+Section::Begin("Check your solution");
+
+Section::End();
+
+###########################################
+Section::Begin("State the solution");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD $BR
+Enter your answer in a comma-separated list. $BR
+If the solution set is the empty set, write $BBOLD none$EBOLD.
+$BR $HR $BR
+Thus, the solution set is {\{ans_rule(30)\}}.$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($solution_set->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+
+ENDDOCUMENT(); 

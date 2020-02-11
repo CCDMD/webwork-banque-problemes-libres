@@ -1,0 +1,158 @@
+##DESCRIPTION
+##  Derivative - Product Rule with algebra
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation of Functions')
+## KEYWORDS('chain differentiation', 'derivative', 'derivative of the product of functions')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(1,5,1);
+$b = non_zero_random(-5,5,1);
+$c = non_zero_random(-5,5,1);
+while( gcd($a,$b,$c) != 1) 
+{
+    $b = non_zero_random(-5,5,1);
+    $c = non_zero_random(-5,5,1);
+}
+
+#\[ g(x) = (${a}x^2 + ${b}x + $c)e^x \]
+
+Context("Numeric");
+$f = Compute("$a x^2 +$b x + $c")->reduce;
+$g = Compute("e^x");
+$df = $f->D('x');
+$dg = $g->D('x');
+$df_g = ($f->D('x') * $g)->reduce;
+$f_dg = ($f * $g->D('x'))->reduce;
+$equation = $f*$g;
+$dequation = $equation->D('x');
+
+$common_factor = $g;
+
+Context("LimitedPolynomial-Strict");
+$num1 = $b + 2*$a;
+$num2 = $c + $b;
+$other_factor = Formula("$a x^2 + $num1 x + $num2")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Let \( \displaystyle f(x) = $equation \). 
+Find \(f'(x)\) and simplify.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR$BITALIC$BBOLD Part 1: Finding the derivative $EBOLD$EITALIC $BR$BR
+
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f'(x) \)","\( = \)","\( \displaystyle \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \cdot \big( \)".ans_rule(10)."\( \big) + \big( \)".ans_rule(10)."\( \displaystyle \big) \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \)"], align=>LEFT, separation=>0).
+AlignedRow(["","","(apply the product rule)" ], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)","\( \big( \)".ans_rule(10)."\( \big) \big( \)".ans_rule(10)."\( \big) + \big( \)".ans_rule(10)."\( \big) \big( \)".ans_rule(10)."\( \big) \)"], align=>LEFT, separation=>0).
+AlignedRow(["","","(find the derivative)" ], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+$HR
+$BR$BITALIC$BBOLD Part 2: Finding the common factor $EBOLD$EITALIC $BR$BR
+
+Common factor \(=\) \{ans_rule(25)\}
+
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 3: Finding the other factor $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(25).$BR.$HR.ans_rule(25),"\( + \)",ans_rule(25).$BR.$HR.ans_rule(25),"(divide every term of the derivative by the common factor)" ], align=>CENTER, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(25)."\( + \)".ans_rule(25),"(simplify each term)" ], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(15),"(simplified form)"], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+$BR $BR
+Other factor \(=\) \{ans_rule(15)\}
+
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 4: Writing the factored form of the derivative $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f'(x) \)","\( = \)",ans_rule(40)], align=>LEFT, separation=>0).
+AlignedRow([" ","","(factorized as common factor \( \times \) other factor)" ], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+
+END_TEXT
+Context()->texStrings;
+
+#Part 1
+ANS($f->cmp);
+ANS($g->cmp);
+ANS($f->cmp);
+ANS($g->cmp);
+
+#derivative
+ANS($df->cmp);
+ANS($g->cmp);
+ANS($f->cmp);
+ANS($dg->cmp);
+
+#Part 2
+ANS($common_factor->cmp);
+
+#Part 3
+ANS($df_g->cmp);
+ANS($common_factor->cmp);
+ANS($f_dg->cmp);
+ANS($common_factor->cmp);
+
+ANS($df->cmp);
+ANS($f->cmp);
+
+ANS($other_factor->cmp);
+ANS($other_factor->cmp);
+
+#Part 4
+ANS($dequation->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

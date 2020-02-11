@@ -1,0 +1,157 @@
+##DESCRIPTION
+##  Limit at Infinity
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('inf/inf', 'limit', 'limit at infinity', 'indeterminate form')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+Context()->strings->add(UND=>{});
+
+$a1 = random(2,11,1);
+$b1 = random(2,11,1);
+$c1 = random(2,11,1);
+$d1 = random(2,11,1);
+$e1 = random(2,11,1);
+do{$f1 = random(2,11,1);}
+until ($f1!=$a1);
+
+$formula = Compute("($a1 x^5 + $b1 x^3 + $c1 x)/($d1 + $e1 x + $f1 x^5)");
+$equation = Compute("sqrt($formula)");
+
+$answer = Compute("sqrt($a1/$f1)");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR 
+Find \( \displaystyle \lim_{x\to\infty} $equation \) and \( \displaystyle \lim_{x\to-\infty} $equation \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We have $BR 
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \lim_{x\to\infty} $equation = \) ","\( \displaystyle \sqrt{ \lim_{x\to\infty} $formula} \)","(bring the limit inside the root)"],align => "LEFT",separation => 0).
+EndTable();
+\}
+$BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(  =  \) ","\( \Bigg( \)",ans_rule(5).$BR.$HR.ans_rule(5),"\( \Bigg)^{1/2} \)","(evaluate the indeterminate form by replacing \(x\) by \( \infty \) )"],align => "LEFT",separation => 0, indent => 180).
+EndTable();
+\}
+$BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \displaystyle \Bigg( \lim_{x\to\infty} \) ",ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big) \)".$BR.$HR.ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big) \)","\( \Bigg)^{1/2} \)","(factor the highest power)"],align => "LEFT",separation => 0, indent => 180).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \displaystyle \Bigg( \lim_{x\to\infty} \) ",ans_rule(20).$BR.$HR.ans_rule(20),"\( \Bigg)^{1/2} \)","(simplify)"],align => "LEFT",separation => 0, indent => 180).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \) ",ans_rule(10),"(evaluate and simplify)"],align => "LEFT",separation => 0, indent => 180).
+EndTable();
+\}
+$BR $BR
+and
+$BR 
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \lim_{x\to-\infty} $equation =  \) ","\( \displaystyle \sqrt{ \lim_{x\to-\infty} $formula} \)","(bring the limit inside the root)"],align => "LEFT",separation => 0).
+EndTable();
+\}
+$BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(  =  \) ","\( \Bigg( \)",ans_rule(5).$BR.$HR.ans_rule(5),"\( \Bigg)^{1/2} \)","(evaluate the indeterminate form by replacing \(x\) by \( -\infty \) )"],align => "LEFT",separation => 0, indent => 190).
+EndTable();
+\}
+$BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \displaystyle \Bigg( \lim_{x\to-\infty} \) ",ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big) \)".$BR.$HR.ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big) \)","\( \Bigg)^{1/2} \)","(factor the highest power)"],align => "LEFT",separation => 0, indent => 190).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \displaystyle \Bigg( \lim_{x\to-\infty} \) ",ans_rule(20).$BR.$HR.ans_rule(20),"\( \Bigg)^{1/2} \)","(simplify)"],align => "LEFT",separation => 0, indent => 190).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \) ",ans_rule(10),"(evaluate and simplify)"],align => "LEFT",separation => 0, indent => 190).
+EndTable();
+\}
+$BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+
+
+END_TEXT
+Context()->normalStrings;
+
+#sub infinity
+ANS(Compute("INF")->cmp);
+ANS(Compute("INF")->cmp); 
+
+#factor
+ANS(Compute("x^5")->cmp);
+ANS(Compute("$a1 + $b1/x^2 + $c1/x^4")->cmp);
+ANS(Compute("x^5")->cmp);
+ANS(Compute("$d1/x^5 + $e1/x^4 + $f1")->cmp);
+
+#simplify
+ANS(Compute("$a1 + $b1/x^2 + $c1/x^4")->cmp);
+ANS(Compute("$d1/x^5 + $e1/x^4 + $f1")->cmp);
+
+ANS($answer->cmp);
+
+#sub -infinity
+ANS(Compute("-INF")->cmp);
+ANS(Compute("-INF")->cmp); 
+
+#factor
+ANS(Compute("x^5")->cmp);
+ANS(Compute("$a1 + $b1/x^2 + $c1/x^4")->cmp);
+ANS(Compute("x^5")->cmp);
+ANS(Compute("$d1/x^5 + $e1/x^4 + $f1")->cmp);
+
+#simplify
+ANS(Compute("$a1 + $b1/x^2 + $c1/x^4")->cmp);
+ANS(Compute("$d1/x^5 + $e1/x^4 + $f1")->cmp);
+
+ANS($answer->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

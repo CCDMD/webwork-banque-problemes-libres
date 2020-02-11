@@ -1,0 +1,68 @@
+##DESCRIPTION
+##  Indefinite Integrals - Basic Rules
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('basic integration formula', 'indefinite integral')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGgraders.pl",
+"PGstandard.pl", 
+"MathObjects.pl", 
+"PGunion.pl",
+"PGcourse.pl",
+"unionTables.pl"
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$c=random(1,9);
+$n=random(2,7); 
+$k=random(1, 4);
+$a=2**$k; 
+$b=random(3, 15, 2);
+
+BEGIN_TEXT
+Evaluate the indefinite integral
+\[ \int \left( \frac{$c}{x^$n}+ \frac{$a}{$b x} \right) dx .\]
+$BR $BR
+We have $BR $BR
+\{
+   BeginTable(center=>0).
+     Row([
+       '\( \displaystyle \int \left( \frac{$c}{x^$n}+ \frac{$a}{$b x} \right) dx = \int  \Bigg( \)'.ans_rule(3).'\( x \)',
+       ans_rule(2).$BR.$BR.$BR,
+       '\( + \)',ans_rule(3).$BR.$HR.ans_rule(3),'\( \Big( \frac{1}{x}  \Big) \Bigg) dx \)'
+
+],separation=>2).
+   EndTable();
+\}
+$BR
+$BR $BR
+Answer \( = \) \{ans_rule(30)\} \(+\) \{ans_rule(3)\}
+END_TEXT
+
+ANS(num_cmp($c));
+ANS(num_cmp(-$n));
+ANS(num_cmp($a));
+ANS(num_cmp($b));
+
+$answer="$c/(-$n+1)*x^(-$n+1) + $a/$b ln(|x|)";
+
+ANS(fun_cmp($answer, mode=>"antider", limits=>[[-100,100]]) );
+ANS(str_cmp("C"));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

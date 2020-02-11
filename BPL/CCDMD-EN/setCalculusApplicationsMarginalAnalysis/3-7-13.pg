@@ -1,0 +1,278 @@
+##DESCRIPTION
+##  Marginal Analysis
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('economy', 'critical value')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"contextCurrency.pl",
+"contextLimitedPolynomial.pl",
+);
+
+TEXT(beginproblem());
+$showpartialcorrectanswers = 1;
+
+$a = random(30, 90, 10);
+$b = random(10000, 90000, 2000);
+$c = random(200,300,5);
+$d = random(30, 110, 10);
+
+$x = random(1000,2000,10);
+
+Context("Currency");
+$fixedCost = Currency($b);
+$itemCost = Currency($d);
+
+Context("Numeric");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+#the cost function
+$fixed = Compute("$b");
+$variable = Compute("$d x");
+$cost = Compute("$fixed + $variable");
+
+$popcostformula = PopUp(["Choose", "price + quantity", "price x quantity", "variable costs + fixed costs", "variable costs x fixed costs"],"variable costs + fixed costs");
+$popcostformula1 = PopUp(["Choose", "price = ", "quantity = ", "variable costs = ", "fixed costs = "],"fixed costs = ");
+$popcostformula2 = PopUp(["Choose", "price = ", "quantity = ", "variable costs = ", "fixed costs = "],"variable costs = ");
+
+$ans_eval8 = Compute($fixed)->cmp();
+$ans_hash8 = $ans_eval8->evaluate($inputs_ref->{ANS_NUM_TO_NAME(8)});
+$TESTcost = $ans_hash8->{score};
+
+#the revenue function
+$quantity = Compute("x");
+$price = Compute("$c - x/$a")->reduce;
+
+Context("LimitedPolynomial-Strict");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+$revenue = Compute("$c x - x^2/$a");
+
+#the profit function
+$coeff1 = $c - $d;
+$coeff2 = 1/$a;
+$profit = Formula("$coeff1 x - $coeff2 x^2 - $b");
+
+Context("Numeric");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$poprevenueformula = PopUp(["Choose", "price + quantity", "price x quantity", "variable costs + fixed costs", "variable costs - fixed costs", "fixed costs -  variable costs", "variable costs x fixed costs"],"price x quantity");
+$poprevenueformula1 = PopUp(["Choose", "price = ", "quantity = ", "variable costs = ", "fixed costs = "],"price = ");
+$poprevenueformula2 = PopUp(["Choose", "price = ", "quantity = ", "variable costs = ", "fixed costs = "],"quantity = ");
+
+$ans_eval14 = Compute($price)->cmp();
+$ans_hash14 = $ans_eval14->evaluate($inputs_ref->{ANS_NUM_TO_NAME(14)});
+$TESTrevenue = $ans_hash14->{score};
+
+$equation = $price*$quantity - $cost;
+$dequation = $equation->D('x');
+$answer = $dequation->eval(x=>"$x");
+
+$popprofitformula = PopUp(["Choose", "revenue + cost", "revenue - cost", "revenue x cost"], "revenue - cost");
+
+#MP
+$popVariableX = PopUp(["?", "x", "C", "R", "P", "MP"],"x");
+$popVariableMP = PopUp(["?", "x", "C", "R", "P", "MP"],"MP");
+
+$popUnit = PopUp(["Choose", "per day", "per week", "per month", "per year", "per microwave"],"per microwave");
+$popTime = PopUp(["Choose", "day", "week", "month", "year"],"year");
+
+if($answer > 0 )
+{
+    $popInc = PopUp(["Choose", "decreasing", "increasing"],"increasing");
+    $PositiveAnswer = $answer;
+}
+else
+{
+    $popInc = PopUp(["Choose", "decreasing", "increasing"],"decreasing");
+    $PositiveAnswer = -1*$answer;
+}
+
+Context("Currency");
+$CurrencyAnswer = Currency($PositiveAnswer);
+
+Context("Numeric");
+#check box 4
+$ans_eval4 = $popVariableMP->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4 = $ans_hash4->{score};
+
+$WantSymbol = "";
+if ($TESTbox4) 
+{
+$WantSymbol = "MP";
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Question $EBOLD $BR $BR
+
+
+	A start-up company is planning to manufacture and market environmental-friendly microwaves. After conducting extensive surveys, the marketing and research department estimates that the price-demand function for the production of \(x\) microwaves is given by the formula \( \displaystyle p = $price \). The finance department estimates that, on a yearly basis, the fixed costs will be \( $fixedCost \) and that the variable costs, which are the cost per microwave, will be \( $itemCost \). Find the marginal profit when the production level is at \( $x \) microwaves.
+$BR $BR
+Assume that the cost function is linear.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point.
+$HR
+$HR
+$BR
+
+$HR
+$BR$BITALIC$BBOLD Step 1: Define the variables $EBOLD$EITALIC $BR$BR
+Let \(C(x)\) be the cost function for the production of \( x \) microwaves. $BR
+Let \(R(x)\) be the revenue function for the production of \( x \) microwaves. $BR
+Let \(P(x)\) be the profit function for the production of \( x \) microwaves. $BR
+Let \(MP\) be the marginal profit.
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 2: Identify what the problem is asking $EBOLD$EITALIC $BR$BR
+We want \{ $popVariableMP->menu() \} 
+when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 3: Find the appropriate formula $EBOLD$EITALIC $BR$BR
+
+We know \{ $popVariableMP->menu() \} \( = \displaystyle \frac{dP}{dx}\) $BR
+and $BR 
+\( \quad P(x) = \) \{ $popprofitformula->menu() \} ($BITALIC formula to find the profit function $EITALIC) $BR
+
+$BR $BR
+
+We know \(C(x) = \) \{ $popcostformula->menu() \} ($BITALIC formula to find the cost function $EITALIC) $BR
+where \{ $popcostformula1->menu() \}\{ans_rule(15)\} $BR
+and \{ $popcostformula2->menu() \}\{ans_rule(15)\} $BR
+\( \therefore C(x) = \)\{ans_rule(20)\} ($BITALIC formula of the cost function $EITALIC)
+$BR $BR
+
+We know \(R(x) = \) \{ $poprevenueformula->menu() \} ($BITALIC formula to find the revenue function $EITALIC) $BR
+where \{ $poprevenueformula1->menu() \}\{ans_rule(15)\} $BR
+and \{ $poprevenueformula2->menu() \}\{ans_rule(15)\} $BR
+\( \therefore R(x) = \)\{ans_rule(20)\} ($BITALIC formula of the revenue function $EITALIC)
+
+$BR $BR
+
+Thus, \(P(x) = \)\{ans_rule(20)\} ($BITALIC formula of the profit function $EITALIC)
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR$BITALIC$BBOLD Step 4: Solve for what the problem is asking $EBOLD$EITALIC $BR$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{dP}{dx} \)","\( = \)",ans_rule(30),"(write the derivative)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+and when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR $BR
+\( \displaystyle $WantSymbol = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( \frac{dP}{dx} \) $EITALIC)
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 5: Draw a conclusion $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD For the penultimate box, include the dollar sign in your answer. 
+$HR $HR
+$BR
+Thus, at a production level of \{ans_rule(5)\} microwaves per \{ $popTime->menu() \}, the profit is \{ $popInc->menu() \} at a rate of \{ans_rule(10)\} \{ $popUnit->menu() \}.
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#Step 2
+ANS($popVariableMP->cmp);
+ANS($popVariableX->cmp);
+ANS(Compute("$x")->cmp);
+
+#Step 3
+ANS($popVariableMP->cmp);
+ANS($popprofitformula->cmp() );
+
+#cost
+ANS($popcostformula->cmp() );
+
+if ($TESTcost) 
+{
+ANS($popcostformula1->cmp() );
+ANS($fixed->cmp() );
+ANS($popcostformula2->cmp() );
+ANS($variable->cmp() );
+}
+else
+{
+ANS($popcostformula2->cmp() );
+ANS($variable->cmp() );
+ANS($popcostformula1->cmp() );
+ANS($fixed->cmp() );
+}
+ANS($cost->cmp() );
+
+#revenue
+ANS($poprevenueformula->cmp() );
+
+if ($TESTrevenue) 
+{
+ANS($poprevenueformula1->cmp() );
+ANS($price->cmp() );
+ANS($poprevenueformula2->cmp() );
+ANS($quantity->cmp() );
+}
+else
+{
+ANS($poprevenueformula2->cmp() );
+ANS($quantity->cmp() );
+ANS($poprevenueformula1->cmp() );
+ANS($price->cmp() );
+}
+ANS($revenue->cmp() );
+
+ANS($profit->cmp);
+
+#Step 4
+ANS($dequation->cmp);
+
+ANS($popVariableX->cmp);
+ANS(Compute("$x")->cmp);
+ANS($answer->cmp);
+
+#Step 5
+ANS(Compute("$x")->cmp);
+ANS($popTime->cmp);
+ANS($popInc->cmp);
+ANS($CurrencyAnswer->cmp);
+ANS($popUnit->cmp);
+
+ENDDOCUMENT();

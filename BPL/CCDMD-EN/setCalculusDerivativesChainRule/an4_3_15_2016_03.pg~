@@ -1,0 +1,103 @@
+## DESCRIPTION
+## Calculus
+## ENDDESCRIPTION
+
+## KEYWORDS('derivative' 'log')
+
+DOCUMENT();        
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,9,1);
+$b = random(2,8,1);
+$c = random(-4,-2,1);
+$d = random(-10,10,2);
+
+$coeff=2*$b;
+
+Context("Numeric");
+Context()->flags->set(useBaseTenLog => 1);
+Context()->variables->add(u => 'Real');
+
+$inner = Formula("${b}x^2+${c}x+$d")->reduce;
+$dinner = $inner->D('x');
+$outer = "log$a(u)";
+$douter = Formula("1/(ln($a)u)");
+$derv = Formula("(1/ln($a))*1/(${b}x^2+${c}x+$d)*(${coeff}x+$c)")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Find the derivative of \( \displaystyle f(x)= \log_{$a}($inner) \) .
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+Let $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( y = \)",ans_rule(10),"(outer function in terms of \( u \))"], align=>CENTER, separation=>0).
+
+AlignedRow(["\( u = \)",ans_rule(10),"(inner function in terms of \( x \))"], align=>CENTER, separation=>0).
+
+EndTable()
+\}
+$BR
+We have $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{df}{dx} \)","\( = \)","\( \displaystyle \frac{d}{du} \big( \)".ans_rule(10)."\(\displaystyle \big) \cdot \frac{d}{dx} \big( \)".ans_rule(10)."\(\big)\)","(write the outer function AND the inner function)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(15)."\( \cdot \)".ans_rule(15)], align=>LEFT, separation=>0, indent=>25).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["(find the derivative of the outer function AND the derivative of the inner function)"], align=>LEFT, separation=>0, indent=>50).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(40),"(write the derivative in terms of \( x \))"], align=>LEFT, separation=>0, indent=>25).
+EndTable()
+\}
+
+$BR
+$HR 
+$BBOLD Note: $EBOLD $BR
+Enter $BBOLD log$a(u) $EBOLD for \( \log_{$a}(u)\) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answers
+
+ANS(str_cmp($outer));
+ANS($inner->cmp);
+
+ANS(str_cmp($outer));
+ANS($inner->cmp);
+
+ANS($douter->cmp);
+ANS($dinner->cmp);
+
+ANS($derv->with(limits => [2,4], tolerance => .001)->cmp);
+
+ENDDOCUMENT();

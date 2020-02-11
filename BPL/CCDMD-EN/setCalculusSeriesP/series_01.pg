@@ -1,0 +1,96 @@
+##DESCRIPTION
+##  p-Series
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Sequences, Summation and Series')
+## KEYWORDS('convergence and divergence', 'series', 'Riemann P series')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGbasicmacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl"
+);
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"unionTables.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"PGcourse.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+$k = random(2,9,1);
+$a = random(2,8,1);
+$b = random(2,9,1);
+$c = $a + 1;
+$N1 = "n**{$c-$a}";
+$N2 = "n**{$c}";
+
+$poptype = PopUp(["Choose","geometric","p", "telescoping", "other"],"other");
+$poptype2 = PopUp(["Choose","geometric","p", "telescoping", "other"],"p");
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Determine if the series is convergent or divergent.
+$BR If it converges, determine the sum (if possible).$BR $BR
+\[\sum_{n=1}^\infty \left( \frac{$k n^{$a}+$b}{n^{$c}} \right)\] 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+We have a \{ $poptype->menu() \} series but it can be decomposed into two \{ $poptype2->menu() \} series:$BR$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \sum_{n=1}^\infty \left( \frac{$k n^{$a}+$b}{n^{$c}} \right)\)","\( = \)", ans_rule(3), "\(\displaystyle \sum_{n=1}^{\infty}\)","\(1\)".$BR.$HR.ans_rule(6),"\(+\)", ans_rule(3), "\(\displaystyle \sum_{n=1}^{\infty}\)","\(1\)".$BR.$HR.ans_rule(6)], align=>center, separation=>0).
+EndTable()
+\}
+$BR
+The first series is a p-series with \( p = \) \{ans_rule(3)\} which is \{ans_rule(12)\} (convergent or divergent).$BR
+The second series is a p-series with \( p = \) \{ans_rule(3)\} which is \{ans_rule(12)\} (convergent or divergent).$BR$BR
+
+Thus the series \(\displaystyle \sum_{n=1}^\infty \left( \frac{$k n^{$a}+$b}{n^{$c}} \right)\) is \{ans_rule(12)\} (convergent, divergent or inconclusive).
+END_TEXT
+
+ANS( $poptype->cmp() );
+ANS( $poptype2->cmp() );
+
+# a simple code to perform a summation. (for A)
+	$i = 1;
+	$sum = 0;
+	while ($i <= $n ) {
+                $fofi = 1/($i) + $b/($i**$c) ;
+		$sum = $sum + $fofi;
+		$i = $i +1 ;
+	}
+#Ici c-a est toujour Ã©gal Ã  1, donc la sÃ©rie est divergente
+if ($c-$a > 1) {
+	$answer = $sum;
+        $s1b = "convergent";
+} else {
+	$answer = 'DIV';
+        $s1b = "divergent";
+}
+
+ANS(num_cmp($k));
+ANS(fun_cmp("$N1", vars=>["n"]));
+ANS(num_cmp($b));
+ANS(fun_cmp("$N2", vars=>["n"]));
+
+ANS(num_cmp($c-$a));
+ANS(str_cmp($s1b));
+
+ANS(num_cmp($c));
+ANS(str_cmp("convergent"));
+
+ANS(str_cmp($s1b));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

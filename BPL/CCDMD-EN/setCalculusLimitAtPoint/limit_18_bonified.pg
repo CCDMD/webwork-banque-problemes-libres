@@ -1,0 +1,180 @@
+##DESCRIPTION
+##  Limit at a point - k/0
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('c/0 undefined form', 'limit', 'left and right limit')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(1,9,1);
+$b = random(-19,-10,1);
+
+$exp1 = 3;
+$exp2 = random(2,8,2);
+
+$aT = -$a;
+$aT3 = $aT*$aT*$aT;
+
+Context("Numeric");
+Context()->strings->add(UND=>{});
+$f = Compute("$b");
+$g = Compute("x^$exp1 (x+$a)^$exp2");
+$equation = $f/$g;
+
+$zero_p = "0+";
+$zero_n = "0-";
+
+$x_right = "$aT+";
+$x_valueR = "$aT3+";
+$ans_right = "INF";
+
+$x_left = "$aT-";
+$x_valueL = "$aT3-";
+$ans_left = "INF";
+
+$answer = "INF";
+$popLimit = PopUp(["Choose", "equal", "not equal"],"equal");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR 
+Find \( \displaystyle \lim_{x \rightarrow $aT} $equation \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We have $BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x \rightarrow $aT} $equation = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \(x\) with \( $aT \))"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+where $BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x \rightarrow $aT^+} $equation = \) ","\($f\)".$BR.$HR."\( \big(\)".ans_rule(1)."\( \big)^$exp1\)"."\( \big(\)".ans_rule(1)."\( + $a \big)^$exp2\)","(evaluate the right-hand side limit by replacing \(x\) with \( $aT^+ \))"],align => "CENTER",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ","\($f\)".$BR.$HR."\( \big(\)".ans_rule(2)."\( \big) \big(\)".ans_rule(2)."\( \big)^$exp2\)","(evaluate the denominator)"],align => "CENTER",separation => 0, indent => 130).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ","\($f\)".$BR.$HR.ans_rule(5),"(evaluate the denominator)"],align => "CENTER",separation => 0, indent => 130).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5),"(evaluate)"],align => "LEFT",separation => 0, indent => 130).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR $BR
+and $BR $BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x \rightarrow $aT^-} $equation = \) ","\($f\)".$BR.$HR."\( \big(\)".ans_rule(1)."\( \big)^$exp1\)"."\( \big(\)".ans_rule(1)."\( + $a \big)^$exp2 \)","(evaluate the left-hand side limit by replacing \(x\) with \( $aT^- \))"],align => "CENTER",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ","\($f\)".$BR.$HR."\( \big(\)".ans_rule(2)."\( \big) \big(\)".ans_rule(2)."\( \big)^$exp2\)","(evaluate the denominator)"],align => "CENTER",separation => 0, indent => 130).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ","\($f\)".$BR.$HR.ans_rule(5),"(evaluate the denominator)"],align => "CENTER",separation => 0, indent => 130).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5),"(evaluate)"],align => "LEFT",separation => 0, indent => 130).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR $BR
+Thus \( \displaystyle \lim_{ x \rightarrow $aT } $equation = \)
+\{ans_rule(5) \} since \( \displaystyle\lim_{ x \rightarrow $aT^{+} } f(x) \) is 
+\{ $popLimit->menu() \} to 
+\( \displaystyle\lim_{ x \rightarrow $aT^{-} } f(x) \)$BR$BR
+$BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).
+$BR $BR
+Enter $BBOLD 0+ $EBOLD for \(0^+\) and $BBOLD 0- $EBOLD for \(0^-\).
+$BR $BR
+Enter $BBOLD $aT+ $EBOLD for \($aT^+\) and $BBOLD $aT- $EBOLD for \($aT^-\).
+
+$BR
+END_TEXT
+Context()->normalStrings;
+
+#sub
+ANS(($f->eval(x=>$aT))->cmp);
+ANS(($g->eval(x=>$aT))->cmp);
+
+#right
+ANS(str_cmp($x_right));
+ANS(str_cmp($x_right));
+ANS(str_cmp($x_valueR));
+ANS(str_cmp($zero_p));
+#ANS(str_cmp($x_valueR));
+#ANS(str_cmp($zero_p));
+ANS(str_cmp($zero_n));
+ANS(Compute($ans_right)->cmp);
+
+#left
+ANS(str_cmp($x_left));
+ANS(str_cmp($x_left));
+ANS(str_cmp($x_valueL));
+ANS(str_cmp($zero_n));
+#ANS(str_cmp($x_valueL));
+#ANS(str_cmp($zero_p));
+ANS(str_cmp($zero_n));
+ANS(Compute($ans_left)->cmp);
+
+#answer
+ANS(Compute($answer)->cmp);
+ANS($popLimit->cmp() );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

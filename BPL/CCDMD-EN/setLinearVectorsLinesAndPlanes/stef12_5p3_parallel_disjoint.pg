@@ -1,0 +1,378 @@
+##DESCRIPTION
+##  Lines & Planes
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"contextLimitedPoint.pl",
+"parserParametricLine.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"contextFraction.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+do
+{
+    $k = non_zero_random(-9,9,1);
+} until( $k!=1 && $k !=-1);
+
+$V1 = Vector(random(-9,9,1), random(-9,9,1), non_zero_random(-9,9,1));
+$V2 = $k*$V1;
+
+Context("LimitedPoint");
+do
+{
+    $P = Point(non_zero_random(-5,5,1), random(-5,5,1), random(-5,5,1));
+    $Q = Point(non_zero_random(-5,5,1), random(-5,5,1), random(-5,5,1));
+} until( $P!=$Q );
+
+$rValue = random(2,3,1);
+$tValue = random(4,5,1);
+$PV1 = Point($P + $rValue*$V1);
+$PV2 = Point($Q - $tValue*$V2);
+
+Context("ParametricLine");
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->parens->set("(" => {type => "Vector", close => ")"});
+Context()->variables->add(r => 'Real');
+$r = Formula('r');
+$Line1 = ParametricLine(Point($PV1) + $r*$V1);
+$Line2 = ParametricLine(Point($PV2),$V2);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Let $BR
+\( \quad \ell_1: (x,y,z) = $Line1 \) where \(r\in\mathbb{R}\)$BR
+and $BR
+\( \quad \ell_2: (x,y,z) = $Line2 \) where \(t\in\mathbb{R}\).$BR $BR
+${BBOLD}(a)$EBOLD
+Show that the lines \( \ell_1 \) and \( \ell_2 \) are parallel disjoint. $BR $BR
+${BBOLD}(b)$EBOLD
+Find the distance between the lines \( \ell_1 \) and \( \ell_2 \). 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("Identify the required vectors");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = $PV1 - $PV2;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_1 \) be the support point of the line \( \ell_1 \). $BR 
+Let \( \vec{v_1} \) be the generator vector of the line \( \ell_1 \). $BR $BR
+Let \( P_2 \) be the support point of the line \( \ell_2 \). $BR
+Let \( \vec{v_2} \) be the generator vector of the line \( \ell_2 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_1 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_1} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_2 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_2} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_2 P_1} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_2 P_1} \))
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1->cmp);
+ANS($V1->cmp);
+ANS($PV2->cmp);
+ANS($V2->cmp);
+
+ANS($P2P1->cmp);
+
+Section::End();
+
+Section::Begin("Check if the lines are parallel");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_1} = k \vec{v_2} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("LimitedFraction");
+$KValue = Fraction(1,$k);
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v_1} \) ","\( = \)","\( k \vec{v_2} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $V1 \) ","\( = \)",ans_rule(2)."\( $V2 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+which gives us that $BR $BR
+\(  \quad \vec{v_1} \) and \( \vec{v_2} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_1 \) and \( \ell_2 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($KValue->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin("Check if the lines are identical");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k_1 \) such that 
+\( \overrightarrow{P_2 P_1} = k_1 \vec{v_1} \).$BR $BR
+
+We \{ $popExist->menu() \} find a scalar \( k_2 \) such that 
+\( \overrightarrow{P_2 P_1} = k_2 \vec{v_2} \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"parallel disjoint");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Which gives us that $BR $BR
+\( \quad \overrightarrow{P_2 P_1} \) and \( \vec{v_1} \) are \{ $popParallel->menu() \} $BR $BR
+\( \quad \overrightarrow{P_2 P_1} \) and \( \vec{v_2} \) are \{ $popParallel->menu() \} $BR $BR
+
+Thus the lines \( \ell_1 \) and \( \ell_2 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("Find the distance");
+
+Context("Numeric");
+$popDistance = PopUp(["Choose", "two points", "a point and a line"],"a point and a line");
+    
+Context()->texStrings;
+BEGIN_TEXT
+We know \( \text{d} \big( \ell_1, \ell_2 \big) \), the distance between the lines \( \ell_1 \) and \( \ell_2 \), can be computed by finding the distance between \{ $popDistance->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popDistance->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "parallel"],"orthogonal");
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ image( "distance_point_line.png",width=>329, height=>201 ) \} $BR $BR
+Let \( C \) be the closest point to \( P_1 \) $BR 
+\( C \) is the only point on \( \ell_2 \) such that \( \overrightarrow{CP_1} \) is \{ $popOrthogonal->menu() \} to \( \vec{v_2} \). $BR $BR
+
+Which of the formulas below corresponds to the $BBOLD closest point \(C \)? $EBOLD $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \displaystyle \overrightarrow{CP_1} =  \textrm{proj}_{\vec{v_2}}\overrightarrow{P_2 P_1} \quad \)","and","\( \quad \displaystyle C = P_1 +  \textrm{proj}_{\vec{v_2}}\overrightarrow{P_2 P_1}  \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \displaystyle \overrightarrow{P_1 C} =  \textrm{proj}_{\vec{v_2}}\overrightarrow{P_2 P_1} \quad \)","and","\( \quad \displaystyle C = P_1 +  \textrm{proj}_{\vec{v_2}}\overrightarrow{P_2 P_1} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 3:","\( \displaystyle \overrightarrow{CP_2 } =  \textrm{proj}_{\vec{v_2}}\overrightarrow{P_2 P_1} \quad \)","and","\( \quad \displaystyle C = P_2 +  \textrm{proj}_{\vec{v_2}}\overrightarrow{P_2 P_1} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 4:","\( \displaystyle \overrightarrow{P_2 C} =  \textrm{proj}_{\vec{v_2}}\overrightarrow{P_2 P_1} \quad \)","and","\( \quad \displaystyle C = P_2 +  \textrm{proj}_{\vec{v_2}}\overrightarrow{P_2 P_1} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popOrthogonal->cmp);
+
+ANS(Compute("4")->cmp );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$Num = $P2P1.$V2;
+$Den = $V2.$V2;
+$Proj = ($Num/$Den)*$V2;
+
+Context("LimitedPoint");
+$C = $PV2 + Point($Proj);
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$CP1 = Vector($PV1 - $C);
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$Distance = norm($CP1);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad C \)", "\( = \)", "\( P_2 \)", "\( + \)", "\( \displaystyle \textrm{proj}_{\vec{v_2}}\overrightarrow{P_2 P_1} \)"], align=>CENTER, separation=>0).
+
+AlignedRow([" ", "\( = \)", ans_rule(10), "\( + \)", ans_rule(10),"(write the components)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ", "\( = \)", ans_rule(10)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+$BR $BR
+\( \quad \overrightarrow{CP_1} = \) \{ ans_rule(20) \} (write the components)
+$BR $BR
+and 
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \text{d} \big( \ell_1, \ell_2 \big) \)", "\( = \)", "\( \| \overrightarrow{CP_1} \| \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ", "\( = \)", ans_rule(30),"(compute the distance)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV2->cmp);
+ANS($Proj->cmp);
+ANS($C->cmp);
+ANS($CP1->cmp);
+ANS($Distance->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();
+
+
+
+

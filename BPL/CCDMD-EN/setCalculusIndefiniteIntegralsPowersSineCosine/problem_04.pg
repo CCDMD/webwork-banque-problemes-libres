@@ -1,0 +1,132 @@
+##DESCRIPTION
+##  Indefinite Integrals - Powers of Sine & Cosine
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('indefinite integral', 'trigonometric substitution')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+"PGunion.pl"
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$l = random(2,9,1);
+$a = random(2,20,1);
+$l1 = $l+1;
+$l2 = $l+2; 
+$l3 = $l+3;
+$al1 = $a*$l1;
+$al3 = $a*$l3; 
+$ans = "-cos($a * x)**($l1)/$al1 + cos($a * x)**($l3)/$al3";
+
+Context("Numeric");
+Context()->variables->add('dx' => 'Real');
+
+#box 9
+$ans_eval9 = Compute("dx")->cmp();
+$ans_hash9 = $ans_eval9->evaluate($inputs_ref->{ANS_NUM_TO_NAME(9)});
+$TESTbox9 = $ans_hash9->{score};
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Evaluate the indefinite integral
+$BR \[ \int \sin^3($a x)\cos^{$l}($a x) dx \]
+$BR
+$HR
+$BR
+$BBOLD Solution $EBOLD $BR $BR
+
+We notice that one of the powers of the function to integrate \( \displaystyle \sin^3($a x)\cos^{$l}($a x) \) is odd. $BR $BR 
+Using the fact that \( \sin^3($a x) = \sin($a x) \sin^2($a x)\) $BR $BR
+and the trigonometric identity \( \sin^2(\theta) + \cos^2(\theta) = 1 \) $BR $BR
+we have
+$BR $BR
+$SPACE \( \sin^3($a x) = \) \{ans_rule( 5) \} \( \big( 1 - \) \{ans_rule( 10) \} \( \big) \)
+$BR $BR 
+and $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["\(\displaystyle \int \sin^3($a x)\cos^{$l}($a x)\, dx = \)","\( \displaystyle \int \)".ans_rule(20).ans_rule(2)."\( \displaystyle \; - \int \)".ans_rule(20).ans_rule(2)], align=>LEFT, separation=>0).
+AlignedRow(["","(integrals with \( x \) where the powers of the cosine function are in ascending order. Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR $BR
+Let $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( u \)", "\( = \)",ans_rule(10),"(choose \(u\))"], align=>LEFT, separation=>0, indent=>10).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(u\))"], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR $BR 
+We have
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["\(\displaystyle \int \sin^3($a x)\cos^{$l}($a x)\, dx \)","\( = \; \)".ans_rule(3)."\( \displaystyle \int\)".ans_rule(10).ans_rule(2)."\( + \)".ans_rule(3)."\( \displaystyle \int\)".ans_rule(10).ans_rule(2)], align=>LEFT, separation=>0).
+AlignedRow(["","(integrals with \(u\) where the powers of \( u \) are in ascending order. Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0).
+AlignedRow(["","\( = \; \)".ans_rule(3)."\( \big( \)".ans_rule(12)."\( \big) + \)".ans_rule(3)."\( \big( \)".ans_rule(12)."\( \big) + \)".ans_rule(1),"(integrate with respect to \(u\))"], align=>LEFT, separation=>0).
+AlignedRow(["","\( = \; \)".ans_rule(30)."\( + \)".ans_rule(1),"(rewrite with respect to \(x\))"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+
+END_TEXT
+
+ANS(fun_cmp("sin($a x)",var=>['x','dx']));
+ANS(fun_cmp("cos^2($a x)",var=>['x','dx']));
+
+ANS(fun_cmp("sin($a x) cos^{$l}($a x)",var=>['x','dx']));
+ANS(fun_cmp("dx",var=>['x','dx']));
+
+ANS(fun_cmp("sin($a x) cos^{$l+2}($a x)",var=>['x','dx']));
+ANS(fun_cmp("dx",var=>['x','dx']));
+
+#u
+ANS(fun_cmp("cos($a x)",var=>['x','dx']));
+ANS(strict_str_cmp("du"));
+if ($TESTbox9) 
+{
+ANS(fun_cmp("dx",var=>['x','dx']));
+ANS(fun_cmp("-$a*sin($a x)",var=>['x','dx']));
+}
+else
+{
+ANS(fun_cmp("-$a",var=>['x','dx']));
+ANS(fun_cmp("sin($a x)dx",var=>['x','dx']));
+}
+
+ANS(num_cmp("-1/$a"));
+ANS(fun_cmp("u^{$l}",var=>['u','du']));
+ANS(strict_str_cmp("du"));
+ANS(num_cmp("1/$a"));
+ANS(fun_cmp("u^{$l2}",var=>['u','du']));
+ANS(strict_str_cmp("du"));
+
+ANS(num_cmp("-1/$a"));
+ANS(fun_cmp("u^{$l1}/$l1",var=>['u','du']));
+ANS(num_cmp("1/$a"));
+ANS(fun_cmp("u^{$l3}/$l3",var=>['u','du']));
+ANS(strict_str_cmp("C"));
+
+ANS(fun_cmp($ans, mode=>"antider"));
+ANS(strict_str_cmp("C"));
+
+ENDDOCUMENT();

@@ -1,0 +1,166 @@
+##DESCRIPTION
+##  Integrals - Substitution method
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('change of bounds', 'change of variable', 'definite integral')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGgraders.pl",
+"PGstandard.pl", 
+"MathObjects.pl", 
+"PGunion.pl",
+"PGcourse.pl"
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$aa = random(5,9,1);
+$m = random(2,5,1);
+
+$ans = "(1/($m))*ln(e^($m * x)+ $aa)";
+
+$u = random(2,7,1);
+
+$Fb=(1/($m))*ln(exp($m*$u)+ $aa);
+$Fa=(1/($m))*ln(1 + $aa);
+
+
+Context("Numeric");
+Context()->variables->add('dx' => 'Real');
+
+#box 3
+$ans_eval3 = Compute("dx")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3 = $ans_hash3->{score};
+
+BEGIN_TEXT
+
+$HR
+$BBOLD Question $EBOLD $BR
+$HR
+Compute the following definite integral $BR$BR
+\( \quad \displaystyle \int_0^{$u} \frac{e^{$m x}}{e^{$m x} + $aa} \, dx \)
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD
+$HR
+$BBOLD 1- Compute the indefinite integral $EBOLD
+$BR$BR Let $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( u \)", "\( = \)",ans_rule(10),"(choose \(u\))"], align=>LEFT, separation=>0).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(u\))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+We have
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \int \frac{e^{$m x}}{e^{$m x} + $aa} \, dx \)","\( = \)",ans_rule(3)."\( \displaystyle \int\)".ans_rule(10).ans_rule(2),"(an integral with \(u\))"], align=>LEFT, separation=>0).
+AlignedRow(["","\( = \)",ans_rule(3)."\( \big( \)".ans_rule(12)."\( \big) + \)".ans_rule(3),"(integrate with respect to \(u\))"], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","","(integrate with respect to \(u\). Make sure to move the appropriate constant outside of the integral)"," "], align=>LEFT, separation=>0, indent=>110).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(20)."\(+\)".ans_rule(3),"(rewrite with respect to \(x\))"], align=>LEFT, separation=>0, indent=>100).
+EndTable()
+\}
+$BR
+$BR
+$HR
+
+$BBOLD 2- Choose an antiderivative \(F(x)\) $EBOLD
+$BR$BR
+By using \(C=0\), we can use the antiderivative$BR$BR
+\(F(x) = \) \{ans_rule(30)\}.
+$BR
+$BR
+$HR
+$BBOLD 3- Use the first Fundamental Theorem of Calculus to compute the definite integral $EBOLD
+
+$BR$BR By the first FTC, we have $BR$BR
+
+\{
+ BeginTable(center=>0).
+  AlignedRow([
+   '\( \displaystyle \int_0^{$u} \frac{e^{$m x}}{e^{$m x} + $aa}\, dx\)',
+   '\( = \)', 
+   '\(F(\)'.ans_rule(5).'\()\)',
+   '\( - \)', 
+   '\(F(\)'.ans_rule(5).'\()\)'
+  ], align => "Center", separation=>2).
+
+  AlignedRow([
+   '', 
+   '\( = \)', 
+   ans_rule(15),
+   '\( - \)', 
+   ans_rule(15)
+  ],separation=>2).
+ EndTable();
+\}
+$BR
+\(\hspace{1.02in} = \) \{ans_rule(40)\}
+
+END_TEXT
+
+#u
+ANS(fun_cmp("e^{$m x} + $aa", vars=>["u","x","du","dx"]));
+
+#du/dx
+ANS(fun_cmp("du", vars=>["u","x","du","dx"]));
+if ($TESTbox3) 
+{
+ANS(fun_cmp("dx", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("e^{$m x}*$m", vars=>["u","x","du","dx"]));
+}
+else
+{
+ANS(fun_cmp("$m", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("e^{$m x}*dx", vars=>["u","x","du","dx"]));
+}
+
+ANS(num_cmp("1/$m"));
+ANS(fun_cmp("1/u", vars=>["u","t","du","dt"]));
+ANS(fun_cmp("du", vars=>["u","t","du","dt"]));
+
+ANS(num_cmp("1/$m"));
+ANS(fun_cmp("ln|u|", mode=>"antider", vars=>["u","x","dx","du"],limits=>[[-100,100],[-100,100],[-100,100],[-100,100]]));#ANS(fun_cmp("ln|u|", mode=>"antider", vars=>["u","t","du","dt"]));
+ANS(str_cmp("C"));
+
+ANS(fun_cmp($ans, mode=>"antider"));
+ANS(str_cmp("C"));
+
+ANS(fun_cmp($ans));
+
+ANS(num_cmp($u));
+ANS(num_cmp(0));
+
+ANS(num_cmp($Fb));
+ANS(num_cmp($Fa));
+ANS(num_cmp("$Fb-$Fa"));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

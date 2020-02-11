@@ -1,0 +1,214 @@
+##DESCRIPTION
+##  Derivative - Numerical approach
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('differentiability', 'estimation', 'table of values')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,7,1);
+$b = random(1,8,1);
+$x0 = $b+1;
+
+Context("Numeric");
+Context()->variables->add(h => 'Real');
+Context()->flags->set(
+      tolerance    => .00001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'relative'
+);
+
+$f = Compute("$a x^2 - $b x")->reduce;
+$fxh = $f->substitute(x => "x+h"); 
+$equation = Compute("($fxh - $f)/h");
+
+$fx = $f->D('x');
+$slope = $fx->eval(x=>"$x0");
+
+$h0 = 0.1;
+$h1 = 0.01;
+$h2 = 0.001;
+
+$ansh0 = $equation->eval(x=>$x0,h=>$h0);  
+$ansh1 = $equation->eval(x=>$x0,h=>$h1);  
+$ansh2 = $equation->eval(x=>$x0,h=>$h2);  
+
+$hM0 = -$h0;
+$hM1 = -$h1;
+$hM2 = -$h2;
+
+$anshM0 = $equation->eval(x=>$x0,h=>$hM0);  
+$anshM1 = $equation->eval(x=>$x0,h=>$hM1);  
+$anshM2 = $equation->eval(x=>$x0,h=>$hM2);  
+
+$popSlope = PopUp(["Choose", "is equal to", "is not equal to", "is approximately equal to"],"is approximately equal to");
+$popFormula = PopUp(["Choose", "Slope of Secant", "Slope of Tangent"],"Slope of Secant");
+
+$box3 = Compute("$x0 + $hM0");
+$box5 = Compute("$x0 + $hM1");
+$box7 = Compute("$x0 + $hM2");
+
+$box9 = Compute("$x0 + $h0");
+$box11 = Compute("$x0 + $h1");
+$box13 = Compute("$x0 + $h2");
+
+Context("Numeric");
+Context()->variables->add(h => 'Real');
+Context()->flags->set(
+      tolerance    => .00001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'relative'
+);
+Context()->operators->undefine("+","-","*","/");
+$ans_box3 = Compute("$box3");
+$ans_box4 = Compute("$anshM0");
+$ans_box5 = Compute("$box5");
+$ans_box6 = Compute("$anshM1");
+$ans_box7 = Compute("$box7");
+$ans_box8 = Compute("$anshM2");
+
+$ans_box9 = Compute("$box9");
+$ans_box10= Compute("$ansh0");
+$ans_box11 = Compute("$box11");
+$ans_box12 = Compute("$ansh1");
+$ans_box13 = Compute("$box13");
+$ans_box14 = Compute("$ansh2");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR 
+$BR
+Estimate the slope of the tangent to the curve \(f(x) = \displaystyle $f \) when \( x = $x0 \). $BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We know $BR
+Slope of Tangent \{ $popSlope->menu() \} Slope of Secant $BR $BR
+where
+$BR
+\{ $popFormula->menu() \} \( \displaystyle = \frac{f(x+h)-f(x)}{h} \) $BR $BR
+
+$HR 
+$BBOLD Note: For the tables below, enter a numerical answer as opposed to a formula. $EBOLD $BR $HR 
+$BR
+
+$BITALIC$BBOLD Part 1: Estimate \( \displaystyle \frac{f(x+h)-f(x)}{h} \) as \(h \rightarrow 0^-\) $EBOLD$EITALIC $BR$BR
+
+
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+'\[ \quad x \quad \]',
+'\(h\)',
+'\(x+h\)',
+'\(\displaystyle \frac{f(x+h)-f(x)}{h}\)'],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\($x0\)','\($hM0\)',ans_rule(10),
+ans_rule(25)],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\($x0\)','\($hM1\)',ans_rule(10),
+ans_rule(25)],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+AlignedRow([
+'\($x0\)','\($hM2\)',ans_rule(10),
+ans_rule(25)],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+EndTable();
+\}
+
+$BR$BR
+
+$HR $BR
+$BITALIC$BBOLD Part 2: Estimate \( \displaystyle \frac{f(x+h)-f(x)}{h} \) as \(h \rightarrow 0^+\) $EBOLD$EITALIC $BR$BR
+
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+'\[ \quad x \quad \]',
+'\(h\)',
+'\(x+h\)',
+'\(\displaystyle \frac{f(x+h)-f(x)}{h}\)'],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\($x0\)','\($h0\)',ans_rule(10),
+ans_rule(25)],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\($x0\)','\($h1\)',ans_rule(10),
+ans_rule(25)],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+AlignedRow([
+'\($x0\)','\($h2\)',ans_rule(10),
+ans_rule(25)],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+EndTable();
+\}
+
+$BR$BR
+
+$HR $BR
+$BITALIC$BBOLD Part 3: Use the information above to estimate the slope of the tangent $EBOLD$EITALIC $BR$BR
+
+What would you expect the true slope of the tangent line to be?$BR $BR
+Slope of Tangent \(=\)\{ans_rule(5)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popSlope->cmp);
+ANS($popFormula->cmp);
+
+#0-
+ANS($ans_box3->cmp);
+ANS($ans_box4->cmp);
+ANS($ans_box5->cmp);
+ANS($ans_box6->cmp);
+ANS($ans_box7->cmp);
+ANS($ans_box8->cmp);
+
+#0+
+ANS($ans_box9->cmp);
+ANS($ans_box10->cmp);
+ANS($ans_box11->cmp);
+ANS($ans_box12->cmp);
+ANS($ans_box13->cmp);
+ANS($ans_box14->cmp);
+
+#slope
+ANS($slope->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,113 @@
+##DESCRIPTION
+##  Instantaneous Rate of Change
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('instantaneous rate of change')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a1 = random(3,5,1);
+$b1 = random(20,35,1);
+$c1 = random(100,200,50);
+$t1 = random(2,4,1);
+
+Context("Numeric");
+Context()->variables->add(t => 'Real');
+
+$equation = Compute("$a1 t^2 + $b1 t + $c1")->reduce;
+$dequation = $equation->D('t');
+$answer = $dequation->eval(t=>"$t1");
+
+$popVariableT = PopUp(["?", "G", "p", "t"],"t");
+$popVariableG = PopUp(["?", "G", "p", "t"],"G");
+
+$popUnit = PopUp(["Choose", "hours per bacteria", "bacteria per hour"],"bacteria per hour");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+The population of a slowly growing bacterial colony after \( t \) hours
+is given by \( p(t) = $equation \). Find the growth rate after
+\( $t1 \) hours. 
+$BR
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR$BITALIC$BBOLD Part 1: Define the variables $EBOLD$EITALIC $BR$BR
+Let \(G\) be the growth rate.
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 2: Identify what the problem is asking $EBOLD$EITALIC $BR$BR
+We want \{ $popVariableG->menu() \} 
+when \{ $popVariableT->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 3: Find the appropriate formula $EBOLD$EITALIC $BR$BR
+
+We know \{ $popVariableG->menu() \} \( = \displaystyle \frac{dp}{dt}\) 
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 4: Solve for what the problem is asking $EBOLD$EITALIC $BR$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{dp}{dt} \)","\( = \)",ans_rule(20),"(write the derivative)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+When \{ $popVariableT->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR $BR
+\( \displaystyle \frac{dp}{dt} = \)\{ans_rule(20) \} ($BITALIC replace the given condition into \( \frac{dp}{dt} \) $EITALIC)
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 5: Draw a conclusion $EBOLD$EITALIC $BR$BR
+Thus, the growth rate is \{ans_rule(10)\} \{ $popUnit->menu() \}.
+
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popVariableG->cmp);
+ANS($popVariableT->cmp);
+ANS(Compute("$t1")->cmp);
+ANS($popVariableG->cmp);
+
+ANS($dequation->cmp);
+
+ANS($popVariableT->cmp);
+ANS(Compute("$t1")->cmp);
+ANS($answer->cmp);
+
+ANS($answer->cmp);
+ANS($popUnit->cmp);
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

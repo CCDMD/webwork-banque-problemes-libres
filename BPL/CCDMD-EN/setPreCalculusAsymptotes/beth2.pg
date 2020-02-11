@@ -1,0 +1,241 @@
+##DESCRIPTION
+##   Asymptotes of rational functions
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('abscissa at the origin','asymptote','horizontal asymptote','vertical asymptote','domain','ordinate at the origin')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+#
+# First comes some stuff that appears at the beginning of every problem
+#
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"contextAlternateIntervals.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"parserPopUp.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#randomize for quadratic function
+$a = non_zero_random(2,9,1);
+do
+{
+    $b = non_zero_random(-9,9,1);
+    $c = non_zero_random(-9,9,1);
+} until ($b!=$c);
+do{
+$d = non_zero_random(2,9,1);
+} until ($d!=$a);
+do 
+{
+    $e = non_zero_random(-9,9,1);
+    $f = non_zero_random(-9,9,1);
+} until (($e!=$b) and ($e!=$c) and ($f!=$b) and ($f!=$c) and ($e!=$f));
+
+$numcoefx = $a*($b+$c);
+$numcon = $a*$b*$c;
+$dencoefx = $d*($e+$f);
+$dencon = $d*$e*$f;
+
+#quadratic answer
+$quadans1 = $b;
+$quadans2 = $c;
+
+@roots = num_sort(($quadans1,$quadans2));
+@domain = num_sort(($e,$f));
+@va = num_sort(($e,$f));
+
+
+Context("Numeric");
+$equationNum = Compute("$a x^2 - $numcoefx x + $numcon")->reduce;
+$equationDen = Compute("$d x^2 -$dencoefx x + $dencon")->reduce;
+$equation = $equationNum/$equationDen;
+
+#$answernum="$a*(x - $b) * (x - $c)";
+#$answerden="$d*(x - $e) * (x - $f)";
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>1);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$c1 = $a/gcd($a,$d);
+$c2 = $d/gcd($a,$d);
+$factoredformNum = Compute("$a (x - $b) (x - $c)");
+$factoredformDen = Compute("$d (x - $e) (x - $f)");
+$simplifiedNum = Compute("$c1 (x - $b) (x - $c)");
+$simplifiedDen = Compute("$c2 (x - $e) (x - $f)");
+
+#
+#  Expanded form
+#
+Context("LimitedPolynomial-Strict");
+$coeff1 = $numcoefx/$a;
+$coeff2 = $numcon/$a;
+$factor1Num = Compute("x^2 - $coeff1 x + $coeff2");
+$commonfactorNum = Compute("$a");
+
+$coeff3 = $dencoefx/$d;
+$coeff4 = $dencon/$d;
+$factor1Den = Compute("x^2 - $coeff3 x + $coeff4");
+$commonfactorDen = Compute("$d");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$IDomain = Compute("(-inf,$domain[0])U($domain[0],$domain[1])U($domain[1],inf)");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BR $BBOLD Question $EBOLD $BR $BR
+Find the domain, intercepts and asymptotes for 
+\( \displaystyle f(x) = $equation \) 
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+
+$HR
+$BR$BITALIC$BBOLD Part 1: Factor the numerator $EBOLD$EITALIC $BR$BR
+
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equationNum \)","\( = \)",ans_rule(2)."\( \Big( \)".ans_rule(15)."\( \Big) \)","(factor the common factor)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(32),"(factorized)"], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+
+$BR
+$HR
+$BR$BITALIC$BBOLD Part 2: Factor the denominator $EBOLD$EITALIC $BR$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equationDen \)","\( = \)",ans_rule(2)."\( \Big( \)".ans_rule(15)."\( \Big) \)","(factor the common factor)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(32),"(factorized)"], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+
+$BR
+$HR
+$BR$BITALIC$BBOLD Part 3: Simplify \(f(x)\) $EBOLD$EITALIC $BR$BR
+$BBOLD Note: $EBOLD  Any fraction of the type \( \frac{a}{-b} \) must be entered as \( \frac{-a}{b} \)
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{$equationNum}{$equationDen} \)","\( = \)",ans_rule(22).$BR.$HR.ans_rule(22),"(factorized form for the numerator and denominator)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(15).$BR.$HR.ans_rule(15),"(simplified)"], align=>LEFT, separation=>0, indent=>135).
+EndTable()
+\}
+
+$BR
+
+$HR $HR
+$BR$BITALIC$BBOLD Part 4: State the domain $EBOLD$EITALIC $BR$BR
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR 
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. 
+$BR $BR
+The domain of \(f(x) \) is  \{ans_rule(40)\} 
+$BR $BR
+$HR 
+$BR$BITALIC$BBOLD Part 5: State the intercepts $EBOLD$EITALIC $BR$BR
+The \(x\)-intercept(s) of \(f(x)\) are (in ascending order)
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(x \)","\( = \)",ans_rule(5),$SPACE.$SPACE." and ".$SPACE.$SPACE,"\(x \)","\( = \)",ans_rule(5)], align=>RIGHT, separation=>0).
+EndTable()
+\}
+
+$BR $BR
+The \(y\)-intercept of \(f(x)\) is \(y=\) \{ans_rule(5)\}
+$BR $BR
+$HR
+$BR$BITALIC$BBOLD Part 6: State the asymptotes $EBOLD$EITALIC $BR$BR
+The vertical asymptote(s) of \(f(x)\) are (in ascending order)
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(x \)","\( = \)",ans_rule(5),$SPACE.$SPACE." and ".$SPACE.$SPACE,"\(x \)","\( = \)",ans_rule(5)], align=>RIGHT, separation=>0).
+EndTable()
+\}
+
+$BR $BR
+The horizontal asymptote of \(f(x)\) is \(y=\) \{ans_rule(5)\}
+$BR $BR
+
+END_TEXT
+Context()->texStrings;
+
+#Numerator
+ANS($commonfactorNum->cmp);
+ANS($factor1Num->cmp);
+ANS($factoredformNum->cmp);
+
+#Denominator
+ANS($commonfactorDen->cmp);
+ANS($factor1Den->cmp);
+ANS($factoredformDen->cmp);
+
+#f(x)
+ANS($factoredformNum->cmp);
+ANS($factoredformDen->cmp);
+ANS($simplifiedNum->cmp);
+ANS($simplifiedDen->cmp);
+
+#Domain
+ANS($IDomain->cmp);
+
+#intercepts
+ANS(Compute("$roots[0]")->cmp);
+ANS(Compute("$roots[1]")->cmp);
+
+ANS($equation->eval(x=>"0")->cmp);
+
+#asymptotes
+ANS(Compute("$va[0]")->cmp);
+ANS(Compute("$va[1]")->cmp);
+
+ANS(Compute("$c1/$c2")->cmp);
+
+#$answernum="$a*(x - $b) * (x - $c)";
+#ANS(FactoringEvaluator($answernum,"x")); 
+
+#$answerden="$d*(x - $e) * (x - $f)";
+#ANS(FactoringEvaluator($answerden,"x")); 
+
+#ANS(number_list_cmp("$quadans1,$quadans2"));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

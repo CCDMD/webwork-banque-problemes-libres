@@ -1,0 +1,498 @@
+##DESCRIPTION
+##  Markov chains
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Matrix Algebra')
+## KEYWORDS('applications', 'Markov chain')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"PGmatrixmacros.pl",
+"MatrixReduce.pl",
+"contextLimitedPolynomial.pl",
+"parserPopUp.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+$patworktoday = Compute(random(75,85));
+$pabsenttoday = Compute(random(50,65));
+
+$a11 = $patworktoday/100;
+$a12 = 1-$pabsenttoday/100;
+$a21 = 1-$patworktoday/100;
+$a22 = $pabsenttoday/100;
+
+$employees = Compute(random(1000,1200,10));
+$employeesatworktoday = Compute(int($employees*random(0.75,0.85,0.01)));
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+In an office complex of $employees employees, on any given day,
+some are at work and the rest are absent. It is known that if an
+employee is at work today, there is an $patworktoday% chance that the employee will be
+at work tomorrow, and if the employee is absent today, there is a
+$pabsenttoday% chance that the employee will be absent tomorrow. Suppose that today
+there are $employeesatworktoday employees at work.
+$BR $BR
+
+$BBOLD (a) $EBOLD How many employees will be at work two days from now? $BR $BR
+$BBOLD (b) $EBOLD How many employees will be at work many, many days from now?
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("Define the transition matrix and initial condition");
+
+Context("Matrix");
+$M = Matrix([[$a11,$a12],[$a21,$a22]]);
+
+$X0 = Matrix( [[$employeesatworktoday],[$employees-$employeesatworktoday]]);
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(M\) be the matrix of transition. $BR
+Let \(\vec{x}_0\) be the initial population distribution. $BR $BR
+Let \(\text{W}\) and \(\text{A}\) represent at work and absent, respectively. $BR $BR
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" "," ","","\(  \hspace{1cm} \text{W} \hspace{1.5cm}  \text{A}\)"], align=>LEFT, separation=>0).
+
+AlignedRow(["\( \quad M \)","\( = \)","\(  \text{W} \)".$BR.$BR."\(  \text{A} \)",$M->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \vec{x}_0 \)","\( = \)","\(  \text{W} \)".$BR.$BR."\(  \text{A} \)",$X0->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($M->cmp);
+ANS($X0->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(\vec{x}_n\) be the population distribution \(n\) days later. $BR $BR
+
+Which of the formulas below corresponds to \(\vec{x}_2\)? $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \vec{x}_2 = \vec{x}_1 M \) and \( \vec{x}_1 = \vec{x}_0 M \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \vec{x}_2 = M \vec{x}_1 \) and \( \vec{x}_1 = M \vec{x}_0 \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR 
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("2")->cmp );
+
+Section::End();
+
+Section::Begin("Find the population distribution after 1 day");
+
+Context("Matrix");
+$X1Temp = $M*$X0;
+
+$x1AtWork = int($X1Temp->element(1,1) + 0.5);
+
+$X1 = Matrix( [[$x1AtWork],[$employees-$x1AtWork]]);
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \vec{x}_1 \)","\( = \)","\( $M $X0 \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",$X1->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+If needed, round your answer to an integer for the first entry of \(\vec{x}_1 \) and make sure the sum of all entries of \(\vec{x}_1 \) is $employees.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($X1->cmp);
+
+Section::End();
+
+Section::Begin("Find the population distribution after 2 days");
+
+Context("Matrix");
+$X2Temp = $M*$X1;
+
+$x2AtWork = int($X2Temp->element(1,1) + 0.5);
+
+$X2 = Matrix( [[$x2AtWork],[$employees-$x2AtWork]]);
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \vec{x}_2 \)","\( = \)","\( $M $X1 \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",$X2->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Thus, two days from now, \{ ans_rule(2) \} employees will be at work.
+$BR $BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+If needed, round your answer to an integer for the first entry of \(\vec{x}_2 \) and make sure the sum of all entries of \(\vec{x}_2 \) is $employees. 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($X2->cmp);
+ANS(($X2->element(1,1))->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("RREF");
+
+Context("Numeric");
+$popPq = PopUp(["?","Mq","qM"],"Mq");
+$popFormula = PopUp(["Choose","q(I-M) = 0","(I-M)q = 0"],"(I-M)q = 0");
+
+$popAdd = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row"],"add a multiple of a row to another row");
+
+Context("Matrix");
+$A = Matrix([[1-$a11,-$a12],[-$a21,1-$a22]])->with(close=>"|");
+$B = Matrix([[0], [0]])->with(open=>".");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(\vec{q} = \{ display_matrix_mm([[q_1],[q_2]]) \}\) be the steady-state vector for \(M\). $BR $BR
+We know \(\vec{q} = \) \{ $popPq->menu() \}. $BR $BR
+We need to find the general solution of \{ $popFormula->menu() \}. $BR $BR
+We have $BR $BR
+\( \quad \) \{ $A->ans_array(2) \}\{ $B->ans_array(2) \}
+$BR $BR
+To find the RREF of the matrix above, I will \{ $popAdd->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popPq->cmp);
+ANS($popFormula->cmp);
+ANS($A->cmp);
+ANS($B->cmp);
+ANS($popAdd->cmp);
+
+Section::End();
+
+###########################################
+# Step 1
+###########################################
+
+Section::Begin(" ");
+
+Context("Numeric");
+$pop_1_Row1 = PopUp(["?", "R1", "R2"],"R1");
+$pop_1_Row2 = PopUp(["?", "R1", "R2"],"R2");
+$pop_2_Row1 = PopUp(["?", "R1", "R2"],"R1");
+$pop_2_Row2 = PopUp(["?", "R1", "R2"],"R2");
+$popSignPlus = PopUp(["?","+","-"],"+");
+
+$popMultiply = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row"],"multiply a row by a non-zero constant");
+$popRow = PopUp(["?", "row 1 column 1", "row 1 column 2", "row 2 column 1", "row 2 column 2"],"row 1 column 1");
+
+Context("Matrix");
+$A1 = row_add($A,2,1,1)->with(close=>"|");
+$B1 = Matrix([[0], [0]])->with(open=>".");
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(  \text{R1} \)".$BR."\(  \text{R2} \)","\( $A $B\)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)",$pop_1_Row1->menu().$popSignPlus->menu().ans_rule(2).$pop_2_Row2->menu(),$A1->ans_array(2),$B1->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+To create a leading 1 in \{ $popRow->menu() \}, I will \{ $popMultiply->menu() \}.
+END_TEXT
+Context()->normalStrings;
+
+ANS($pop_1_Row2->cmp());
+ANS($popSignPlus->cmp());
+ANS(Compute("1")->cmp);
+ANS($pop_2_Row1->cmp());
+
+ANS($A1->cmp);
+ANS($B1->cmp);
+
+ANS($popRow->cmp);
+ANS($popMultiply->cmp);
+
+Section::End();
+
+###########################################
+# Step 2
+###########################################
+
+Section::Begin(" ");
+
+Context("Matrix");
+$A2 = row_mult($A1,1,(1/$A1->element(1,1)))->with(close=>"|");
+$B2 = Matrix([[0], [0]])->with(open=>".");
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(  \text{R1} \)".$BR."\(  \text{R2} \)","\( $A1 $B1\)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)",ans_rule(1)."\(  \text{R1} \)".$BR.$BR."\( \text{R2} \)",$A2->ans_array(2),$B2->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS((1/$A1->element(1,1))->cmp);
+ANS($A2->cmp);
+ANS($B2->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Section::Begin("General solution");
+
+Context("Point");
+$P = Point(0,0);
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->variables->are(t=>"Real");
+$V = Vector(-$A2->element(1,2),1);
+
+#  for checking a particular vector parametric line
+sub mycheck {
+  my ($correct, $student, $ansHash) = @_;
+
+  if ( 
+       ($correct . i == $student . i) && 
+       ($correct . j == $student . j) 
+     ) 
+  { return 1; } else { return 0; }
+}
+
+$T = Formula("t");
+$Answer = $P + $T * $V;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR $BR
+\( \quad $A2 $B2 \) 
+
+$BR $BR
+Thus, the general solution is $BR $BR
+\( \quad (q_1,q_2) = \) \{ ans_rule(25) \} $BR $BR
+$HR
+$BBOLD Note: $EBOLD $BR
+Write the general solution in one of the following formats: $BR
+\( \quad P \) $BR
+\( \quad P + t \vec{v} \) $BR
+\( \quad P + s \vec{v} + t \vec{w} \)$BR
+\( \quad none \)
+END_TEXT
+Context()->normalStrings;
+
+ANS($Answer->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Section::Begin("Steady-state");
+
+Context("Numeric");
+$element12 = $A2->element(1,2);
+$coeff = Compute("-$element12 + 1");
+$ValueT = Compute("1/$coeff");
+$q1 = Compute("-$element12*$ValueT");
+$q2 = $ValueT;
+
+Context("LimitedPolynomial-Strict");
+Context()->variables->add(t => 'Real');
+$FormulaT = Compute("$coeff t");
+
+Context("Matrix");
+$Q = Matrix([[$q1],[$q2]]);
+
+Context()->texStrings;
+BEGIN_TEXT
+For the steady-state vector, we want $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( q_1 + q_2 \)","\( = \)",ans_rule(2)], align=>LEFT, separation=>0, indent=>70).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(10),"\( = \)",ans_rule(2),"(replace \(q_1\) and \(q_2\) with the values obtained from the general solution)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( t \)","\( = \)",ans_rule(2),"(solve for \(t\))"], align=>LEFT, separation=>0, indent=>110).
+
+EndTable()
+\}
+
+$BR $BR
+Thus, the steady-state vector is $BR $BR
+\( \quad \vec{q} = \) \{ $Q->ans_array(5) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("1")->cmp);
+ANS($FormulaT->cmp);
+ANS(Compute("1")->cmp);
+ANS($ValueT->cmp);
+
+ANS($Q->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Section::Begin("Conclusion");
+
+Context("Numeric");
+$W = $employees;
+
+Context("Matrix");
+$XKTemp = $W*$Q;
+
+$xKAtWork = int($XKTemp->element(1,1) + 0.5);
+
+$XK = Matrix( [[$xKAtWork],[$employees-$xKAtWork]]);
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(W\) be the sum of all the entries of the initial condition \(\vec{x}_0\). $BR $BR
+We know that as \(k \to \infty\), \(\vec{x}_k \to W \vec{q} \) $BR $BR
+We have $BR 
+\( \quad W = \) \{ ans_rule(15) \} $BR $BR
+
+and $BR $BR
+\( \quad \vec{x}_k \to \) \{ $XK->ans_array(5) \} $BR $BR
+$BR $BR
+Thus, many, many days from now, \{ ans_rule(2) \} employees will be at work.
+$BR $BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+If needed, round your answer to an integer for the first entry of \(\vec{x}_k \) and make sure the sum of all entries of \(\vec{x}_k \) is $employees. 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($W->cmp);
+ANS($XK->cmp);
+ANS(($XK->element(1,1))->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        

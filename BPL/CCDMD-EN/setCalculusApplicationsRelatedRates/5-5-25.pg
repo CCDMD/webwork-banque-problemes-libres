@@ -1,0 +1,256 @@
+##DESCRIPTION
+##  Related Rates
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('economy', 'related rates')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"contextCurrency.pl",
+"contextLimitedPolynomial.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->variables->add(C => 'Real', R => 'Real', P => 'Real', p => 'Real', 'dC' => 'Real', 'dR' => 'Real', 'dx'=> 'Real', 'dP'=> 'Real','dp'=> 'Real','dt'=> 'Real');
+Context()->flags->set(
+      tolerance    => .000001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$dxdt = Compute("dx/dt");
+$dPdt = Compute("dP/dt");
+$MyP = Compute("P");
+
+$a = random(70000,90000,10000);
+$b = random(20,40,10);
+$c = random(200,400,100);
+$d = random(20,40,10);
+
+$dx = random(100,900,100);
+$x = random(1000,9000,1000);
+
+#C=$a + $b x, \qquad R=$c - \frac{x^2}{$d}
+
+$cost = Compute("$a + $b x")->reduce;
+$revenue = Compute("$c - x^2/$d")->reduce;
+
+$LHS = Compute("P");
+$dLHS = $LHS->D('P');
+$dLHS_dPdt = $dLHS*$dPdt;
+
+$RHS = $revenue - ($cost);
+$dRHS = $RHS->D('x');
+$dRHS_dxdt = $dRHS*$dxdt;
+
+$answer = ($dRHS*$dx)->eval(x=>$x);
+
+if($answer > 0 )
+{
+    $popInc = PopUp(["Choose", "decreasing", "increasing"],"increasing");
+    $PositiveAnswer = $answer
+}
+else
+{
+    $popInc = PopUp(["Choose", "decreasing", "increasing"],"decreasing");
+    $PositiveAnswer = -1*$answer;
+}
+
+Context("LimitedPolynomial-Strict");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+#the profit function
+$coeff1 = $c - $a;
+$coeff2 = 1/$d;
+$profit = Formula("$coeff1 - $coeff2 x^2 - $b x");
+
+Context("Currency");
+$CurrencyAnswer = Currency($PositiveAnswer);
+
+Context("Numeric");
+
+$popTime = PopUp(["Choose", "day", "week", "month", "year"],"week");
+$popprofitformula = PopUp(["Choose", "revenue + cost", "revenue - cost", "revenue x cost"], "revenue - cost");
+
+#check box 1
+$ans_eval1 = $dPdt->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1 = $ans_hash1->{score};
+
+$WantSymbol = "";
+if ($TESTbox1) 
+{
+$WantSymbol = $dPdt;
+}
+
+#check box 2
+$ans_eval2 = $dxdt->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2 = $ans_hash2->{score};
+
+#check box 4
+$ans_eval4 = Compute("x")->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4 = $ans_hash4->{score};
+
+#check box 6
+$ans_eval6 = $MyP->cmp();
+$ans_hash6 = $ans_eval6->evaluate($inputs_ref->{ANS_NUM_TO_NAME(6)});
+$TESTbox6 = $ans_hash6->{score};
+
+#check box 8
+$ans_eval8 = $profit->cmp();
+$ans_hash8 = $ans_eval8->evaluate($inputs_ref->{ANS_NUM_TO_NAME(8)});
+$TESTbox8 = $ans_hash8->{score};
+
+$VariableSymbol_x = "";
+$VariableSymbol_P = "";
+$VariableSymbol_dxdt = "";
+$ProfitFormula = "";
+if ($TESTbox2 && $TESTbox4 && $TESTbox6 && $TESTbox8) 
+{
+$VariableSymbol_x = "x";
+$VariableSymbol_P = "P";
+$VariableSymbol_dxdt = $dxdt;
+$ProfitFormula = Formula("$inputs_ref->{ANS_NUM_TO_NAME(8)}");
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Question $EBOLD $BR $BR
+
+Suppose that for a company manufacturing \(x\) calculators per week, the cost (in dollars) is given by $BR
+\( \quad C(x) = $cost \) $BR
+and the revenue (in dollars) is given by $BR
+\( \displaystyle \quad R(x) = $revenue \) $BR
+If the production rate is increasing at a rate of $dx calculators
+when the production output is $x calculators, find the rate of change in the profit.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point. $BR
+
+$BR
+Enter $BBOLD dP/dt $EBOLD for \( \displaystyle \frac{dP}{dt} \) or \( P'\) $BR $BR
+Enter $BBOLD dx/dt $EBOLD for \( \displaystyle \frac{dx}{dt} \) or \( x'\) $BR
+$HR
+$HR
+$BR
+$HR
+$BR$BITALIC$BBOLD Step 1: Define the variables $EBOLD$EITALIC $BR$BR
+Let \(P(x)\) be the profit function for the production of \( x \) calculators. 
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 2: Identify what the problem is asking $EBOLD$EITALIC $BR$BR
+We want \{ans_rule(5)\} ($BITALIC write the mathematical expression for $BBOLD the rate of change in the profit $EBOLD $EITALIC)
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 3: Find the appropriate formula $EBOLD$EITALIC $BR$BR
+
+We know $BR $BR
+\{ans_rule(4)\} \( = \) \{ans_rule(5)\} ($BITALIC write the mathematical expression for $BBOLD the production rate is increasing at a rate of $dx calculators $EBOLD $EITALIC) $BR$BR
+\{ans_rule(4)\} \( = \) \{ans_rule(5)\} ($BITALIC write the mathematical expression for $BBOLD the production output is $x calculators $EBOLD $EITALIC) $BR $BR
+\{ans_rule(4)\} \( = \) \{ $popprofitformula->menu() \} $BR
+\( \hspace{0.5cm} \)($BITALIC write the mathematical expression for $BBOLD the profit $EBOLD and choose the formula to find the profit function $EITALIC) $BR $BR
+\( \hspace{3cm} = \)\{ans_rule(20)\} ($BITALIC formula of the profit function $EITALIC)
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR$BITALIC$BBOLD Step 4: Solve for what the problem is asking $EBOLD$EITALIC $BR$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d}{dt} \big( $VariableSymbol_P \big) \)","\( = \)","\( \displaystyle \frac{d}{dt} \Big( $ProfitFormula \Big) \)"], align=>LEFT, separation=>0, indent=>35).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),"\( = \)",ans_rule(40)], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["($BITALIC find the derivative with respect to \( t \) $EITALIC)"], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR $BR 
+and when \( \displaystyle $VariableSymbol_dxdt = \) \{ans_rule(5)\} and \( \displaystyle $VariableSymbol_x = \) \{ans_rule(5)\} ($BITALIC write the given conditions $EITALIC)
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),"\( = \)",ans_rule(40),"($BITALIC replace the given conditions $EITALIC)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 5: Draw a conclusion $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD For the penultimate box, include the dollar sign in your answer. 
+$HR $HR
+$BR
+Thus, the profit is \{ $popInc->menu() \} at a rate of \{ans_rule(10)\} per \{ $popTime->menu() \}.
+
+
+END_TEXT
+Context()->normalStrings;
+
+#Step 2
+ANS($dPdt->cmp);
+
+#Step 3
+ANS($dxdt->cmp);
+ANS(Compute("$dx")->cmp);
+ANS(Compute("x")->cmp);
+ANS(Compute("$x")->cmp);
+#ANS(Compute("P")->cmp);
+ANS($MyP->cmp);
+ANS($popprofitformula->cmp() );
+ANS($profit->cmp);
+
+#Step 4
+#derivative
+ANS($dLHS_dPdt->cmp);
+ANS($dRHS_dxdt->cmp);
+
+#conditions
+ANS(Compute("$dx")->cmp);
+ANS(Compute("$x")->cmp);
+
+ANS($dLHS_dPdt->cmp);
+ANS($answer->cmp);
+
+#Step 5
+ANS($popInc->cmp);
+ANS($CurrencyAnswer->cmp);
+ANS($popTime->cmp);
+
+ENDDOCUMENT();

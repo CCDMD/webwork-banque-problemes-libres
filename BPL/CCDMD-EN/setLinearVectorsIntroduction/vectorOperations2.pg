@@ -1,0 +1,69 @@
+##DESCRIPTION
+##  Vector algebra
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('vector arithmetic', 'direction', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+# Please please please DO NOT change the variables to bold and (,,) to <,,>
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"PGunion.pl",
+);
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->variables->add(a => 'Real');
+
+$x1 = non_zero_random(-10, 10);
+$x2 = non_zero_random(-10, 10);
+$x3 = non_zero_random(-10, 10);
+$x = Vector($x1, $x2, $x3);
+
+{ $a = non_zero_random(-10, 10);
+redo if ($a==1 || $a==-1);
+}
+
+$ax = $a*$x;
+
+$b = $a*$x2;
+$ax_unknown = Vector(Compute("$x1 a"), $b, Compute("$x3*a"))->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Let \( \vec{x} = $x \) be in \( \mathbb R ^3 \) and \(a\) be in \( \mathbb R \). $BR $BR
+Find the scalar \(a\) that satisfies \( a \vec{x} = $ax_unknown \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR
+$HR $BR 
+We have $BR $BR
+\( \quad a = \) \{ ans_rule(5) \} $BR $BR
+and $BR
+\( \quad a \vec{x} = \) \{ ans_rule(15) \} 
+$BR
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("$a")->cmp);
+ANS($ax->cmp);
+
+ENDDOCUMENT(); 

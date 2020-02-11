@@ -1,0 +1,116 @@
+## DESCRIPTION
+## Instantaneous Rate of Change
+##  Find the rate of change of the area of a square with respect to
+##  its side when its side is of a given value
+## ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('instantaneous rate of change')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a1 = random(3,17,1);
+
+Context("Numeric");
+Context()->variables->add(s => 'Real');
+
+$equation = Compute("s^2");
+$dequation = $equation->D('s');
+$answer = $dequation->eval(s=>"$a1");
+
+$popVariableA = PopUp(["?", "A", "R", "s"],"A");
+$popVariableR = PopUp(["?", "A", "R", "s"],"R");
+$popVariableS = PopUp(["?", "A", "R", "s"],"s");
+
+$popUnit = PopUp(["Choose", "square cm per cm", "cm per square cm"],"square cm per cm");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+What is the rate of change of the area of a square with respect to its side length
+when its side length is \( $a1 \) cm? 
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR$BITALIC$BBOLD Part 1: Define the variables $EBOLD$EITALIC $BR$BR
+Let \(R\) be the rate of change of the area of a square with respect to its side length. $BR
+Let \(A\) be the area of a square. $BR
+Let \(s\) be the side length of a square.
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 2: Identify what the problem is asking $EBOLD$EITALIC $BR$BR
+We want \{ $popVariableR->menu() \} 
+when \{ $popVariableS->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 3: Find the appropriate formula $EBOLD$EITALIC $BR$BR
+
+We know \{ $popVariableR->menu() \} \( = \displaystyle \frac{dA}{ds}\) $BR $BR
+where \( A = \)\{ans_rule(5)\} ($BITALIC write the formula for the area of a square $EITALIC)
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 4: Solve for what the problem is asking $EBOLD$EITALIC $BR$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{dA}{ds} \)","\( = \)",ans_rule(20),"(write the derivative)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+When \{ $popVariableS->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR $BR
+\( \displaystyle \frac{dA}{ds} = \)\{ans_rule(20) \} ($BITALIC replace the given condition into \( \frac{dA}{ds} \) $EITALIC)
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 5: Draw a conclusion $EBOLD$EITALIC $BR$BR
+Thus, the rate of the area of a square is \{ans_rule(10)\} \{ $popUnit->menu() \}.
+
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+
+ANS($popVariableR->cmp);
+ANS($popVariableS->cmp);
+ANS(Compute("$a1")->cmp);
+
+ANS($popVariableR->cmp);
+ANS($equation->cmp);
+
+ANS($dequation->cmp);
+
+ANS($popVariableS->cmp);
+ANS(Compute("$a1")->cmp);
+ANS($answer->cmp);
+
+ANS($answer->cmp);
+ANS($popUnit->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,109 @@
+##DESCRIPTION
+##  Limit at Infinity
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('inf/inf', 'limit', 'limit at infinity', 'indeterminate form')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+);
+
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$tag = random(0,6,1);
+@choose = ("x","y","a","b","s","t","n");
+$x = $choose[$tag];
+
+$a = random(5,9,1);
+$c = random(2,5,1);
+$e = random(2,9,1);
+
+Context("Numeric");
+Context()->strings->add(UND=>{});
+Context()->variables->add($x => 'Real');
+
+$equation = Formula("$a/($c^$x + $e $x^2)") ->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR 
+Find \( \displaystyle \lim_{$x\to\infty} $equation \) and \( \displaystyle \lim_{$x\to-\infty} $equation \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+
+We have $BR $BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{$x\to\infty} $equation = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the limit by replacing \($x\) by \( \infty \) )"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5),,"(evaluate and simplify)"],align => "LEFT",separation => 0, indent => 100).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR $BR
+and
+$BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{$x\to-\infty} $equation = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the limit by replacing \($x\) by \( -\infty \) )"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5),,"(evaluate and simplify)"],align => "LEFT",separation => 0, indent => 110).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#sub infinity
+ANS(Real("$a")->cmp);
+ANS(Compute("INF")->cmp);   
+
+#answer
+ANS(Compute("0")->cmp);
+
+#sub -infinity
+ANS(Real("$a")->cmp);
+ANS(Compute("INF")->cmp);  
+
+#answer
+ANS(Compute("0")->cmp);
+
+ENDDOCUMENT();
+

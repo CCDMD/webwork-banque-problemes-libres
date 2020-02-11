@@ -1,0 +1,148 @@
+##DESCRIPTION
+## Solving equations
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Equations and Inequations)
+##KEYWORDS('equation with absolute value', 'solving an equation')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextFraction.pl",
+"PGunion.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$a = random(2,10,1);
+$b = non_zero_random(-10,10,1);
+$c = random(2,10,1);
+
+$LHS = Compute("1/|$a x + $b |")->reduce;
+$RHS = Compute("$c")->reduce;
+
+$RootNum0 = 1-$b*$c;
+$RootNum1 = -($b*$c+1);
+$RootDen = $a*$c;
+
+#forces a fraction 
+Context("LimitedFraction");
+Context()->operators->undefine("+","-","*");
+@roots = num_sort((Compute("$RootNum0/$RootDen"),Compute("$RootNum1/$RootDen")));
+
+Context("Numeric");
+$solution_set = List($roots[0],$roots[1]);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Solve \( \displaystyle $LHS = $RHS \) 
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Solve for \(x\)");
+
+Context("LimitedPolynomial-Strict");
+$LHS_S1 = Compute("$a x + $b")->reduce;
+$RHS_S1p = Compute("1/$c");
+$RHS_S1n = Compute("-1/$c");
+
+Context("Numeric");
+#check box 2
+$ans_eval2 = $RHS_S1p->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2 = $ans_hash2->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle $LHS \)","\( = \)","\( $RHS \)"], align=>RIGHT, separation=>0, indent=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(10),"\( = \)",ans_rule(5),"\( \quad \text{or} \quad \)",ans_rule(10),"\( = \)",ans_rule(5),"(rewrite as two separate equations, one positive and the other negative, keeping \( $LHS_S1 \) on the LHS)"], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+$BR $BR
+Solving for \(x\) gives us (in ascending order)
+$BR
+\(x_1 = \) \{ans_rule(10)\} and \(x_2 = \) \{ans_rule(10)\}
+END_TEXT
+Context()->normalStrings;
+
+if($TESTbox2)
+{
+    ANS($LHS_S1->cmp);
+    ANS($RHS_S1p->cmp);
+    ANS($LHS_S1->cmp);
+    ANS($RHS_S1n->cmp);
+}
+else
+{
+    ANS($LHS_S1->cmp);
+    ANS($RHS_S1n->cmp);
+    ANS($LHS_S1->cmp);
+    ANS($RHS_S1p->cmp);
+}
+
+ANS($roots[0]->cmp);
+ANS($roots[1]->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Check your solution");
+
+Section::End();
+
+###########################################
+Section::Begin("State the solution");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD $BR
+Enter your answer in a comma-separated list. $BR
+If the solution set is the empty set, write $BBOLD none$EBOLD.
+$BR $HR $BR
+Thus, the solution set is {\{ans_rule(30)\}}.$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($solution_set->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;
+
+
+

@@ -1,0 +1,149 @@
+##DESCRIPTION
+##  Indefinite Integrals - Powers of Sine & Cosine
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('indefinite integral', 'trigonometric substitution')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+"PGunion.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,99,1);
+$b = random(2,99,1);
+
+$funct = "$a*x/2 + $a*sin(2*$b*x)/(4*$b)";
+
+Context("Numeric");
+Context()->variables->add('dx' => 'Real');
+
+#box 10
+$ans_eval10 = Compute("dx")->cmp();
+$ans_hash10 = $ans_eval10->evaluate($inputs_ref->{ANS_NUM_TO_NAME(10)});
+$TESTbox10 = $ans_hash10->{score};
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Evaluate the indefinite integral
+$BR \[ \int $a\cos^2($b x)\,dx \]
+$BR
+$HR
+$BR
+$BBOLD Solution $EBOLD $BR $BR
+
+We notice that the power of the function to integrate \( \displaystyle $a\cos^2($b x) \) is even. $BR $BR 
+
+Using the trigonometric identity \( \displaystyle \sin^2(\theta) = \frac{1 - \cos(2 \theta)}{2} \) or \( \displaystyle \cos^2(\theta) = \frac{1 + \cos(2 \theta)}{2} \) $BR $BR
+we have
+ $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \cos^2($b x) = \)",ans_rule(10).$BR.$HR.ans_rule(10)], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+
+$BR $BR 
+and $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["\(\displaystyle \int $a\cos^2($b x) \, dx = \)",ans_rule(3)."\( \displaystyle \int \)".ans_rule(2)."\( \displaystyle \; + \)".ans_rule(3)."\( \displaystyle \int \)".ans_rule(10).ans_rule(2)], align=>LEFT, separation=>0).
+AlignedRow(["","(integrals with \( x \) where the powers of the cosine function are in ascending order. Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+$BR $BR
+Let $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( u \)", "\( = \)",ans_rule(10),"(choose \(u\))"], align=>LEFT, separation=>0, indent=>10).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(u\))"], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+
+$BR $BR 
+We have
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["\(\displaystyle \int $a\cos^2($b x)\, dx \)","\( = \; \)".ans_rule(3)."\( \displaystyle \int\)".ans_rule(2)."\( \, + \, \)".ans_rule(3)."\( \displaystyle \int\)".ans_rule(10).ans_rule(2)], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["(integral with \(x\) and integral with \(u\), respectively. Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0, indent=>150).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["\( = \; \)".ans_rule(3)."\( \big( \)".ans_rule(3)."\( \big) + \)".ans_rule(3)."\( \big( \)".ans_rule(12)."\( \big) + \)".ans_rule(1),"(integrate with respect to \(x\) and \(u\))"], align=>LEFT, separation=>0, indent=>130).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["\( = \; \)".ans_rule(30)."\( + \)".ans_rule(1),"(rewrite with respect to \(x\))"], align=>LEFT, separation=>0, indent=>130).
+EndTable()
+\}
+
+
+END_TEXT
+
+ANS(fun_cmp("1+cos(2*$b x)",var=>['x','dx']));
+ANS(num_cmp("2"));
+
+ANS(fun_cmp("$a/2",var=>['x','dx']));
+ANS(fun_cmp("dx",var=>['x','dx']));
+ANS(fun_cmp("$a/2",var=>['x','dx']));
+ANS(fun_cmp("cos(2*$b x)",var=>['x','dx']));
+ANS(strict_str_cmp("dx"));
+
+#u
+ANS(fun_cmp("2*$b x",var=>['x','dx']));
+ANS(strict_str_cmp("du"));
+if ($TESTbox10) 
+{
+ANS(fun_cmp("dx",var=>['x','dx']));
+ANS(fun_cmp("2*$b",var=>['x','dx']));
+}
+else
+{
+ANS(fun_cmp("2*$b",var=>['x','dx']));
+ANS(fun_cmp("dx",var=>['x','dx']));
+}
+
+ANS(fun_cmp("$a/2",var=>['x','dx']));
+ANS(fun_cmp("dx",var=>['x','dx']));
+ANS(fun_cmp("($a/2)/(2*$b)",var=>['x','dx']));
+ANS(fun_cmp("cos(u)",var=>['u','du']));
+ANS(strict_str_cmp("du"));
+
+ANS(fun_cmp("$a/2",var=>['x','dx']));
+ANS(fun_cmp("x",var=>['x','dx']));
+ANS(fun_cmp("($a/2)/(2*$b)",var=>['x','dx']));
+ANS(fun_cmp("sin(u)",var=>['u','du']));
+ANS(strict_str_cmp("C"));
+
+$ans = $funct;
+ANS(fun_cmp($ans, mode=>"antider"));
+ANS(strict_str_cmp("C"));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

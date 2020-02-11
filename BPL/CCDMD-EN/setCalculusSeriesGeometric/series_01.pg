@@ -1,0 +1,104 @@
+##DESCRIPTION
+##  Geometric Series
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Sequences, Summation and Series')
+## KEYWORDS('convergence and divergence', 'series', 'geometric series', 'sum', 'sum of a series')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGunion.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT("This problem is using sum_{n=k}^{inf} a r^n = a r^k/(1-r).");
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$b= random(1,4,1);
+$c = random(5,9,1);
+$d = $b + $c + 1;
+$r1 = $b/$d ;
+$r2 = $c/$d ;
+
+$poptype = PopUp(["Choose","geometric","p", "telescoping", "other"],"other");
+$poptype2 = PopUp(["Choose","geometric","p", "telescoping", "other"],"geometric");
+
+$popvalue = PopUp(["Choose","< 1",">= 1"],"< 1");
+
+$popcon = PopUp(["Choose","are convergent","are divergent"],"are convergent");
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Determine if the series is convergent or divergent.
+$BR If it converges, determine the sum (if possible).
+$BR $BR 
+\( \displaystyle \sum_{n=1}^\infty \left(\frac{$b^n + $c^n}{$d ^n}\right) \)
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+We have a \{ $poptype->menu() \} series but it can be decomposed into two \{ $poptype2->menu() \} series:
+$BR $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \sum_{n=1}^{\infty} \left(\frac{$b^n + $c^n}{$d ^n}\right) = \sum_{n=1}^{\infty}\)", ans_rule(5), "\( \big( \)", ans_rule(5), "\( \displaystyle \big)^n + \sum_{n=1}^{\infty} \)", ans_rule(5), "\( \big( \)", ans_rule(5), "\( \displaystyle \big)^n \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR where \(a = \) \{ans_rule(5)\} and \(r = \) \{ans_rule(5)\} for the first series, and \(a = \) \{ans_rule(5)\} and \(r = \) \{ans_rule(5)\} for the second series.
+$BR $BR
+Since, for both series, \( |r| \) is \{ $popvalue->menu() \} then both series \{ $popcon->menu() \}. 
+$BR $BR
+Thus 
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \sum_{n=1}^{\infty} \left(\frac{$b^n + $c^n}{$d ^n}\right) \)","\( = \)".ans_rule(15)."\( + \)".ans_rule(15), "(enter the sum of each series separately)"], align=>LEFT, separation=>0).
+AlignedRow(["","\( = \)".ans_rule(15), "(add the two sums above)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+END_TEXT
+
+ANS( $poptype->cmp() );
+ANS( $poptype2->cmp() );
+
+$a=1;
+#series
+ANS(Real($a)->cmp);
+ANS(Real($r1)->cmp);
+ANS(Real($a)->cmp);
+ANS(Real($r2)->cmp);
+
+#r and a
+ANS(Real($a)->cmp);
+ANS(Real($r1)->cmp);
+ANS(Real($a)->cmp);
+ANS(Real($r2)->cmp);
+
+ANS( $popvalue->cmp() );
+ANS( $popcon->cmp() );
+
+#sum
+ANS(Compute("$r1/(1-$r1)")->cmp);
+ANS(Compute("$r2/(1-$r2)")->cmp);
+
+
+$answer = Compute("1/(1-$r1) + 1/(1-$r2) - 2");
+
+ANS($answer->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

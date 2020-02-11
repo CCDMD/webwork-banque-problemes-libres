@@ -1,0 +1,139 @@
+##DESCRIPTION
+##  Geometric Series - Word problems
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Sequences, Summation and Series')
+## KEYWORDS('series', 'geometric series', 'sum', 'sum of a series')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+loadMacros(
+"PGstandard.pl", 
+"MathObjects.pl", 
+"PGunion.pl",
+"PGcourse.pl"
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(55,90,5);
+$k = 100 - $a;
+$b = random(5,15,1)*$k;
+
+$r = $a/100;
+
+$d = $b + $r*$b;
+
+$f = 1 - $r;
+
+
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD$BR$BR
+
+A ball drops from a height of \($b\) meters. Each time it hits the ground, it bounces,
+
+and it returns to \($a\) per cent of its previous height on each bounce. Find \(D\) the total distance travelled by the ball until it stops bouncing.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR$BR
+
+Let \(h_0\) be the initial height of the drop and let \(h_n\) be the height reached after the \(n^{th}\) bounce for \(n\geq 1\):$BR$BR
+
+\(h_0=\)\{ans_rule(12)\}, \(h_1=\)\{ans_rule(12)\}, \(h_2=\)\{ans_rule(12)\}, \(h_3=\)\{ans_rule(12)\}, \(h_4=\)\{ans_rule(12)\}, \(\dots\)$BR$BR
+
+Thus the total distance travelled \(D\) can be computed as a series:$BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(D= \)", ans_rule(3)."\(h_0\)","\(+\)", ans_rule(3)."\(h_1\)","\(+\)", ans_rule(3)."\(h_2\)","\(+\)", ans_rule(3)."\(h_3\)","\(+\)", ans_rule(3)."\(h_4\)","\(+\)","\(\dots\)"], align=>CENTER, separation=>0).
+AlignedRow(["\(D= \)", ans_rule(12),"\(+\)", ans_rule(12),"\(+\)", ans_rule(12),"\(+\)", ans_rule(12),"\(+\)", ans_rule(12),"\(+\)","\(\dots\)"], align=>CENTER, separation=>0).
+EndTable()
+\}
+$BR
+
+The series is a $BBOLD geometric series $EBOLD starting at the$BBOLD second$EBOLD term where $BR
+the$BITALIC common ratio$EITALIC is $BR
+\(r=\) \{ans_rule(6)\} and $BR
+the$BITALIC first term$EITALIC is $BR
+\(a=\) \{ans_rule(12)\}.$BR$BR
+
+Thus using sigma notation the total distance travelled \(D\) can be written as $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \)","\(D\)","\( = \)", ans_rule(4),"\(+\)","\(\displaystyle\sum_{n=0}^{\infty}\)".ans_rule(12)."\((\)".ans_rule(4)."\()^n\)","(with series in sigma notation)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \)","\(D\)","\( = \)", ans_rule(4),"\(+\)", ans_rule(12).$BR.$HR."\(\big( 1- \)".ans_rule(4)."\( \big) \)" ,"(use the geometric series formula since \(|r|<1\))"], align=>CENTER, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \)","\(D\)","\( = \)", ans_rule(4),"\(+\)",ans_rule(12),"."], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+Thus the total distance travelled by the ball is$BR$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \)","\(D\)","\( = \)",ans_rule(16),"meters."], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+END_TEXT
+
+Context()->flags->set(
+  tolerance => 0.00001,     
+);
+
+
+ANS(Real($b)->cmp);
+ANS(Compute("$b*$r")->cmp);
+ANS(Compute("$b*$r**2")->cmp);
+ANS(Compute("$b*$r**3")->cmp);
+ANS(Compute("$b*$r**4")->cmp);
+
+ANS(Real(1)->cmp);
+ANS(Real(2)->cmp);
+ANS(Real(2)->cmp);
+ANS(Real(2)->cmp);
+ANS(Real(2)->cmp);
+
+ANS(Real($b)->cmp);
+ANS(Compute("2*$b*$r")->cmp);
+ANS(Compute("2*$b*$r**2")->cmp);
+ANS(Compute("2*$b*$r**3")->cmp);
+ANS(Compute("2*$b*$r**4")->cmp);
+
+ANS(Real($r)->cmp);
+ANS(Compute("2*$b*$r")->cmp);
+
+ANS(Real($b)->cmp);
+ANS(Compute("2*$b*$r")->cmp);
+ANS(Real($r)->cmp);
+
+ANS(Real($b)->cmp);
+ANS(Compute("2*$b*$r")->cmp);
+ANS(Real($r)->cmp);
+
+ANS(Real($b)->cmp);
+ANS(Compute("2*$b*$r/(1-$r)")->cmp);
+
+$answer = Compute("$d/$f");
+ANS($answer->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

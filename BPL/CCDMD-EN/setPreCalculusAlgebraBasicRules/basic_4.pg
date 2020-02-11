@@ -1,0 +1,115 @@
+#DESCRIPTION
+##  Algebra problem: Simplify expression
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('rational fraction', 'simplification')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->noreduce('(-x)-y');
+#Context()->noreduce('(-x)+y');
+
+$A = non_zero_random(-9,9,1);
+$B = non_zero_random(-9,9,1);
+#$C = non_zero_random(-9,9,1);
+$C = random(1,9,1);
+$D = non_zero_random(-9,9,1);
+$E = non_zero_random(-9,9,1);
+#$F = non_zero_random(-9,9,1);
+$F = random(1,9,1);
+
+while ($A+$E-$C ==0 || $F-$A*$D-$C*$B ==0) 
+{$A=non_zero_random(-9,9,1);}
+
+while (gcd($A+$E-$C,$F-$A*$D-$C*$B)>1) 
+{
+#    $F= non_zero_random(-9,9,1);
+    $F = random(1,9,1);
+    $E =non_zero_random(-9,9,1);
+}
+
+
+#\[ \frac{$A}{x+$B} - \frac{$C}{x+$D} + \frac{$E x+$F}{(x+$B)(x+$D)} \] 
+$Equation = Compute("$A/(x+$B) - $C/(x+$D)  + ($E x+$F)/((x+$B)(x+$D))")->reduce;
+
+#  Common factor
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$CommonFactor = Compute("(x+$B)(x+$D)");
+$FactorNum1 = Formula("$A(x+$D)");
+$FactorNum2 = Formula("$C(x+$B)");
+$FactorNum3 = Formula("$E x+$F");
+
+#answer
+Context("LimitedPolynomial-Strict");
+$Coeff1 = $A+$E-$C;
+$Coeff2 = $F+$A*$D-$C*$B;
+$Numerator = Compute("$Coeff1 x + $Coeff2");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Simplify the expression $BR $BR
+\( \quad \displaystyle $Equation \) $BR
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle $Equation \)","\( = \)",ans_rule(5).$BR.$HR.ans_rule(5),"\( - \)",ans_rule(5).$BR.$HR.ans_rule(5),"\( + \)",ans_rule(5).$BR.$HR.ans_rule(5),"(find a common denominator. DO NOT EXPAND THE COMMON DENOMINATOR.)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(10).$BR.$HR.ans_rule(10),"(combine and simplify into one fraction. DO NOT EXPAND THE COMMON DENOMINATOR.)" ], align=>LEFT, separation=>0, indent=>260).
+EndTable()
+\}
+
+
+$BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($FactorNum1->cmp);
+ANS($CommonFactor->cmp);
+ANS($FactorNum2->cmp);
+ANS($CommonFactor->cmp);
+ANS($FactorNum3->cmp);
+ANS($CommonFactor->cmp);
+
+#answer
+ANS($Numerator->cmp);
+ANS($CommonFactor->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

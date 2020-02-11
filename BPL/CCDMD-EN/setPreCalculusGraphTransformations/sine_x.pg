@@ -1,0 +1,905 @@
+#DESCRIPTION
+##  Algebra problem: Trigonometric function graphs 
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('function', 'transformation', 'graph', 'function transformation')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGML.pl",
+  "PGgraphmacros.pl",
+  "PGchoicemacros.pl",
+  "MathObjects.pl",
+  "parserMultiAnswer.pl",
+  "PGcourse.pl",
+  "contextFraction.pl",
+  "parserPopUp.pl",
+  "PGunion.pl",
+  "scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+###########################################################################
+# setup contexts and variables 
+###########################################################################
+
+Context("Numeric");
+
+$r=non_zero_random(-6,6,1);
+do {$a=non_zero_random(-6,6,1);} until ($a != 1 && $a != -1);
+ $vSSPop = PopUp(["select", "stretched vertically", "compressed vertically"], "stretched vertically");
+$vSSans = Compute("abs($a)");
+
+$b1 = random(2,6,1);
+
+Context("Fraction-NoDecimals");
+$hSS = random(0,1,1); # 0 - stretch, 1 - compress
+if ($hSS == 0) 
+{
+    $bnum = 1;
+    $bden = $b1;
+    $hSSPop = PopUp(["select", "stretched horizontally", "compressed horizontally"], "stretched horizontally")
+} 
+else 
+{
+    $bnum = $b1;
+    $bden = 1;
+    $hSSPop = PopUp(["select", "stretched horizontally", "compressed horizontally"], "compressed horizontally")
+}
+$b = Fraction($bnum,$bden);
+$hSSans = abs($b);
+
+$c = $r*$b;
+
+$d = non_zero_random(-6,6,1);
+
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)+y');
+
+$origfun = Compute("sin(x)");
+if($hSS == 0)
+{
+    $dispfunshown = Compute("$a sin( x/$b1 - pi/$r) + $d")->reduce;
+}
+else
+{
+    $dispfunshown = Compute("$a sin( $b x - pi/$r) + $d")->reduce;
+}
+$dispfun = Compute("$a sin( $b (x - pi/$c)) + $d")->reduce;
+$fun1 = Compute("$vSSans sin($b x)")->reduce;
+$fun2 = Compute("$a sin($b x)")->reduce;
+$fun3 = Compute("$a sin( $b (x - pi/$c))")->reduce;
+$fun4 = $dispfun;
+
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Sketch the graph of \( \displaystyle g(x) = $dispfunshown \)
+by using graph transformation.
+$BR $BR
+$HR $HR
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Rewriting \(g(x)\)");
+
+Context()->texStrings;
+BEGIN_TEXT
+\(\displaystyle g(x) = $dispfunshown\) can be rewritten as \(g(x) = a \sin\Big( b(x-c) \Big)+d\) $BR 
+where $BR $BR 
+\(\quad a = \) \{ans_rule(5)\} $BR $BR
+\(\quad b = \) \{ans_rule(5)\} $BR $BR
+\(\quad c = \) \{ans_rule(5)\} $BR $BR
+\(\quad d = \) \{ans_rule(5)\} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Context()->operators->undefine('*','+','-');
+
+ANS(Compute("$a")->cmp);
+ANS(Compute("$b")->cmp);
+ANS(Compute("pi/$c")->cmp);
+ANS(Compute("$d")->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Step 1: Original Graph");
+
+Context("Numeric");
+$refreshCachedImages = 1;
+
+$OnePi = $PI;
+$TwoPi = 2*$PI;
+
+$OnePi_tex = "pi";
+$TwoPi_tex = "2pi";
+
+#construct 4 graphs
+$fS1[0] = "sin(x) for x in <0,$TwoPi> using color:blue and weight:2";
+$fS1[1] = "cos(x) for x in <0,$TwoPi> using color:blue and weight:2";
+$fS1[2] = "-sin(x) for x in <0,$TwoPi> using color:blue and weight:2";
+$fS1[3] = "-cos(x) for x in <0,$TwoPi> using color:blue and weight:2";
+
+#plot the graphs
+for ($j = 0; $j <= 3; $j++)
+{
+$graphS1[$j] = init_graph(0, -2, $TwoPi, 2, axes=>[0,0], grid=>[4,4],size=>[300,300]);
+$graphS1[$j]->lb('reset');
+$graphS1[$j]->lb(new Label(.05,-.15,0,'black','left','top'));
+$graphS1[$j]->lb(new Label($OnePi,-.15,$OnePi_tex,'black','left','top'));
+$graphS1[$j]->lb(new Label($TwoPi,-.15,$TwoPi_tex,'black','right','top'));
+$graphS1[$j]->lb(new Label(.05,1,1,'black','left','top')); 
+$graphS1[$j]->lb(new Label(.05,-1,"-1",'black','left','top'));
+}
+
+for ($j = 0; $j <=3; $j++){
+  plot_functions( $graphS1[$j], $fS1[$j]);
+  $plotS1[$j] = image(insertGraph($graphS1[$j]),width =>250,height=>250,tex_size=>310);
+}
+
+@permS1 = NchooseK(4,4);
+@plotS1 = @plotS1[@permS1];
+@letterS1 = ("A", "B", "C", "D");
+for ($j = 0; $j <= 3; $j++){ if ($permS1[$j] == 0) {$ansS1 = $letterS1[$j]; $j=3 }};
+
+
+Context()->texStrings;
+BEGIN_TEXT
+The graph of \(g(x)\) can be obtained from \( \displaystyle f(x) = $origfun \). $BR
+Select the graph that represents \( f(x) \) from the choices below. $BR
+$PAR
+
+$PAR
+\{
+$BCENTER.
+BeginTable().
+AlignedRow([$plotS1[0],$plotS1[1]]).
+TableSpace(4,0).
+AlignedRow(["A","B"]).
+TableSpace(20,6).
+AlignedRow([$plotS1[2],$plotS1[3]]).
+TableSpace(4,0).
+AlignedRow(["C","D"]).
+EndTable().
+$ECENTER
+\}
+$BR 
+$BITALIC You may click a graph to enlarge it. $EITALIC
+$BR $BR
+The graph of \(f(x)\) is identified by the letter \{ans_rule(5)\}
+$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Context()->strings->add(A=>{}, B=>{}, C=>{}, D=>{});
+ANS(String($ansS1)->cmp());
+
+Section::End();
+
+###########################################
+Section::Begin("Step 2: Stretch/compression");
+
+Context("Numeric");
+$refreshCachedImages = 1;
+
+$TwoPiOverA = 2*$PI/$vSSans;
+$TwoPiOverB = 2*$PI/$b;
+$PiOverA = $PI/$vSSans;
+$PiOverB = $PI/$b;
+
+$AplusOne = $vSSans + 1;
+$BplusOne = $b1 + 1;
+$dyA = 2*$AplusOne;
+$dyB = 2*$BplusOne;
+
+if( 2/gcd(2,$vSSans) == 1)
+{
+    $aOver2 = $vSSans/2;
+    if( $aOver2 == 1)
+    {
+        $TwoPiOverA_tex = "pi";
+    }
+    else
+    {
+        $TwoPiOverA_tex = "pi/$aOver2";
+    }
+    
+    $aOver4 = 2*$aOver2;
+    if( $aOver4 == 1)
+    {
+        $PiOverA_tex = "pi/$aOver4";
+    }
+    else
+    {
+        $PiOverA_tex = "pi/$aOver4";
+    }
+}
+else
+{
+     $TwoPiOverA_tex = "2pi/$vSSans";
+     $PiOverA_tex = "pi/$vSSans";
+}
+
+if( $hSS == 0)
+{
+    $bTimes2 = 2*$b1;
+    $TwoPiOverB_tex = "$bTimes2 pi";
+    $PiOverB_tex = "$b1 pi";
+}
+else
+{
+    if( 2/gcd(2,$b1) == 1)
+    {
+        $bOver2 = $b1/2;
+        if ($bOver2 == 1)
+        {
+            $TwoPiOverB_tex = "pi";
+        }
+        else
+        {
+            $TwoPiOverB_tex = "pi/$bOver2";
+        }
+    
+        $bOver4 = 2*$bOver2;
+        if( $bOver4 == 1)
+        {
+            $PiOverB_tex = "pi";
+        }
+        else
+        {
+            $PiOverB_tex = "pi/$bOver4";
+        }
+    }
+    else
+    {
+        $TwoPiOverB_tex = "2pi/$b1";
+        $PiOverB_tex = "pi/$b1";
+    }
+}
+
+#construct 4 graphs
+$fS2[0] = "$vSSans sin($b x) for x in <0,$TwoPiOverB> using color:blue and weight:2";
+$fS2[1] = "$vSSans cos($b x) for x in <0,$TwoPiOverB> using color:blue and weight:2";
+$fS2[2] = "$b sin($vSSans x) for x in <0,$TwoPiOverA> using color:blue and weight:2";
+$fS2[3] = "$b cos($vSSans x) for x in <0,$TwoPiOverA> using color:blue and weight:2";
+
+#plot the graphs
+for ($j = 0; $j <= 1; $j++)
+{
+    $graphS2[$j] = init_graph(0, -$AplusOne, $TwoPiOverB, $AplusOne, axes=>[0,0], grid=>[4,$dyA],size=>[300,300]);
+    $graphS2[$j]->lb('reset');
+    $graphS2[$j]->lb(new Label(.05,-.15,0,'black','left','top'));
+    $graphS2[$j]->lb(new Label($PiOverB- 0.05,-.15,$PiOverB_tex,'black','left','top'));
+    $graphS2[$j]->lb(new Label($TwoPiOverB-0.05,-.15,$TwoPiOverB_tex,'black','right','top'));
+    $graphS2[$j]->lb(new Label(.05,$vSSans,$vSSans,'black','left','top')); 
+    $graphS2[$j]->lb(new Label(.05,-$vSSans,"-$vSSans",'black','left','top'));
+}
+
+for ($j = 2; $j <= 3; $j++)
+{
+    $graphS2[$j] = init_graph(0, -$BplusOne, $TwoPiOverA, $BplusOne, axes=>[0,0], grid=>[4,$dyB],size=>[300,300]);
+    $graphS2[$j]->lb('reset');
+    $graphS2[$j]->lb(new Label(.015,-.15,0,'black','left','top'));
+    $graphS2[$j]->lb(new Label($PiOverA,-.15,$PiOverA_tex,'black','left','top'));
+    $graphS2[$j]->lb(new Label($TwoPiOverA,-.15,$TwoPiOverA_tex,'black','right','top'));
+    $graphS2[$j]->lb(new Label(.015,$b1,$b1,'black','left','top')); 
+    $graphS2[$j]->lb(new Label(.015,-$b1,"-$b1",'black','left','top'));
+}
+
+for ($j = 0; $j <=3; $j++){
+  plot_functions( $graphS2[$j], $fS2[$j]);
+  $plotS2[$j] = image(insertGraph($graphS2[$j]),width =>250,height=>250,tex_size=>310);
+}
+
+@permS2 = NchooseK(4,4);
+@plotS2 = @plotS2[@permS2];
+@letterS2 = ("A", "B", "C", "D");
+for ($j = 0; $j <= 3; $j++){ if ($permS2[$j] == 0) {$ansS2 = $letterS2[$j]; $j=3 }};
+
+Context("Numeric");
+$amplitude = Compute("abs($a)");
+$period = Compute("2*pi/$b");
+
+Context()->texStrings;
+BEGIN_TEXT
+The graph of \(g(x) = $fun1 \) is the graph of \(f(x) = $origfun\) \{ $vSSPop->menu() \} by a factor of \{ans_rule(10)\} units and \{ $hSSPop->menu() \} by a factor of \{ans_rule(10)\} units. $BR $BR
+
+We say the amplitude of \(g(x) \) is \{ans_rule(15) \}.
+$BR
+We say the period of \(g(x) \) is \{ans_rule(15) \}.
+
+$PAR
+Select the graph that represents \( g(x) \) from the choices below. $BR
+$PAR
+\{
+$BCENTER.
+BeginTable().
+AlignedRow([$plotS2[0],$plotS2[1]]).
+TableSpace(4,0).
+AlignedRow(["A","B"]).
+TableSpace(20,6).
+AlignedRow([$plotS2[2],$plotS2[3]]).
+TableSpace(4,0).
+AlignedRow(["C","D"]).
+EndTable().
+$ECENTER
+\}
+
+$PAR
+$BR 
+$BITALIC You may click a graph to enlarge it. $EITALIC
+$BR $BR
+The graph of \(g(x)\) is identified by the letter \{ans_rule(5)\}
+$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($vSSPop->cmp());
+ANS($vSSans->cmp());
+
+ANS($hSSPop->cmp());
+ANS($hSSans->cmp());
+
+ANS($amplitude->cmp);
+ANS($period->cmp);
+
+Context()->strings->add(A=>{}, B=>{}, C=>{}, D=>{});
+ANS(String($ansS2)->cmp());
+
+Section::End();
+
+###########################################
+Section::Begin("Step 3: Reflection");
+
+Context("Numeric");
+$refreshCachedImages = 1;
+
+if ($a < 0) {
+  $xPop = PopUp(["select", "is", "is not"], "is");
+} else {
+  $xPop = PopUp(["select", "is", "is not"], "is not");
+}
+
+#construct 4 graphs
+$fS3[0] = "$a sin($b x) for x in <0,$TwoPiOverB> using color:blue and weight:2";
+$fS3[1] = "$a cos($b x) for x in <0,$TwoPiOverB> using color:blue and weight:2";
+$fS3[2] = "-$a sin($b x) for x in <0,$TwoPiOverB> using color:blue and weight:2";
+$fS3[3] = "-$a cos($b x) for x in <0,$TwoPiOverB> using color:blue and weight:2";
+
+#plot the graphs
+for ($j = 0; $j <= 3; $j++){
+    $graphS3[$j] = init_graph(0, -$AplusOne, $TwoPiOverB, $AplusOne, axes=>[0,0], grid=>[4,$dyA],size=>[300,300]);
+    $graphS3[$j]->lb('reset');
+    $graphS3[$j]->lb(new Label(.05,-.15,0,'black','left','top'));
+    $graphS3[$j]->lb(new Label($PiOverB- 0.05,-.15,$PiOverB_tex,'black','left','top'));
+    $graphS3[$j]->lb(new Label($TwoPiOverB-0.05,-.15,$TwoPiOverB_tex,'black','right','top'));
+    $graphS3[$j]->lb(new Label(.05,$vSSans,$vSSans,'black','left','top')); 
+    $graphS3[$j]->lb(new Label(.05,-$vSSans,"-$vSSans",'black','left','top'));
+}
+
+for ($j = 0; $j <=3; $j++){
+  plot_functions( $graphS3[$j], $fS3[$j]);
+  $plotS3[$j] = image(insertGraph($graphS3[$j]),width =>250,height=>250,tex_size=>310);
+}
+
+@permS3 = NchooseK(4,4);
+@plotS3 = @plotS3[@permS3];
+@letterS3 = ("A", "B", "C", "D");
+for ($j = 0; $j <= 3; $j++){ if ($permS3[$j] == 0) {$ansS3 = $letterS3[$j]; $j=3 }};
+
+
+Context()->texStrings;
+BEGIN_TEXT
+The graph of \(g(x) = $fun2 \) \{$xPop->menu()\} the graph of \(f(x) = $fun1\) reflected about the \(x\)-axis.
+$PAR
+Select the graph that represents \( g(x) \) from the choices below. $BR
+$PAR
+\{
+$BCENTER.
+BeginTable().
+AlignedRow([$plotS3[0],$plotS3[1]]).
+TableSpace(4,0).
+AlignedRow(["A","B"]).
+TableSpace(20,6).
+AlignedRow([$plotS3[2],$plotS3[3]]).
+TableSpace(4,0).
+AlignedRow(["C","D"]).
+EndTable().
+$ECENTER
+\}
+
+$PAR
+$BR 
+$BITALIC You may click a graph to enlarge it. $EITALIC
+$BR $BR
+The graph of \(g(x)\) is identified by the letter \{ans_rule(5)\}
+$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($xPop->cmp());
+
+Context()->strings->add(A=>{}, B=>{}, C=>{}, D=>{});
+ANS(String($ansS3)->cmp());
+
+Section::End();
+
+###########################################
+Section::Begin("Step 4: Horizontal shift");
+
+Context("Numeric");
+$refreshCachedImages = 1;
+
+$CAbs = abs($c);
+$hans = abs($PI/$c);
+    
+$XStart = $PI/$c;
+$XModifiedStart = -$PI/$c;
+
+if ($c < 0) 
+{
+    $hPop = PopUp(["select", "left", "right"], "left");
+
+    $XStart_tex = "-pi/$CAbs";
+    $XModifiedStart_tex = "pi/$CAbs";
+} else 
+{
+    $hPop = PopUp(["select", "left", "right"], "right");
+
+    $XStart_tex = "pi/$CAbs";
+    $XModifiedStart_tex = "-pi/$CAbs";
+}
+
+$XShiftC = $period + $PI/$c;
+if($hSS == 0)
+{
+    $NumXShiftC = (2*$b1*$r+$b1)/gcd(2*$b1*$r+$b1,$r);
+    $DenXShiftC = $r/gcd(2*$b1*$r+$b1,$r);
+}
+else
+{
+    $NumXShiftC = (2*$r+1)/gcd(2*$r+1,$r*$b1);
+    $DenXShiftC = ($r*$b1)/gcd(2*$r+1,$r*$b1);
+}
+ 
+$NumXShiftCAbs = abs($NumXShiftC);
+$DenXShiftCAbs = abs($DenXShiftC);
+
+if($DenXShiftC == 1)
+{
+    if( $NumXShiftC == 1)
+    {
+        $XShiftC_tex = "pi";
+    } 
+    else
+    {
+        $XShiftC_tex = "$NumXShiftCAbs pi";
+    }
+}
+else
+{ 
+    if( $NumXShiftC == 1)
+    {
+        if($DenXShiftC<0)
+        {
+            $XShiftC_tex = "-pi/$DenXShiftCAbs";
+        }
+        else
+        {
+            $XShiftC_tex = "pi/$DenXShiftCAbs";
+        }
+    }
+    else
+    {
+        if( ($NumXShiftC < 0 && $DenXShiftC > 0) || 
+            ($NumXShiftC > 0 && $DenXShiftC < 0))
+        {
+            $XShiftC_tex = "- $NumXShiftCAbs pi/$DenXShiftCAbs";
+        }
+        else
+        {
+            $XShiftC_tex = "$NumXShiftCAbs pi/$DenXShiftCAbs";
+        }
+    }
+}
+
+$XShiftCModified = $period - $PI/$c;
+if($hSS == 0)
+{
+    $NumXShiftCModified = (2*$b1*$r-$b1)/gcd(2*$b1*$r-$b1,$r);
+    $DenXShiftCModified = $r/gcd(2*$b1*$r-$b1,$r);
+}
+else
+{
+    $NumXShiftCModified = (2*$r-1)/gcd(2*$r-1,$r*$b1);
+    $DenXShiftCModified = ($r*$b1)/gcd(2*$r-1,$r*$b1);
+}
+ 
+$NumXShiftCModifiedAbs = abs($NumXShiftCModified);
+$DenXShiftCModifiedAbs = abs($DenXShiftCModified);
+
+if($DenXShiftCModified == 1)
+{
+    if( $NumXShiftCModified == 1)
+    {
+        $XShiftCModified_tex = "pi";
+    } 
+    else
+    {
+        $XShiftCModified_tex = "$NumXShiftCModifiedAbs pi";
+    }
+}
+else
+{ 
+    if( $NumXShiftCModified == 1)
+    {
+        if($DenXShiftCModified<0)
+        {
+            $XShiftCModified_tex = "-pi/$DenXShiftCModifiedAbs";
+        }
+        else
+        {
+            $XShiftCModified_tex = "pi/$DenXShiftCModifiedAbs";
+        }
+    }
+    else
+    {
+        if( ($NumXShiftCModified < 0 && $DenXShiftCModified > 0) || 
+            ($NumXShiftCModified > 0 && $DenXShiftCModified < 0))
+        {
+            $XShiftCModified_tex = "- $NumXShiftCModifiedAbs pi/$DenXShiftCModifiedAbs";
+        }
+        else
+        {
+            $XShiftCModified_tex = "$NumXShiftCModifiedAbs pi/$DenXShiftCModifiedAbs";
+        }
+    }
+}
+ 
+$bSquared = $b1*$b1;
+$AbsR = abs($r);
+
+if($hSS == 0)
+{
+    $CB = $AbsR/$bSquared;
+    $PiOverCB = $PI/$CB;
+    $PiOverCB_tex = "$bSquared pi/$AbsR";
+
+    $XShiftCBRight = $period + $PiOverCB;
+    $NumXShiftCBRight = (2*$b1*$AbsR+$bSquared)/gcd(2*$b1*$AbsR+$bSquared,$r);
+    $DenXShiftCBRight = $AbsR/gcd(2*$b1*$AbsR+$bSquared,$AbsR);
+}
+else
+{
+    $CB = $AbsR*$bSquared;
+    $PiOverCB = $PI/$CB;
+    $PiOverCB_tex = "pi/$CB";
+    
+    $XShiftCBRight = $period + $PiOverCB;
+    $NumXShiftCBRight = (2*$AbsR*$b1+1)/gcd(2*$AbsR*$b1+1,$CB);
+    $DenXShiftCBRight = $CB/gcd(2*$AbsR*$b1+1,$CB);
+}
+
+$NumXShiftCBRightAbs = abs($NumXShiftCBRight);
+$DenXShiftCBRightAbs = abs($DenXShiftCBRight);
+
+if($DenXShiftCBRight == 1)
+{
+    if( $NumXShiftCBRight == 1)
+    {
+        $XShiftCBRight_tex = "pi";
+    } 
+    else
+    {
+        $XShiftCBRight_tex = "$NumXShiftCBRightAbs pi";
+    }
+}
+else
+{ 
+    if( $NumXShiftCBRight == 1)
+    {
+        if( $DenXShiftCBRight < 0)
+        {
+            $XShiftCBRight_tex = "- pi/$DenXShiftCBRightAbs";
+        }
+        else
+        {
+            $XShiftCBRight_tex = "pi/$DenXShiftCBRightAbs";
+        }
+    } 
+    else
+    {
+        if( ($NumXShiftCBRight < 0) && ($DenXShiftCBRight > 0) ||
+            ($NumXShiftCBRight > 0) && ($DenXShiftCBRight < 0) )
+        {
+            $XShiftCBRight_tex = "- $NumXShiftCBRightAbs pi/$DenXShiftCBRightAbs";
+        }
+        else
+        {
+            $XShiftCBRight_tex = "$NumXShiftCBRightAbs pi/$DenXShiftCBRightAbs";
+        }
+    }
+}
+
+if($hSS == 0)
+{
+    $CB = $AbsR/$bSquared;
+    $PiOverCB = $PI/$CB;
+    $PiOverCB_tex = "$bSquared pi/$AbsR";
+
+    $XShiftCBLeft = $period - $PiOverCB;
+    $NumXShiftCBLeft = (2*$b1*$AbsR-$bSquared)/gcd(2*$b1*$AbsR-$bSquared,$r);
+    $DenXShiftCBLeft = $AbsR/gcd(2*$b1*$AbsR-$bSquared,$AbsR);
+}
+else
+{
+    $CB = $AbsR*$bSquared;
+    $PiOverCB = $PI/$CB;
+    $PiOverCB_tex = "pi/$CB";
+    
+    $XShiftCBLeft = $period - $PiOverCB;
+    $NumXShiftCBLeft = (2*$AbsR*$b1-1)/gcd(2*$AbsR*$b1-1,$CB);
+    $DenXShiftCBLeft = $CB/gcd(2*$AbsR*$b1-1,$CB);
+}
+
+$NumXShiftCBLeftAbs = abs($NumXShiftCBLeft);
+$DenXShiftCBLeftAbs = abs($DenXShiftCBLeft);
+if($DenXShiftCBLeft == 1)
+{
+    if( $NumXShiftCBLeft == 1)
+    { 
+        $XShiftCBLeft_tex = "pi";
+    } 
+    else
+    { 
+        $XShiftCBLeft_tex = "$NumXShiftCBLeftAbs pi";
+    }
+}
+else
+{ 
+    if( $NumXShiftCBLeft == 1)
+    {
+        if( $DenXShiftCBLeft < 0)
+        {
+            $XShiftCBLeft_tex = "- pi/$DenXShiftCBLeftAbs";
+        }
+        else
+        {
+            $XShiftCBLeft_tex = "pi/$DenXShiftCBLeftAbs";
+        }
+    } 
+    else
+    {
+        if( ($NumXShiftCBLeft < 0) && ($DenXShiftCBLeft > 0) ||
+            ($NumXShiftCBLeft > 0) && ($DenXShiftCBLeft < 0) )
+        {
+            $XShiftCBLeft_tex = "- $NumXShiftCBLeftAbs pi/$DenXShiftCBLeftAbs";
+        }
+        else
+        {
+            $XShiftCBLeft_tex = "$NumXShiftCBLeftAbs pi/$DenXShiftCBLeftAbs";
+        }
+    }
+}
+
+#construct 4 graphs
+$fS4[0] = "$a sin($b (x - $PI/$c)) for x in <$XStart,$XShiftC> using color:blue and weight:2";
+$fS4[1] = "$a sin($b (x + $PI/$c)) for x in <$XModifiedStart,$XShiftCModified> using color:blue and weight:2";
+$fS4[2] = "$a sin($b x - $PI/$c) for x in <$PiOverCB,$XShiftCBRight> using color:blue and weight:2";
+$fS4[3] = "$a sin($b x + $PI/$c) for x in <-$PiOverCB,$XShiftCBLeft> using color:blue and weight:2";
+
+#plot the graphs
+$graphS4[0] = init_graph($XStart, -$AplusOne, $XShiftC, $AplusOne, axes=>[0,0], grid=>[4,$dyA],size=>[300,300]);
+$graphS4[0]->lb('reset');
+$graphS4[0]->lb(new Label($XStart,-.15,$XStart_tex,'black','left','top'));
+$graphS4[0]->lb(new Label($XShiftC,-.15,$XShiftC_tex,'black','right','top'));
+$graphS4[0]->lb(new Label($XStart+0.05,$vSSans,$vSSans,'black','left','top')); 
+$graphS4[0]->lb(new Label($XStart+0.05,-$vSSans,"-$vSSans",'black','left','top'));
+
+$graphS4[1] = init_graph($XModifiedStart, -$AplusOne, $XShiftCModified, $AplusOne, axes=>[0,0], grid=>[4,$dyA],size=>[300,300]);
+$graphS4[1]->lb('reset');
+$graphS4[1]->lb(new Label($XModifiedStart,-.15,$XModifiedStart_tex,'black','left','top'));
+$graphS4[1]->lb(new Label($XShiftCModified,-.15,$XShiftCModified_tex,'black','right','top'));
+$graphS4[1]->lb(new Label($XModifiedStart+0.05,$vSSans,$vSSans,'black','left','top')); 
+$graphS4[1]->lb(new Label($XModifiedStart+0.05,-$vSSans,"-$vSSans",'black','left','top'));
+
+$graphS4[2] = init_graph($PiOverCB, -$AplusOne, $XShiftCBRight, $AplusOne, axes=>[0,0], grid=>[4,$dyA],size=>[300,300]);
+$graphS4[2]->lb('reset');
+$graphS4[2]->lb(new Label($PiOverCB,-.15,$PiOverCB_tex,'black','left','top'));
+$graphS4[2]->lb(new Label($XShiftCBRight,-.15,$XShiftCBRight_tex,'black','right','top'));
+$graphS4[2]->lb(new Label($PiOverCB+0.05,$vSSans,$vSSans,'black','left','top')); 
+$graphS4[2]->lb(new Label($PiOverCB+0.05,-$vSSans,"-$vSSans",'black','left','top'));
+
+$graphS4[3] = init_graph(-$PiOverCB, -$AplusOne, $XShiftCBLeft, $AplusOne, axes=>[0,0], grid=>[4,$dyA],size=>[300,300]);
+$graphS4[3]->lb('reset');
+$graphS4[3]->lb(new Label(-$PiOverCB,-.15,"-$PiOverCB_tex",'black','left','top'));
+$graphS4[3]->lb(new Label($XShiftCBLeft,-.15,$XShiftCBLeft_tex,'black','right','top'));
+$graphS4[3]->lb(new Label(-$PiOverCB+0.05,$vSSans,$vSSans,'black','left','top')); 
+$graphS4[3]->lb(new Label(-$PiOverCB+0.05,-$vSSans,"-$vSSans",'black','left','top'));
+
+for ($j = 0; $j <=3; $j++){
+  plot_functions( $graphS4[$j], $fS4[$j]);
+  $plotS4[$j] = image(insertGraph($graphS4[$j]),width =>250,height=>250,tex_size=>310);
+}
+
+@permS4 = NchooseK(4,4);
+@plotS4 = @plotS4[@permS4];
+@letterS4 = ("A", "B", "C", "D");
+for ($j = 0; $j <= 3; $j++){ if ($permS4[$j] == 0) {$ansS4 = $letterS4[$j]; $j=3 }};
+
+Context()->texStrings;
+BEGIN_TEXT
+The graph of \(g(x) = $fun3 \) is the graph of \(f(x) = $fun2 \) shifted \{ $hPop->menu() \} by \{ans_rule(10)\} units.
+$PAR
+Select the graph that represents \( g(x) \) from the choices below. $BR
+$PAR
+\{
+$BCENTER.
+BeginTable().
+AlignedRow([$plotS4[0],$plotS4[1]]).
+TableSpace(4,0).
+AlignedRow(["A","B"]).
+TableSpace(20,6).
+AlignedRow([$plotS4[2],$plotS4[3]]).
+TableSpace(4,0).
+AlignedRow(["C","D"]).
+EndTable().
+$ECENTER
+\}
+
+$PAR
+$BR 
+$BITALIC You may click a graph to enlarge it. $EITALIC
+$BR $BR
+The graph of \(g(x)\) is identified by the letter \{ans_rule(5)\}
+$BR $BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($hPop->cmp());
+ANS(Compute($hans)->cmp());
+
+Context()->strings->add(A=>{}, B=>{}, C=>{}, D=>{});
+ANS(String($ansS4)->cmp());
+
+Section::End();
+
+###########################################
+Section::Begin("Step 5: Vertical shift");
+
+Context("Numeric");
+$refreshCachedImages = 1;
+
+if ($d < 0) {
+ $vPop = PopUp(["select", "down", "up"], "down");
+} else {
+ $vPop = PopUp(["select", "down", "up"], "up");
+}
+$vans = abs($d);
+
+#construct 4 graphs
+$fS5[0] = "$a sin($b (x - $PI/$c)) + $d for x in <$XStart,$XShiftC> using color:blue and weight:2";
+$fS5[1] = "$a cos($b (x - $PI/$c)) + $d for x in <$XStart,$XShiftC> using color:blue and weight:2";
+$fS5[2] = "$a sin($b (x - $PI/$c)) - $d for x in <$XStart,$XShiftC> using color:blue and weight:2";
+$fS5[3] = "$a cos($b (x - $PI/$c)) - $d for x in <$XStart,$XShiftC> using color:blue and weight:2";
+
+$yValueStartS5[0] = Compute("$a sin($b ($XStart - $PI/$c)) + $d");
+$yValueStartS5[1] = Compute("$a cos($b ($XStart - $PI/$c)) + $d");
+$yValueStartS5[2] = Compute("$a sin($b ($XStart - $PI/$c)) - $d");
+$yValueStartS5[3] = Compute("$a cos($b ($XStart - $PI/$c)) - $d");
+
+$yValueShiftS5[0] = Compute("$a sin($b ($XShiftC - $PI/$c)) + $d");
+$yValueShiftS5[1] = Compute("$a cos($b ($XShiftC - $PI/$c)) + $d");
+$yValueShiftS5[2] = Compute("$a sin($b ($XShiftC - $PI/$c)) - $d");
+$yValueShiftS5[3] = Compute("$a cos($b ($XShiftC - $PI/$c)) - $d");
+
+
+#check label
+for ($j = 0; $j <= 3; $j++)
+{
+$YMinValue_Up[$j] = -$vSSans + $d;
+$YMaxValue_Up[$j] = $vSSans + $d;
+
+$YMinValue_Down[$j] = -$vSSans - $d;
+$YMaxValue_Down[$j] = $vSSans - $d;
+
+if( $yValueStartS5[$j] == $YMinValue_Up[$j]) { $YMinValue_Up[$j] += 2; }
+    if( $yValueStartS5[$j] == $YMinValue_Down[$j]) { $YMinValue_Down[$j] += 2; }
+
+    if( $yValueShiftS5[$j] == $YMaxValue_Up[$j]) { $YMaxValue_Up[$j] -= 2; }
+    if( $yValueShiftS5[$j] == $YMaxValue_Down[$j]) { $YMaxValue_Down[$j] -= 2; }
+}
+#plot the graphs
+for ($j = 0; $j <= 1; $j++)
+{
+    $graphS5[$j] = init_graph($XStart, -$AplusOne + $d, $XShiftC, $AplusOne + $d, axes=>[0,0], grid=>[4,$dyA],size=>[300,300]);
+    $graphS5[$j]->lb('reset');
+    $graphS5[$j]->lb(new Label($XStart,$yValueStartS5[$j],$XStart_tex,'black','left','top'));
+    $graphS5[$j]->lb(new Label($XShiftC,$yValueShiftS5[$j],$XShiftC_tex,'black','right','top'));
+    $graphS5[$j]->lb(new Label($XStart+0.05,$YMaxValue_Up[$j],$YMaxValue_Up[$j],'black','left','top')); 
+    $graphS5[$j]->lb(new Label($XStart+0.05,$YMinValue_Up[$j],$YMinValue_Up[$j],'black','left','top'));
+}
+
+for ($j = 2; $j <= 3; $j++)
+{
+    $graphS5[$j] = init_graph($XStart, -$AplusOne - $d, $XShiftC, $AplusOne - $d, axes=>[0,0], grid=>[4,$dyA],size=>[300,300]);
+    $graphS5[$j]->lb('reset');
+$graphS5[$j]->lb(new Label($XStart,$yValueStartS5[$j],$XStart_tex,'black','left','top'));    $graphS5[$j]->lb(new Label($XShiftC,$yValueShiftS5[$j],$XShiftC_tex,'black','right','top'));
+    $graphS5[$j]->lb(new Label($XStart+0.05,$YMaxValue_Down[$j],$YMaxValue_Down[$j],'black','left','top')); 
+    $graphS5[$j]->lb(new Label($XStart+0.05,$YMinValue_Down[$j],$YMinValue_Down[$j],'black','left','top'));
+}
+
+for ($j = 0; $j <=3; $j++){
+  plot_functions( $graphS5[$j], $fS5[$j]);
+  $plotS5[$j] = image(insertGraph($graphS5[$j]),width =>250,height=>250,tex_size=>310);
+}
+
+@permS5 = NchooseK(4,4);
+@plotS5 = @plotS5[@permS5];
+@letterS5 = ("A", "B", "C", "D");
+for ($j = 0; $j <= 3; $j++){ if ($permS5[$j] == 0) {$ansS5 = $letterS5[$j]; $j=3 }};
+
+Context()->texStrings;
+BEGIN_TEXT
+The graph of \(g(x) = $fun4 \) is the graph of \(f(x) = $fun3 \) shifted \{ $vPop->menu() \} by \{ans_rule(10)\} units.
+$PAR
+Select the graph that represents \( g(x) \) from the choices below. $BR
+$PAR
+\{
+$BCENTER.
+BeginTable().
+AlignedRow([$plotS5[0],$plotS5[1]]).
+TableSpace(4,0).
+AlignedRow(["A","B"]).
+TableSpace(20,6).
+AlignedRow([$plotS5[2],$plotS5[3]]).
+TableSpace(4,0).
+AlignedRow(["C","D"]).
+EndTable().
+$ECENTER
+\}
+
+$PAR
+$BR 
+$BITALIC You may click a graph to enlarge it. $EITALIC
+$BR $BR
+The graph of \(g(x)\) is identified by the letter \{ans_rule(5)\}
+$BR $BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($vPop->cmp());
+ANS(Compute($vans)->cmp());
+
+Context()->strings->add(A=>{}, B=>{}, C=>{}, D=>{});
+ANS(String($ansS5)->cmp());
+
+Section::End();
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,187 @@
+##DESCRIPTION
+##  Lines & Planes
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+#####################################################################
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"parserParametricLine.pl",
+"answerCustom.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"scaffold.pl",
+);
+########################################################################
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#####################################################################
+
+Context("Numeric");
+$a = random(2,9,1);
+$b = random(2,8,1);
+$c = random(3,5,1);
+$d = random(3,6,1);
+
+Context("Point");
+$Q = Point($a,0,-$b);
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$V = Vector(2,-$c,$d);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Construct a vectorial equation for the line \( \ell \) passing through the point  
+\( Q = $Q \) and parallel to the vector \(2\mathbf{i}-$c\mathbf{j}+$d\mathbf{k}\).
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Construct the generator vector");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+#check box 1
+$ans_eval1 = $V->cmp( checker=>sub {
+  my ($correct, $student, $ansHash) = @_;
+  return $correct->isParallel($student);
+});
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1 = $ans_hash1->{score};
+
+if($TESTbox1)
+{
+    $V = Vector($inputs_ref->{ANS_NUM_TO_NAME(1)});
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{v} \) be the generator vector for the line \( \ell \). $BR $BR
+
+$BR
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v} \) ","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+#ANS($V->cmp);
+ANS( $V->cmp( checker=>sub {
+  my ($correct, $student, $ansHash) = @_;
+  return $correct->isParallel($student);
+}, showCoordinateHints => 0 ) );
+
+
+Section::End();
+
+###########################################
+Section::Begin("Choose a support point");
+
+Context("Point");
+$P = $Q;
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( P \) be the support point for the line \( \ell \). $BR $BR
+
+We have $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( P \) ","\( = \)",ans_rule(15),"(write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($P->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Construct the vectorial equation");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->variables->are(t=>"Real");
+
+#  for checking a particular vector parametric line
+sub mycheck {
+  my ($correct, $student, $ansHash) = @_;
+
+  if ( 
+       ($correct . i == $student . i) && 
+       ($correct . j == $student . j) && 
+       ($correct . k == $student . k) 
+     ) 
+  { return 1; } else { return 0; }
+}
+
+$T = Formula("t");
+$line = $P + $T * $V;
+
+Context()->texStrings;
+BEGIN_TEXT
+Thus, the vectorial equation of the line is $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \ell: (x,y,z) \) ","\( = \)",ans_rule(40),"(write the vectorial equation as \( P + t \vec{v} \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( custom_cmp( $line, ~~&mycheck, showCoordinateHints=>1 ) );
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();

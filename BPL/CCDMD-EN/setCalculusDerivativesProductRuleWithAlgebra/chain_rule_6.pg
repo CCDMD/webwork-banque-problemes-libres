@@ -1,0 +1,218 @@
+##DESCRIPTION
+##  Derivative - Product Rule with algebra
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation of Functions')
+## KEYWORDS('chain differentiation', 'derivative', 'derivative of the product of functions')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,5,1);
+$b = random(1,9,1);
+$c = random(2,5,1);
+$d = random(1,9,1);
+$n = random(2,5,1);
+$m1 = random(2,6,1);
+$m2 = random(2,6,1);
+
+if ( $m1 == $m2) { $m2 += 1; }
+
+$m11 = $m1 - 1;
+$m21 = $m2 - 1;
+$n1 = $n - 1;
+
+#\( f(x) = \frac{($a x^$n + $b)^{$m1}}{($c x + $d)^{$m2}} \)
+
+Context("Numeric");
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)+y');
+
+$f = Compute("($a x^$n + $b)^$m1")->reduce;
+$g = Compute("($c x + $d)^$m2")->reduce;
+
+$df = $f->D('x');
+$dg = $g->D('x');
+$df_g = ($f->D('x') * $g)->reduce;
+$f_dg = ($f * $g->D('x'))->reduce;
+$equation = $f*$g;
+$dequation = $equation->D('x');
+
+$gcdCF = gcd($m1*$a*$n,$m2*$c);
+$common_factor = Compute("$gcdCF ($a x^$n + $b)^$m11 ($c x + $d)^$m21");
+
+Context("LimitedPolynomial-Strict");
+$num1 = $m1*$a*$n*$c/$gcdCF + $m2*$c*$a/$gcdCF;
+$num2 = $m1*$a*$n*$d/$gcdCF;
+$num3 = $m2*$c*$b/$gcdCF;
+$other_factor = Formula("$num1 x^$n + $num2 x^$n1 + $num3")->reduce;
+
+$gcd12 = gcd($num1,$num2);
+$gcdOF = gcd($gcd12,$num3);
+$num1a = $num1/$gcdOF;
+$num2a = $num2/$gcdOF;
+$num3a = $num3/$gcdOF;
+$factored_other_factor = Formula("$num1a x^$n + $num2a x^$n1 + $num3a")->reduce;
+
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 16,
+message => "either 0 or 1",
+);
+$coeff1 = $m1*$a*$n/$gcdCF;
+$coeff2 = $m2*$c/$gcdCF;
+$formula1 = Compute("$coeff1 x^$n1 ($c x + $d)");
+$formula2 = Compute("$coeff2 ($a x^$n + $b)");
+$expanded_other_factor = Compute("$gcdOF $factored_other_factor");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Let \( \displaystyle f(x) = $equation \). 
+Find \(f'(x)\) and simplify.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR$BITALIC$BBOLD Part 1: Finding the derivative $EBOLD$EITALIC $BR$BR
+
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f'(x) \)","\( = \)","\( \displaystyle \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \cdot \big( \)".ans_rule(10)."\( \big) + \big( \)".ans_rule(10)."\( \displaystyle \big) \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \)"], align=>LEFT, separation=>0).
+AlignedRow(["","","(apply the product rule)" ], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)","\( \big( \)".ans_rule(10)."\( \big) \big( \)".ans_rule(10)."\( \big) + \big( \)".ans_rule(10)."\( \big) \big( \)".ans_rule(10)."\( \big) \)"], align=>LEFT, separation=>0).
+AlignedRow(["","","(find the derivative)" ], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+$HR
+$BR$BITALIC$BBOLD Part 2: Finding the common factor $EBOLD$EITALIC $BR$BR
+
+Common factor \(=\) \{ans_rule(25)\}
+
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 3: Finding the other factor $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(25).$BR.$HR.ans_rule(25),"\( + \)",ans_rule(25).$BR.$HR.ans_rule(25),"(divide every term of the derivative by the common factor)" ], align=>CENTER, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(25)."\( + \)".ans_rule(25),"(simplify each term)" ], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(15),"(simplified form)"], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+$BR 
+END_TEXT
+Context()->texStrings;
+
+if($gcdOF != 1) 
+{
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(2)."\( \big( \)".ans_rule(15)."\( \big) \)","(factor out the common term)"], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+$BR
+END_TEXT
+Context()->texStrings;
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+Other factor \(=\) \{ans_rule(15)\}
+
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 4: Writing the factored form of the derivative $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f'(x) \)","\( = \)",ans_rule(40),"(factorized as common factor \( \times \) other factor)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+
+END_TEXT
+Context()->texStrings;
+
+#Part 1
+ANS($f->cmp);
+ANS($g->cmp);
+ANS($f->cmp);
+ANS($g->cmp);
+
+#derivative
+ANS($df->cmp);
+ANS($g->cmp);
+ANS($f->cmp);
+ANS($dg->cmp);
+
+#Part 2
+ANS($common_factor->cmp);
+
+#Part 3
+ANS($df_g->cmp);
+ANS($common_factor->cmp);
+ANS($f_dg->cmp);
+ANS($common_factor->cmp);
+
+ANS($formula1->cmp);
+ANS($formula2->cmp);
+
+ANS($other_factor->cmp);
+
+if($gcdOF != 1) 
+{
+ANS(Compute("$gcdOF")->cmp);
+ANS($factored_other_factor->cmp);
+}
+
+ANS($expanded_other_factor->cmp);
+
+#Part 4
+ANS($dequation->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

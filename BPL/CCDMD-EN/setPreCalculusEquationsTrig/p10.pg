@@ -1,0 +1,320 @@
+## DESCRIPTION
+## Precalculus: Trigonometry
+## ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Trigonometric Function)
+##KEYWORDS('trigonometric equation', 'trigonometric identity')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"contextLimitedPolynomial.pl",
+"contextFraction.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+@values =('1','-4');
+
+$tag1 = random(0,1,1);
+
+@ans1 = (1/3,2/3);
+@ans2 = (5/3,4/3);
+
+$LHS = Compute("2 (sin(x))^2 +$values[$tag1] ")->reduce;
+$RHS = Compute("5 cos(x)")->reduce;
+$equation = $LHS - $RHS;
+
+@roots = num_sort((Compute("$ans1[$tag1]*pi"),Compute("$ans2[$tag1]*pi")));
+$solution_set = List($roots[0],$roots[1]);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Solve \( \displaystyle $LHS = $RHS\) where \( 0 \leq x \leq 2 \pi \)
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Solve for \(x\)");
+
+Context("Numeric");
+#$a x^2 + $b x + $c
+$a = 2;
+$b = 5;
+$c = -(2 + $values[$tag1]);
+$d = sqrt($b*$b-4*$a*$c);
+
+Context()->texStrings;
+BEGIN_TEXT
+We have 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $LHS \)","\( = \)","\( $RHS \)"], align=>RIGHT, separation=>0, indent=>120).
+
+AlignedRow([ans_rule(22),"\( = \)","\( 0 \)"], align=>LEFT, separation=>0, indent=>120).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(2)."\( \cos^2(x) + \)".ans_rule(2)."\( \cos(x) + \)".ans_rule(2),"\( = \)","\( 0 \)"], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["(use an appropriate trigonometric identity to rewrite with only \( \cos(x) \), making sure that the coefficient for \( \cos^2(x)\) is positive)"], align=>LEFT, separation=>0, indent=>5).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($equation->cmp);
+ANS(Compute("$a")->cmp);
+ANS(Compute("$b")->cmp);
+ANS(Compute("$c")->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context("Numeric");
+$expandedform = Compute("$a cos^2(x) + $b cos(x) + $c")->reduce;
+
+$LHS_S1 = Compute("cos(x)");
+
+$popFactor = PopUp(["Choose", "factor", "use the quadratic formula"],"factor");
+$popQuad = PopUp(["Choose", "factor", "use the quadratic formula"],"use the quadratic formula");
+
+#check box 5
+$ans_eval5 = $popFactor->cmp();
+$ans_hash5 = $ans_eval5->evaluate($inputs_ref->{ANS_NUM_TO_NAME(5)});
+$TESTFactor = $ans_hash5->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+To solve \( $expandedform = 0\), I will \{ $popFactor->menu() \}.
+$BR
+END_TEXT
+Context()->normalStrings;
+
+if($TESTFactor)
+{
+    ANS($popFactor->cmp() );
+}
+else
+{
+    ANS($popQuad->cmp() );
+}
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context("Numeric");
+$gcd1 = gcd(-$b - $d,2*$a);
+$coeff1_Num = (-$b - $d)/$gcd1;
+$coeff1_Den = (2*$a)/$gcd1;
+$gcd2 = gcd(-$b + $d,2*$a);
+$coeff2_Num = (-$b + $d)/$gcd2;
+$coeff2_Den = (2*$a)/$gcd2;
+
+Context("LimitedFraction");
+$RHS_S1m = Compute("$coeff1_Num/$coeff1_Den");
+$RHS_S1p = Compute("$coeff2_Num/$coeff2_Den");
+
+if($TESTFactor)
+{
+
+#
+#  Factored form
+#
+Context("Numeric");
+$factor1 = Compute("$coeff1_Den cos(x) - $coeff1_Num");
+$factor2 = Compute("$coeff2_Den cos(x) - $coeff2_Num");
+    
+#check box 6
+$ans_eval6 = $factor1->cmp();
+$ans_hash6 = $ans_eval6->evaluate($inputs_ref->{ANS_NUM_TO_NAME(6)});
+$TESTbox6 = $ans_hash6->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $expandedform \)","\( = \)","\( \Big( \)".ans_rule(10)."\( \Big) \Big( \)".ans_rule(10)."\( \Big) \)","(factorized)"],       align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Solving for \($LHS_S1\) gives us (in ascending order)
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $LHS_S1 = \)",ans_rule(10),"\( \quad \)","or","\( \quad $LHS_S1 = \)",ans_rule(10)], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+if($TESTbox6)
+{
+    ANS($factor1->cmp); 
+    ANS($factor2->cmp); 
+}
+else
+{
+    ANS($factor2->cmp); 
+    ANS($factor1->cmp); 
+}
+
+ANS($RHS_S1m->cmp(studentsMustReduceFractions=>1));
+ANS($RHS_S1p->cmp(studentsMustReduceFractions=>1));
+}
+else
+{
+Context("Numeric");
+Context()->operators->undefine("+","-");
+$sqrtValue = Compute("$d");
+
+#
+# Forces a numerical answer as opposed to a formula
+#
+Context("LimitedPolynomial-Strict");
+Context()->operators->undefine("/"," /","/ ","//");
+$coeff1 = 2*$a;
+$bValue = Compute("-$b");
+$TwoaValue = Compute("$coeff1");
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $LHS_S1 \)","\( = \)","\( \displaystyle \frac{-b \pm \sqrt{b^2-4ac}}{2a} \)","(quadratic formula)" ], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(5)."\( \pm \)".ans_rule(5).$BR.$HR.ans_rule(5),"(give the numerical values of \( -b \), \(\sqrt{b^2-4ac}\) and \( 2a\))"], align=>CENTER, separation=>0, indent=>40).
+EndTable()
+\}
+$BR $BR
+Solving for \($LHS_S1\) gives us (in ascending order)
+$BR
+    \{ 
+    BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+    AlignedRow(["\( $LHS_S1 = \)",ans_rule(10),"\( \quad \)","or","\( \quad $LHS_S1 = \)",ans_rule(10)], align=>LEFT, separation=>0, indent=>0).
+
+    EndTable()
+    \}
+END_TEXT
+Context()->normalStrings;
+
+ANS($bValue->cmp);
+ANS($sqrtValue->cmp);
+ANS($TwoaValue->cmp);
+
+ANS($RHS_S1m->cmp(studentsMustReduceFractions=>1));
+ANS($RHS_S1p->cmp(studentsMustReduceFractions=>1));
+
+}
+
+Section::End();
+
+
+###########################################
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+When \( $LHS_S1 = $RHS_S1m \), it is impossible to solve for \(x\) since 
+\( -1 \leq $LHS_S1 \leq 1 \).
+$BR $BR
+
+Type $BBOLD ok $EBOLD in the box: \{ans_rule(5)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(str_cmp("ok"));
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+When \( $LHS_S1 = $RHS_S1p \)
+$BR $BR
+Solving for \(x\) gives us (in ascending order)
+$BR
+\(x_1 = \) \{ans_rule(10)\} and \(x_2 = \) \{ans_rule(10)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($roots[0]->cmp);
+ANS($roots[1]->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Check your solution");
+
+Section::End();
+
+###########################################
+Section::Begin("State the solution");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD $BR
+Enter your answer in a comma-separated list. $BR
+If the solution set is the empty set, write $BBOLD none$EBOLD.
+$BR $HR $BR
+Thus, the solution set is {\{ans_rule(30)\}}.$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($solution_set->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

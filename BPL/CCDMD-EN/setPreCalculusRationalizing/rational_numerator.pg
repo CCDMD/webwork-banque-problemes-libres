@@ -1,0 +1,110 @@
+#DESCRIPTION
+##  Algebra problem: simplifying fraction using conjugation
+##  Rationalize the denominator
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('conjugate pairs','rational fraction','square root')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"contextLimitedPolynomial.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->variables->set(x=>{limits=>[1,2]});
+Context()->variables->add(y => 'Real', limits=>[2,3]);
+
+$tag1 = random(0,2,1);
+@choose1=(2,3,4);
+$a = $choose1[$tag1];
+$tag2 = random(0,2,1);
+@choose2=(5,7,11);
+$b = $choose2[$tag2];
+
+$c = random(2,9,1);
+
+$Term1 = Compute("$b sqrt{x + 1}");
+$Term2 = Compute("$a sqrt{y - 1}");
+$ToRationalize = $Term1 + $Term2;
+$ToRationalize_tex = "$b \sqrt{x + 1} + $a \sqrt{y - 1}";
+
+$equation_tex = "\frac{$ToRationalize_tex}{$c x}";
+$conjugate = $Term1 - $Term2;
+
+$ansDen = Compute("$c x $conjugate");
+
+#$b**2*x - $a**2*y + $b**2 + $a**2
+Context("LimitedPolynomial-Strict");
+Context()->variables->set(x=>{limits=>[1,2]});
+Context()->variables->add(y => 'Real', limits=>[2,3]);
+$coeff1 = $b**2;
+$coeff2 = $a**2;
+$coeff3 = $b**2 + $a**2;
+$ansNum = Compute("$coeff1 x - $coeff2 y + $coeff3");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Rationalize the numerator of $BR $BR
+\( \quad \displaystyle $equation_tex \)
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle $equation_tex \)","\( = \)",ans_rule(20).$BR.$HR.ans_rule(20),"\( \Bigg( \)",ans_rule(20).$BR.$HR.ans_rule(20),"\( \Bigg) \)","(rewrite the original equation and then multiply by the conjugate of \( $ToRationalize_tex )\))" ], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)","\( \Big( \)".ans_rule(5)."\( \Big)^2 - \Big( \)".ans_rule(5)."\( \Big)^2 \)".$BR.$HR.ans_rule(25),"(rewrite the numerator as a difference of squares \( a^2 - b^2 \))" ], align=>CENTER, separation=>0, indent=>110).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(20).$BR.$HR.ans_rule(20),"(simplify)" ], align=>LEFT, separation=>0, indent=>110).
+EndTable()
+\}
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#mulitply by conjugate
+ANS($ToRationalize->cmp(limits=>[2,3]));
+ANS(Compute("$c x")->cmp);
+ANS($conjugate->cmp(limits=>[2,3]));
+ANS($conjugate->cmp(limits=>[2,3]));
+
+#perfect squares
+ANS($Term1->cmp);
+ANS($Term2->cmp(limits=>[2,3]));
+ANS($ansDen->cmp(limits=>[2,3]));
+
+#answer
+ANS($ansNum->cmp);
+ANS($ansDen->cmp(limits=>[2,3]));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

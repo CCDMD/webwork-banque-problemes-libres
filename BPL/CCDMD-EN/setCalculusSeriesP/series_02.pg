@@ -1,0 +1,105 @@
+##DESCRIPTION
+##  p-Series
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Sequences, Summation and Series')
+## KEYWORDS('convergence and divergence', 'series', 'Riemann P series')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"unionTables.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"PGcourse.pl"
+);
+
+$poptype = PopUp(["Choose","geometric","p", "telescoping", "other"],"other");
+$poptype2 = PopUp(["Choose","geometric","p", "telescoping", "other"],"p");
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = non_zero_random(-10,10,1);
+$b1 = random(2,10,1);
+$s = random(-1,1,2);
+$b = $s*$b1;
+$c = random(2,9,2);
+$d = random(2,7,1);
+$e = random(2,7,1);
+$n = random(4,6,1);
+$N1 = "n**($c/$e)";
+$N2 = "n**($d)";
+
+if($e==2) {
+$first = "\sqrt{n^$c}";
+} else {
+$first = "\root $e \of {n^$c}";
+}
+
+$sign = "+";
+if( $s == -1) {$sign = "-";}
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Determine if the series is convergent or divergent.
+$BR If it converges, determine the sum (if possible). $BR $BR
+\[ \sum_{n=1}^\infty \left( \frac{$a}{ $first } $sign \frac{$b1}{n^$d} \right)\]
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+We have a \{ $poptype->menu() \} series but it can be decomposed into two \{ $poptype2->menu() \} series:$BR$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \sum_{n=1}^\infty \left( \frac{$a}{$first} $sign \frac{$b1}{n^$d} \right)\)","\( = \)", ans_rule(3), "\(\displaystyle \sum_{n=1}^{\infty}\)","\(1\)".$BR.$HR.ans_rule(6),"\($sign\)", ans_rule(3), "\(\displaystyle \sum_{n=1}^{\infty}\)","\(1\)".$BR.$HR.ans_rule(6)], align=>center, separation=>0).
+EndTable()
+\}
+$BR
+The first series is a p-series with \( p = \) \{ans_rule(3)\} which is \{ans_rule(12)\} (convergent or divergent).$BR
+The second series is a p-series with \( p = \) \{ans_rule(3)\} which is \{ans_rule(12)\} (convergent or divergent).$BR$BR
+
+Thus the series \(\displaystyle \sum_{n=1}^\infty \left( \frac{$a}{$first} $sign \frac{$b1}{n^$d} \right)\) is \{ans_rule(12)\} (convergent, divergent or inconclusive).
+END_TEXT
+
+ANS( $poptype->cmp() );
+ANS( $poptype2->cmp() );
+
+# a simple code to perform a summation. (for A)
+	$i = 1;
+	$sum = 0;
+	while ($i <= $n ) {
+                $fofi = $a/($i**($c/$e)) + $b/($i**$d) ;
+		$sum = $sum + $fofi;
+		$i = $i +1 ;
+	}
+
+if ($c > $e) {
+	$answer = $sum;
+        $s1b = "convergent";
+} else {
+	$answer = 'DIV';
+        $s1b = "divergent";
+}
+
+ANS(num_cmp($a));
+ANS(fun_cmp("$N1", vars=>["n"]));
+ANS(num_cmp($b1));
+ANS(fun_cmp("$N2", vars=>["n"]));
+
+ANS(num_cmp($c/$e));
+ANS(str_cmp($s1b));
+
+ANS(num_cmp($d));
+ANS(str_cmp("convergent"));
+
+ANS(str_cmp($s1b));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

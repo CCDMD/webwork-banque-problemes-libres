@@ -1,0 +1,101 @@
+##DESCRIPTION
+##  Indefinite Integrals - Substitution
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Sequences, Summation and Series')
+## KEYWORDS('convergence and divergence', 'sequence')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl", 
+"MathObjects.pl", 
+"PGunion.pl",
+"PGcourse.pl",
+"parserPopUp.pl"
+);
+
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$popcon = PopUp(["Choose","convergent","divergent"],"divergent");
+
+$a = random(2,5,1);
+$b = random(2,7,1);
+$c = random(3,10,1);
+$d = random(-9,9,1);
+$exp = $b + 2;
+$p = random(1,7,1);
+$q = $p + 2;
+$m1 = random(1,5,1);
+$m2 = $m1 + 3;
+$exp1 = random(1,8,1);
+$exp2 = $exp1 + 1;
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR 
+Determine if the sequence \( \displaystyle a_n = \frac{$a n^{$q}}{n^{$p} + $c} \) is convergent or divergent.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+We have $BR $BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{n\to\infty} \frac{$a n^{$q}}{n^{$p} + $c} = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \(n\) with \( \infty \))"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \) ",ans_rule(3)."\( \big( \)".ans_rule(10)."\( \big) \)".$BR.$HR.ans_rule(3)."\( \big( \)".ans_rule(10)."\( \big) \)","(factor the highest power)"],align => "LEFT",separation => 0, indent => 100).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \) ",ans_rule(10).$BR.$HR.ans_rule(10),"(simplify)"],align => "LEFT",separation => 0, indent => 100).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(10),"(evaluate)"],align => "LEFT",separation => 0, indent => 100).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+Enter $BBOLD INF $EBOLD for \(\infty\), $BBOLD -INF $EBOLD for \(-\infty\),
+and $BBOLD DNE $EBOLD if the limit does not exist.
+$BR $BR
+Thus, the sequence \( a_n \) is \{ $popcon->menu() \}
+END_TEXT
+#sub
+ANS(Compute("inf")->cmp());
+ANS(Compute("inf")->cmp());
+
+#factor
+Context()->variables->are(n=>"Real");
+ANS(Compute("n^$q")->cmp);
+ANS(Compute("$a")->cmp);
+ANS(Compute("n^$p")->cmp);
+ANS(Compute("1+$c/n^$p")->cmp);
+
+#simplify
+ANS(Compute("$a n^2")->cmp);
+ANS(Compute("1+$c/n^$p")->cmp);
+
+#answer
+ANS(Compute("inf")->cmp); 
+ANS( $popcon->cmp() );
+
+ENDDOCUMENT;	

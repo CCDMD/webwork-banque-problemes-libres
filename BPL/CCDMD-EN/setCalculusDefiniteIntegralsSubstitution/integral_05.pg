@@ -1,0 +1,143 @@
+##DESCRIPTION
+##  Integrals - Substitution method
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('change of bounds', 'change of variable', 'definite integral')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGunion.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+"PGcourse.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$pi = arccos(-1);
+$a = random(2,4,1);
+
+$b = $pi / $a;
+$c = sin($b);
+$e = exp(1);
+$f = random(2,9,1);
+
+$soln = $f*(exp($c) - 1);
+
+$int = "$f e^{\sin (x)} \cos (x)";
+$upper = $pi/$a;
+$lower = 0;
+
+Context("Numeric");
+Context()->variables->add('dx' => 'Real');
+
+#box 3
+$ans_eval3 = Compute("dx")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3 = $ans_hash3->{score};
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Evaluate
+$BR $BR
+\( \displaystyle \int_{0}^{\pi /$a} $int \, dx. \)
+$BR
+$BR
+$PAR
+$HR $BR
+$BBOLD Solution $EBOLD $BR $BR
+Let $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["\( u \)", "\( = \)",ans_rule(10),"(choose \(u\))"], align=>LEFT, separation=>0).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(u\))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+When \( \displaystyle x = \frac{\pi}{$a} \), we have \( u = \) \{ ans_rule(5) \}
+$BR $BR 
+When \( x = $lower \), we have \( u = \) \{ ans_rule(5) \}
+$BR $BR
+We have
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \int_{0}^{\pi /$a} $int \, dx \)","\( = \)",ans_rule(3)."\( \displaystyle \int\)",ans_rule(4).$BR.$BR.ans_rule(4),ans_rule(10).ans_rule(2)], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["(an integral with \(u\). Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0, indent=>170).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(3)."\( \Bigg[ \)".ans_rule(12)."\( \Bigg] \)",ans_rule(4).$BR.$BR.ans_rule(4),"(integrate with respect to \(u\))"], align=>LEFT, separation=>0, indent=>160).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(40),"(evaluate)"], align=>LEFT, separation=>0, indent=>160).
+EndTable()
+\}
+
+$BR
+
+END_TEXT
+
+#e^{\sin (x)} \cos (x)
+
+#u
+ANS(fun_cmp("sin(x)", vars=>["u","x","du","dx"]));
+
+#du/dx
+ANS(fun_cmp("du", vars=>["u","x","du","dx"]));
+if ($TESTbox3) 
+{
+ANS(fun_cmp("dx", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("cos(x)", vars=>["u","x","du","dx"]));
+}
+else
+{
+ANS(fun_cmp("1", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("cos(x) dx", vars=>["u","x","du","dx"]));
+}
+
+#upper & lower
+ANS(num_cmp("sin($upper)"));
+ANS(num_cmp("sin($lower)"));
+
+#integral with u
+ANS(num_cmp("$f"));
+ANS(num_cmp("sin($upper)"));
+ANS(num_cmp("sin($lower)"));
+ANS(fun_cmp("e^u", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("du", vars=>["u","x","du","dx"]));
+
+#answer of integral with u
+ANS(num_cmp("$f"));
+ANS(fun_cmp("e^u", vars=>["u","x","du","dx"]));
+ANS(num_cmp("sin($upper)"));
+ANS(num_cmp("sin($lower)"));
+
+
+$ans = $soln;
+ANS(num_cmp($ans));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

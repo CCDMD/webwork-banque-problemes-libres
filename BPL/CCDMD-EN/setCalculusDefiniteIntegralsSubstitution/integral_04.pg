@@ -1,0 +1,136 @@
+##DESCRIPTION
+##  Integrals - Substitution method
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('change of bounds', 'change of variable', 'definite integral')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGunion.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$m = random(4,9,1);
+$answ = (1-0.5**(1-$m))/(1-$m);
+
+$int = "\frac{\cos(z)}{\sin^{$m}(z)}";
+$upper = pi/2;
+$lower = pi/6;
+
+#\int_{\pi/6}^{\pi/2} \frac{\cos(z)}{\sin^{$m}(z)}\, dz\)
+
+Context("Numeric");
+Context()->variables->add('dz' => 'Real');
+
+#box 3
+$ans_eval3 = Compute("dz")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3 = $ans_hash3->{score};
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Evaluate
+$BR $BR
+\( \displaystyle \int_{\pi/6}^{\pi/2} $int \, dz. \)
+$BR
+$BR
+$PAR
+$HR $BR
+$BBOLD Solution $EBOLD $BR $BR
+Let $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["\( u \)", "\( = \)",ans_rule(10),"(choose \(u\))"], align=>LEFT, separation=>0).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(u\))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+When \( \displaystyle x = \frac{\pi}{2} \), we have \( u = \) \{ ans_rule(5) \}
+$BR $BR 
+When \( \displaystyle x = \frac{\pi}{6} \), we have \( u = \) \{ ans_rule(5) \}
+$BR $BR $BR
+We have
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \int_{\pi/6}^{\pi/2} $int \, dz \)","\( = \)",ans_rule(3)."\( \displaystyle \int\)",ans_rule(4).$BR.$BR.ans_rule(4),ans_rule(10).ans_rule(2)], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["(an integral with \(u\). Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0, indent=>150).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(3)."\( \Bigg[ \)".ans_rule(12)."\( \Bigg] \)",ans_rule(4).$BR.$BR.ans_rule(4),"(integrate with respect to \(u\))"], align=>LEFT, separation=>0, indent=>140).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(40),"(evaluate)"], align=>LEFT, separation=>0, indent=>140).
+EndTable()
+\}
+
+$BR
+
+END_TEXT
+
+
+#u
+ANS(fun_cmp("sin(z)", vars=>["u","z","du","dz"]));
+
+#du/dx
+ANS(fun_cmp("du", vars=>["u","z","du","dz"]));
+if ($TESTbox3) 
+{
+ANS(fun_cmp("dz", vars=>["u","z","du","dz"]));
+ANS(fun_cmp("cos(z)", vars=>["u","z","du","dz"]));
+}
+else
+{
+ANS(fun_cmp("1", vars=>["u","z","du","dz"]));
+ANS(fun_cmp("cos(z) dz", vars=>["u","z","du","dz"]));
+}
+
+#upper & lower
+ANS(num_cmp(1));
+ANS(num_cmp(1/2));
+
+#integral with u
+ANS(num_cmp("1"));
+ANS(num_cmp(1));
+ANS(num_cmp(1/2));
+ANS(fun_cmp("1/u^$m", vars=>["u","z","du","dz"]));
+ANS(fun_cmp("du", vars=>["u","z","du","dz"]));
+
+#answer of integral with u
+ANS(num_cmp("1"));
+ANS(fun_cmp("u^(-$m+1)/(-$m+1)", vars=>["u","z","du","dz"]));
+ANS(num_cmp(1));
+ANS(num_cmp(1/2));
+
+ANS(num_cmp($answ));
+
+ENDDOCUMENT();
+

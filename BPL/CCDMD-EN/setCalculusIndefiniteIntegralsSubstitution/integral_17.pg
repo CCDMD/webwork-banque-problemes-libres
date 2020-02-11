@@ -1,0 +1,108 @@
+##DESCRIPTION
+##  Indefinite Integrals - Substitution
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('change of variable', 'indefinite integral')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGstandard.pl", 
+"MathObjects.pl", 
+"PGunion.pl",
+"PGcourse.pl"
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$a=random(2,10,1);
+$k=random(2,10,1)*random(-1,1,2);
+$b=random(1,10,1)*random(-1,1,2);
+$c=random(2,10,1);
+$u="$a*t+$b";
+
+Context("Numeric");
+Context()->variables->add('dt' => 'Real');
+
+#box 3
+$ans_eval3 = Compute("dt")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3 = $ans_hash3->{score};
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Compute \( \displaystyle \int {\frac{$k}{($a t + $b)^{$c}}}\, dt\).
+$BR
+$PAR
+$BBOLD Solution $EBOLD $BR $BR
+Let $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( u \)", "\( = \)",ans_rule(10),"(choose \(u\))"], align=>LEFT, separation=>0).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(u\))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+We have
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \int {\frac{$k}{($a t + $b)^{$c}}}\, dt \)","\( = \)",ans_rule(3)."\( \displaystyle \int\)".ans_rule(10).ans_rule(2)], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["(an integral with \(u\). Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0, indent=>130).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(3)."\( \big( \)".ans_rule(12)."\( \big) + \)".ans_rule(1),"(integrate with respect to \(u\))"], align=>LEFT, separation=>0, indent=>110).
+AlignedRow(["","\( = \)",ans_rule(30),"(rewrite with respect to \(t\))"], align=>LEFT, separation=>0, indent=>110).
+EndTable()
+\}
+
+
+END_TEXT
+
+#u
+ANS(fun_cmp("$u", vars=>["u","t","du","dt"]));
+
+#du/dt
+ANS(fun_cmp("du", vars=>["u","t","du","dt"]));
+if ($TESTbox3) 
+{
+ANS(fun_cmp("dt", vars=>["u","t","du","dt"]));
+ANS(fun_cmp("$a", vars=>["u","t","du","dt"]));
+}
+else
+{
+ANS(fun_cmp("$a", vars=>["u","t","du","dt"]));
+ANS(fun_cmp("dt", vars=>["u","t","du","dt"]));
+}
+
+ANS(num_cmp("$k/$a"));
+ANS(fun_cmp("1/u**($c)", vars=>["u","t","du","dt"]));
+ANS(fun_cmp("du", vars=>["u","t","du","dt"]));
+
+ANS(num_cmp("$k/$a"));
+ANS(fun_cmp("1/((-$c+1)*u^($c-1))", mode=>"antider", vars=>["u","t","du","dt"]));
+ANS(str_cmp("C"));
+
+ANS(fun_cmp("$k/$a*1/((-$c+1)*($a*t+$b)^($c-1))+C", vars=>["u","t","du","dt","C"]));
+
+ENDDOCUMENT();

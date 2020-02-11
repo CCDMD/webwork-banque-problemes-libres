@@ -1,0 +1,97 @@
+##DESCRIPTION
+##  Algebra problem: factor
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('difference of squares','factor','factorization')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,5,1);  #$a and $b must be relatively prime.
+do {$b = random(2,7,1);} until (gcd($a,$b)==1);
+$n = random(4,6,1);
+$n2 = $n*2;
+
+#
+# Formula ($a*x^$n - $b)* ($a*x^$n + $b)
+# 
+
+$equation = Formula("$a^2 x^$n2 - $b^2")->reduce->TeX;; 
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => $n,
+message => "either 0 or 1",
+);
+#$factoredform = Compute("($ax-$b)($ax+$b)");
+$factor1 = Formula("$a x^$n");
+$factor2 = Formula("$b");
+$factoredform = Compute("($factor1 - $factor2)($factor1 + $factor2)");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Factor \( $equation \) 
+
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equation \)","\( = \)","\( \Big( \)".ans_rule(2)."\( \Big)^2 - \Big( \)".ans_rule(2)."\( \Big)^2 \)","(rewrite as a difference of squares \( a^2 - b^2 \))" ], align=>LEFT, separation=>0).
+AlignedRow([" ","\( = \)",ans_rule(25),"(factorized)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($factor1->cmp);
+ANS($factor2->cmp);
+ANS($factoredform->cmp);
+
+ENDDOCUMENT();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

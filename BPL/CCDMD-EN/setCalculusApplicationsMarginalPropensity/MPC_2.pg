@@ -1,0 +1,280 @@
+##DESCRIPTION
+##  Marginal Propensity
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('economy', 'Point of inflection')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"contextPercent.pl",
+"contextLimitedNumeric.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->variables->add(C => 'Real',I => 'Real','dC'=> 'Real','dI'=> 'Real');
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$dCdI = Compute("dC/dI");
+
+$a = random(1,4,1);
+$b = random(1,4,1);
+$c = random(1,4,1);
+$x1 = random(1,4,1);
+$y1 = random(1,4,1);
+if ($y1 == $x1) {$y1 = $x1-1;}
+
+$term1 = Compute("$b C^2 - $c I^2")->reduce;
+$term2 = Compute("$b C^2")->reduce;
+$dterm2 = $term2->D('C');
+$term3 = Compute("$c I^2")->reduce;
+$dterm3 = $term3->D('I');
+$pr_f1 = Compute("$a C^2")->reduce;
+$dpr_f1 = $pr_f1->D('C');
+$pr_g1 = Compute("I")->reduce;
+$dpr_g1 = $pr_g1->D('I');
+
+$dterm1 = 2*$term1*$dterm2*$dCdI - 2*$term1*$dterm3;
+
+$LHS = Compute("($term1)^2 - $pr_f1*$pr_g1")->reduce;
+
+$f = $LHS->substitute(C=>$x1,I=>$y1);
+
+$dLHS = $dterm1 - $dpr_f1*$dCdI*$pr_g1 - $pr_f1*$dpr_g1;
+
+$dCdIterm = (2*$term1*$dterm2 - $dpr_f1*$pr_g1)->substitute(C=>$x1,I=>$y1);
+$constant = (2*$term1*$dterm3 + $pr_f1*$dpr_g1)->substitute(C=>$x1,I=>$y1);
+
+while ( ($dCdIterm == 0) || ($constant/$dCdIterm < 0) || ($constant/$dCdIterm > 1)) 
+{
+    $a = random(2,9,1);
+    $b = random(2,9,1);
+    $c = random(2,9,1);
+    $x1 = random(2,9,1);
+    $y1 = random(2,9,1);
+    $dCdIterm = (2*$term1*$dterm2 - $dpr_f1*$pr_g1)->substitute(C=>$x1,I=>$y1);
+    $constant = (2*$term1*$dterm3 + $pr_f1*$dpr_g1)->substitute(C=>$x1,I=>$y1);
+}
+
+$answer = $constant/$dCdIterm;
+
+$MPCPercent = sprintf("%0.1f", $answer*100 );
+$MPSPercent = Compute("100 - $MPCPercent");
+
+Context("LimitedNumeric");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+$AnswerDecimal = Compute("$answer");
+
+Context("LimitedPercent-strict");
+$MPC = Compute("$MPCPercent%");
+$MPS = Compute("$MPSPercent%");
+
+Context("Numeric");
+$popVariableMPC = PopUp(["?", "C", "I", "MPC"],"MPC");
+$popVariable1 = PopUp(["?", "C", "I", "MPC"],"C");
+$popVariable2 = PopUp(["?", "C", "I", "MPC"],"I");
+
+#box 3
+$ans_eval3 = Compute("$x1")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTvariable3 = $ans_hash3->{score};
+
+#box 16
+$ans_eval16 = Compute("$x1")->cmp();
+$ans_hash16 = $ans_eval16->evaluate($inputs_ref->{ANS_NUM_TO_NAME(16)});
+$TESTvariable16 = $ans_hash16->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR 
+$BBOLD Question $EBOLD $BR $BR
+
+Consider the consumption function \( \displaystyle $LHS = $f \) where \(C\) is the national consumption in billions of dollars and \(I\) is the national income in billions of dollars.
+$BR
+Find the marginal propensity to consume when the total national consumption is \($x1 \) billion and the total national income is \($y1 \) billion.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point. 
+$HR
+$HR
+$BR
+
+$HR
+$BR$BITALIC$BBOLD Step 1: Define the variables $EBOLD$EITALIC $BR$BR
+Let \(MPC\) be the marginal propensity to consume. 
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 2: Identify what the problem is asking $EBOLD$EITALIC $BR$BR
+We want \{ $popVariableMPC->menu() \} 
+when \{ $popVariable1->menu() \} \( = \) \{ans_rule(5)\} and \{ $popVariable1->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given conditions $EITALIC)
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 3: Find the appropriate formula $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD Enter $BBOLD dC/dI $EBOLD for \( \displaystyle \frac{dC}{dI} \) or for \( C' \)
+$HR $HR
+$BR $BR
+
+We know \{ $popVariableMPC->menu() \} \( = \displaystyle \frac{dC}{dI}\) $BR $BR
+
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d}{dI} \Big( $LHS \Big) \)","\( = \)","\( \displaystyle \frac{d}{dI} \big( $f \big) \)"], align=>LEFT, separation=>0, indent=>370).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(20),"\( \displaystyle - \Big( \frac{d}{dI} \)".ans_rule(2)."\( \cdot \)".ans_rule(2)."\( + \)".ans_rule(2)."\( \displaystyle \frac{d}{dI} \)".ans_rule(2)."\( \Big)\)","\( = \)",ans_rule(5)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["($BITALIC apply the product rule as required and find the derivative with respect to \( I \) of the other terms $EITALIC)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(40),"\( = \)",ans_rule(5)], align=>LEFT, separation=>0, indent=>200).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["($BITALIC find the derivative $EITALIC)"], align=>LEFT, separation=>0, indent=>245).
+
+EndTable()
+\}
+$BR $BR 
+and when \{ $popVariable1->menu() \} \( = \) \{ans_rule(5)\} and \{ $popVariable1->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given conditions $EITALIC)
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(40),"\( = \)",ans_rule(5),"($BITALIC replace the given conditions $EITALIC)"], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \big( \)".ans_rule(10)."\( \big) \displaystyle \frac{dC}{dI} \)","\( = \)",ans_rule(10),"($BITALIC isolate \(\frac{dC}{dI}\) $EITALIC)"], align=>RIGHT, separation=>0, indent=>185).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{dC}{dI} \)","\( = \)",ans_rule(10),"($BITALIC solve for \(\frac{dC}{dI}\) $EITALIC)"], align=>RIGHT, separation=>0, indent=>360).
+
+EndTable()
+\}
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 4: Draw a conclusion $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD For the last two boxes, include the percentage sign in your answer and your answer must have no more than 1 decimal digit. 
+$HR $HR
+$BR
+Thus, the marginal propensity to consume is \{ans_rule(5)\}, which means that \{ans_rule(5)\} of the income is spent and \{ans_rule(5)\} of the income is saved.
+$BR 
+
+END_TEXT
+Context()->normalStrings;
+
+#Step 2
+ANS($popVariableMPC->cmp);
+
+if ($TESTvariable3) 
+{
+ANS($popVariable1->cmp() );
+ANS(Compute("$x1")->cmp);
+ANS($popVariable2->cmp() );
+ANS(Compute("$y1")->cmp);
+}
+else
+{
+ANS($popVariable2->cmp() );
+ANS(Compute("$y1")->cmp);
+ANS($popVariable1->cmp() );
+ANS(Compute("$x1")->cmp);
+}
+
+#Step 3
+ANS($popVariableMPC->cmp);
+
+#LHS 
+ANS($dterm1->cmp);
+ANS($pr_f1->cmp);
+ANS($pr_g1->cmp);
+ANS($pr_f1->cmp);
+ANS($pr_g1->cmp);
+
+#RHS
+ANS(Compute("0")->cmp);
+
+#derivative
+ANS($dLHS->cmp);
+ANS(Compute("0")->cmp);
+
+if ($TESTvariable16) 
+{
+ANS($popVariable1->cmp() );
+ANS(Compute("$x1")->cmp);
+ANS($popVariable2->cmp() );
+ANS(Compute("$y1")->cmp);
+}
+else
+{
+ANS($popVariable2->cmp() );
+ANS(Compute("$y1")->cmp);
+ANS($popVariable1->cmp() );
+ANS(Compute("$x1")->cmp);
+}
+
+ANS(($dLHS->substitute(C=>$x1,I=>$y1))->cmp);
+ANS(Compute("0")->cmp);
+
+ANS($dCdIterm->cmp);
+ANS($constant->cmp);
+ANS($answer->cmp);
+
+#Step 4
+ANS($AnswerDecimal->cmp);
+ANS($MPC->cmp);
+ANS($MPS->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

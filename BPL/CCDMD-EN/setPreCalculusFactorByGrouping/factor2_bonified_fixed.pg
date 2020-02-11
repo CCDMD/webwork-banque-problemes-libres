@@ -1,0 +1,101 @@
+###DESCRIPTION
+## Factoring Polynomials by Grouping
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('factor', 'factorization')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$A = random(1,9,1);
+$B = random(1,9,1);
+while (gcd($A,$B) > 1) {$B = random(1,9,1);}
+
+$K = random(1,9,1);
+$L = random(1,9,1);
+while (gcd($K,$L)>1) {$L = random(1,9,1);}
+
+$c1 = $K*$A;
+$c2 = $K*$B;
+$c3 = $L*$A;
+$c4 = $L*$B;
+
+#
+# Formula ($K*x**2 + $L)($A*x + $B)
+# 
+$equation = Formula("$c1 x^3 + $c2 x^2 + $c3 x + $c4")->reduce; 
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 2,
+message => "either 0 or 1",
+);
+$factoredform = Compute("($K*x**2 + $L)($A*x + $B)");
+
+#
+#  Expanded form
+#
+Context("LimitedPolynomial-Strict");
+$factor1 = Compute("$K x^2");
+$factor2 = Compute("$L");
+$commonfactor = Compute("$A x + $B");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Factor \( $equation \) 
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equation \)","\( = \)",ans_rule(2)."\( \Big( \)".ans_rule(10)."\( \Big) \)"."\( + \)".ans_rule(2)."\( \Big( \)".ans_rule(10)."\( \Big) \)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["(factor the common factor of the first two terms and then factor the common factor of the last two terms. DO NOT CHANGE THE ORDER OF GROUPING.)" ], align=>LEFT, separation=>0, indent=>190).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(32),"(factorized)"], align=>LEFT, separation=>0, indent=>170).
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($factor1->cmp);
+ANS($commonfactor->cmp);
+ANS($factor2->cmp);
+ANS($commonfactor->cmp);
+
+ANS($factoredform->cmp); 
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;
+

@@ -1,0 +1,320 @@
+##DESCRIPTION
+##  Optimization
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('economy', 'maximum', 'minimum optimization')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"contextLimitedPolynomial.pl",
+"contextAlternateIntervals.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$a = random(1000,2000,50);
+$b = random(360,540,30);
+$c = random(10,30,1);
+$d = 10*$c;
+$a1= $a*$b/6;
+$a2 = $b/3;
+
+#$twoslope = 2 * $slope;
+#$xvalue = -$intercept/$twoslope;
+#$deltatv = $xvalue - $a;
+
+#demand function 
+$slope = Compute("-$c/$d");
+$yint = Compute("$b - $slope * $a");
+$price = Compute("$slope x + $yint")->reduce;
+$bound = int(-$yint/$slope);
+$MyBound = Compute("$bound");
+$CP = int(-$yint/(2*$slope));
+$MyCP = Compute("$CP");
+
+#the revenue function
+$quantity = Compute("x");
+#$equation = Formula("$quantity $price");  ### gives rounding errors
+$equation = Compute("-$c/$d x^2 + ($b + $c/$d $a)x");
+$dequation = $equation->D('x');
+
+$RevenueZero = $equation->eval(x=>"0");
+$RevenueBound = $equation->eval(x=>"$bound");
+$RevenueCP = $equation->eval(x=>"$CP");
+
+$PriceAns = $price->eval(x=>"$CP");
+
+#Expanded Form
+Context("LimitedPolynomial-Strict");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$revenue = Compute("$slope x^2 + $yint x");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+Context()->flags->set(
+      tolerance    => .00001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$IBounds = Compute("[0,$bound]");
+
+Context("Numeric");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$popVariableX = PopUp(["?", "x", "p", "R"],"x");
+$popVariablep = PopUp(["?", "x", "p", "R"],"p");
+$popVariableR = PopUp(["?", "x", "p", "R"],"R");
+
+$poprevenueformula = PopUp(["Choose", "quantity + price", "quantity x price", "variable costs + fixed costs", "variable costs - fixed costs", "fixed costs -  variable costs", "variable costs x fixed costs"],"quantity x price");
+
+$popTime = PopUp(["Choose", "day", "week", "month", "year"],"week");
+
+#check box 1
+$ans_eval1 = $popVariableR->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1 = $ans_hash1->{score};
+
+$WantSymbol = "";
+$WantWord = "";
+if ($TESTbox1) 
+{
+$WantSymbol = "R";
+$WantWord = "revenue";
+}
+
+#check box 2
+$ans_eval2 = $poprevenueformula->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2 = $ans_hash2->{score};
+
+$quantitySymbol = "";
+$demandSymbol = "";
+if ($TESTbox2) 
+{
+    $quantitySymbol = "quantity";
+    $demandSymbol = "price";
+}
+
+#check box 15
+$ans_eval15 = $IBounds->cmp();
+$ans_hash15 = $ans_eval15->evaluate($inputs_ref->{ANS_NUM_TO_NAME(15)});
+$TESTbox15 = $ans_hash15->{score};
+
+#check box 18
+$ans_eval18 = Compute("$CP")->cmp();
+$ans_hash18 = $ans_eval18->evaluate($inputs_ref->{ANS_NUM_TO_NAME(18)});
+$TESTbox18 = $ans_hash18->{score};
+
+$ConditionVariable = "";
+$ValueZero = "";
+$ValueBound = "";
+$ValueCP = "";
+if ($TESTbox15 && $TESTbox18) 
+{
+    $ConditionVariable = "x";
+    $ValueZero = Compute("0");
+    $ValueBound = $bound;
+    $ValueCP = Compute("$CP");
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Question $EBOLD $BR $BR
+A manufacture has been selling $a television sets a week at $b dollars each.
+A market survey indicates that for each $c dollars rebate offered to buyers,
+the number of sets sold will increase by $d per week. How many television sets must be sold per week to maximize the revenue?
+$BR $BR 
+Assume the equation relating the unit price of a television set to the quantity 
+sold is linear.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point.
+$HR
+$HR
+$BR
+
+$HR
+$BR$BITALIC$BBOLD Step 1: Define the variables $EBOLD$EITALIC $BR$BR
+Let \(x\) be the number of television sets sold per week. $BR
+Let \(p\) be the unit price of a television set (in dollars). $BR $BR
+Let \(R(x)\) be the revenue function. 
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 2: Find the function to maximize $EBOLD$EITALIC $BR$BR
+We want to maximize \{ $popVariableR->menu() \} 
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next line. $EBOLD $BR $HR $BR
+
+We know \($WantSymbol(x) = \) \{ $poprevenueformula->menu() \} ($BITALIC formula to find the $WantWord function $EITALIC) 
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines. $EBOLD $BR $HR $BR
+
+where $BR
+\( \quad \text{$quantitySymbol} = \) \{ans_rule(15)\} $BR 
+and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \text{$demandSymbol} \)","\( = \)",$popVariablep->menu(),"($BITALIC choose the variable that represents the $demandSymbol function $EITALIC)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)","\(a x + b \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+We have $BR
+\( \quad a = \) \{ans_rule(15)\} ($BITALIC numerical value of the slope $EITALIC)$BR
+and $BR
+\( \quad b = \) \{ans_rule(15)\} ($BITALIC numerical value of the y-intercept $EITALIC)$BR $BR
+\( \therefore \) \{ $popVariablep->menu() \} \( = \)\{ans_rule(20)\} ($BITALIC formula of the $demandSymbol function $EITALIC)
+$BR
+and $BR
+\( $WantSymbol(x) = \)\{ans_rule(20)\} ($BITALIC formula of the $WantWord function $EITALIC)
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 3: Find the bounds on the demand function $EBOLD$EITALIC $BR$BR
+
+We want \{ $popVariableX->menu() \} when \( \text{$demandSymbol} = 0 \)
+$BR
+$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(15),"\( = \)","\( 0 \)","($BITALIC write the $demandSymbol function $EITALIC)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([$popVariableX->menu(),"\( = \)",ans_rule(20),"($BITALIC solve for the $quantitySymbol, which must be an integer. Round down if needed. $EITALIC)"], align=>LEFT, separation=>0, indent=>105).
+
+EndTable()
+\}
+$BR
+\( \therefore \) Bounds on \{ $popVariableX->menu()\} \( = \) \{ ans_rule(20) \} ($BITALIC write your answer in interval notation $EITALIC)
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 4: Find the critical point(s) $EBOLD$EITALIC $BR$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d$WantSymbol}{dx} \)","\( = \)",ans_rule(30),"(find the derivative with respect to \( x\) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d$WantSymbol}{dx} = 0 \) when",ans_rule(10),"\( = \)","\( 0 \)","(write \( \frac{d$WantSymbol}{dx} \))"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( x \)","\( = \)",ans_rule(2),"(isolate for \( x \), which must be an integer. Round down if needed.)"], align=>RIGHT, separation=>0).
+
+
+EndTable()
+\}
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 5: Find the maximum $EBOLD$EITALIC $BR$BR
+
+When \( $ConditionVariable = $ValueZero \), 
+\( \displaystyle \quad $WantSymbol = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( $WantSymbol(x) \) $EITALIC) $BR $BR
+When \( $ConditionVariable = $ValueBound \), 
+\( \displaystyle \quad $WantSymbol = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( $WantSymbol(x) \) $EITALIC) $BR $BR
+When \( $ConditionVariable = $ValueCP \), 
+\( \displaystyle \quad $WantSymbol = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( $WantSymbol(x) \) $EITALIC) $BR $BR
+Thus, a maximum occurs when \( $ConditionVariable = \)\{ans_rule(5) \}$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 6: Draw a conclusion $EBOLD$EITALIC $BR$BR
+Thus, to maximize the revenue, \{ans_rule(10)\} television sets must be sold per \{ $popTime->menu() \}. 
+$BR
+
+
+END_TEXT
+Context()->normalStrings;
+
+#Step 2
+ANS($popVariableR->cmp);
+
+#revenue
+ANS($poprevenueformula->cmp() );
+ANS($quantity->cmp);
+ANS($popVariablep->cmp() );
+
+ANS($slope->cmp);
+ANS($yint->cmp);
+ANS($popVariablep->cmp() );
+ANS($price->cmp);
+
+ANS($revenue->cmp() );
+
+#Step 3
+ANS($popVariableX->cmp);
+ANS($price->cmp);
+ANS($popVariableX->cmp);
+ANS($MyBound->cmp);
+ANS($popVariableX->cmp);
+ANS($IBounds->cmp);
+
+#Step 4
+ANS($dequation->cmp);
+ANS($dequation->cmp);
+ANS($MyCP->cmp);
+
+ANS($RevenueZero->cmp);
+ANS($RevenueBound->cmp);
+ANS($RevenueCP->cmp);
+
+ANS($MyCP->cmp);
+
+ANS($MyCP->cmp);
+ANS($popTime->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

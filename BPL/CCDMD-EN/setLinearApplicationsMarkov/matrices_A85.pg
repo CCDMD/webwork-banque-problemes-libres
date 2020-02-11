@@ -1,0 +1,210 @@
+##DESCRIPTION
+##  Markov chains
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Matrix Algebra')
+## KEYWORDS('applications', 'Markov chain')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+# Load whatever macros you need for the problem
+ 
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"PGmatrixmacros.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$sum_c = 10;
+while( $sum_c > 1)
+{
+  $cc = random(0,1,0.01);
+  $cs = random(0,1,0.01);
+  $sum_c = $cs + $cc;
+}
+$cn = 1-$cc-$cs;
+
+$sum_s = 10;
+while( $sum_s > 1)
+{
+  $sc = random(0,1,0.01);
+  $ss = random(0,1,0.01);
+  $sum_s = $sc + $ss;
+}
+$sn = 1-$sc-$ss;
+
+$sum_n = 10;
+while( $sum_n > 1)
+{
+  $nc = random(0,1,0.01);
+  $nn = random(0,1,0.01);
+  $sum_n = $nc + $nn;
+}
+$ns = 1-$nc-$nn;
+
+$c = random(10,100,5);
+$n = random(10,100,5);
+$s = random(10,100,5);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Consider a model of population flows between cities, suburbs, and non-metropolitan areas of a certain country. Their respective population in 2003 were $c millions, $s millions, and $n millions.
+During 2003, the probability of a person staying in the city was $cc, while the probability of a person moving to the suburb was $cs. The probability of a person moving from suburb to the city was $sc while the probability of remaining in suburb was $ss. Now consider the population flow from non-metropolitan area to the city. The probability of a person moving to the city was $nc while the probability of remaining in non-metropolitan area was $nn. 
+
+$BR $BR
+
+$BBOLD (a) $EBOLD Find the matrix of transition and the initial population distribution (in millions).
+$BR $BR
+$BBOLD (b) $EBOLD Find the population distribution one year later.
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin(" ");
+
+side_labels( @array );
+
+Context("Matrix");
+$M = Matrix([[$cc,$sc,$nc], [$cs,$ss,$ns], [$cn,$sn,$nn]]);
+
+$X0 = Matrix([[$c], [$s], [$n]]);
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(M\) be the matrix of transition. $BR
+Let \(\vec{x}_0\) be the initial population distribution. $BR $BR
+Let \(\text{C}\), \(\text{S}\) and \(\text{N}\) represent cities, suburbs, and non-metropolitan areas, respectively. $BR $BR
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" "," ","","\(  \hspace{1cm} \text{C} \hspace{2.7cm}  \text{S} \hspace{2.7cm}\text{N} \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["\( \quad M \)","\( = \)","\(  \text{C} \)".$BR.$BR."\(  \text{S} \)".$BR.$BR."\( \text{N} \)",$M->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \vec{x}_0 \)","\( = \)","\(  \text{C} \)".$BR.$BR."\(  \text{S} \)".$BR.$BR."\( \text{N} \)",$X0->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($M->cmp);
+ANS($X0->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(\vec{x}_1\) be the population distribution one year later. $BR $BR
+
+Which of the formulas below corresponds to \(\vec{x}_1\)? $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \vec{x}_1 = \vec{x}_0 M \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \vec{x}_1 = M \vec{x}_0 \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR 
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("2")->cmp );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Matrix");
+$X1 = $M*$X0;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \vec{x}_1 \)","\( = \)","\( $M $X0 \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",$X1->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Thus, one year later, $BR
+\( \quad \) the city population is \{ ans_rule(2) \} millions, $BR
+\( \quad \) the suburb population is \{ ans_rule(2) \} millions and $BR
+\( \quad \) the non-metropolitan area population is \{ ans_rule(2) \} millions. $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($X1->cmp);
+ANS(($X1->element(1,1))->cmp);
+ANS(($X1->element(2,1))->cmp);
+ANS(($X1->element(3,1))->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();

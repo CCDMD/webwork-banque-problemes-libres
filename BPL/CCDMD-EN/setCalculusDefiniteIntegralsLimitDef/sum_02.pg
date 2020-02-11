@@ -1,0 +1,272 @@
+##DESCRIPTION
+##  Integrals - Riemann Sums
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration - Definition and Interpretation')
+## KEYWORDS('definite integral', 'right rectangles', 'Riemann sum')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"contextLimitedPolynomial.pl",
+"unionTables.pl",
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+);
+
+TEXT(beginproblem());
+
+#install_problem_grader(~~&std_problem_grader); #Remove this line for partial marks.
+
+$showPartialCorrectAnswers = 1;
+
+##############################################
+#  Setup
+
+Context("Numeric");
+Context()->variables->add(k => 'Real');
+Context()->variables->add(n => 'Real');
+
+$a = random(3,9,3);
+$b = random(2,6,2);
+
+if( (2*$a==$b) )
+{ $b++; }
+
+$c = random(3,5,1);
+
+$d = $c-1;
+
+$gcd1 = gcd($a,6);
+$gcd2 = gcd($b,6);
+
+
+##############################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR 
+
+$BBOLD Question $EBOLD $BR $BR
+Consider the function \( \displaystyle f(x) = $a x^2 - $b x \). $BR $BR
+Calculate \( \displaystyle \int_{1}^{$c} \left( $a x^2 - $b x \right) \,dx \) by using a Riemann Sum with the right-hand rule.
+$BR
+$BR
+$HR
+$PAR
+$BBOLD Solution $EBOLD $BR
+
+$HR
+
+We have $BR $BR
+\( \Delta x = \) \{ans_rule(5) \} (find the width of the rectangle)
+$BR$BR
+
+\( c_k = \) \{ans_rule(15) \} (find \( c_k = x_k = a + k \cdot \Delta x \))
+$BR$BR
+
+\( f(c_k) = \) \{ans_rule(30) \} (replace \( c_k \) into \(f(x)\) and simplify)
+$BR$BR
+$HR
+
+$PAR
+Now $BR $BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \int_{1}^{$c} \left( $a x^2 - $b x \right) \,dx \)"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \lim_{n \to \infty} \sum_{k=1}^{n} f(c_k) \Delta x \)"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["","\( \displaystyle = \lim_{n \to \infty} \sum_{k=1}^{n} \Big( \) ".ans_rule(20)."\( \Big) \Big( \)".ans_rule(10)."\( \Big) \)","(replace \(f(c_k) \) and \(\Delta x\))"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \sum_{k=1}^{n} \Big( \) ",ans_rule(10)."\( + \)".ans_rule(10)."\( + \)".ans_rule(10)."\( \Big) \)"],align => "LEFT",separation => 0, indent => 20).
+  AlignedRow(["","(simplify formula with powers of \( k \) in descending order)"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \Big( \) ",ans_rule(5)."\( \displaystyle \sum_{k=1}^{n} \)".ans_rule(10)."\( + \)".ans_rule(5)."\( \displaystyle \sum_{k=1}^{n} \)".ans_rule(10)."\( + \)".ans_rule(5)."\( \displaystyle \sum_{k=1}^{n} \)".ans_rule(10)."\( \Big) \)"],align => "LEFT",separation => 0, indent => 20).
+  AlignedRow(["","(write your answer with only \(k\)'s in the summation signs. If there are no \(k\)'s, enter \( 1 \))"],align => "LEFT",separation => 0, indent => 20). TableSpace(0,0).
+EndTable();
+\}
+$BR $BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \Big( \) ".ans_rule(5)."\( \big( \)".ans_rule(20)."\( \quad\big) + \)".ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big)\)"],align => "LEFT",separation => 0, indent => 20).
+  AlignedRow(["\(\quad + \)".ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big) \Big) \)"],align => "LEFT",separation => 0, indent => 20).
+  AlignedRow(["(replace any summation signs with an equivalent formula)"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR $BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(= \displaystyle \lim_{n\to\infty} \) ",ans_rule(20).$BR.$HR.ans_rule(20),"\( + \displaystyle \lim_{n\to\infty} \) ",ans_rule(20).$BR.$HR.ans_rule(20),"\( + \displaystyle \lim_{n\to\infty} \) ",ans_rule(10)],align => "LEFT",separation => 0, indent => 20).
+TableSpace(0,0).
+EndTable();
+\}
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","(distribute the limit and simplify if possible)"],align => "LEFT",separation => 0, indent => 20).
+TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"\( + \) ",ans_rule(5).$BR.$HR.ans_rule(5),"\( + \) ".ans_rule(5),"(evaluate the indeterminate form by replacing \(n\) with \( \infty \))"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \) ",ans_rule(3)."\( \big( \)".ans_rule(20)."\( \big) \)".$BR.$HR.ans_rule(3)."\( \big( \)".ans_rule(20)."\( \big) \)","\( + \displaystyle \lim_{n\to\infty} \) ",ans_rule(3)."\( \big( \)".ans_rule(20)."\( \big) \)".$BR.$HR.ans_rule(3)."\( \big( \)".ans_rule(20)."\( \big) \)","\( + \) ".ans_rule(5)],align => "LEFT",separation => 0, indent => 20).
+  AlignedRow(["","(factor the highest powers)"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \) ",ans_rule(20).$BR.$HR.ans_rule(20),"\( + \displaystyle \lim_{n\to\infty}\) ",ans_rule(20).$BR.$HR.ans_rule(20),"\( + \) ".ans_rule(5),"(simplify)"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(10),"(evaluate)"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR 
+$HR
+
+Thus, \( \displaystyle \int_{1}^{$c} \left( $a x^2 - $b x \right) \,dx = \) \{ans_rule(15) \}
+$BR $BR
+$HR
+$BR
+Enter $BBOLD INF $EBOLD for \(\infty\), $BBOLD MINF $EBOLD for \(-\infty\),
+and $BBOLD DNE $EBOLD if the limit does not exist.
+$BR $BR
+
+
+END_TEXT
+
+$ck=Formula("1+$d*k/n")->reduce();
+$fck = Formula("$a (1+$d*k/n)^2 - $b (1+$d*k/n)")->reduce();
+$Dx = "$d/n";
+
+#delta x
+ANS(fun_cmp($Dx, vars=>'n'));
+
+#c_k
+ANS($ck->cmp);
+
+#f(c_k) = $s \frac {x^2}{$an} + $b
+ANS($fck->cmp);
+
+#sub f(ck) & delta x
+ANS($fck->cmp);
+ANS(fun_cmp($Dx, vars=>'n'));
+
+#Formula "$a*$d-$b*$d + (2*$d*$d*$a-$b*$d*$d)*(n+1)/(2*n) + $a*$d**3*(n+1)*(2*n+1)/(6*n**2)";
+ANS(fun_cmp("$a*$d**3*k^2/n^3",var=>["n","k"]));
+ANS(fun_cmp("(2*$d*$d*$a-$b*$d*$d)*k/n^2",var=>["n","k"]));
+ANS(fun_cmp("($a*$d-$b*$d)/n",var=>["n","k"]));
+
+#sum with k's
+ANS(fun_cmp("$a*$d**3/n^3",var=>["n","k"]));
+ANS(fun_cmp("k^2",var=>["n","k"]));
+ANS(fun_cmp("(2*$d*$d*$a-$b*$d*$d)/n^2",var=>["n","k"]));
+ANS(fun_cmp("k",var=>["n","k"]));
+ANS(fun_cmp("($a*$d-$b*$d)/n",var=>["n","k"]));
+ANS(fun_cmp("1",var=>["n","k"]));
+
+#sum with n's
+ANS(fun_cmp("$a*$d**3/n^3",var=>["n","k"]));
+ANS(fun_cmp("(2n^3+3n^2+n)/6",var=>["n","k"]));
+ANS(fun_cmp("(2*$d*$d*$a-$b*$d*$d)/n^2",var=>["n","k"]));
+ANS(fun_cmp("(n^2+n)/2",var=>["n","k"]));
+ANS(fun_cmp("($a*$d-$b*$d)/n",var=>["n","k"]));
+ANS(fun_cmp("n",var=>["n","k"]));
+
+#Rn 
+
+$gcd1 = gcd($a*$d**3,6);
+$gcd2 = gcd(2*$d*$d*$a-$b*$d*$d,2);
+
+ANS(fun_cmp("($a*$d**3/$gcd1)*(2n^2+3n+1)", vars=>'n'));
+ANS(fun_cmp("6/$gcd1*n^2", vars=>'n'));
+ANS(fun_cmp("(2*$d*$d*$a-$b*$d*$d)/$gcd2*(n+1)", vars=>'n'));
+ANS(fun_cmp("2/$gcd2*n", vars=>'n'));
+ANS(num_cmp("$a*$d-$b*$d"));
+
+#sub
+ANS(str_cmp("INF "));
+ANS(str_cmp("INF "));
+# ANS(str_cmp("MINF ")); #OLD LINE
+if (2*$d*$d*$a-$b*$d*$d>0){ANS(str_cmp("INF "));}; # NEW LINE
+if (2*$d*$d*$a-$b*$d*$d<0){ANS(str_cmp("MINF "));}; # NEW LINE
+ANS(str_cmp("INF "));
+ANS(num_cmp("$a*$d-$b*$d"));
+
+#factor
+ANS(fun_cmp("n^2",var=>'n'));
+ANS(fun_cmp("($a*$d**3/$gcd1)*(2+3/n+1/n^2)",var=>'n'));
+ANS(fun_cmp("n^2",var=>'n'));
+ANS(num_cmp("6/$gcd1"));
+ANS(fun_cmp("n", vars=>'n'));
+ANS(fun_cmp("(2*$d*$d*$a-$b*$d*$d)/$gcd2*(1+1/n)", vars=>'n'));
+ANS(fun_cmp("n", vars=>'n'));
+ANS(num_cmp("2/$gcd2"));
+ANS(num_cmp("$a*$d-$b*$d"));
+
+#simplify
+ANS(fun_cmp("($a*$d**3/$gcd1)*(2+3/n+1/n^2)",var=>'n'));
+ANS(num_cmp("6/$gcd1"));
+ANS(fun_cmp("(2*$d*$d*$a-$b*$d*$d)/$gcd2*(1+1/n)", vars=>'n'));
+ANS(num_cmp("2/$gcd2"));
+ANS(num_cmp("$a*$d-$b*$d"));
+
+#answer
+$ans2 = $a/3*$c**3-$b/2*$c**2-$a/3+$b/2;
+ANS(num_cmp($ans2,strings =>['inf','minf','dne'] ,relTol=>0.0000001, mode=>'frac'));
+ANS(num_cmp($ans2,strings =>['inf','minf','dne'] ,relTol=>0.0000001, mode=>'frac'));
+
+#  End do not edit
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

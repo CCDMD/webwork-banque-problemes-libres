@@ -1,0 +1,122 @@
+##DESCRIPTION
+##  Limit at a point - 0/0
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('0/0', 'factorization', 'indeterminate form', 'limit')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+do{
+$a1 = random(1,10,1);
+$b1 = random(1,10,1);
+} until($a1!=$b1);
+
+
+$t1 = $a1+$b1;
+$n1 = $a1*$b1;
+
+$aT = -$a1;
+
+Context("Numeric");
+Context()->strings->add(UND=>{});
+$equation = Compute("(x^2 + $t1 x + $n1)/(x + $a1)")->reduce;
+$answer = Compute("-$a1 + $b1");
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->strings->add(UND=>{});
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$factorednum = Compute("(x+$a1)(x+$b1)");
+$den = Compute("x+$a1");
+$num = Compute("x+$b1");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR 
+Find \( \displaystyle \lim_{x \rightarrow $aT} $equation \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We have $BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x \rightarrow $aT} $equation = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \(x\) with \( $e \))"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x \rightarrow $aT} \) ",ans_rule(10).$BR.$HR.ans_rule(10),"(factor)"],align => "LEFT",separation => 0, indent => 150).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x \rightarrow $aT} \) ",ans_rule(10),"(simplify)"],align => "LEFT",separation => 0, indent => 150).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(10),"(evaluate)"],align => "LEFT",separation => 0, indent => 150).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#sub
+ANS(Compute("0")->cmp);
+ANS(Compute("0")->cmp);
+
+#factor
+ANS($factorednum->cmp);
+ANS($den->cmp);
+
+#simplify
+ANS($num->cmp);
+
+ANS($answer->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

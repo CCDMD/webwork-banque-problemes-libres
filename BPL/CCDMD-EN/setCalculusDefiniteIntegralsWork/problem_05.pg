@@ -1,0 +1,192 @@
+##DESCRIPTION
+##  Work
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the integral')
+## KEYWORDS('direct applications', 'physical')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"parserPopUp.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGunion.pl",
+"PGauxiliaryFunctions.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$d = random(10,20,2);
+$h = random(3,4,1);
+$v = random(0.5,1.5,1);
+$a = $h - $v;
+$c = random(1,3);
+
+$g  = 9.81;
+$rho = 1000;
+
+$ans1 = $d**2 * pi * $g * $rho * ($h**2 - $v**2) / 8;
+$ans2 = $d**2 * pi * $g * $rho * (($c+$h)**2-($c+$v)**2)/8;
+
+$popshape = PopUp(["Choose","a cone","an inverted cone", "a cube", "a cylinder", "a rectangular prism", "a triangular prism"],"a cylinder");
+
+$popslice = PopUp(["Choose","cylinder", "rectangular prism"],"cylinder");
+
+$displacement = "$h+$c-xk";
+$radius = "$d/2";
+$D = 1000;
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+A circular swimming pool has a diameter of $d m, the sides are $h m high, and the depth of the water is $a m. $BR
+How much work (in joules) is required to pump all of the water out of an outlet $c m over the side? Use the fact that the water density is $D \( \text{kg}/m^3 \). 
+
+$BR
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD
+$HR
+$BR$BITALIC$BBOLD Part 1: Define and describe the situation $EBOLD$EITALIC $BR$BR
+The pool can be described geometrically as \{ $popshape->menu() \}. $BR $BR
+
+Partition the liquid held in the pool into \( n \) slices of equal width, where each slice can be described geometrically as a \{$popslice->menu\}. $BR $BR
+Let \( x \) be the height of the slice measured from the lower end of the pool 
+where \{ans_rule(2)\} \( \leq x \leq \) \{ans_rule(2)\}. $BR $BR 
+Let \( \Delta x \) be the width of each slice. $BR $BR
+The interval to partition is from \( x = \) \{ans_rule(5)\} to \( x = \) \{ans_rule(5)\}. $BR $BR
+
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 2: Compute an approximation of the work over each subinterval $EBOLD$EITALIC $BR$BR
+Consider the slice in the \( k^{th} \) subinterval \( [x_{k-1}, x_k] \). $BR $BR
+Choose \( x_k \) $BR $BR
+For that \( k^{th} \) subinterval, $BR $BR
+\( W_k = F_k d_k \) $BR $BR 
+where $BR $BR
+\( d_k \approx \) \{ans_rule(30)\} (the distance traveled by the slice to reach the top of the pool) $BR $BR
+\( F_k = m_k g \) where \( g = \) \{ans_rule(10)\} $BR $BR
+\( m_k = \rho V_k \) where \( \rho = \) \{ans_rule(10)\} $BR $BR
+\( V_k \approx \) \{ans_rule(10)\} (formula for the volume of a slice) $BR
+where \( h = \Delta x \) and \( r_k = \) \{ans_rule(30)\} $BR $BR
+
+Thus $BR $BR
+\( V_k \approx \big( \) \{ans_rule(30)\} \( \big) \Delta x \) $BR $BR
+\( F_k \approx \big( \) \{ans_rule(30)\} \( \big) \Delta x \) $BR $BR
+\( W_k \approx \big( \) \{ans_rule(30)\} \( \big) \Delta x \) $BR $BR
+
+Enter \( xk \) for \(x_k\) and \( rk \) for \(r_k\) $BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 3: Compute an approximation of the total work $EBOLD$EITALIC $BR$BR
+The total work can be approximated by $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle W \approx \sum _{k=1}^n W_k \)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle = \sum _{k=1}^n \)","\( \Big( \)".ans_rule(30)."\( \Big) \Delta x \)","(work in sigma notation)"], align=>LEFT, separation=>0, indent=>20).
+EndTable()
+\}
+
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 4: Compute the exact value of the work $EBOLD$EITALIC $BR$BR
+As \( n \) gets larger, \(\displaystyle W \approx \sum _{k=1}^n W_k \) gets closer to \( W \) $BR $BR
+
+Thus $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle W = \lim_{n\to\infty} \sum _{k=1}^n \)","\( \Big( \)".ans_rule(30)."\( \Big) \Delta x \)","(work in sigma notation)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \)",ans_rule(20),"\( \displaystyle \int \)",ans_rule(1).$BR.$BR.ans_rule(1),"\( \Big( \)".ans_rule(15)."\( \Big) \)","\( \displaystyle \, dx \, \)"],align => "LEFT",separation => 0,indent=>20). 
+  TableSpace(0,0).
+EndTable();
+\}
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["","(set up the appropriate bounds and functions for the integral in terms of \( x \)) "],align => "LEFT",separation => 0,indent=>20). 
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \)",ans_rule(20),"\( \displaystyle \Bigg[ \)",ans_rule(15),"\( \displaystyle \Bigg] \)",ans_rule(4).$BR.$BR.ans_rule(4),$SPACE,"(integrate in terms of \( x \))"],align => "LEFT",separation => 0,indent=>20). 
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \)",ans_rule(50),$SPACE,"(evaluate) "],align => "LEFT",separation => 0,indent=>20). 
+  TableSpace(0,0).
+EndTable();
+\}
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 5: Draw a conclusion $EBOLD$EITALIC $BR$BR
+Thus, the work required to pump all of the water out of an outlet $c m over the side is \{ans_rule(50)\} joules.
+ $BR $BR
+
+
+END_TEXT
+
+#situation
+ANS( $popshape->cmp() );
+ANS( $popslice->cmp() );
+ANS(num_cmp("0"));
+ANS(num_cmp("$h+$c"));
+ANS(num_cmp("0"));
+ANS(num_cmp("$a"));
+
+#subinterval
+ANS(fun_cmp($displacement,var=>["r","h","xk","x","rk"]));
+ANS(num_cmp("9.81"));
+ANS(num_cmp("$D"));
+ANS(fun_cmp("pi*rk^2*h",var=>["r","h","xk","x","rk"]));
+ANS(num_cmp("$radius"));
+
+ANS(fun_cmp("pi*($radius)^2",var=>["r","h","xk","x","rk"]));
+ANS(fun_cmp("9.81*$D*pi*($radius)^2",var=>["r","h","xk","x","rk"]));
+ANS(fun_cmp("9.81*$D*pi*($radius)^2*($displacement)",var=>["r","h","xk","x","rk"]));
+
+#all
+ANS(fun_cmp("9.81*$D*pi*($radius)^2*($displacement)",var=>["r","h","xk","x","rk"]));
+
+ANS(fun_cmp("9.81*$D*pi*($radius)^2*($displacement)",var=>["r","h","xk","x","rk"]));
+
+ANS(num_cmp("9.81*$D*pi*($radius)^2"));
+ANS(num_cmp("$a"));
+ANS(num_cmp("0"));
+ANS(fun_cmp("$h+$c-x",var=>["r","h","xk","x","rk"]));
+
+ANS(num_cmp("9.81*$D*pi*($radius)^2"));
+ANS(fun_cmp("($h+$c)*x-x^2/2",var=>["r","h","xk","x","rk"]));
+ANS(num_cmp("$a"));
+ANS(num_cmp("0"));
+
+ANS(num_cmp($ans2));
+ANS(num_cmp($ans2));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

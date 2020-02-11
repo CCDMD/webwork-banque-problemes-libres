@@ -1,0 +1,311 @@
+##DESCRIPTION
+##  Find an orthogonal vector
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications', 'R^3', 'vector', 'orthogonal vectors')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+#####################################################################
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Point");
+
+$a = random(2,6,1);
+$b = random(3,5,1);
+$c = random(6,10,1);
+$d = random(1,5,1);
+
+$x1 = Compute("1");
+$y1 = Compute("$a");
+$z1 = Compute("1");
+
+$x2 = Compute("-$b");
+$y2 = Compute("$c");
+$z2 = Compute("-$d");
+
+$x3 = Compute("$x1-$x2+1");
+$y3 = Compute("$y1-$y2+2");
+$z3 = Compute("$z1-$z2-3");
+
+$P = Point($x1,$y1,$z1);
+$Q = Point($x2,$y2,$z2);
+$R = Point($x3,$y3,$z3);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find a non-zero vector orthogonal to the plane passing through the points \( P = $P ,\) \( Q = $Q\) and \( R = $R.\) $BR
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Formula");
+
+Context("Numeric");
+
+$popOperation = PopUp(["Choose","cross product", "dot product"],"cross product");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{u} , \vec{v} \) and \( \vec{w} \) be vectors in \( \mathbb{R}^3 \). $BR $BR
+We know the \{ $popOperation->menu() \} between \( \vec{u} \) and \( \vec{v} \) will create a vector \( \vec{w} \) which will be orthogonal to both \( \vec{u} \) and \( \vec{v} \). $BR $BR 
+
+Which of the formulas below corresponds to the $BBOLD \( \vec{w} \)? $EBOLD $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \displaystyle \vec{w} = \vec{u} \times \vec{v} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" "], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \displaystyle \vec{w} = \| \vec{u} \times \vec{v} \| \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" "], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 3:","\( \displaystyle \vec{w} = \vec{u} \cdot \vec{v} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" "], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 4:","\( \displaystyle \vec{w} = | \vec{u} \cdot \vec{v} | \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $popOperation->cmp() );
+
+ANS(Compute("1")->cmp );
+
+Section::End();
+
+###########################################
+Section::Begin("Construct the required vectors");
+
+Context("Numeric");
+Context()->strings->add( "PQ"=>{}, "QP"=>{}, "QR"=>{}, "RQ"=>{}, "PR"=>{}, "RP"=>{} );
+
+#check box 3
+# PQ & PR
+$ans_eval3 = Compute("PR")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3PR = $ans_hash3->{score};
+
+$ans_eval4 = Compute("PQ")->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4PQ = $ans_hash4->{score};
+
+# QP & QR
+$ans_eval3 = Compute("QP")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3QP = $ans_hash3->{score};
+
+$ans_eval4 = Compute("QR")->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4QR = $ans_hash4->{score};
+
+$ans_eval4 = Compute("QP")->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4QP = $ans_hash4->{score};
+
+$ans_eval3 = Compute("QR")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3QR = $ans_hash3->{score};
+
+# RQ & RP
+$ans_eval3 = Compute("RQ")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3RQ = $ans_hash3->{score};
+
+$ans_eval4 = Compute("RP")->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4RP = $ans_hash4->{score};
+
+$ans_eval4 = Compute("RQ")->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4RQ = $ans_hash4->{score};
+
+$ans_eval3 = Compute("RP")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3RP = $ans_hash3->{score};
+
+# PQ & PR
+$InitialPoint1 = "P";
+$EndPoint1 = "Q";
+$Side1 = "PQ";
+
+$InitialPoint2 = "P";
+$EndPoint2 = "R";
+$Side2 = "PR";
+
+if($TESTbox3PR && $TESTbox4PQ)
+{
+    $InitialPoint1 = "P";
+    $EndPoint1 = "R";
+    $Side1 = "PR";
+
+    $InitialPoint2 = "P";
+    $EndPoint2 = "Q";
+    $Side2 = "PQ";
+
+}
+
+# QP & QR
+if($TESTbox3QP && $TESTbox4QR)
+{
+    $InitialPoint1 = "Q";
+    $EndPoint1 = "P";
+    $Side1 = "QP";
+
+    $InitialPoint2 = "Q";
+    $EndPoint2 = "R";
+    $Side2 = "QR";
+
+}
+
+if($TESTbox4QP && $TESTbox3QR)
+{
+    $InitialPoint2 = "Q";
+    $EndPoint2 = "P";
+    $Side2 = "QP";
+
+    $InitialPoint1 = "Q";
+    $EndPoint1 = "R";
+    $Side1 = "QR";
+
+}
+
+# RQ & RP
+if($TESTbox3RQ && $TESTbox4RP)
+{
+    $InitialPoint1 = "R";
+    $EndPoint1 = "Q";
+    $Side1 = "RQ";
+
+    $InitialPoint2 = "R";
+    $EndPoint2 = "P";
+    $Side2 = "RP";
+
+}
+
+if($TESTbox4RQ && $TESTbox3RP)
+{
+    $InitialPoint2 = "R";
+    $EndPoint2 = "Q";
+    $Side2 = "RQ";
+
+    $InitialPoint1 = "R";
+    $EndPoint1 = "P";
+    $Side1 = "RP";
+
+}
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$u = Vector($$EndPoint1-$$InitialPoint1);
+$v = Vector($$EndPoint2-$$InitialPoint2);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BITALIC Choose two directed line segments to create the vectors \( \vec{u} \) and \( \vec{v} \). Make sure that both directed line segments have the same initial point. $EITALIC $BR
+\{ image( "points_PQR.png",width=>329, height=>201 ) \} $BR $BR
+Let \( \vec{u} \) be the vector corresponding to the directed line segment \{ ans_rule(2) \} ($BITALIC enter the letters corresponding to the chosen directed line segment $EITALIC) $BR $BR
+Let \( \vec{v}  \) be the vector corresponding to the directed line segment \{ ans_rule(2) \} ($BITALIC enter the letters corresponding to the chosen directed line segment $EITALIC) $BR $BR
+
+$BR
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{u} \) ","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v} \) ","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(str_cmp("$Side1"));
+ANS(str_cmp("$Side2"));
+
+ANS($u->cmp);
+
+ANS($v->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Find the orthogonal vector");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$w = $u x $v;
+
+Context()->texStrings;
+BEGIN_TEXT
+Thus $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{w} \) ","\( = \)","\( \vec{u} \times \vec{v} \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(15),"(write the components of the vector \( \vec{w} \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($w->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

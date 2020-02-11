@@ -1,0 +1,112 @@
+##DESCRIPTION
+##  Compute determinant
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('System of Linear Equations')
+## KEYWORDS('determinant')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+$a11 = non_zero_random(-9,9,1);
+$a12 = non_zero_random(-9,9,1);
+$a13 = non_zero_random(-9,9,1);
+$a21 = non_zero_random(-9,9,1);
+$a22 = non_zero_random(-9,9,1);
+$a23 = non_zero_random(-9,9,1);
+$a31 = non_zero_random(-9,9,1);
+$a32 = non_zero_random(-9,9,1);
+$a33 = non_zero_random(-9,9,1);
+
+$A = Matrix([[$a11,$a12,$a13],[$a21,$a22,$a23],[$a31,$a32,$a33]]);
+
+$M13 = Matrix([[$a21,$a22],[$a31,$a32]]);
+$M32 = Matrix([[$a11,$a13],[$a21,$a23]]);
+
+$DetM13 = $M13->det;
+$Coeff13 = Compute("1*$DetM13");
+
+$DetM32 = $M32->det;
+$Coeff32 = Compute("-1*$DetM32");
+
+Context("Numeric");
+$popCPlus = PopUp(["?", "+1", "-1"],"+1");
+$popCMinus = PopUp(["?", "+1", "-1"],"-1");
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Given the matrix \( A = $A \), compute the minors \(M_{13}\), \(M_{32}\) and the cofactors \(C_{13}\), \(C_{32}\).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( M_{13} \)","\( = \)","\( \det \)".$M13->ans_array(2)], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(5)], align=>LEFT, separation=>0).
+
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+
+AlignedRow(["\( C_{13} \)","\( = \)",$popCPlus->menu()."\( M_{13} \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(5)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+and $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( M_{32} \)","\( = \)","\( \det \)".$M32->ans_array(2)], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(5)], align=>LEFT, separation=>0).
+
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+
+AlignedRow(["\( C_{32} \)","\( = \)",$popCPlus->menu()."\( M_{32} \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(5)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($M13->cmp);
+ANS($DetM13->cmp);
+ANS($popCPlus->cmp);
+ANS($Coeff13->cmp);
+
+ANS($M32->cmp);
+ANS($DetM32->cmp);
+ANS($popCMinus->cmp);
+ANS($Coeff32->cmp);
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

@@ -1,0 +1,88 @@
+##DESCRIPTION
+##  Work
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the integral')
+## KEYWORDS('direct applications', 'physical')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+# Load whatever macros you need for the problem
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGauxiliaryFunctions.pl"
+          );
+
+TEXT(beginproblem());
+ 
+## Do NOT show partial correct answers
+$showPartialCorrectAnswers = 1;
+$G=6.67E-11;
+
+$M2=5.9736*10**(24);
+$M=5.9736*10**(24);
+$M3=$M-$M2;
+$R=6.371E+6;
+$m=random(30000,40000,100);
+$y=random(500,1000,50);
+$O=random(9000000,12000000,100000);
+
+#$constant = 1000000;
+$constant = 1/1000000;
+$mf = " $m - $y /1000000 * x ";
+
+$Ffunc="($m-($y/1000000)x)/(x+$R)**2";
+$W2=$G*$M*( (-$m-$y/1000000*$R)/($O+$R) - $y*log($O+$R)/1000000 );
+$W1=$G*$M*((-$m-$y/1000000*$R)/(0+$R)-$y*log(0+$R)/1000000);
+$W=$W2-$W1;
+
+BEGIN_TEXT
+$HR
+$BBOLD Reminder $EBOLD
+$HR
+\(\bullet\) Let \(d\) be the distance between two bodies. The universal law of attraction of two bodies of mass \(m\) and \(M\) (in kilograms) says that the force of attraction between the two bodies, in Newton, is given by 
+$BR$BR
+\[F=\frac{GmM}{d^2}, \]where \(G=6.67\times 10^{-11}\) is the universal constant. 
+$BR
+$BR
+\(\bullet\) The work, in joules, necessary to move an object against a constant force of \(F\) Newton over a distance of \(d\) meters is given by 
+$BR$BR
+\[W=Fd.\]
+$BR
+\(\bullet\) The planet Earth has a mass of \(M=5.9736\times 10^{24}\) kilograms and a radius of \(R=$R\) meters.
+$BR$BR
+$HR
+$BBOLD Question $EBOLD
+$HR
+The rocket Bob-XIII, when full of gas, has a mass of \($m\) kilograms. 
+We want to compute the work necessary to bring the rocket to an orbit of \($O\) meters.$BR$BR
+When launched, the rocket will burn uniformly \($y\) kilograms of fuel per \(1000000\) meters travelled (vertically). 
+$BR$BR
+Let \(x\) be the distance, in meters, of the rocket Bob-XIII from the ground. 
+$BR$BR
+Let \(m(x)\) be the linear function that computes the mass of the rocket Bob-XIII and \(F(x)\) be the force of attraction due to gravity of the rocket Bob-XIII to the planet Earth at \(x\geq 0\) meters from the ground. 
+$BR$BR
+Then the functions \(m(x)\) and \(F(x)\) are
+$BR$BR
+\(m(x)=\) \{ans_rule(30)\} and
+$BR$BR
+\(F(x)=GM\)\{ans_rule(30)\}.
+$BR
+$BR
+The work necessary to bring the rocket Bob-XIII to an orbit of \($O\) meters is
+$BR$BR
+\(W=\) \{ans_rule(40)\} joules.
+$BR
+END_TEXT
+
+ANS(fun_cmp($mf, vars=>"x",limits=>[10000,9000000]));
+ANS(fun_cmp($Ffunc, vars=>"x",limits=>[10000,9000000]));
+ANS(num_cmp($W,reltol=>0.001));
+
+ENDDOCUMENT();

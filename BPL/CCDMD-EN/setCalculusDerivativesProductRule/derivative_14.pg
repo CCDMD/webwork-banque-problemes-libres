@@ -1,0 +1,287 @@
+##DESCRIPTION
+##  Derivative - Product Rule
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation of Functions')
+## KEYWORDS('chain differentiation', 'derivative', 'derivative of the product of functions')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"parserMultiAnswer.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a1 = random(2,7,1);
+$a2 = random(2,7,1);
+
+$b1 = random(2,8,1);
+$b2 = random(2,8,1);
+
+$c1 = random(2,7,1);
+$c2 = random(2,7,1);
+$c3 = random(2,7,1);
+
+$e = random(2,6,1);
+$m = random(2,7,1);
+$n = $e + random(1,3,1);
+
+#\( f(x) = \frac{$a1 x + $b1 }{$c1 x + $d1} ($e1 x^$f1 + $g1) \)
+
+$toggle = random(0,1,1);
+
+Context("Numeric");
+
+if($toggle == 0) 
+{
+    $f = Compute("sin($a1 x^$m - $a2 x)")->reduce;
+}
+else
+{
+    $f = Compute("cos($a1 x^$m - $a2 x)")->reduce;
+}
+
+$g = Compute("e^{$b1 x + $b2}")->reduce;
+$g->{limits} = [0,1];
+$h = Compute("$c1 x^$n + $c2 x^$e - $c3")->reduce;
+
+$g1 = Compute("e^{-$b1 x -$b2}")->reduce;
+$g1->{limits} = [0,1];
+$equation = $f/$g*$h;
+$dequation = $equation->D("x");
+$dequation->{limits} = [0,1];
+
+$multians = MultiAnswer($f, $g1, $h)->with(
+  singleResult => 0,
+  checker => sub {
+      my ( $correct, $student, $self ) = @_;
+      my ( $box1stu, $box2stu, $box3stu ) = @{$student};
+      my ( $f, $g1, $h ) = @{$correct};
+      if( ($box1stu == $f && $box2stu == $g1 && $box3stu == $h) ||
+        ($box1stu == $f && $box2stu == $h && $box3stu == $g1) ||
+        ($box1stu == $g1 && $box2stu == $f && $box3stu == $h) ||
+        ($box1stu == $g1 && $box2stu == $h && $box3stu == $f) ||
+        ($box1stu == $h && $box2stu == $f && $box3stu == $g1) ||
+        ($box1stu == $h && $box2stu == $g1 && $box3stu == $f)  )
+            {
+              return [1,1,1];
+      } else {
+              return [0,0,0];
+          }
+      }
+);
+
+
+#box2
+$ans_eval2f = $f->cmp();
+$ans_hash2f = $ans_eval2f->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2f = $ans_hash2f->{score};
+
+$ans_eval2g1 = $g1->cmp();
+$ans_hash2g1 = $ans_eval2g1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2g1 = $ans_hash2g1->{score};
+
+$ans_eval2h = $h->cmp();
+$ans_hash2h = $ans_eval2h->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2h = $ans_hash2h->{score};
+
+#box3
+$ans_eval3f = $f->cmp();
+$ans_hash3f = $ans_eval3f->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3f = $ans_hash3f->{score};
+
+$ans_eval3g1 = $g1->cmp();
+$ans_hash3g1 = $ans_eval3g1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3g1 = $ans_hash3g1->{score};
+
+$ans_eval3h = $h->cmp();
+$ans_hash3h = $ans_eval3h->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3h = $ans_hash3h->{score};
+
+#box4
+$ans_eval4f = $f->cmp();
+$ans_hash4f = $ans_eval4f->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4f = $ans_hash4f->{score};
+
+$ans_eval4g1 = $g1->cmp();
+$ans_hash4g1 = $ans_eval4g1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4g1 = $ans_hash4g1->{score};
+
+$ans_eval4h = $h->cmp();
+$ans_hash4h = $ans_eval4h->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4h = $ans_hash4h->{score};
+
+Context("Numeric");
+Context()->operators->undefine("/");
+$new_eq = Compute("$f*$g^(-1)*$h");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Let \( \displaystyle y = $equation \). $BR $BR
+Find \( \displaystyle y' \) by using the triple product rule: 
+\( \displaystyle f'(x) g(x) h(x) + f(x) g'(x) h(x) + f(x) g(x) h'(x) \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR$BITALIC$BBOLD Part 1: Rewriting the function $EBOLD$EITALIC $BR$BR
+
+Using laws of exponents, rewrite \( y \) such that it does not contain a quotient. $BR $BR
+\(y =\) \{ans_rule(40)\}
+
+$BR $BR
+$HR
+$BR$BITALIC$BBOLD Part 2: Finding the derivative $EBOLD$EITALIC $BR$BR
+
+In order to use the triple product rule, first identify \( f(x), g(x) \) and \( h(x) \). $BR $BR
+Let $BR
+\( f(x) = \) \{$multians->ans_rule(10)\} $BR
+\( g(x) = \) \{$multians->ans_rule(10)\} $BR
+\( h(x) = \) \{$multians->ans_rule(10)\} $BR $BR
+
+$HR 
+$BBOLD Submit your answer at this point to ensure that \( f(x), g(x) \) and \( h(x) \) are $BBOLD all $EBOLD correctly entered for 'WeBWorK' to recognize them as $BITALIC correct $EITALIC. $EBOLD $BR 
+$HR 
+$BR
+
+
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( y' \)","\( = \)","\( \displaystyle \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \cdot \big( \)".ans_rule(10)."\( \big) \cdot \big( \)".ans_rule(10)."\( \big) \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","","\( \displaystyle + \big( \)".ans_rule(10)."\( \displaystyle \big) \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \cdot \big( \)".ans_rule(10)."\( \big) \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","","\( \displaystyle + \big( \)".ans_rule(10)."\( \big) \cdot \big( \)".ans_rule(10)."\( \displaystyle \big) \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","","(apply the triple product rule)" ], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(110) ], align=>LEFT, separation=>0, indent=>15).
+
+AlignedRow([" ","(find the derivative)" ], align=>LEFT, separation=>0, indent=>15).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->texStrings;
+
+#Part 1
+ANS($new_eq->cmp);
+
+ANS( $multians->cmp() );
+
+#Part 2
+#    ($box2 == $f && $box3 == $g1 && $box4 == $h) 
+if($TESTbox2f && $TESTbox3g1 && $TESTbox4h)
+{
+    ANS($f->cmp);
+    ANS($g1->cmp);
+    ANS($h->cmp);
+
+    ANS($f->cmp);
+    ANS($g1->cmp);
+    ANS($h->cmp);
+
+    ANS($f->cmp);
+    ANS($g1->cmp);
+    ANS($h->cmp);
+}
+#    ($box2 == $f && $box3 == $h && $box4 == $g1) ||
+elsif($TESTbox2f && $TESTbox3h && $TESTbox4g1)
+{
+    ANS($f->cmp);
+    ANS($h->cmp);
+    ANS($g1->cmp);
+
+    ANS($f->cmp);
+    ANS($h->cmp);
+    ANS($g1->cmp);
+
+    ANS($f->cmp);
+    ANS($h->cmp);
+    ANS($g1->cmp);
+}
+#    ($box2 == $g1 && $box3 == $f && $box4 == $h) ||
+elsif($TESTbox2g1 && $TESTbox3f && $TESTbox4h)
+{
+    ANS($g1->cmp);
+    ANS($f->cmp);
+    ANS($h->cmp);
+
+    ANS($g1->cmp);
+    ANS($f->cmp);
+    ANS($h->cmp);
+
+    ANS($g1->cmp);
+    ANS($f->cmp);
+    ANS($h->cmp);
+}
+#    ($box2 == $g1 && $box3 == $h && $box4 == $f) ||
+elsif($TESTbox2g1 && $TESTbox3h && $TESTbox4f)
+{
+    ANS($g1->cmp);
+    ANS($h->cmp);
+    ANS($f->cmp);
+
+    ANS($g1->cmp);
+    ANS($h->cmp);
+    ANS($f->cmp);
+
+    ANS($g1->cmp);
+    ANS($h->cmp);
+    ANS($f->cmp);
+}
+#    ($box2 == $h && $box3 == $f && $box4 == $g1) ||
+elsif($TESTbox2h && $TESTbox3f && $TESTbox4g1)
+{
+    ANS($h->cmp);
+    ANS($f->cmp);
+    ANS($g1->cmp);
+
+    ANS($h->cmp);
+    ANS($f->cmp);
+    ANS($g1->cmp);
+
+    ANS($h->cmp);
+    ANS($f->cmp);
+    ANS($g1->cmp);
+}
+#    ($box2 == $h && $box3 == $g1 && $box4 == $f) )
+else
+{
+    ANS($h->cmp);
+    ANS($g1->cmp);
+    ANS($f->cmp);
+
+    ANS($h->cmp);
+    ANS($g1->cmp);
+    ANS($f->cmp);
+
+    ANS($h->cmp);
+    ANS($g1->cmp);
+    ANS($f->cmp);
+}
+
+ANS($dequation->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

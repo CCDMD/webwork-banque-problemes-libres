@@ -1,0 +1,100 @@
+##DESCRIPTION
+##  Vector Operations
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('vector arithmetic', 'properties', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$v0 = Real(random(1, 10, 1));
+$v1 = Real(random(1, 10, 1));
+$v2 = Real(random(1, 10, 1));
+
+$w0 = Real(random(1, 10, 1));
+$w1 = Real(random(1, 10, 1));
+$w2 = Real(random(-10, -1, 1));
+
+$Num1 = Compute("$w0 * $w1");
+$Num2 = Compute("-$w0 * $w2");
+
+$uDotu = Compute("($v1)**2");
+$vDotv = Compute("($v2)**2");
+$uDotv = Compute("$v0");
+
+$Term1 = "$Num1 u.u";
+$Term2 = "$Num2 u.v";
+
+$NumTerm1 = $Num1 * $uDotu;
+$NumTerm2 = $Num2 * $uDotv;
+$NumTerm3 = $NumTerm1 - $NumTerm2;
+
+Context("Numeric");
+Context()->operators->undefine('/',' /','/ ','//','*','-','+');
+$Answer = Compute("$NumTerm3");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find \( $w0 \vec{u} \bullet ( $w1 \vec{u} + $w2 \vec{v} ) \) given that \( \vec{u} \bullet \vec{v} = $v0 \), \( \| \vec{u} \| = $v1 \) and \( \| \vec{v} \| = $v2 \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$BBOLD Note: $EBOLD Enter $BBOLD u.u $EBOLD for \( \vec{u} \bullet \vec{u} \) and leave a space between a constant and \( \vec{u} \bullet \vec{u} \) (for example $BBOLD $v0 u.u $EBOLD ).$BR
+$HR $BR 
+We know $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{u} \bullet \vec{u} \) ","\( = \)",ans_rule(5),"(use the fact that \( u \bullet u = {\| \vec{u} \|}^{2} \))"], align=>LEFT, separation=>0).
+
+AlignedRow(["\( \vec{v} \bullet \vec{v} \) ","\( = \)",ans_rule(5),"(use the fact that \( v \bullet v = {\| \vec{v} \|}^{2} \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $w0 \vec{u} \bullet ( $w1 \vec{u} + $w2 \vec{v} ) \) ","\( = \)",ans_rule(5)."\( - \)".ans_rule(5),"(expand by using the distributive property of dot products)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(5)."\( - \)".ans_rule(5),"(write the numerical answer)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(5),"(evaluate)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($uDotu->cmp);
+ANS($vDotv->cmp);
+
+ANS(str_cmp($Term1));
+ANS(str_cmp($Term2));
+
+ANS($NumTerm1->cmp);
+ANS($NumTerm2->cmp);
+ANS($Answer->cmp);
+
+ENDDOCUMENT();
+
+

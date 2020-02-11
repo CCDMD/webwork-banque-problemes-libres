@@ -1,0 +1,274 @@
+##DESCRIPTION
+##  Geometric Series - Limit Comparison Test
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Sequences, Summation and Series')
+## KEYWORDS('convergence and divergence', 'comparison test by a limit', 'series')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+######################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"unionTables.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"PGcourse.pl"
+);
+
+
+TEXT(beginproblem());
+
+
+##################################
+#  Setup
+
+Context("Numeric")->variables->are(n=>"Real");
+
+$a = random(5,9,1);
+$b = random(2,9,1);
+$c = random(2,5,1);
+$d = random(3,5,1);
+$e = random(2,9,1);
+
+$dm1 = $d - 1;
+$dm2 = $d - 2;
+
+$dm1d = $d-1/$d;
+
+# TeX
+$series = "\sum_{n=$c}^{\infty} \frac{\sqrt[$d]{$a n}}{$c n^$d + $e}";
+$an = "\frac{\sqrt[$d]{$a n}}{$c n^$d + $e}";
+$Sig = "\sum_{n=$c}^{\infty}";
+$fraction = "\lim_{n \to \infty} \frac{ a_{n} }{ b_{n} } = \lim_{n \to \infty}";
+
+$limit = Formula("$a^(1/$d)/$c");
+$popup = PopUp(["Choose","is convergent by the LCT","is divergent by the LCT","is inconclusive for the series"],"is convergent by the LCT");
+
+$poptype = PopUp(["Choose","geometric","p", "telescoping", "other"],"other");
+
+$popDTcond = PopUp(["Choose","is equal to zero","is not equal to zero"],"is equal to zero");
+$popsol = PopUp(["Choose","is convergent by the divergence test","is divergent by the divergence test", "cannot be classified by the divergence test (inconclusive)"],"cannot be classified by the divergence test (inconclusive)");
+
+$poptypebn = PopUp(["Choose","geometric","p"],"p");
+
+$popvalue = PopUp(["Choose","r","p"],"p");
+$popvalueb = PopUp(["Choose","|r| < 1","|r| >= 1","p <= 1", "p > 1"],"p > 1");
+
+$popcon = PopUp(["Choose","is convergent","is divergent"],"is convergent");
+
+$popsign = PopUp(["Choose","is a number less than 0","is zero","is a number greater than 0","is infinity","DNE"],"is a number greater than 0");
+
+#######################################
+#  Main text
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Determine if the series is convergent or divergent. 
+If it converges, determine the sum (if possible). 
+$BR $BR \( \displaystyle $series \) 
+$BR
+$BR
+$HR
+$PAR
+$BBOLD Solution $EBOLD $BR
+
+
+
+$HR
+$BR$BITALIC$BBOLD Identify the series:$EBOLD$EITALIC $BR$BR
+
+
+
+
+We have a \{ $poptype->menu() \} series. 
+
+
+$HR
+$BR$BITALIC$BBOLD Apply the divergence test:$EBOLD$EITALIC $BR$BR
+
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{n\to\infty} $an = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \(n\) with \( \infty \))"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \) ",ans_rule(3)."\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.ans_rule(3)."\( \big( \)".ans_rule(15)."\( \big) \)","(factor the highest power)"],align => "LEFT",separation => 0, indent => 110).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \) ",ans_rule(15).$BR.$HR.ans_rule(15),"(simplify)"],align => "LEFT",separation => 0, indent => 110).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(10),,"(evaluate and simplify)"],align => "LEFT",separation => 0, indent => 110).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR $BR
+Thus, since \(\displaystyle \lim_{n\to\infty} $an\) \{ $popDTcond->menu() \}, then the series \{ $popsol->menu() \}.
+
+$BR$BR
+
+
+
+$HR
+$BR$BITALIC$BBOLD Apply the limit comparison test:$EBOLD$EITALIC $BR$BR
+
+
+
+Let \( a_n = \) \{ans_rule(30) \} be the term of the series \(\displaystyle $series\).
+$BR $BR
+
+We want to compare the series \(\displaystyle $series\) with another series \(\displaystyle $Sig b_n\). 
+$BR $BR
+
+By keeping the dominating terms (here the terms with the highest powers), we get \( b_n = \) \{ans_rule(30) \}.
+$BR $BR
+Thus the series \( \displaystyle \sum_{n=$c}^{\infty} b_n \) is a \{ $poptypebn->menu() \} series and since \{ $popvalue->menu() \} \( = \) \{ans_rule(5) \} where \{ $popvalueb->menu() \} then the series \{ $popcon->menu() \}.
+$BR$BR
+
+
+Now, for \( n \geq $c \), $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle $fraction \)", ans_rule(20).$BR.$HR.ans_rule(20), "(write your answer as a fully reduced fraction)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \( n\) with \( \infty \))"],align => "LEFT",separation => 0, indent => 65).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \) ",ans_rule(3)."\( \big( \)".ans_rule(10)."\( \big) \)".$BR.$HR.ans_rule(3)."\( \big( \)".ans_rule(10)."\( \big) \)","(factor the highest power)"],align => "LEFT",separation => 0, indent => 65).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \) ",ans_rule(10).$BR.$HR.ans_rule(10),"(simplify)"],align => "LEFT",separation => 0, indent => 65).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(10),"(evaluate and simplify)"],align => "LEFT",separation => 0, indent => 65).
+  TableSpace(0,0).
+EndTable();
+\}
+
+$BR $BR
+Since \( \displaystyle \lim_{n \to \infty} \frac{ a_{n} }{ b_{n} } \) \{ $popsign->menu() \} and \( \displaystyle \sum_{n=$c}^{\infty} b_n \) \{ $popcon->menu() \} then \( \displaystyle $series \) \{ $popup->menu() \}.
+
+$BR
+$BR
+Enter $BBOLD INF $EBOLD for \(\infty\), $BBOLD -INF $EBOLD for \(-\infty\),
+and $BBOLD DNE $EBOLD if the limit does not exist.
+END_TEXT
+
+
+#######################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers=1;
+
+##########################
+### IDENTIFYING THE SERIES ###
+##########################
+
+
+ANS( $poptype->cmp() );
+
+############################
+### Applying the divergence test ###
+############################
+
+
+#sub
+ANS(Compute("inf")->cmp());
+ANS(Compute("inf")->cmp());
+
+#factor
+ANS(fun_cmp("n^(1/$d)",var=>'n'));
+ANS(fun_cmp("$a^(1/$d)",var=>'n'));
+ANS(fun_cmp("n^$d",var=>'n'));
+ANS(fun_cmp("$c + $e/n^$d",var=>'n'));
+
+#simplify
+ANS(fun_cmp("$a^(1/$d)",var=>'n'));
+ANS(fun_cmp("n^$dm1d($c + $e/n^$d)",var=>'n'));
+
+#answer
+ANS(num_cmp(0));
+ANS($popDTcond->cmp() );
+ANS($popsol->cmp() );
+
+
+#################################
+### Applying the limit comparison test ###
+#################################
+
+
+#an
+ANS(fun_cmp("($a n)^(1/$d)/($c n^$d + $e)",var=>'n'));
+
+#bn
+ANS(fun_cmp("1/n^$dm1d",var=>'n'));
+ANS( $poptypebn->cmp() );
+ANS( $popvalue->cmp() );
+ANS(num_cmp($dm1d));
+ANS( $popvalueb->cmp() );
+ANS( $popcon->cmp() );
+
+#limit
+ANS(fun_cmp("$a^(1/$d) n^$d",var=>'n'));
+ANS(fun_cmp("$c n^$d + $e",var=>'n'));
+
+#sub
+ANS(Compute("inf")->cmp());
+ANS(Compute("inf")->cmp());
+
+#factor
+ANS(fun_cmp("n^$d",var=>'n'));
+ANS(fun_cmp("$a^(1/$d)",var=>'n'));
+ANS(fun_cmp("n^$d",var=>'n'));
+ANS(fun_cmp("$c + $e/n^$d",var=>'n'));
+
+#simplify
+ANS(fun_cmp("$a^(1/$d)",var=>'n'));
+ANS(fun_cmp("$c + $e/n^$d",var=>'n'));
+
+#answer
+ANS( $limit->cmp() );
+ANS( $popsign->cmp() );
+ANS( $popcon->cmp() );
+ANS( $popup->cmp() );
+
+
+ENDDOCUMENT();
+

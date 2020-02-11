@@ -1,0 +1,155 @@
+## DESCRIPTION
+## Algebra, Inequalities
+## ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Equations and Inequations)
+##KEYWORDS('inequality with absolute value', 'solving an inequality')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"contextAlternateIntervals.pl",
+"contextLimitedPolynomial.pl",
+"parserPopUp.pl",
+"PGcourse.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$a = non_zero_random(-6,6,1);
+
+$b = random(1,8,1);
+$c=-$b+$a;
+$d=$b+$a;
+
+$popLess = PopUp(["?","<","<=","=",">",">="],"<");
+$popLessEqual = PopUp(["?","<","<=","=",">",">="],"<=");
+$popGreater = PopUp(["?","<","<=","=",">",">="],">");
+$popGreaterEqual = PopUp(["?","<","<=","=",">",">="],">=");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+$case = random(1,2);
+if ($case == 1) 
+{
+  $Sign = "<";
+  $popAnswer = $popLess;
+  $SolSet = Compute("($c,$d)");
+} 
+else
+{
+  $Sign = "\leq";
+  $popAnswer = $popLessEqual;
+  $SolSet = Compute("[$c,$d]");
+}
+
+
+$LHS = "|x-$a|";
+$RHS = "$b";
+
+$equation_tex = "$LHS $Sign $RHS";
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Solve \( \displaystyle $equation_tex \)
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Solve for \(x\)");
+
+# -$b < x-$a < $b
+
+Context("Numeric");
+$coeff_ls2 = -$b+$a;
+$coeff_rs2 = $b+$a;
+
+Context("LimitedPolynomial-Strict");
+$LHS_S1 = Compute("-$b");
+$MHS_S1 = Compute("x-$a");
+$RHS_S1 = Compute("$b");
+
+$LHS_S2 = Compute("$coeff_ls2");
+$MHS_S2 = Compute("x");
+$RHS_S2 = Compute("$coeff_rs2");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+\( \displaystyle $equation_tex \) can be rewritten as $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),$popLess->menu(),ans_rule(5),$popLess->menu(),ans_rule(5),"(rewrite by using \( |x| $Sign c \iff -c $Sign x $Sign c\) )"], align=>LEFT, separation=>0, indent=>0).
+
+AlignedRow([ans_rule(5),$popLess->menu(),ans_rule(5),$popLess->menu(),ans_rule(5),"(rewrite by keeping only \( $MHS_S2 \) as the middle term)"], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($LHS_S1->cmp);
+ANS($popAnswer->cmp);
+ANS($MHS_S1->cmp);
+ANS($popAnswer->cmp);
+ANS($RHS_S1->cmp);
+
+ANS($LHS_S2->cmp);
+ANS($popAnswer->cmp);
+ANS($MHS_S2->cmp);
+ANS($popAnswer->cmp);
+ANS($RHS_S2->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("State the solution");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD  $BR
+Express your answer in interval notation. $BR
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR 
+$HR $BR
+
+Thus, the solution set is \{ans_rule(35)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($SolSet->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

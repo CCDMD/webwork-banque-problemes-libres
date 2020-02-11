@@ -1,0 +1,154 @@
+##DESCRIPTION
+##  Integrals - Approximate by Riemann Sums
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration - Definition and Interpretation')
+## KEYWORDS('area', 'approximation', 'midpoint rule', 'right rectangles', 'left triangles', 'Riemann sum')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"unionTables.pl",
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(0,3,1);         ## left endpoint
+$k = random(1,2,1);
+$b = $a + $k;            ## right endpoint
+$dx = ($b-$a)/5;
+
+$l1=$a+(0)*$dx;
+$l2=$a+(1)*$dx;
+$l3=$a+(2)*$dx;
+$l4=$a+(3)*$dx;
+$l5=$a+(4)*$dx;
+
+$r1=$a+(1)*$dx;
+$r2=$a+(2)*$dx;
+$r3=$a+(3)*$dx;
+$r4=$a+(4)*$dx;
+$r5=$a+(5)*$dx;
+
+$m1=($l1+$r1)/2;
+$m2=($l2+$r2)/2;
+$m3=($l3+$r3)/2;
+$m4=($l4+$r4)/2;
+$m5=($l5+$r5)/2;
+
+
+$c = random(2,4,1);
+$e = random(1,5,1);
+
+sub myfunc {
+    $x = shift @_;
+    return $c/($x**2+1) + $e;
+}
+
+BEGIN_TEXT
+
+Consider the definite integral
+\[ \int_{$a}^{$b} \left( \frac {$c}{x^2+1} + $e \right) \,dx .\]
+$BR $BR
+1 - Find the Riemann sum for this integral using left endpoints and \( n=5 \). Reminder: \(c_k=x_{k-1}=a+(k-1)\Delta x\).$BR$BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( L(5) \)","\(=\)","\(\big(\)","\(f(c_1)\)","\(+\)","\(f(c_2)\)","\(+\)","\(f(c_3)\)","\(+\)","\(f(c_4)\)","\(+\)","\(f(c_5)\)","\(\big)\)","\(\Delta x\)"],align => "Center",separation => 0).
+  AlignedRow(["","\(=\)","\(\big(\)","\(f(\)".ans_rule(5)."\()\)","\(+\)","\(f(\)".ans_rule(5)."\()\)","\(+\)","\(f(\)".ans_rule(5)."\()\)","\(+\)","\(f(\)".ans_rule(5)."\()\)","\(+\)","\(f(\)".ans_rule(5)."\()\)","\(\big)\)",ans_rule(5)],align => "LEFT",separation => 0).
+  AlignedRow(["","\(=\)","\(\big(\)",ans_rule(10),"\(+\)",ans_rule(10),"\(+\)",ans_rule(10),"\(+\)",ans_rule(10),"\(+\)",ans_rule(10),"\(\big)\)",ans_rule(5)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$SPACE $SPACE $SPACE $SPACE $SPACE \(=\)\{ans_rule(60)\}.
+
+$BR$BR$BR
+2 - Find the Riemann sum for this same integral, using right endpoints and \( n=5 \). Reminder: \(c_k=x_{k}=a+k\Delta x\).$BR$BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( R(5) \)","\(=\)","\(\big(\)","\(f(c_1)\)","\(+\)","\(f(c_2)\)","\(+\)","\(f(c_3)\)","\(+\)","\(f(c_4)\)","\(+\)","\(f(c_5)\)","\(\big)\)","\(\Delta x\)"],align => "Center",separation => 0).
+  AlignedRow(["","\(=\)","\(\big(\)","\(f(\)".ans_rule(5)."\()\)","\(+\)","\(f(\)".ans_rule(5)."\()\)","\(+\)","\(f(\)".ans_rule(5)."\()\)","\(+\)","\(f(\)".ans_rule(5)."\()\)","\(+\)","\(f(\)".ans_rule(5)."\()\)","\(\big)\)",ans_rule(5)],align => "LEFT",separation => 0).
+  AlignedRow(["","\(=\)","\(\big(\)",ans_rule(10),"\(+\)",ans_rule(10),"\(+\)",ans_rule(10),"\(+\)",ans_rule(10),"\(+\)",ans_rule(10),"\(\big)\)",ans_rule(5)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$SPACE $SPACE $SPACE $SPACE $SPACE \(=\)\{ans_rule(60)\}.
+
+$BR$BR$BR
+3 - Find the Riemann sum for this same integral, using midpoints and \( n=5 \). Reminder: \(c_k=\frac{x_{k-1}+x_k}{2}\overset{or}{=}a+(k-0.5)\Delta x\).$BR$BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( M(5) \)","\(=\)","\(\big(\)","\(f(c_1)\)","\(+\)","\(f(c_2)\)","\(+\)","\(f(c_3)\)","\(+\)","\(f(c_4)\)","\(+\)","\(f(c_5)\)","\(\big)\)","\(\Delta x\)"],align => "Center",separation => 0).
+  AlignedRow(["","\(=\)","\(\big(\)","\(f(\)".ans_rule(5)."\()\)","\(+\)","\(f(\)".ans_rule(5)."\()\)","\(+\)","\(f(\)".ans_rule(5)."\()\)","\(+\)","\(f(\)".ans_rule(5)."\()\)","\(+\)","\(f(\)".ans_rule(5)."\()\)","\(\big)\)",ans_rule(5)],align => "LEFT",separation => 0).
+  AlignedRow(["","\(=\)","\(\big(\)",ans_rule(10),"\(+\)",ans_rule(10),"\(+\)",ans_rule(10),"\(+\)",ans_rule(10),"\(+\)",ans_rule(10),"\(\big)\)",ans_rule(5)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$SPACE $SPACE $SPACE $SPACE $SPACE $SPACE $SPACE \(=\)\{ans_rule(60)\}.
+
+END_TEXT
+
+ANS(num_cmp($l1));
+ANS(num_cmp($l2));
+ANS(num_cmp($l3));
+ANS(num_cmp($l4));
+ANS(num_cmp($l5));
+ANS(num_cmp($dx));
+ANS(num_cmp(myfunc($l1)));
+ANS(num_cmp(myfunc($l2)));
+ANS(num_cmp(myfunc($l3)));
+ANS(num_cmp(myfunc($l4)));
+ANS(num_cmp(myfunc($l5)));
+ANS(num_cmp($dx));
+
+$L5 = (myfunc($l1)+myfunc($l2)+myfunc($l3)+myfunc($l4)+myfunc($l5))*$dx;
+ANS(num_cmp($L5));
+
+ANS(num_cmp($r1));
+ANS(num_cmp($r2));
+ANS(num_cmp($r3));
+ANS(num_cmp($r4));
+ANS(num_cmp($r5));
+ANS(num_cmp($dx));
+ANS(num_cmp(myfunc($r1)));
+ANS(num_cmp(myfunc($r2)));
+ANS(num_cmp(myfunc($r3)));
+ANS(num_cmp(myfunc($r4)));
+ANS(num_cmp(myfunc($r5)));
+ANS(num_cmp($dx));
+
+$R5 = (myfunc($r1)+myfunc($r2)+myfunc($r3)+myfunc($r4)+myfunc($r5))*$dx;
+ANS(num_cmp($R5));
+
+ANS(num_cmp($m1));
+ANS(num_cmp($m2));
+ANS(num_cmp($m3));
+ANS(num_cmp($m4));
+ANS(num_cmp($m5));
+ANS(num_cmp($dx));
+ANS(num_cmp(myfunc($m1)));
+ANS(num_cmp(myfunc($m2)));
+ANS(num_cmp(myfunc($m3)));
+ANS(num_cmp(myfunc($m4)));
+ANS(num_cmp(myfunc($m5)));
+ANS(num_cmp($dx));
+
+$M5 = (myfunc($m1)+myfunc($m2)+myfunc($m3)+myfunc($m4)+myfunc($m5))*$dx;
+ANS(num_cmp($M5));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

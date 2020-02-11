@@ -1,0 +1,91 @@
+##DESCRIPTION
+##  Find the angle between two vectors
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('R^3', 'angle', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+do
+{
+    $a1 = non_zero_random(-10, 10, 1);
+    $a2 = random(-10, 10, 1);
+    $a3 = random(-10, 10, 1);
+
+    $a = Vector($a1, $a2, $a3);
+
+    $b1 = non_zero_random(-10, 10, 1);
+    $b2 = random(-10, 10, 1);
+    $b3 = random(-10, 10, 1);
+
+    $b = Vector($b1, $b2, $b3);
+
+    $DotProduct = $a.$b;
+} until( $DotProduct!=0);
+
+$Norma = norm($a);
+$Normb = norm($b);
+
+$Angle = arccos($DotProduct/($Norma*$Normb));
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find the angle \( \theta \) between \( \vec{a}  = $a \) and \( \vec{b}  = $b \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR $BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \cos (\theta ) \) ","\( = \)","\( \displaystyle \frac{\vec{a} \bullet \vec{b}}{ \| \vec{a} \| \; \| \vec{b} \|} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(10).$BR.$HR."\( \Big( \)".ans_rule(5)."\( \Big) \Big( \)".ans_rule(5)."\( \Big) \)","(write the numerical value of \(\vec{a} \bullet \vec{b}\) , \( \| \vec{a} \| \) and \( \| \vec{b} \| \))" ], align=>CENTER, separation=>0, indent=>40).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \theta \) ","\( = \)",ans_rule(25),"(in radian)" ], align=>CENTER, separation=>0, indent=>30).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($Norma->cmp);
+ANS($Normb->cmp);
+ANS($Angle->cmp);
+
+ENDDOCUMENT();

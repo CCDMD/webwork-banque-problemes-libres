@@ -1,0 +1,135 @@
+## DESCRIPTION
+## Instantaneous Rate of Change
+## ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('instantaneous rate of change')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showpartialcorrectanswers = 1;
+
+$a = random(15,25, 1);
+$x = random(2,8,1);
+
+#Tex
+$eq = "$a \sqrt[3]{x^2}";
+
+Context("Numeric");
+$equation = Compute("$a x^(2/3)");
+$dequation = $equation->D('x');
+
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+$answer = $dequation->eval(x=>"$x");
+
+$popVariableX = PopUp(["?", "x", "y", "R"],"x");
+$popVariableR = PopUp(["?", "x", "y", "R"],"R");
+
+$popUnit = PopUp(["Choose", "hours per item", "items per hour"],"items per hour");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Suppose that the number of items, \(y\), that a person can learn in \(x\) hours is given by $BR 
+\( \quad \displaystyle y = $eq \) $BR
+Find the rate of learning for a person at \($x\) hours.
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point.
+$HR
+$HR
+$BR
+
+$HR
+$BR$BITALIC$BBOLD Part 1: Define the variables $EBOLD$EITALIC $BR$BR
+Let \(R\) represent the rate of learning for a person.
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 2: Identify what the problem is asking $EBOLD$EITALIC $BR$BR
+We want \{ $popVariableR->menu() \} 
+when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 3: Find the appropriate formula $EBOLD$EITALIC $BR$BR
+
+We know \{ $popVariableR->menu() \} \( = \displaystyle \frac{dy}{dx}\) 
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 4: Solve for what the problem is asking $EBOLD$EITALIC $BR$BR
+We have $BR $BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( y = \) ",ans_rule(2),"\( x \) ",ans_rule(2).$BR.$BR.$BR,"(rewriting \(y\) )"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+and
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{dy}{dx} \)","\( = \)",ans_rule(20),"(write the derivative)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+When \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR $BR
+\( \displaystyle \frac{dy}{dx} = \)\{ans_rule(20) \} ($BITALIC replace the given condition into \( \frac{dy}{dx} \) $EITALIC)
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 5: Draw a conclusion $EBOLD$EITALIC $BR$BR
+Thus, the rate of learning is \{ans_rule(10)\} \{ $popUnit->menu() \}.
+
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popVariableR->cmp);
+ANS($popVariableX->cmp);
+ANS(Compute("$x")->cmp);
+ANS($popVariableR->cmp);
+
+#y
+ANS(Compute("$a")->cmp);
+ANS(Compute("2/3")->cmp);
+
+ANS($dequation->cmp);
+
+ANS($popVariableX->cmp);
+ANS(Compute("$x")->cmp);
+ANS($answer->cmp);
+
+ANS($answer->cmp);
+ANS($popUnit->cmp);
+
+
+
+
+ENDDOCUMENT();

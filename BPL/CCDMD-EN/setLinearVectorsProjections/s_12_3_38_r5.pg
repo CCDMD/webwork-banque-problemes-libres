@@ -1,0 +1,229 @@
+##DESCRIPTION
+##  Vector Operations
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('R^3', 'orthogonal projection', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+#####################################################################
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$a1 = non_zero_random(-10, 10, 1);
+$a2 = random(-10, 10, 1);
+$a3 = random(-10, 10, 1);
+$a4 = random(-10, 10, 1);
+$a5 = random(-10, 10, 1);
+$a = Vector($a1, $a2, $a3, $a4, $a5);
+
+$b1 = random(-10, 10, 1);
+$b2 = non_zero_random(-10, 10, 1);
+$b3 = random(-10, 10, 1);
+$b4 = random(-10, 10, 1);
+$b5 = random(-10, 10, 1);
+$b = Vector($b1, $b2, $b3, $b4, $b5);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Let \(\vec{a} = $a \) and \(\vec{b} = $b \) be vectors in \(\mathbb{R}^5\). $BR
+Find the orthogonal projection of \(\vec{b}\) on \(\vec{a}\) and the orthogonal projection of \(\vec{a}\) on \(\vec{b}\).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Find the orthogonal projection of \(\vec{b}\) on \(\vec{a}\)");
+
+Context()->texStrings;
+BEGIN_TEXT
+Which of the formulas below corresponds to the $BBOLD orthogonal projection of \(\vec{b}\) on \(\vec{a}\)? $EBOLD $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+
+AlignedRow(["Option 1:","\( \displaystyle \textrm{proj}_{\vec{a}}\vec{b} = \left( \frac{\vec{b} \bullet \vec{a}}{\vec{a} \bullet \vec{a}} \right) \vec{a}\)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \displaystyle \textrm{proj}_{\vec{a}}\vec{b} = \left( \frac{\vec{a} \bullet \vec{b}}{\vec{b} \bullet \vec{b}} \right) \vec{b}\)"], align=>LEFT, separation=>0).
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 3:","\( \displaystyle \textrm{proj}_{\vec{b}}\vec{a} = \left( \frac{\vec{b} \bullet \vec{a}}{\vec{a} \bullet \vec{a}} \right) \vec{a}\)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 4:","\( \displaystyle \textrm{proj}_{\vec{b}}\vec{a} = \left( \frac{\vec{a} \bullet \vec{b}}{\vec{b} \bullet \vec{b}} \right) \vec{b}\)"], align=>LEFT, separation=>0).
+
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("1")->cmp );
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$Num = $b.$a;
+$Den = $a.$a;
+$Proj = ($Num/$Den)*$a;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \textrm{proj}_{\vec{a}}\vec{b} \) ","\( = \)","\( \displaystyle \left( \frac{\vec{b} \bullet \vec{a}}{\vec{a} \bullet \vec{a}} \right) \vec{a} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)","\( \Bigg( \)",ans_rule(5).$BR.$HR.ans_rule(5),"\( \Bigg) \)".ans_rule(5),"(write the numerical value of \(\vec{b} \bullet \vec{a}\) and \( \vec{a} \bullet \vec{a} \) and the components of the vector \( \vec{a} \))" ], align=>LEFT, separation=>0, indent=>45).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(25),"(write the components of the vector)" ], align=>CENTER, separation=>0, indent=>30).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Num->cmp);
+ANS($Den->cmp);
+ANS($a->cmp);
+ANS($Proj->cmp);
+
+Section::End();
+
+###########################################
+
+###########################################
+Section::Begin("Find the orthogonal projection of \(\vec{a}\) on \(\vec{b}\)");
+
+Context()->texStrings;
+BEGIN_TEXT
+Which of the formulas below corresponds to the $BBOLD orthogonal projection of \(\vec{a}\) on \(\vec{b}\)? $EBOLD $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+
+AlignedRow(["Option 1:","\( \displaystyle \textrm{proj}_{\vec{a}}\vec{b} = \left( \frac{\vec{b} \bullet \vec{a}}{\vec{a} \bullet \vec{a}} \right) \vec{a}\)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \displaystyle \textrm{proj}_{\vec{a}}\vec{b} = \left( \frac{\vec{a} \bullet \vec{b}}{\vec{b} \bullet \vec{b}} \right) \vec{b}\)"], align=>LEFT, separation=>0).
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 3:","\( \displaystyle \textrm{proj}_{\vec{b}}\vec{a} = \left( \frac{\vec{b} \bullet \vec{a}}{\vec{a} \bullet \vec{a}} \right) \vec{a}\)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 4:","\( \displaystyle \textrm{proj}_{\vec{b}}\vec{a} = \left( \frac{\vec{a} \bullet \vec{b}}{\vec{b} \bullet \vec{b}} \right) \vec{b}\)"], align=>LEFT, separation=>0).
+
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("4")->cmp );
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$Num = $b.$a;
+$Den = $b.$b;
+$Proj = ($Num/$Den)*$b;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \textrm{proj}_{\vec{b}}\vec{b} \) ","\( = \)","\( \displaystyle \left( \frac{\vec{a} \bullet \vec{b}}{\vec{b} \bullet \vec{b}} \right) \vec{b} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)","\( \Bigg( \)",ans_rule(5).$BR.$HR.ans_rule(5),"\( \Bigg) \)".ans_rule(5),"(write the numerical value of \(\vec{a} \bullet \vec{b}\) and \( \vec{b} \bullet \vec{b} \) and the components of the vector \( \vec{b} \))" ], align=>LEFT, separation=>0, indent=>45).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(25),"(write the components of the vector)" ], align=>CENTER, separation=>0, indent=>30).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Num->cmp);
+ANS($Den->cmp);
+ANS($b->cmp);
+ANS($Proj->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

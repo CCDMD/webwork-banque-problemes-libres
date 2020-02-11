@@ -1,0 +1,146 @@
+##DESCRIPTION
+##  Indefinite Integrals - Substitution
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('change of variable', 'indefinite integral')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGstandard.pl", 
+"MathObjects.pl", 
+"PGunion.pl",
+"PGcourse.pl"
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+do{
+$a = random(3,7,2);
+$b = random(4,8,2);
+} until( $a != $b );
+
+$gcd = gcd($a,$b);
+
+Context("Numeric");
+Context()->variables->add('dx' => 'Real');
+
+#box 7
+$ans_eval7 = Compute("dx")->cmp();
+$ans_hash7 = $ans_eval7->evaluate($inputs_ref->{ANS_NUM_TO_NAME(7)});
+$TESTbox7 = $ans_hash7->{score};
+
+BEGIN_TEXT
+$PAR
+$BBOLD Question $EBOLD $BR $BR
+Compute 
+$BR $BR
+\( \quad \displaystyle \int \frac{1}{$a x +$b \sqrt{x}}\, dx\)
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+We know \{ans_rule(10) \} is a common factor of \( $a x +$b \sqrt{x}\),
+$BR $BR
+thus $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{1}{$a x +$b \sqrt{x}} \)", "\( = \)",ans_rule(4).$BR.$HR.ans_rule(6)."\( \big( \)".ans_rule(8)."\( \big) \)","(factorize denominator)"], align=>CENTER, separation=>0).
+EndTable()
+\}
+$BR $BR
+Let $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( u \)", "\( = \)",ans_rule(10),"(choose \(u\))"], align=>LEFT, separation=>0).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(u\))"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR $BR 
+We have
+$PAR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \int \frac{1}{$a x +$b \sqrt{x}}\,dx \)","\( = \)",ans_rule(2)."\( \displaystyle \int \)",ans_rule(4).$BR.$HR.ans_rule(6)."\( \big( \)".ans_rule(8)."\( \big) \)",ans_rule(2)], align=>CENTER, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["(rewrite as the factored form. Make sure to move the appropriate constant outside of the integral)"], align=>CENTER, separation=>0, indent=>140).
+EndTable()
+\}
+$PAR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(3)."\( \displaystyle \int\)".ans_rule(10).ans_rule(2),"(an integral with \(u\))"], align=> LEFT, separation=>0,indent=>120).
+AlignedRow(["\( = \)",ans_rule(2)."\( \big( \)".ans_rule(24)."\( \big) + \)".ans_rule(1),"(integrate with respect to \(u\))"], align=>LEFT, separation=>0,indent=>120).
+AlignedRow(["\( = \)",ans_rule(33)."\( + \)".ans_rule(1),"(rewrite with respect to \(x\))"], align=>LEFT, separation=>0,indent=>120).
+EndTable()
+\}
+
+
+END_TEXT
+
+#
+
+#ans_rule(12).$BR.$HR.ans_rule(4)."\( \big( \)".ans_rule(8)."\( \big) \)"
+
+#factor
+ANS(fun_cmp("$gcd*sqrt(x)", vars=>["u","x","du","dx"],limits => [[0,10]]));
+ANS(num_cmp(1));
+ANS(fun_cmp("$gcd*sqrt(x)", vars=>["u","x","du","dx"],limits => [[0,10]]));
+ANS(fun_cmp("$a/$gcd*sqrt(x)+$b/$gcd", vars=>["u","x","du","dx"],limits => [[0,10]]));
+
+#u
+ANS(fun_cmp("$a/$gcd*sqrt(x)+$b/$gcd", vars=>["u","x","du","dx"],limits => [[0,10]]));
+
+#du/dx
+ANS(fun_cmp("du", vars=>["u","x","du","dx"]));
+if ($TESTbox3) 
+{
+ANS(fun_cmp("dx", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("$a/(2*$gcd)*x^(-1/2)", vars=>["u","x","du","dx"],limits => [[0,10]]));
+}
+else
+{
+ANS(fun_cmp("$a/(2*$gcd)", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("x^(-1/2)dx", vars=>["u","x","du","dx"],limits => [[0,10]]));
+}
+
+#rewrite x
+ANS(num_cmp("1/$gcd"));
+ANS(num_cmp("1"));
+ANS(fun_cmp("sqrt(x)", vars=>["u","x","du","dx"],limits => [[0,10]] ));
+ANS(fun_cmp("$a/$gcd*sqrt(x)+$b/$gcd", vars=>["u","x","du","dx"],limits => [[0,10]] ));
+ANS(fun_cmp("dx", vars=>["u","x","du","dx"]));
+
+#ANS(num_cmp("(2*$gcd)/$a"));
+ANS(num_cmp("2/$a"));
+ANS(fun_cmp("1/u", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("du", vars=>["u","x","du","dx"]));
+
+#ANS(num_cmp("(2*$gcd)/$a"));
+ANS(num_cmp("2/$a"));
+ANS(fun_cmp("ln|u|", mode=>"antider", vars=>["u","x","dx","du"],limits=>[[-100,100]]));
+ANS(str_cmp("C"));
+
+#answer
+ANS(fun_cmp("2*ln|$a*sqrt(x)+$b|/$a", mode=>"antider", vars=>["u","x","dx","du"],limits => [[0,10]] ));
+ANS(str_cmp("C"));
+
+ENDDOCUMENT();
+
+
+

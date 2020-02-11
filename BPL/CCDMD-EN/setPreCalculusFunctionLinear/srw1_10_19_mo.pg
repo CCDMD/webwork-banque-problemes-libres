@@ -1,0 +1,136 @@
+##DESCRIPTION
+##  find the equation of the line given a point on the line and given
+##  that it is parallel to some line
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Affine and linear function)
+##KEYWORDS('equation of a straight line', 'linear function', 'ax + b form')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+#"contextFraction.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->variables->add(y => 'Real');
+
+$x1 = random(1,9,1);
+$y1 = random(1,10,1);
+$a1 = random(2,5,1);
+$b1 = random(2,5,1);
+$c1 = random(2,5,1);
+
+$DeltaY = -$a1;
+$DeltaX = $b1;
+$BValue = $y1*$DeltaX - $DeltaY*$x1;
+$gcdB = gcd($BValue,$DeltaX);
+$BValueNum = $BValue/$gcdB;
+$BValueDen = $DeltaX/$gcdB;
+
+$equation = Compute("$a1 x + $b1 y")->reduce;
+
+$popP = PopUp(["Choose", "equal", "not equal", "negative of each other", "positive reciprocals", "negative reciprocals"],"equal");
+
+#forces a fraction for exponents
+#Context("LimitedFraction");
+Context("Numeric");
+Context()->operators->undefine("+","-","*");
+$M1 = Compute("- $a1/$b1");
+$M2 = $M1;
+$B1 = Compute("$c1/$b1");
+$B2 = Compute("$BValueNum/$BValueDen");
+
+Context("Numeric");
+Context()->variables->add(b => 'Real');
+#Box 10 
+$ans_eval10 = Compute("b")->cmp();
+$ans_hash10 = $ans_eval10->evaluate($inputs_ref->{ANS_NUM_TO_NAME(10)});
+$TESTbox10 = $ans_hash10->{score};
+
+if ($TESTbox10) 
+{
+    $Box_10 = Compute("b");
+    $Box_11 = $B2;
+}
+else
+{
+    $Box_10 = $B2;
+    $Box_11 = Compute("b");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find an equation of the line passing through the point 
+\( ( $x1 ,$y1 ) \) and parallel to the line
+\( $equation = $c1 \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR
+Let \( m_1 \) be the slope of \( $equation = $c1 \). $BR
+Let \( m_2 \) be the slope of the line parallel to \( $equation = $c1 \). $BR $BR
+We want \( y = m_2 x + b \).  $BR $BR 
+We know two lines are parallel if \( m_1 \) and \( m_2 \) are \{ $popP->menu() \}.
+$BR $BR
+If we rewrite \( $equation = $c1 \) in slope-intercept form \( y = m x + b\), we have $BR $BR
+\( y = \) 
+\{ ans_rule(5) \} \( x + \) 
+\{ ans_rule(5) \}  
+$BR $BR
+Then \( m_1 = \) \{ ans_rule(5) \} and \( m_2 = \) \{ ans_rule(5) \}.
+$BR $BR
+Now
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( y \)","\( = \)","\( m_2 \)","\( x \)","\( + \)","\( b \)"], align=>CENTER, separation=>0).
+AlignedRow([ans_rule(5),"\( = \)",ans_rule(5),ans_rule(5),"\( + \)",ans_rule(5),"(if possible, replace \( y, m, x\) and \( b\) with their numerical value, otherwise rewrite the variables)"], align=>LEFT, separation=>0).
+AlignedRow([ans_rule(5),"\( = \)",ans_rule(5),"","","","(solve for the missing variable)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Thus, the equation of the line passing through the point 
+\( ( $x1 ,$y1 ) \) and parallel to \( $equation = $c1 \) is $BR
+\( \quad y = \) 
+\{ ans_rule(5) \} \( x + \) 
+\{ ans_rule(5) \}  
+$BR
+$BR
+END_TEXT
+
+ANS($popP->cmp() );
+ANS($M1->cmp() );
+ANS($B1->cmp() );
+ANS($M1->cmp() );
+ANS($M2->cmp() );
+
+ANS(Compute("$y1")->cmp);
+ANS($M2->cmp() );
+ANS(Compute("$x1")->cmp);
+ANS(Compute("b")->cmp);
+
+ANS($Box_10->cmp() );
+ANS($Box_11->cmp);
+
+ANS($M2->cmp() );
+ANS($B2->cmp() );
+
+ENDDOCUMENT();

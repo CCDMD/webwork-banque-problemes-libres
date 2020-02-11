@@ -1,0 +1,82 @@
+##DESCRIPTION
+##  Derivative - Product Rule
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation of Functions')
+## KEYWORDS('chain differentiation', 'derivative', 'derivative of the product of functions')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        
+       
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,5,1);
+$b = random(8,15,1);
+$m = random(2,9,1);
+$n = random(2,9,1);
+if($n == $m) {$n += 1;}
+
+Context("Numeric");
+Context()->flags->set(useBaseTenLog => 1);
+Context()->variables->set(x=>{limits=>[-1,1]});
+$f = Compute("x^$n");
+$g = Compute("ln($b - $a x^$m)");
+$equation = $f*$g;
+$dequation = $equation->D('x');
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Let \( \displaystyle f(x) = $equation \). 
+Find \(f'(x)\) .
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR $BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f'(x) \)","\( = \)","\( \displaystyle \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \cdot \big( \)".ans_rule(10)."\( \big) + \big( \)".ans_rule(10)."\( \displaystyle \big) \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["(apply the product rule)" ], align=>LEFT, separation=>0, indent=>50).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(40),"(write the derivative)"], align=>LEFT, separation=>0, indent=>40).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->texStrings;
+
+ANS($f->cmp);
+ANS($g->cmp);
+ANS($f->cmp);
+ANS($g->cmp);
+
+ANS($dequation->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

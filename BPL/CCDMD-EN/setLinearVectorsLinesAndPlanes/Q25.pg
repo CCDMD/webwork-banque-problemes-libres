@@ -1,0 +1,352 @@
+##DESCRIPTION
+##  Lines & Planes
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"parserImplicitPlane.pl",
+"parserParametricPlane.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"parserSolutionFor.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Point");
+do
+{
+    $nz1 = random(0,2,1);
+    @p1 = ( 0, 0, 0 );
+    $p1[$nz1] = 1;
+
+    @p2 = ( 1, list_random(-1,1), non_zero_random(-2,2,1) );
+    @p3 = ( non_zero_random(-2,2,1), list_random(-1,1), 1 );
+    for ( my $i=0; $i<3; $i++ ) {
+        $p3[$i] *= -1 if ( $p3[$i] == $p2[$i] );
+    }
+
+    $P = Point($p1[0],$p1[1],$p1[2]);
+    $Q = Point($p2[0],$p2[1],$p2[2]);
+    $R = Point($p3[0],$p3[1],$p3[2]);
+    $Cross = Vector($Q-$P) x Vector($R-$P);
+} until( $Cross->extract(1)!=0 && $Cross->extract(2)!=0 && $Cross->extract(3)!=0);
+
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Let \( P=$P, Q=$Q \) and \(R=$R \) be points in \(\mathbb{R}^3\).
+$BR
+Find the cartesian equation for a plane that contains \( P \), \( Q \), and \( R \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Construct the normal vector");
+
+Context("Numeric");
+Context()->strings->add( "PQ"=>{}, "QP"=>{}, "QR"=>{}, "RQ"=>{}, "PR"=>{}, "RP"=>{} );
+
+#check box 1
+# PQ & PR
+$ans_eval1 = Compute("PR")->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1PR = $ans_hash1->{score};
+
+$ans_eval2 = Compute("PQ")->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2PQ = $ans_hash2->{score};
+
+# QP & QR
+$ans_eval1 = Compute("QP")->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1QP = $ans_hash1->{score};
+
+$ans_eval2 = Compute("QR")->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2QR = $ans_hash2->{score};
+
+$ans_eval2 = Compute("QP")->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2QP = $ans_hash2->{score};
+
+$ans_eval1 = Compute("QR")->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1QR = $ans_hash1->{score};
+
+# RQ & RP
+$ans_eval1 = Compute("RQ")->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1RQ = $ans_hash1->{score};
+
+$ans_eval2 = Compute("RP")->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2RP = $ans_hash2->{score};
+
+$ans_eval2 = Compute("RQ")->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2RQ = $ans_hash2->{score};
+
+$ans_eval1 = Compute("RP")->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1RP = $ans_hash1->{score};
+
+# PQ & PR
+$InitialPoint1 = "P";
+$EndPoint1 = "Q";
+$Side1 = "PQ";
+
+$InitialPoint2 = "P";
+$EndPoint2 = "R";
+$Side2 = "PR";
+
+if($TESTbox1PR && $TESTbox2PQ)
+{
+    $InitialPoint1 = "P";
+    $EndPoint1 = "R";
+    $Side1 = "PR";
+
+    $InitialPoint2 = "P";
+    $EndPoint2 = "Q";
+    $Side2 = "PQ";
+
+}
+
+# QP & QR
+if($TESTbox1QP && $TESTbox2QR)
+{
+    $InitialPoint1 = "Q";
+    $EndPoint1 = "P";
+    $Side1 = "QP";
+
+    $InitialPoint2 = "Q";
+    $EndPoint2 = "R";
+    $Side2 = "QR";
+
+}
+
+if($TESTbox2QP && $TESTbox1QR)
+{
+    $InitialPoint2 = "Q";
+    $EndPoint2 = "P";
+    $Side2 = "QP";
+
+    $InitialPoint1 = "Q";
+    $EndPoint1 = "R";
+    $Side1 = "QR";
+
+}
+
+# RQ & RP
+if($TESTbox1RQ && $TESTbox2RP)
+{
+    $InitialPoint1 = "R";
+    $EndPoint1 = "Q";
+    $Side1 = "RQ";
+
+    $InitialPoint2 = "R";
+    $EndPoint2 = "P";
+    $Side2 = "RP";
+
+}
+
+if($TESTbox2RQ && $TESTbox1RP)
+{
+    $InitialPoint2 = "R";
+    $EndPoint2 = "Q";
+    $Side2 = "RQ";
+
+    $InitialPoint1 = "R";
+    $EndPoint1 = "P";
+    $Side1 = "RP";
+
+}
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$v = Vector($$EndPoint1-$$InitialPoint1);
+$w = Vector($$EndPoint2-$$InitialPoint2);
+
+$normal = $v x $w;
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{v}\) and \( \vec{w}\) be the generators of the plane. $BR 
+$BR
+
+$BITALIC Choose two directed line segments to create the vectors \( \vec{v} \) and \( \vec{w} \). Make sure that both directed line segments have the same initial point. $EITALIC $BR $BR
+Let \( \vec{v} \) be the vector corresponding to the directed line segment \{ ans_rule(2) \} ($BITALIC enter the letters corresponding to the chosen directed line segment $EITALIC) $BR $BR
+Let \( \vec{w}  \) be the vector corresponding to the directed line segment \{ ans_rule(2) \} ($BITALIC enter the letters corresponding to the chosen directed line segment $EITALIC) $BR $BR
+
+$BR
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v} \) ","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{w} \) ","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Which of the formulas below corresponds to $BBOLD a vector \( \vec{u} \) orthogonal to \( \vec{v} \) and \( \vec{w} \)? $EBOLD $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \displaystyle \vec{u} = \vec{v} + \vec{w} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \displaystyle \vec{u} = \vec{v} - \vec{w} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 3:","\( \displaystyle \vec{u} = \vec{v} \bullet \vec{w}\)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 4:","\( \displaystyle \vec{u} = \vec{v} \times \vec{w}\)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR $BR
+Then $BR
+\( \quad \vec{u} = \) \{ ans_rule(15) \} $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+ANS(str_cmp("$Side1"));
+ANS(str_cmp("$Side2"));
+
+ANS($v->cmp);
+ANS($w->cmp);
+
+ANS(Compute("4")->cmp );
+
+ANS($normal->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "orthogonal", "parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n} \) be the normal vector of the plane. $BR $BR
+
+We know $BR $BR
+\( \quad \vec{u} = $normal \) $BR $BR
+\( \quad \vec{u} \) and \( \vec{n} \) are \{ $popParallel->menu() \}
+$BR $BR
+which gives us $BR 
+\( \quad \vec{n} = \) \{ ans_rule(15) \} $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($normal->cmp( checker=>sub {
+  my ($correct, $student, $ansHash) = @_;
+  return $correct->isParallel($student);
+}, showCoordinateHints => 0 ) );
+
+Section::End();
+
+###########################################
+Section::Begin("Choose a support point");
+
+Context("ImplicitPlane");
+$plane = ImplicitPlane($P,$normal);
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$EquivalentPoint = SolutionFor("$plane","$P");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( A \) be the support point of the plane. $BR $BR
+
+We have $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( A \) ","\( = \)",ans_rule(15),"(choose \(P\), \(Q\) or \(R\) and write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($EquivalentPoint->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Construct the cartesian equation");
+
+Context()->texStrings;
+BEGIN_TEXT
+Thus the cartesian equation of the plane is $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \)",ans_rule(50),"(write the cartesian equation as \( a x + b y + c z = d \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($plane->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();
+

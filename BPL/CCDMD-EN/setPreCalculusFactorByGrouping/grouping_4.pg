@@ -1,0 +1,155 @@
+###DESCRIPTION
+## Factoring Polynomials by Grouping
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('factor', 'factorization')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$A = random(1,9,1);
+$B = non_zero_random(-8,8,1);
+while (gcd($A,$B) > 1 || $B==-$A) {$B = random(1,9,1);}
+
+$C = random(1, 9,1);
+
+$c1 = $A**2;
+$c2 = 2*$A*$B;
+$c3 = $B**2;
+$c4 = -$C**2;
+
+$e = random(2,7,1);
+$e2 = 2*$e;
+
+$E = non_zero_random(-8,8,2);
+
+Context("Numeric");
+Context()->variables->add(a => 'Real',b => 'Real');
+#
+# Formula ($A*a**$e+$B*b+$C)($A*a**$e+$B*b-$C) 
+# 
+$equation = Formula("$c1 a^{$e2} + $c2 a^{$e}b + $c3 b^2 + $c4")->reduce; 
+
+#
+#  Factored form Part I
+#
+Context("PolynomialFactors-Strict");
+Context()->variables->add(a => 'Real',b => 'Real');
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => $e,
+message => "between 0 and $e",
+);
+$factor1_partI = Compute("$A a^$e");
+if($B<0) 
+{
+$factor2_partI = Compute("-$B b");
+$sign = "-";
+$factoredform_partI = Compute("($factor1_partI - $factor2_partI)($factor1_partI - $factor2_partI)");
+}
+else
+{
+$factor2_partI = Compute("$B b");
+$sign = "+";
+$factoredform_partI = Compute("($factor1_partI + $factor2_partI)($factor1_partI + $factor2_partI)");
+}
+
+#
+#  Factored form Part II
+#
+Context("PolynomialFactors-Strict");
+Context()->variables->add(a => 'Real',b => 'Real');
+Context()->flags->set(singleFactors=>1);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => $e,
+message => "between 0 and $e",
+);
+if($B<0) 
+{
+$factor1_partII = Formula("$factor1_partI - $factor2_partI");
+}
+else
+{
+$factor1_partII = Formula("$factor1_partI + $factor2_partI");
+}
+
+$factor2_partII = Formula("$C");
+$factoredform_partII = Compute("($factor1_partII - $factor2_partII)($factor1_partII + $factor2_partII)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Factor \( $equation \) 
+
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+The polynomial \( $equation \) 
+has 4 terms but factor by grouping does not work. $BR
+To factor this polynomial, we need to factor twice using formulas.
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equation \)","\( = \)","\( \big( \)".ans_rule(2)."\( \big)^2 $sign 2 \big( \)".ans_rule(2)."\( \big) \big( \)".ans_rule(2)."\( \big) + \big( \)".ans_rule(2)."\( \big)^2 + $c4\)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["(rewrite the first three terms as a perfect square trinomials \( a^2 $sign 2ab + b^2 \))" ], align=>LEFT, separation=>0, indent=>190).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(25)."\( + $c4 \)","(factorized form of the first three terms)"], align=>LEFT, separation=>0,indent=>180).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)","\( \Big( \)".ans_rule(10)."\( \Big)^2 - \Big( \)".ans_rule(5)."\( \Big)^2 \)","(rewrite as a difference of squares \( a^2 - b^2 \))" ], align=>LEFT, separation=>0,indent=>180).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(25),"(factorized)"], align=>LEFT, separation=>0,indent=>180).
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+#Part I
+ANS($factor1_partI->cmp);
+ANS($factor1_partI->cmp);
+ANS($factor2_partI->cmp);
+ANS($factor2_partI->cmp);
+
+ANS($factoredform_partI->cmp); 
+
+#Part II
+ANS($factor1_partII->cmp);
+ANS($factor2_partII->cmp);
+ANS($factoredform_partII->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;
+

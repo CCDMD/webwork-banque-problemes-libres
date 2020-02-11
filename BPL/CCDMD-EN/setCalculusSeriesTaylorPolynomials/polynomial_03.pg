@@ -1,0 +1,233 @@
+##DESCRIPTION
+##  Taylor Polynomial
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Sequences, Summation and Series')
+## KEYWORDS('Taylor polynomial approximation', 'Taylor polynomial')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+# Load whatever macros you need for the problem
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGcourse.pl", 
+  "PGunion.pl",
+);
+ 
+## Do NOT show partial correct answers
+$showPartialCorrectAnswers = 1;
+$a1=random(2,7,1);
+$a=$a1*$a1;
+$k=non_zero_random(-1,1,2);
+$b=$a+$k;
+
+$f="x**.5";
+$f1="0.5*x**-.5";
+$f2="-0.25*x**-1.5";
+$f3="0.25*1.5*x**-2.5";
+$f4="-0.25*1.5*2.5*x**-3.5";
+
+$fa = $a**.5;
+$f1a = 0.5*$a**-.5;
+$f2a = -0.25*$a**-1.5;
+$f3a = 0.25*1.5*$a**-2.5;
+$f4a = -0.25*1.5*2.5*$a**-3.5;
+
+$L="1/(2*$a1)*(x-$a)+$a1";
+$Lb=1/(2*$a1)*($b-$a)+$a1;
+
+$Q="-1/(4*$a1^3)*(1/2)*(x-$a)^2+1/(2*$a1)*(x-$a)+$a1";
+$Qb=-1/(4*$a1*$a1*$a1)*(1/2)*($b-$a)**2+1/(2*$a1)*($b-$a)+$a1;
+
+$T3="3/(8*$a1^5)*(1/6)*(x-$a)^3-1/(4*$a1^3)*(1/2)*(x-$a)^2+1/(2*$a1)*(x-$a)+$a1";
+$T3b=3/(8*$a1**5)*(1/6)*($b-$a)**3-1/(4*$a1**3)*(1/2)*($b-$a)**2+1/(2*$a1)*($b-$a)+$a1;
+
+$T4="-15/(16*$a1^7)*(1/24)*(x-$a)^4+3/(8*$a1^5)*(1/6)*(x-$a)^3-1/(4*$a1^3)*(1/2)*(x-$a)^2+1/(2*$a1)*(x-$a)+$a1";
+$T4b=-15/(16*$a1**7)*(1/24)*($b-$a)**4+3/(8*$a1**5)*(1/6)*($b-$a)**3-1/(4*$a1**3)*(1/2)*($b-$a)**2+1/(2*$a1)*($b-$a)+$a1;
+
+$r=$b**(.5);
+
+TEXT(beginproblem());
+
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR$BR
+We want to approximate \(\sqrt{$b}\) using the function \(f(x)=\sqrt{x}\).$BR
+$BR$HR$BR 
+
+$BBOLD Solution $EBOLD $BR$BR
+$BITALIC Remark$EITALIC: Any answer which is a numerical value in this question needs to be evaluated as a fraction or a decimal value.$BR
+$BITALIC Tip$EITALIC: To help you simplify some computations in this question, remember that \(\displaystyle x^{-n/2}=\frac{1}{(\sqrt{x})^n}\).$BR
+
+$BR$HR$BR 
+
+$BITALIC $BBOLD Find the starting point x = a for the approximations: $EITALIC $EBOLD $BR$BR
+
+First we need to find the closest (integer) input to \(x=$b\) where the function \(f(x)=\sqrt{x}\) can easily be evaluated without a calculator. $BR
+The closest integer input is \(a=\) \{ans_rule(15)\}.$BR$BR
+All our approximations below will start at that value.$BR
+
+$BR$HR$BR 
+
+$BITALIC $BBOLD Compute the linear approximation: $EITALIC $EBOLD $BR$BR
+
+
+To compute the linear approximation \(L(x)\) of \(f(x)\) at \(x=a\) we need:$BR$BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f(x) = \) ",ans_rule(15),$SPACE,$SPACE,$SPACE,"\( f(a) = \)",ans_rule(10)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+AlignedRow(["\( f'(x) = \) ",ans_rule(15),$SPACE,$SPACE,$SPACE,"\( f'(a) = \)",ans_rule(10)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+
+Thus the linear approximation is:$BR$BR
+\(L(x) =\) \{ans_rule(5)\} \(+\) \{ans_rule(8)\} \((x-\) \{ans_rule(5)\} \()\) $BR 
+\(L(x) =\) \{ans_rule(30)\}.$BR$BR 
+The value of \(\sqrt{$b}\) can be approximated by \(L($b)\):$BR$BR
+\(\sqrt{$b} \approx L($b)=\) \{ans_rule(30)\}.$BR
+
+$BR$HR$BR 
+
+$BITALIC $BBOLD Compute the quadratic approximation \(T_2(x)\): $EITALIC $EBOLD $BR$BR
+
+To compute the quadratic approximation \(T_2(x)\) of \(f(x)\) at \(x=a\) we need:$BR$BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f(x) = \) ",ans_rule(15),$SPACE,$SPACE,$SPACE,"\( f(a) = \)",ans_rule(10)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+AlignedRow(["\( f'(x) = \) ",ans_rule(15),$SPACE,$SPACE,$SPACE,"\( f'(a) = \)",ans_rule(10)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+AlignedRow(["\( f''(x) = \) ",ans_rule(15),$SPACE,$SPACE,$SPACE,"\( f''(a) = \)",ans_rule(10)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+
+Thus the quadratic approximation is:$BR$BR
+\(T_2(x) =\) \{ans_rule(5)\} \(+\) \{ans_rule(8)\} \((x-\) \{ans_rule(5)\} \()\) \(+\) \{ans_rule(8)\} \((x-\) \{ans_rule(5)\} \()^2\)$BR 
+\(T_2(x) =\) \{ans_rule(45)\}.$BR$BR 
+The the value of \(\sqrt{$b}\) can be approximated by \(T_2($b)\):$BR$BR
+\(\sqrt{$b} \approx T_2($b)=\) \{ans_rule(30)\}.$BR
+
+$BR$HR$BR 
+
+$BITALIC $BBOLD Compute the 3rd degree approximation \(T_3(x)\): $EITALIC $EBOLD $BR$BR
+
+To compute the 3rd degree approximation \(T_3(x)\) of \(f(x)\) at \(x=a\) we need:$BR$BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f(x) = \) ",ans_rule(15),$SPACE,$SPACE,$SPACE,"\( f(a) = \)",ans_rule(10)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+AlignedRow(["\( f'(x) = \) ",ans_rule(15),$SPACE,$SPACE,$SPACE,"\( f'(a) = \)",ans_rule(10)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+AlignedRow(["\( f''(x) = \) ",ans_rule(15),$SPACE,$SPACE,$SPACE,"\( f''(a) = \)",ans_rule(10)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+AlignedRow(["\( f'''(x) = \) ",ans_rule(15),$SPACE,$SPACE,$SPACE,"\( f'''(a) = \)",ans_rule(10)],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}$BR
+
+Thus the 3th degree approximation is:$BR$BR
+\(T_3(x) =\) \{ans_rule(5)\} \(+\) \{ans_rule(10)\} \((x-\) \{ans_rule(5)\} \()\) \(+\) 
+\{ans_rule(10)\} \((x-\) \{ans_rule(5)\} \()^2\) \(+\) 
+\{ans_rule(10)\} \((x-\) \{ans_rule(5)\} \()^3\)$BR 
+\(T_3(x) =\) \{ans_rule(60)\}.$BR$BR 
+The the value of \(\sqrt{$b}\) can be approximated by \(T_3($b)\):$BR$BR
+\(\sqrt{$b} \approx T_3($b)=\) \{ans_rule(30)\}.$BR
+
+$BR$HR$BR 
+
+$BITALIC $BBOLD Compare your approximations with the real value (i.e. the approximation given by your calculator): $EITALIC $EBOLD $BR$BR
+
+The real value is \(\sqrt{$b}=\) \{ans_rule(30)\}.
+END_TEXT
+
+# STARTING POINT OF THE APPROXIMATIONS
+
+ANS(num_cmp($a));
+
+# LINEAR APPROXIMATION
+
+Context()->variables->set(x=>{limits=>[0,10]});
+#ANS(Compute($T6)->cmp);
+ANS(Compute($f)->cmp);
+ANS(num_cmp($fa,mode=>'frac'));
+
+ANS(Compute($f1)->cmp);
+ANS(num_cmp($f1a,mode=>'frac'));
+
+ANS(num_cmp($fa,mode=>'frac'));
+ANS(num_cmp($f1a,mode=>'frac'));
+ANS(num_cmp($a));
+
+ANS(Compute($L)->cmp);
+ANS(num_cmp($Lb,strings=>["infinity","-infinity","DNE","UND","yes","NO"],relTol=>0.0000001,mode=>'frac'));
+
+# QUADRATIC APPROXIMATION
+
+ANS(Compute($f)->cmp);
+ANS(num_cmp($fa,mode=>'frac'));
+
+ANS(Compute($f1)->cmp);
+ANS(num_cmp($f1a,mode=>'frac'));
+
+ANS(Compute($f2)->cmp);
+ANS(num_cmp($f2a,mode=>'frac'));
+
+ANS(num_cmp($fa,mode=>'frac'));
+ANS(num_cmp($f1a,mode=>'frac'));
+ANS(num_cmp($a));
+ANS(num_cmp($f2a/2,mode=>'frac'));
+ANS(num_cmp($a));
+
+ANS(Compute($Q)->cmp);
+ANS(num_cmp($Qb,strings=>["infinity","-infinity","DNE","UND","yes","NO"],relTol=>0.0000001,mode=>'frac'));
+
+# 3RD DEGREE APPROXIMATION
+
+ANS(Compute($f)->cmp);
+ANS(num_cmp($fa,mode=>'frac'));
+
+ANS(Compute($f1)->cmp);
+ANS(num_cmp($f1a,mode=>'frac'));
+
+ANS(Compute($f2)->cmp);
+ANS(num_cmp($f2a,mode=>'frac'));
+
+ANS(Compute($f3)->cmp);
+ANS(num_cmp($f3a,mode=>'frac'));
+
+#ANS(fun_cmp($f4));
+#ANS(num_cmp($f4a,mode=>'frac'));
+
+ANS(num_cmp($fa,mode=>'frac'));
+
+ANS(num_cmp($f1a,mode=>'frac'));
+ANS(num_cmp($a));
+
+ANS(num_cmp($f2a/2,mode=>'frac'));
+ANS(num_cmp($a));
+
+ANS(num_cmp($f3a/6,mode=>'frac'));
+ANS(num_cmp($a));
+
+#ANS(num_cmp($f4a/24,mode=>'frac'));
+#ANS(num_cmp($a));
+
+ANS(Compute($T3)->cmp);
+ANS(num_cmp($T3b,strings=>["infinity","-infinity","DNE","UND","yes","NO"],relTol=>0.0000001, mode=>'frac'));
+
+ANS(num_cmp($r,strings=>["infinity","-infinity","DNE","UND","yes","NO"],relTol=>0.0000001, mode=>'frac'));
+
+ENDDOCUMENT();

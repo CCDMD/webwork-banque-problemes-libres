@@ -1,0 +1,138 @@
+###DESCRIPTION
+## Factoring Polynomials by Grouping
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('factor', 'factorization')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+@alphabet = ("a","b","s","t","x","y");
+$n = random(0,2,2);
+
+$var1= $alphabet[$n];
+$var2= $alphabet[1+$n];
+$var3= $alphabet[2+$n];
+$var4= $alphabet[3+$n];
+Context()->variables->are($var1=>'Real',$var2=>'Real',
+                          $var3=>'Real',$var4=>'Real');
+
+$a = random(2,7,1);
+do {$b= random(2,7,1);} until (gcd($a,$b)==1);
+$c = random(2,7,1);
+do {$d= random(2,7,1);} until (gcd($c,$d)==1);
+$ac = $a * $c;
+$bc = $b * $c;
+$ad = $a * $d;
+$bd = $b * $d;
+$e = random(2,4,1);
+
+#
+# Formula ($c * $var3 + $d * $var4^2) * ($a * $var1 - $b * $var2)
+# 
+$equation = Formula("$ac $var1 $var3 - $bc $var2 $var3 + $ad $var1 $var4^2 - $bd $var2 $var4^2")->reduce; 
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->variables->are($var1=>'Real',$var2=>'Real',
+                          $var3=>'Real',$var4=>'Real');
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 2,
+message => "either 0 or 1",
+);
+$factoredform = Compute("($c * $var3 + $d * $var4^2) * ($a * $var1 - $b * $var2)");
+
+#
+#  Expanded form
+#
+Context("LimitedPolynomial-Strict");
+Context()->variables->are($var1=>'Real',$var2=>'Real',
+                          $var3=>'Real',$var4=>'Real');
+$factor1 = Compute("$c * $var3");
+$factor2 = Compute("$d * $var4^2");
+$commonfactor = Compute("$a * $var1 - $b * $var2");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Factor \( $equation \) 
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equation \)","\( = \)",ans_rule(2)."\( \Big( \)".ans_rule(10)."\( \Big) \)"."\( + \)".ans_rule(2)."\( \Big( \)".ans_rule(10)."\( \Big) \)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["(factor the common factor of the first two terms and then factor the common factor of the last two terms. DO NOT CHANGE THE ORDER OF GROUPING.)" ], align=>LEFT, separation=>0, indent=>210).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(32),"(factorized)"], align=>LEFT, separation=>0, indent=>190).
+EndTable()
+\}
+$BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($factor1->cmp);
+ANS($commonfactor->cmp);
+ANS($factor2->cmp);
+ANS($commonfactor->cmp);
+
+ANS($factoredform->cmp); 
+
+
+ENDDOCUMENT();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

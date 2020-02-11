@@ -1,0 +1,128 @@
+## DESCRIPTION
+## Algebra: Intercepts
+## ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('abscissa at the origin', 'ordinate at the origin')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$a = non_zero_random(-8,-2,1);
+$b = 0;
+$c = 0;
+$d = non_zero_random(2,8,1);
+# (x-a)(x)(x)(x-d)
+$b1=-($a+$d);
+$c1=$a*$d;
+
+$xint1 = Compute("$a");
+$xint2 = Compute("$d");
+
+$zero = Compute("0");
+
+$equation = Compute("x^4 + $b1 x^3 + $c1 x^2")->reduce; 
+
+#
+#  Expanded form
+#
+Context("LimitedPolynomial-Strict");
+$expandedform = Compute("x^2 + $b1 x + $c1");
+$commonfactor = Compute("x^2");
+
+
+#
+#  Factored form
+#
+#Context("PolynomialFactors-Strict");
+Context("PolynomialFactors");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 2,
+message => "either 0 or 2",
+);
+$factoredform = Compute("(x-$a)(x-$d)");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Find the \(x\) and \(y\)-intercepts of \(y=$equation\).
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR$BITALIC$BBOLD Part 1: Finding the \(x\)-intercept(s) $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equation \)","\( = \)","\( 0 \)"], align=>LEFT, separation=>0, indent=>95).
+EndTable()
+\}
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(2)."\( \Big( \)".ans_rule(10)."\( \Big) \)","\( = \)",ans_rule(2),"(factor the common factor)"], align=>LEFT, separation=>0).
+
+AlignedRow([ans_rule(2)."\( \Big( \)".ans_rule(10)."\( \Big) \)","\( = \)",ans_rule(2),"(factorized)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+The \(x\)-intercepts are (in ascending order)
+$BR
+\(x_1 = \) \{ans_rule(5)\}, \(x_2 = \) \{ans_rule(5)\} and \(x_3 = \) \{ans_rule(5)\}  
+
+
+$BR
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 2: Finding the \(y\)-intercept $EBOLD$EITALIC $BR$BR
+
+The \(y\)-intercept is \(y=\) \{ans_rule(5)\}
+$BR
+
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($commonfactor->cmp);
+ANS($expandedform->cmp);
+ANS($zero->cmp);
+
+ANS($commonfactor->cmp);
+ANS($factoredform->cmp);
+ANS($zero->cmp);
+
+ANS($xint1->cmp);
+ANS($zero->cmp);
+ANS($xint2->cmp);
+
+ANS($zero->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

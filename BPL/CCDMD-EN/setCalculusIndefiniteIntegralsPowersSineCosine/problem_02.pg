@@ -1,0 +1,181 @@
+##DESCRIPTION
+##  Indefinite Integrals - Powers of Sine & Cosine
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('indefinite integral', 'trigonometric substitution')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl",
+"PGunion.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,99,1);
+$b = random(2,99,1);
+
+$funct = "$a/$b*sin($b*x) - $a/(3*$b)*(sin($b*x))**3";
+
+Context("Numeric");
+Context()->variables->add('dx' => 'Real');
+
+#box 11
+$ans_eval11 = Compute("dx")->cmp();
+$ans_hash11 = $ans_eval11->evaluate($inputs_ref->{ANS_NUM_TO_NAME(11)});
+$TESTbox11 = $ans_hash11->{score};
+
+#box 15
+$ans_eval15 = Compute("dx")->cmp();
+$ans_hash15 = $ans_eval15->evaluate($inputs_ref->{ANS_NUM_TO_NAME(15)});
+$TESTbox15 = $ans_hash15->{score};
+
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Evaluate the indefinite integral
+$BR \[ \int $a\cos^3 ($b x)\,dx \]
+
+$BR
+$HR
+$BR
+$BBOLD Solution $EBOLD $BR $BR
+
+We notice that the power of the function to integrate \( \displaystyle $a\cos^3 ($b x) \) is odd. $BR $BR 
+Using the fact that \( \cos^3 ($b x) = \cos($b x) \cos^2($b x)\) $BR $BR
+and the trigonometric identity \( \sin^2(\theta) + \cos^2(\theta) = 1 \) $BR $BR
+we have
+$BR $BR
+$SPACE \( \cos^3 ($b x) = \) \{ans_rule( 5) \} \( \big( 1 - \) \{ans_rule( 10) \} \( \big) \)
+$BR $BR 
+and $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["\(\displaystyle \int $a\cos^3 ($b x) \, dx = \)",ans_rule(2)."\( \displaystyle \int \)".ans_rule(10).ans_rule(2)."\( \displaystyle \; - \)".$SPACE.ans_rule(2)."\( \displaystyle \int \)".ans_rule(20).ans_rule(2)], align=>LEFT, separation=>0).
+AlignedRow(["","(integrals with \( x \) where the powers of the sine function are in ascending order. Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR $BR
+We need two substitutions: $BR $BR
+$BBOLD First integral $EBOLD $BR 
+Let $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( u \)", "\( = \)",ans_rule(10),"(choose \(u\))"], align=>LEFT, separation=>0, indent=>10).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(u\))"], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR $BR 
+$BBOLD Second integral $EBOLD $BR 
+Let $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( w \)", "\( = \)",ans_rule(10),"(choose \(w\))"], align=>LEFT, separation=>0, indent=>10).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(w\))"], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR $BR 
+We have
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["\(\displaystyle \int $a\cos^3 ($b x) \, dx \)","\( = \; \)".ans_rule(3)."\( \displaystyle \int\)".ans_rule(10).ans_rule(2),"\( - \)",ans_rule(3)."\( \displaystyle \int\)".ans_rule(10).ans_rule(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["(integrals with \(u\) and \( w \) respectively. Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0,indent=>150).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["","\( = \; \)".ans_rule(3)."\( \big( \)".ans_rule(12)."\( \big) \)","\( - \)",ans_rule(3)."\( \big( \)".ans_rule(12)."\( \big) + \)".ans_rule(1),"(integrate with respect to \(u\) and \( w \))"], align=>LEFT, separation=>0, indent=>145).
+
+EndTable()
+\}
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["","\( = \; \)".ans_rule(40)."\( + \)".ans_rule(1),"(rewrite with respect to \(x\))"], align=>LEFT, separation=>0, indent=>145).
+EndTable()
+\}
+
+
+END_TEXT
+
+ANS(fun_cmp("cos($b x)",var=>'x'));
+ANS(fun_cmp("sin^2($b x)",var=>'x'));
+
+ANS(num_cmp($a));
+ANS(fun_cmp("cos($b x)",var=>'x'));
+ANS(fun_cmp("dx",var=>['x','dx']));
+ANS(num_cmp($a));
+ANS(fun_cmp("cos($b x)sin^2($b x)",var=>'x'));
+ANS(fun_cmp("dx",var=>['x','dx']));
+
+#u
+ANS(fun_cmp("$b x",var=>'x'));
+ANS(fun_cmp("du",var=>['du']));
+if ($TESTbox11) 
+{
+ANS(fun_cmp("dx",var=>['x','dx']));
+ANS(fun_cmp("$b",var=>['x','dx']));
+}
+else
+{
+ANS(fun_cmp("$b",var=>['x','dx']));
+ANS(fun_cmp("dx",var=>['x','dx']));
+}
+
+#w
+ANS(fun_cmp("sin($b x)",var=>'x'));
+ANS(fun_cmp("dw",var=>['dw']));
+if ($TESTbox15) 
+{
+ANS(fun_cmp("dx",var=>['x','dx']));
+ANS(fun_cmp("$b*cos($b x)",var=>['x','dx']));
+}
+else
+{
+ANS(fun_cmp("$b",var=>['x','dx']));
+ANS(fun_cmp("cos($b x)dx",var=>['x','dx']));
+}
+
+ANS(num_cmp("$a/$b"));
+ANS(fun_cmp("cos(u)",var=>'u'));
+ANS(fun_cmp("du",var=>['du']));
+
+ANS(num_cmp("$a/$b"));
+ANS(fun_cmp("w^2",var=>'w'));
+ANS(fun_cmp("dw",var=>['dw']));
+
+ANS(num_cmp("$a/$b"));
+ANS(fun_cmp("sin(u)",var=>'u'));
+ANS(num_cmp("$a/$b"));
+ANS(fun_cmp("w^3/3",var=>'w'));
+ANS(strict_str_cmp("C"));
+
+$ans = $funct;
+ANS(fun_cmp($ans, mode=>"antider"));
+ANS(strict_str_cmp("C"));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,226 @@
+# DESCRIPTION
+# Gives the formula of a piecewise function and 4 graphs to choose from.
+# ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Function by Parts and Absolute Value)
+##KEYWORDS('domain', 'function defined by parts', 'graph', 'range')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGgraphmacros.pl",
+"MathObjects.pl",
+"PGchoicemacros.pl",
+"PGunion.pl",
+"contextAlternateIntervals.pl",
+);
+
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+$showPartialCorrectAnswers = 1;
+
+$i1 = random(6,8,2);
+$i2 = random(4,10,2);
+
+$a = random(2,6,2);
+$b = random(6,10,2);
+$c = random(0,$b-2,2);
+do{ $d = random(2*$a,18,2); } until ($d!=($i1+$a));
+
+$coeff = $i1+$a;
+#construct 5 identical graphs
+$f_tex = "$a-x";
+$g_tex = "x + $b";
+$h_tex = "x^2";
+$k_tex = "$c";
+$l_tex = "\sqrt{x-$i2}+$coeff";
+
+for ($j = 0; $j <= 4; $j++)
+{
+    $f[$j] = "-x+$a for x in <-12,-$i1> using color:blue and weight:2";
+    $g[$j] = "x + $b for x in <-$i1,-2> using color:blue and weight:2";
+    $h[$j] = "x^2 for x in <-2,2> using color:blue and weight:2";
+    $k[$j] = "$c for x in <2,$i2> using color:blue and weight:2";
+    $l[$j] = "sqrt{x-$i2}+$i1+$a for x in <$i2,14> using color:blue and weight:2";
+}
+
+#create "bad" portion of the graphs
+$f[1] = "x+$a+$d for x in <-12,-$i1> using color:blue and weight:2";
+$g[1] = "-x + 2 for x in <-$i1,-2> using color:blue and weight:2";
+$l[1] = "-sqrt{x-$i2}+$i1+$a for x in <$i2,14> using color:blue and weight:2";
+
+$l[2] = "-sqrt{x-$i2}+$i1+$a for x in <$i2,14> using color:blue and weight:2";
+
+$k[3] = "$d for x in <2,$i2> using color:blue and weight:2";
+
+$f[4] = "x+$a + $d for x in <-12,-$i1> using color:blue and weight:2";
+$g[4] = "-x - $b + 4 for x in <-$i1,-2> using color:blue and weight:2";
+$h[4] = "-x^2 + 4 for x in <-2,2> using color:blue and weight:2";
+$k[4] = "$d for x in <2,$i2> using color:blue and weight:2";
+$l[4] = "-sqrt{x-$i2}+$i1+$a for x in <$i2,14> using color:blue and weight:2";
+
+$pt1[0] = open_circle(-$i1,$i1+$a, black);
+$pt2[0] = closed_circle(-$i1,-$i1+$b, black);
+$pt3[0] = open_circle(-2,4, black);
+$pt4[0] = closed_circle(-2,-2+$b, black);
+$pt5[0] = open_circle(2,4, black);
+$pt6[0] = open_circle(2,$c, black);
+$pt7[0] = closed_circle(2,$d, black);
+$pt8[0] = open_circle($i2,$c, black);
+$pt9[0] = open_circle($i2,$i1+$a, black);
+
+$pt1[1] = open_circle(-$i1,-$i1+$a+$d, black);
+$pt2[1] = closed_circle(-$i1,$i1+2, black);
+$pt3[1] = open_circle(-2,4, black);
+$pt4[1] = closed_circle(-2,-2+$b, black);
+$pt5[1] = open_circle(2,4, black);
+$pt6[1] = open_circle(2,$c, black);
+$pt7[1] = closed_circle(2,$d, black);
+$pt8[1] = open_circle($i2,$c, black);
+$pt9[1] = open_circle($i2,$i1+$a, black);
+
+$pt1[2] = open_circle(-$i1,$i1+$a, black);
+$pt2[2] = closed_circle(-$i1,-$i1+$b, black);
+$pt3[2] = open_circle(-2,4, black);
+$pt4[2] = closed_circle(-2,-2+$b, black);
+$pt5[2] = open_circle(2,4, black);
+$pt6[2] = open_circle(2,$c, black);
+$pt7[2] = closed_circle(2,$d, black);
+$pt8[2] = open_circle($i2,$c, black);
+$pt9[2] = open_circle($i2,$i1+$a, black);
+
+$pt1[3] = open_circle(-$i1,$i1+$a, black);
+$pt2[3] = closed_circle(-$i1,-$i1+$b, black);
+$pt3[3] = open_circle(-2,4, black);
+$pt4[3] = closed_circle(-2,-2+$b, black);
+$pt5[3] = open_circle(2,4, black);
+$pt6[3] = open_circle(2,4, black);
+$pt7[3] = closed_circle(2,$d, black);
+$pt8[3] = closed_circle($i2,$d, black);
+$pt9[3] = open_circle($i2,$i1+$a, black);
+
+$pt1[4] = open_circle(-$i1,-$i1+$a + $d, black);
+$pt2[4] = closed_circle(-$i1,$i1 - $b + 4, black);
+$pt3[4] = open_circle(-2,0, black);
+$pt4[4] = closed_circle(-2,0, black);
+$pt5[4] = open_circle(2,0, black);
+$pt6[4] = open_circle(-2,6 - $b, black);
+$pt7[4] = closed_circle(2,$d, black);
+$pt8[4] = closed_circle($i2,$d, black);
+$pt9[4] = open_circle($i2,$i1+$a, black);
+
+#plot the graphs
+$dx = 26;
+$dy = 24;
+for ($j = 0; $j <= 4; $j++){
+$graph[$j] = init_graph(-12,-4,14,20,'axes'=>[0,0],'grid'=>[$dx/2,$dy/2],size=>[300,300]);
+$graph[$j]->lb('reset');
+for ($i = 1; $i <= 9; $i++){
+   $graph[$j]->lb(new Label(-2*$i-$dx/50,-$dy/40,-2*$i,'black','left','top'));
+   $graph[$j]->lb(new Label(2*$i-$dx/100,-$dy/40,2*$i,'black','left','top'));
+   $graph[$j]->lb(new Label(-$dx/20,2*$i+$dy/50,2*$i,'black','left','top')) };
+$graph[$j]->lb(new Label(9.5,-$dy/20,"x",'black','left','bottom'));
+$graph[$j]->lb(new Label(-$dx/20,19.5,"y",'black','left','top')) };
+
+for ($j = 0; $j <=4; $j++){
+#  if ($j>0) { $graph[$j]->stamps($pt1[$j],$pt2[$j]); }
+  $graph[$j]->stamps($pt1[$j],$pt2[$j],$pt3[$j],$pt4[$j],$pt5[$j],$pt6[$j],$pt7[$j],$pt8[$j],$pt9[$j]);
+  plot_functions( $graph[$j], $f[$j], $g[$j], $h[$j], $k[$j], $l[$j]);
+  $plot[$j] = image(insertGraph($graph[$j]),width =>250,height=>250,tex_size=>310);
+}
+
+@perm = NchooseK(5,5);
+@plot = @plot[@perm];
+@letter = ("A", "B", "C", "D", "E");
+for ($j = 0; $j <= 4; $j++){ if ($perm[$j] == 0) {$ans = $letter[$j]; $j=4 }};
+
+$fundisp = "f(x) = \left$LBRACE\begin{array}{ccl}
+$f_tex   & \quad & \mbox{for } x < -$i1 \\
+$g_tex & \quad & \mbox{for } -$i1 \leq x \leq -2 \\
+$h_tex & \quad & \mbox{for } -2 < x < 2 \\
+$d & \quad & \mbox{for } x = 2 \\
+$k_tex & \quad & \mbox{for } 2< x < $i2 \\
+$l_tex & \quad & \mbox{for }  x > $i2 \\
+\end{array} \right.";
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$Domain = Compute("(-inf,$i2)U($i2,inf)");
+$RangeInterval = Compute("[-$i1+$b,$b-2]U($i1+$a,inf)");
+$IncInterval = Compute("(-$i1,-2)U(0,2)U($i2,inf)");
+$DecInterval = Compute("(-inf,-$i1)U(-2,0)");
+$ConstInterval = Compute("(2,$i2)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Sketch a graph of $BR $BR
+\( \quad \displaystyle $fundisp \) $BR $BR
+on a piece of paper and then select the graph that represents \( f(x) \) from the choices below. $BR
+Then find the domain, the range and the interval of increase and decrease.
+$PAR
+\{
+$BCENTER.
+BeginTable().
+AlignedRow([$plot[0],$plot[1],$plot[2]]).
+TableSpace(5,0).
+AlignedRow(["A","B","C"]).
+TableSpace(25,6).
+AlignedRow([$plot[3],$plot[4],""]).
+TableSpace(5,0).
+AlignedRow(["D","E",""]).
+EndTable().
+$ECENTER
+\}
+$BR 
+$BITALIC You may click a graph to enlarge it. $EITALIC
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR 
+Express your answer in interval notation. $BR
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. $BR
+If the interval is the empty set, write { }. $BR
+If the interval is one number, say \( N \), write {\( N  \)}.
+$BR $HR $BR 
+The graph of \(f(x)\) is identified by the letter \{ans_rule\}
+$BR $BR
+The domain of \(f(x)\) is \{ans_rule(35) \}
+$BR $BR
+The range of \(f(x)\) is \{ans_rule(35) \}
+$BR $BR
+The interval over which \(f(x)\) is strictly increasing is \{ans_rule(35) \}
+$BR $BR
+The interval over which \(f(x)\) is strictly decreasing is \{ans_rule(35) \}
+$BR $BR
+The interval over which \(f(x)\) is constant is \{ans_rule(35) \}
+$BR $BR
+
+END_TEXT
+Context()->texStrings;
+Context()->texStrings;
+Context()->strings->add(A=>{}, B=>{}, C=>{}, D=>{}, E=>{});
+
+ANS(String($ans)->cmp());
+
+ANS($Domain->cmp());
+ANS($RangeInterval->cmp());
+ANS($IncInterval->cmp());
+ANS($DecInterval->cmp());
+ANS($ConstInterval->cmp());
+
+
+ENDDOCUMENT();

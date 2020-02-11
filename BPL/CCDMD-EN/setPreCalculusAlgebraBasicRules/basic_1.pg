@@ -1,0 +1,144 @@
+#DESCRIPTION
+##  Algebra problem: Simplify expression
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('rational fraction', 'simplification')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$a = random(4,8,2);
+$b = random(1,3,2);
+$c = 1;
+
+# \[\frac{\frac{$a}{x-1}-\frac{$b}{x+1}}{\frac{x}{x-1}+\frac{1}{x+1}}\] 
+$Equation = Compute("($a/(x-1)-$b/(x+1))/(x/(x-1)+$c/(x+1))")->reduce;
+
+#
+#  Common factor
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>1);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$FactorNum1 = Formula("$a(x+1)");
+$FactorNum2 = Formula("$b(x-1)");
+$FactorDen2 = Formula("$c(x-1)");
+$CommonFactor = Compute("(x-1)(x+1)");
+
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>1);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 2,
+message => "either 0 or 1",
+);
+$FactorDen1 = Formula("x(x+1)");
+
+Context("LimitedPolynomial-Strict");
+$Coeff1 = $a-$b;
+$Coeff2 = $a+$b;
+$Numerator = Compute("$Coeff1 x + $Coeff2");
+$Denominator = Compute("x**2+2*x-1");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Simplify the expression $BR $BR
+\( \Large \quad \displaystyle $Equation \) $BR
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \Large \displaystyle $Equation \)","\( = \)",ans_rule(5).$BR.$HR.ans_rule(5),"\( - \)",ans_rule(5).$BR.$HR.ans_rule(5),"(find a common denominator for the numerator. DO NOT EXPAND THE COMMON DENOMINATOR.)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["_________________________"], align=>LEFT, separation=>0, indent=>140).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5).$BR.$HR.ans_rule(5),"\( + \)",ans_rule(5).$BR.$HR.ans_rule(5),"(find a common denominator for the denominator. DO NOT EXPAND THE COMMON DENOMINATOR.)"], align=>LEFT, separation=>0, indent=>140).
+EndTable()
+\}
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(10).$BR.$HR.ans_rule(10).$BR.$HR.ans_rule(10).$BR.$HR.ans_rule(10),"(simplify the numerator into one fraction and simplify the denominator into one fraction. DO NOT EXPAND THE COMMON DENOMINATORS.)" ], align=>LEFT, separation=>0, indent=>120).
+EndTable()
+\}
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(10).$BR.$HR.ans_rule(10),"\( \cdot \)",ans_rule(10).$BR.$HR.ans_rule(10),"(rewrite using the rule \( \displaystyle \frac{\frac{a}{b}}{\frac{c}{d}} = \frac{a}{b} \cdot \frac{d}{c} \))" ], align=>LEFT, separation=>0, indent=>120).
+EndTable()
+\}
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(10).$BR.$HR.ans_rule(10),"(simplify)" ], align=>LEFT, separation=>0, indent=>120).
+EndTable()
+\}
+
+$BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($FactorNum1->cmp);
+ANS($CommonFactor->cmp);
+ANS($FactorNum2->cmp);
+ANS($CommonFactor->cmp);
+
+ANS($FactorDen1->cmp);
+ANS($CommonFactor->cmp);
+ANS($FactorDen2->cmp);
+ANS($CommonFactor->cmp);
+
+#single fraction
+ANS($Numerator->cmp);
+ANS($CommonFactor->cmp);
+ANS($Denominator->cmp);
+ANS($CommonFactor->cmp);
+
+#fraction flipped
+ANS($Numerator->cmp);
+ANS($CommonFactor->cmp);
+ANS($CommonFactor->cmp);
+ANS($Denominator->cmp);
+
+#answer
+ANS($Numerator->cmp);
+ANS($Denominator->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,346 @@
+##DESCRIPTION
+##  Lines & Planes
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"contextLimitedPoint.pl",
+"parserParametricPlane.pl",
+"parserImplicitPlane.pl",
+"parserSolutionFor.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$V = Vector(non_zero_random(-5,5,1),non_zero_random(-5,5,1),non_zero_random(-5,5,1));
+
+$W = Vector(non_zero_random(-5,5,1),0,non_zero_random(-5,5,1));
+
+$N = Vector($V x $W);
+
+while(($N->extract(1)==0) || ($N->extract(2)==0) || ($N->extract(3)==0)) 
+{
+    $V = Vector(non_zero_random(-5,5,1),non_zero_random(-5,5,1),non_zero_random(-5,5,1));
+
+    $W = Vector(non_zero_random(-5,5,1),0,non_zero_random(-5,5,1));
+    $N = Vector($V x $W);
+}
+
+Context("Point");
+#the point Q
+$Q = Point(random(-5,5,1),random(-5,5,1),non_zero_random(-5,5,1));
+
+#a point a the plane P
+do
+{
+    $P = Point(non_zero_random(-5,5,1),random(-5,5,1),random(-5,5,1));
+ } until( $P != $Q);
+
+Context("ParametricPlane");
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$Parametric_Plane = ParametricPlane(Point($P),Vector($V),Vector($W));
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Let \(Q=$Q\) be a point in \(\mathbb{R}^3\). $BR $BR
+Let \( \Phi: $Parametric_Plane \) be the equation of a plane in \(\mathbb{R}^3\). $BR $BR
+
+${BBOLD}(a)$EBOLD
+Compute \(d(Q,\Phi)\) the distance between the point \(Q\) and the plane \(\Phi\). $BR $BR
+${BBOLD}(b)$EBOLD
+Find \(C\) the closest point on the plane \(\Phi\) to \(Q\).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("Find the distance");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( P \) be the support point of the plane \( \Phi \). $BR 
+Let \( \vec{n} \) be the normal vector of the plane \( \Phi \). $BR $BR
+Let \( \vec{v} \) and \( \vec{w} \) be the generator vectors of the plane \( \Phi \). $BR $BR
+We know $BR $BR
+\( \quad \vec{v} = \) \{ ans_rule(15) \} (write the components of the vector) $BR $BR
+\( \quad \vec{w} = \) \{ ans_rule(15) \} (write the components of the vector) $BR $BR
+Let \( \vec{u} \) be a vector orthogonal to \( \vec{v} \) and \( \vec{w} \). $BR $BR
+
+Then $BR
+\( \quad \vec{u} = \) \{ ans_rule(15) \} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($V->cmp);
+ANS($W->cmp);
+ANS($N->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "orthogonal", "parallel"],"parallel");
+
+Context("ImplicitPlane");
+$Plane = ImplicitPlane($P,$N);
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$EquivalentPoint = SolutionFor("$Plane","$P");
+
+Context("Numeric");
+#check box 5
+$ans_eval5 = $N->cmp( checker=>sub {
+  my ($correct, $student, $ansHash) = @_;
+  return $correct->isParallel($student);
+});
+$ans_hash5 = $ans_eval5->evaluate($inputs_ref->{ANS_NUM_TO_NAME(5)});
+$TESTbox5 = $ans_hash5->{score};
+
+#check box 6
+$ans_eval6 = $EquivalentPoint->cmp();
+$ans_hash6 = $ans_eval6->evaluate($inputs_ref->{ANS_NUM_TO_NAME(6)});
+$TESTbox6 = $ans_hash6->{score};
+
+Context("Point");
+$PointP = $P;
+
+if($TESTbox6)
+{
+    $PointP = Point($inputs_ref->{ANS_NUM_TO_NAME(6)});
+}
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+if($TESTbox5)
+{
+    $N = Vector($inputs_ref->{ANS_NUM_TO_NAME(5)});
+}
+
+$QP = Vector($PointP - $Q);
+
+Context()->texStrings;
+BEGIN_TEXT
+We know $BR $BR
+\( \quad \vec{u} = $N \) $BR $BR
+\( \quad \vec{u} \) and \( \vec{n} \) are \{ $popParallel->menu() \}
+$BR $BR
+which gives us $BR 
+\( \quad \vec{n} = \) \{ ans_rule(15) \} $BR $BR
+
+Also $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad P \) ","\( = \)",ans_rule(15),"(choose values for \(s\) and 
+\(t\) and write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+and $BR 
+\( \quad \overrightarrow{QP} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{QP} \))$BR $BR
+\{ image( "distance_point_plane_PQ_1.png",width=>329, height=>251 ) \} $BR $BR
+
+Which of the formulas below corresponds to the $BBOLD distance? $EBOLD $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \displaystyle \| \textrm{proj}_{\vec{n}}\overrightarrow{QP} \| = \left\lVert \left( \frac{\vec{n} \bullet \overrightarrow{QP}}{\overrightarrow{QP} \bullet \overrightarrow{QP}} \right) \overrightarrow{QP} \right\lVert = \frac{ | \vec{n} \bullet \overrightarrow{QP} | }{ \| \overrightarrow{QP} \| } \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \displaystyle \| \textrm{proj}_{\vec{n}}\overrightarrow{QP} \| = \left\lVert \left( \frac{\overrightarrow{QP} \bullet \vec{n}}{\vec{n} \bullet \vec{n}} \right) \vec{n} \right\lVert  = \frac{ | \overrightarrow{QP} \bullet \vec{n} | }{ \| \vec{n} \| } \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($N->cmp( checker=>sub {
+  my ($correct, $student, $ansHash) = @_;
+  return $correct->isParallel($student);
+}, showCoordinateHints => 0 ) );
+
+ANS($EquivalentPoint->cmp);
+ANS($QP->cmp);
+
+ANS(Compute("2")->cmp );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$AbsDotProduct = abs($QP.$N);
+$NormN = norm($N);
+
+Context("Numeric");
+$Distance = $AbsDotProduct/$NormN;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \text{d} \big( Q,\Phi \big) \) ","\( = \)","\( \displaystyle \frac{ | \overrightarrow{QP} \bullet \vec{n} | }{ \| \vec{n} \| } \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(15).$BR.$HR.ans_rule(15),"(write the appropriate numerical values)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(15),"(compute the distance)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($AbsDotProduct->cmp);
+ANS($NormN->cmp);
+ANS($Distance->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+###########################################
+Section::Begin("Find the closest point");
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ image( "point_C_plane_1.png",width=>201, height=>229 ) \} $BR $BR
+Let \( C \) be the closest point to \( Q \). $BR $BR
+We know $BR $BR
+\( \quad C \) is the only point on \( \Phi \) such that \( \overrightarrow{QC} \) is \{ $popOrthogonal->menu() \} to \( \vec{n} \). $BR $BR
+
+Which of the formulas below corresponds to the $BBOLD closest point \(C \)? $EBOLD $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \displaystyle \overrightarrow{CQ} =  \textrm{proj}_{\vec{n}}\overrightarrow{QP} \quad \)","and","\( \quad \displaystyle C = Q +  \textrm{proj}_{\vec{n}}\overrightarrow{QP}  \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \displaystyle \overrightarrow{QC} =  \textrm{proj}_{\vec{n}}\overrightarrow{QP} \quad \)","and","\( \quad \displaystyle C = Q +  \textrm{proj}_{\vec{n}}\overrightarrow{QP} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popOrthogonal->cmp);
+
+ANS(Compute("2")->cmp );
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$Proj = (($QP.$N)/($N.$N))*$N;
+
+Context("LimitedPoint");
+$C = $Q + Point($Proj);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad C \)", "\( = \)", "\( Q \)", "\( + \)", "\( \displaystyle \textrm{proj}_{\vec{n}}\overrightarrow{QP} \)"], align=>CENTER, separation=>0).
+
+AlignedRow([" ", "\( = \)", ans_rule(10), "\( + \)", ans_rule(10),"(write the components)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ", "\( = \)", ans_rule(10)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Q->cmp);
+ANS($Proj->cmp);
+ANS($C->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();
+

@@ -1,0 +1,90 @@
+##DESCRIPTION
+##  Algebra problem: factor
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('difference of squares','factor','factorization')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$A = random(1,9,1);
+$B = random(1,9,1);
+while (gcd($A,$B) > 1) {$B = random(1,9,1);}
+
+$K = random(1,9,1);
+$L = random(1,9,1);
+while (gcd($K,$L)>1) {$L = random(1,9,1);}
+$minpower = $K;
+$maxpower = $L;
+if($K>$L) {
+ $minpower = $L;
+ $maxpower = $K;
+}
+
+$c1 = $A**2;
+$c2 = $B**2;
+$e1 = $K*2;
+$e2 = $L*2;
+
+Context()->variables->add(y=>'Real');
+$equation = Formula("$c1 x^{$e1} - $c2 y^{$e2}")->reduce; 
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>1);
+LimitedPowers::OnlyIntegers(
+minPower => $minpower, maxPower => $maxpower,
+message => "either $minpower or $maxpower",
+);
+Context()->variables->add(y=>'Real');
+$factor1 = Formula("$A x^$K");
+$factor2 = Formula("$B y^$L");
+$factoredform = Compute("($factor1 - $factor2)($factor1 + $factor2)");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Factor \( $equation \) 
+
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equation \)","\( = \)","\( \Big( \)".ans_rule(2)."\( \Big)^2 - \Big( \)".ans_rule(2)."\( \Big)^2 \)","(rewrite as a difference of squares \( a^2 - b^2 \))" ], align=>LEFT, separation=>0).
+AlignedRow([" ","\( = \)",ans_rule(25),"(factorized)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($factor1->cmp);
+ANS($factor2->cmp);
+ANS($factoredform->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;
+

@@ -1,0 +1,132 @@
+##DESCRIPTION
+##  Matrix Operations
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Matrix Algebra')
+## KEYWORDS('addition and subtraction', 'compatibility of an operation', 'minor matrix multiplication', 'scalar nilpotence multiplication')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+$A = Matrix([ 
+[random(-4,4,1),non_zero_random(-4,4,1)],                [non_zero_random(-4,4,1),random(-4,4,1)], 
+[random(-4,4,1),non_zero_random(-4,4,1)]
+]);
+
+$B = Matrix([ 
+[random(-3,3,1),non_zero_random(-3,3,1)],                [non_zero_random(-3,3,1),random(-3,3,1)], 
+]);
+
+$C = Matrix([[1,2],[3,4],[5,6]]);
+
+Context("Numeric");
+$numRowA = Compute("3");
+$numColA = Compute("2");
+$numRowB = Compute("2");
+$numColB = Compute("2");
+
+$k = random(2,9,1);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Compute the following matrix. 
+$BR $BR
+\( $A $B + $k $C \) $BR $BR
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popColA = PopUp(["?", "number of rows of A", "number of columns of A"],"number of columns of A");
+$popRowB = PopUp(["?", "number of rows of B", "number of columns of B"],"number of rows of B");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( A = $A \) and \( B = $B \) $BR $BR
+We know $BR $BR
+the size of \(A\) is \{ ans_rule(2) \} \( \times \) \{ ans_rule(2) \} ( $BITALIC enter the number of rows and then the number of columns $EITALIC )$BR $BR
+the size of \(B\) is \{ ans_rule(2) \} \( \times \) \{ ans_rule(2) \} $BR $BR
+Since \{ $popColA->menu() \} \( = \) \{ $popRowB->menu() \} then \(AB\) exists and its size is \{ ans_rule(2) \} \( \times \) \{ ans_rule(2) \}.
+END_TEXT
+Context()->normalStrings;
+
+ANS( $numRowA->cmp() );
+ANS( $numColA->cmp() );
+ANS( $numRowB->cmp() );
+ANS( $numColB->cmp() );
+
+ANS( $popColA->cmp() );
+ANS( $popRowB->cmp() );
+
+ANS( $numRowA->cmp() );
+ANS( $numColB->cmp() );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Matrix");
+$AB = Matrix($A*$B);
+$kC = Matrix($k*$C);
+
+$D = $AB + $kC;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $A $B + $k $C \)","\( = \)",$AB->ans_array(2)."\( + \)".$kC->ans_array(2)], align=>LEFT, separation=>0).
+
+AlignedRow(["","","(write the components of each matrix)"], align=>LEFT, separation=>0).
+
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",$D->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $AB->cmp() );
+ANS( $kC->cmp() );
+ANS( $D->cmp() );
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT(); 
+

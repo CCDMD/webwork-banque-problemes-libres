@@ -1,0 +1,158 @@
+##DESCRIPTION
+##  Markov chains
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Matrix Algebra')
+## KEYWORDS('applications', 'Markov chain')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+ 
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"PGmatrixmacros.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$p11 = random(0.1,0.9,0.1);
+$p21 = 1 - $p11;
+
+$p12 = random(0.1,0.9,0.1);
+$p22 = 1 - $p12;
+
+do
+{
+    $w = random(5000,25000,1000);
+    $m = random(5000,25000,1000);
+} until($w!=$m);
+
+$sum = $w + $m;
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+A study shows that the probability that the son of a manual worker is a white-collar worker is $p12, and the probability that the son of a white-collar worker is a manual worker is $p21. $BR
+If, out of $sum workers, $w are white-collar workers then how many of their sons will be white-collar and how many will be manual workers one year from now?
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Section::Begin(" ");
+
+Context("Matrix");
+$M = Matrix([[$p11,$p12],[$p21,$p22]]);
+$X0 = Matrix([[$w], [$m]]);
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(P\) be the matrix of transition. $BR
+Let \(\vec{x}_0\) be the initial population distribution. $BR $BR
+Let \(\text{W}\) and \(\text{M}\) represent white-collar workers and manual workers, respectively. $BR $BR
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" "," ","","\(  \hspace{1cm} \text{W} \hspace{1.5cm}  \text{M} \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["\( \quad P \)","\( = \)","\(  \text{W} \)".$BR.$BR."\(  \text{M} \)",$M->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \vec{x}_0 \)","\( = \)","\(  \text{W} \)".$BR.$BR."\(  \text{M} \)",$X0->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($M->cmp);
+ANS($X0->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(\vec{x}_1\) be the population distribution one year later. $BR $BR
+
+Which of the formulas below corresponds to \(\vec{x}_1\)? $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \vec{x}_1 = \vec{x}_0 P \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \vec{x}_1 = P \vec{x}_0 \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR 
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("2")->cmp );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Matrix");
+$X1 = $M*$X0;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \vec{x}_1 \)","\( = \)","\( $M $X0 \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",$X1->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Thus, one year later, there will be \{ans_rule(10)\} white-collar workers and \{ans_rule(10)\} manual workers.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($X1->cmp);
+ANS(($X1->element(1,1))->cmp);
+ANS(($X1->element(2,1))->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();

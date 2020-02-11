@@ -1,0 +1,150 @@
+##DESCRIPTION
+##  Algebra problem: long division
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('polynomial division')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$a = non_zero_random(-1,1,2);
+$b = non_zero_random(-9,9,1);
+if($b==1){$b+=1;}
+if($b==-1){$b-=1;}
+
+$c = -($a + $b);
+
+$ma = -$a;
+$mb = -$b;
+$mc = -$c;
+
+$a1 = -($b +$c + $a);
+$a2 = (($c + $a)*$b + $a*$c);
+$a3 = - $a*$c*$b;
+
+#f(x) = (x-a)(x-b)(x-c)
+$equation = Compute("x^3 +$a1 x^2 +$a2 x +$a3")->reduce; 
+
+Context("LimitedPolynomial-Strict");
+$divisor = Compute("x-$a")->reduce;
+
+$coeff1 = $mb + $mc;
+$coeff2 = $mc*$mb;
+
+$q1 = Compute("x^2");
+$q2 = Compute("$coeff1 x");
+$q3 = Compute("$coeff2");
+
+#(x-a)(x^2)
+$eq1 = Compute("x^3-$a x^2");
+
+$eq2 = Compute("$coeff1 x^2 + $a2 x + $a3");
+
+#(x-a)($coeff1 x)
+$coeff3 = $coeff1*$a;
+$eq3 = Compute("$coeff1 x^2 - $coeff3 x");
+
+#(x-a)$coeff2
+$coeff4 = $a*$coeff2;
+$eq4 = Compute("$coeff2 x - $coeff4");
+$eq5 = Compute("0");
+
+#answer
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 2,
+message => "either 0 or 1 or 2",
+);
+$quotient =  Compute("x^2 + $coeff1 x + $coeff2");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Evaluate \( \displaystyle \frac{$equation}{$divisor} \)
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR $BR
+To evaluate \( \displaystyle \frac{$equation}{$divisor} \), we can use long division as follows: $BR
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([$SPACE.$BR.$BR.ans_rule(10),$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(2)."\( + \)".ans_rule(2)."\( + \)".ans_rule(2).$BR.$HR."\( \Big) \)".$SPACE.$SPACE.$SPACE.ans_rule(25),"(write the Divisor and Dividend)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( - \)".$BR.$BR.$BR,"\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(15),"(determine the first term of the Quotient)"], align=>LEFT, separation=>0, indent=>120).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( - \)".$BR.$BR.$BR,"\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(15),"(determine the second term of the Quotient)"], align=>LEFT, separation=>0, indent=>140).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( - \)".$BR.$BR.$BR,"\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(12),"(determine the third term of the Quotient)"], align=>LEFT, separation=>0, indent=>180).
+
+EndTable()
+\}
+
+$BR $BR
+Thus,  
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{$equation}{$divisor} \)","\( = \)",ans_rule(15),"(write the \( \displaystyle \text{Quotient} \) )"], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+
+
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($divisor->cmp);
+
+ANS($q1->cmp);
+ANS($q2->cmp);
+ANS($q3->cmp);
+
+ANS($equation->cmp);
+ANS($eq1->cmp);
+ANS($eq2->cmp);
+ANS($eq3->cmp);
+ANS($eq4->cmp);
+ANS($eq4->cmp);
+ANS($eq5->cmp);
+
+ANS($quotient->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

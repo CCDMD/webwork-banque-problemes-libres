@@ -1,0 +1,380 @@
+##DESCRIPTION
+##  Find the angle between two vectors
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('angle', 'applications', 'R^2', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"PGunion.pl",
+"scaffold.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Point");
+
+# choose 3 distinct x-coordinates
+$lowx = random(1, 6, 1);
+$midx = random($lowx + 1, 8, 1);
+$bigx = random($midx + 1, 10, 1);
+@xs = ($lowx, $midx, $bigx);
+
+# choose 3 distinct y-coordinates
+$lowy = random(1, 6, 1);
+$midy = random($lowy + 1, 8, 1);
+$bigy = random($midy + 1, 10, 1);
+# put them out of order on purpose, so we get a triangle (not a line)
+@ys = ($lowy, $bigy, $midy);
+
+# so we aren't always calling the bottom-left corner "A"
+$offset = random(0, 2, 1);
+
+($a0, $a1) = (Real($xs[$offset]),       Real($ys[$offset]));
+($b0, $b1) = (Real($xs[($offset+1)%3]), Real($ys[($offset+1)%3]));
+($c0, $c1) = (Real($xs[($offset+2)%3]), Real($ys[($offset+2)%3]));
+
+($A, $B, $C) = (Point($a0, $a1), Point($b0, $b1), Point($c0, $c1));
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+A triangle is defined by the three points:
+$PAR
+\( A = $A \)
+$PAR
+\( B = $B \)
+$PAR
+\( C = $C \)
+$PAR
+Determine all three angles in the triangle (in radians).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR $BR 
+Let \(  \theta_A \) be the angle at the point \( \it A \). $BR
+Let \(  \theta_B \) be the angle at the point \( \it B \). $BR
+Let \(  \theta_C \) be the angle at the point \( \it C \). $BR $BR
+ 
+\{ image( "triangle_ABC_angle.png",width=>329, height=>201 ) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Angle at \( \it A \) $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+Section::Begin("Construct the required vectors");
+
+Context("Numeric");
+Context()->strings->add( "AB"=>{}, "BA"=>{}, "AC"=>{}, "CA"=>{}, "BC"=>{}, "CB"=>{} );
+
+#check box 1
+$ans_eval1 = Compute("AC")->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1 = $ans_hash1->{score};
+
+$InitialPoint1 = "A";
+$EndPoint1 = "B";
+$Side1 = "AB";
+
+$InitialPoint2 = "A";
+$EndPoint2 = "C";
+$Side2 = "AC";
+
+if ($TESTbox1) 
+{
+    $InitialPoint1 = "A";
+    $EndPoint1 = "C";
+    $Side1 = "AC";
+
+    $InitialPoint2 = "A";
+    $EndPoint2 = "B";
+    $Side2 = "AB";
+}
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$U = Vector($$EndPoint1-$$InitialPoint1);
+$V = Vector($$EndPoint2-$$InitialPoint2);
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{u} \) be the vector corresponding to the directed line segment \{ ans_rule(2) \} ($BITALIC enter the letters corresponding to the chosen directed line segment $EITALIC)$BR $BR
+Let \( \vec{v} \) be the vector corresponding to the directed line segment \{ ans_rule(2) \} ($BITALIC enter the letters corresponding to the chosen directed line segment $EITALIC)$BR $BR
+
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{u} \ \)","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v} \ \)","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+Context()->strings->add( "AB"=>{caseSensitive=>1}, "BA"=>{caseSensitive=>1}, "AC"=>{caseSensitive=>1}, "CA"=>{caseSensitive=>1}, "BC"=>{caseSensitive=>1}, "CB"=>{caseSensitive=>1} );
+
+ANS(Compute("$Side1")->cmp);
+ANS(Compute("$Side2")->cmp);
+
+ANS($U->cmp);
+ANS($V->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Find the angle");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$DotProduct = $U.$V;
+$NormU = norm($U);
+$NormV = norm($V);
+
+$AngleA = arccos($DotProduct/($NormU*$NormV));
+
+Context()->texStrings;
+BEGIN_TEXT
+Then $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \cos (\theta_A ) \) ","\( = \)","\( \displaystyle \frac{\vec{u} \cdot \vec{v}}{ \| \vec{u} \| \; \| \vec{v} \|} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(10).$BR.$HR."\( \Big( \)".ans_rule(5)."\( \Big) \Big( \)".ans_rule(5)."\( \Big) \)","(write the numerical value of \(\vec{u} \cdot \vec{v}\) , \( \| \vec{u} \| \) and \( \| \vec{v} \| \))" ], align=>CENTER, separation=>0, indent=>40).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \theta_A \) ","\( = \)",ans_rule(25),"(in radian)" ], align=>CENTER, separation=>0, indent=>20).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($NormU->cmp);
+ANS($NormV->cmp);
+ANS($AngleA->cmp);
+
+Section::End();
+
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Angle at \( \it B \) $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+Section::Begin("Construct the required vectors");
+
+Context("Numeric");
+Context()->strings->add( "AB"=>{}, "BA"=>{}, "AC"=>{}, "CA"=>{}, "BC"=>{}, "CB"=>{} );
+
+#check box 9
+$ans_eval9 = Compute("BC")->cmp();
+$ans_hash9 = $ans_eval9->evaluate($inputs_ref->{ANS_NUM_TO_NAME(9)});
+$TESTbox9 = $ans_hash9->{score};
+
+$InitialPoint1 = "B";
+$EndPoint1 = "A";
+$Side1 = "BA";
+
+$InitialPoint2 = "B";
+$EndPoint2 = "C";
+$Side2 = "BC";
+
+if ($TESTbox9) 
+{
+    $InitialPoint1 = "B";
+    $EndPoint1 = "C";
+    $Side1 = "BC";
+
+    $InitialPoint2 = "B";
+    $EndPoint2 = "A";
+    $Side2 = "BA";
+}
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$U = Vector($$EndPoint1-$$InitialPoint1);
+$V = Vector($$EndPoint2-$$InitialPoint2);
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{u} \) be the vector corresponding to the directed line segment \{ ans_rule(2) \} ($BITALIC enter the letters corresponding to the chosen directed line segment $EITALIC) $BR $BR
+Let \( \vec{v} \) be the vector corresponding to the directed line segment \{ ans_rule(2) \} ($BITALIC enter the letters corresponding to the chosen directed line segment $EITALIC)  $BR $BR
+
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{u} \ \)","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v} \ \)","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+Context()->strings->add( "AB"=>{caseSensitive=>1}, "BA"=>{caseSensitive=>1}, "AC"=>{caseSensitive=>1}, "CA"=>{caseSensitive=>1}, "BC"=>{caseSensitive=>1}, "CB"=>{caseSensitive=>1} );
+
+ANS(Compute("$Side1")->cmp);
+ANS(Compute("$Side2")->cmp);
+
+ANS($U->cmp);
+ANS($V->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Find the angle");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$DotProduct = $U.$V;
+$NormU = norm($U);
+$NormV = norm($V);
+
+$AngleB = arccos($DotProduct/($NormU*$NormV));
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Then $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \cos (\theta_B ) \) ","\( = \)","\( \displaystyle \frac{\vec{u} \cdot \vec{v}}{ \| \vec{u} \| \; \| \vec{v} \|} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(10).$BR.$HR."\( \Big( \)".ans_rule(5)."\( \Big) \Big( \)".ans_rule(5)."\( \Big) \)","(write the numerical value of \(\vec{u} \cdot \vec{v}\) , \( \| \vec{u} \| \) and \( \| \vec{v} \| \))" ], align=>CENTER, separation=>0, indent=>40).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \theta_B \) ","\( = \)",ans_rule(25),"(in radian)" ], align=>CENTER, separation=>0, indent=>20).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($NormU->cmp);
+ANS($NormV->cmp);
+ANS($AngleB->cmp);
+
+Section::End();
+
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Angle at \( \it C \) $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+Section::Begin("Find the angle");
+
+Context("Numeric");
+
+$AngleC = pi - $AngleA - $AngleB;
+
+Context()->texStrings;
+BEGIN_TEXT
+We know the sum of the angles in a triangle is \{ ans_rule(5) \} (in radian). $BR $BR
+Thus $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \theta_C \) ","\( = \)",ans_rule(25),"(in radian)" ], align=>CENTER, separation=>0, indent=>30).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("pi")->cmp);
+
+ANS($AngleC->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();
+
+

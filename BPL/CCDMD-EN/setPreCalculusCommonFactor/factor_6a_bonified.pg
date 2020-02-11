@@ -1,0 +1,236 @@
+##DESCRIPTION
+## Algebraic equations
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('common factor','factorization')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+do{
+    $a = random(2,5,1);
+    $b = random(1,9,1);
+} until (gcd($a,$b) == 1);
+
+do{
+    $c = random(2,5,1);
+    $d = random(1,9,1);
+} until (gcd($c,$d) == 1);
+
+$n = random(2,5,1);
+$n1 = $n - 1;
+
+do{
+    $m1 = random(2,6,1);
+    $m2 = random(2,6,1);
+} until ($m1 != $m2);
+
+$m11 = $m1 - 1;
+$m21 = -$m2 - 1;
+$m2p = -$m21;
+
+$maxpower = $n;
+if (($m1 > $n) || ($m2p > $n))
+{
+  $maxpower = $m1;
+  if ($m2p > $m1)
+  {
+    $maxpower = $m2p;
+  }
+}
+
+#
+# numbers needed
+#
+$coeffdf = $m1*$a*$n;
+$coeffdg = $m2*$c;
+$gcd = gcd($coeffdf, $coeffdg);
+$coeff1 = $coeffdf/$gcd;
+$coeff2 = $coeffdg/$gcd;
+$num1 = $coeff1*$c - $coeff2*$a;
+$num2 = $coeff1*$d;
+$num3 = -$coeff2*$b;
+$gcdtemp = gcd($num1,$num2);
+$intGCD = gcd($gcdtemp,$num3);
+$intcoeff1 = $num1/$intGCD;
+$intcoeff2 = $num2/$intGCD;
+$intcoeff3 = $num3/$intGCD;
+## making sure that there are common factors in the end result
+while (gcd($gcdtemp,$num3) == 1)
+{
+#do{
+    $a = random(2,5,1);
+    $b = random(1,9,1);
+#} until (gcd($a,$b) == 1);
+
+#do{
+    $c = random(2,5,1);
+    $d = random(1,9,1);
+#} until (gcd($c,$d) == 1);
+
+$coeffdf = $m1*$a*$n;
+$coeffdg = $m2*$c;
+$gcd = gcd($coeffdf, $coeffdg);
+$coeff1 = $coeffdf/$gcd;
+$coeff2 = $coeffdg/$gcd;
+$num1 = $coeff1*$c - $coeff2*$a;
+$num2 = $coeff1*$d;
+$num3 = -$coeff2*$b;
+$gcdtemp = gcd($num1,$num2);
+$intGCD = gcd($gcdtemp,$num3);
+$intcoeff1 = $num1/$intGCD;
+$intcoeff2 = $num2/$intGCD;
+$intcoeff3 = $num3/$intGCD;
+}
+
+Context("Numeric");
+$f = Formula("($a x^$n + $b)^$m1");
+$g = Formula("($c x + $d)^-$m2");
+$equation = $f*$g;
+$df_g = ($f->D('x') * $g)->reduce;
+$f_dg = (-1*$f * $g->D('x'))->reduce;
+$dequation = $equation->D('x')->reduce;
+
+#
+#  Expanded form
+#
+Context("LimitedPolynomial-Strict");
+$expandedform = Formula("$num1 x^$n + $num2 x^$n1 + $num3")->reduce;
+$intexpandedform = Formula("$intcoeff1 x^$n + $intcoeff2 x^$n1 + $intcoeff3");
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => $m21, maxPower => $maxpower,
+message => "either $m21 or $maxpower",
+);
+$common_factor = Compute("$gcd ($a x^$n + $b)^$m11 ($c x + $d)^$m21");
+$formula1 = Compute("$coeff1 x^$n1 ($c x + $d)");
+$formula2 = Compute("$coeff2 ($a x^$n + $b)");
+$factoredform = Compute("$expandedform $common_factor");
+$positiveexpnum = Compute("$expandedform $gcd ($a x^$n + $b)^$m11");
+$positiveexpden = Compute("($c x + $d)^$m2p");
+
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => $n,
+message => "between 0 and $n",
+);
+$IntermediateFactoredForm = Compute("$intGCD $intexpandedform");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Factor \(  \displaystyle $dequation \) 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR$BITALIC$BBOLD Part 1: Finding the common factor $EBOLD$EITALIC $BR$BR
+
+Common factor \(=\) \{ans_rule(25)\}
+
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 2: Finding the other factor $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $df_g \)".$BR.$HR.ans_rule(25),"\( - \)","\( $f_dg \)".$BR.$HR.ans_rule(25),"(divide every term by the common factor)" ], align=>CENTER, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(25)."\( - \big( \)".ans_rule(25)."\( \big) \)","(simplify each term)" ], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(15),"(simplified form)"], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(5)."\( \big( \)".ans_rule(15)."\( \big) \)","(factor the common coefficient)"], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+$BR $BR
+Other factor \(=\) \{ans_rule(15)\}
+
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 3: Writing the factored form $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $dequation \)","\( = \)",ans_rule(40)], align=>LEFT, separation=>0).
+AlignedRow([" ","","(factorized as common factor \( \times \) other factor)" ], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(30).$BR.$HR.ans_rule(30), ], align=>LEFT, separation=>0, indent=>430).
+AlignedRow([" ","","(rewrite with only positive exponents)" ], align=>LEFT, separation=>0, indent=>430).
+EndTable()
+\}
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#Part 1
+ANS($common_factor->cmp);
+
+#Part 2
+ANS($common_factor->cmp);
+ANS($common_factor->cmp);
+
+ANS($formula1->cmp);
+ANS($formula2->cmp);
+ANS($expandedform->cmp);
+
+ANS(Compute("$intGCD")->cmp);
+ANS($intexpandedform->cmp);
+ANS($IntermediateFactoredForm->cmp);
+
+#Part 3
+ANS($factoredform->cmp); 
+ANS($positiveexpnum->cmp);
+ANS($positiveexpden->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

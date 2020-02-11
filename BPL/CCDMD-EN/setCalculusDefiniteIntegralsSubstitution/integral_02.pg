@@ -1,0 +1,138 @@
+##DESCRIPTION
+##  Integrals - Substitution method
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('change of bounds', 'change of variable', 'definite integral')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGunion.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"MathObjects.pl", 
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#$a = random(1,4,1);
+$a = 1;
+$b = random(2,3,1);
+$c = random(2,4,1);
+
+$int = "(e^{$b x} - $b x)^{$c}(e^{$b x} - 1)";
+$upper = $a;
+$lower = 0;
+
+Context("Numeric");
+Context()->variables->add('dx' => 'Real');
+
+#box 3
+$ans_eval3 = Compute("dx")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3 = $ans_hash3->{score};
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Evaluate
+$BR $BR
+\( \displaystyle \int_{$lower}^{$upper} $int \, dx .\)
+$BR
+$BR
+$PAR
+$HR $BR
+$BBOLD Solution $EBOLD $BR $BR
+Let $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["\( u \)", "\( = \)",ans_rule(10),"(choose \(u\))"], align=>LEFT, separation=>0).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(u\))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+When \( x = $upper \), we have \( u = \) \{ ans_rule(5) \}
+$BR $BR 
+When \( x = $lower \), we have \( u = \) \{ ans_rule(5) \}
+$BR $BR
+We have
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \int_{$lower}^{$upper} $int \, dx \)","\( = \)",ans_rule(3)."\( \displaystyle \int\)",ans_rule(4).$BR.$BR.ans_rule(4),ans_rule(10).ans_rule(2)], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["(an integral with \(u\). Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0, indent=>220).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(3)."\( \Bigg[ \)".ans_rule(12)."\( \Bigg] \)",ans_rule(4).$BR.$BR.ans_rule(4),"(integrate with respect to \(u\))"], align=>LEFT, separation=>0, indent=>205).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(40),"(evaluate)"], align=>LEFT, separation=>0, indent=>205).
+EndTable()
+\}
+
+$BR
+
+END_TEXT
+
+#(e^{$b x} - $b x)^{$c}(e^{$b x} - 1)
+
+#u
+ANS(fun_cmp("e^{$b x} - $b x", vars=>["u","x","du","dx"]));
+
+#du/dx
+ANS(fun_cmp("du", vars=>["u","x","du","dx"]));
+if ($TESTbox3) 
+{
+ANS(fun_cmp("dx", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("$b*e^{$b x} - $b", vars=>["u","x","du","dx"]));
+}
+else
+{
+ANS(fun_cmp("$b", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("(e^{$b x} - 1)dx", vars=>["u","x","du","dx"]));
+}
+
+#upper & lower
+ANS(num_cmp("e^{$b*$upper} - $b*$upper"));
+ANS(num_cmp("e^{$b*$lower} - $b*$lower"));
+
+#integral with u
+ANS(num_cmp("1/$b"));
+ANS(num_cmp("e^{$b*$upper} - $b*$upper"));
+ANS(num_cmp("e^{$b*$lower} - $b*$lower"));
+ANS(fun_cmp("u^$c", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("du", vars=>["u","x","du","dx"]));
+
+#answer of integral with u
+ANS(num_cmp("1/$b"));
+ANS(fun_cmp("u^($c+1)/($c+1)", vars=>["u","x","du","dx"]));
+ANS(num_cmp("e^{$b*$upper} - $b*$upper"));
+ANS(num_cmp("e^{$b*$lower} - $b*$lower"));
+
+$ans = (1/($b*($c+1)))*((exp($a*$b) - $a*$b)**(1+$c) - 1);
+
+
+ANS(num_cmp($ans));
+
+ENDDOCUMENT();

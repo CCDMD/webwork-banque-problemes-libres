@@ -1,0 +1,135 @@
+##DESCRIPTION
+##  Find an orthogonal vector
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications', 'R^3', 'vector', 'orthogonal vectors')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+#####################################################################
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"PGunion.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context('Numeric');
+
+$a = random(2,10,1);
+$b = random(2,10,1);
+
+$a2 = Compute("$a^2");
+$ab = Compute("$a2+$b");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->variables->add(b => 'Real');
+
+$v = Vector(-$ab, b, $b);
+$w = Vector(b, Compute("b^2"), b);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+For what values of \(b\) are the vectors \( \vec{v} = $v \) and \( \vec{w} = $w \) orthogonal? 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Find \( b \)");
+
+Context("Numeric");
+$popVectorPerpendicular = PopUp(["Choose", "their cross product gives 0", "their dot product gives 0", "their norm gives 0"],"their dot product gives 0");
+
+Context()->texStrings;
+BEGIN_TEXT
+We know two non-zero vectors are orthogonal if \{ $popVectorPerpendicular->menu() \}. $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popVectorPerpendicular->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context("LimitedPolynomial-Strict");
+Context()->variables->add(b=>'Real');
+$DotProduct = Compute("b^3 - $a2 b");
+
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>1);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+Context()->variables->add(b=>'Real');
+$factoredform = Compute("b (b - $a)(b + $a)");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v} \cdot \vec{w} \) ","\( = \)","\( 0 \)"], align=>RIGHT, separation=>0, indent=>0).
+
+AlignedRow([ans_rule(20),"\( = \)","\( 0 \)","(combine like terms and simplify)"], align=>LEFT, separation=>0, indent=>0).
+
+AlignedRow([ans_rule(20),"\( = \)","\( 0 \)","(factorized form)"], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+
+$BR $BR
+
+Solving for \(b\) gives us (in ascending order)
+$BR
+\(b_1 = \) \{ans_rule(10)\}, \(b_2 = \) \{ans_rule(10)\} and \(b_3 = \) \{ans_rule(10)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($factoredform->cmp);
+
+ANS(Compute("-$a")->cmp);
+ANS(Compute("0")->cmp);
+ANS(Compute("$a")->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,286 @@
+##DESCRIPTION
+##  Geometric Series - Limit Comparison Test
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Sequences, Summation and Series')
+## KEYWORDS('convergence and divergence', 'comparison test by a limit', 'series')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+######################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"unionTables.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"PGcourse.pl"
+);
+
+
+TEXT(beginproblem());
+
+
+##################################
+#  Setup
+
+Context("Numeric")->variables->are(n=>"Real");
+
+$a = random(2,3,1);
+$b = random(2,9,1);
+$c = random(3,5,1);
+$d = random(3,4,1);
+$e = random(2,9,1);
+
+$twoa = 2*$a;
+
+$ap1 = $a + 1;
+
+$cm1 = $c - 1;
+
+$dm1 = $d - 1;
+
+
+# TeX
+$series = "\sum_{n=$cm1}^{\infty} \frac{$twoa^n + $b}{$ap1^n + $e($a^{$d n})}";
+$an = "\frac{$twoa^n + $b}{$ap1^n + $e($a^{$d n})}";
+$Sig = "\sum_{n=$cm1}^{\infty}";
+$fraction = "\lim_{n \to \infty} \frac{ a_{n} }{ b_{n} } = \lim_{n \to \infty}";
+
+$limit = Formula("1/$e");
+$popup = PopUp(["Choose","is convergent by the LCT","is divergent by the LCT","is inconclusive for the series"],"is convergent by the LCT");
+
+$poptype = PopUp(["Choose","geometric","p", "telescoping", "other"],"other");
+
+$popDTcond = PopUp(["Choose","is equal to zero","is not equal to zero"],"is equal to zero");
+$popsol = PopUp(["Choose","is convergent by the divergence test","is divergent by the divergence test", "cannot be classified by the divergence test (inconclusive)"],"cannot be classified by the divergence test (inconclusive)");
+
+$poptypebn = PopUp(["Choose","geometric","p"],"geometric");
+
+$popvalue = PopUp(["Choose","r","p"],"r");
+$popvalueb = PopUp(["Choose","|r| < 1","|r| >= 1","p <= 1", "p > 1"],"|r| < 1");
+
+$popcon = PopUp(["Choose","is convergent","is divergent"],"is convergent");
+
+$popsign = PopUp(["Choose","is a number less than 0","is zero","is a number greater than 0","is infinity","DNE"],"is a number greater than 0");
+
+#######################################
+#  Main text
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Determine if the series is convergent or divergent. 
+If it converges, determine the sum (if possible). 
+$BR $BR \( \displaystyle $series \) 
+$BR
+$BR
+$HR
+$PAR
+$BBOLD Solution $EBOLD $BR
+
+
+
+$HR
+$BR$BITALIC$BBOLD Identify the series:$EBOLD$EITALIC $BR$BR
+
+
+
+
+We have a \{ $poptype->menu() \} series. 
+
+
+$HR
+$BR$BITALIC$BBOLD Apply the divergence test:$EBOLD$EITALIC $BR$BR
+
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{n\to\infty} $an = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \(n\) with \( \infty \))"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \) ",ans_rule(3)."\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.ans_rule(3)."\( \big( \)".ans_rule(15)."\( \big) \)","(factor the exponential terms with highest bases)"],align => "LEFT",separation => 0, indent => 140).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \) ","\( \Bigg( \)",ans_rule(5).$BR.$HR.ans_rule(5),"\( \Bigg)^n \, \Bigg( \)",ans_rule(20).$BR.$HR."\( ( \)".ans_rule(5)."\( )^n + \)".ans_rule(5),,"\( \Bigg)\)","(rewrite as SIMPLIFIED exponential functions)"],align => "LEFT",separation => 0, indent => 140).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(10),,"(evaluate and simplify)"],align => "LEFT",separation => 0, indent => 140).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR $BR
+Thus, since \(\displaystyle \lim_{n\to\infty} $an\) \{ $popDTcond->menu() \}, then the series \{ $popsol->menu() \}.
+
+$BR$BR
+
+
+
+$HR
+$BR$BITALIC$BBOLD Apply the limit comparison test:$EBOLD$EITALIC $BR$BR
+
+
+
+Let \( a_n = \) \{ans_rule(30) \} be the term of the series \(\displaystyle $series\).
+$BR $BR
+
+We want to compare the series \(\displaystyle $series\) with another series \(\displaystyle $Sig b_n\). 
+$BR $BR
+
+By keeping the dominating terms (here the terms with the highest powers), we get \( b_n = \) \{ans_rule(30) \}.
+$BR $BR
+Thus the series \( \displaystyle $Sig b_n \) is a \{ $poptypebn->menu() \} series and since \{ $popvalue->menu() \} \( = \) \{ans_rule(5) \} where \{ $popvalueb->menu() \} then the series \{ $popcon->menu() \}.
+$BR$BR
+
+
+Now, for \( n \geq $c \), $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle $fraction \)", ans_rule(20).$BR.$HR.ans_rule(20), "(write your answer as a fully reduced fraction)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \( n\) with \( \infty \))"],align => "LEFT",separation => 0, indent => 65).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \) ",ans_rule(3)."\( \big( \)".ans_rule(10)."\( \big) \)".$BR.$HR.ans_rule(3)."\( \big( \)".ans_rule(10)."\( \big) \)","(factor the exponential terms with highest bases)"],align => "LEFT",separation => 0, indent => 65).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \) ",ans_rule(10).$BR.$HR.ans_rule(10),"(simplify)"],align => "LEFT",separation => 0, indent => 65).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(10),"(evaluate and simplify)"],align => "LEFT",separation => 0, indent => 65).
+  TableSpace(0,0).
+EndTable();
+\}
+
+
+$BR $BR
+Since \( \displaystyle \lim_{n \to \infty} \frac{ a_{n} }{ b_{n} } \) \{ $popsign->menu() \} and \( \displaystyle $Sig b_n \) \{ $popcon->menu() \} then \( \displaystyle $series \) \{ $popup->menu() \}.
+
+$BR
+$BR
+Enter $BBOLD INF $EBOLD for \(\infty\), $BBOLD -INF $EBOLD for \(-\infty\),
+and $BBOLD DNE $EBOLD if the limit does not exist.
+END_TEXT
+
+
+#######################################
+#  Answer evaluation
+
+$showPartialCorrectAnswers=1;
+
+##########################
+### IDENTIFYING THE SERIES ###
+##########################
+
+
+ANS( $poptype->cmp() );
+
+############################
+### Applying the divergence test ###
+############################
+
+#{$twoa^n + $b}{$ap1^n + $e($a^{$d n})}
+
+$gcdanbn = gcd($twoa,$a**$d);
+
+#sub
+ANS(Compute("inf")->cmp());
+ANS(Compute("inf")->cmp());
+
+#factor
+ANS(fun_cmp("$twoa^n",var=>'n'));
+ANS(fun_cmp("1 + $b/$twoa^n",var=>'n'));
+ANS(fun_cmp("$a^{$d n}",var=>'n'));
+ANS(fun_cmp("$ap1^n/$a^{$d n} + $e",var=>'n'));
+
+#simplify
+ANS(fun_cmp("$twoa/$gcdanbn",var=>'n'));
+ANS(fun_cmp("$a^$d/$gcdanbn",var=>'n'));
+ANS(fun_cmp("1 + $b/$twoa^n",var=>'n'));
+ANS(fun_cmp("$ap1/$a^$d",var=>'n'));
+ANS(fun_cmp("$e",var=>'n'));
+
+#answer
+ANS(num_cmp(0));
+ANS($popDTcond->cmp() );
+ANS($popsol->cmp() );
+
+
+#################################
+### Applying the limit comparison test ###
+#################################
+
+#an
+ANS(fun_cmp("($twoa^n + $b)/($ap1^n + $e($a^{$d n}))",var=>'n'));
+
+#bn
+ANS(fun_cmp("($twoa/$a^$d)^n",var=>'n'));
+ANS( $poptypebn->cmp() );
+ANS( $popvalue->cmp() );
+ANS(num_cmp("$twoa/$a^$d"));
+ANS( $popvalueb->cmp() );
+ANS( $popcon->cmp() );
+
+$hp = $twoa/$gcdanbn*($a**$d);
+$den = $ap1*$twoa/$gcdanbn;
+
+#limit
+ANS(fun_cmp("$hp^n + $b*($a^$d/$gcdanbn)^n",var=>'n'));
+ANS(fun_cmp("$den^n + $e($hp^n)",var=>'n'));
+
+#sub
+ANS(Compute("inf")->cmp());
+ANS(Compute("inf")->cmp());
+
+#factor
+ANS(fun_cmp("$hp^n",var=>'n'));
+ANS(fun_cmp("1 + $b/$twoa^n",var=>'n'));#Issue fixed...
+ANS(fun_cmp("$hp^n",var=>'n'));
+ANS(fun_cmp("($ap1/$a^$d)^n + $e",var=>'n'));
+
+#simplify
+ANS(fun_cmp("1 + $b/$twoa^n",var=>'n'));#Issue fixed...
+ANS(fun_cmp("($ap1/$a^$d)^n + $e",var=>'n'));
+
+#answer
+ANS( $limit->cmp() );
+ANS( $popsign->cmp() );
+ANS( $popcon->cmp() );
+ANS( $popup->cmp() );
+
+
+ENDDOCUMENT();

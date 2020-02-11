@@ -1,0 +1,91 @@
+##DESCRIPTION
+##  Basic derivative rules
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation of Functions')
+## KEYWORDS('derivative', 'differentiation formulae')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$an = random(2,7,1);
+$as = random(-1,1,2);
+$a = $an * $as;
+$asign = " ";
+if($as == -1) {$asign = "-";}
+
+$bn = random(2,8,1);
+$bs = random(-1,1,2);
+$b = $bn * $bs;
+$bsign = "+";
+if($bs == -1) {$bsign = "-";}
+
+$cn = random(2,7,1);
+$cs = random(-1,1,2);
+$c = $cn * $cs;
+$csign = "+";
+if($cs == -1) {$csign = "-";}
+
+Context("Numeric");
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)+y');
+$f = Compute("($a x^5 + $b x^4 + $c x^3)/x^4")->reduce;
+$fx = $f->D('x');
+
+Context("LimitedPolynomial-Strict");
+$exp = Formula("-1");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR 
+Differentiate the following function: 
+\[
+\displaystyle f(x) = $f
+ \]
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We have $BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( f(x) = $asign \) ",ans_rule(2),"\( x \) ","\( $bsign \) ",ans_rule(2),"\( $csign \) ",ans_rule(2),"\( x \) ",ans_rule(2).$BR.$BR,"(rewriting \(f(x)\) )"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+
+$BR
+and
+$BR $BR
+\(f'(x)=\) \{ans_rule(40)\}.
+
+END_TEXT
+Context() -> normalStrings;
+
+$funct1 = "$a - $c/x^2";
+
+ANS(Compute("$an")->cmp);
+
+ANS(Compute("$bn")->cmp);
+
+ANS(Compute("$cn")->cmp);
+ANS($exp->cmp);
+
+ANS($fx->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

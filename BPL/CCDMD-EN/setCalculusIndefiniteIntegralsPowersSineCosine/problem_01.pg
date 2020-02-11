@@ -1,0 +1,281 @@
+##DESCRIPTION
+##  Indefinite Integrals - Powers of Sine & Cosine
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('indefinite integral', 'trigonometric substitution')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGanswermacros.pl",
+"parserFormulaUpToConstant.pl",
+"Parser.pl",
+"freemanMacros.pl",
+"PGchoicemacros.pl",
+"MathObjects.pl",
+"PGunion.pl"
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$context = Context();
+
+$a = Real(random(2, 9, 1));
+$b=4*$a;
+$c=8*$a;
+
+$doublea = 2*$a;
+
+$ans = FormulaUpToConstant("-(1/$b) ((sin($a x))**3) * cos($a x) - (3/$c) *sin($a x) * cos($a x) + (3/8) * x+ C");
+
+Context("Numeric");
+Context()->variables->add('dx' => 'Real');
+
+#box 39
+$ans_eval39 = Compute("dx")->cmp();
+$ans_hash39 = $ans_eval39->evaluate($inputs_ref->{ANS_NUM_TO_NAME(39)});
+$TESTbox39 = $ans_hash39->{score};
+
+#box 43
+$ans_eval43 = Compute("dx")->cmp();
+$ans_hash43 = $ans_eval43->evaluate($inputs_ref->{ANS_NUM_TO_NAME(43)});
+$TESTbox43 = $ans_hash43->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Calculate \( \displaystyle \int \sin^4 ($a x) \, dx \).
+$BR $BR
+$HR
+$BR
+$BBOLD Solution $EBOLD $BR $BR
+
+We notice that the power of the function to integrate \( \displaystyle \sin^4 ($a x) \) is even. $BR $BR 
+
+Using the trigonometric identity \( \displaystyle \sin^2(\theta) = \frac{1 - \cos(2 \theta)}{2} \) or \( \displaystyle \cos^2(\theta) = \frac{1 + \cos(2 \theta)}{2} \) $BR $BR
+we have
+ $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sin^2 ($a x) = \)",ans_rule(10).$BR.$HR.ans_rule(10)], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR $BR 
+and 
+ $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sin^4 ($a x) \)","\( = \)","\( \big( \sin^2 ($a x) \big)^2 \)"], align=>LEFT, separation=>0, indent=>10).
+AlignedRow(["","\( = \)",ans_rule(10).$BR.$HR.ans_rule(10),"\( - \)",ans_rule(10).$BR.$HR.ans_rule(10),"\( + \)",ans_rule(10).$BR.$HR.ans_rule(10),"(the powers of the cosine function are in ascending order)"], align=>LEFT, separation=>0, indent=>10).
+EndTable()
+\} 
+$BR $BR
+Now $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["\(\displaystyle \int \sin^4 ($a x) \, dx = \)",ans_rule(3)."\( \displaystyle \int \)".ans_rule(2)."\( \displaystyle \; - \)".$SPACE.ans_rule(3)."\( \displaystyle \int \)".ans_rule(10).ans_rule(2)."\( \displaystyle \; + \)".$SPACE.ans_rule(3)."\( \displaystyle \int \)".ans_rule(10).ans_rule(2)], align=>LEFT, separation=>0).
+AlignedRow(["","(integrals with \( x \) where the powers of the cosine function are in ascending order. Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+$BR $BR
+We notice that the power of the function to integrate \( \displaystyle \cos^2($doublea x) \) is even. $BR $BR 
+
+Using the trigonometric identity \( \displaystyle \sin^2(\theta) = \frac{1 - \cos(2 \theta)}{2} \) or \( \displaystyle \cos^2(\theta) = \frac{1 + \cos(2 \theta)}{2} \) $BR $BR
+we have
+ $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \cos^2($doublea x) = \)",ans_rule(10).$BR.$HR.ans_rule(10)], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR $BR 
+and $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["\(\displaystyle \int \sin^4 ($a x) \, dx = \)",ans_rule(3)."\( \displaystyle \int \)".ans_rule(2)."\( \displaystyle \; - \)".$SPACE.ans_rule(3)."\( \displaystyle \int \)".ans_rule(10).ans_rule(2)."\( \displaystyle \; + \)".$SPACE.ans_rule(3)."\( \displaystyle \int \)".ans_rule(2)."\( \displaystyle \; + \)".$SPACE.ans_rule(3)."\( \displaystyle \int \)".ans_rule(10).ans_rule(2)], align=>LEFT, separation=>0).
+AlignedRow(["","(integrals with \( x \) where the arguments of the cosine function are in ascending order)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["\( = \)",ans_rule(3)."\( \displaystyle \int \)".ans_rule(2)."\( \displaystyle \; - \)".$SPACE.ans_rule(3)."\( \displaystyle \int \)".ans_rule(10).ans_rule(2)."\( \displaystyle \; + \)".$SPACE.ans_rule(3)."\( \displaystyle \int \)".ans_rule(10).ans_rule(2),"(combine like terms)"], align=>LEFT, separation=>0,indent=>120).
+EndTable()
+\}
+$BR $BR
+We need two substitutions: $BR $BR
+$BBOLD First integral $EBOLD $BR 
+Let $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( u \)", "\( = \)",ans_rule(10),"(choose \(u\))"], align=>LEFT, separation=>0, indent=>10).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(u\))"], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR $BR 
+$BBOLD Second integral $EBOLD $BR 
+Let $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( w \)", "\( = \)",ans_rule(10),"(choose \(w\))"], align=>LEFT, separation=>0, indent=>10).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(w\))"], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR $BR 
+
+We have
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["\(\displaystyle \int \sin^4 ($a x) \, dx \)","\( = \; \)".ans_rule(3)."\( \displaystyle \int\)".ans_rule(2),"\( + \)",ans_rule(3)."\( \displaystyle \int\)".ans_rule(10).ans_rule(2),"\( + \)",ans_rule(3)."\( \displaystyle \int\)".ans_rule(10).ans_rule(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["(integrals with \(x\), \(u\) and \( w \) respectively. Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0,indent=>140).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["","\( = \; \)".ans_rule(3)."\( \big( \)".ans_rule(12)."\( \big) \)","\( + \)",ans_rule(3)."\( \big( \)".ans_rule(12)."\( \big) \)","\( + \)",ans_rule(3)."\( \big( \)".ans_rule(12)."\( \big) + \)".ans_rule(1)], align=>LEFT, separation=>0, indent=>110).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["","(integrate with respect to \(x\), \(u\) and \( w \))"], align=>LEFT, separation=>0, indent=>110).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2,center=>0).
+AlignedRow(["","\( = \; \)".ans_rule(40),"(rewrite with respect to \(x\))"], align=>LEFT, separation=>0, indent=>110).
+EndTable()
+\}
+
+
+$BR $BR
+Note: Use \( C \) as the constant of integration.
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS(fun_cmp("1-cos(2*$a x)",var=>'x'));
+ANS(num_cmp(2));
+
+ANS(num_cmp(1));
+ANS(num_cmp(4));
+ANS(fun_cmp("cos(2*$a x)",var=>'x'));
+ANS(num_cmp(2));
+ANS(fun_cmp("cos^2(2*$a x)",var=>'x'));
+ANS(num_cmp(4));
+
+#integral
+ANS(num_cmp(1/4));
+ANS(strict_str_cmp("dx"));
+ANS(num_cmp(1/2));
+ANS(fun_cmp("cos(2*$a x)",var=>'x'));
+ANS(strict_str_cmp("dx"));
+ANS(num_cmp(1/4));
+ANS(fun_cmp("cos^2(2*$a x)",var=>'x'));
+ANS(strict_str_cmp("dx"));
+
+#cos^2
+ANS(fun_cmp("1+cos(4*$a x)",var=>'x'));
+ANS(num_cmp(2));
+
+#integral
+ANS(num_cmp(1/4));
+ANS(strict_str_cmp("dx"));
+ANS(num_cmp(1/2));
+ANS(fun_cmp("cos(2*$a x)",var=>'x'));
+ANS(strict_str_cmp("dx"));
+ANS(num_cmp(1/8));
+ANS(strict_str_cmp("dx"));
+ANS(num_cmp(1/8));
+ANS(fun_cmp("cos(4*$a x)",var=>'x'));
+ANS(strict_str_cmp("dx"));
+
+#like terms - integral
+ANS(num_cmp(3/8));
+ANS(strict_str_cmp("dx"));
+ANS(num_cmp(1/2));
+ANS(fun_cmp("cos(2*$a x)",var=>'x'));
+ANS(strict_str_cmp("dx"));
+ANS(num_cmp(1/8));
+ANS(fun_cmp("cos(4*$a x)",var=>'x'));
+ANS(strict_str_cmp("dx"));
+
+#u
+ANS(fun_cmp("2*$a x",var=>'x'));
+ANS(strict_str_cmp("du"));
+if ($TESTbox39) 
+{
+ANS(strict_str_cmp("dx"));
+ANS(fun_cmp("2*$a",var=>'x'));
+}
+else
+{
+ANS(fun_cmp("2*$a",var=>['x','dx']));
+ANS(fun_cmp("dx",var=>['x','dx']));
+}
+
+#w
+ANS(fun_cmp("4*$a x",var=>'x'));
+ANS(strict_str_cmp("dw"));
+if ($TESTbox43) 
+{
+ANS(strict_str_cmp("dx"));
+ANS(fun_cmp("4*$a",var=>'x'));
+}
+else
+{
+ANS(fun_cmp("4*$a",var=>['x','dx']));
+ANS(fun_cmp("dx",var=>['x','dx']));
+}
+
+#integral
+ANS(num_cmp(3/8));
+ANS(strict_str_cmp("dx"));
+ANS(num_cmp("-1/2/(2*$a)"));
+ANS(fun_cmp("cos(u)",var=>'u'));
+ANS(strict_str_cmp("du"));
+ANS(num_cmp("1/8/(4*$a)"));
+ANS(fun_cmp("cos(w)",var=>'w'));
+ANS(strict_str_cmp("dw"));
+
+#solved integral
+ANS(num_cmp(3/8));
+ANS(fun_cmp("x",var=>'x'));
+ANS(num_cmp("-1/2/(2*$a)"));
+ANS(fun_cmp("sin(u)",var=>'u'));
+ANS(num_cmp("1/8/(4*$a)"));
+ANS(fun_cmp("sin(w)",var=>'w'));
+ANS(strict_str_cmp("C"));
+
+ANS($ans->cmp());
+
+
+ENDDOCUMENT();
+
+

@@ -1,0 +1,132 @@
+##DESCRIPTION
+##   Algebra: Exponential and Logarithmic Equations
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Exponential and Logarithmic Function)
+##KEYWORDS('exponential equation','exponential function')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$B = random(2,6,1);
+$C = random(3,12,1);
+$D = random(11,87,1);
+$E = random(2,5,1);
+$F = random(2,5,1);
+
+$LHS = Compute("$C $B^{$E x -$F}")->reduce;
+$RHS = Compute("$D")->reduce;
+
+Context()->flags->set(useBaseTenLog => 1);
+$roots[0] = Compute("(log($D/$C)/log($B)+$F)/$E");
+$solution_set = List($roots[0]);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Solve \( \displaystyle $LHS = $RHS \) 
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Solve for \(x\)");
+
+Context("Numeric");
+#Context()->flags->set(useBaseTenLog => 1);
+$LHS_S1 = Compute("$B^{$E x -$F}");
+$RHS_S1 = Compute("$D/$C");
+
+$LHS_S2 = Compute("$E x -$F");
+$RHS_S2 = Compute("ln($D/$C)/ln($B)");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $LHS \)","\( = \)","\( $RHS \)"], align=>RIGHT, separation=>0, indent=>50).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(10),"\( = \)",ans_rule(10),"(rewrite by keeping \( $LHS_S1 \) on the LHS)"], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(10),"\( = \)",ans_rule(10),"(rewrite by keeping \( $LHS_S2 \) on the LHS)"], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+$BR $BR
+Solving for \(x\) gives us \(x = \) \{ans_rule(15)\} 
+END_TEXT
+Context()->normalStrings;
+
+ANS($LHS_S1->cmp);
+ANS($RHS_S1->cmp);
+
+ANS($LHS_S2->cmp);
+ANS($RHS_S2->cmp);
+
+ANS($roots[0]->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Check your solution");
+
+Section::End();
+
+###########################################
+Section::Begin("State the solution");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD $BR
+Enter your answer in a comma-separated list. $BR
+If the solution set is the empty set, write $BBOLD none$EBOLD.
+$BR $HR $BR
+Thus, the solution set is {\{ans_rule(30)\}}.$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($solution_set->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

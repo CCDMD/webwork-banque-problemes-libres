@@ -1,0 +1,184 @@
+##DESCRIPTION
+##  Vector Operations
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('vector arithmetic', 'properties', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "PGchoicemacros.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "parserVectorUtils.pl",
+  "contextLimitedVector.pl",
+  "PGunion.pl",
+  "scaffold.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$u1 = non_zero_random(-10,10,1);
+$u2 = random(-10,10,1);
+$u3 = random(-10,10,1);
+$u = Vector($u1, $u2, $u3);
+
+$v1 = random(-10,10,1);
+$v2 = non_zero_random(-10,10,1);
+$v3 = random(-10,10,1);
+$v = Vector($v1, $v2, $v3);
+
+$w1 = random(-10,10,1);
+$w2 = random(-10,10,1);
+$w3 = non_zero_random(-10,10,1);
+$w = Vector($w1, $w2, $w3);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Perform the following operations on the vectors \( \vec{u} = $u \), \(
+\vec{v} = $v \) and \( \vec{w} = $w \) in \(\mathbb{R}^3\).  
+$PAR
+${BBOLD}(a)$EBOLD
+\( \quad (\vec{u} \bullet \vec{v}) \vec{u} \) 
+$PAR
+${BBOLD}(b)$EBOLD
+\( \quad ((\vec{w} \bullet \vec{w}) \vec{u} ) \bullet \vec{u} \) 
+$PAR
+${BBOLD}(c)$EBOLD
+\( \quad ( \vec{u}  + \vec{w} ) \bullet \vec{v}\) 
+
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Part A");
+
+Context("Vector");
+$AnsAbox1 = $u.$v;
+$AnsAbox2 = $u;
+$AnsAbox3 = $AnsAbox1*$u;
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( (\vec{u} \bullet \vec{v})\,\vec{u} \) ","\( = \)","\( \big(  \)".ans_rule(5)."\( \big) \)".ans_rule(10),"(write the numerical value of \( \vec{u} \bullet \vec{v} \) and the components of vector \( \vec{u} \))" ], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(10),"(write the resulting vector)" ], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($AnsAbox1->cmp() );
+ANS($AnsAbox2->cmp() );
+ANS($AnsAbox3->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Part B");
+
+Context("Vector");
+$AnsAbox1 = $w.$w;
+$AnsAbox2 = $u;
+$AnsAbox3 = $u;
+$AnsAbox4 = $AnsAbox1*$u;
+$AnsAbox5 = $u;
+$AnsAbox6 = $AnsAbox4.$u;
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( ( (\vec{w} \bullet \vec{w})\,\vec{u} )\bullet \vec{u}\) ","\( = \)","\( \Big(  \)"."\( \big(  \)".ans_rule(5)."\( \big)  \)".ans_rule(10)."\( \Big) \bullet  \)".ans_rule(10)], align=>LEFT, separation=>0).
+
+AlignedRow(["","","(write the numerical value of \( \vec{w} \bullet \vec{w} \) and the components of the vector \( \vec{u} \))" ], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(10)."\( \bullet \)".ans_rule(10), "(write the components of the vector \( (\vec{w} \bullet \vec{w})\,\vec{u}  \) )" ], align=>LEFT, separation=>0, indent=>95).
+
+EndTable()
+\}
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(10), "(write the numerical value of the dot product)" ], align=>LEFT, separation=>0, indent=>95).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($AnsAbox1->cmp() );
+ANS($AnsAbox2->cmp() );
+ANS($AnsAbox3->cmp() );
+ANS($AnsAbox4->cmp() );
+ANS($AnsAbox5->cmp() );
+ANS($AnsAbox6->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Part C");
+
+Context("Vector");
+$AnsAbox1 = $u+$w;
+$AnsAbox2 = $v;
+$AnsAbox3 = $AnsAbox1.$v;
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( ( \vec{u}  + \vec{w} ) \bullet \vec{v} \) ","\( = \)",ans_rule(5)."\( \bullet \)".ans_rule(5),"(write the components of the vector \( \vec{u}  + \vec{w}  \) and then the components of the vector \( \vec{v} \))" ], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(10),"(write the numerical value of the dot product)" ], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($AnsAbox1->cmp() );
+ANS($AnsAbox2->cmp() );
+ANS($AnsAbox3->cmp() );
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();

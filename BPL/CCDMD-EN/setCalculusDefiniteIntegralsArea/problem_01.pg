@@ -1,0 +1,272 @@
+##DESCRIPTION
+##  Area
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the integral')
+## KEYWORDS('area between two curves')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"MathObjects.pl",
+"PGstandard.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"PGauxiliaryFunctions.pl",
+"CofIdaho_macros.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+#Context()->variables->are(x=>'Real');
+
+$a=0;
+$A=random(2,5,1);
+$k=$A+1;
+$d=$A;
+
+$b=$A*$A+random(1,3,1);
+
+$fx = "x+$d";
+$gx = "$k*x**(1/2)";
+
+$fx2 = "x**2+2*$d*x+$d*$d";
+$gx2 = "$k*$k*x";
+
+$Fx = "0.5*x**2+$d*x";
+$Gx = "2*$k/3*x**(3/2)";
+
+$F0 = 0;
+$F1 = 0.5+$d;
+$Fx2 = 0.5*($A*$A*$A*$A)+$d*($A*$A);
+$Fb = 0.5*($b*$b)+$d*($b);
+
+$G0 = 0;
+$G1 = 2*$k/3;
+$Gx2 = 2*$k/3*$A*$A*$A;
+$Gb = 2*$k/3*($b)**(3/2);
+
+$ans1 = ($F1-$G1)-($F0-$G0);
+$ans2 = ($Gx2-$Fx2)-($G1-$F1);
+$ans3 = ($Fb-$Gb)-($Fx2-$Gx2);
+$ans4 = $ans1+$ans2+$ans3;
+
+$IP1=1;
+$IP2=$A;
+
+
+
+$factored = "(x-1)*(x-$A*$A)";
+
+$poptypefx = PopUp(["Choose","a horizontal line", "a vertical line", "an increasing line","a decreasing line","increasing concave up","decreasing concave up","increasing concave down","decreasing concave down"],"an increasing line");
+$poptypegx = PopUp(["Choose","a horizontal line", "a vertical line", "an increasing line","a decreasing line","increasing concave up","decreasing concave up","increasing concave down","decreasing concave down"],"increasing concave down");
+
+$poptypeI1 = PopUp(["Choose","above","below"],"above");
+$poptypeI2 = PopUp(["Choose","above","below"],"below");
+$poptypeI3 = PopUp(["Choose","above","below"],"above");
+
+$poptypeS1 = PopUp(["Choose","and corresponds to an intersection point", "but does not correspond to an intersection point (outside of interval)", "but does not correspond to an intersection point (extraneous solution)"],"and corresponds to an intersection point");
+$poptypeS2 = PopUp(["Choose","and corresponds to an intersection point", "but does not correspond to an intersection point (outside of interval)", "but does not correspond to an intersection point (extraneous solution)"],"and corresponds to an intersection point");
+
+
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR $BR
+
+$PAR
+Find the area of the region between \( f(x) = $fx \) and \( g(x) = $k\sqrt{x} \) over the interval \([0, $b]\).
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD
+$HR
+$BR$BITALIC$BBOLD Part 1: Describe the shape of the functions and their intercepts $EBOLD$EITALIC 
+$BR $BR $BBOLD Reminder: \( f(x) = $fx \) and \( g(x) = $k\sqrt{x} \) $EBOLD $BR$BR
+
+ \( f(x) \) is \{ $poptypefx->menu() \} , $BR
+the \(y\)-intercept is \{ans_rule(5)\} and
+the \(x\)-intercept is \{ans_rule(5)\}.
+
+$BR$BR
+
+ \( g(x) \) is \{ $poptypegx->menu() \} , $BR
+the \(y\)-intercept is \{ans_rule(5)\} and
+the \(x\)-intercept is \{ans_rule(5)\}.
+
+$BR $BR
+$BBOLD Remark: $EBOLD If there is no intercept, then enter $BITALIC none $EITALIC in the corresponding answer box.
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 2: Find the point(s) of intersection $EBOLD$EITALIC $BR$BR
+We have $BR
+
+\{
+ BeginTable(center=>0).
+  AlignedRow([
+   ans_rule(10),
+   '\( = \)', 
+   ans_rule(10),
+   '(set both functions equal to each other \(f(x)=g(x)\))'
+  ], align => "Left", separation=>2).
+
+  AlignedRow([
+    ans_rule(10),
+   '\( = \)', 
+   ans_rule(10),
+  '(square both sides)'
+  ], align => "Left", separation=>2).
+
+ AlignedRow([
+    ans_rule(10),
+   '\( = \)', 
+   '\(0\)',
+  '(move all terms to the LHS)'
+  ], align => "Left", separation=>2).
+
+ AlignedRow([
+    ans_rule(10),
+   '\( = \)', 
+   '\(0\)',
+  '(factorize)'
+  ], align => "Left", separation=>2).
+
+ EndTable();
+\}
+
+$BR
+
+The solutions are (in ascending order)
+$BR
+\(x_1 = \) \{ans_rule(5)\} \{ $poptypeS1->menu() \} and $BR
+\(x_2 = \) \{ans_rule(5)\} \{ $poptypeS2->menu() \} . 
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 3: Graph the region bounded by the given conditions $EBOLD$EITALIC 
+$BR $BR $BBOLD Reminder: \( f(x) = $fx \) and \( g(x) = $k\sqrt{x} \) $EBOLD $BR$BR
+Between \(0\) and \(x_1\), \(f(x)\) is \{ $poptypeI1->menu() \} \(g(x)\).$BR
+Between \(x_1\) and \(x_2\), \(f(x)\) is \{ $poptypeI2->menu() \} \(g(x)\).$BR
+Between \(x_2\) and \($b\), \(f(x)\) is \{ $poptypeI3->menu() \} \(g(x)\).$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 4: Find the area of the region graphed in Part 3 $EBOLD$EITALIC $BR$BR
+
+
+
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle A = \int \)",ans_rule(1).$BR.$BR.ans_rule(1),"\( \Big( \)",ans_rule(10),"\( \Big) \)","\( \displaystyle \, dx \, + \, \int \)",ans_rule(1).$BR.$BR.ans_rule(1),"\( \Big( \)",ans_rule(10),"\( \Big) \)","\( \, dx\)"],align => "LEFT",separation => 0,indent=>0). 
+  AlignedRow(["\(\displaystyle \quad + \, \int \)",ans_rule(1).$BR.$BR.ans_rule(1),"\( \Big( \)",ans_rule(10),"\( \Big) \)","\( \displaystyle \, dx \, \)"],align => "LEFT",separation => 0,indent=>0).
+  TableSpace(0,0).
+EndTable();
+\}
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["","(set the definite integrals to compute the area)"],align => "LEFT",separation => 0,indent=>15). 
+  TableSpace(0,0).
+EndTable();
+\}$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \Bigg[ \)",ans_rule(10),"\( \displaystyle \Bigg] \)",ans_rule(4).$BR.$BR.ans_rule(4),"\( \displaystyle \, + \, \Bigg[ \)",ans_rule(10),"\( \displaystyle \Bigg] \)",ans_rule(4).$BR.$BR.ans_rule(4),],align => "LEFT",separation => 0,indent=>15). 
+  AlignedRow(["\( \quad + \, \Bigg[ \)",ans_rule(10),"\( \displaystyle \Bigg] \)",ans_rule(4).$BR.$BR.ans_rule(4),"","(integrate in terms of \( x \))"],align => "LEFT",separation => 0,indent=>15).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \)",ans_rule(20),"\( \displaystyle \, + \, \)",ans_rule(20)],align => "LEFT",separation => 0,indent=>15). 
+  AlignedRow(["\( \quad + \, \)",ans_rule(20),$SPACE,"(evaluate) "],align => "LEFT",separation => 0,indent=>15). 
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \)",ans_rule(30),"\( \text{units}^2 \)"],align => "LEFT",separation => 0,indent=>15). 
+  TableSpace(0,0).
+EndTable();
+\}
+
+
+END_TEXT
+
+#shape
+ANS( $poptypefx->cmp() );
+ANS(num_cmp("$d", strings =>['none']));
+ANS(num_cmp("-$d", strings =>['none']));
+
+ANS($poptypegx->cmp() );
+ANS(num_cmp("0",strings =>['none']));
+ANS(num_cmp("0",strings =>['none']));
+
+#pt of intersection
+ANS(fun_cmp($fx));
+ANS(fun_cmp($gx));
+ANS(fun_cmp($fx2));
+ANS(fun_cmp($gx2));
+ANS(fun_cmp("$fx2 - $gx2"));
+ANS(FactoringEvaluator($factored,['x']));
+ANS(num_cmp("1"));
+ANS( $poptypeS1->cmp() );
+ANS(num_cmp("$A*$A"));
+ANS( $poptypeS2->cmp() );
+
+#Comparing fx and gx
+ANS( $poptypeI1->cmp() );
+ANS( $poptypeI2->cmp() );
+ANS( $poptypeI3->cmp() );
+
+#integral
+
+ANS(num_cmp("1"));
+ANS(num_cmp("0"));
+ANS(fun_cmp("$fx - $gx"));
+
+
+ANS(num_cmp("$A*$A"));
+ANS(num_cmp("1"));
+ANS(fun_cmp("$gx - ($fx)"));
+
+
+ANS(num_cmp("$b"));
+ANS(num_cmp("$A*$A"));
+ANS(fun_cmp("$fx - $gx"));
+
+#evaluate
+ANS(fun_cmp("($Fx) - ($Gx)"));
+ANS(num_cmp("1"));
+ANS(num_cmp("0"));
+
+ANS(fun_cmp("($Gx) - ($Fx)"));
+ANS(num_cmp("$A*$A"));
+ANS(num_cmp("1"));
+
+ANS(fun_cmp("($Fx) - ($Gx)"));
+ANS(num_cmp("$b"));
+ANS(num_cmp("$A*$A"));
+
+
+#sub
+
+ANS(num_cmp($ans1));
+ANS(num_cmp($ans2));
+ANS(num_cmp($ans3));
+ANS(num_cmp($ans4));
+
+ENDDOCUMENT();
