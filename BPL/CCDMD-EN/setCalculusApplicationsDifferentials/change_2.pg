@@ -1,0 +1,168 @@
+##DESCRIPTION
+##  Differentials - Change in Cost, Revenue, Profit
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('differential derivative', 'economy')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"contextCurrency.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(500,800,10);
+$x1 = random(100,400,10);
+$d1 = random(100,500,10);
+$x2 = $x1 + $d1;
+
+Context("Numeric");
+Context()->variables->set(x=>{limits=>[9,10]});
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$popTime = PopUp(["Choose", "day", "week", "month", "year"],"month");
+
+$equation = Compute("sqrt($a + x)");;
+$dequation = $equation->D('x');
+$answerMC = $dequation->eval(x=>"$x1");
+$answerDeltaC = Compute("$answerMC $d1");
+
+$popVariableX = PopUp(["?", "x", "C", "MC", "deltaC"],"x");
+$popVariableDeltaC = PopUp(["?", "x", "C", "MC", "deltaC"],"deltaC");
+$popVariableMC = PopUp(["?", "x", "C", "MC", "deltaC"],"MC");
+
+Context("Currency");
+$CurrencyAnswer = Currency($answerDeltaC);
+
+Context("Numeric");
+#check box 1
+$ans_eval1 = $popVariableMC->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1 = $ans_hash1->{score};
+
+$WantSymbol = "";
+if ($TESTbox1) 
+{
+$WantSymbol = "MC";
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Question $EBOLD $BR $BR
+
+The total monthly cost for producing \( x \) items of a product is given by \( C(x) = $equation \) in dollars. 
+$BR
+Compute the marginal cost when $x1 items are produced and use this to estimate the change in the monthly cost if the production is increased to $x2 items per month. $BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point.
+$HR
+$HR
+$BR
+
+$HR
+$BR$BITALIC$BBOLD Step 1: Define the variables $EBOLD$EITALIC $BR$BR
+Let \(MC\) be the marginal cost. $BR
+Let \( \Delta C \) be the change in the cost.
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 2: Find the marginal cost $EBOLD$EITALIC $BR$BR
+We want \{ $popVariableMC->menu() \} 
+when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{dC}{dx} \)","\( = \)",ans_rule(30),"(write the derivative)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+and when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR $BR
+\( \displaystyle $WantSymbol = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( \frac{dC}{dx} \) $EITALIC)
+
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 3: Find the change in the cost $EBOLD$EITALIC $BR$BR
+
+We want \{ $popVariableDeltaC->menu() \} 
+when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} is increased to \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR
+$BR
+We know \{ $popVariableDeltaC->menu() \} \( \approx MC \cdot \Delta x\) $BR
+where $BR
+\( \quad \) \( MC =\)\{ans_rule(15)\} $BR
+and $BR
+\( \quad \) \( \Delta x =\)\{ans_rule(15)\} ($BITALIC calculate the change in \(x\) $EITALIC)$BR $BR
+\( \therefore \) \{ $popVariableDeltaC->menu() \}\( \approx \)\{ans_rule(20)\} ($BITALIC calculate the change in the cost $EITALIC)
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 4: Draw a conclusion $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD For the last box, include the dollar sign in your answer. 
+$HR $HR
+$BR
+Thus, the change in the cost if the production is increased from \{ans_rule(5)\} to \{ans_rule(5)\} items per \{ $popTime->menu() \} is approximately \{ans_rule(10)\}.
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+
+#Step 2
+ANS($popVariableMC->cmp);
+ANS($popVariableX->cmp);
+ANS(Compute("$x1")->cmp);
+
+ANS($dequation->cmp);
+
+ANS($popVariableX->cmp);
+ANS(Compute("$x1")->cmp);
+ANS($answerMC->cmp);
+
+#Step 3
+ANS($popVariableDeltaC->cmp);
+ANS($popVariableX->cmp);
+ANS(Compute("$x1")->cmp);
+ANS(Compute("$x2")->cmp);
+
+ANS($popVariableDeltaC->cmp);
+ANS($answerMC->cmp);
+ANS(Compute("$d1")->cmp);
+ANS($popVariableDeltaC->cmp);
+ANS($answerDeltaC->cmp);
+ANS(Compute("$x1")->cmp);
+ANS(Compute("$x2")->cmp);
+ANS($popTime->cmp);
+ANS($CurrencyAnswer->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

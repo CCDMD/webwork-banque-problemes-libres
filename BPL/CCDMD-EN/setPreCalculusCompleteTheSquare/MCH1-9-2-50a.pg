@@ -1,0 +1,142 @@
+## DESCRIPTION
+## Complete the square
+## ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('completion of square')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"contextLimitedPolynomial.pl",
+"contextFraction.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->noreduce('(-x)-y');
+
+do{
+$a = random(2,8,1);
+$b = random(2,9,1);
+} until( gcd($a,$b)==1);
+$c = random(3,9,2);
+
+$b2 = 2 * $b;
+$ab2 = $b * 2;
+$cmabb = $c - $a*$b*$b;
+$bb = $b*$b;
+$abb = $a*$b*$b;
+##########
+$a2 = 2*$a;
+$a4 = 4*$a;
+$aa4 = 4*$a*$a;
+$bb = $b*$b;
+
+$A = Compute("-$a");
+
+$equation = Formula("$c - $b x - $a x^2 ")->reduce;
+
+$gcdtermAdd = gcd($bb,$aa4);
+$termAddNum = Compute("$bb/$gcdtermAdd");
+$termAddDen = Compute("$aa4/$gcdtermAdd");
+
+$coeffMultiply = $a*$termAddNum;
+$gcdMultiply = gcd($coeffMultiply,$termAddDen);
+$termMultiplyNum = Compute("$coeffMultiply/$gcdMultiply");
+$termMultiplyDen = Compute("$termAddDen/$gcdMultiply");
+
+$coeffK = $c*$termMultiplyDen+$termMultiplyNum;
+$gcdK = gcd($coeffK,$termMultiplyDen);
+$KNum = Compute("$coeffK/$gcdK");
+$KDen = Compute("$termMultiplyDen/$gcdK");
+
+Context("LimitedPolynomial-Strict");
+$factoredform = Compute("x^2 + $b/$a x");
+$constant = Compute("$c");
+$perfectSquare = Compute("x + $b/$a2");
+
+#forces a fraction 
+Context("LimitedFraction");
+Context()->operators->undefine("+","-","*");
+$termAdd = Compute("$termAddNum/$termAddDen");
+$termMultiply = Compute("-$termMultiplyNum/$termMultiplyDen");
+$K = Compute("$KNum/$KDen");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR $BR
+Express \( \displaystyle y = $equation \) in standard form.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle $equation \)","\( = \)",ans_rule(5)."\( \Big(  \)".ans_rule(10)."\( \Big)  \)"."\( + \)".ans_rule(5),"(factor \( a \) as \( a (x^2 + \frac{b}{a} x ) + c \))" ], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(5)."\( \Big(  \)".ans_rule(10)."\( + \)".ans_rule(5)."\( - \)".ans_rule(5)."\( \Big)  \)"."\( + \)".ans_rule(5),"(add and subtract \( \left( \frac{b}{2a} \right)^2 \) )" ], align=>LEFT, separation=>0, indent=>90).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(5)."\( \Big(  \)".ans_rule(10)."\( \Big)^2  \)"."\( - \)".ans_rule(5)."\( + \)".ans_rule(5)], align=>LEFT, separation=>0, indent=>90).
+AlignedRow(["","(rewrite into a perfect square as \( a \left( x + \frac{b}{2a} \right)^2 - \frac{b^2}{4a} + c\) )" ], align=>LEFT, separation=>0, indent=>90).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(5)."\( \Big(  \)".ans_rule(10)."\( \Big)^2  \)"."\( + \)".ans_rule(5),"(simplify into the standard form \( a \left( x - h \right)^2 +k\) )"], align=>LEFT, separation=>0, indent=>90).
+
+EndTable()
+\}
+$BR
+END_TEXT
+Context()->normalStrings;
+
+#factor a
+ANS($A->cmp);
+ANS($factoredform->cmp);
+ANS($constant->cmp);
+
+#add & subtrac
+ANS($A->cmp);
+ANS($factoredform->cmp);
+ANS($termAdd->cmp);
+ANS($termAdd->cmp);
+ANS($constant->cmp);
+
+#perfect square
+ANS($A->cmp);
+ANS($perfectSquare->cmp);
+ANS($termMultiply->cmp);
+ANS($constant->cmp);
+
+#standard form
+ANS($A->cmp);
+ANS($perfectSquare->cmp);
+ANS($K->cmp);
+
+ENDDOCUMENT();

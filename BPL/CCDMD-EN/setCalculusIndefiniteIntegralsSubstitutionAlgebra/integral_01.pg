@@ -1,0 +1,118 @@
+##DESCRIPTION
+##  Indefinite Integrals - Substitution
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('change of variable', 'indefinite integral')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGstandard.pl", 
+"MathObjects.pl",
+"parserFormulaUpToConstant.pl",
+"PGunion.pl",
+"PGcourse.pl"
+);
+
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+$b=random(2,4,1);
+$a=$b*random(2,3,1)*random(-1,1,2);
+$c = 2*$b-1;
+$d = random(1,9,1);
+
+Context("Numeric");
+Context()->variables->add('dx' => 'Real');
+
+#box 3
+$ans_eval3 = Compute("dx")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3 = $ans_hash3->{score};
+
+BEGIN_TEXT
+
+$PAR
+$BBOLD Question $EBOLD $BR $BR
+Compute 
+\( \displaystyle \int {$a x^$c\, \sqrt[3]{x^$b+$d}}\, dx\).
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+Let $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( u \)", "\( = \)",ans_rule(10),"(choose \(u\))"], align=>LEFT, separation=>0).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(u\))"], align=>LEFT, separation=>0).
+AlignedRow(["\( x^$b \)", "\( = \)",ans_rule(10),"(isolate for \(x^$b\))"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR $BR 
+We have
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \int {$a x^$c\, \sqrt[3]{x^$b+$d}}\, dx \)","\( = \)",ans_rule(2)."\( \displaystyle \int \Big(\)".ans_rule(5)."\(-\)".ans_rule(5)."\( \Big)\)".ans_rule(2)], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["(an integral with \(u\) where the powers of \(u\) are in descending order. Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0, indent=>160).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(2)."\( \big( \)".ans_rule(20)."\( \big) + \)".ans_rule(1),"(integrate with respect to \(u\))"], align=>LEFT, separation=>0, indent=>130).
+AlignedRow(["","\( = \)",ans_rule(40),"(rewrite with respect to \(x\))"], align=>LEFT, separation=>0, indent=>130).
+EndTable()
+\}
+
+
+END_TEXT
+
+#u
+ANS(fun_cmp("x^$b+$d", vars=>["u","x","du","dx"]));
+
+#du/dx
+ANS(fun_cmp("du", vars=>["u","x","du","dx"]));
+if ($TESTbox3) 
+{
+ANS(fun_cmp("dx", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("$b*x^($b-1)", vars=>["u","x","du","dx"]));
+}
+else
+{
+ANS(fun_cmp("$b", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("x^($b-1)dx", vars=>["u","x","du","dx"]));
+}
+ANS(fun_cmp("u-$d", vars=>["u","x","du","dx"]));
+
+ANS(num_cmp("$a/$b"));
+ANS(fun_cmp("u^(4/3)", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("$d*u^(1/3)", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("du", vars=>["u","x","du","dx"]));
+
+ANS(num_cmp("$a/$b"));
+ANS(fun_cmp("u**(7/3)/(7/3)-$d*u**(4/3)/(4/3)", mode=>"antider", vars=>["u","x","du","dx"]));
+ANS(str_cmp("C"));
+
+#answer
+$ans = FormulaUpToConstant("$a*3/(7*$b) *(x^$b+$d)^(7/3)-$a*$d*3/(4*$b)*(x^$b+$d)^(4/3)")->reduce;
+ANS($ans->cmp());
+
+
+ENDDOCUMENT();

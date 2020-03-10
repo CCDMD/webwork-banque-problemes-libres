@@ -1,0 +1,66 @@
+##DESCRIPTION
+##  Vector algebra
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('vector arithmetic', 'direction', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#create a vector 
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$a = Real(random(1,10,1));
+$b = $a + Real(random(1,10,1));
+$c = $b + Real(random(1,10,1));
+
+$v = Vector($a, $b, $c);
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "have the same components", "are scalar multiples of each other", "are positive scalar multiples of each other", "are negative scalar multiples of each other"],"are positive scalar multiples of each other");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find a vector that is parallel to \( \vec{v} = $v \) and pointing in the same direction as \( \vec{v}\).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR $BR 
+Let \( \vec{w} \) be a vector parallel to \( \vec{v} \). $BR $BR
+We know two non-zero vectors are parallel if they \{ $popParallel->menu() \}. $BR $BR
+Thus $BR $BR
+\( \quad \vec{w} = \) \{ ans_rule(10) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp() );
+
+ANS( $v->cmp( checker=>sub {
+  my ($correct, $student, $ansHash) = @_;
+  return $correct->isParallel($student, sameDirection => 1);
+}, showCoordinateHints => 0, sameDirection => 1 ) );
+
+              
+ENDDOCUMENT();
+
+

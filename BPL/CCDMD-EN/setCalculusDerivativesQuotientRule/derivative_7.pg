@@ -1,0 +1,113 @@
+##DESCRIPTION
+##  Derivative - Quotient Rule
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation of Functions')
+## KEYWORDS('derivative', 'derivative of the quotient of functions')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"PGunion.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+do{
+$a = random(2,7,1);
+$b = random(2,8,1);
+$c = random(2,7,1);
+$d = random(2,6,1);
+} until($a!=$c || $b!=$d);
+
+$x1 = random(2,5,1);
+
+Context("Numeric");
+$f = Compute("$a x + $b");
+$g = Compute("$c x + $d");
+$gsquared = $g*$g;
+$equation = $f/$g;
+
+$df = $f->D('x');
+$dg = $g->D('x');
+$dequation = $equation->D('x');
+
+$answer = $dequation->eval(x=>"$x1");
+
+Context("LimitedPolynomial-Strict");
+$coeff = $a*$d - $b*$c;
+$ans_num = Compute("$coeff");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Let \( \displaystyle f(x) = $equation \). 
+Find \(f'(x)\) and then find \( f'( $x1 ) \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR $BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f'(x) \)","\( = \)","\( \displaystyle \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \cdot \big( \)".ans_rule(10)."\( \big) - \big( \)".ans_rule(10)."\( \displaystyle \big) \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \)".$BR.$HR.ans_rule(15)], align=>CENTER, separation=>0).
+AlignedRow(["","","(apply the quotient rule)" ], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)","\( \displaystyle \big( \)".ans_rule(10)."\( \big) \cdot \big( \)".ans_rule(10)."\( \big) - \big( \)".ans_rule(10)."\( \displaystyle \big) \big( \)".ans_rule(10)."\( \big) \)".$BR.$HR.ans_rule(15)], align=>CENTER, separation=>0, indent=>40).
+AlignedRow(["","","(find the derivative, DO NOT EXPAND THE DENOMINATOR)" ], align=>LEFT, separation=>0, indent=>40).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(15).$BR.$HR.ans_rule(15),"(simplify the numerator)" ], align=>CENTER, separation=>0, indent=>40).
+EndTable()
+\}
+$BR $BR 
+and $BR $BR
+\( f'( $x1 ) = \)\{ans_rule(48) \}.
+
+END_TEXT
+Context()->texStrings;
+
+#formula
+ANS($f->cmp);
+ANS($g->cmp);
+ANS($f->cmp);
+ANS($g->cmp);
+ANS($gsquared->cmp);
+
+#derivative
+ANS($df->cmp);
+ANS($g->cmp);
+ANS($f->cmp);
+ANS($dg->cmp);
+ANS($gsquared->cmp);
+
+#simplified
+ANS($ans_num->cmp);
+ANS($gsquared->cmp);
+
+ANS($answer->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

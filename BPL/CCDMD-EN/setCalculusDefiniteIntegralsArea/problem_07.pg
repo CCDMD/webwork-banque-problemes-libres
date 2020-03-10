@@ -1,0 +1,205 @@
+##DESCRIPTION
+##  Area
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the integral')
+## KEYWORDS('area between two curves')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"MathObjects.pl",
+"PGauxiliaryFunctions.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"CofIdaho_macros.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$u = random(2,5,1);
+$v = - random($u+1,8,1);
+$a = random(4,9,1);
+$b = - $u - $v;
+$c = - $u*$v - $a;
+$x1 = - $a;
+$x2 = $c - $b*$u;
+$x3 = $c - $b*$v;
+$ans1 = $u**3/3 + $b*$u**2/2 + $u**2*$v;
+$ans2 = $v**3/3 + $b*$v**2/2 + $u*$v**2;
+$answ = $ans2 - $ans1;
+
+#Context()->variables->are(y=>'Real');
+Context()->variables->add(y=>'Real');
+$factored = "(y-$u)*(y-$v)";
+#Add left side of the curve x + $b y = $c, to simplify the $b=1.
+$leftfy = Formula("x + $b*y")->reduce;
+
+$poptypefy = PopUp(["Choose","an increasing line","a decreasing line","a constant line","an upward quadratic","a downward quadratic","a sideway parabola opened to the right","a sideway parabola opened to the left"],"a decreasing line");
+$poptypegy = PopUp(["Choose","an increasing line","a decreasing line","a constant line","an upward quadratic","a downward quadratic","a sideway parabola opened to the right","a sideway parabola opened to the left"],"a sideway parabola opened to the right");
+
+$poptypeS1 = PopUp(["Choose","and corresponds to an intersection point", "but does not correspond to an intersection point (outside of interval)", "but does not correspond to an intersection point (extraneous solution)"],"and corresponds to an intersection point");
+$poptypeS2 = PopUp(["Choose","and corresponds to an intersection point", "but does not correspond to an intersection point (outside of interval)", "but does not correspond to an intersection point (extraneous solution)"],"and corresponds to an intersection point");
+
+#$poptypeI1 = PopUp(["Choose","above","below"],"above");
+$poptypeI1 = PopUp(["Choose","to the right of","to the left of"],"to the right of");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Find the area of the region between 
+\($leftfy = $c\) and
+\(x + $a = y^2\).
+
+$BR 
+$BR
+$HR
+$BBOLD Solution $EBOLD
+$HR
+$BR$BITALIC$BBOLD Part 1: Describe the shape of the functions and their intercepts $EBOLD$EITALIC $BR$BR
+Let \( f(y) = \) \{ans_rule(10)\} (rewrite \($leftfy = $c\) as a function of \( y \)) $BR $BR
+Let \( g(y) = \) \{ans_rule(10)\} (rewrite \(x + $a = y^2\) as a function of \( y \)) $BR $BR
+ \( f(y) \) is \{ $poptypefy->menu() \} , $BR
+the \(y\)-intercept is \{ans_rule(5)\} and
+the \(x\)-intercept is \{ans_rule(5)\}. $BR $BR
+
+\( g(y) \) is \{ $poptypegy->menu() \} , $BR
+the \(y\)-intercepts (in ascending order) are \{ans_rule(5)\} and \{ans_rule(5)\}, and
+the \(x\)-intercept is \{ans_rule(5)\}. $BR $BR
+
+$BBOLD Remark: $EBOLD If there is no intercept, then enter $BITALIC none $EITALIC in the corresponding answer box.
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 2: Find the point(s) of intersection $EBOLD$EITALIC $BR$BR
+We have $BR
+\{
+ BeginTable(center=>0).
+  AlignedRow([
+   ans_rule(10),
+   '\( = \)', 
+   ans_rule(10),
+   '(set both functions equal to each other \(f(y)=g(y)\))'
+  ], align => "Left", separation=>2).
+
+ EndTable();
+\}
+
+\{
+ BeginTable(center=>0).
+ AlignedRow([
+   '\(0\)',
+   '\( = \)', 
+    ans_rule(10),
+  '(move all terms to the RHS)'
+  ], align => "Left", separation=>2,indent=>90).
+
+ AlignedRow([
+   '\(0\)',
+   '\( = \)', 
+    ans_rule(10),
+  '(factorize)'
+  ], align => "Left", separation=>2,indent=>90).
+
+ EndTable();
+\}
+
+$BR
+
+The solutions are (in ascending order)
+$BR
+\(y_1 = \) \{ans_rule(5)\} \{ $poptypeS1->menu() \} and $BR
+\(y_2 = \) \{ans_rule(5)\} \{ $poptypeS1->menu() \} . 
+
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 3: Graph the region bounded by the given conditions $EBOLD$EITALIC $BR$BR
+Between \(y_1\) and \(y_2\), \(f(y)\) is \{ $poptypeI1->menu() \} \(g(y)\).$BR
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 4: Find the area of the region graphed in Part 3 $EBOLD$EITALIC $BR$BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle A = \int \)",ans_rule(1).$BR.$BR.ans_rule(1),"\( \Big( \)",ans_rule(10),"\( \Big) \, dy \, \)","(set the definite integrals to compute the area) "],align => "LEFT",separation => 0,indent=>0). 
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \Bigg[ \)",ans_rule(15),"\( \displaystyle \Bigg] \)",ans_rule(4).$BR.$BR.ans_rule(4),"(integrate in terms of \( y \))"],align => "LEFT",separation => 0,indent=>15). 
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \)",ans_rule(50),"\( \text{units}^2 \)"],align => "LEFT",separation => 0,indent=>15). 
+  TableSpace(0,0).
+EndTable();
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+#\(x + $b y = $c\) and
+#\(x + $a = y^2\)
+
+#relations
+ANS(fun_cmp("$c-$b*y", vars=>"y"));
+ANS(fun_cmp("y^2-$a", vars=>"y"));
+
+#shape
+ANS( $poptypefy->cmp() );
+ANS(num_cmp("$c/$b",strings =>['none'] ));
+ANS(num_cmp("$c",strings =>['none'] ));
+
+ANS($poptypegy->cmp() );
+ANS(num_cmp("-sqrt($a)",strings =>['none'] ));
+ANS(num_cmp("sqrt($a)",strings =>['none'] ));
+ANS(num_cmp("-$a",strings =>['none'] ));
+
+#pt of intersection
+ANS(fun_cmp("$c-$b*y", vars=>"y"));
+ANS(fun_cmp("y^2-$a", vars=>"y"));
+ANS(fun_cmp("y^2-$a - ($c-$b*y)", vars=>"y"));
+ANS(FactoringEvaluator($factored,['y']));
+ANS(num_cmp("$v"));
+ANS( $poptypeS1->cmp() );
+ANS(num_cmp("$u"));
+ANS( $poptypeS2->cmp() );
+
+
+#Comparing fx and gx
+ANS( $poptypeI1->cmp() );
+
+#integral
+ANS(num_cmp($u));
+ANS(num_cmp($v));
+ANS(fun_cmp("$c - $b*y - y**2 + $a", vars=>"y"));
+
+#evaluate
+ANS(fun_cmp("$c*y - $b*y**2/2 - y**3/3 + $a*y", vars=>"y"));
+ANS(num_cmp($u));
+ANS(num_cmp($v));
+
+#sub
+ANS(num_cmp($answ));
+
+
+ENDDOCUMENT();

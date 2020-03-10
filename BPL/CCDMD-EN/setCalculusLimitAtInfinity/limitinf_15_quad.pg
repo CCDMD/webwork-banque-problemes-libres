@@ -1,0 +1,234 @@
+##DESCRIPTION
+##  Limit at Infinity
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('inf/inf', 'limit', 'limit at infinity', 'indeterminate form')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->strings->add(UND=>{});
+
+$a = random(3,9,1);
+$b = random(2,9,1);
+$c = random(2,5,1);
+
+$f = random(2,9,1);
+
+$cm1 = $c - 1;
+
+$equation = Formula("($a x + $b)/(sqrt($c x^2 + $f))");
+
+$answerinf = Compute("$a/sqrt($c)");
+$answerminf = Compute("-$a/sqrt($c)");
+
+Context("Numeric");
+LimitedPowers::OnlyIntegers(
+    minPower => -1, maxPower => 0,
+    message => "integer constants between -1 and 0",
+);
+Context()->operators->undefine("*");
+$FactoredNum = Compute("$a + $b/x");
+
+Context("Numeric");
+Context()->operators->undefine("*");
+$FactoredDen = Compute("($c + $f/x^2)^(1/2)");
+$FactoredDenNegative = Compute("-($c + $f/x^2)^(1/2)");
+
+Context("Numeric");
+LimitedPowers::OnlyIntegers(
+    minPower => 0, maxPower => 1,
+    message => "integer constants between 0 and 1",
+);
+$FunctionX = Compute("x");
+$FunctionNegativeX = Compute("-x");
+$FunctionAbsX = Compute("abs(x)");
+
+Context("Numeric");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR 
+Find \( \displaystyle \lim_{x\to\infty} $equation \) and \( \displaystyle \lim_{x\to-\infty} $equation \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We have $BR 
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x\to\infty} $equation = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \(x\) by \( \infty \) )"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x\to\infty} \) ",ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big) \)".$BR.$HR.ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big) \)"],align => "LEFT",separation => 0, indent => 115).
+  TableSpace(0,0).
+EndTable();
+\}
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["(factor the highest power and use $BBOLD abs $EBOLD for absolute value)"],align => "LEFT",separation => 0, indent => 135).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x\to\infty} \) ",ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big) \)".$BR.$HR.ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big) \)"],align => "LEFT",separation => 0, indent => 115).
+  TableSpace(0,0).
+EndTable();
+\}
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["(determine if the absolute value gives a positive or negative value)"],align => "LEFT",separation => 0, indent => 135).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x\to\infty} \) ",ans_rule(20).$BR.$HR.ans_rule(20),"(simplify)"],align => "LEFT",separation => 0, indent => 115).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(10),"(evaluate and simplify)"],align => "LEFT",separation => 0, indent => 115).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR $BR
+and
+$BR 
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x\to-\infty} $equation = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \(x\) by \( \infty \) )"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x\to-\infty} \) ",ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big) \)".$BR.$HR.ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big) \)"],align => "LEFT",separation => 0, indent => 125).
+  TableSpace(0,0).
+EndTable();
+\}
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["(factor the highest power and use $BBOLD abs $EBOLD for absolute value)"],align => "LEFT",separation => 0, indent => 145).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x\to-\infty} \) ",ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big) \)".$BR.$HR.ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big) \)"],align => "LEFT",separation => 0, indent => 125).
+  TableSpace(0,0).
+EndTable();
+\}
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["(determine if the absolute value gives a positive or negative value)"],align => "LEFT",separation => 0, indent => 145).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x\to-\infty} \) ",ans_rule(20).$BR.$HR.ans_rule(20),"(simplify)"],align => "LEFT",separation => 0, indent => 125).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(10),"(evaluate and simplify)"],align => "LEFT",separation => 0, indent => 125).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+
+
+END_TEXT
+Context()->normalStrings;
+
+
+#sub infinity
+ANS(Compute("INF")->cmp);
+ANS(Compute("INF")->cmp); 
+
+#factor
+ANS($FunctionX->cmp);
+ANS($FactoredNum->cmp);
+ANS($FunctionAbsX->cmp(limits=>[-1,1]));
+ANS($FactoredDen->cmp);
+
+#abs
+ANS($FunctionX->cmp);
+ANS($FactoredNum->cmp);
+ANS($FunctionX->cmp);
+ANS($FactoredDen->cmp);
+
+#simplify
+ANS($FactoredNum->cmp);
+ANS($FactoredDen->cmp);
+
+#answer
+ANS($answerinf->cmp);
+
+#sub -infinity
+ANS(Compute("-INF")->cmp);
+ANS(Compute("INF")->cmp);  
+
+#factor
+ANS($FunctionX->cmp);
+ANS($FactoredNum->cmp);
+ANS($FunctionAbsX->cmp(limits=>[-1,1]));
+ANS($FactoredDen->cmp);
+
+#abs
+ANS($FunctionX->cmp);
+ANS($FactoredNum->cmp);
+ANS($FunctionNegativeX->cmp);
+ANS($FactoredDen->cmp);
+
+#simplify
+ANS($FactoredNum->cmp);
+ANS($FactoredDenNegative->cmp);
+
+#answer
+ANS($answerminf->cmp);
+
+ENDDOCUMENT();
+

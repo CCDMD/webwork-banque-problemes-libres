@@ -1,0 +1,102 @@
+##DESCRIPTION
+##  Chain Rule
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation of Functions')
+## KEYWORDS('chain differentiation', 'derivative')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();       
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,5,1);
+$b = random(2,8,1);
+
+do{
+$e = random(3,9,1);
+$n = random(3,8,1);
+}until($n != $e);
+
+Context("Numeric");
+Context()->variables->add(u => 'Real');
+
+$inner = Formula("x^$n+ $a x + $b");
+$dinner = $inner->D('x');
+$outer = Formula("u^$e");
+$douter = $outer->D('u');
+$f = Compute("$inner^$e");
+$df = $f->D('x');
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Find the derivative of \( \displaystyle f(x) = $f \) .
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+Let $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( y = \)",ans_rule(10),"(outer function in terms of \( u \))"], align=>CENTER, separation=>0).
+
+AlignedRow(["\( u = \)",ans_rule(10),"(inner function in terms of \( x \))"], align=>CENTER, separation=>0).
+
+EndTable()
+\}
+$BR
+We have $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{df}{dx} \)","\( = \)","\( \displaystyle \frac{d}{du} \big( \)".ans_rule(10)."\(\displaystyle \big) \cdot \frac{d}{dx} \big( \)".ans_rule(10)."\(\big)\)","(write the outer function AND the inner function)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(15)."\( \cdot \)".ans_rule(15)], align=>LEFT, separation=>0, indent=>25).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["(find the derivative of the outer function AND the derivative of the inner function)"], align=>LEFT, separation=>0, indent=>50).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(40),"(write the derivative in terms of \( x \))"], align=>LEFT, separation=>0, indent=>25).
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($outer->cmp);
+ANS($inner->cmp);
+
+ANS($outer->cmp);
+ANS($inner->cmp);
+
+ANS($douter->cmp);
+ANS($dinner->cmp);
+
+ANS($df->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

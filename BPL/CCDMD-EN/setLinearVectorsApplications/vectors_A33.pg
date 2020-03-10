@@ -1,0 +1,191 @@
+##DESCRIPTION
+##  Find the volume
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications', 'R^3', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Point");
+
+$a1 = non_zero_random(-9,9,1);
+$a2 = random(-9,9,1);
+$a3 = random(-9,9,1);
+
+$b1 = random(-9,9,1);
+$b2 = non_zero_random(-9,9,1);
+$b3 = random(-9,9,1);
+
+$c1 = random(-9,9,1);
+$c2 = random(-9,9,1);
+$c3 = non_zero_random(-9,9,1);
+
+$d1 = non_zero_random(-9,9,1);
+$d2 = random(-9,9,1);
+$d3 = random(-9,9,1);
+
+$A = Point($a1,$a2,$a3);
+$B = Point($b1,$b2,$b3);
+$C = Point($c1,$c2,$c3);
+$D = Point($d1,$d2,$d3);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find the volume of the parallelepiped having adjacent edges defined by the points 
+\(A=$A,\qquad B= $B,\qquad C=$C,\qquad D= $D \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Formula");
+
+Context()->texStrings;
+BEGIN_TEXT
+Which of the formulas below corresponds to the $BBOLD volume of the parallelepiped? $EBOLD $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \displaystyle A = \frac{ \| \vec{u} \times \vec{v} \|}{\| \vec{u} \| \| \vec{v} \|} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" "], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \displaystyle A = \frac{1}{2} \| \vec{u} \times \vec{v} \| \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" "], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 3:","\( \displaystyle A = \| \vec{u} \times \vec{v} \| \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" "], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 4:","\( \displaystyle A = | ( \vec{u} \times \vec{v} ) \cdot \vec{w} | \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("4")->cmp );
+
+Section::End();
+
+###########################################
+Section::Begin("Construct the required vectors");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->variables->add(a => 'Real',b => 'Real');
+
+$u = Vector($A-$D);
+$v = Vector($B-$D);
+$w = Vector($C-$D);
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ image( "parallelepiped_2.png",width=>329, height=>201 ) \} $BR $BR
+Let \( \vec{u} \) be the vector corresponding to the directed line segment \( \it{DA} \). $BR $BR
+Let \( \vec{v} \) be the vector corresponding to the directed line segment \( \it{DB} \). $BR $BR
+Let \( \vec{w} \) be the vector corresponding to the directed line segment \( \it{DC} \). $BR $BR
+
+$BR
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{u} \ \)","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v} \ \)","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{w} \ \)","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($u->cmp);
+ANS($v->cmp);
+ANS($w->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Compute the volume");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$Cross = $u x $v;
+$DotProduct = $Cross.$w;
+$Volume = abs($DotProduct);
+
+Context()->texStrings;
+BEGIN_TEXT
+Now $BR $BR
+
+\( \vec{u} \times \vec{v} = \) \{ ans_rule(15) \} $BR $BR
+
+and $BR $BR
+
+\( ( \vec{u} \times \vec{v} ) \cdot \vec{w} = \) \{ ans_rule(15) \}
+$BR $BR
+Thus, the volume of the parallelepiped is \{ ans_rule(15) \} units\(^3\).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Cross->cmp);
+ANS($DotProduct->cmp);
+
+ANS(Real($Volume)->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();

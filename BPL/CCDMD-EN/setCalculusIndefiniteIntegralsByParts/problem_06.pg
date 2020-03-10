@@ -1,0 +1,91 @@
+##DESCRIPTION
+##  Indefinite Integrals - By Parts
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('indefinite integral', 'piecewise-defined')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGunion.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$b = random(2,9,1);
+$a = $b**3;
+$coeff = 1 / $b;
+$ans = "$a*(-1*(1/$b)*x*cos($b * x)+(1/$b)**2*sin($b*x))";
+
+$integral = "$a x \sin ($b x)";
+$intnoconstant = "x \sin ($b x)";
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Evaluate the integral \( \displaystyle \int $integral \, dx \).
+$BR
+$BR
+$HR
+$BR
+$BBOLD Solution $EBOLD $BR $BR
+We know $BR $BR
+\( \displaystyle \int $integral dx = \) \{ans_rule(3)\}\( \displaystyle \int $intnoconstant \, dx \) $BR $BR
+Let $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( u \)", "\( = \)",ans_rule(15),$SPACE.$SPACE.$SPACE.$SPACE.$SPACE,"\( dv \)","\( = \)",ans_rule(15),$SPACE."(choose \(u\) and \( dv \))"], align=>LEFT, separation=>0).
+AlignedRow(["\( du \)", "\( = \)",ans_rule(15),$SPACE.$SPACE,"\( v \)","\( = \)",ans_rule(15),$SPACE."(derive \(u\) and integrate \( dv \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+We have
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["\(\displaystyle \int $integral \, dx \)","\( = \)",ans_rule(3)."\( \Big( \)".ans_rule(20)."\( - \)".ans_rule(3)."\( \displaystyle \int\)".ans_rule(10).ans_rule(2)."\( \Big) \)","(an integral with \(x\) using \( u v- \int v \, du \))"], align=>LEFT, separation=>0).
+AlignedRow(["","\( = \)",ans_rule(3)."\( \Big( \)".ans_rule(20)."\( - \)".ans_rule(3)."\( \big( \)".ans_rule(12)."\( \big) \)"."\( \Big) + \)".ans_rule(1),"(integrate with respect to \(x\))"], align=>LEFT, separation=>0).
+AlignedRow(["","\( = \)",ans_rule(40)."\( + \)".ans_rule(1)], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+
+END_TEXT
+
+ANS(num_cmp("$a"));
+
+#u and v
+ANS(fun_cmp("x",var=>['x','dx']));
+ANS(fun_cmp("sin($b x) dx",var=>['x','dx']));
+ANS(fun_cmp("dx",var=>['x','dx']));
+ANS(fun_cmp("-cos($b x)/$b",var=>['x','dx']));
+
+ANS(num_cmp("$a"));
+ANS(fun_cmp("-x*cos($b x)/$b",var=>['x','dx']));
+ANS(num_cmp("-1/$b"));
+ANS(fun_cmp("cos($b x)",var=>['x','dx']));
+ANS(fun_cmp("dx",var=>['x','dx']));
+
+ANS(num_cmp("$a"));
+ANS(fun_cmp("-x*cos($b x)/$b",var=>['x','dx']));
+ANS(num_cmp("-1/$b"));
+ANS(fun_cmp("sin($b x)/$b",var=>['x','dx']));
+ANS(str_cmp("C"));
+
+#answer
+ANS(fun_cmp($ans, mode=>"antider"));
+ANS(str_cmp("C"));
+
+ENDDOCUMENT();

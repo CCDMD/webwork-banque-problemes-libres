@@ -1,0 +1,255 @@
+##DESCRIPTION
+##  Solve a system using the inverse
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('System of Linear Equations')
+## KEYWORDS('inverse matrix method', 'unique solution', 'two-variable system')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"MatrixUnits.pl",
+"MatrixReduce.pl",
+"PGmatrixmacros.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$a = non_zero_random(-6,6,1);
+$b = non_zero_random(-5,5,1);
+$c = non_zero_random(-4,4,1);
+do {$d = random(-9,9,2);} until (($a * $d - $b * $c) != 0);
+
+$B11 = non_zero_random(-3,3,1);
+$B21 = non_zero_random(-3,3,1);
+
+do {$B12 = non_zero_random(-3,3,1);} until ($B12 != $B11);
+$B22 = non_zero_random(-4,4,1);
+
+Context("Matrix");
+$A = Matrix([[$a, $b], [$c, $d]]);
+$b1 = Matrix([[$B11], [$B21]]);
+$b2 = Matrix([[$B12], [$B22]]);
+
+Context("Numeric");
+$ls1 = nicestring([$a,$b],['x','y']);
+$ls2 = nicestring([$c,$d],['x','y']);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Consider the following two systems.
+$BR
+(a) 
+\[ \left\{"\{"\} \begin{array}{ccc}
+$ls1 &=& $B11 \\
+$ls2 &=& $B21
+\end{array} \right. \]
+$BR
+(b)
+\[ \left\{"\{"\} \begin{array}{ccc}
+$ls1 &=& $B12 \\
+$ls2 &=& $B22
+\end{array} \right.\]
+$BR
+$BBOLD (a) $EBOLD Find the inverse of the (common) coefficient matrix of the two systems. $BR $BR
+$BBOLD (b) $EBOLD Find the solutions to the two systems by using the inverse. 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Matrix");
+$Ainv = $A->inverse;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR $BR
+\( \quad A = \) \{ $A->ans_array(2) \}
+$BR $BR
+Thus, the inverse of \(A \) is $BR $BR
+\( \quad A^{-1} = \) \{ $Ainv->ans_array(2) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($A->cmp() );
+ANS($Ainv->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+Section::Begin(" ");
+
+Context("Matrix");
+$AnswerMatrix1 = $Ainv * $b1;
+$bMatrix1 = Matrix($b1);
+$InverseMatrix1 = Matrix($Ainv);
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$Answer1 = Vector($AnswerMatrix1->element(1,1),$AnswerMatrix1->element(2,1));
+
+Context()->texStrings;
+BEGIN_TEXT
+For the system
+\[ \left\{"\{"\} \begin{array}{ccc}
+$ls1 &=& $B11 \\
+$ls2 &=& $B21
+\end{array} \right. \]
+$BR
+we have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{x} \)","\( = \)", "\( A^{-1} \vec{b} \)"], align=>LEFT, separation=>0, indent=>120).
+
+EndTable()
+\}
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([answer_matrix(2,1,2),"\( = \)", $InverseMatrix1->ans_array(2), $bMatrix1->ans_array(2)], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)", $AnswerMatrix1->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+$BR $BR
+Thus, the general solution is $BR $BR
+\( \quad (x,y) = \) \{ ans_rule(25) \} $BR $BR
+$HR
+$BBOLD Note: $EBOLD $BR
+Write the general solution in one of the following formats: $BR
+\( \quad P \) $BR
+\( \quad P + t \vec{v} \) $BR
+\( \quad P + s \vec{v} + t \vec{w} \) $BR
+\( \quad none \)
+END_TEXT
+Context()->normalStrings;
+
+#x
+ANS(str_cmp("x"));
+ANS(str_cmp("y"));
+
+ANS($InverseMatrix1->cmp);
+ANS($bMatrix1->cmp);
+
+ANS($AnswerMatrix1->cmp);
+ANS($Answer1->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context("Matrix");
+$AnswerMatrix2 = $Ainv * $b2;
+$bMatrix2 = Matrix($b2);
+$InverseMatrix2 = Matrix($Ainv);
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$Answer2 = Vector($AnswerMatrix2->element(1,1),$AnswerMatrix2->element(2,1));
+
+Context()->texStrings;
+BEGIN_TEXT
+For the system
+\[ \left\{"\{"\} \begin{array}{ccc}
+$ls1 &=& $B12 \\
+$ls2 &=& $B22
+\end{array} \right.\]
+$BR
+we have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{x} \)","\( = \)", "\( A^{-1} \vec{b} \)"], align=>LEFT, separation=>0, indent=>120).
+
+EndTable()
+\}
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([answer_matrix(2,1,2),"\( = \)", $InverseMatrix2->ans_array(2), $bMatrix2->ans_array(2)], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)", $AnswerMatrix2->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+$BR $BR
+Thus, the general solution is $BR $BR
+\( \quad (x,y) = \) \{ ans_rule(25) \} $BR $BR
+$HR
+$BBOLD Note: $EBOLD $BR
+Write the general solution in one of the following formats: $BR
+\( \quad P \) $BR
+\( \quad P + t \vec{v} \) $BR
+\( \quad P + s \vec{v} + t \vec{w} \) $BR
+\( \quad none \)
+END_TEXT
+Context()->normalStrings;
+
+#x
+ANS(str_cmp("x"));
+ANS(str_cmp("y"));
+
+ANS($InverseMatrix2->cmp);
+ANS($bMatrix2->cmp);
+
+ANS($AnswerMatrix2->cmp);
+ANS($Answer2->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

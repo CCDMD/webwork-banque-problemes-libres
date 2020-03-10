@@ -1,0 +1,133 @@
+##DESCRIPTION
+## Algebraic equations
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('common factor','factorization')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$b = random(2,5,1);
+$b1= $b + 1;
+$c = random(2,5,1);
+$c1= $c + 1;
+$d = random(1,7,1);
+
+$maxpower = $c1;
+if($b1>$c1) {$maxpower = $b1;}
+
+#
+# Formula y^b (y+d)^c (y^2+dy+1) 
+# 
+Context("Numeric");
+Context()->variables->add(y=>'Real');
+$LHS = Compute("y^{$b}(y+$d)^{$c}");
+$RHS = Compute("y^{$b1}(y+$d)^{$c1}");
+$equation = $LHS + $RHS; 
+
+#
+#  Expanded form
+#
+Context("LimitedPolynomial-Strict");
+Context()->variables->add(y=>'Real');
+$formula1 = Formula("1")->reduce;
+$expandedform = Formula("y^2+$d y+1")->reduce;
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => $maxpower,
+message => "either 0 or $maxpower",
+);
+Context()->variables->add(y=>'Real');
+$common_factor = Compute("y^{$b}(y+$d)^{$c}");
+$formula2 = Compute("y(y+$d)")->reduce;
+$factoredform = Compute("$expandedform $common_factor");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Factor \( $equation \) 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR$BITALIC$BBOLD Part 1: Finding the common factor $EBOLD$EITALIC $BR$BR
+
+Common factor \(=\) \{ans_rule(15)\}
+
+
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 2: Finding the other factor $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $LHS \)".$BR.$HR.ans_rule(10),"\(  + \)","\( $RHS \)".$BR.$HR.ans_rule(10),"\( = \)",ans_rule(5)."\( + \)".ans_rule(5),"(divide every term by the common factor)" ], align=>CENTER, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(5),"(simplified form)"], align=>LEFT, separation=>0, indent=>260).
+EndTable()
+\}
+$BR
+Other factor \(=\) \{ans_rule(15)\}
+
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 3: Writing the factored form $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equation \)","\( = \)",ans_rule(20),"(factorized as common factor \( \times \) other factor)" ], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+END_TEXT
+Context()->normalStrings;
+
+#Part 1
+ANS($common_factor->cmp);
+
+#Part 2
+ANS($common_factor->cmp);
+ANS($common_factor->cmp);
+
+ANS($formula1->cmp);
+ANS($formula2->cmp);
+ANS($expandedform->cmp);
+ANS($expandedform->cmp);
+
+#Part 3
+ANS($factoredform->cmp); 
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

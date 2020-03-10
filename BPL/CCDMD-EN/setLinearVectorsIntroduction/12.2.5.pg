@@ -1,0 +1,81 @@
+##DESCRIPTION
+##  Vector algebra
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('vector arithmetic', 'direction', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#create the points P and Q
+Context("Point");
+$p0 = Real(random(1, 10, 1));
+$p1 = Real(random(1, 10, 1));
+$p2 = Real(random(1, 10, 1));
+
+$q0 = Real(random(1, 10, 1));
+$q1 = Real(random(1, 10, 1));
+$q2 = Real(random(1, 10, 1));
+
+$P = Point(random(1, 10, 1), random(1, 10, 1), random(1, 10, 1));
+$Q = Point(random(1, 10, 1), random(1, 10, 1), random(1, 10, 1));
+
+#creates the vector PQ
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$v0 = $q0 - $p0;
+$v1 = $q1 - $p1;
+$v2 = $q2 - $p2;
+
+$V = Vector($Q - $P);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR
+Let \( P = $P \) and \( Q = $Q \) be points in \( \mathbb{R}^3 \). 
+Find the vector \( \vec{v} = \overrightarrow{PQ} \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR
+$HR $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v} \) ","\( = \)",ans_rule(5)."\( - \)".ans_rule(5)], align=>LEFT, separation=>0).
+
+AlignedRow([" "," ","(write the components of the vector associated to the $BBOLD terminal point $EBOLD minus the components of the vector associated to the $BBOLD initial point $EBOLD)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(15)."(write the components of the vector \( \overrightarrow{PQ} \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Q->cmp);
+ANS($P->cmp);
+
+ANS($V->cmp);
+
+ENDDOCUMENT();
+
+

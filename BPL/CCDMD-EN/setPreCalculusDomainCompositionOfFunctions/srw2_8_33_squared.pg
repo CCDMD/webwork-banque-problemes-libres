@@ -1,0 +1,270 @@
+## DESCRIPTION
+##  Domain of Functions
+## ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('domain','composition')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",     # Standard macros for PG language
+"MathObjects.pl",
+"PGunion.pl",
+"contextLimitedPolynomial.pl",
+"contextAlternateIntervals.pl",
+"parserPopUp.pl",
+"contextFraction.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$a = random(2,9,1);
+do{$b = random(3,9,1);} until($b!=$a);
+
+$f = Compute("1/x")->reduce;
+$g = Compute("$a*x^3 - $b x")->reduce;
+
+$Composite1_Q_tex = "(f \circ g)(x)";
+$Composite1_tex = "f(g(x))";
+$outer1 = $f;
+$outer1_tex = "f";
+$inside1 = $g;
+$inside1_tex = "g(x)";
+
+$Composite2_Q_tex = "(g \circ f)(x)";
+$Composite2_tex = "g(f(x))";
+$outer2 = $g;
+$outer2_tex = "g";
+$inside2 = $f;
+$inside2_tex = "f(x)";
+
+$Composite3_Q_tex = "(f \circ f)(x)";
+$Composite3_tex = "f(f(x))";
+$outer3 = $f;
+$outer3_tex = "f";
+$inside3 = $f;
+$inside3_tex = "f(x)";
+
+$Composite4_Q_tex = "(g \circ g)(x)";
+$Composite4_tex = "g(g(x))";
+$outer4 = $g;
+$outer4_tex = "g";
+$inside4 = $g;
+$inside4_tex = "g(x)";
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR $BR
+Let \(\displaystyle f(x) = $f \) and \(g(x)=  $g\).  Find \( $Composite1_Q_tex \) and \( $Composite2_Q_tex \), and their respective domains.
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$BBOLD Part A $EBOLD
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Find \( $Composite1_Q_tex \)");
+
+Context("Numeric");
+$Composite1 = $outer1->substitute(x=>$inside1);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $Composite1_Q_tex \)","\( = \)","\( $Composite1_tex \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)","\( $outer1_tex(\)".ans_rule(10)."\( )\)","(write the corresponding function)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(20),"(evaluate and simplify if possible)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($inside1->cmp);
+ANS($Composite1->cmp(limits=>[4,10]) );
+
+Section::End();
+
+###########################################
+Section::Begin("Find when \( $Composite1_Q_tex \) is defined");
+
+Context("Numeric");
+$popOriginal1 = PopUp(["Choose", "f(x)", "g(x)"],$inside1_tex);
+$popComposition1 = PopUp(["Choose", "f(f(x))", "f(g(x))", "g(f(x))", "g(g(x))"],$Composite1_tex);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We know \( $Composite1_Q_tex \) is defined whenever both \{ $popOriginal1->menu() \} and \{ $popComposition1->menu() \} are defined.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popOriginal1->cmp() );
+ANS($popComposition1->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Find the domain of \( $Composite1_Q_tex \)");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$domain_inside1 = Compute("(-inf,inf)");
+$domain_composite1 = Compute("(-inf,-sqrt($b/$a))U(-sqrt($b/$a),0)U(0,sqrt($b/$a))U(sqrt($b/$a),inf)");
+$IDomain1 = Compute("(-inf,-sqrt($b/$a))U(-sqrt($b/$a),0)U(0,sqrt($b/$a))U(sqrt($b/$a),inf)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD  $BR
+Express your answer in interval notation. $BR
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+$HR $BR
+
+\( $inside1_tex \) is defined on \{ans_rule(30)\} $BR $BR
+\( $Composite1_tex \) is defined on \{ans_rule(30)\} $BR $BR
+$BR
+Thus, the domain of \( $Composite1_Q_tex \) is \{ans_rule(30)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($domain_inside1->cmp() );
+ANS($domain_composite1->cmp() );
+
+#Domain
+ANS($IDomain1->cmp);
+
+Section::End();
+
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $BR
+$BBOLD Part B $EBOLD 
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+Section::Begin("Find \( $Composite2_Q_tex \)");
+
+Context("Numeric");
+$Composite2 = $outer2->substitute(x=>$inside2);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $Composite2_Q_tex \)","\( = \)","\( $Composite2_tex\)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)","\( $outer2_tex(\)".ans_rule(10)."\( )\)","(write the corresponding function)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(20),"(evaluate and simplify if possible)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($inside2->cmp);
+ANS($Composite2->cmp(limits=>[4,10]) );
+
+Section::End();
+
+###########################################
+Section::Begin("Find when \( $Composite2_Q_tex \) is defined");
+
+Context("Numeric");
+$popOriginal2 = PopUp(["Choose", "f(x)", "g(x)"],$inside2_tex);
+$popComposition2 = PopUp(["Choose", "f(f(x))", "f(g(x))", "g(f(x))", "g(g(x))"],$Composite2_tex);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We know \( $Composite2_Q_tex \) is defined whenever both \{ $popOriginal2->menu() \} and \{ $popComposition2->menu() \} are defined.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popOriginal2->cmp() );
+ANS($popComposition2->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Find the domain of \( $Composite2_Q_tex \)");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$domain_inside2 = Compute("(-inf,0)U(0,inf)");
+$domain_composite2 = Compute("(-inf,0)U(0,inf)");
+$IDomain2 = Compute("(-inf,0)U(0,inf)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD  $BR
+Express your answer in interval notation. $BR
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+$HR $BR
+
+\( $inside2_tex \) is defined on \{ans_rule(30)\} $BR $BR
+\( $Composite2_tex \) is defined on \{ans_rule(30)\} $BR $BR
+$BR
+Thus, the domain of \( $Composite2_Q_tex \) is \{ans_rule(30)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($domain_inside2->cmp() );
+ANS($domain_composite2->cmp() );
+
+#Domain
+ANS($IDomain2->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

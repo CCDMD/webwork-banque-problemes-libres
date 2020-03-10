@@ -1,0 +1,139 @@
+## DESCRIPTION
+##  Algebra: Equations involving radicals 
+## ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Equations and Inequations)
+##KEYWORDS('equation with radical', 'solving an equation')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"PGunion.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->strings->add(none=>{},EmptySet=>{alias=>"none"});
+
+$a = random(2,8,1);
+do{$b = random(2,8,1);} until( $b!=$a);
+
+Context()->variables->set(x=>{limits=>[$a^2-$b^2,$b^2-$a^2]});
+
+$LHS = Compute("sqrt(x^2+($a^2-$b^2))-$a")->reduce;
+$RHS = Compute("0");
+
+$roots[0] = Compute("-$b");
+$roots[1] = Compute("$b");
+$solution_set = List($roots[0],$roots[1]);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Solve \( \displaystyle $LHS = $RHS \) 
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Solve for \(x\)");
+
+Context("Numeric");
+$LHS_S1 = Compute("sqrt(x^2+($a^2-$b^2))")->reduce;
+
+$coeff_LHS_S2_1 = $a**2-$b**2;
+$coeff_RHS_S2_1 = $a**2;
+$coeff_RHS_S3_1 = $a**2 - $coeff_LHS_S2_1;
+
+Context("LimitedPolynomial-Strict");
+$RHS_S1 = Compute("$a");
+$LHS_S2 = Compute("x^2 + $coeff_LHS_S2_1");
+$RHS_S2 = Compute("$coeff_RHS_S2_1");
+$RHS_S3 = Compute("$coeff_RHS_S3_1");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $LHS \)","\( = \)","\( $RHS \)"], align=>LEFT, separation=>0, indent=>15).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(10),"\( = \)",ans_rule(10),"(solve for \( $LHS_S1 \))"], align=>LEFT, separation=>0, indent=>0).
+
+AlignedRow([ans_rule(10),"\( = \)",ans_rule(10),"(square both sides)"], align=>LEFT, separation=>0, indent=>0).
+
+AlignedRow(["\( x^2 \)","\( = \)",ans_rule(10)], align=>RIGHT, separation=>0, indent=>0).
+
+EndTable()
+\}
+$BR $BR
+Solving for \(x\) gives us (in ascending order)
+$BR
+\(x_1 = \) \{ans_rule(10)\} and \(x_2 = \) \{ans_rule(10)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($LHS_S1->cmp(limits=>[$a^2-$b^2,$b^2-$a^2]));
+ANS($RHS_S1->cmp);
+ANS($LHS_S2->cmp);
+ANS($RHS_S2->cmp);
+ANS($RHS_S3->cmp);
+
+ANS($roots[0]->cmp);
+ANS($roots[1]->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Check your solution");
+
+Section::End();
+
+###########################################
+Section::Begin("State the solution");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD $BR
+Enter your answer in a comma-separated list. $BR
+If the solution set is the empty set, write $BBOLD none$EBOLD.
+$BR $HR $BR
+Thus, the solution set is {\{ans_rule(30)\}}.$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($solution_set->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();

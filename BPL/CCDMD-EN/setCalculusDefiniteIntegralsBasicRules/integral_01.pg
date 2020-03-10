@@ -1,0 +1,114 @@
+##DESCRIPTION
+##  Integration - Basic Rules
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('definite integral', 'basic integration formula')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGstandard.pl", 
+"MathObjects.pl", 
+"PGunion.pl",
+"PGcourse.pl",
+"unionTables.pl"
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+
+$n=random(3,10); 
+$u=random(9,99,1);
+$c=$u*($n-1);
+$k=random(1,2);
+$a=2**$k; 
+$b=random(3, 9, 2);
+
+
+BEGIN_TEXT
+$HR
+$BBOLD Question $EBOLD $BR
+$HR
+Compute the following definite integral $BR $BR
+\[ \int_1^{$u} \frac{1}{x}\, dx .\]
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD
+$HR
+$BBOLD 1- Compute the indefinite integral. $EBOLD
+$BR$BR We have $BR $BR
+
+\( \displaystyle \int \frac{1}{x}\, dx = \) \{ans_rule(30)\} \(+\) \{ans_rule(3)\}
+$BR
+$BR
+$HR
+
+$BBOLD 2- Choose an antiderivative \(F(x)\). $EBOLD
+$BR$BR
+By using \(C=0\), we can use the antiderivative$BR$BR
+\(F(x) = \) \{ans_rule(30)\}.
+$BR
+$BR
+$HR
+$BBOLD 3- Use the first Fundamental Theorem of Calculus to compute the definite integral. $EBOLD
+
+$BR$BR By the first FTC, we have $BR$BR
+
+\{
+ BeginTable(center=>0).
+  AlignedRow([
+   '\( \displaystyle \int_1^{$u} \frac{1}{x}\, dx\)',
+   '\( = \)', 
+   '\(F(\)'.ans_rule(5).'\()\)',
+   '\( - \)', 
+   '\(F(\)'.ans_rule(5).'\()\)'
+  ], align => "Center", separation=>2).
+
+  AlignedRow([
+   '', 
+   '\( = \)', 
+   ans_rule(15),
+   '\( - \)', 
+   ans_rule(15)
+  ],separation=>2).
+ EndTable();
+\}
+$BR
+\(\hspace{0.68in} = \) \{ans_rule(40)\}
+
+
+END_TEXT
+
+
+
+$answer="ln(|x|)";
+
+ANS(fun_cmp($answer, mode=>"antider", limits=>[[-100,100]]) );
+ANS(str_cmp("C"));
+
+ANS(fun_cmp($answer, limits=>[[-100,100]]) );
+
+ANS(num_cmp($u));
+ANS(num_cmp(1));
+
+$Fb="ln(|$u|)";
+$Fa=0;
+ANS(num_cmp($Fb));
+ANS(num_cmp($Fa));
+
+ANS(num_cmp("$Fb-$Fa"));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

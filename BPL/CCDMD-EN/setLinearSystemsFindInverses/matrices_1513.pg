@@ -1,0 +1,241 @@
+##DESCRIPTION
+##  Finding Inverse by Gauss-Jordan
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Matrix Algebra')
+## KEYWORDS('reduced row echelon form matrix', 'identity matrix', 'inverse matrix')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"MatrixUnits.pl",
+"MatrixReduce.pl",
+"PGmatrixmacros.pl",
+"PGunion.pl",
+"contextLimitedPolynomial.pl",
+"parserPopUp.pl",
+"scaffold.pl"
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+foreach $i (0..3) {
+$a[$i]=0;
+$b[$i]=0;
+$c[$i]=0;
+$d[$i]=0;
+}
+
+$a[0] = 1;
+$b[1] = 1;
+$c[2] = 1;
+$d[3] = 1;
+
+#R2-R3
+$d34 = non_zero_random(-9,9,1);
+
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$M = Matrix([[$a[0], $b[0], $c[0], $d[0],$a[0], $b[0], $c[0], $d[0]], 
+		    [$a[1], $b[1], $c[1], $d[1],$a[1], $b[1], $c[1], $d[1]],
+			[$a[2], $b[2], $c[2], $d34,$a[2], $b[2], $c[2], $d[2]],
+			[$a[3], $b[3], $c[3], $d[3],$a[3], $b[3], $c[3], $d[3]]]);
+$M = apply_fraction_to_matrix_entries($M); 
+
+Context("Matrix");
+$A_display = Matrix([[$a[0], $b[0], $c[0], $d[0]], 
+		    [$a[1], $b[1], $c[1], $d[1]],
+			[$a[2], $b[2], $c[2], $d34],
+			[$a[3], $b[3], $c[3], $d[3]]]);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$A = Matrix([[$a[0], $b[0], $c[0], $d[0]], 
+		    [$a[1], $b[1], $c[1], $d[1]],
+			[$a[2], $b[2], $c[2], $d34],
+			[$a[3], $b[3], $c[3], $d[3]]]);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$B = Matrix([[$a[0], $b[0], $c[0], $d[0]], 
+			[$a[1], $b[1], $c[1], $d[1]],
+			[$a[2], $b[2], $c[2], $d[2]],
+			[$a[3], $b[3], $c[3], $d[3]]]);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find the inverse of \( A = $A_display \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+side_labels( @array );
+
+Section::Begin("Augmented matrix");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR $BR
+\( \quad \) \{ $A->ans_array(2) \} \{ $B->ans_array(2) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS( $A->cmp() );
+ANS( $B->cmp() );
+
+Section::End();
+
+###########################################
+### R4C4
+###########################################
+Section::Begin("Create 0's");
+
+Context("Numeric");
+$popAbove = PopUp(["?", "above", "below", "above and below"],"above");
+
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR1 = $M;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR1 = $A;
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR1 = $B;
+
+Context("Numeric");
+$popColumn = PopUp(["?", "column 1", "column 2", "column 3", "column 4"],"column 4");
+$popPivot = PopUp(["?", "row 1 column 1", "row 1 column 2", "row 1 column 3", "row 1 column 4", "row 2 column 1", "row 2 column 2","row 2 column 3", "row 2 column 4", "row 3 column 1", "row 3 column 2", "row 3 column 3", "row 3 column 4", "row 4 column 1", "row 4 column 2", "row 4 column 3", "row 4 column 4"],"row 4 column 4");
+
+Context()->texStrings;
+BEGIN_TEXT 
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} \text{R4}) )\} 
+    \{   display_matrix_mm($MR1, align=>'rrrr|rrrr')  \} 
+\) 
+$BR $BR
+For this step, there should be 0's in \{ $popColumn->menu() \}. I will use the leading 1 in \{ $popPivot->menu() \} to create those 0's \{ $popAbove->menu() \} that leading 1.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popColumn->cmp() );
+ANS($popPivot->cmp() );
+ANS($popAbove->cmp() );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context('Fraction')->parens->set("[" => {formMatrix => 1});
+$MR1C1 = row_add($MR1, 3, 4, -$MR1->element(3,4));
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$AR1C1 = row_add($AR1, 3, 4, -$AR1->element(3,4));
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$BR1C1 = row_add($BR1, 3, 4, -$AR1->element(3,4));
+
+Context()->texStrings;
+BEGIN_TEXT
+\( 
+    \{side_labels(  qw(\text{R1} \text{R2} \text{R3} \text{R4}) )\} 
+    \{   display_matrix_mm($MR1, align=>'rrrr|rrrr')  \} 
+\) 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)","\(  \text{R1} \)".$BR.$BR."\(  \text{R2}  \)".$BR.$BR."\(  \text{R3}     +  \)".ans_rule(1)."\(  \text{R4} \)".$BR.$BR."\(  \text{R4} \)",$AR1C1->ans_array(1),$BR1C1->ans_array(1)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS((-$AR1->element(3,4))->cmp);
+ANS($AR1C1->cmp);
+ANS($BR1C1->cmp);
+
+Section::End();
+
+###########################################
+
+Section::Begin("Draw a conclusion");
+
+Context("Matrix");
+$Ainv = $A_display->inverse;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR $BR
+\( 
+    \{   display_matrix_mm($MR1C1, align=>'rrrr|rrrr')  \} 
+\) 
+$BR $BR $BR
+Thus, the inverse of \(A \) is $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( A^{-1} = \)",$Ainv->ans_array()], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Ainv->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+Note that it only took you one elementary row operation to obtain the inverse.
+$BR
+The matrix A is actually called an elementary matrix, and can be obtained from the identity matrix by performing one elementary row operation. $BR $BR
+Write $BBOLD ok $EBOLD in the following box: \{ans_rule(5)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(str_cmp("ok"));
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

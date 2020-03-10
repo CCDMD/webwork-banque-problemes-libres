@@ -1,0 +1,81 @@
+##DESCRIPTION
+##  Geometric Series
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Sequences, Summation and Series')
+## KEYWORDS('convergence and divergence', 'series', 'geometric series', 'sum', 'sum of a series')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGunion.pl",
+  "parserPopUp.pl",
+  "PGcourse.pl", 
+);
+
+COMMENT("This problem is using sum_{n=k}^{inf} a r^n = a r^k/(1-r).");
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$c=random(4,10);
+$d=$c+1;
+
+$ans3= Compute("($c**5/$d**5)/(1-($c/$d))");
+
+$poptype = PopUp(["Choose","geometric","p", "telescoping", "other"],"geometric");
+
+$popvalue = PopUp(["Choose","< 1",">= 1"],"< 1");
+
+$popcon = PopUp(["Choose","is convergent","is divergent"],"is convergent");
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Determine if the series is convergent or divergent.
+$BR If it converges, determine the sum (if possible).
+$BR $BR 
+\( \displaystyle \sum_{n=5}^{\infty} \frac{$c^n}{$d^n} \) 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+We have a \{ $poptype->menu() \} series.
+$BR $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \sum_{n=5}^{\infty} \frac{$c^n}{$d^n} = \sum_{n=5}^{\infty}\)", ans_rule(5), "\( \big( \)", ans_rule(5), "\( \big)^n \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR where \(a = \) \{ans_rule(5)\} and \(r = \) \{ans_rule(5)\}.
+$BR $BR
+Since \( |r| \) is \{ $popvalue->menu() \} then the series \{ $popcon->menu() \} and its sum is \{ans_rule(20)\}.
+ 
+END_TEXT
+
+ANS( $poptype->cmp() );
+
+#series
+ANS(Real(1)->cmp);
+ANS(Compute("$c/$d")->cmp);
+
+#r and a
+ANS(Real(1)->cmp);
+ANS(Compute("$c/$d")->cmp);
+
+ANS( $popvalue->cmp() );
+ANS( $popcon->cmp() );
+
+ANS($ans3->cmp);
+
+
+ENDDOCUMENT;
+		  	

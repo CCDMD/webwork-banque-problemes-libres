@@ -1,0 +1,91 @@
+##DESCRIPTION
+##  Derivative - Product Rule
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation of Functions')
+## KEYWORDS('chain differentiation', 'derivative', 'derivative of the product of functions')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+
+
+Context()->flags->set(useBaseTenLog => 1);
+
+$b  = random(2,8,1);
+
+$inner  = Compute("x tan(x)")->reduce;
+$dinner  = $inner->D('x');
+
+$f = Compute("$b^{x tan(x)}")->reduce;
+$df = $f->D('x');
+
+$ans_eval1 = Compute($inner)->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbreak = $ans_hash1->{score};
+
+$expression = "";
+if ($TESTbreak) 
+{
+$expression = $inner;
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Find the derivative of \( \displaystyle f(x) = $f \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We know $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \text{inner function} = \)",ans_rule(10),"(write the inner function in terms of \( x \))"], align=>LEFT, separation=>0, indent=>5).
+
+EndTable()
+\}
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d}{dx} \left( $expression \right) = \)",ans_rule(30),"(find the derivative of inner function)"], align=>LEFT, separation=>0, indent=>6).
+
+EndTable()
+\}
+
+$BR
+We have $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+
+AlignedRow(["\( \displaystyle \frac{df}{dx} = \)",ans_rule(40),"(write the derivative in terms of \( x \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($inner->cmp);
+ANS($dinner->cmp);
+
+ANS($df->with(limits => [0,1], tolerance => .001)->cmp);
+
+ENDDOCUMENT();

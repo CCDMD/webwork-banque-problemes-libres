@@ -1,0 +1,200 @@
+##DESCRIPTION
+##  Work
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the integral')
+## KEYWORDS('direct applications', 'physical')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"parserPopUp.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGunion.pl",
+"parserPopUp.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#Here we ensure that the height of the tank is always greater than the depth of
+#the water
+$c1 = random(5,12,1);
+$c2 = $c1 ;
+while ($c1== $c2) {
+		$c2 = random(2,11,1);
+		}
+@cs =($c1,$c2);
+@sortedcs = num_sort(@cs);
+$C = $sortedcs[0];
+$A = $sortedcs[1];
+$b = random(3,20,1) ;
+$D = random(1450,1550,10);
+
+$popshape = PopUp(["Choose","a cone","an inverted cone", "a cube", "a cylinder", "a rectangular prism", "a triangular prism"],"an inverted cone");
+
+$popslice = PopUp(["Choose","cylinder", "rectangular prism"],"cylinder");
+
+$displacement = "$A-xk";
+$radius = "$b/$A*xk";
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+A tank in the shape of an inverted right circular cone has a height of \( $A \) meters and
+a radius of \($b \) meters. It is filled with \($C \) meters of hot chocolate. $BR
+Find the work required to empty the tank by pumping the hot chocolate over the
+top of the tank. Note: the hot chocolate density is
+\( $D \, \, kg/m^3 \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD
+$HR
+$BR$BITALIC$BBOLD Part 1: Define and describe the situation $EBOLD$EITALIC $BR$BR
+The tank can be described geometrically as \{ $popshape->menu() \}. $BR $BR
+
+Partition the liquid held in the tank into \( n \) slices of equal width, where each slice can be described geometrically as a \{$popslice->menu\}. $BR $BR
+Let \( x \) be the height of the slice measured from the lower end of the tank 
+where \{ans_rule(2)\} \( \leq x \leq \) \{ans_rule(2)\}. $BR $BR 
+Let \( \Delta x \) be the width of each slice. $BR $BR
+The interval to partition is from \( x = \) \{ans_rule(5)\} to \( x = \) \{ans_rule(5)\}. $BR $BR
+
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 2: Compute an approximation of the work over each subinterval $EBOLD$EITALIC $BR$BR
+Consider the slice in the \( k^{th} \) subinterval \( [x_{k-1}, x_k] \). $BR $BR
+Choose \( x_k \) $BR $BR
+For that \( k^{th} \) subinterval, $BR $BR
+\( W_k = F_k d_k \) $BR $BR 
+where $BR $BR
+\( d_k \approx \) \{ans_rule(30)\} (the distance traveled by the slice to reach the top of the tank) $BR $BR
+\( F_k = m_k g \) where \( g = \) \{ans_rule(10)\} $BR $BR
+\( m_k = \rho V_k \) where \( \rho = \) \{ans_rule(10)\} $BR $BR
+\( V_k \approx \) \{ans_rule(10)\} (formula for the volume of a slice) $BR
+where \( h = \Delta x \) $BR $BR
+
+By similar triangle, \( r_k = \) \{ans_rule(30)\} $BR $BR
+
+Thus $BR $BR
+\( V_k \approx \big( \) \{ans_rule(30)\} \( \big) \Delta x \) $BR $BR
+\( F_k \approx \big( \) \{ans_rule(30)\} \( \big) \Delta x \) $BR $BR
+\( W_k \approx \big( \) \{ans_rule(30)\} \( \big) \Delta x \) $BR $BR
+
+Enter \( xk \) for \(x_k\) and \( rk \) for \(r_k\) $BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 3: Compute an approximation of the total work $EBOLD$EITALIC $BR$BR
+The total work can be approximated by $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle W \approx \sum _{k=1}^n W_k \)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle = \sum _{k=1}^n \)","\( \Big( \)".ans_rule(30)."\( \Big) \Delta x \)","(work in sigma notation)"], align=>LEFT, separation=>0, indent=>20).
+EndTable()
+\}
+
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 4: Compute the exact value of the work $EBOLD$EITALIC $BR$BR
+As \( n \) gets larger, \(\displaystyle W \approx \sum _{k=1}^n W_k \) gets closer to \( W \) $BR $BR
+
+Thus $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle W = \lim_{n\to\infty} \sum _{k=1}^n \)","\( \Big( \)".ans_rule(30)."\( \Big) \Delta x \)","(work in sigma notation)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \)",ans_rule(20),"\( \displaystyle \int \)",ans_rule(1).$BR.$BR.ans_rule(1),"\( \Big( \)".ans_rule(15)."\( \Big) \)","\( \displaystyle \, dx \, \)"],align => "LEFT",separation => 0,indent=>20). 
+  TableSpace(0,0).
+EndTable();
+\}
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["","(set up the appropriate bounds and functions for the integral in terms of \( x \)) "],align => "LEFT",separation => 0,indent=>20). 
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \)",ans_rule(20),"\( \displaystyle \Bigg[ \)",ans_rule(15),"\( \displaystyle \Bigg] \)",ans_rule(4).$BR.$BR.ans_rule(4),$SPACE,"(integrate in terms of \( x \))"],align => "LEFT",separation => 0,indent=>20). 
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \)",ans_rule(50),$SPACE,"(evaluate) "],align => "LEFT",separation => 0,indent=>20). 
+  TableSpace(0,0).
+EndTable();
+\}
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 5: Draw a conclusion $EBOLD$EITALIC $BR$BR
+Thus, the work required to empty the tank by pumping the hot chocolate over the
+top of the tank is \{ans_rule(50)\} joules.
+ $BR $BR
+END_TEXT
+
+#situation
+ANS( $popshape->cmp() );
+ANS( $popslice->cmp() );
+ANS(num_cmp("0"));
+ANS(num_cmp("$A"));
+ANS(num_cmp("0"));
+ANS(num_cmp("$C"));
+
+#subinterval
+ANS(fun_cmp($displacement,var=>["r","h","xk","x","rk"]));
+ANS(num_cmp("9.81"));
+ANS(num_cmp("$D"));
+ANS(fun_cmp("pi*rk^2*h",var=>["r","h","xk","x","rk"]));
+ANS(fun_cmp($radius,var=>["r","h","xk","x","rk"]));
+
+ANS(fun_cmp("pi*($radius)^2",var=>["r","h","xk","x","rk"]));
+ANS(fun_cmp("9.81*$D*pi*($radius)^2",var=>["r","h","xk","x","rk"]));
+ANS(fun_cmp("9.81*$D*pi*($radius)^2*($displacement)",var=>["r","h","xk","x","rk"]));
+
+#all
+ANS(fun_cmp("9.81*$D*pi*($radius)^2*($displacement)",var=>["r","h","xk","x","rk"]));
+
+ANS(fun_cmp("9.81*$D*pi*($radius)^2*($displacement)",var=>["r","h","xk","x","rk"]));
+
+ANS(num_cmp("9.81*$D*pi*($b/$A)^2"));
+ANS(num_cmp("$C"));
+ANS(num_cmp("0"));
+ANS(fun_cmp("($A-x)*(x)^2",var=>["r","h","xk","x","rk"]));
+
+ANS(num_cmp("9.81*$D*pi*($b/$A)^2"));
+ANS(fun_cmp("$A*x^3/3-x^4/4",var=>["r","h","xk","x","rk"]));
+ANS(num_cmp("$C"));
+ANS(num_cmp("0"));
+
+
+#$answer = 9.81*$D*pi*($b/$A)**2*( ($A**4)/12 - .5*$A**2*($A-$C)**2 + (2/3)*$A*($A-$C)**3 -.25*($A-$C)**4);
+$answer = 9.81*$D*pi*($b/$A)**2*( $A*$C**3/3 - $C**4/4);
+ANS(num_cmp($answer));
+ANS(num_cmp($answer));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

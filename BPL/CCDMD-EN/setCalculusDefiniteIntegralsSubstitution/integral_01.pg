@@ -1,0 +1,135 @@
+##DESCRIPTION
+##  Integrals - Substitution method
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('change of bounds', 'change of variable', 'definite integral')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGunion.pl",
+"MathObjects.pl", 
+"PGauxiliaryFunctions.pl",
+"PGcourse.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(3,7,1);
+$b = $a-1;
+
+$int = "\frac{ 1 }{ x^{$a} } \sqrt{ 1 + \frac{ 1 }{ x^{$b} } }";
+$upper = random(3,5,1);
+$lower = 1;
+
+Context("Numeric");
+Context()->variables->add('dx' => 'Real');
+
+#box 3
+$ans_eval3 = Compute("dx")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3 = $ans_hash3->{score};
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Evaluate
+$BR $BR
+\( \displaystyle \int_{$lower}^{$upper} $int \, dx .\)
+$BR
+$BR
+$PAR
+$HR $BR
+$BBOLD Solution $EBOLD $BR $BR
+Let $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["\( u \)", "\( = \)",ans_rule(10),"(choose \(u\))"], align=>LEFT, separation=>0).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(u\))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+When \( x = $upper \), we have \( u = \) \{ ans_rule(5) \}
+$BR $BR 
+When \( x = $lower \), we have \( u = \) \{ ans_rule(5) \}
+$BR $BR
+We have
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \int_{$lower}^{$upper} $int \, dx \)","\( = \)",ans_rule(3)."\( \displaystyle \int\)",ans_rule(4).$BR.$BR.ans_rule(4),ans_rule(10).ans_rule(2)], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["(an integral with \(u\). Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0, indent=>170).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(3)."\( \Bigg[ \)".ans_rule(12)."\( \Bigg] \)",ans_rule(4).$BR.$BR.ans_rule(4),"(integrate with respect to \(u\))"], align=>LEFT, separation=>0, indent=>140).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(40),"(evaluate)"], align=>LEFT, separation=>0, indent=>140).
+EndTable()
+\}
+
+$BR
+
+END_TEXT
+
+#\frac{ 1 }{ x^{$a} } \sqrt{ 1 + \frac{ 1 }{ x^{$b} } }
+
+#u
+ANS(fun_cmp("1+1/x^$b", vars=>["u","x","du","dx"]));
+
+#du/dx
+ANS(fun_cmp("du", vars=>["u","x","du","dx"]));
+if ($TESTbox3) 
+{
+ANS(fun_cmp("dx", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("-$b/x^$a", vars=>["u","x","du","dx"]));
+}
+else
+{
+ANS(fun_cmp("-$b", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("1/x^$a dx", vars=>["u","x","du","dx"]));
+}
+
+#upper & lower
+ANS(num_cmp("1+1/($upper^$b)",relTol=>0.0000001));
+ANS(num_cmp("1+1/($lower^$b)"));
+
+#integral with u
+ANS(num_cmp("-1/$b"));
+ANS(num_cmp("1+1/($upper^$b)",relTol=>0.0000001));
+ANS(num_cmp("1+1/($lower^$b)"));
+ANS(fun_cmp("u^(1/2)", vars=>["u","x","du","dx"], limits => [[0,10],[-1,1],[-1,1],[-1,1]]));
+ANS(fun_cmp("du", vars=>["u","x","du","dx"]));
+
+#answer of integral with u
+ANS(num_cmp("-1/$b"));
+ANS(fun_cmp("u^(3/2)/(3/2)", vars=>["u","x","du","dx"],limits => [[0,10],[-1,1],[-1,1],[-1,1]]));
+ANS(num_cmp("1+1/($upper^$b)",relTol=>0.0000001));
+ANS(num_cmp("1+1/($lower^$b)"));
+
+$ans = 2/($b*3) * ( 2**(3/2) - ( 1 + 1/($upper**$b) )**(3/2) );
+ANS(num_cmp($ans));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

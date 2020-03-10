@@ -1,0 +1,182 @@
+##DESCRIPTION
+##  Vector Operations
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('vector arithmetic', 'properties', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+  "PGstandard.pl",
+  "PGchoicemacros.pl",
+  "MathObjects.pl",
+  "PGcourse.pl",
+  "contextLimitedVector.pl",
+  "PGunion.pl",
+  "scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("LimitedVector-ijk");
+Context()->flags->set( ijk=>1 );
+
+Context()->constants->set(
+  i => {TeX => "\,\mathit{\vec i}"},
+  j => {TeX => "\,\mathit{\vec j}"},
+  k => {TeX => "\,\mathit{\vec k}"},
+);
+
+$a = Vector( (0, random(1,5,1), random(1,5,1)) );
+$b = Vector( (non_zero_random(-5,5,1), random(1,8,1), random(1,8,1)) );
+$c = Vector( (random(1,5,1), non_zero_random(-8,8,1), 0) );
+$y = Vector( (non_zero_random(-8,8,1), non_zero_random(-8,8,1), 0) );
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Let \(\vec a\), \(\vec b\), \(\vec c\) and \(\vec y\) be the following three
+dimensional vectors
+\[ \vec a = $a,\quad \vec b = $b,\quad \vec c = $c,\quad \vec y = $y \]
+
+$PAR
+Perform the following operations on these vectors:
+$PAR
+${BBOLD}(a)$EBOLD
+\( \quad \vec c\cdot\vec a + \vec a\cdot\vec y \) 
+
+$PAR
+${BBOLD}(b)$EBOLD
+\( \quad (\vec a\cdot\vec b)\,\vec a \) 
+
+$PAR
+${BBOLD}(c)$EBOLD
+\( \quad ( (\vec c\cdot\vec c)\,\vec a )\cdot\vec a \) 
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Part A");
+
+Context("Vector");
+$AnsAbox1 = $c.$a;
+$AnsAbox2 = $a.$y;
+$AnsAbox3 = Compute("$c.$a + $a.$y");
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec c\cdot\vec a + \vec a\cdot\vec y \) ","\( = \)",ans_rule(5)."\( + \)".ans_rule(5),"(write the numerical value of \( \vec c\cdot\vec a \) and \( \vec a\cdot\vec y \) )" ], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(10) ], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($AnsAbox1->cmp() );
+ANS($AnsAbox2->cmp() );
+ANS($AnsAbox3->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Part B");
+
+Context("Vector");
+$AnsAbox1 = $a.$b;
+$AnsAbox2 = $a;
+$AnsAbox3 = $AnsAbox1*$a;
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( (\vec a\cdot\vec b)\,\vec a \) ","\( = \)",ans_rule(5)."\( \big(  \)".ans_rule(10)."\( \big) \)","(write the numerical value of \( \vec a\cdot\vec b \) and the vector \( \vec a \) in terms of \( \vec{i}, \vec{j}, \vec{k} \) )" ], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(10),"(write the vector in terms of \( \vec{i}, \vec{j}, \vec{k} \) )" ], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($AnsAbox1->cmp() );
+ANS($AnsAbox2->cmp() );
+ANS($AnsAbox3->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Part C");
+
+Context("Vector");
+$AnsAbox1 = $c.$c;
+$AnsAbox2 = $a;
+$AnsAbox3 = $a;
+$AnsAbox4 = $AnsAbox1*$a;
+$AnsAbox5 = $a;
+$AnsAbox6 = $AnsAbox4.$a;
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( ( (\vec c\cdot\vec c)\,\vec a )\cdot\vec a \) ","\( = \)","\( \Big(  \)".ans_rule(5)."\( \big(  \)".ans_rule(10)."\( \big) \Big) \cdot \big( \)".ans_rule(10)."\( \big) \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","","(write the numerical value of \( \vec c\cdot\vec c \) and the vector \( \vec a \) in terms of \( \vec{i}, \vec{j}, \vec{k} \) )" ], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)","\( \big(  \)".ans_rule(10)."\( \big) \cdot \big( \)".ans_rule(10)."\( \big) \)", "(write the vector \( (\vec c\cdot\vec c)\,\vec a  \) in terms of \( \vec{i}, \vec{j}, \vec{k} \) )" ], align=>LEFT, separation=>0, indent=>85).
+
+EndTable()
+\}
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(10), "(write the numerical value of the dot product)" ], align=>LEFT, separation=>0, indent=>85).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($AnsAbox1->cmp() );
+ANS($AnsAbox2->cmp() );
+ANS($AnsAbox3->cmp() );
+ANS($AnsAbox4->cmp() );
+ANS($AnsAbox5->cmp() );
+ANS($AnsAbox6->cmp() );
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();

@@ -1,0 +1,235 @@
+##DESCRIPTION
+##  Identify RREF
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Matrix Algebra')
+## KEYWORDS('row echelon form matrix', 'reduced row echelon form matrix', 'properties')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 0;
+
+Context("Numeric");
+$a = random(2,10,1)*random(-1,1,2);
+$b = random(2,10,1)*random(-1,1,2);
+$c = random(2,10,1)*random(-1,1,2);
+$d = random(2,10,1)*random(-1,1,2);
+$e = random(2,10,1)*random(-1,1,2);
+$f = random(2,10,1)*random(-1,1,2);
+$g = random(2,10,1)*random(-1,1,2);
+$h = random(2,10,1)*random(-1,1,2);
+$i = random(2,10,1)*random(-1,1,2);
+$j = random(2,10,1)*random(-1,1,2);
+$k = random(2,10,1)*random(-1,1,2);
+$l = random(2,10,1)*random(-1,1,2);
+$m = random(2,10,1)*random(-1,1,2);
+$n = random(2,10,1)*random(-1,1,2);
+$o = random(2,10,1)*random(-1,1,2);
+
+Context("Matrix");
+$M1 = Matrix([[1, $b, $c, $d, $e], [0, 1, 1, 1, 1], [0, 0, 1, 0, $g], [0, 0, 0, 1, 0]]);
+$M2 = Matrix([[1, 1, $h], [1, 0, $i]]);
+$M3 = Matrix([[1, 0, 0, 1], [0, 1, 0, $k], [0, 0, 0, 0]]);
+$M4 = Matrix([[1, 0, 0, $l], [0, 0, 0, 0], [0, 1, 0, $m]]);
+$M5 = Matrix([[1, 0, 0], [0, 1, 0], [0, 0, 0]]);
+$M6 = Matrix([[1, 0, 1], [0, 1, 0]]);
+
+#@corans = ('Row Echelon Form', 'Not in Echelon Form',
+#	   'Reduced Row Echelon Form', 'Not in Echelon Form',
+#   'Reduced Row Echelon Form', 'Reduced Row Echelon Form',
+
+Context("Numeric");
+$popYes1 = PopUp(["?", "is", "is not"],"is not");
+$popReason1 = PopUp(["Choose", "all conditions are satisfied", "condition 1 is not satisfied", "condition 2 is not satisfied", "condition 3 is not satisfied", "condition 4 is not satisfied"],"condition 4 is not satisfied");
+
+$popYes2 = PopUp(["?", "is", "is not"],"is not");
+$popReason2 = PopUp(["Choose", "all conditions are satisfied", "condition 1 is not satisfied", "condition 2 is not satisfied", "condition 3 is not satisfied", "condition 4 is not satisfied"],"condition 3 is not satisfied");
+
+$popYes3 = PopUp(["?", "is", "is not"],"is");
+$popReason3 = PopUp(["Choose", "all conditions are satisfied", "condition 1 is not satisfied", "condition 2 is not satisfied", "condition 3 is not satisfied", "condition 4 is not satisfied"],"all conditions are satisfied");
+
+$popYes4 = PopUp(["?", "is", "is not"],"is not");
+$popReason4 = PopUp(["Choose", "all conditions are satisfied", "condition 1 is not satisfied", "condition 2 is not satisfied", "condition 3 is not satisfied", "condition 4 is not satisfied"],"condition 2 is not satisfied");
+
+$popYes5 = PopUp(["?", "is", "is not"],"is");
+$popReason5 = PopUp(["?", "all conditions are satisfied", "condition 1 is not satisfied", "condition 2 is not satisfied", "condition 3 is not satisfied", "condition 4 is not satisfied"],"all conditions are satisfied");
+
+$popYes6 = PopUp(["?", "is", "is not"],"is");
+$popReason6 = PopUp(["Choose", "all conditions are satisfied", "condition 1 is not satisfied", "condition 2 is not satisfied", "condition 3 is not satisfied", "condition 4 is not satisfied"],"all conditions are satisfied");
+
+$case = random(1,6,1);
+
+if($case == 1)
+{
+Context("Matrix");
+$A = $M1;
+$B = $M2;
+$C = $M3;
+$D = $M4;
+
+Context("Numeric");
+$popYesA = $popYes1;
+$popYesB = $popYes2;
+$popYesC = $popYes3;
+$popYesD = $popYes4;
+
+$popReasonA = $popReason1;
+$popReasonB = $popReason2;
+$popReasonC = $popReason3;
+$popReasonD = $popReason4;
+}
+
+if($case == 2)
+{
+Context("Matrix");
+$A = $M5;
+$B = $M6;
+$C = $M1;
+$D = $M2;
+
+Context("Numeric");
+$popYesA = $popYes5;
+$popYesB = $popYes6;
+$popYesC = $popYes1;
+$popYesD = $popYes2;
+
+$popReasonA = $popReason5;
+$popReasonB = $popReason6;
+$popReasonC = $popReason1;
+$popReasonD = $popReason2;
+}
+
+if($case == 3)
+{
+Context("Matrix");
+$A = $M4;
+$B = $M3;
+$C = $M2;
+$D = $M5;
+
+Context("Numeric");
+$popYesA = $popYes4;
+$popYesB = $popYes3;
+$popYesC = $popYes2;
+$popYesD = $popYes5;
+
+$popReasonA = $popReason4;
+$popReasonB = $popReason3;
+$popReasonC = $popReason2;
+$popReasonD = $popReason5;
+}
+
+if($case == 4)
+{
+Context("Matrix");
+$A = $M2;
+$B = $M4;
+$C = $M6;
+$D = $M3;
+
+Context("Numeric");
+$popYesA = $popYes2;
+$popYesB = $popYes4;
+$popYesC = $popYes6;
+$popYesD = $popYes3;
+
+$popReasonA = $popReason2;
+$popReasonB = $popReason4;
+$popReasonC = $popReason6;
+$popReasonD = $popReason3;
+}
+
+if($case == 5)
+{
+Context("Matrix");
+$A = $M4;
+$B = $M1;
+$C = $M6;
+$D = $M3;
+
+Context("Numeric");
+$popYesA = $popYes4;
+$popYesB = $popYes1;
+$popYesC = $popYes6;
+$popYesD = $popYes3;
+
+$popReasonA = $popReason4;
+$popReasonB = $popReason1;
+$popReasonC = $popReason6;
+$popReasonD = $popReason3;
+}
+
+if($case == 6)
+{
+Context("Matrix");
+$A = $M6;
+$B = $M2;
+$C = $M5;
+$D = $M1;
+
+Context("Numeric");
+$popYesA = $popYes6;
+$popYesB = $popYes2;
+$popYesC = $popYes5;
+$popYesD = $popYes1;
+
+$popReasonA = $popReason6;
+$popReasonB = $popReason2;
+$popReasonC = $popReason5;
+$popReasonD = $popReason1;
+}
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Definition $EBOLD $BR 
+A matrix is in $BBOLD reduced row echelon form $EBOLD (RREF) when it satisfies the following conditions: $BR $BR
+$BBOLD \( \quad \) 1. $EBOLD The leading coefficient in any non-zero row is 1. We call this a $BBOLD leading 1. $EBOLD $BR $BR
+$BBOLD \( \quad \) 2. $EBOLD All zero rows are at the bottom of the matrix. $BR $BR
+$BBOLD \( \quad \) 3. $EBOLD Each leading 1 is in a column to the right of the leading 1 in the previous row. $BR $BR
+$BBOLD \( \quad \) 4. $EBOLD All entries in the column above and below a leading 1 are zero. $BR $BR
+
+
+$BBOLD Question $EBOLD $BR $BR
+Determine whether the following matrices are in reduced row echelon form. $BR $BR
+$BBOLD Note: $EBOLD Choose the first condition that fails. 
+$BR
+$BR
+$HR $HR $BR
+\( $A \) \{ $popYesA->menu() \} in a reduced row echelon form because \{ $popReasonA->menu() \}. $BR $BR
+$HR $HR $BR
+\( $B \) \{ $popYesB->menu() \} in a reduced row echelon form because \{ $popReasonB->menu() \}. $BR $BR
+$HR $HR $BR
+\( $C \) \{ $popYesC->menu() \} in a reduced row echelon form because \{ $popReasonC->menu() \}. $BR $BR
+$HR $HR $BR
+\( $D \) \{ $popYesD->menu() \} in a reduced row echelon form because \{ $popReasonD->menu() \}. $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popYesA->cmp);
+ANS($popReasonA->cmp);
+
+ANS($popYesB->cmp);
+ANS($popReasonB->cmp);
+
+ANS($popYesC->cmp);
+ANS($popReasonC->cmp);
+
+ANS($popYesD->cmp);
+ANS($popReasonD->cmp);
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

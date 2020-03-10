@@ -1,0 +1,245 @@
+##DESCRIPTION
+##  Related Rates
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('economy', 'related rates')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"contextCurrency.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->variables->add(p => 'Real','dx'=> 'Real','dp'=> 'Real','dt'=> 'Real');
+Context()->flags->set(
+      tolerance    => .000001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$dxdt = Compute("dx/dt");
+$dpdt = Compute("dp/dt");
+
+#the answer have to be > than $0.01
+do{
+$c1 = random(200,900,5);
+$p = random(1.1,5,0.1);
+
+$x = random(10000,50000,1000);
+$dx = random(1000,9000,1000);
+} until ( $x*$dx/($c1*$p) >= 10000 );
+
+$term1 = Compute("$c1 p^2")->reduce;
+$dterm1 = $term1->D('p');
+$dterm1_dpdt = $dterm1*$dpdt;
+$term2 = Compute("x^2")->reduce;
+$dterm2 = $term2->D('x');
+$dterm2_dxdt = $dterm2*$dxdt;
+
+$LHS = Compute("$term1 - $term2")->reduce;
+$RHS = $LHS->eval(x=>$x/1000,p=>$p);
+
+$dLHS = $dterm1_dpdt - $dterm2_dxdt;
+$dRHS = Compute("0");
+
+$dLHS_answer = ($dterm1_dpdt + $dterm2*$dx/1000)->substitute(p=>$p,x=>$x/1000);
+$dpdtTerm = ($dterm1)->eval(p=>$p,x=>$x/1000);
+$constant = (-$dterm2*$dx/1000)->eval(p=>$p,x=>$x/1000);
+
+$answer = $constant/$dpdtTerm;
+
+if($answer > 0 )
+{
+    $popInc = PopUp(["Choose", "decreasing", "increasing"],"increasing");
+    $PositiveAnswer = $answer;
+}
+else
+{
+    $popInc = PopUp(["Choose", "decreasing", "increasing"],"decreasing");
+    $PositiveAnswer = -1*$answer;
+}
+
+Context("Currency");
+$CurrencyAnswer = Currency($PositiveAnswer);
+
+Context("Numeric");
+
+$popTime = PopUp(["Choose", "day", "week", "month", "year"],"week");
+
+#check box 1
+$ans_eval1 = $dpdt->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1 = $ans_hash1->{score};
+
+$WantSymbol = "";
+if ($TESTbox1) 
+{
+$WantSymbol = $dpdt;
+}
+
+#check box 2
+$ans_eval2 = Compute("x")->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2 = $ans_hash2->{score};
+
+#check box 4
+$ans_eval4 = $dxdt->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4 = $ans_hash4->{score};
+
+$VariableSymbol_x = "";
+$VariableSymbol_p = "";
+$VariableSymbol_dxdt = "";
+if ($TESTbox2 && $TESTbox4) 
+{
+$VariableSymbol_x = "x";
+$VariableSymbol_p = "p";
+$VariableSymbol_dxdt = $dxdt;
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Question $EBOLD $BR $BR
+
+Suppose the wholesale price of a certain brand of yogurt \(p\) (in dollars/container) and the weekly supply \(x \) (in thousands of containers) are related by \( $LHS = $RHS \)
+$BR
+If \($x\) containers are available for a given week and the supply is falling at a rate of \($dx\) containers/week, find the rate at which the wholesale price is changing.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point. $BR
+
+$BR
+Enter $BBOLD dp/dt $EBOLD for \( \displaystyle \frac{dp}{dt} \) or \( p'\) $BR $BR
+Enter $BBOLD dx/dt $EBOLD for \( \displaystyle \frac{dx}{dt} \) or \( x'\) $BR
+$HR
+$HR
+$BR
+$HR
+$BR$BITALIC$BBOLD Step 1: Identify what the problem is asking $EBOLD$EITALIC $BR$BR
+We want \{ans_rule(5)\} ($BITALIC write the mathematical expression for $BBOLD the rate at which the wholesale price is changing $EBOLD $EITALIC)
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 2: Find the appropriate formula $EBOLD$EITALIC $BR$BR
+
+We know $BR $BR
+\{ans_rule(4)\} \( = \) \{ans_rule(5)\} ($BITALIC write the mathematical expression for $BBOLD $x containers are available for a given week $EBOLD $EITALIC) $BR$BR
+\{ans_rule(4)\} \( = \) \{ans_rule(5)\} ($BITALIC write the mathematical expression for $BBOLD the supply is falling at a rate of $dx containers/week $EBOLD $EITALIC) 
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR
+\( $VariableSymbol_p = \) \{ans_rule(10)\} ($BITALIC find the numerical value $EITALIC) 
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 3: Solve for what the problem is asking $EBOLD$EITALIC $BR$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d}{dt} \big( $LHS \big) \)","\( = \)","\( \displaystyle \frac{d}{dt} \big( $RHS \big) \)"], align=>LEFT, separation=>0, indent=>255).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(40),"\( = \)",ans_rule(5)], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["($BITALIC find the derivative with respect to \( t \) $EITALIC)"], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR $BR 
+and when \( $VariableSymbol_x = \) \{ans_rule(5)\}, \( \displaystyle $VariableSymbol_dxdt = \) \{ans_rule(5)\} and \( $VariableSymbol_p = \) \{ans_rule(5)\} ($BITALIC write the given conditions $EITALIC)
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(40),"\( = \)",ans_rule(5),"($BITALIC replace the given conditions $EITALIC)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \big( \)".ans_rule(10)."\( \big) \displaystyle $WantSymbol \)","\( = \)",ans_rule(10),"($BITALIC isolate \( $WantSymbol \) $EITALIC)"], align=>RIGHT, separation=>0, indent=>175).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle $WantSymbol \)","\( = \)",ans_rule(10),"($BITALIC solve for \($WantSymbol\) $EITALIC)"], align=>RIGHT, separation=>0, indent=>350).
+
+EndTable()
+\}
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 4: Draw a conclusion $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD For the penultimate box, include the dollar sign in your answer. 
+$HR $HR
+$BR
+Thus, the demand is \{ $popInc->menu() \} at a rate of \{ans_rule(5)\} per \{ $popTime->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+#Step 1
+ANS($dpdt->cmp);
+
+#Step 2
+ANS(Compute("x")->cmp);
+ANS(Compute("$x/1000")->cmp);
+ANS($dxdt->cmp);
+ANS(Compute("-$dx/1000")->cmp);
+ANS(Compute("$p")->cmp);
+
+#Step 3
+#derivative
+ANS($dLHS->cmp);
+ANS($dRHS->cmp);
+
+#conditions
+ANS(Compute("$x/1000")->cmp);
+ANS(Compute("-$dx/1000")->cmp);
+ANS(Compute("$p")->cmp);
+
+ANS($dLHS_answer->cmp);
+ANS($dRHS->cmp);
+
+ANS($dpdtTerm->cmp);
+ANS($constant->cmp);
+ANS($answer->cmp);
+
+#Step 4
+ANS($popInc->cmp);
+ANS($CurrencyAnswer->cmp);
+ANS($popTime->cmp);
+
+ENDDOCUMENT();

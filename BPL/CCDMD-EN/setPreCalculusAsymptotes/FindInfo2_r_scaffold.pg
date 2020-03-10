@@ -1,0 +1,302 @@
+##DESCRIPTION
+##   Asymptotes of rational functions
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('abscissa at the origin','asymptote','horizontal asymptote','vertical asymptote','domain','ordinate at the origin')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"contextAlternateIntervals.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$root1 = 0;
+$root2 = non_zero_random(-9,9,1);
+
+$hole  = non_zero_random(-9,9,1);
+while ($root2 == $hole) {$hole = non_zero_random(-9,9,1);}
+
+$v1 = non_zero_random(-9,9,1);
+while ($v1==$root2 || $v1==$hole) {$v1 = non_zero_random(-9,9,1);}
+
+$v2 = -$v1;
+
+@roots = num_sort(($root1,$root2));
+@domain = num_sort(($hole,$v1,$v2));
+@va = num_sort(($v1,$v2));
+
+@num1 = (1,-$root1);
+@num2 = (1,-$root2);
+@num3 = (1,-$hole);
+@den1 = (1,-$hole);
+@den2 = (1,-$v1);
+@den3 = (1,-$v2);
+
+$yhole = ($hole-$root1)*($hole-$root2)/(($hole-$v1)*($hole-$v2));
+
+foreach $i (0..2) {$temp[$i] =0;}
+foreach $i (0..3) {$num[$i] = 0;}
+
+foreach $i (0..1) {
+    foreach $j (0..1) {
+        $temp[$i+$j] = $temp[$i+$j] + $num1[$i]*$num2[$j];
+    }
+}
+foreach $i (0..2) {
+    foreach $j (0..1) {
+        $num[$i+$j] = $num[$i+$j] + $temp[$i]*$num3[$j];
+    }
+}
+
+foreach $i (0..2) {$temp[$i] =0;}
+foreach $i (0..3) {$den[$i] = 0;}
+
+foreach $i (0..1) {
+    foreach $j (0..1) {
+        $temp[$i+$j] = $temp[$i+$j] + $den1[$i]*$den2[$j];
+    }
+}
+foreach $i (0..2) {
+    foreach $j (0..1) {
+        $den[$i+$j] = $den[$i+$j] + $temp[$i]*$den3[$j];
+    }
+}
+
+
+Context("Numeric");
+$equationNum = Compute(" $num[0] x^3 + $num[1] x^2 + $num[2] x")->reduce;
+$equationDen = Compute(" $den[0] x^3 + $den[1] x^2 + $den[2] x + $den[3]")->reduce;
+$equation = $equationNum/$equationDen;
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>1);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$factoredformNum = Compute("x*(x - $root2) * (x - $hole)");
+$factoredformDen = Compute("(x-$hole)*(x - $v1) * (x - $v2)");
+$simplifiedNum = Compute("x*(x - $root2)");
+$simplifiedDen = Compute("(x - $v1) * (x - $v2)");
+
+#
+#  Expanded form
+#
+Context("LimitedPolynomial-Strict");
+$factor1Num = Compute(" $num[0] x^2 + $num[1] x + $num[2]");
+$commonfactorNum = Compute("x");
+
+$factor1Den = Compute("x^2");
+$factor2Den = Compute("$den[2]");
+$commonfactorDen = Compute("x + $den[1]")->reduce;
+
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>1);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 2,
+message => "either 0 or 1 or 2",
+);
+$intfactoredformDen = Compute("$commonfactorDen ($factor1Den + $factor2Den)");
+
+Context("Numeric");
+#box5
+$ans_eval5 = $commonfactorDen->cmp();
+$ans_hash5 = $ans_eval5->evaluate($inputs_ref->{ANS_NUM_TO_NAME(5)});
+$TESTbox5 = $ans_hash5->{score};
+
+#box7
+$ans_eval7 = $commonfactorDen->cmp();
+$ans_hash7 = $ans_eval7->evaluate($inputs_ref->{ANS_NUM_TO_NAME(7)});
+$TESTbox7 = $ans_hash7->{score};
+
+$binomial = "";
+if ($TESTbox5 && $TESTbox7) 
+{
+$binomial = $commonfactorDen;
+}
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$IDomain = Compute("(-inf,$domain[0])U($domain[0],$domain[1])U($domain[1],$domain[2])U($domain[2],inf)");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR $BR
+Find the domain, intercepts and asymptotes for 
+\( \displaystyle f(x) = $equation \) 
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+
+$HR
+$BR$BITALIC$BBOLD Part 1: Factor the numerator $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equationNum \)","\( = \)",ans_rule(2)."\( \Big( \)".ans_rule(15)."\( \Big) \)","(factor the common factor)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(32),"(factorized)"], align=>LEFT, separation=>0, indent=>110).
+EndTable()
+\}
+$BR
+$HR
+$BR$BITALIC$BBOLD Part 2: Factor the denominator $EBOLD$EITALIC $BR$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equationDen \)","\( = \)",ans_rule(2)."\( \Big( \)".ans_rule(10)."\( \Big) \)"."\( + \)".ans_rule(2)."\( \Big( \)".ans_rule(10)."\( \Big) \)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","","(factor the common factor of the first two terms and then factor the common factor of the last two terms. DO NOT CHANGE THE ORDER OF GROUPING.)" ], align=>LEFT, separation=>0, indent=>150).
+EndTable()
+\}
+$BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(30),"(factor out the common binomial \( ($binomial) \))" ], align=>LEFT, separation=>0, indent=>150).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(30),"(factorized)"], align=>LEFT, separation=>0, indent=>150).
+EndTable()
+\}
+
+$BR
+$HR
+$BR$BITALIC$BBOLD Part 3: Simplify \(f(x)\) $EBOLD$EITALIC $BR$BR
+$BBOLD Note: $EBOLD  Any fraction of the type \( \frac{a}{-b} \) must be entered as \( \frac{-a}{b} \).
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{$equationNum}{$equationDen} \)","\( = \)",ans_rule(22).$BR.$HR.ans_rule(22),"(factorized form for the numerator and denominator)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(15).$BR.$HR.ans_rule(15),"(simplified)"], align=>LEFT, separation=>0, indent=>150).
+EndTable()
+\}
+
+$BR
+
+$HR $HR
+$BR$BITALIC$BBOLD Part 4: State the domain $EBOLD$EITALIC $BR$BR
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR 
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. 
+$BR $BR
+The domain of \(f(x) \) is  \{ans_rule(40)\} 
+$BR $BR
+$HR 
+$BR$BITALIC$BBOLD Part 5: State the intercepts $EBOLD$EITALIC $BR$BR
+The \(x\)-intercept(s) of \(f(x)\) are (in ascending order)
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(x \)","\( = \)",ans_rule(5),$SPACE.$SPACE." and ".$SPACE.$SPACE,"\(x \)","\( = \)",ans_rule(5)], align=>RIGHT, separation=>0).
+EndTable()
+\}
+
+$BR $BR
+The \(y\)-intercept of \(f(x)\) is \(y=\) \{ans_rule(5)\}
+$BR $BR
+$HR
+$BR$BITALIC$BBOLD Part 5: State the asymptotes $EBOLD$EITALIC $BR$BR
+The vertical asymptote(s) of \(f(x)\) are (in ascending order)
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(x \)","\( = \)",ans_rule(5),$SPACE.$SPACE." and ".$SPACE.$SPACE,"\(x \)","\( = \)",ans_rule(5)], align=>RIGHT, separation=>0).
+EndTable()
+\}
+
+$BR $BR
+The horizontal asymptote of \(f(x)\) is \(y=\) \{ans_rule(5)\}
+$BR $BR
+
+$HR $HR
+$BR$BITALIC$BBOLD Note:  $EBOLD$EITALIC 
+\(f(x)\) has one hole at the point: 
+(\{ans_rule(10)\} , \{ans_rule(10)\}).$BR $BR
+
+
+END_TEXT
+Context()->texStrings;
+
+#Numerator
+ANS($commonfactorNum->cmp);
+ANS($factor1Num->cmp);
+ANS($factoredformNum->cmp);
+
+#Denominator
+ANS($factor1Den->cmp);
+ANS($commonfactorDen->cmp);
+ANS($factor2Den->cmp);
+ANS($commonfactorDen->cmp);
+ANS($intfactoredformDen->cmp);
+ANS($factoredformDen->cmp);
+
+#f(x)
+ANS($factoredformNum->cmp);
+ANS($factoredformDen->cmp);
+ANS($simplifiedNum->cmp);
+ANS($simplifiedDen->cmp);
+
+#Domain
+ANS($IDomain->cmp);
+
+#intercepts
+ANS(Compute("$roots[0]")->cmp);
+ANS(Compute("$roots[1]")->cmp);
+
+ANS(Compute("0")->cmp);
+
+#asymptotes
+ANS(Compute("$va[0]")->cmp);
+ANS(Compute("$va[1]")->cmp);
+
+ANS(Compute("$num[0]/$den[0]")->cmp);
+
+#hole
+ANS(num_cmp($hole/$num3[0]));
+ANS(num_cmp($yhole));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

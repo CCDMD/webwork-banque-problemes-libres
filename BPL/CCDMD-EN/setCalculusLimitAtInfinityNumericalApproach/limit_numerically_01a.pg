@@ -1,0 +1,166 @@
+##DESCRIPTION
+##  Limit at Infinity - Numerical Approach
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('estimation', 'limit', 'limit at infinity', 'table of values')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"extraAnswerEvaluators.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(1,7,1);
+
+Context("Numeric");
+$f = Formula("1/(x-$a) + 1/abs(x-$a)")->reduce;
+
+$left=0;
+$right="INF";
+
+$if1= $f->eval(x=>10);
+$if2= $f->eval(x=>100);
+$if3= $f->eval(x=>1000);
+
+$mif1= $f->eval(x=>-10);
+$mif2= $f->eval(x=>-100);
+$mif3= $f->eval(x=>-1000);
+
+Context("Numeric");
+Context()->operators->undefine("+","-","*","/"," /","/ ","//");
+$ans_if1 = Compute("$if1");
+$ans_if2 = Compute("$if2");
+$ans_if3 = Compute("$if3");
+
+$ans_mif1 = Compute("$mif1");
+$ans_mif2 = Compute("$mif2");
+$ans_mif3 = Compute("$mif3");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR 
+$BR
+Use the numerical approach to find $BR 
+\( \displaystyle \lim_{ x \rightarrow \infty } \Bigg( $f \Bigg)\) $BR 
+and $BR
+\( \displaystyle \lim_{ x \rightarrow -\infty } \Bigg( $f \Bigg) \)
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR 
+$BBOLD Note: For the tables below, enter a numerical answer as opposed to a formula. $EBOLD $BR $HR 
+$BR
+
+$BITALIC$BBOLD Part A: Estimate the limit of \( \displaystyle f(x) = $f \) as \(x \rightarrow \infty \) $EBOLD$EITALIC $BR$BR
+
+
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+'\[x\]',
+'\(f(x)\)'],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\(10\)',
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\(100\)',
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+
+AlignedRow([
+'\(1000\)',
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+
+EndTable();
+\}
+
+$BR
+We say \( \displaystyle \lim_{ x \rightarrow \infty } \Bigg( $f \Bigg) = \) \{ans_rule(25) \}$BR$BR
+
+
+$HR $BR
+$BITALIC$BBOLD Part B: Estimate the limit of \( \displaystyle f(x) = $f \) as \(x \rightarrow -\infty \) $EBOLD$EITALIC $BR$BR
+
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+'\[x\]',
+'\(f(x)\)'],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\(-10\)',
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\(-100\)',
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+
+AlignedRow([
+'\(-1000\)',
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+
+EndTable();
+\}
+
+$BR
+We say \( \displaystyle\lim_{ x \rightarrow -\infty } \Bigg( $f \Bigg) = \) \{ans_rule(25) \}$BR$BR
+
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+
+
+END_TEXT
+Context()->normalStrings;
+
+#inf
+ANS($ans_if1->cmp);
+ANS($ans_if2->cmp);
+ANS($ans_if3->cmp);
+
+ANS(Compute("0")->cmp);
+
+#-inf
+ANS($ans_mif1->cmp);
+ANS($ans_mif2->cmp);
+ANS($ans_mif3->cmp);
+
+ANS(Compute("0")->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

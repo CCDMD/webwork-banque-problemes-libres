@@ -1,0 +1,223 @@
+##DESCRIPTION
+##  Solve system using Cramer's Rule
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('System of Linear Equations')
+## KEYWORDS('applications', 'determinant', 'méthode de Cramer', 'unique solution')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = non_zero_random(-8,8,2);
+$b = random(3,9,2) * random(-1,1,2);
+$c = random(3,9,2) * random(-1,1,2);
+$d = random(2,9,1) * random(-1,1,2);
+$x = random(-10,10,1);
+$y = non_zero_random(-10,10,1);
+$m = $a * $x + $b * $y;
+$n = $c * $x + $d * $y;
+
+Context("Matrix");
+$A = Matrix([[$a, $b], [$c, $d]]);
+$DetA = $A->det;
+
+$B = Matrix([[$m],[$n]]);
+
+$A1 = Matrix([[$m, $b], [$n, $d]]);
+$DetA1 = $A1->det;
+$A2 = Matrix([[$a, $m], [$c, $n]]);
+$DetA2 = $A2->det;
+
+$X = Matrix([['x'],['y']]);
+
+Context("Numeric");
+Context()->variables->add(y => 'Real');
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)+y');
+$Eq1 = Formula("$a x + $b y")->reduce;
+$Eq2 = Formula("$c x + $d y")->reduce;
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Solve this system by using Cramer's Rule. $BR $BR
+
+\( \quad \begin{aligned}
+$Eq1 &= $m\\
+$Eq2 &= $n\\
+\end{aligned}\)
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Section::Begin("Define the matrices");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(A \vec{x} = \vec{b}\) be the standard notation to represent a system of linear equations. $BR 
+Let \(A_i\) be the matrix formed by replacing the \(i\)-th column of \(A\) by the column vector \(\vec{b}\). $BR $BR
+We have $BR $BR
+\( \quad A = \) \{ $A->ans_array(2) \}, \( \quad \vec{b} = \) \{ $B->ans_array(2) \} and \( \quad \vec{x} = \) \{ $X->ans_array(2) \}
+$BR $BR
+and $BR $BR
+\( \quad A_1 = \) \{ $A1->ans_array(2) \} $BR $BR
+\( \quad A_2 = \) \{ $A2->ans_array(2) \} $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+ANS( $A->cmp() );
+ANS( $B->cmp() );
+ANS( $X->cmp() );
+ANS( $A1->cmp() );
+ANS( $A2->cmp() );
+
+Section::End();
+
+###########################################
+###########################################
+
+Section::Begin("Find the determinant");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \det(A) \)","\( = \)","\( \det $A \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(15)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \det(A_1) \)","\( = \)","\( \det $A1 \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(15)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \det(A_2) \)","\( = \)","\( \det $A2 \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(15)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DetA->cmp() );
+ANS($DetA1->cmp() );
+ANS($DetA2->cmp() );
+
+Section::End();
+
+###########################################
+###########################################
+
+Section::Begin("General solution");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$Answer = Vector($x,$y);
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad x \)","\( = \)", "\( \displaystyle \frac{ \det(A_1)}{\det(A)} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)", ans_rule(10)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad y \)","\( = \)", "\( \displaystyle \frac{ \det(A_2)}{\det(A)} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)", ans_rule(10)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+$BR $BR
+Thus, the general solution is $BR $BR
+\( \quad (x,y) = \) \{ ans_rule(25) \} $BR $BR
+$HR
+$BBOLD Note: $EBOLD $BR
+Write the general solution in one of the following formats: $BR
+\( \quad P \) $BR
+\( \quad P + t \vec{v} \) $BR
+\( \quad P + s \vec{v} + t \vec{w} \) $BR
+\( \quad none \)
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("$x")->cmp);
+ANS(Compute("$y")->cmp);
+ANS($Answer->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popGeo = PopUp(["?","a point","a line","a plane","N/A"],"a point");
+$popSol = PopUp(["?","a unique solution","infinitely many solutions", "no solution"],"a unique solution");
+
+Context()->texStrings;
+BEGIN_TEXT
+The general solution represents \{ $popGeo->menu() \}. $BR $BR
+The system has \{ $popSol->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popGeo->cmp);
+ANS($popSol->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.

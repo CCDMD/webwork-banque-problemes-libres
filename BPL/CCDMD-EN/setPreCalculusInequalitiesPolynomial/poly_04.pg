@@ -1,0 +1,229 @@
+##DESCRIPTION
+##  Algebra problem: polynomial inequalities
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Equations and Inequations)
+##KEYWORDS('interval', 'solving an inequality', 'table of signs')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+##################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"contextAlternateIntervals.pl",
+"contextLimitedPolynomial.pl",
+"contextFraction.pl",
+"parserPopUp.pl",
+"PGcourse.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers=1;
+
+Context("Numeric");
+Context()->variables->add(y=>"Real", z=>"Real", w=>"Real", u=>"Real", v=>"Real", p=>"Real", q=>"Real" );
+
+$var = list_random('x','y','z','w','u','v','p','q');
+
+$a = random(5,10,1);
+$b = random(3,5,1);
+$ab = $a*$b;
+$c = random(2,10,1);
+$e = random(2,5,1);
+$d = $b*$e - random(1,7);
+
+$popLess = PopUp(["?","<","<=","=",">",">="],"<");
+$popLessEqual = PopUp(["?","<","<=","=",">",">="],"<=");
+$popGreater = PopUp(["?","<","<=","=",">",">="],">");
+$popGreaterEqual = PopUp(["?","<","<=","=",">",">="],">=");
+
+Context("Fraction-NoDecimals");
+$endpoint = Fraction($d*$e, ($b*$e - $d + $b*$c));
+
+$case = random(1,4,1);
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+if($case ==1){
+   $Sign1 = '>';
+   $popAnswer = $popGreater;
+   $popAnswerOther = $popLess;
+   $SolSet = Compute( " ($endpoint,inf) " );}
+elsif($case ==2){
+   $Sign1 = '<';
+   $popAnswer = $popLess;
+   $popAnswerOther = $popGreater;
+   $SolSet = Compute( " (-inf,$endpoint) " );}
+elsif($case == 3){
+   $Sign1 = '\geq';
+   $popAnswer = $popGreaterEqual;
+   $popAnswerOther = $popLessEqual;
+   $SolSet = Compute( " [$endpoint,inf) " );}
+elsif($case ==4){
+   $Sign1 = '\leq';
+   $popAnswer = $popLessEqual;
+   $popAnswerOther = $popGreaterEqual;
+   $SolSet = Compute( " (-inf,$endpoint] " );}
+
+Context("Numeric");
+Context()->variables->add(y=>"Real", z=>"Real", w=>"Real", u=>"Real", v=>"Real", p=>"Real", q=>"Real" );
+$LHScoeff[0] = $ab;
+$LHScoeff[1] = $a*($b*$e - $d);
+$LHScoeff[2] = $a*$d*$e;
+$LHS = "$LHScoeff[0] $var^2 + $LHScoeff[1] $var - $LHScoeff[2]";
+
+$RHScoeff[0] = $ab;
+$RHScoeff[1] = $ab*$c;
+$RHS = "$RHScoeff[0] $var^2 - $RHScoeff[1] $var";
+
+$equation_tex = "$LHS $Sign1 $RHS";
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Solve \( \displaystyle $equation_tex \)
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Solve for \($var\)");
+
+Context("Numeric");
+$coeff_S1 = $LHScoeff[1] + $RHScoeff[1];
+
+Context("LimitedPolynomial-Strict");
+Context()->variables->add(y=>"Real", z=>"Real", w=>"Real", u=>"Real", v=>"Real", p=>"Real", q=>"Real" );
+
+$LHS_S2_x = Compute("$coeff_S1 $var");
+$LHS_S2_c = Compute("-$coeff_S1 $var");
+
+$RHS_S2_x = Compute("$LHScoeff[2]");
+$RHS_S2_c = Compute("-$LHScoeff[2]");
+
+$LHS_S3 = Compute("$var");
+
+Context("LimitedFraction");
+#$RHS_S3 = Fraction($coeff_S1,$LHScoeff[1]);
+$RHS_S3 = $endpoint;
+
+Context("Numeric");
+#check box 1
+$ans_eval1 = $LHS_S2_x->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1 = $ans_hash1->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $LHS \)","\( $Sign1 \)","\( $RHS \)"], align=>CENTER, separation=>0, indent=>0).
+
+AlignedRow([ans_rule(10),$popLess->menu(),ans_rule(10),"(combine like terms so that all of the constant terms are on one side of the inequality while \($var\) remains on the other side)"], align=>LEFT, separation=>0, indent=>0).
+
+AlignedRow([ans_rule(10),$popLess->menu(),ans_rule(10),"(isolate \( $var \))"], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+if($TESTbox1)
+{
+    if($LHScoeff[1] > 0)
+    {
+        ANS($LHS_S2_x->cmp);
+        ANS($popAnswer->cmp);
+        ANS($RHS_S2_x->cmp);
+
+        ANS($LHS_S3->cmp);
+        ANS($popAnswer->cmp);
+        ANS($RHS_S3->cmp(studentsMustReduceFractions=>1));
+    }
+    else
+    {
+        ANS($LHS_S2_x->cmp);
+        ANS($popAnswer->cmp);
+        ANS($RHS_S2_x->cmp);
+
+        ANS($LHS_S3->cmp);
+        ANS($popAnswerOther->cmp);
+        ANS($RHS_S3->cmp(studentsMustReduceFractions=>1));
+    }
+}
+else
+{
+    if($LHScoeff[1] < 0)
+    {
+        ANS($RHS_S2_c->cmp);
+        ANS($popAnswer->cmp);
+        ANS($LHS_S2_c->cmp);
+
+        ANS($RHS_S3->cmp(studentsMustReduceFractions=>1));
+        ANS($popAnswer->cmp);
+        ANS($LHS_S3->cmp);
+    }
+    else
+    {
+        ANS($RHS_S2_c->cmp);
+        ANS($popAnswer->cmp);
+        ANS($LHS_S2_c->cmp);
+
+        ANS($RHS_S3->cmp(studentsMustReduceFractions=>1));
+        ANS($popAnswerOther->cmp);
+        ANS($LHS_S3->cmp);
+    }
+}
+
+Section::End();
+
+###########################################
+Section::Begin("State the solution");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD  $BR
+Express your answer in interval notation. $BR
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR 
+$HR $BR
+
+Thus, the solution set is \{ans_rule(35)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($SolSet->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+
+COMMENT('of form a (bx - c)(x + d) <*> e x(x - f), where <*> is any inequality');
+ENDDOCUMENT();

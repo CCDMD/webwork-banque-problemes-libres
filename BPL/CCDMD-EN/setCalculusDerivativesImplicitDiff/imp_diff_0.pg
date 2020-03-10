@@ -1,0 +1,148 @@
+##DESCRIPTION
+##  Find slope by using implicit Differentiation
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation of Functions')
+## KEYWORDS('implicit differentiation', 'derivative')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+
+$x0 = random(-2,2,1);
+$y0 = non_zero_random(-2,2,1);
+$a = random(2,6,1);
+$c = random(2,4,1);
+while (3*$c*$y0**2 + 2*$y0 == 0)
+{
+    $y0 = non_zero_random(-2,2,1);
+}
+$b = $c*$y0**3 + $y0**2 - $a*$x0**2;
+
+#$c y^3 + y^2 - $a x^2 = {$b}
+
+Context("Numeric");
+Context()->variables->add(y => 'Real','dy'=> 'Real','dx'=> 'Real');
+
+$dydx = Compute("dy/dx");
+
+$equationLHS = Compute("$c y^3 + y^2")->reduce;
+$equationRHS = Compute("$a x^2 + $b")->reduce;
+
+$P1 = Compute("$c y^3");
+$dP1 = $P1->D('y');
+
+$P2 = Compute("y^2");
+$dP2 = $P2->D('y');
+
+$P3 = Compute("$a x^2");
+$dP3 = $P3->D('x');
+
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$dRHS = $dP3;
+
+$dLHS = $dP1*$dydx + $dP2*$dydx;
+
+$dydxterm = $dP1 + $dP2;
+$constant = $dP3;
+$answer = $constant/$dydxterm;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Find the slope of the tangent line to the curve \( \displaystyle \, $equationLHS = $equationRHS \) at the point
+\(($x0,$y0)\).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR 
+$BBOLD Note: $EBOLD  
+Enter $BBOLD dy/dx $EBOLD for \( \displaystyle \frac{dy}{dx} \) or for \( y' \)$BR
+$HR $BR
+
+We know $BR
+\( \quad \text{slope of tangent line} = \displaystyle \frac{dy}{dx} \) evaluated at \( x = \) \{ans_rule(2) \} and \( y = \) \{ans_rule(2) \} $BR $BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d}{dx} \Big( $equationLHS \Big) \)","\( = \)","\( \displaystyle \frac{d}{dx} \Big( $equationRHS \Big) \)","(find the derivative with respect to \( x \))"], align=>LEFT, separation=>0, indent=>115).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(20),"\( = \)",ans_rule(20),"(find the derivative)"], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+$BR $BR
+When \( x = \) \{ans_rule(2) \} and \( y = \) \{ans_rule(2) \} , we have
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(20),"\( = \)",ans_rule(20),"(replace \(x\) and \(y\))"], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \big( \)".ans_rule(10)."\( \big) \displaystyle \frac{dy}{dx} \)","\( = \)",ans_rule(10),"(isolate \(\frac{dy}{dx}\))"], align=>RIGHT, separation=>0, indent=>20).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{dy}{dx} \)","\( = \)",ans_rule(10),"(solve for \(\frac{dy}{dx}\))"], align=>RIGHT, separation=>0, indent=>195).
+
+EndTable()
+\}
+$BR $BR
+Thus, the slope of the tangent line is \{ans_rule(5) \}.
+
+END_TEXT
+Context()->texStrings;
+
+ANS(Compute("$x0")->cmp);
+ANS(Compute("$y0")->cmp);
+
+ANS($dLHS->cmp);
+ANS($dRHS->cmp);
+
+ANS(Compute("$x0")->cmp);
+ANS(Compute("$y0")->cmp);
+
+ANS($dLHS->substitute(x=>$x0,y=>$y0)->cmp);
+ANS($dRHS->substitute(x=>$x0,y=>$y0)->cmp);
+
+ANS($dydxterm->substitute(x=>$x0,y=>$y0)->cmp);
+ANS($constant->substitute(x=>$x0,y=>$y0)->cmp);
+ANS($answer->substitute(x=>$x0,y=>$y0)->cmp);
+
+ANS($answer->substitute(x=>$x0,y=>$y0)->cmp);
+
+ENDDOCUMENT();
+
+
+

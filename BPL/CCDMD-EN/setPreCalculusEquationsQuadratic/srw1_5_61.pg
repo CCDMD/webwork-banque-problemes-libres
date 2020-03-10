@@ -1,0 +1,370 @@
+## DESCRIPTION
+##   Solve a Quadratic Equation
+## ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Equations and Inequations)
+##KEYWORDS('quadratic equation', 'solving an equation')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"contextFraction.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$a = random(2,5,1);
+$b = random(2,10,1);
+$c = random(1,4,1);
+$d = sqrt($b*$b+4*$a*$c);
+
+$LHS = Compute("$a x^4-$b x^3")->reduce;
+$RHS = Compute("$c x^2")->reduce;
+$equation = $LHS - $RHS;
+
+@roots = num_sort((Compute("0"),Compute("($b-$d)/(2*$a)"),Compute("($b+$d)/(2*$a)")));
+$solution_set = List($roots[0],$roots[1],$roots[2]);
+
+#
+#  Expanded form
+#
+Context("LimitedPolynomial-Strict");
+$expandedform = Compute("$a x^2 - $b x - $c")->reduce;
+$commonfactor = Compute("x^2");
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Solve \($LHS = $RHS\) 
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Solve for \(x\)");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $LHS \)","\( = \)","\( $RHS \)"], align=>RIGHT, separation=>0, indent=>0).
+
+AlignedRow([ans_rule(22),"\( = \)","\( 0 \)"], align=>LEFT, separation=>0, indent=>0).
+
+AlignedRow([ans_rule(2)."\( \Big( \)".ans_rule(10)."\( \Big) \)","\( = \)","\( 0 \)","(factor the common factor)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($equation->cmp);
+ANS($commonfactor->cmp);
+ANS($expandedform->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context("Numeric");
+$popFactor = PopUp(["Choose", "factor", "complete the square", "use the quadratic formula"],"factor");
+$popSquare = PopUp(["Choose", "factor", "complete the square", "use the quadratic formula"],"complete the square");
+$popQuad = PopUp(["Choose", "factor", "complete the square", "use the quadratic formula"],"use the quadratic formula");
+
+#check box
+$ans_eval5 = $popFactor->cmp();
+$ans_hash5 = $ans_eval5->evaluate($inputs_ref->{ANS_NUM_TO_NAME(5)});
+$TESTFactor = $ans_hash5->{score};
+
+$ans_eval5 = $popSquare->cmp();
+$ans_hash5 = $ans_eval5->evaluate($inputs_ref->{ANS_NUM_TO_NAME(5)});
+$TESTSquare = $ans_hash5->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+Solving \($commonfactor = 0\) gives us \(x = \) \{ans_rule(5)\}. $BR $BR
+
+To solve \( $expandedform = 0\), I will \{ $popFactor->menu() \}.
+$BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($roots[1]->cmp);
+
+if($TESTFactor)
+{
+    ANS($popFactor->cmp() );
+}
+elsif($TESTSquare)
+{
+    ANS($popSquare->cmp() );
+}
+else
+{
+    ANS($popQuad->cmp() );
+}
+
+Section::End();
+###########################################
+
+###########################################
+Section::Begin(" ");
+
+if($TESTFactor)
+{
+if( int($d) == $d)
+{
+    #
+    #  Factored form
+    #
+    Context("PolynomialFactors-Strict");
+    Context()->flags->set(singleFactors=>0);
+    LimitedPowers::OnlyIntegers(
+    minPower => 0, maxPower => 1,
+    message => "either 0 or 1",
+    );
+    $gcdA = gcd($b-$d,2*$a);
+    $coeff1 = 2*$a/$gcdA;
+    $coeff2 = ($b-$d)/$gcdA;
+    $gcdB = gcd($b+$d,2*$a);
+    $coeff3 = 2*$a/$gcdB;
+    $coeff4 = ($b+$d)/$gcdB;
+    $factoredform = Compute("($coeff1 x - $coeff2)($coeff3 x - $coeff4)");
+
+    Context()->texStrings;
+    BEGIN_TEXT
+    \{ 
+    BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+    AlignedRow(["\( $expandedform \)","\( = \)",ans_rule(22),"(factorized)"],       align=>LEFT, separation=>0).
+    EndTable()
+    \}
+    $BR $BR
+    Solving for \(x\) gives us (in ascending order)
+    $BR
+    \(x_1 = \) \{ans_rule(10)\} and \(x_2 = \) \{ans_rule(10)\}
+
+    END_TEXT
+    Context()->normalStrings;
+
+    ANS($factoredform->cmp); 
+
+    ANS($roots[0]->cmp);
+    ANS($roots[2]->cmp);
+}
+else
+{
+Context()->texStrings;
+BEGIN_TEXT
+\( $expandedform \) cannot be factored. Reopen the previous tab and choose a different option. $BR $BR
+Leave the following box empty: \{ans_rule(5)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(str_cmp("ok"));
+}
+}
+elsif($TESTSquare)
+{
+
+#$a x^2 - $b x - $c
+
+Context("Numeric");
+$a2 = 2*$a;
+$a4 = 4*$a;
+$aa4 = 4*$a*$a;
+$bb = $b*$b;
+
+$A = Compute("$a");
+
+$gcdtermAdd = gcd($bb,$aa4);
+$termAddNum = Compute("$bb/$gcdtermAdd");
+$termAddDen = Compute("$aa4/$gcdtermAdd");
+
+$coeffMultiply = $a*$termAddNum;
+$gcdMultiply = gcd($coeffMultiply,$termAddDen);
+$termMultiplyNum = Compute("$coeffMultiply/$gcdMultiply");
+$termMultiplyDen = Compute("$termAddDen/$gcdMultiply");
+
+$coeffK = -$c*$termMultiplyDen-$termMultiplyNum;
+$gcdK = gcd($coeffK,$termMultiplyDen);
+$KNum = Compute("$coeffK/$gcdK");
+$KDen = Compute("$termMultiplyDen/$gcdK");
+
+Context("LimitedPolynomial-Strict");
+$factoredform = Compute("x^2 - $b/$a x");
+$constant = Compute("-$c");
+$perfectSquare = Compute("x - $b/$a2");
+
+#forces a fraction 
+Context("LimitedFraction");
+Context()->operators->undefine("+","-","*");
+$termAdd = Compute("$termAddNum/$termAddDen");
+$termMultiply = Compute("$termMultiplyNum/$termMultiplyDen");
+$K = Compute("$KNum/$KDen");
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle $expandedform \)","\( = \)",ans_rule(5)."\( \Big(  \)".ans_rule(10)."\( \Big)  \)"."\( + \)".ans_rule(5),"(factor \( a \) as \( a (x^2 + \frac{b}{a} x ) + c \))" ], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(5)."\( \Big(  \)".ans_rule(10)."\( + \)".ans_rule(5)."\( - \)".ans_rule(5)."\( \Big)  \)"."\( + \)".ans_rule(5),"(add and subtract \( \left( \frac{b}{2a} \right)^2 \) )" ], align=>LEFT, separation=>0, indent=>90).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(5)."\( \Big(  \)".ans_rule(10)."\( \Big)^2  \)"."\( - \)".ans_rule(5)."\( + \)".ans_rule(5)], align=>LEFT, separation=>0, indent=>90).
+AlignedRow(["","(rewrite into a perfect square as \( a \left( x + \frac{b}{2a} \right)^2 - \frac{b^2}{4a} + c\) )" ], align=>LEFT, separation=>0, indent=>90).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(5)."\( \Big(  \)".ans_rule(10)."\( \Big)^2  \)"."\( + \)".ans_rule(5),"(simplify into the standard form \( a \left( x - h \right)^2 +k\) )"], align=>LEFT, separation=>0, indent=>90).
+
+EndTable()
+\}
+$BR $BR
+Solving for \(x\) gives us (in ascending order)
+$BR
+\(x_1 = \) \{ans_rule(10)\} and \(x_2 = \) \{ans_rule(10)\}
+END_TEXT
+Context()->normalStrings;
+
+#factor a
+ANS($A->cmp);
+ANS($factoredform->cmp);
+ANS($constant->cmp);
+
+#add & subtrac
+ANS($A->cmp);
+ANS($factoredform->cmp);
+ANS($termAdd->cmp);
+ANS($termAdd->cmp);
+ANS($constant->cmp);
+
+#perfect square
+ANS($A->cmp);
+ANS($perfectSquare->cmp);
+ANS($termMultiply->cmp);
+ANS($constant->cmp);
+
+#standard form
+ANS($A->cmp);
+ANS($perfectSquare->cmp);
+ANS($K->cmp);
+
+ANS($roots[0]->cmp);
+ANS($roots[2]->cmp);
+
+}
+else
+{
+
+Context("Numeric");
+Context()->operators->undefine("+","-");
+$sqrtValue = Compute("$d");
+
+#
+# Forces a numerical answer as opposed to a formula
+#
+Context("LimitedPolynomial-Strict");
+Context()->operators->undefine("/"," /","/ ","//");
+$coeff1 = 2*$a;
+$bValue = Compute("$b");
+$TwoaValue = Compute("$coeff1");
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( x \)","\( = \)","\( \displaystyle \frac{-b \pm \sqrt{b^2-4ac}}{2a} \)","(quadratic formula)" ], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(5)."\( \pm \)".ans_rule(5).$BR.$HR.ans_rule(5),"(give the numerical values of \( -b \), \(\sqrt{b^2-4ac}\) and \( 2a\))"], align=>CENTER, separation=>0, indent=>10).
+EndTable()
+\}
+$BR $BR
+Solving for \(x\) gives us (in ascending order)
+$BR
+\(x_1 = \) \{ans_rule(10)\} and \(x_2 = \) \{ans_rule(10)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($bValue->cmp);
+ANS($sqrtValue->cmp);
+ANS($TwoaValue->cmp);
+
+ANS($roots[0]->cmp);
+ANS($roots[2]->cmp);
+
+}
+
+Section::End();
+
+###########################################
+Section::Begin("Check your solution");
+
+Section::End();
+
+###########################################
+Section::Begin("State the solution");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD $BR
+Enter your answer in a comma-separated list. $BR
+If the solution set is the empty set, write $BBOLD none$EBOLD.
+$BR $HR $BR
+Thus, the solution set is {\{ans_rule(30)\}}.$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($solution_set->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

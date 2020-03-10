@@ -1,0 +1,157 @@
+##DESCRIPTION
+##  Lines & Planes
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+           
+DOCUMENT();	# This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"parserImplicitPlane.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Point");
+$P = Point(random(-9, 9, 1), non_zero_random(-9, 9, 1), non_zero_random(-9, 9, 1));
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$normal = Vector(non_zero_random(-9, 9, 1),random(-9, 9, 1),random(-9, 9, 1));
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find the cartesian equation of the plane going through the point \( $P \) and orthogonal to the
+vector \( $normal \).  
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Construct the normal vector");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "orthogonal", "parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n} \) be the normal vector of the plane. $BR $BR
+
+$BITALIC Draw a picture to see the relationship between the given vector and the normal vector. $EITALIC $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n} \) and \( $normal \) are \{ $popParallel->menu() \}
+$BR $BR
+which gives us $BR 
+\( \quad \vec{n} = \) \{ ans_rule(15) \} $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($normal->cmp( checker=>sub {
+  my ($correct, $student, $ansHash) = @_;
+  return $correct->isParallel($student);
+}, showCoordinateHints => 0 ) );
+
+Section::End();
+
+###########################################
+Section::Begin("Choose a support point");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( P \) be the support point of the plane. $BR $BR
+
+We have $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( P \) ","\( = \)",ans_rule(15),"(write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($P->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Construct the cartesian equation");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+#check box 2
+$ans_eval2 = $normal->cmp( checker=>sub {
+  my ($correct, $student, $ansHash) = @_;
+  return $correct->isParallel($student);
+}, showCoordinateHints => 0 );
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2 = $ans_hash2->{score};
+
+$N = $normal;
+if($TESTbox2)
+{
+    $N = Vector($inputs_ref->{ANS_NUM_TO_NAME(2)});
+}
+
+#will accept any vector parallel to n (do not know how to fix)
+Context("ImplicitPlane");
+$plane = ImplicitPlane($P,$N);
+
+Context()->texStrings;
+BEGIN_TEXT
+Thus the cartesian equation of the plane is $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \Phi: \)",ans_rule(50),"(write the cartesian equation as \( a x + b y + c z = d \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($plane->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+
+ENDDOCUMENT();	# This should be the last executable line in the problem.

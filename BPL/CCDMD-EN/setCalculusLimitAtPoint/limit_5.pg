@@ -1,0 +1,123 @@
+##DESCRIPTION
+##  Limit at a point - 0/0
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('0/0', 'factorization', 'indeterminate form', 'limit')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$tag = random(0,4,1);
+@choose = ("y","a","b","s","t");
+$x = $choose[$tag];
+
+$a1 = random(1,9,1);
+$a2 = $a1*$a1;
+
+$aT = $a2;
+
+Context("Numeric");
+Context()->strings->add(UND=>{});
+
+Context()->variables->add($x => 'Real');
+
+$f = Compute("$a2 - $x")->reduce;
+$g = Compute("$a1 - sqrt($x)")->reduce;
+$equation = $f/$g;
+$answer = Compute("2 $a1");
+
+$conjugate = Compute("$a1 + sqrt($x)")->reduce;
+
+$factorednum = $f * $conjugate;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR 
+Find \( \displaystyle \lim_{$x \rightarrow $aT} $equation \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We have $BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{$x \rightarrow $aT} $equation = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \($x\) with \( $aT \))"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \displaystyle \lim_{$x \rightarrow $aT} \)","\( \Bigg( \)",ans_rule(10).$BR.$HR.ans_rule(10),"\( \Bigg) \)","\( \Bigg( \)",ans_rule(10).$BR.$HR.ans_rule(10),"\( \Bigg) \)","(rationalize the denominator)" ], align=>LEFT, separation=>0, indent=>90).
+EndTable()
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{$x \rightarrow $aT} \) ",ans_rule(15).$BR.$HR.ans_rule(15),"(expand the denominator using \( (a-b)(a+b) = a^2 - b^2 \))"],align => "LEFT",separation => 0, indent => 90).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{$x \rightarrow $aT} \) ",ans_rule(10),"(simplify)"],align => "LEFT",separation => 0, indent => 90).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(10),"(evaluate)"],align => "LEFT",separation => 0, indent => 90).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#sub
+ANS(Compute("0")->cmp);
+ANS(Compute("0")->cmp);
+
+#rationalize
+ANS($f->cmp);
+ANS($g->cmp(limits=>[0,4]));
+ANS($conjugate->cmp(limits=>[0,4]));
+ANS($conjugate->cmp(limits=>[0,4]));
+
+#simplify
+ANS($factorednum->cmp(limits=>[-4,4]));
+ANS($f->cmp);
+
+Context()->operators->undefine('/',' /','/ ','//');
+ANS($conjugate->cmp);
+
+ANS($answer->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

@@ -1,0 +1,274 @@
+##DESCRIPTION
+##  Limit at a point - Numerical Approach
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('estimation', 'c/0 undefined form', 'limit', 'left and right limit', 'table of values')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$e = random(1,7,1);
+$a=$e+1;
+
+$eT = "$e";
+
+$aT = "$a";
+
+Context("Numeric");
+Context()->strings->add(UND=>{});
+$f = Formula("1/ln(x-$e)");
+
+$xe1 = Real("$e+0.1");
+$xe2 = Real("$e+0.01");
+$xe3 = Real("$e+0.001");
+$xe4 = Real("$e+0.000001");
+
+$e1 = $f->eval(x=>$xe1); 
+$e2 = $f->eval(x=>$xe2); 
+$e3 = $f->eval(x=>$xe3); 
+$e4 = $f->eval(x=>$xe4); 
+
+$xl1 = Real("$a-0.1");
+$xl2 = Real("$a-0.01");
+$xl3 = Real("$a-0.001");
+$xl4 = Real("$a-0.000001");
+
+$l1 = $f->eval(x=>$xl1);  
+$l2 = $f->eval(x=>$xl2); 
+$l3 = $f->eval(x=>$xl3); 
+$l4 = $f->eval(x=>$xl4);
+
+$xr1 = Real("$a+0.1");
+$xr2 = Real("$a+0.01");
+$xr3 = Real("$a+0.001");
+$xr4 = Real("$a+0.000001");
+
+$r1 = $f->eval(x=>$xr1);  
+$r2 = $f->eval(x=>$xr2); 
+$r3 = $f->eval(x=>$xr3); 
+$r4 = $f->eval(x=>$xr4);
+
+$left = Compute("-INF");
+$right = Compute("INF");
+
+$answer = Compute("DNE");
+$popLimit = PopUp(["Choose", "equal", "not equal"],"not equal");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Question $EBOLD $BR 
+$BR
+Use the numerical approach to find 
+\( \displaystyle \lim_{ x \rightarrow $eT^+ } $f \)
+ and \( \displaystyle \lim_{ x \rightarrow $aT } $f \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR 
+$BBOLD Note: For the tables below, enter a numerical value as opposed to a formula. $EBOLD $BR $HR 
+$BR
+$BITALIC$BBOLD Part A: Estimate the limit of \( \displaystyle f(x) = $f \) as \(x \rightarrow $eT^+\) $EBOLD$EITALIC $BR$BR
+
+
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+'\[x\]',
+'\(f(x)\)'],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\($eT+0.1=\)'.ans_rule(10),
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\($eT+0.01=\)'.ans_rule(10),
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+
+AlignedRow([
+'\($eT+0.001=\)'.ans_rule(10),
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\($eT+0.000001=\)'.ans_rule(10),
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+
+EndTable();
+\}
+
+$BR
+We say \( \displaystyle \lim_{ x \rightarrow $eT^{+} } f(x) = \) \{ans_rule(25) \}$BR$BR
+
+$HR $BR
+$BITALIC$BBOLD Part B: Estimate the limit of \( \displaystyle f(x) = $f \) as \(x \rightarrow $aT\) $EBOLD$EITALIC $BR$BR
+
+
+\(\bullet\) When \(x \rightarrow $aT^-\):
+
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+'\[x\]',
+'\(f(x)\)'],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\($aT-0.1=\)'.ans_rule(10),
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\($aT-0.01=\)'.ans_rule(10),
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+
+AlignedRow([
+'\($aT-0.001=\)'.ans_rule(10),
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\($aT-0.000001=\)'.ans_rule(10),
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+
+EndTable();
+\}
+
+$BR
+We say \( \displaystyle \lim_{ x \rightarrow $aT^{-} } f(x) = \) \{ans_rule(25) \}$BR$BR
+
+\(\bullet\) When \(x \rightarrow $aT^+\):
+
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+'\[x\]',
+'\(f(x)\)'],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\($aT+0.1=\)'.ans_rule(10),
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\($aT+0.01=\)'.ans_rule(10),
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+
+AlignedRow([
+'\($aT+0.001=\)'.ans_rule(10),
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\($aT+0.000001=\)'.ans_rule(10),
+ans_rule(25)],
+align => "RIGHT",separation => 0). 
+  TableSpace(0,0).
+
+EndTable();
+\}
+
+$BR
+We say \( \displaystyle \lim_{ x \rightarrow $aT^{+} } f(x) = \) \{ans_rule(25) \}$BR$BR
+
+Thus \( \displaystyle \lim_{ x \rightarrow $aT } $f = \)
+\{ans_rule(5) \} since \( \displaystyle\lim_{ x \rightarrow $aT^{-} } f(x) \) is 
+\{ $popLimit->menu() \} to 
+\( \displaystyle\lim_{ x \rightarrow $aT^{+} } f(x) \)$BR$BR 
+
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+
+END_TEXT
+Context()->normalStrings;
+
+Context()->operators->undefine("+","-","*","/",' /','/ ','//',"^","**");
+#extra
+ANS($xe1->cmp);
+ANS($e1->cmp);
+ANS($xe2->cmp);
+ANS($e2->cmp);
+ANS($xe3->cmp);
+ANS($e3->cmp);
+ANS($xe4->cmp);
+ANS($e4->cmp);
+
+ANS(Compute("0")->cmp);
+
+#left
+ANS($xl1->cmp);
+ANS($l1->cmp);
+ANS($xl2->cmp);
+ANS($l2->cmp);
+ANS($xl3->cmp);
+ANS($l3->cmp);
+ANS($xl4->cmp);
+ANS($l4->cmp);
+
+ANS($left->cmp);
+
+#right
+ANS($xr1->cmp);
+ANS($r1->cmp);
+ANS($xr2->cmp);
+ANS($r2->cmp);
+ANS($xr3->cmp);
+ANS($r3->cmp);
+ANS($xr4->cmp);
+ANS($r4->cmp);
+
+ANS($right->cmp);
+
+#answer
+ANS($answer->cmp);
+ANS($popLimit->cmp() );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,91 @@
+##DESCRIPTION
+##  Derivative - Product Rule
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation of Functions')
+## KEYWORDS('derivative', 'derivative of the product of functions')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a1 = random(2,7,1);
+$b1 = random(2,8,1);
+$c1 = random(2,7,1);
+$d1 = random(2,6,1);
+$n1 = random(3,7,1);
+$x1 = random(2,5,1);
+
+#If \( f(t) = (t^2 + $a1 t +$b1)($c1 t^2 +$d1) \), find \( f'( t ) \).
+
+Context("Numeric");
+Context()->variables->are(t => 'Real');
+$f = Compute("t^$n1 + $a1 t +$b1");
+$g = Compute("$c1 t^2 +$d1");
+$equation = $f*$g;
+$dequation = $equation->D('t');
+$answer = $dequation->eval(t=>"$x1");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Let \( \displaystyle f(t) = $equation \). 
+Find \(f'(t)\) and then find \( f'( $x1 ) \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR $BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f'(t) \)","\( = \)","\( \displaystyle \frac{d}{dt} \big( \)".ans_rule(10)."\( \big) \cdot \big( \)".ans_rule(10)."\( \big) + \big( \)".ans_rule(10)."\( \displaystyle \big) \frac{d}{dt} \big( \)".ans_rule(10)."\( \big) \)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["(apply the product rule)" ], align=>LEFT, separation=>0, indent=>50).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(40),"(write the derivative)"], align=>LEFT, separation=>0, indent=>40).
+
+EndTable()
+\}
+
+$BR $BR
+and $BR $BR
+\( f'( $x1 ) = \) \{ans_rule(48) \}.
+
+END_TEXT
+Context()->texStrings;
+
+ANS($f->cmp);
+ANS($g->cmp);
+ANS($f->cmp);
+ANS($g->cmp);
+
+ANS($dequation->cmp);
+
+ANS($answer->cmp( tolerance => 0.0001,     
+  tolType => "absolute",
+));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

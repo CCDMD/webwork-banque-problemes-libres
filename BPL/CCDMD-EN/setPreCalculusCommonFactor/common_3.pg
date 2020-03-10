@@ -1,0 +1,142 @@
+##DESCRIPTION
+## Algebraic equations
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('common factor','factorization')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+
+$a = random(1,3,1);
+
+$b = random(4,8,1);
+$bb = $b * $b;
+
+$amb = $a - $b;
+$apb = $a + $b;
+
+#
+# Formula (t + $a)^3 - $bb (t + $a) 
+# 
+Context("Numeric");
+Context()->variables->add(t=>'Real');
+$LHS = Compute("(t + $a)^3");
+$RHS = Compute("$bb (t + $a)");
+$equation = $LHS - $RHS; 
+
+$expression = "\( (t + $a)^3 - $bb (t + $a) \)";
+
+
+#
+#  Expanded form
+#
+Context("LimitedPolynomial-Strict");
+Context()->variables->add(t=>'Real');
+$formula2 = Formula("$bb")->reduce;
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->variables->are(t=>"Real");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$common_factor = Compute("t + $a");
+$expandedform = Formula("(t + $amb) (t + $apb)")->reduce;
+$factoredform = Compute("$expandedform $common_factor");
+
+Context("PolynomialFactors-Strict");
+Context()->variables->are(t=>"Real");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 2,
+message => "either 0 or 2",
+);
+$formula1 = Compute("(t+$a)^2")->reduce;
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Factor \( $equation \) 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR$BITALIC$BBOLD Part 1: Finding the common factor $EBOLD$EITALIC $BR$BR
+
+Common factor \(=\) \{ans_rule(15)\}
+
+
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 2: Finding the other factor $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $LHS \)".$BR.$HR.ans_rule(10),"\(  - \)","\( $RHS \)".$BR.$HR.ans_rule(10),"\( = \)",ans_rule(5)."\( - \)".ans_rule(5),"(divide every term by the common factor)" ], align=>CENTER, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(20),"(factored form by using a difference of squares \( a^2 - b^2 \))"], align=>LEFT, separation=>0, indent=>260).
+EndTable()
+\}
+$BR
+Other factor \(=\) \{ans_rule(15)\}
+
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 3: Writing the factored form $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equation \)","\( = \)",ans_rule(20),"(factorized as common factor \( \times \) other factor)" ], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+END_TEXT
+Context()->normalStrings;
+
+#Part 1
+ANS($common_factor->cmp);
+
+#Part 2
+ANS($common_factor->cmp);
+ANS($common_factor->cmp);
+
+ANS($formula1->cmp);
+ANS($formula2->cmp);
+ANS($expandedform->cmp);
+ANS($expandedform->cmp);
+
+#Part 3
+ANS($factoredform->cmp); 
+
+ENDDOCUMENT();

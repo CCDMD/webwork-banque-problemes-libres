@@ -1,0 +1,177 @@
+##DESCRIPTION
+##  Algebra problem: factor
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('factorization','rational fraction','simplification')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+###########
+# Numerator
+###########
+
+$A = 1;
+$B = random(2,9,1);
+
+$K = 1;
+$L = random(5,8,1);
+
+$c1 = $K*$A;
+$c2 = $K*$B;
+$c3 = $L*$A;
+$c4 = $L*$B;
+
+#
+# Formula ($K*x**2 + $L)($A*x + $B)
+# 
+Context("Numeric");
+$equationNum = Formula("$c1 x^3 + $c2 x^2 + $c3 x + $c4")->reduce; 
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 2,
+message => "either 0 or 1",
+);
+$factoredformNum = Compute("($K*x**2 + $L)($A*x + $B)");
+$simplifiedNum = Compute("$A*x + $B");
+
+#
+#  Expanded form
+#
+Context("LimitedPolynomial-Strict");
+$factor1Num = Compute("$K x^2");
+$factor2Num = Compute("$L");
+$commonfactor = Compute("$A x + $B");
+
+##############
+# Denominator
+##############
+
+$a = random(1,4,1);
+$b = $L;
+$t = $a+$b;
+$n = $a*$b;
+
+#
+# Formula (x^2+$a)(x^2+$b) where a != b
+# 
+Context("Numeric");
+$a1 = $a**2;
+$a2 = 2*$a*$b;
+$a3 = $b**2;
+
+$equationDen = Formula("x^4+$t x^2+$n"); 
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 2,
+message => "either 0 or 1",
+);
+$factoredformDen = Compute("(x^2+$a)(x^2+$b)");
+$simplifiedDen = Compute("x^2+$a");
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR $BR
+
+Factor and simplify \( \displaystyle \frac{$equationNum}{$equationDen} \) 
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$BBOLD Numerator $EBOLD $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equationNum \)","\( = \)",ans_rule(2)."\( \Big( \)".ans_rule(10)."\( \Big) \)"."\( + \)".ans_rule(2)."\( \Big( \)".ans_rule(10)."\( \Big) \)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","","(factor the common factor of the first two terms and then factor the common factor of the last two terms. DO NOT CHANGE THE ORDER OF GROUPING.)" ], align=>LEFT, separation=>0, indent=>150).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(32),"(factorized)"], align=>LEFT, separation=>0, indent=>140).
+EndTable()
+\}
+
+$BR $BR
+$HR
+$BBOLD Denominator $EBOLD $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equationDen \)","\( = \)",ans_rule(22),"(factorized)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+$BR $BR
+$HR
+$BR
+Thus, $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{$equationNum}{$equationDen} \)","\( = \)",ans_rule(22).$BR.$HR.ans_rule(22),"(factorized form for the numerator and denominator)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(15).$BR.$HR.ans_rule(15),"(simplified)"], align=>LEFT, separation=>0, indent=>150).
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+#Numerator
+ANS($factor1Num->cmp);
+ANS($commonfactor->cmp);
+ANS($factor2Num->cmp);
+ANS($commonfactor->cmp);
+
+ANS($factoredformNum->cmp); 
+
+#Denominator
+ANS($factoredformDen->cmp); 
+
+#Final answer
+ANS($factoredformNum->cmp); 
+ANS($factoredformDen->cmp); 
+
+ANS($simplifiedNum->cmp);
+ANS($simplifiedDen->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;
+

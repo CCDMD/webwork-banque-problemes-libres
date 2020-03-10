@@ -1,0 +1,107 @@
+##DESCRIPTION
+##  Limit at Infinity
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('inf/inf', 'limit', 'limit at infinity', 'indeterminate form')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,3,1);
+$d = random(3,4,1);
+$e = random(2,9,1);
+
+$twoa = 2*$a;
+$b = $twoa-1;
+
+$ap1 = $a + 1;
+
+Context()->strings->add(UND=>{});
+
+$equation = Formula("($twoa^x + $b)/($ap1^x + $e($a^{$d x}))");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR 
+Find \( \displaystyle \lim_{x\to\infty} $equation \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We have $BR 
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x\to\infty} $equation = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \(x\) by \( \infty \) )"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x\to\infty} \) ",ans_rule(3)."\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.ans_rule(3)."\( \big( \)".ans_rule(15)."\( \big) \)","(factor the exponential terms with highest bases)"],align => "LEFT",separation => 0, indent => 120).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x\to\infty} \) ","\( \Big( \)",ans_rule(5),"\( \Big)^x \, \Bigg( \)",ans_rule(20).$BR.$HR."\( ( \)".ans_rule(5)."\( )^x + \)".ans_rule(5),,"\( \Bigg)\)","(rewrite as exponential functions)"],align => "LEFT",separation => 0, indent => 120).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(10),,"(evaluate and simplify)"],align => "LEFT",separation => 0, indent => 120).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#sub
+ANS(Compute("INF")->cmp);
+ANS(Compute("INF")->cmp);  
+
+#factor
+ANS(Compute("$twoa^x")->cmp);
+ANS(Compute("1 + $b/$twoa^x")->cmp);
+ANS(Compute("$a^{$d x}")->cmp);
+ANS(Compute("$ap1^x/$a^{$d x} + $e")->cmp);
+
+#simplify
+ANS(Compute("$twoa/$a^$d")->cmp);
+ANS(Compute("1 + $b/$twoa^x")->cmp);
+ANS(Compute("$ap1/$a^$d")->cmp);
+ANS(Compute("$e")->cmp);
+
+#answer
+ANS(Compute("0")->cmp);
+
+ENDDOCUMENT();

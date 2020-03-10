@@ -1,0 +1,251 @@
+##DESCRIPTION
+##  Integrals - Riemann Sums
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration - Definition and Interpretation')
+## KEYWORDS('definite integral', 'right rectangles', 'Riemann sum')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"contextLimitedPolynomial.pl",
+"unionTables.pl",
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"PGgraders.pl"
+);
+
+TEXT(beginproblem());
+
+#install_problem_grader(~~&std_problem_grader); #Remove this line for partial marks.
+
+$showPartialCorrectAnswers = 1;
+
+##############################################
+#  Setup
+
+Context("Numeric");
+Context()->variables->add(k => 'Real');
+Context()->variables->add(n => 'Real');
+
+$a = random(2,8,1);
+
+$b = random(2,9,1);
+while ($b == $a) {
+  $b = random(2,9,1);
+  }
+
+$c  = random(4,9,1);
+
+
+##############################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR 
+
+$BBOLD Question $EBOLD $BR $BR
+Consider the function \( \displaystyle f(x) = $a x^3 + $b \). $BR $BR
+Calculate \( \displaystyle \int_{0}^{$c} \left( $a x^3 + $b\right) \,dx \) by using the Riemann Sum with the right-hand rule.
+
+$BR
+$BR
+$HR
+$PAR
+$BBOLD Solution $EBOLD $BR
+
+$HR
+
+We have $BR $BR
+\( \Delta x = \) \{ans_rule(5) \} (find the width of the rectangles)
+$BR$BR
+
+\( c_k = \) \{ans_rule(15) \} (find \( c_k = x_k = a + k \cdot \Delta x \))
+$BR$BR
+
+\( f(c_k) = \) \{ans_rule(30) \} (replace \( c_k \) into \(f(x)\) and simplify)
+$BR$BR
+$HR
+
+$PAR
+Now $BR $BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \int_{0}^{$c} \left( $a x^3 + $b\right) \,dx \)"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \lim_{n \to \infty} \sum_{k=1}^{n} f(c_k) \Delta x \)"],align => "LEFT",separation => 0, indent => 20).
+  AlignedRow(["","\( \displaystyle = \lim_{n \to \infty} \sum_{k=1}^{n} \Big( \) ".ans_rule(20)."\( \Big) \Big( \)".ans_rule(10)."\( \Big) \)","(replace \(f(c_k) \) and \(\Delta x\))"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \sum_{k=1}^{n} \Big( \) ",ans_rule(10)."\( + \)".ans_rule(10),"\( \Big) \)"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["(simplify formula with powers of \( k \) in descending order)"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \Big( \) ",ans_rule(5)."\( \displaystyle \sum_{k=1}^{n} \)".ans_rule(10)."\( + \)".ans_rule(5)."\( \displaystyle \sum_{k=1}^{n} \)".ans_rule(10)."\( \Big) \)"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["(write your answer with only \(k\)'s in the summation signs. If there are no \(k\)'s, enter \( 1 \))"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \Big( \) ",ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big)\)","\( + \)",ans_rule(5)."\( \big( \)".ans_rule(20)."\( \big) \Big) \)"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["(replace any summation signs with an equivalent formula)"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(= \displaystyle \lim_{n\to\infty} \) ",ans_rule(20).$BR.$HR.ans_rule(20),"\( + \displaystyle \lim_{n\to\infty} \) ",ans_rule(10),"(distribute the limit and simplify if possible)"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"\( + \) ".ans_rule(5),"(evaluate the indeterminate form by replacing \(n\) by \( \infty \))"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \) ",ans_rule(3)."\( \big( \)".ans_rule(20)."\( \big) \)".$BR.$HR.ans_rule(3)."\( \big( \)".ans_rule(20)."\( \big) \)","\( + \) ".ans_rule(5),"(factor the highest powers)"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{n\to\infty} \) ",ans_rule(20).$BR.$HR.ans_rule(20),"\( + \) ".ans_rule(5),"(simplify)"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(10),"(evaluate)"],align => "LEFT",separation => 0, indent => 20).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR 
+$HR
+
+Thus, \( \displaystyle \int_{0}^{$c} \left( $a x^3 + $b \right) \,dx = \) \{ans_rule(15) \}
+
+$BR $BR
+$HR
+$BR
+Enter $BBOLD INF $EBOLD for \(\infty\), $BBOLD MINF $EBOLD for \(-\infty\),
+and $BBOLD DNE $EBOLD if the limit does not exist.
+$BR $BR
+
+
+END_TEXT
+
+#delta x
+ANS(fun_cmp("$c/n",var=>'n'));
+
+#c_k
+ANS(fun_cmp("$c*k/n",var=>["n","k"]));
+
+#f(c_k) 
+ANS(fun_cmp("$a*(($c*k/n)**3) + $b",var=>["n","k"]));
+
+#sub f(ck) & delta x
+ANS(fun_cmp("$a*(($c*k/n)**3) + $b",var=>["n","k"]));
+ANS(fun_cmp("$c/n",var=>'n'));
+
+#Formula($a*$c**4*k^3/n^4 + $b*$c/n)
+ANS(fun_cmp("$a*$c**4*k^3/n^4",var=>["n","k"]));
+ANS(fun_cmp("$b*$c/n",var=>["n","k"]));
+
+#sum with k's
+ANS(fun_cmp("$a*$c**4/n^4",var=>["n","k"]));
+ANS(fun_cmp("k^3",var=>["n","k"]));
+ANS(fun_cmp("$b*$c/n",var=>["n","k"]));
+ANS(fun_cmp("1",var=>["n","k"]));
+
+#sum with n's
+ANS(fun_cmp("$a*$c^4/n^4",var=>["n","k"]));
+ANS(fun_cmp("(n^4+2n^3+n^2)/4",var=>["n","k"]));
+ANS(fun_cmp("$b*$c/n",var=>["n","k"]));
+ANS(fun_cmp("n",var=>["n","k"]));
+
+#Rn 
+
+$gcd = gcd($a*$c**4,4);
+
+ANS(fun_cmp("($a*$c**4/$gcd)*(n^2+2n+1)", vars=>'n'));
+ANS(fun_cmp("4/$gcd*n^2", vars=>'n'));
+ANS(num_cmp("$b*$c"));
+
+#sub
+ANS(str_cmp("INF "));
+ANS(str_cmp("INF "));
+ANS(num_cmp("$b*$c"));
+
+#factor
+ANS(fun_cmp("n^2",var=>'n'));
+ANS(fun_cmp("($a*$c**4/$gcd)*(1+2/n+1/n^2)",var=>'n'));
+ANS(fun_cmp("n^2",var=>'n'));
+ANS(num_cmp("4/$gcd"));
+ANS(num_cmp("$b*$c"));
+
+#simplify
+ANS(fun_cmp("($a*$c**4/$gcd)*(1+2/n+1/n^2)",var=>'n'));
+ANS(num_cmp("4/$gcd"));
+ANS(num_cmp("$b*$c"));
+
+#answer
+$ans2 = $a*$c**4/4 + $b*$c;
+ANS(num_cmp($ans2,strings =>['inf','minf','dne'],relTol=>0.0000001, mode=>'frac'));
+ANS(num_cmp($ans2,strings =>['inf','minf','dne'],relTol=>0.0000001, mode=>'frac'));
+
+#  End do not edit
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

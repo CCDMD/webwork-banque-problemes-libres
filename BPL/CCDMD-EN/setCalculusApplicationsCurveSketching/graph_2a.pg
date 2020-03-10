@@ -1,0 +1,617 @@
+#DESCRIPTION
+#KEYWORDS('maximum,minimum', 'increase,decrease', 'convex')
+#  intervals of increase and decrease, convexity
+#  of a fraction of two linear functions
+#ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('horizontal asymptote', 'vertical asymptote', 'concavity', 'increase and decrease', 'domain', 'maximum', 'Point of inflection', 'sign table', 'plot of curves', 'critical value')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"contextAlternateIntervals.pl",
+"parserPopUp.pl",
+"PGgraphmacros.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers=1;
+$refreshCachedImages = 1; 
+
+$a = random(2,4,2);
+$b = random(5,9,2);
+$c = random(6,8,2);
+$d = random(3,5,2);
+
+Context("Numeric");
+Context()->strings->add(none=>{});
+
+$fnum = Compute("$a x + $b")->reduce;
+$fden = Compute("$c x + $d")->reduce;
+$f = $fnum/$fden;
+
+$VA1 = Compute("-$d/$c");
+$HA = Compute("$a/$c");
+$xint = Compute("-$b/$a");
+$yint = $f->eval(x=>"0");
+$max = Compute("none");
+$maxYvalue = Compute("none");
+$min = Compute("none");
+$minYvalue = Compute("none");
+$pt_inf = Compute("none");
+$pt_infYvalue = Compute("none");
+
+$factored_num = Compute("$a + $b/x");
+$factored_den = Compute("$c + $d/x");
+
+$dfnum = Compute("$a*$d - $b*$c")->reduce;
+$dfden = Compute("($c x + $d)^2")->reduce;
+$df = $dfnum/$dfden;
+
+$ddfnum = Compute("-2 $c ($a*$d - $b*$c)")->reduce;
+$ddfden = Compute("($c x + $d)^3")->reduce;
+$ddf = $ddfnum/$ddfden;
+
+$graph_x_min = $VA1 - 6;
+$graph_x_max = $VA1 + 6;
+$graph_y_min = $HA - 6;
+$graph_y_max = $HA + 6;
+
+#to plot the graph around the undefined points
+$dist = 0.0001;
+$xL1 = $VA1- $dist;
+$xR1 = $VA1+ $dist; 
+
+$f1 = FEQ("$f for x in ($graph_x_min,$xL1) using color:blue and weight:2");
+$f2 = FEQ("$f for x in ($xR1,$graph_x_max) using color:blue and weight:2");
+$f4 = FEQ("$HA for x in ($graph_x_min,$graph_x_max) using color:red and weight:1");
+
+$graph = init_graph($graph_x_min+1,$graph_y_min+1,$graph_x_max-1,$graph_y_max-1,'axes'=>[0,0],'ticks'=>[10,10],'grid'=>[10,10],'size'=>[500,500]);
+
+plot_functions($graph,$f1,$f2,$f4);
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$IDomain = Compute("(-inf,$VA1)U($VA1,inf)");
+
+$IInc1 = Compute("(-inf,$VA1)");
+$IInc2 = Compute("($VA1,inf)");
+
+$IUp1 = Compute("(-inf,$VA1)");
+$IUp2 = Compute("($VA1,inf)");
+
+Context("Numeric");
+
+#check box 9
+$ans_eval9 = $VA1->cmp();
+$ans_hash9 = $ans_eval9->evaluate($inputs_ref->{ANS_NUM_TO_NAME(9)});
+$TESTbox9 = $ans_hash9->{score};
+
+$aT1 = "";
+$gcd_aT1 = gcd($d,$c);
+$num_aT1 = $d/$gcd_aT1;
+$den_aT1 = $c/$gcd_aT1;
+if ($TESTbox9) 
+{
+    $aT1 = "\frac{-$num_aT1}{$den_aT1}";
+}
+
+$const = $b*$c - $a*$d;
+$gcd_const = gcd($const,$c);
+$const_num = $const/$gcd_const;
+$const_den = $c/$gcd_const;
+$zero_p = "0+";
+$zero_m = "0-";
+if($const_den == 1)
+{
+$num_p = "$const_num+";
+$num_m = "$const_num-";
+}
+else
+{ 
+$num_p = "$const_num/$const_den+";
+$num_m = "$const_num/$const_den-";
+}
+$inf_p = "INF";
+$inf_m = "-INF";
+
+$popInc = PopUp(["Choose", "increasing", "decreasing"], "increasing");
+$popDec = PopUp(["Choose", "increasing", "decreasing"], "decreasing");
+
+$popUp = PopUp(["Choose", "concave up", "concave down"], "concave up");
+$popDown = PopUp(["Choose", "concave up", "concave down"], "concave down");
+
+#shape
+# 56 | 57
+# 58 | 59
+#
+$ans_eval56 = $popDec->cmp();
+$ans_hash56 = $ans_eval56->evaluate($inputs_ref->{ANS_NUM_TO_NAME(56)});
+$TESTbox56 = $ans_hash56->{score};
+
+$ans_eval58 = $popDown->cmp();
+$ans_hash58 = $ans_eval58->evaluate($inputs_ref->{ANS_NUM_TO_NAME(58)});
+$TESTbox58 = $ans_hash58->{score};
+
+$Arrow1 = "unknown_arrow.png";
+if($TESTbox56 && $TESTbox58){$Arrow1 = "dec_cd_arrow.png";}
+
+$ans_eval57 = $popDec->cmp();
+$ans_hash57 = $ans_eval57->evaluate($inputs_ref->{ANS_NUM_TO_NAME(57)});
+$TESTbox57 = $ans_hash57->{score};
+
+$ans_eval59 = $popUp->cmp();
+$ans_hash59 = $ans_eval59->evaluate($inputs_ref->{ANS_NUM_TO_NAME(59)});
+$TESTbox59 = $ans_hash59->{score};
+
+$Arrow2 = "unknown_arrow.png";
+if($TESTbox57 && $TESTbox59){$Arrow2 = "dec_cu_arrow.png";}
+
+#check Graph box 60
+$ans_eval60 = Compute("1")->cmp();
+$ans_hash60 = $ans_eval60->evaluate($inputs_ref->{ANS_NUM_TO_NAME(60)});
+$TESTGraph = $ans_hash60->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR $BR
+Answer the following questions in order to sketch  
+\( \displaystyle f(x) =  $f \)
+$BR $BR
+where \( \displaystyle f'(x) = $df \) 
+and 
+\( \displaystyle f''(x) = $ddf \)
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR $HR $BR
+
+$BITALIC$BBOLD Step 1: Find the domain of \( f(x) \) $EBOLD$EITALIC $BR$BR
+
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+$HR
+$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f(x) \) is not defined when ",ans_rule(10),"\( = \)","\( 0 \)","(write the denominator of \( f(x) \))"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( x \)","\( = \)",ans_rule(2),"(isolate for \( x \))"], align=>RIGHT, separation=>0).
+
+EndTable()
+\}
+
+$BR
+The domain of the function is \(\text{dom}(f)=\)\{ans_rule(25)\}$BR $BR
+
+$HR $HR
+$BR$BITALIC$BBOLD Step 2: Find the x-intercept(s) of \( f(x) \) $EBOLD$EITALIC $BR$BR
+$HR
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f(x) = 0 \) when ",ans_rule(10),"\( = \)","\( 0 \)","(write the numerator of \( f(x) \))"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( x \)","\( = \)",ans_rule(2),"(isolate for \( x \))"], align=>RIGHT, separation=>0).
+
+EndTable()
+\}
+
+$BR
+The x-intercept of the function is \(x=\)\{ans_rule(2)\}$BR $BR
+
+
+$HR $HR
+$BR$BITALIC$BBOLD Step 3: Find the y-intercept of \( f(x) \) $EBOLD$EITALIC $BR$BR
+$HR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f(0) = \)",ans_rule(10),"(find the \( y\)-value when \( x = 0 \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+The y-intercept of the function is \(y=\)\{ans_rule(2)\}$BR $BR
+
+
+$HR $HR
+$BR$BITALIC$BBOLD Step 4: Find the vertical asymptote(s) of \( f(x) \) $EBOLD$EITALIC $BR$BR
+$BBOLD Note: $EBOLD  $BR
+For integers, enter the integer followed by + or -. For example, $BBOLD 0+ $EBOLD for \(0^+\) and $BBOLD 0- $EBOLD for \(0^-\). $BR
+For fractions, enter the simplified fraction and $BBOLD NOT $EBOLD the decimal value. For example, $BBOLD 1/2+ $EBOLD for \(\frac{1}{2}^+\) and $BBOLD 1/2- $EBOLD for \(\frac{1}{2}^-\).  $BR
+$HR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f(x) \) is not defined when ","\( x \)","\( = \)",ans_rule(2),"(use the information from the domain)"], align=>RIGHT, separation=>0).
+
+EndTable()
+\}
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR $BR
+
+At \( x = $aT1 \), we have
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x \rightarrow $aT1^+} $f =  \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluating the right-hand side limit by replacing \(x\) with \( $aT1^+ \))"],align => "CENTER",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5),"(evaluate)"],align => "LEFT",separation => 0, indent => 100).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR $BR
+and $BR $BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x \rightarrow $aT1^-} $f =  \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluating the left-hand side limit by replacing \(x\) with \( $aT1^- \))"],align => "CENTER",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5),"(evaluate)"],align => "LEFT",separation => 0, indent => 100).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR $BR
+
+The vertical asymptote of the function is \(x =\)\{ans_rule(2)\}$BR $BR
+
+
+$HR $HR
+$BR$BITALIC$BBOLD Step 5: Find the horizontal asymptote of \( f(x) \) $EBOLD$EITALIC $BR$BR
+$HR $BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x\to\infty} $f =  \lim_{x\to\infty} \) ",ans_rule(3)."\( \big( \)".ans_rule(10)."\( \big) \)".$BR.$HR.ans_rule(3)."\( \big( \)".ans_rule(10)."\( \big) \)","(factor the highest power)"],align => "LEFT",separation => 0, indent => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(10),"(simplify and evaluate)"],align => "LEFT",separation => 0, indent => 90).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR $BR
+and
+ $BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x\to-\infty} $f = \lim_{x\to-\infty} \) ",ans_rule(3)."\( \big( \)".ans_rule(10)."\( \big) \)".$BR.$HR.ans_rule(3)."\( \big( \)".ans_rule(10)."\( \big) \)","(factor the highest power)"],align => "LEFT",separation => 0, indent => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(10),"(simplify and evaluate)"],align => "LEFT",separation => 0, indent => 100).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR $BR
+
+The horizontal asymptote of the function is \(y =\)\{ans_rule(2)\}$BR $BR
+
+
+$HR $HR
+$BR$BITALIC$BBOLD Step 6: Find the interval of increase and decrease $EBOLD$EITALIC $BR$BR
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD none $EBOLD when an \(x\)-value does not exist. $BR
+Enter $BBOLD (none,none) $EBOLD when a minimum or maximum does not exist. $BR
+$BR
+
+$BBOLD Recall: $EBOLD 
+\( \displaystyle f(x) =  $f \) and \( \displaystyle f'(x) = $df \)
+$BR 
+$HR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f'(x) = 0 \) when",ans_rule(10),"\( = \)","\( 0 \)","(write the numerator of \( f'(x) \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( x \)","\( = \)",ans_rule(2),"(isolate for \( x \))"], align=>RIGHT, separation=>0, indent=>215).
+
+
+EndTable()
+\}
+$BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f'(x) \; \text{DNE}\) when ",ans_rule(10),"\( = \)","\( 0 \)","(write the denominator of \( f'(x) \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( x \)","\( = \)",ans_rule(2),"(isolate for \( x \))"], align=>RIGHT, separation=>0, indent=>225).
+
+EndTable()
+\}
+$BR
+Construct the sign table of \(f'(x)\):$BR$BR
+
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+"\(x\)",
+ans_rule(10),ans_rule(10),"(write the intervals for \(x\))"],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+"Sign of \(f'(x)\)",
+ans_rule(10),ans_rule(10),"(write \(+\) or \(-\))"],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+  AlignedRow([
+"Behavior of \(f(x)\)",
+$popInc->menu(),$popInc->menu()],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+EndTable();
+\}
+$BR $BR
+The local maximum of the function is \( \big( \)\{ans_rule(2)\}\( ,\)\{ans_rule(2)\}\( \big) \) (enter the answer as \((x,y)\))$BR $BR
+The local minimum of the function is \( \big( \)\{ans_rule(2)\}\( ,\)\{ans_rule(2)\}\( \big) \) (enter the answer as \((x,y)\))$BR $BR
+
+
+$HR $HR
+$BR$BITALIC$BBOLD Step 7: Find the interval of concave up and concave down $EBOLD$EITALIC $BR$BR
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD none $EBOLD when an \(x\)-value does not exist. $BR
+Enter $BBOLD (none,none) $EBOLD when a point of inflection does not exist. $BR
+$BR
+
+$BBOLD Recall: $EBOLD 
+\( \displaystyle f(x) =  $f \) and \( \displaystyle f''(x) = $ddf \)
+$BR 
+$HR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f''(x) = 0 \) when",ans_rule(10),"\( = \)","\( 0 \)","(write the numerator of \( f''(x) \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( x \)","\( = \)",ans_rule(2),"(isolate for \( x \))"], align=>RIGHT, separation=>0, indent=>220).
+
+
+EndTable()
+\}
+$BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f''(x) \; \text{DNE}\) when ",ans_rule(10),"\( = \)","\( 0 \)","(write the denominator of \( f''(x) \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( x \)","\( = \)",ans_rule(2),"(isolate for \( x \))"], align=>RIGHT, separation=>0, indent=>230).
+
+EndTable()
+\}
+$BR
+Construct the sign table of \(f''(x)\):$BR$BR
+
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+"\(x\)",
+ans_rule(10),ans_rule(10),"(write the intervals for \(x\))"],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+"Sign of \(f''(x)\)",
+ans_rule(10),ans_rule(10),"(write \(+\) or \(-\))"],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+  AlignedRow([
+"Behavior of \(f(x)\)",
+$popUp->menu(),$popUp->menu()],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+EndTable();
+\}
+$BR $BR
+The point of inflection of the function is \( \big( \)\{ans_rule(2)\}\( ,\)\{ans_rule(2)\}\( \big) \) (enter the answer as \((x,y)\))$BR $BR
+
+$HR $HR
+$BR$BITALIC$BBOLD Step 8: Determine the graphical behavior of \( f(x) \) $EBOLD$EITALIC $BR$BR
+$HR $BR
+Using the information from the sign table of \(f'(x)\) and the sign table of \(f''(x)\), determine the graphical behavior of \( f(x) \). $BR$BR
+
+
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+"\(x\)",
+ans_rule(10),ans_rule(10),"(write the intervals for \(x\))"],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+"Behavior of \(f(x)\)",
+$popInc->menu(),$popInc->menu()],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+  AlignedRow([
+"",
+$popUp->menu(),$popUp->menu()],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+  AlignedRow([
+"Shape of \(f(x)\)",
+image($Arrow1 ,width=>60, height=>60 ),image($Arrow2 ,width=>60, height=>60 )],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+EndTable();
+\}
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the shape of the function and make sure all of the answers above are correct before proceeding. $EBOLD $BR $BR
+$HR $HR
+$BR$BITALIC$BBOLD Step 9: Sketch \( f(x) \) $EBOLD$EITALIC $BR$BR
+$HR $BR
+Use the information above to sketch \( f(x) \). You can compare your result with 'WeBWorK' by typing $BBOLD 1 $EBOLD in the $BITALIC Show graph $EITALIC box, or by using any other graphical tools. $BR
+Note that 'WeBWorK' does not draw the vertical tangents. $BR $BR
+
+Show graph: \{ans_rule(2)\}$BR $BR 
+END_TEXT
+
+if( $TESTGraph ) 
+{
+BEGIN_TEXT
+
+$BCENTER
+\{image(insertGraph($graph),width=>400,height=>400,tex_size=>500)\}
+$ECENTER 
+
+END_TEXT
+}
+
+Context()->texStrings;
+
+#Domain
+ANS($fden->cmp);
+ANS($VA1->cmp);
+ANS($IDomain->cmp);
+
+#x-int
+ANS($fnum->cmp);
+ANS($xint->cmp);
+ANS($xint->cmp);
+
+#y-int
+ANS($yint->cmp);
+ANS($yint->cmp);
+
+#VA
+ANS($VA1->cmp);
+
+#aT1
+ANS(str_cmp($num_p));
+ANS(str_cmp($zero_p));
+ANS(str_cmp($inf_p));
+
+ANS(str_cmp($num_m));
+ANS(str_cmp($zero_m));
+ANS(str_cmp($inf_m));
+
+ANS($VA1->cmp);
+
+#HA
+ANS(Compute("x")->cmp);
+ANS($factored_num->cmp);
+ANS(Compute("x")->cmp);
+ANS($factored_den->cmp);
+
+ANS($HA->cmp);
+
+ANS(Compute("x")->cmp);
+ANS($factored_num->cmp);
+ANS(Compute("x")->cmp);
+ANS($factored_den->cmp);
+
+ANS($HA->cmp);
+ANS($HA->cmp);
+
+#inc/dec
+ANS($dfnum->cmp);
+ANS(Compute("none")->cmp);
+ANS($dfden->cmp);
+ANS($VA1->cmp);
+
+ANS($IInc1->cmp);
+ANS($IInc2->cmp);
+
+ANS(str_cmp("-"));
+ANS(str_cmp("-"));
+
+ANS($popDec->cmp);
+ANS($popDec->cmp);
+
+ANS($max->cmp);
+ANS($maxYvalue->cmp);
+ANS($min->cmp);
+ANS($minYvalue->cmp);
+
+#up/down
+ANS($ddfnum->cmp);
+ANS(Compute("none")->cmp);
+ANS($ddfden->cmp);
+ANS($VA1->cmp);
+
+ANS($IUp1->cmp);
+ANS($IUp2->cmp);
+
+ANS(str_cmp("-"));
+ANS(str_cmp("+"));
+
+ANS($popDown->cmp);
+ANS($popUp->cmp);
+
+ANS($pt_inf->cmp);
+ANS($pt_infYvalue->cmp);
+
+#shape
+ANS($IInc1->cmp);
+ANS($IInc2->cmp);
+
+# 56 | 57  
+# 58 | 59  
+
+ANS($ans_eval56);
+ANS($ans_eval57);
+
+ANS($ans_eval58);
+ANS($ans_eval59);
+
+#graph
+ANS(Compute("1")->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

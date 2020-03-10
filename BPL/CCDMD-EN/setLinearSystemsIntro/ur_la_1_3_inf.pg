@@ -1,0 +1,209 @@
+##DESCRIPTION
+##  Describing a system
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('System of Linear Equations')
+## KEYWORDS('augmented matrix', 'number of solutions', 'graphical representation of a system')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextFraction.pl",
+"contextLimitedPolynomial.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+$a11 = 1;
+do 
+{ 
+    $a12 = non_zero_random(-9,9,1);
+} until ($a12!=1 && $a12!=-1);
+
+$b1 = random(-5,5,1);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$A = Matrix([[$a11,$a12]]);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$b = Matrix([[$b1]]);
+
+Context("Numeric");
+Context()->variables->add(y => 'Real');
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)+y');
+$Eq1 = Formula("$a11 x + $a12 y")->reduce;
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Consider the following system of linear equations $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $Eq1 \)","\( = \)","\( $b1 \)"], align=>RIGHT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR 
+${BBOLD}(a)$EBOLD
+Give the augmented matrix of the system. $BR $BR
+${BBOLD}(b)$EBOLD
+Find the general solution of the system. $BR $BR
+${BBOLD}(c)$EBOLD
+Does the general solution represent a point, a line or a plane? $BR $BR
+${BBOLD}(d)$EBOLD
+How many solutions does the system have?
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("Augmented matrix");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR $BR
+\( \quad \) \{ $A->ans_array() \} \{ $b->ans_array() \}
+END_TEXT
+Context()->normalStrings;
+
+ANS( $A->cmp() );
+ANS( $b->cmp() );
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("General solution");
+
+Context("Point");
+$P = Point($b1,0);
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->variables->are(t=>"Real");
+$V = Vector(-$a12,$a11);
+
+#  for checking a particular vector parametric line
+sub mycheck {
+  my ($correct, $student, $ansHash) = @_;
+
+  if ( 
+       ($correct . i == $student . i) && 
+       ($correct . j == $student . j) && 
+       ($correct . k == $student . k) 
+     ) 
+  { return 1; } else { return 0; }
+}
+
+$T = Formula("t");
+$Answer = $P + $T * $V;
+#$Answer = Vector($coeff/$a11,$YValue);
+
+Context("LimitedPolynomial-Strict");
+Context()->variables->add("y"=>'Real');
+$XValue = Compute("$b1 - $a12 y");
+
+Context()->texStrings;
+BEGIN_TEXT
+Solving for \(x\) gives us $BR $BR
+\( \quad x = \) \{ ans_rule(10) \} $BR $BR
+Let \( y = t \) $BR $BR
+Thus, the general solution is $BR $BR
+\( \quad (x,y) = \) \{ ans_rule(25) \} (write the general solution in the format \( P + t \vec{v} \))
+END_TEXT
+Context()->normalStrings;
+
+ANS( $XValue->cmp() );
+ANS( $Answer->cmp() );
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part C & D$EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popGeo = PopUp(["?","a point","a line","a plane"],"a line");
+$popSol = PopUp(["?","a unique solution","infinitely many solutions", "no solution"],"infinitely many solutions");
+
+Context()->texStrings;
+BEGIN_TEXT
+The general solution represents \{ $popGeo->menu() \}. $BR $BR
+The system has \{ $popSol->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popGeo->cmp);
+ANS($popSol->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();       # This should be the last executable line in the problem. 

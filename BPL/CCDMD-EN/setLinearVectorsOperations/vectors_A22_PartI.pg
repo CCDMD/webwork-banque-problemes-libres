@@ -1,0 +1,179 @@
+##DESCRIPTION
+##  Vector Operations
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('vector arithmetic', 'properties', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$popScalar = PopUp(["Choose", "gives a scalar", "gives a vector", "makes no sense"],"gives a scalar");
+$popVector = PopUp(["Choose", "gives a scalar", "gives a vector", "makes no sense"],"gives a vector");
+$popNoSense = PopUp(["Choose", "gives a scalar", "gives a vector", "makes no sense"],"makes no sense");
+
+$popScalarMultiplication = PopUp(["Choose", "the norm needs a vector to give a number", "the dot product needs two vectors to give a number", "scalar addition needs two numbers to give a number", "scalar multiplication needs a number with a vector to give a vector", "vector addition needs two vectors to give one vector"],"scalar multiplication needs a number with a vector to give a vector");
+
+$popVectorAddition = PopUp(["Choose", "the norm needs a vector to give a number", "the dot product needs two vectors to give a number", "scalar addition needs two numbers to give a number", "scalar multiplication needs a number with a vector to give a vector", "vector addition needs two vectors to give one vector"],"vector addition needs two vectors to give one vector");
+
+$popScalarAddition = PopUp(["Choose", "the norm needs a vector to give a number", "the dot product needs two vectors to give a number", "scalar addition needs two numbers to give a number", "scalar multiplication needs a number with a vector to give a vector", "vector addition needs two vectors to give one vector"],"scalar addition needs two numbers to give a number");
+
+$popNorm = PopUp(["Choose", "the norm needs a vector to give a number", "the dot product needs two vectors to give a number", "scalar addition needs two numbers to give a number", "scalar multiplication needs a number with a vector to give a vector", "vector addition needs two vectors to give one vector"],"the norm needs a vector to give a number");
+
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Let \( \vec{u}, \vec{v}\), and \( \vec{w}\) be vectors in a given Euclidean space and let \( c \) and \( d \) be non-zero scalars. Determine whether each of the following expressions is a $BITALIC scalar$EITALIC, a $BITALIC vector$EITALIC, or $BITALIC makes no sense$EITALIC . 
+
+$PAR
+${BBOLD}(a)$EBOLD
+\( \quad ( \vec{u} \bullet \vec{v}) \vec{w} \) 
+$PAR
+${BBOLD}(b)$EBOLD
+\( \quad \vec{u} \bullet \vec{v} + c \vec{w} \) 
+$PAR
+${BBOLD}(c)$EBOLD
+\( \quad \| \vec{u} + c \vec{v} \| + d \) 
+$PAR
+${BBOLD}(d)$EBOLD
+\( \quad \| \vec{u} \bullet \vec{v} \| \) 
+
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Part A");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+\( ( \vec{u} \bullet \vec{v}) \vec{w} \) \{ $popVector->menu() \} since $BR $BR
+\(  \vec{u} \bullet \vec{v} \) \{ $popScalar->menu() \} $BR $BR 
+\(  \vec{w} \) \{ $popVector->menu() \} $BR $BR 
+and \{ $popScalarMultiplication->menu() \}
+$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popVector->cmp() );
+ANS($popScalar->cmp() );
+ANS($popVector->cmp() );
+ANS($popScalarMultiplication->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Part B");
+
+Context("Numeric");
+#check box 8
+$ans_eval8 = $popVectorAddition->cmp();
+$ans_hash8 = $ans_eval8->evaluate($inputs_ref->{ANS_NUM_TO_NAME(8)});
+$TESTbox8 = $ans_hash8->{score};
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+\( \vec{u} \bullet \vec{v} + c \vec{w} \) \{ $popNoSense->menu() \} since $BR $BR
+\(  \vec{u} \bullet \vec{v}\) \{ $popScalar->menu() \} $BR $BR
+\(  c \vec{w}\) \{ $popVector->menu() \} $BR $BR 
+and \{ $popVectorAddition->menu() \}
+$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popNoSense->cmp() );
+ANS($popScalar->cmp() );
+ANS($popVector->cmp() );
+
+if($TESTbox8)
+{
+    ANS($popVectorAddition->cmp() );
+}
+else
+{
+    ANS($popScalarAddition->cmp() );
+}
+
+Section::End();
+
+###########################################
+Section::Begin("Part C");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+\( \| \vec{u} + c \vec{v} \| + d \) \{ $popScalar->menu() \} because $BR $BR
+\(  \vec{u} + c \vec{v} \) \{ $popVector->menu() \} $BR $BR
+\(  \| \vec{u} + c \vec{v} \| \) \{ $popScalar->menu() \} $BR $BR
+\(  d \) \{ $popScalar->menu() \} $BR $BR
+and \{ $popScalarAddition->menu() \}
+$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popScalar->cmp() );
+ANS($popVector->cmp() );
+ANS($popScalar->cmp() );
+ANS($popScalar->cmp() );
+ANS($popScalarAddition->cmp() );
+
+Section::End();
+
+###########################################
+Section::Begin("Part D");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+\( \| \vec{u} \bullet \vec{v} \| \) \{ $popNoSense->menu() \} since $BR $BR
+\(  \vec{u} \bullet \vec{v} \) \{ $popScalar->menu() \} $BR $BR
+and \{ $popNorm->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popNoSense->cmp() );
+ANS($popScalar->cmp() );
+ANS($popNorm->cmp() );
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

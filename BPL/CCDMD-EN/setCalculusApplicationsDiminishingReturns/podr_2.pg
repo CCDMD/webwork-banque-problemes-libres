@@ -1,0 +1,381 @@
+## DESCRIPTION
+## Calculus: Point of Diminishing Returns
+## ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('economy', 'Point of inflection')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"contextCurrency.pl",
+"contextAlternateIntervals.pl",
+"PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#code to make sure that PoI (Point of Inflection) is positive
+$ans = 0;
+while (($ans < 0) || ($ans == 0))
+{
+$a = random(2,9,1);
+$b = random(2,9,1);
+$d = random(2,9,1);
+$c = random(5,9,2);
+$c1 = int($c/2);
+$c2 = $c - $c1;
+
+$ans1 = -$c**2*$b*$c2/$c*($c2/$c-1);
+$ans2 = $c**2*($a*$c1/$c*($c1/$c-1));
+$ans3 = ($c2/$c-2)-($c1/$c-2);
+$ans = (-$ans2/$ans1)**(1/$ans3)-1/$d;
+}
+
+Context("Numeric");
+Context()->variables->are(I => ['Real', limits=>[1,3]],R => 'Real');
+Context()->strings->add(none=>{});
+Context()->flags->set(
+      tolerance    => .01,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$inner = Formula(" I + 1/$d");
+
+$term1  = Compute("$a ($inner ) ^{$c1/$c}")->reduce;
+$term2  = Compute("-$b ( $inner ) ^{$c2/$c}")->reduce;
+
+#Tex
+$TexEquation = "$a \bigg( I + \frac{1}{$d} \bigg) ^{$c1/$c} - $b \bigg( I + \frac{1}{$d} \bigg) ^{$c2/$c}";
+
+$equation = $term1 + $term2;
+$dequation =  $equation->D('I');
+$d2equation = $dequation->D('I');
+
+$dterm1 = $term1->D('I');
+$d2term1 = $dterm1->D('I');
+$dterm2 = $term2->D('I');
+$d2term2 = $dterm2->D('I');
+
+$gcdTerm1 = gcd($a*$c1*($c1-$c),$c**2);
+$coeffTerm1Num = $a*$c1*($c1-$c)/$gcdTerm1;
+$coeffTerm1Den = $c**2/$gcdTerm1;
+
+$gcdTerm2 = gcd($b*$c1*($c-$c1),$c**2);
+$coeffTerm2Num = $b*$c1*($c-$c1)/$gcdTerm2;
+$coeffTerm2Den = $c**2/$gcdTerm2;
+
+$gcdNum = gcd($coeffTerm1Num, $coeffTerm2Num);
+$maxDen = max($coeffTerm1Den, $coeffTerm2Den);
+
+$common_factor = Compute("$gcdNum/$maxDen $inner^(($c1-2*$c)/$c)");
+
+$formula1 = Compute("$d2term1/$common_factor");
+$formula2 = Compute("$d2term2/$common_factor");
+$other_factor = $formula1 + $formula2;
+#$other_factor = Compute("$d2term1/$common_factor + $d2term2/$common_factor");
+
+$expanded_other_factor = $common_factor*$other_factor;
+
+$ExpandedNum = Compute("$gcdNum $other_factor");
+$ExpandedDen = Compute("$maxDen $inner^(-($c1-2*$c)/$c)");
+
+$coeffOFNum = ($coeffTerm1Num/$coeffTerm1Den)/($gcdNum/$maxDen);
+$coeffOFDen = (-$coeffTerm2Num/$coeffTerm2Den)/($gcdNum/$maxDen);
+$PoI = Compute("($coeffOFNum/$coeffOFDen)^(-$c/(2*$c1-$c))-1/$d");
+
+Context("Currency");
+$CurrencyAnswer = Currency($PoI);
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$IUp1 = Compute("[0,$PoI)");
+$IUp2 = Compute("($PoI,inf)");
+
+Context("Numeric");
+
+#box 4
+$ans_eval4 = $d2term1->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbreak = $ans_hash4->{score};
+
+$popUp = PopUp(["Choose", "concave up", "concave down"], "concave up");
+$popDown = PopUp(["Choose", "concave up", "concave down"], "concave down");
+$popMax = PopUp(["Choose", "maximum", "minimum"], "maximum");
+$popMin = PopUp(["Choose", "maximum", "minimum"], "minimum");
+$popRapid = PopUp(["Choose", "rapid", "slow"], "rapid");
+$popSlow = PopUp(["Choose", "rapid", "slow"], "slow");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR 
+$BBOLD Question $EBOLD $BR $BR
+The revenue function \( R \) of a product is given by $BR
+\( \quad \displaystyle R = $TexEquation \)$BR 
+where \( I \) is the amount invested to produce and market the product. Find and verify the point of diminishing returns for that product. $BR
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR$BITALIC$BBOLD Step 1: Finding the first derivative $EBOLD$EITALIC $BR$BR
+
+We have $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+
+AlignedRow(["\( \displaystyle R'(I) = \)",ans_rule(40),"(find the derivative in terms of \( I \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+$HR
+$BR$BITALIC$BBOLD Step 2: Finding the second derivative $EBOLD$EITALIC $BR$BR
+We have $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+
+AlignedRow(["\( \displaystyle R''(I) = \)",ans_rule(40),"(find the derivative in terms of \( I \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+$HR
+$BR$BITALIC$BBOLD Step 3: Finding the common factor of the second derivative $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD Note: $EBOLD $BR 
+Take \( \frac{1}{$maxDen} \), or its simplified form, as part of the common factor. $BR
+Take the positive common factor. $BR
+$HR $HR
+$BR 
+
+Common factor \(=\) \{ans_rule(25)\}
+
+$BR $BR
+$HR
+$BR$BITALIC$BBOLD Step 4: Finding the other factor $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(25).$BR.$HR.ans_rule(25),"\( + \)",ans_rule(25).$BR.$HR.ans_rule(25),"(divide every term of the second derivative by the common factor)" ], align=>CENTER, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(25)."\( + \)".ans_rule(25),"(simplify each term)" ], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(15),"(simplified form)"], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+$BR 
+$BR
+Other factor \(=\) \{ans_rule(15)\}
+
+$BR $BR
+$HR
+$BR$BITALIC$BBOLD Step 5: Writing the factored form of the second derivative $EBOLD$EITALIC $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( R''(I) \)","\( = \)",ans_rule(40),"(factorized as common factor \( \times \) other factor)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(20).$BR.$HR.ans_rule(20),"(rewrite with only positive exponents)" ], align=>LEFT, separation=>0, indent=>33).
+
+EndTable()
+\}
+
+$BR $BR
+$HR 
+$BR$BITALIC$BBOLD Step 6: Find the interval of concave up and concave down $EBOLD$EITALIC $BR $BR
+$HR $HR
+$BBOLD Note: $EBOLD $BR
+Enter $BBOLD none $EBOLD when an \(I\)-value does not exist. $BR
+Enter $BBOLD none $EBOLD when a point of inflection does not exist. $BR
+$HR $HR 
+$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( R''(I) = 0 \) when",ans_rule(20),"\( = \)","\( 0 \)","(write the numerator of \( R''(I) \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( I \)","\( = \)",ans_rule(10),"(isolate for \( I \))"], align=>RIGHT, separation=>0, indent=>290).
+
+
+EndTable()
+\}
+$BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( R''(I) \; \text{DNE}\) when ",ans_rule(20),"\( = \)","\( 0 \)","(write the denominator of \( R''(I) \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( I \)","\( = \)",ans_rule(10),"(isolate for \( I \))"], align=>RIGHT, separation=>0, indent=>300).
+
+EndTable()
+\}
+$BR
+Construct the sign table of \(R''(I)\):$BR$BR
+
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+"\(I\)",
+ans_rule(10),ans_rule(10),"(write the intervals for \(I\))"],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+"Sign of \(R''(I)\)",
+ans_rule(10),ans_rule(10),"(write \(+\) or \(-\))"],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+  AlignedRow([
+"Behavior of \(R(I)\)",
+$popUp->menu(),$popUp->menu()],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+
+EndTable()
+\}
+$BR $BR
+The point of inflection of the function is \(I =\)\{ans_rule(10)\}
+$BR $BR
+$HR
+$BR$BITALIC$BBOLD Step 7: Draw a conclusion $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD Note: $EBOLD For the first box, include the dollar sign in your answer. 
+$HR $HR
+$BR
+Thus, when the company invests \{ans_rule(10)\}, the rate of change of revenue is at is \{ $popMax->menu() \}. Before that amount, the investment gives a \{ $popRapid->menu() \} increase in the revenue, and after that amount, the investment gives a slow \{ $popSlow->menu() \} increase in the revenue.
+
+$BR
+
+END_TEXT
+Context()->texStrings;
+
+#Step 1
+ANS($dequation->cmp);
+
+#Step 2
+ANS($d2equation->cmp);
+
+#Step 3
+ANS($common_factor->cmp);
+
+#Step 4
+if ($TESTbreak) 
+{
+ANS($d2term1->cmp);
+ANS($common_factor->cmp);
+ANS($d2term2->cmp);
+ANS($common_factor->cmp);
+
+ANS($formula1->cmp);
+ANS($formula2->cmp);
+}
+else
+{
+ANS($d2term2->cmp);
+ANS($common_factor->cmp);
+ANS($d2term1->cmp);
+ANS($common_factor->cmp);
+
+ANS($formula2->cmp);
+ANS($formula1->cmp);
+}
+
+ANS($other_factor->cmp);
+ANS($other_factor->cmp);
+
+#Step 5
+ANS($expanded_other_factor->cmp);
+ANS($ExpandedNum->cmp);
+ANS($ExpandedDen->cmp);
+
+#Step 6
+ANS($ExpandedNum->cmp);
+ANS($PoI->cmp);
+ANS($ExpandedDen->cmp);
+ANS(Compute("none")->cmp);
+
+ANS($IUp1->cmp);
+ANS($IUp2->cmp);
+
+$CheckPoint = random(1,$PoI,1);
+if ($d2equation->eval(I=>$CheckPoint) < 0)
+{
+ANS(str_cmp("-"));
+ANS(str_cmp("+"));
+
+ANS($popDown->cmp);
+ANS($popUp->cmp);
+}
+else
+{
+ANS(str_cmp("+"));
+ANS(str_cmp("-"));
+
+ANS($popUp->cmp);
+ANS($popDown->cmp);
+}
+ANS($PoI->cmp);
+
+#Step 7
+ANS($CurrencyAnswer->cmp);
+ANS($popMax->cmp);
+if ($d2equation->eval(I=>$CheckPoint) < 0)
+{
+ANS($popSlow->cmp);
+ANS($popRapid->cmp);
+}
+else
+{
+ANS($popRapid->cmp);
+ANS($popSlow->cmp);
+}
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

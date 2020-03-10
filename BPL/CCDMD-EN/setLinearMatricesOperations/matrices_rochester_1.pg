@@ -1,0 +1,140 @@
+##DESCRIPTION
+##  Matrix Operations
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Matrix Algebra')
+## KEYWORDS('addition and subtraction', 'scalar nilpotence multiplication')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT() ;        
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+$A = Matrix([ 
+[random(-4,4,1),non_zero_random(-4,4,1),random(-4,4,1)],                [non_zero_random(-4,4,1),random(-4,4,1),random(-4,4,1)], 
+[random(-4,4,1),random(-4,4,1),non_zero_random(-4,4,1)]
+]);
+
+$B = Matrix([ 
+[random(-4,4,1),non_zero_random(-4,4,1),random(-4,4,1)],                [non_zero_random(-4,4,1),random(-4,4,1),random(-4,4,1)], 
+[random(-4,4,1),random(-4,4,1),non_zero_random(-4,4,1)]
+]);
+
+do
+{
+    $mult1 = random(2,4,1);
+    $mult2 = random(2,4,1);
+    $mult3 = random(2,6,1);
+} until ($mult1 != $mult2 && $mult1 != $mult3);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Let \(A=$A\) and \(B=$B\). 
+$BR $BR
+
+$BBOLD (a) $EBOLD Find \( $mult3 A\) $BR $BR
+$BBOLD (b) $EBOLD Find \( $mult1 A - $mult2 B \) 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Matrix");
+$C = $mult3*$A;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad $mult3 A = \) \{ $C->ans_array() \} $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $C->cmp() );
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin(" ");
+
+Context("Matrix");
+$D1 = $mult1*$A;
+$D2 = $mult2*$B;
+$D = $D1 - $D2;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $mult1 A - $mult2 B \)","\( = \)",$D1->ans_array(2)."\( - \)".$D2->ans_array(2)], align=>LEFT, separation=>0).
+
+AlignedRow(["","","(write the components of \( $mult1 A \) and then the components of \( $mult2 B \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",$D->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $D1->cmp() );
+ANS( $D2->cmp() );
+ANS( $D->cmp() );
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT() ;        

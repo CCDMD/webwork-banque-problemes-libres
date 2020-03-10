@@ -1,0 +1,164 @@
+##DESCRIPTION
+##  Algebra problem: long division
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('polynomial division')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+do
+{
+$a = non_zero_random(-3,3,1);
+$b = random(-1,1,2)*random(2,5,1);
+$c = random(-1,1,2)*random(2,5,1);
+$d = random(-1,1,2)*random(2,5,1);
+$e = random(-1,1,2)*random(2,5,1);
+$f = random(2,5,1);
+
+$coeff1 = $a*$f;
+$coeff2 = $e + $coeff1;
+$coeff3 = $coeff2*$a;
+$coeff4 = $d + $coeff3;
+$coeff5 = $a*$coeff4;
+$coeff6 = $c + $coeff5;
+$coeff7 = $a*$coeff6;
+$coeff8 = $coeff7 + $b;
+} until ( $coeff2 != 0 && $coeff4 != 0 && $coeff6 != 0);
+
+$equation = Compute("$f x^4 + $e x^3 + $d x^2 + $c x + $b")->reduce; 
+
+Context("LimitedPolynomial-Strict");
+$divisor = Compute("x-$a")->reduce; ;
+
+#(x-a)($f x^3)
+$eq1 = Compute("$f x^4 - $coeff1 x^3");
+$eq2 = Compute("$coeff2 x^3 + $d x^2 + $c x + $b");
+
+#(x-a)($coeff2 x^2)
+$eq3 = Compute("$coeff2 x^3 - $coeff3 x^2");
+$eq4 = Compute("$coeff4 x^2 + $c x + $b");
+
+#(x-a)($coeff4 x)
+$eq5 = Compute("$coeff4 x^2 - $coeff5 x");
+$eq6 = Compute("$coeff6 x + $b");
+
+#(x-a)($coeff6)
+$eq7 = Compute("$coeff6 x - $coeff7");
+
+$remainder = Compute("$coeff8");
+
+$q1 = Compute("$f x^3");
+$q2 = Compute("$coeff2 x^2");
+$q3 = Compute("$coeff4 x");
+$q4 = Compute("$coeff6");
+
+#answer
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 4,
+message => "between 0 and 4",
+);
+$quotient =  Compute("$q1 + $q2 + $q3 + $q4");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Evaluate \( \displaystyle \frac{$equation}{$divisor} \)
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR $BR
+To evaluate \( \displaystyle \frac{$equation}{$divisor} \), we can use long division as follows: $BR
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([$SPACE.$BR.$BR.ans_rule(10),$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(2)."\( + \)".ans_rule(2)."\( + \)".ans_rule(2)."\( + \)".ans_rule(2).$BR.$HR."\( \Big) \)".$SPACE.$SPACE.$SPACE.ans_rule(25),"(write the Divisor and Dividend)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( - \)".$BR.$BR.$BR,"\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(15),"(determine the first term of the Quotient)"], align=>LEFT, separation=>0, indent=>120).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( - \)".$BR.$BR.$BR,"\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(15),"(determine the second term of the Quotient)"], align=>LEFT, separation=>0, indent=>140).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( - \)".$BR.$BR.$BR,"\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(12),"(determine the third term of the Quotient)"], align=>LEFT, separation=>0, indent=>180).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( - \)".$BR.$BR.$BR,"\( \big( \)".ans_rule(12)."\( \big) \)".$BR.$HR.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(12),"(determine the fourth term of the Quotient)"], align=>LEFT, separation=>0, indent=>200).
+
+EndTable()
+\}
+
+$BR $BR
+Thus,  
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{$equation}{$divisor} \)","\( = \)",ans_rule(15)."\( + \)",ans_rule(10).$BR.$HR.ans_rule(10),"(write the answer as \( \displaystyle \text{Quotient} + \frac{\text{Remainder}}{\text{Divisor}} \) )"], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($divisor->cmp);
+
+ANS($q1->cmp);
+ANS($q2->cmp);
+ANS($q3->cmp);
+ANS($q4->cmp);
+
+ANS($equation->cmp);
+ANS($eq1->cmp);
+ANS($eq2->cmp);
+ANS($eq3->cmp);
+ANS($eq4->cmp);
+ANS($eq5->cmp);
+ANS($eq6->cmp);
+ANS($eq7->cmp);
+ANS($remainder->cmp);
+
+ANS($quotient->cmp);
+ANS($remainder->cmp);
+ANS($divisor->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

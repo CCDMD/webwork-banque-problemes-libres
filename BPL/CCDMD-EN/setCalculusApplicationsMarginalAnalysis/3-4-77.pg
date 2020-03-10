@@ -1,0 +1,161 @@
+## DESCRIPTION
+## Marginal Cost
+## ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('economy', 'critical value')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"contextCurrency.pl",
+);
+
+TEXT(beginproblem());
+$showpartialcorrectanswers = 1;
+
+$a = random(400, 800, 50);
+$b = random(50,150,10);
+$c = random(.1,.9,.1);
+$x = random(10,60,5);
+
+Context("Numeric");
+$equation = Compute("$a + $b x - $c x^2")->reduce;
+$dequation = $equation->D('x');
+
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+$answer = $dequation->eval(x=>"$x");
+
+$popVariableX = PopUp(["?", "x", "C", "MC"],"x");
+$popVariableMC = PopUp(["?", "x", "C", "MC"],"MC");
+
+$popUnit = PopUp(["Choose", "per day", "per week", "per month", "per year", "per golf club"],"per golf club");
+$popTime = PopUp(["Choose", "day", "week", "month", "year"],"day");
+
+if($answer > 0 )
+{
+    $popInc = PopUp(["Choose", "decreasing", "increasing"],"increasing");
+    $PositiveAnswer = $answer;
+}
+else
+{
+    $popInc = PopUp(["Choose", "decreasing", "increasing"],"decreasing");
+    $PositiveAnswer = -1*$answer;
+}
+
+Context("Currency");
+$CurrencyAnswer = Currency($PositiveAnswer);
+
+Context("Numeric");
+#check box 4
+$ans_eval4 = $popVariableMC->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4 = $ans_hash4->{score};
+
+$WantSymbol = "";
+if ($TESTbox4) 
+{
+$WantSymbol = "MC";
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Question $EBOLD $BR $BR
+A company manufactures pink golf clubs and for each pink golf club sold, $1 will be donated to the Canadian Cancer Society. The total daily cost (in dollars) of producing \(x\) golf clubs is given by the formula $BR
+\( \quad C(x) = $equation \)
+$BR
+Find the marginal cost at a production level of \($x\) golf clubs per day.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point.
+$HR
+$HR
+$BR
+
+$HR
+$BR$BITALIC$BBOLD Step 1: Define the variables $EBOLD$EITALIC $BR$BR
+Let \(MC\) be the marginal cost.
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 2: Identify what the problem is asking $EBOLD$EITALIC $BR$BR
+We want \{ $popVariableMC->menu() \} 
+when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 3: Find the appropriate formula $EBOLD$EITALIC $BR$BR
+
+We know \{ $popVariableMC->menu() \} \( = \displaystyle \frac{dC}{dx}\) 
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR$BITALIC$BBOLD Step 4: Solve for what the problem is asking $EBOLD$EITALIC $BR$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{dC}{dx} \)","\( = \)",ans_rule(30),"(write the derivative)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+and when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR $BR
+\( \displaystyle $WantSymbol = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( \frac{dC}{dx} \) $EITALIC)
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 5: Draw a conclusion $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD For the penultimate box, include the dollar sign in your answer. 
+$HR $HR
+$BR
+Thus, at a production level of \{ans_rule(5)\} golf clubs per \{ $popTime->menu() \}, the total cost of producing one additional golf club is \{ $popInc->menu() \} at a rate of \{ans_rule(10)\} \{ $popUnit->menu() \}.
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#Step 2
+ANS($popVariableMC->cmp);
+ANS($popVariableX->cmp);
+ANS(Compute("$x")->cmp);
+
+#Step 3
+ANS($popVariableMC->cmp);
+
+#Step 4
+ANS($dequation->cmp);
+
+ANS($popVariableX->cmp);
+ANS(Compute("$x")->cmp);
+ANS($answer->cmp);
+
+#Step 5
+ANS(Compute("$x")->cmp);
+ANS($popTime->cmp);
+ANS($popInc->cmp);
+ANS($CurrencyAnswer->cmp);
+ANS($popUnit->cmp);
+
+ENDDOCUMENT();

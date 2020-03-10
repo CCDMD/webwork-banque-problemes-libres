@@ -1,0 +1,201 @@
+##DESCRIPTION
+##  Lines & Planes
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"parserImplicitPlane.pl",
+"parserParametricPlane.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"parserSolutionFor.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+#  Vectors in the plane
+$V = non_zero_vector3D();
+$W = non_zero_vector3D(); 
+$N = Vector($V x $W);
+
+while((areParallel $V $W) || ($N->extract(1)==0) || ($N->extract(2)==0) || ($N->extract(3)==0)) 
+{
+    $V = non_zero_vector3D();
+    $W = non_zero_vector3D();
+    $N = Vector($V x $W);
+}
+
+$P = non_zero_point3D();
+
+Context("ParametricPlane");
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$Parametric_Plane = ParametricPlane($P,$V,$W);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Given the vectorial equation of a plane in \(\mathbb{R}^3\) $BR $BR
+\( \quad \Phi:(x,y,z) = $Parametric_Plane \) with \(s,t\in\mathbb{R}\)$BR
+$BR
+find the cartesian equation of the plane \(\Phi \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Construct the normal vector");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{v} = $V\) and \( \vec{w} = $W\) be the generators of the plane \( \Phi \). $BR 
+$BR
+
+Which of the formulas below corresponds to $BBOLD a vector \( \vec{u} \) orthogonal to \( \vec{v} \) and \( \vec{w} \)? $EBOLD $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \displaystyle \vec{u} = \vec{v} + \vec{w} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \displaystyle \vec{u} = \vec{v} - \vec{w} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 3:","\( \displaystyle \vec{u} = \vec{v} \bullet \vec{w}\)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 4:","\( \displaystyle \vec{u} = \vec{v} \times \vec{w}\)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR $BR
+
+Then $BR
+\( \quad \vec{u} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("4")->cmp );
+ANS($N->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "orthogonal", "parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n} \) be the normal vector of the plane \( \Phi \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{u} = $N \) $BR $BR
+\( \quad \vec{u} \) and \( \vec{n} \) are \{ $popParallel->menu() \}
+$BR $BR
+which gives us $BR 
+\( \quad \vec{n} = \) \{ ans_rule(15) \} $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($N->cmp( checker=>sub {
+  my ($correct, $student, $ansHash) = @_;
+  return $correct->isParallel($student);
+}, showCoordinateHints => 0 ) );
+
+Section::End();
+
+###########################################
+Section::Begin("Choose a support point");
+
+Context("ImplicitPlane");
+$plane = ImplicitPlane($P,$N);
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$EquivalentPoint = SolutionFor("$plane","$P");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( P \) be the support point of the plane. $BR $BR
+
+We have $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( P \) ","\( = \)",ans_rule(15),"(choose values for \(s\) and 
+\(t\) and write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($EquivalentPoint->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Construct the cartesian equation");
+
+Context()->texStrings;
+BEGIN_TEXT
+Thus $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \Phi: \)",ans_rule(50),"(write the cartesian equation as \( a x + b y + c z = d \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($plane->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();

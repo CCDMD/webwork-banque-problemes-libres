@@ -1,0 +1,206 @@
+## DESCRIPTION
+## Algebra: Intercepts
+## ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('abscissa at the origin', 'ordinate at the origin')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+do{
+$a = non_zero_random(-9,-4,2);
+$b = non_zero_random(4,9,1);
+$c = -($a + $b);
+} until ($c != 0);
+
+$ma = -$a;
+$mb = -$b;
+$mc = -$c;
+
+$a1 = -($b +$c + $a);
+$a2 = (($c + $a)*$b + $a*$c);
+$a3 = - $a*$c*$b;
+
+#f(x) = (x-a)(x-b)(x-c)
+$equation = Compute("x^3 +$a1 x^2 +$a2 x +$a3")->reduce; 
+
+if($c < $a)
+{
+$xint1 = Compute("$c");
+$xint2 = Compute("$a");
+$xint3 = Compute("$b");
+}
+elsif($c > $b)
+{
+$xint1 = Compute("$a");
+$xint2 = Compute("$b");
+$xint3 = Compute("$c");
+}
+else
+{
+$xint1 = Compute("$a");
+$xint2 = Compute("$c");
+$xint3 = Compute("$b");
+}
+
+Context("LimitedPolynomial-Strict");
+$divisor = Compute("x-$a")->reduce;
+
+$coeff1 = $mb + $mc;
+$coeff2 = $mc*$mb;
+
+$q1 = Compute("x^2");
+$q2 = Compute("$coeff1 x");
+$q3 = Compute("$coeff2");
+
+#(x-a)(x^2)
+$eq1 = Compute("x^3-$a x^2");
+
+$eq2 = Compute("$coeff1 x^2 + $a2 x + $a3");
+
+#(x-a)($coeff1 x)
+$coeff3 = $coeff1*$a;
+$eq3 = Compute("$coeff1 x^2 - $coeff3 x");
+
+#(x-a)$coeff2
+$coeff4 = $a*$coeff2;
+$eq4 = Compute("$coeff2 x - $coeff4");
+$eq5 = Compute("0");
+
+#answer
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 2,
+message => "either 0 or 1 or 2",
+);
+$quotient =  Compute("x^2 + $coeff1 x + $coeff2");
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 2,
+message => "either 0 or 1 or 2",
+);
+$factor1 = Compute("(x^2 + $coeff1 x + $coeff2)(x-$a)");
+
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$factoredform = Compute("(x-$a)(x-$b)(x-$c)");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Find all the roots (\(x\)-intercepts) of the polynomial \($equation\) given that \( x = $a \) is a root. Your solution must involve polynomial division (long division).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR 
+$BR$BITALIC$BBOLD Part 1: Performing long division $EBOLD$EITALIC $BR$BR
+
+To factor \( $equation \), we can use long division with \{ ans_rule(5) \} ( $BITALIC factor of the form \(x - a\) where  \( a\) is a root $EITALIC)
+$BR $BR
+
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([$SPACE.$BR.$BR.ans_rule(10),$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(2)."\( + \)".ans_rule(2)."\( + \)".ans_rule(2).$BR.$HR."\( \Big) \)".$SPACE.$SPACE.$SPACE.ans_rule(25),"(write the Divisor and Dividend)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( - \)".$BR.$BR.$BR,"\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(15),"(determine the first term of the Quotient)"], align=>LEFT, separation=>0, indent=>120).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( - \)".$BR.$BR.$BR,"\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(15),"(determine the second term of the Quotient)"], align=>LEFT, separation=>0, indent=>140).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( - \)".$BR.$BR.$BR,"\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(12),"(determine the third term of the Quotient)"], align=>LEFT, separation=>0, indent=>180).
+
+EndTable()
+\}
+
+$BR
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 2: Factorizing \( $equation \) $EBOLD$EITALIC $BR$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equation \)","\( = \)",ans_rule(20),"(factorized as Quotient x Divisor)" ], align=>LEFT, separation=>0).
+AlignedRow([" ","\( = \)",ans_rule(20),"(factorized)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR  
+$HR
+$BR$BITALIC$BBOLD Part 3: Finding the \(x\)-intercept(s) $EBOLD$EITALIC $BR$BR
+The \(x\)-intercepts are (in ascending order)
+$BR
+\(x_1 = \) \{ans_rule(5)\}, \(x_2 = \) \{ans_rule(5)\} and \(x_3 = \) \{ans_rule(5)\}  
+
+
+END_TEXT
+Context()->normalStrings;
+
+#Step 1
+ANS($divisor->cmp);
+ANS($divisor->cmp);
+
+ANS($q1->cmp);
+ANS($q2->cmp);
+ANS($q3->cmp);
+
+ANS($equation->cmp);
+ANS($eq1->cmp);
+ANS($eq2->cmp);
+ANS($eq3->cmp);
+ANS($eq4->cmp);
+ANS($eq4->cmp);
+ANS($eq5->cmp);
+
+#Step 2
+ANS($factor1->cmp);
+ANS($factoredform->cmp);
+
+#answer
+ANS($xint1->cmp);
+ANS($xint2->cmp);
+ANS($xint3->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

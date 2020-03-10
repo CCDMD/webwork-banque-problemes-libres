@@ -1,0 +1,158 @@
+##DESCRIPTION
+##  Indefinite Integrals - Substitution
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('change of variable', 'indefinite integral')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"MathObjects.pl",
+"CofIdaho_macros.pl"
+);
+
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+$a=random(2,10,1);
+$b=random(2,9,1);
+
+$u = random(2,7,1);
+$v = $u;
+
+if( $b == $u) { $b=$b+1; }
+
+#$factored = "(x-$u)*(x-$v)";
+$factored = "(x-$u)";
+
+$uv = $u*$v;
+$upv = -$u-$v;
+
+$integral = "\frac{$a (x-$b)}{x^2+$upv x + $uv}";
+$intnoconstant = "\frac{x-$b}{x^2+$upv x + $uv}";
+$den = "x^2+$upv x + $uv";
+$num = "x-$b";
+
+Context("Numeric");
+Context()->variables->add('dx' => 'Real');
+
+#box 7
+$ans_eval7 = Compute("dx")->cmp();
+$ans_hash7 = $ans_eval7->evaluate($inputs_ref->{ANS_NUM_TO_NAME(7)});
+$TESTbox7 = $ans_hash7->{score};
+
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR $BR
+
+Evaluate the indefinite integral
+$BR
+$BR 
+\( \displaystyle \int $integral \, dx \) 
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+We know $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \int $integral \, dx \)","\( = \)",ans_rule(3)."\( \displaystyle \int \)",ans_rule(5).$BR.$HR."\( \big( \)".ans_rule(5)."\( \big)^2 \)",ans_rule(2)], align=>CENTER, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["(factor and rewrite the denominator. Make sure to move the appropriate constant outside of the integral)"], align=>CENTER, separation=>0, indent=>160).
+EndTable()
+\}
+
+$BR $BR
+Let $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( u \)", "\( = \)",ans_rule(10),"(choose \(u\))"], align=>LEFT, separation=>0, indent=>2).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(u\))"], align=>LEFT, separation=>0, indent=>2).
+AlignedRow(["\( x \)", "\( = \)",ans_rule(10),"(isolate for \(x\))"], align=>LEFT, separation=>0, indent=>2).
+EndTable()
+\}
+$BR $BR 
+We have
+$BR $BR
+
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \int $integral \, dx \)","\( = \)",ans_rule(2)."\( \displaystyle \int \Big(\)".ans_rule(5)."\(+\)".ans_rule(5)."\( \Big)\)".ans_rule(2)], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["(an integral with \(u\) where the powers of \(u\) are in descending order. Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0, indent=>160).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(2)."\( \big( \)".ans_rule(20)."\( \big) + \)".ans_rule(1),"(integrate with respect to \(u\))"], align=>LEFT, separation=>0, indent=>130).
+AlignedRow(["","\( = \)",ans_rule(40),"(rewrite with respect to \(x\))"], align=>LEFT, separation=>0, indent=>130).
+EndTable()
+\}
+
+$BR $BR
+Note: Use an upper-case "C" for the constant of integration.
+
+$PAR
+END_TEXT
+
+ANS(num_cmp($a));
+ANS(fun_cmp($num));
+
+#factor
+Context()->variables->are(x=>'Real');
+ANS(FactoringEvaluator($factored,['x']));
+ANS(fun_cmp("dx", vars=>["u","x","du","dx"]));
+
+#u
+ANS(fun_cmp($factored, vars=>["u","x","du","dx"]));
+
+#du/dx
+ANS(fun_cmp("du", vars=>["u","x","du","dx"]));
+if ($TESTbox7) 
+{
+ANS(fun_cmp("dx", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("1", vars=>["u","x","du","dx"]));
+}
+else
+{
+ANS(fun_cmp("1", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("dx", vars=>["u","x","du","dx"]));
+}
+ANS(fun_cmp("u+$u", vars=>["u","x","du","dx"]));
+
+ANS(num_cmp($a));
+ANS(fun_cmp("u^(-1)", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("($u-$b)*u^(-2)", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("du", vars=>["u","x","du","dx"]));
+
+ANS(num_cmp($a));
+ANS(fun_cmp("ln(abs(u))-($u-$b)*u^(-1)", var=>["u","x","du","dx"], limits=>[[-10,10]]));
+ANS(str_cmp("C"));
+
+
+#answer
+ANS(fun_cmp("$a*(-($u-$b)*1/(x-$u)+ln(abs(x-$u)))+C", var=>["x","C"], limits=>[[-10,10],[2.1,10]]));
+
+ENDDOCUMENT();

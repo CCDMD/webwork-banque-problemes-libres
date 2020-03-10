@@ -1,0 +1,2324 @@
+##DESCRIPTION
+##  Lines & Planes
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"parserParametricLine.pl",
+"parserImplicitPlane.pl",
+"answerCustom.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"contextFraction.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#Case 1 parallel disjoint
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+do
+{
+$N1_1 = Vector(non_zero_random(-9,9,1),non_zero_random(-9,9,1),non_zero_random(-9,9,1));
+$k_1 = non_zero_random(-5,5,1);
+$N2_1 = $k_1*$N1_1;
+
+Context("Point");
+$p1 = random(-9,9,1);
+$p2 = non_zero_random(-9,9,1);
+$p3 = random(-9,9,1);
+$P_1 = Point($p1, $p2, $p3);
+
+$Q_1 = Point($p1+1, $p2, $p3-1);
+
+    $d1_value = $N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3);
+    $d2_value = $N2_1->extract(1)*$Q_1->extract(1) + $N2_1->extract(2)*$Q_1->extract(2) + $N2_1->extract(3)*$Q_1->extract(3);
+
+} until($d2_value!=($k_1*$d1_value));
+
+Context("ImplicitPlane");
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)+y');
+$Plane1_1 = ImplicitPlane($P_1,$N1_1);
+$Plane2_1 = ImplicitPlane($Q_1,$N2_1);
+
+#Case 2 identical
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$N2_2 = Vector(non_zero_random(-9,9,1),non_zero_random(-9,9,1),non_zero_random(-9,9,1));
+$k_2 = non_zero_random(-5,5,1);
+$N1_2 = $k_2*$N2_2;
+
+Context("Point");
+$p1 = random(-9,9,1);
+$p2 = non_zero_random(-9,9,1);
+$p3 = random(-9,9,1);
+$P_2 = Point($p1, $p2, $p3);
+
+$Q_2 = $P_2;
+
+Context("ImplicitPlane");
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)+y');
+$Plane1_2 = ImplicitPlane($P_2,$N1_2);
+$Plane2_2 = ImplicitPlane($Q_2,$N2_2);
+
+#Case 3 intersecting
+Context("Point");
+$p1 = random(-9,9,1);
+$p2 = random(-9,9,1);
+$p3 = random(-9,9,1);
+$P_3 = Point($p1, $p2, $p3);
+
+$Q_3 = $P_3;
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$N1_3 = Vector(random(1,7,1), random(1,7,1), random(1,7,1));
+
+$N2_3 = Vector(random(1,7,1), random(1,7,1), random(1,7,1));
+while(areParallel $N1_3 $N2_3)
+{
+    $N2_3 = Vector(random(1,7,1), random(1,7,1), random(1,7,1));
+}
+
+Context("ImplicitPlane");
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)+y');
+$Plane1_3 = ImplicitPlane($P_3,$N1_3);
+$Plane2_3 = ImplicitPlane($Q_3,$N2_3);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+For each question below, determine whether the planes are parallel disjoint, identical or intersecting. $BR
+$BR
+$HR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+$case=random(1,5,1);
+
+#1-2-3
+if($case == 1)
+{
+$String_11 = 1;
+$String_12 = 2;
+
+$String_21 = 3;
+$String_22 = 4;
+
+$String_31 = 5;
+$String_32 = 6;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 1: parallel disjoint
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \Phi_$String_11: $Plane1_1 \) $BR $BR
+\( \quad \Phi_$String_12: $Plane2_1 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$d1_value = $N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2_1->extract(1)*$Q_1->extract(1) + $N2_1->extract(2)*$Q_1->extract(2) + $N2_1->extract(3)*$Q_1->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_$String_11} \) be the normal vector of the plane \( \Phi_$String_11 \). $BR 
+Let \( d_$String_11 \) be the constant associated with the plane \( \Phi_$String_11 \). $BR $BR
+Let \( \vec{n_$String_12} \) be the normal vector of the plane \( \Phi_$String_12 \). $BR 
+Let \( d_$String_12 \) be the constant associated with the plane \( \Phi_$String_12 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_$String_11} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_11 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_12} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_12 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1_1->cmp);
+ANS($D1->cmp);
+ANS($N2_1->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_$String_11} = k \vec{n_$String_12} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_11} \) and \( \vec{n_$String_12} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_$String_11 \) and \( \Phi_$String_12 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Point");
+$d1_value = $N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3);
+$PointValue = ($N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3))/$N1_1->extract(3);
+
+Context("Numeric");
+$d_value = $N2_1->extract(3)*$PointValue;
+
+$popAnd = PopUp(["Choose", "and", "or"],"and");
+$popEqual = PopUp(["Choose", "=", "not ="],"not =");
+
+Context("LimitedFraction");
+$KValue = Fraction(1,$k_1);
+$DValue = Fraction($D2,$k_1);
+
+Context()->texStrings;
+BEGIN_TEXT
+We know the planes \( \Phi_$String_11 \) and \( \Phi_$String_12 \) are identical if \( \vec{n_$String_11} = k \vec{n_$String_12} \quad \) \{ $popAnd->menu() \} \( \quad d_$String_11 = k d_$String_12 \) for the same \( k \). $BR $BR
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{n_$String_11} \) ","\( = \)","\( k \vec{n_$String_12} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $N1_1 \) ","\( = \)",ans_rule(2)."\( $N2_1 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+For that same \( k \), we have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( d_$String_11 \) ",$popEqual->menu(),"\( k d_$String_12 \)"], align=>LEFT, separation=>0,indent=>65).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),$popEqual->menu(),ans_rule(5),"(write the numerical value of \( d_$String_11 \) and \( k d_$String_12 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popAnd->cmp);
+ANS($KValue->cmp(studentsMustReduceFractions=>1));
+
+ANS($popEqual->cmp);
+
+ANS($D1->cmp);
+ANS($popEqual->cmp);
+ANS($DValue->cmp(studentsMustReduceFractions=>1));
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"parallel disjoint");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the planes \( \Phi_$String_11 \) and \( \Phi_$String_12 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 2: identical
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \Phi_$String_21: $Plane1_2 \) $BR $BR
+\( \quad \Phi_$String_22: $Plane2_2 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$d1_value = $N1_2->extract(1)*$P_2->extract(1) + $N1_2->extract(2)*$P_2->extract(2) + $N1_2->extract(3)*$P_2->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2_2->extract(1)*$Q_2->extract(1) + $N2_2->extract(2)*$Q_2->extract(2) + $N2_2->extract(3)*$Q_2->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_$String_21} \) be the normal vector of the plane \( \Phi_$String_21 \). $BR 
+Let \( d_$String_21 \) be the constant associated with the plane \( \Phi_$String_21 \). $BR $BR
+Let \( \vec{n_$String_22} \) be the normal vector of the plane \( \Phi_$String_22 \). $BR 
+Let \( d_$String_22 \) be the constant associated with the plane \( \Phi_$String_22 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_$String_21} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_21 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_22} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_22 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1_2->cmp);
+ANS($D1->cmp);
+ANS($N2_2->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_$String_21} = k \vec{n_$String_22} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_21} \) and \( \vec{n_$String_22} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_$String_21 \) and \( \Phi_$String_22 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Point");
+$d1_value = $N1_2->extract(1)*$P_2->extract(1) + $N1_2->extract(2)*$P_2->extract(2) + $N1_2->extract(3)*$P_2->extract(3);
+$PointValue = ($N1_2->extract(1)*$P_2->extract(1) + $N1_2->extract(2)*$P_2->extract(2) + $N1_2->extract(3)*$P_2->extract(3))/$N1_2->extract(3);
+
+Context("Numeric");
+$d_value = $N2_2->extract(3)*$PointValue;
+
+$popAnd = PopUp(["?", "and", "or"],"and");
+$popEqual = PopUp(["?", "=", "not ="],"=");
+
+Context("Numeric");
+$coeff = $k_2*$D2;
+
+Context("Numeric");
+Context()->operators->undefine('*',' *','* ','**');
+$KValue = Compute("$k_2");
+$DValue = Compute("$coeff");
+
+Context()->texStrings;
+BEGIN_TEXT
+We know the planes \( \Phi_$String_21 \) and \( \Phi_$String_22 \) are identical if \( \vec{n_$String_21} = k \vec{n_$String_22} \quad \) \{ $popAnd->menu() \} \( \quad d_$String_21 = k d_$String_22 \) for the same \( k \). $BR $BR
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{n_$String_21} \) ","\( = \)","\( k \vec{n_$String_22} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $N1_2 \) ","\( = \)",ans_rule(2)."\( $N2_2 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+For that same \( k \), we have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( d_$String_21 \) ",$popEqual->menu(),"\( k d_$String_22 \)"], align=>LEFT, separation=>0,indent=>65).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),$popEqual->menu(),ans_rule(5),"(write the numerical value of \( d_$String_21 \) and \( k d_$String_22 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popAnd->cmp);
+ANS($KValue->cmp);
+
+ANS($popEqual->cmp);
+
+ANS($D1->cmp);
+ANS($popEqual->cmp);
+ANS($DValue->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"identical");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the planes \( \Phi_$String_21 \) and \( \Phi_$String_22 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 3: intersecting
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \Phi_$String_31: $Plane1_3 \) $BR $BR
+\( \quad \Phi_$String_32: $Plane2_3 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$d1_value = $N1_3->extract(1)*$P_3->extract(1) + $N1_3->extract(2)*$P_3->extract(2) + $N1_3->extract(3)*$P_3->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2_3->extract(1)*$Q_3->extract(1) + $N2_3->extract(2)*$Q_3->extract(2) + $N2_3->extract(3)*$Q_3->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_$String_31} \) be the normal vector of the plane \( \Phi_$String_31 \). $BR 
+Let \( d_$String_31 \) be the constant associated with the plane \( \Phi_$String_31 \). $BR $BR
+Let \( \vec{n_$String_32} \) be the normal vector of the plane \( \Phi_$String_32 \). $BR 
+Let \( d_$String_32 \) be the constant associated with the plane \( \Phi_$String_32 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_$String_31} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_31 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_32} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_32 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1_3->cmp);
+ANS($D1->cmp);
+ANS($N2_3->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_$String_31} = k \vec{n_$String_32} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_32} \) and \( \vec{n_$String_32} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_$String_31 \) and \( \Phi_$String_32 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the planes \( \Phi_$String_31 \) and \( \Phi_$String_32 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+}
+
+#2-1-3
+if($case == 2)
+{
+$String_11 = 3;
+$String_12 = 4;
+
+$String_21 = 1;
+$String_22 = 2;
+
+$String_31 = 5;
+$String_32 = 6;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 2: identical
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \Phi_$String_21: $Plane1_2 \) $BR $BR
+\( \quad \Phi_$String_22: $Plane2_2 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$d1_value = $N1_2->extract(1)*$P_2->extract(1) + $N1_2->extract(2)*$P_2->extract(2) + $N1_2->extract(3)*$P_2->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2_2->extract(1)*$Q_2->extract(1) + $N2_2->extract(2)*$Q_2->extract(2) + $N2_2->extract(3)*$Q_2->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_$String_21} \) be the normal vector of the plane \( \Phi_$String_21 \). $BR 
+Let \( d_$String_21 \) be the constant associated with the plane \( \Phi_$String_21 \). $BR $BR
+Let \( \vec{n_$String_22} \) be the normal vector of the plane \( \Phi_$String_22 \). $BR 
+Let \( d_$String_22 \) be the constant associated with the plane \( \Phi_$String_22 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_$String_21} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_21 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_22} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_22 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1_2->cmp);
+ANS($D1->cmp);
+ANS($N2_2->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_$String_21} = k \vec{n_$String_22} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_21} \) and \( \vec{n_$String_22} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_$String_21 \) and \( \Phi_$String_22 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Point");
+$d1_value = $N1_2->extract(1)*$P_2->extract(1) + $N1_2->extract(2)*$P_2->extract(2) + $N1_2->extract(3)*$P_2->extract(3);
+$PointValue = ($N1_2->extract(1)*$P_2->extract(1) + $N1_2->extract(2)*$P_2->extract(2) + $N1_2->extract(3)*$P_2->extract(3))/$N1_2->extract(3);
+
+Context("Numeric");
+$d_value = $N2_2->extract(3)*$PointValue;
+
+$popAnd = PopUp(["?", "and", "or"],"and");
+$popEqual = PopUp(["?", "=", "not ="],"=");
+
+Context("Numeric");
+$coeff = $k_2*$D2;
+
+Context("Numeric");
+Context()->operators->undefine('*',' *','* ','**');
+$KValue = Compute("$k_2");
+$DValue = Compute("$coeff");
+
+Context()->texStrings;
+BEGIN_TEXT
+We know the planes \( \Phi_$String_21 \) and \( \Phi_$String_22 \) are identical if \( \vec{n_$String_21} = k \vec{n_$String_22} \quad \) \{ $popAnd->menu() \} \( \quad d_$String_21 = k d_$String_22 \) for the same \( k \). $BR $BR
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{n_$String_21} \) ","\( = \)","\( k \vec{n_$String_22} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $N1_2 \) ","\( = \)",ans_rule(2)."\( $N2_2 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+For that same \( k \), we have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( d_$String_21 \) ",$popEqual->menu(),"\( k d_$String_22 \)"], align=>LEFT, separation=>0,indent=>65).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),$popEqual->menu(),ans_rule(5),"(write the numerical value of \( d_$String_21 \) and \( k d_$String_22 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popAnd->cmp);
+ANS($KValue->cmp);
+
+ANS($popEqual->cmp);
+
+ANS($D1->cmp);
+ANS($popEqual->cmp);
+ANS($DValue->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"identical");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the planes \( \Phi_$String_21 \) and \( \Phi_$String_22 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 1: parallel disjoint
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \Phi_$String_11: $Plane1_1 \) $BR $BR
+\( \quad \Phi_$String_12: $Plane2_1 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$d1_value = $N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2_1->extract(1)*$Q_1->extract(1) + $N2_1->extract(2)*$Q_1->extract(2) + $N2_1->extract(3)*$Q_1->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_$String_11} \) be the normal vector of the plane \( \Phi_$String_11 \). $BR 
+Let \( d_$String_11 \) be the constant associated with the plane \( \Phi_$String_11 \). $BR $BR
+Let \( \vec{n_$String_12} \) be the normal vector of the plane \( \Phi_$String_12 \). $BR 
+Let \( d_$String_12 \) be the constant associated with the plane \( \Phi_$String_12 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_$String_11} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_11 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_12} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_12 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1_1->cmp);
+ANS($D1->cmp);
+ANS($N2_1->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_$String_11} = k \vec{n_$String_12} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_11} \) and \( \vec{n_$String_12} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_$String_11 \) and \( \Phi_$String_12 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Point");
+$d1_value = $N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3);
+$PointValue = ($N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3))/$N1_1->extract(3);
+$SupportPoint = Point(0,0,$PointValue);
+
+Context("Numeric");
+$d_value = $N2_1->extract(3)*$PointValue;
+
+$popAnd = PopUp(["Choose", "and", "or"],"and");
+$popEqual = PopUp(["Choose", "=", "not ="],"not =");
+
+Context("LimitedFraction");
+$KValue = Fraction(1,$k_1);
+$DValue = Fraction($D2,$k_1);
+
+Context()->texStrings;
+BEGIN_TEXT
+We know the planes \( \Phi_$String_11 \) and \( \Phi_$String_12 \) are identical if \( \vec{n_$String_11} = k \vec{n_$String_12} \quad \) \{ $popAnd->menu() \} \( \quad d_$String_11 = k d_$String_12 \) for the same \( k \). $BR $BR
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{n_$String_11} \) ","\( = \)","\( k \vec{n_$String_12} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $N1_1 \) ","\( = \)",ans_rule(2)."\( $N2_1 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+For that same \( k \), we have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( d_$String_11 \) ",$popEqual->menu(),"\( k d_$String_12 \)"], align=>LEFT, separation=>0,indent=>65).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),$popEqual->menu(),ans_rule(5),"(write the numerical value of \( d_$String_11 \) and \( k d_$String_12 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popAnd->cmp);
+ANS($KValue->cmp(studentsMustReduceFractions=>1));
+
+ANS($popEqual->cmp);
+
+ANS($D1->cmp);
+ANS($popEqual->cmp);
+ANS($DValue->cmp(studentsMustReduceFractions=>1));
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"parallel disjoint");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the planes \( \Phi_$String_11 \) and \( \Phi_$String_12 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 3: intersecting
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \Phi_$String_31: $Plane1_3 \) $BR $BR
+\( \quad \Phi_$String_32: $Plane2_3 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$d1_value = $N1_3->extract(1)*$P_3->extract(1) + $N1_3->extract(2)*$P_3->extract(2) + $N1_3->extract(3)*$P_3->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2_3->extract(1)*$Q_3->extract(1) + $N2_3->extract(2)*$Q_3->extract(2) + $N2_3->extract(3)*$Q_3->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_$String_31} \) be the normal vector of the plane \( \Phi_$String_31 \). $BR 
+Let \( d_$String_31 \) be the constant associated with the plane \( \Phi_$String_31 \). $BR $BR
+Let \( \vec{n_$String_32} \) be the normal vector of the plane \( \Phi_$String_32 \). $BR 
+Let \( d_$String_32 \) be the constant associated with the plane \( \Phi_$String_32 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_$String_31} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_31 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_32} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_32 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1_3->cmp);
+ANS($D1->cmp);
+ANS($N2_3->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_$String_31} = k \vec{n_$String_32} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_32} \) and \( \vec{n_$String_32} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_$String_31 \) and \( \Phi_$String_32 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the planes \( \Phi_$String_31 \) and \( \Phi_$String_32 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+}
+
+# 3-2-1
+if($case == 3)
+{
+$String_11 = 5;
+$String_12 = 6;
+
+$String_21 = 3;
+$String_22 = 4;
+
+$String_31 = 1;
+$String_32 = 2;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 3: intersecting
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \Phi_$String_31: $Plane1_3 \) $BR $BR
+\( \quad \Phi_$String_32: $Plane2_3 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$d1_value = $N1_3->extract(1)*$P_3->extract(1) + $N1_3->extract(2)*$P_3->extract(2) + $N1_3->extract(3)*$P_3->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2_3->extract(1)*$Q_3->extract(1) + $N2_3->extract(2)*$Q_3->extract(2) + $N2_3->extract(3)*$Q_3->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_$String_31} \) be the normal vector of the plane \( \Phi_$String_31 \). $BR 
+Let \( d_$String_31 \) be the constant associated with the plane \( \Phi_$String_31 \). $BR $BR
+Let \( \vec{n_$String_32} \) be the normal vector of the plane \( \Phi_$String_32 \). $BR 
+Let \( d_$String_32 \) be the constant associated with the plane \( \Phi_$String_32 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_$String_31} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_31 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_32} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_32 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1_3->cmp);
+ANS($D1->cmp);
+ANS($N2_3->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_$String_31} = k \vec{n_$String_32} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_32} \) and \( \vec{n_$String_32} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_$String_31 \) and \( \Phi_$String_32 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the planes \( \Phi_$String_31 \) and \( \Phi_$String_32 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 2: identical
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \Phi_$String_21: $Plane1_2 \) $BR $BR
+\( \quad \Phi_$String_22: $Plane2_2 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$d1_value = $N1_2->extract(1)*$P_2->extract(1) + $N1_2->extract(2)*$P_2->extract(2) + $N1_2->extract(3)*$P_2->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2_2->extract(1)*$Q_2->extract(1) + $N2_2->extract(2)*$Q_2->extract(2) + $N2_2->extract(3)*$Q_2->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_$String_21} \) be the normal vector of the plane \( \Phi_$String_21 \). $BR 
+Let \( d_$String_21 \) be the constant associated with the plane \( \Phi_$String_21 \). $BR $BR
+Let \( \vec{n_$String_22} \) be the normal vector of the plane \( \Phi_$String_22 \). $BR 
+Let \( d_$String_22 \) be the constant associated with the plane \( \Phi_$String_22 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_$String_21} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_21 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_22} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_22 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1_2->cmp);
+ANS($D1->cmp);
+ANS($N2_2->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_$String_21} = k \vec{n_$String_22} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_21} \) and \( \vec{n_$String_22} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_$String_21 \) and \( \Phi_$String_22 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Point");
+$d1_value = $N1_2->extract(1)*$P_2->extract(1) + $N1_2->extract(2)*$P_2->extract(2) + $N1_2->extract(3)*$P_2->extract(3);
+$PointValue = ($N1_2->extract(1)*$P_2->extract(1) + $N1_2->extract(2)*$P_2->extract(2) + $N1_2->extract(3)*$P_2->extract(3))/$N1_2->extract(3);
+
+Context("Numeric");
+$d_value = $N2_2->extract(3)*$PointValue;
+
+$popAnd = PopUp(["?", "and", "or"],"and");
+$popEqual = PopUp(["?", "=", "not ="],"=");
+
+Context("Numeric");
+$coeff = $k_2*$D2;
+
+Context("Numeric");
+Context()->operators->undefine('*',' *','* ','**');
+$KValue = Compute("$k_2");
+$DValue = Compute("$coeff");
+
+Context()->texStrings;
+BEGIN_TEXT
+We know the planes \( \Phi_$String_21 \) and \( \Phi_$String_22 \) are identical if \( \vec{n_$String_21} = k \vec{n_$String_22} \quad \) \{ $popAnd->menu() \} \( \quad d_$String_21 = k d_$String_22 \) for the same \( k \). $BR $BR
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{n_$String_21} \) ","\( = \)","\( k \vec{n_$String_22} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $N1_2 \) ","\( = \)",ans_rule(2)."\( $N2_2 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+For that same \( k \), we have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( d_$String_21 \) ",$popEqual->menu(),"\( k d_$String_22 \)"], align=>LEFT, separation=>0,indent=>65).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),$popEqual->menu(),ans_rule(5),"(write the numerical value of \( d_$String_21 \) and \( k d_$String_22 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popAnd->cmp);
+ANS($KValue->cmp);
+
+ANS($popEqual->cmp);
+
+ANS($D1->cmp);
+ANS($popEqual->cmp);
+ANS($DValue->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"identical");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the planes \( \Phi_$String_21 \) and \( \Phi_$String_22 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 1: parallel disjoint
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \Phi_$String_11: $Plane1_1 \) $BR $BR
+\( \quad \Phi_$String_12: $Plane2_1 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$d1_value = $N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2_1->extract(1)*$Q_1->extract(1) + $N2_1->extract(2)*$Q_1->extract(2) + $N2_1->extract(3)*$Q_1->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_$String_11} \) be the normal vector of the plane \( \Phi_$String_11 \). $BR 
+Let \( d_$String_11 \) be the constant associated with the plane \( \Phi_$String_11 \). $BR $BR
+Let \( \vec{n_$String_12} \) be the normal vector of the plane \( \Phi_$String_12 \). $BR 
+Let \( d_$String_12 \) be the constant associated with the plane \( \Phi_$String_12 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_$String_11} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_11 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_12} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_12 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1_1->cmp);
+ANS($D1->cmp);
+ANS($N2_1->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_$String_11} = k \vec{n_$String_12} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_11} \) and \( \vec{n_$String_12} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_$String_11 \) and \( \Phi_$String_12 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Point");
+$d1_value = $N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3);
+$PointValue = ($N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3))/$N1_1->extract(3);
+$SupportPoint = Point(0,0,$PointValue);
+
+Context("Numeric");
+$d_value = $N2_1->extract(3)*$PointValue;
+
+$popAnd = PopUp(["Choose", "and", "or"],"and");
+$popEqual = PopUp(["Choose", "=", "not ="],"not =");
+
+Context("LimitedFraction");
+$KValue = Fraction(1,$k_1);
+$DValue = Fraction($D2,$k_1);
+
+Context()->texStrings;
+BEGIN_TEXT
+We know the planes \( \Phi_$String_11 \) and \( \Phi_$String_12 \) are identical if \( \vec{n_$String_11} = k \vec{n_$String_12} \quad \) \{ $popAnd->menu() \} \( \quad d_$String_11 = k d_$String_12 \) for the same \( k \). $BR $BR
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{n_$String_11} \) ","\( = \)","\( k \vec{n_$String_12} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $N1_1 \) ","\( = \)",ans_rule(2)."\( $N2_1 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+For that same \( k \), we have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( d_$String_11 \) ",$popEqual->menu(),"\( k d_$String_12 \)"], align=>LEFT, separation=>0,indent=>65).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),$popEqual->menu(),ans_rule(5),"(write the numerical value of \( d_$String_11 \) and \( k d_$String_12 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popAnd->cmp);
+ANS($KValue->cmp(studentsMustReduceFractions=>1));
+
+ANS($popEqual->cmp);
+
+ANS($D1->cmp);
+ANS($popEqual->cmp);
+ANS($DValue->cmp(studentsMustReduceFractions=>1));
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"parallel disjoint");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the planes \( \Phi_$String_11 \) and \( \Phi_$String_12 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+}
+
+# 2-3-1
+if($case == 4)
+{
+$String_11 = 5;
+$String_12 = 6;
+
+$String_21 = 1;
+$String_22 = 2;
+
+$String_31 = 3;
+$String_32 = 4;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 2: identical
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \Phi_$String_21: $Plane1_2 \) $BR $BR
+\( \quad \Phi_$String_22: $Plane2_2 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$d1_value = $N1_2->extract(1)*$P_2->extract(1) + $N1_2->extract(2)*$P_2->extract(2) + $N1_2->extract(3)*$P_2->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2_2->extract(1)*$Q_2->extract(1) + $N2_2->extract(2)*$Q_2->extract(2) + $N2_2->extract(3)*$Q_2->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_$String_21} \) be the normal vector of the plane \( \Phi_$String_21 \). $BR 
+Let \( d_$String_21 \) be the constant associated with the plane \( \Phi_$String_21 \). $BR $BR
+Let \( \vec{n_$String_22} \) be the normal vector of the plane \( \Phi_$String_22 \). $BR 
+Let \( d_$String_22 \) be the constant associated with the plane \( \Phi_$String_22 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_$String_21} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_21 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_22} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_22 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1_2->cmp);
+ANS($D1->cmp);
+ANS($N2_2->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_$String_21} = k \vec{n_$String_22} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_21} \) and \( \vec{n_$String_22} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_$String_21 \) and \( \Phi_$String_22 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Point");
+$d1_value = $N1_2->extract(1)*$P_2->extract(1) + $N1_2->extract(2)*$P_2->extract(2) + $N1_2->extract(3)*$P_2->extract(3);
+$PointValue = ($N1_2->extract(1)*$P_2->extract(1) + $N1_2->extract(2)*$P_2->extract(2) + $N1_2->extract(3)*$P_2->extract(3))/$N1_2->extract(3);
+
+Context("Numeric");
+$d_value = $N2_2->extract(3)*$PointValue;
+
+$popAnd = PopUp(["?", "and", "or"],"and");
+$popEqual = PopUp(["?", "=", "not ="],"=");
+
+Context("Numeric");
+$coeff = $k_2*$D2;
+
+Context("Numeric");
+Context()->operators->undefine('*',' *','* ','**');
+$KValue = Compute("$k_2");
+$DValue = Compute("$coeff");
+
+Context()->texStrings;
+BEGIN_TEXT
+We know the planes \( \Phi_$String_21 \) and \( \Phi_$String_22 \) are identical if \( \vec{n_$String_21} = k \vec{n_$String_22} \quad \) \{ $popAnd->menu() \} \( \quad d_$String_21 = k d_$String_22 \) for the same \( k \). $BR $BR
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{n_$String_21} \) ","\( = \)","\( k \vec{n_$String_22} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $N1_2 \) ","\( = \)",ans_rule(2)."\( $N2_2 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+For that same \( k \), we have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( d_$String_21 \) ",$popEqual->menu(),"\( k d_$String_22 \)"], align=>LEFT, separation=>0,indent=>65).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),$popEqual->menu(),ans_rule(5),"(write the numerical value of \( d_$String_21 \) and \( k d_$String_22 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popAnd->cmp);
+ANS($KValue->cmp);
+
+ANS($popEqual->cmp);
+
+ANS($D1->cmp);
+ANS($popEqual->cmp);
+ANS($DValue->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"identical");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the planes \( \Phi_$String_21 \) and \( \Phi_$String_22 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 3: intersecting
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \Phi_$String_31: $Plane1_3 \) $BR $BR
+\( \quad \Phi_$String_32: $Plane2_3 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$d1_value = $N1_3->extract(1)*$P_3->extract(1) + $N1_3->extract(2)*$P_3->extract(2) + $N1_3->extract(3)*$P_3->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2_3->extract(1)*$Q_3->extract(1) + $N2_3->extract(2)*$Q_3->extract(2) + $N2_3->extract(3)*$Q_3->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_$String_31} \) be the normal vector of the plane \( \Phi_$String_31 \). $BR 
+Let \( d_$String_31 \) be the constant associated with the plane \( \Phi_$String_31 \). $BR $BR
+Let \( \vec{n_$String_32} \) be the normal vector of the plane \( \Phi_$String_32 \). $BR 
+Let \( d_$String_32 \) be the constant associated with the plane \( \Phi_$String_32 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_$String_31} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_31 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_32} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_32 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1_3->cmp);
+ANS($D1->cmp);
+ANS($N2_3->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_$String_31} = k \vec{n_$String_32} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_32} \) and \( \vec{n_$String_32} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_$String_31 \) and \( \Phi_$String_32 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the planes \( \Phi_$String_31 \) and \( \Phi_$String_32 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 1: parallel disjoint
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \Phi_$String_11: $Plane1_1 \) $BR $BR
+\( \quad \Phi_$String_12: $Plane2_1 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$d1_value = $N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2_1->extract(1)*$Q_1->extract(1) + $N2_1->extract(2)*$Q_1->extract(2) + $N2_1->extract(3)*$Q_1->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_$String_11} \) be the normal vector of the plane \( \Phi_$String_11 \). $BR 
+Let \( d_$String_11 \) be the constant associated with the plane \( \Phi_$String_11 \). $BR $BR
+Let \( \vec{n_$String_12} \) be the normal vector of the plane \( \Phi_$String_12 \). $BR 
+Let \( d_$String_12 \) be the constant associated with the plane \( \Phi_$String_12 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_$String_11} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_11 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_12} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_12 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1_1->cmp);
+ANS($D1->cmp);
+ANS($N2_1->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_$String_11} = k \vec{n_$String_12} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_11} \) and \( \vec{n_$String_12} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_$String_11 \) and \( \Phi_$String_12 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Point");
+$d1_value = $N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3);
+$PointValue = ($N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3))/$N1_1->extract(3);
+$SupportPoint = Point(0,0,$PointValue);
+
+Context("Numeric");
+$d_value = $N2_1->extract(3)*$PointValue;
+
+$popAnd = PopUp(["Choose", "and", "or"],"and");
+$popEqual = PopUp(["Choose", "=", "not ="],"not =");
+
+Context("LimitedFraction");
+$KValue = Fraction(1,$k_1);
+$DValue = Fraction($D2,$k_1);
+
+Context()->texStrings;
+BEGIN_TEXT
+We know the planes \( \Phi_$String_11 \) and \( \Phi_$String_12 \) are identical if \( \vec{n_$String_11} = k \vec{n_$String_12} \quad \) \{ $popAnd->menu() \} \( \quad d_$String_11 = k d_$String_12 \) for the same \( k \). $BR $BR
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{n_$String_11} \) ","\( = \)","\( k \vec{n_$String_12} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $N1_1 \) ","\( = \)",ans_rule(2)."\( $N2_1 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+For that same \( k \), we have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( d_$String_11 \) ",$popEqual->menu(),"\( k d_$String_12 \)"], align=>LEFT, separation=>0,indent=>65).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),$popEqual->menu(),ans_rule(5),"(write the numerical value of \( d_$String_11 \) and \( k d_$String_12 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popAnd->cmp);
+ANS($KValue->cmp(studentsMustReduceFractions=>1));
+
+ANS($popEqual->cmp);
+
+ANS($D1->cmp);
+ANS($popEqual->cmp);
+ANS($DValue->cmp(studentsMustReduceFractions=>1));
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"parallel disjoint");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the planes \( \Phi_$String_11 \) and \( \Phi_$String_12 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+}
+
+# 3-1-2
+if($case == 5)
+{
+$String_11 = 3;
+$String_12 = 4;
+
+$String_21 = 5;
+$String_22 = 6;
+
+$String_31 = 1;
+$String_32 = 2;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 3: intersecting
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \Phi_$String_31: $Plane1_3 \) $BR $BR
+\( \quad \Phi_$String_32: $Plane2_3 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$d1_value = $N1_3->extract(1)*$P_3->extract(1) + $N1_3->extract(2)*$P_3->extract(2) + $N1_3->extract(3)*$P_3->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2_3->extract(1)*$Q_3->extract(1) + $N2_3->extract(2)*$Q_3->extract(2) + $N2_3->extract(3)*$Q_3->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_$String_31} \) be the normal vector of the plane \( \Phi_$String_31 \). $BR 
+Let \( d_$String_31 \) be the constant associated with the plane \( \Phi_$String_31 \). $BR $BR
+Let \( \vec{n_$String_32} \) be the normal vector of the plane \( \Phi_$String_32 \). $BR 
+Let \( d_$String_32 \) be the constant associated with the plane \( \Phi_$String_32 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_$String_31} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_31 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_32} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_32 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1_3->cmp);
+ANS($D1->cmp);
+ANS($N2_3->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_$String_31} = k \vec{n_$String_32} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_32} \) and \( \vec{n_$String_32} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_$String_31 \) and \( \Phi_$String_32 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the planes \( \Phi_$String_31 \) and \( \Phi_$String_32 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 1: parallel disjoint
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \Phi_$String_11: $Plane1_1 \) $BR $BR
+\( \quad \Phi_$String_12: $Plane2_1 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$d1_value = $N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2_1->extract(1)*$Q_1->extract(1) + $N2_1->extract(2)*$Q_1->extract(2) + $N2_1->extract(3)*$Q_1->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_$String_11} \) be the normal vector of the plane \( \Phi_$String_11 \). $BR 
+Let \( d_$String_11 \) be the constant associated with the plane \( \Phi_$String_11 \). $BR $BR
+Let \( \vec{n_$String_12} \) be the normal vector of the plane \( \Phi_$String_12 \). $BR 
+Let \( d_$String_12 \) be the constant associated with the plane \( \Phi_$String_12 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_$String_11} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_11 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_12} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_12 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1_1->cmp);
+ANS($D1->cmp);
+ANS($N2_1->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_$String_11} = k \vec{n_$String_12} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_11} \) and \( \vec{n_$String_12} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_$String_11 \) and \( \Phi_$String_12 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Point");
+$d1_value = $N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3);
+$PointValue = ($N1_1->extract(1)*$P_1->extract(1) + $N1_1->extract(2)*$P_1->extract(2) + $N1_1->extract(3)*$P_1->extract(3))/$N1_1->extract(3);
+$SupportPoint = Point(0,0,$PointValue);
+
+Context("Numeric");
+$d_value = $N2_1->extract(3)*$PointValue;
+
+$popAnd = PopUp(["Choose", "and", "or"],"and");
+$popEqual = PopUp(["Choose", "=", "not ="],"not =");
+
+Context("LimitedFraction");
+$KValue = Fraction(1,$k_1);
+$DValue = Fraction($D2,$k_1);
+
+Context()->texStrings;
+BEGIN_TEXT
+We know the planes \( \Phi_$String_11 \) and \( \Phi_$String_12 \) are identical if \( \vec{n_$String_11} = k \vec{n_$String_12} \quad \) \{ $popAnd->menu() \} \( \quad d_$String_11 = k d_$String_12 \) for the same \( k \). $BR $BR
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{n_$String_11} \) ","\( = \)","\( k \vec{n_$String_12} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $N1_1 \) ","\( = \)",ans_rule(2)."\( $N2_1 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+For that same \( k \), we have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( d_$String_11 \) ",$popEqual->menu(),"\( k d_$String_12 \)"], align=>LEFT, separation=>0,indent=>65).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),$popEqual->menu(),ans_rule(5),"(write the numerical value of \( d_$String_11 \) and \( k d_$String_12 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popAnd->cmp);
+ANS($KValue->cmp(studentsMustReduceFractions=>1));
+
+ANS($popEqual->cmp);
+
+ANS($D1->cmp);
+ANS($popEqual->cmp);
+ANS($DValue->cmp(studentsMustReduceFractions=>1));
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"parallel disjoint");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the planes \( \Phi_$String_11 \) and \( \Phi_$String_12 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 2: identical
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \Phi_$String_21: $Plane1_2 \) $BR $BR
+\( \quad \Phi_$String_22: $Plane2_2 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$d1_value = $N1_2->extract(1)*$P_2->extract(1) + $N1_2->extract(2)*$P_2->extract(2) + $N1_2->extract(3)*$P_2->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2_2->extract(1)*$Q_2->extract(1) + $N2_2->extract(2)*$Q_2->extract(2) + $N2_2->extract(3)*$Q_2->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_$String_21} \) be the normal vector of the plane \( \Phi_$String_21 \). $BR 
+Let \( d_$String_21 \) be the constant associated with the plane \( \Phi_$String_21 \). $BR $BR
+Let \( \vec{n_$String_22} \) be the normal vector of the plane \( \Phi_$String_22 \). $BR 
+Let \( d_$String_22 \) be the constant associated with the plane \( \Phi_$String_22 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_$String_21} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_21 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_22} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_$String_22 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1_2->cmp);
+ANS($D1->cmp);
+ANS($N2_2->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_$String_21} = k \vec{n_$String_22} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_21} \) and \( \vec{n_$String_22} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_$String_21 \) and \( \Phi_$String_22 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Point");
+$d1_value = $N1_2->extract(1)*$P_2->extract(1) + $N1_2->extract(2)*$P_2->extract(2) + $N1_2->extract(3)*$P_2->extract(3);
+$PointValue = ($N1_2->extract(1)*$P_2->extract(1) + $N1_2->extract(2)*$P_2->extract(2) + $N1_2->extract(3)*$P_2->extract(3))/$N1_2->extract(3);
+
+Context("Numeric");
+$d_value = $N2_2->extract(3)*$PointValue;
+
+$popAnd = PopUp(["?", "and", "or"],"and");
+$popEqual = PopUp(["?", "=", "not ="],"=");
+
+Context("Numeric");
+$coeff = $k_2*$D2;
+
+Context("Numeric");
+Context()->operators->undefine('*',' *','* ','**');
+$KValue = Compute("$k_2");
+$DValue = Compute("$coeff");
+
+Context()->texStrings;
+BEGIN_TEXT
+We know the planes \( \Phi_$String_21 \) and \( \Phi_$String_22 \) are identical if \( \vec{n_$String_21} = k \vec{n_$String_22} \quad \) \{ $popAnd->menu() \} \( \quad d_$String_21 = k d_$String_22 \) for the same \( k \). $BR $BR
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{n_$String_21} \) ","\( = \)","\( k \vec{n_$String_22} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $N1_2 \) ","\( = \)",ans_rule(2)."\( $N2_2 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+For that same \( k \), we have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( d_$String_21 \) ",$popEqual->menu(),"\( k d_$String_22 \)"], align=>LEFT, separation=>0,indent=>65).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),$popEqual->menu(),ans_rule(5),"(write the numerical value of \( d_$String_21 \) and \( k d_$String_22 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popAnd->cmp);
+ANS($KValue->cmp);
+
+ANS($popEqual->cmp);
+
+ANS($D1->cmp);
+ANS($popEqual->cmp);
+ANS($DValue->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"identical");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the planes \( \Phi_$String_21 \) and \( \Phi_$String_22 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+}
+
+Scaffold::End();
+
+ENDDOCUMENT();
+
+
+
+

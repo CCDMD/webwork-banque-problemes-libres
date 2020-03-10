@@ -1,0 +1,339 @@
+##DESCRIPTION
+##  Lines & Planes
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"parserParametricLine.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$V1 = Vector(random(1,7,1), random(1,7,1), random(1,7,1));
+
+$V2 = Vector(random(1,7,1), random(1,7,1), random(1,7,1));
+while(areParallel $V1 $V2)
+{
+    $V2 = Vector(random(1,7,1), random(1,7,1), random(1,7,1));
+}
+
+Context("Point");
+
+## Point of intersection
+$P = Point(non_zero_random(-5,5,1), random(-5,5,1), random(-5,5,1));
+
+$rValue = random(4,5,1);
+$tValue = random(2,3,1);
+$PV1 = Point($P + $rValue*$V1);
+$PV2 = Point($P - $tValue*$V2);
+
+Context("ParametricLine");
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->parens->set("(" => {type => "Vector", close => ")"});
+Context()->variables->add(r => 'Real');
+$r = Formula('r');
+$Line1 = ParametricLine(Point($PV1) + $r*$V1);
+$Line2 = ParametricLine(Point($PV2),$V2);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Let $BR
+\( \quad \ell_1: (x,y,z) = $Line1 \) where \(r\in\mathbb{R}\)$BR
+and $BR
+\( \quad \ell_2: (x,y,z) = $Line2 \) where \(t\in\mathbb{R}\).$BR $BR
+${BBOLD}(a)$EBOLD
+Show that the lines \( \ell_1 \) and \( \ell_2 \) are intersecting. $BR $BR
+${BBOLD}(b)$EBOLD
+Find the point of intersection between the lines \( \ell_1 \) and \( \ell_2 \). $BR $BR
+${BBOLD}(c)$EBOLD
+Find the angle between the lines \( \ell_1 \) and \( \ell_2 \). 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("Identify the required vectors");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($PV2 - $PV1);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P_1 \) be the support point of the line \( \ell_1 \). $BR 
+Let \( \vec{v_1} \) be the generator vector of the line \( \ell_1 \). $BR $BR
+Let \( P_2 \) be the support point of the line \( \ell_2 \). $BR
+Let \( \vec{v_2} \) be the generator vector of the line \( \ell_2 \). $BR $BR
+
+We know $BR $BR
+\( \quad P_1 = \) \{ ans_rule(15) \} (let \(r=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_1} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad P_2 = \) \{ ans_rule(15) \} (let \(t=0\) and write the components of the point) $BR $BR
+\( \quad \vec{v_2} = \) \{ ans_rule(15) \} $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_1 P_2} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_1 P_2} \))$BR $BR
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PV1->cmp);
+ANS($V1->cmp);
+ANS($PV2->cmp);
+ANS($V2->cmp);
+
+ANS($P2P1->cmp);
+
+Section::End();
+
+Section::Begin("Check if the lines are parallel");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{v_1} = k \vec{v_2} \).$BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+Which gives us that $BR $BR
+\( \quad \vec{v_1} \) and \( \vec{v_2} \) are \{ $popParallel->menu() \} $BR $BR
+and $BR $BR
+\( \quad \ell_1 \) and \( \ell_2 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin("Check if the lines are intersecting");
+
+Context("Numeric");
+$popCoplanar = PopUp(["Choose", "coplanar", "equal", "equivalent", "parallel"],"coplanar");
+$popTripleScalar = PopUp(["Choose", "cross product", "dot product", "triple scalar product"],"triple scalar product");
+    
+Context()->texStrings;
+BEGIN_TEXT
+\( \ell_1 \) and \( \ell_2 \) are intersecting if the vectors \( \overrightarrow{P_2 P_1} \), \( \vec{v_1} \) and \( \vec{v_2} \) are \{ $popCoplanar->menu() \}, that is, when their \{ $popTripleScalar->menu() \} \( = 0\). $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popCoplanar->cmp);
+ANS($popTripleScalar->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "skew", "intersecting"],"intersecting");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$CrossProduct = $V1 x $V2;
+$Triple = $P2P1.$CrossProduct;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{P_2 P_1} \bullet \big( \vec{v_1} \times \vec{v_2} \big) \) ","\( = \)","\( $P2P1 \bullet \)".ans_rule(15),"(find the cross product)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(15),"(find the dot product)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Thus the line \( \ell_1 \) and the line \( \ell_2 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($CrossProduct->cmp);
+ANS($Triple->cmp);
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("Find the point of intersection");
+   
+Context()->texStrings;
+BEGIN_TEXT
+
+Solving for \( r \) and \( t \) gives us $BR $BR
+\( \quad r = \) \{ ans_rule(15) \} $BR $BR
+\( \quad t = \) \{ ans_rule(15) \}
+$BR $BR
+
+Thus the point of intersection is \( P_{\cap} = \) \{ ans_rule(15) \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("-$rValue")->cmp);
+ANS(Compute("$tValue")->cmp);
+ANS($P->cmp);
+
+Section::End();
+
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("Find the angle");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$DotProduct = $V1.$V2;
+$NormV1 = norm($V1);
+$NormV2 = norm($V2);
+
+$AngleStar = arccos($DotProduct/($NormV1*$NormV2));
+
+$Angle = $AngleStar;
+if($DotProduct < 0) { $Angle = pi - $AngleStar;}
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \theta^{*}\) be the angle between the vectors \( \vec{v_1} \) and \( \vec{v_2} \). $BR $BR
+Let \( \theta \) be the angle between the lines \( \ell_1 \) and \( \ell_2 \). $BR $BR $BR
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \cos (\theta^{*} ) \) ","\( = \)","\( \displaystyle \frac{\vec{v_1} \bullet \vec{v_2}}{ \| \vec{v_1} \| \; \| \vec{v_2} \|} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(10).$BR.$HR."\( \Big( \)".ans_rule(5)."\( \Big) \Big( \)".ans_rule(5)."\( \Big) \)","(write the numerical value of \(\vec{v_1} \bullet \vec{v_2}\) , \( \| \vec{v_1} \| \) and \( \| \vec{v_2} \| \))" ], align=>CENTER, separation=>0, indent=>40).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \theta^{*} \) ","\( = \)",ans_rule(25),"(in radian)" ], align=>CENTER, separation=>0, indent=>30).
+
+EndTable()
+\}
+$BR
+and $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \theta \) ","\( = \)",ans_rule(25),"(in radian)" ], align=>CENTER, separation=>0, indent=>30).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($NormV1->cmp);
+ANS($NormV2->cmp);
+ANS($AngleStar->cmp);
+ANS($Angle->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();
+
+
+
+

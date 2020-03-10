@@ -1,0 +1,657 @@
+##DESCRIPTION
+##  Algebra problem: polynomial functions
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Rational and Algebraic Function)
+##KEYWORDS('abscissa at the origin', 'polynomial function', 'graph', 'sign')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"contextAlternateIntervals.pl",
+"parserPopUp.pl",
+"PGchoicemacros.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$A = non_zero_random(-9,9,1);
+$B = non_zero_random(-9,9,1);
+while ($A == $B) { $B = non_zero_random(-9,9,1);}
+$C = non_zero_random(-9,9,1);
+while ($A == $C || $B == $C) {$C = non_zero_random(-9,9,1);}
+
+$K = non_zero_random(-9,9,1);
+
+$E1 = random(2,9,1);
+$E2 = random(2,9,1);
+$E3 = random(2,9,1);
+
+@root = num_sort(($A,$B,$C));
+
+#
+# Formula $K(x-$root[0])^$E1 (x-$root[1])^$E2 (x-$root[2])^$E3
+# 
+$equation = Compute("$K(x-$root[0])^$E1 (x-$root[1])^$E2 (x-$root[2])^$E3")->reduce; 
+
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Sketch \(f(x) = $equation\). 
+ 
+$BR $BR
+$HR $HR
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Part 1: Find the \(x\)-intercept(s)");
+
+Context()->texStrings;
+BEGIN_TEXT
+We know $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f(x) = 0 \) when \( $equation \)","\( = \)","\( 0 \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+The \(x\)-intercepts are (in ascending order)
+$BR
+\(x_1 = \) \{ans_rule(5)\}, \(x_2 = \) \{ans_rule(5)\} and \(x_3 = \) \{ans_rule(5)\}  
+END_TEXT
+Context()->normalStrings;
+
+#x-int
+ANS(Compute($root[0])->cmp);
+ANS(Compute($root[1])->cmp);
+ANS(Compute($root[2])->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Part 2: Construct the sign table of \( f(x) \)");
+
+Context("Numeric");
+
+#test points
+$x1 = random(-10,$root[0]-0.1,0.1);
+$x2 = random($root[0]+0.1,$root[1]-0.1,0.1);
+$x3 = random($root[1]+0.1,$root[2]-0.1,0.1);
+$x4 = random($root[2]+0.1,10,0.1);
+
+$popAbove = PopUp(["Choose", "above", "below"], "above");
+$popBelow = PopUp(["Choose", "above", "below"], "below");
+
+if( $equation->eval(x=>"$x1") < 0 )
+{
+$Graph_x1 = $popBelow;
+$Sign_x1 = "-";
+}
+else
+{
+$Graph_x1 = $popAbove;
+$Sign_x1 = "+";
+}
+
+if( $equation->eval(x=>"$x2") < 0 )
+{
+$Graph_x2 = $popBelow;
+$Sign_x2 = "-";
+}
+else
+{
+$Graph_x2 = $popAbove;
+$Sign_x2 = "+";
+}
+
+if( $equation->eval(x=>"$x3") < 0 )
+{
+$Graph_x3 = $popBelow;
+$Sign_x3 = "-";
+}
+else
+{
+$Graph_x3 = $popAbove;
+$Sign_x3 = "+";
+}
+
+if( $equation->eval(x=>"$x4") < 0 )
+{
+$Graph_x4 = $popBelow;
+$Sign_x4 = "-";
+}
+else
+{
+$Graph_x4 = $popAbove;
+$Sign_x4 = "+";
+}
+
+$popCross = PopUp(["Choose", "crosses", "touches"], "crosses");
+$popTouch = PopUp(["Choose", "crosses", "touches"], "touches");
+
+if( 
+    ($equation->eval(x=>"$x1") < 0) && ($equation->eval(x=>"$x2") < 0) ||
+    ($equation->eval(x=>"$x1") > 0) && ($equation->eval(x=>"$x2") > 0)
+    )
+{
+$Int_x1 = $popTouch
+}
+else
+{
+$Int_x1 = $popCross
+}
+
+if( 
+    ($equation->eval(x=>"$x2") < 0) && ($equation->eval(x=>"$x3") < 0) ||
+    ($equation->eval(x=>"$x2") > 0) && ($equation->eval(x=>"$x3") > 0)
+    )
+{
+$Int_x2 = $popTouch
+}
+else
+{
+$Int_x2 = $popCross
+}
+
+if( 
+    ($equation->eval(x=>"$x3") < 0) && ($equation->eval(x=>"$x4") < 0) ||
+    ($equation->eval(x=>"$x3") > 0) && ($equation->eval(x=>"$x4") > 0)
+    )
+{
+$Int_x3 = $popTouch
+}
+else
+{
+$Int_x3 = $popCross
+}
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$Interval1 = Compute("(-inf,$root[0])");
+$Interval2 = Compute("($root[0],$root[1])");
+$Interval3 = Compute("($root[1],$root[2])");
+$Interval4 = Compute("($root[2],inf)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR 
+$BR
+$BBOLD Recall: $EBOLD 
+\( \displaystyle f(x) =  $equation \)
+$BR 
+$HR $BR
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+"\(x\)",
+ans_rule(10),ans_rule(10),ans_rule(10),ans_rule(10),"(write the intervals for \(x\), making sure to exclude the endpoints of each interval)"],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+"Sign of \(f(x)\)",
+ans_rule(10),ans_rule(10),ans_rule(10),ans_rule(10),"(write \(+\), \(-\) or DNE)"],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+  AlignedRow([
+"Behavior of \(f(x)\)",
+$popAbove->menu(),$popAbove->menu(),$popAbove->menu(),$popAbove->menu(),"(choose $BITALIC above $EITALIC or  $BITALIC below $EITALIC the \(x\)-axis)"],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+EndTable();
+\}
+$BR $BR
+
+At \(x_1 \), the graph of \(f(x)\) \{$popCross->menu()\} the \(x\)-axis. $BR
+At \(x_2 \), the graph of \(f(x)\) \{$popCross->menu()\} the \(x\)-axis. $BR
+At \(x_3 \), the graph of \(f(x)\) \{$popCross->menu()\} the \(x\)-axis. $BR
+
+END_TEXT
+Context()->normalStrings;
+
+#interval
+ANS($Interval1->cmp);
+ANS($Interval2->cmp);
+ANS($Interval3->cmp);
+ANS($Interval4->cmp);
+
+#sign
+ANS(str_cmp($Sign_x1));
+ANS(str_cmp($Sign_x2));
+ANS(str_cmp($Sign_x3));
+ANS(str_cmp($Sign_x4));
+
+#behavior
+ANS($Graph_x1->cmp);
+ANS($Graph_x2->cmp);
+ANS($Graph_x3->cmp);
+ANS($Graph_x4->cmp);
+
+#touch/cross
+ANS($Int_x1->cmp);
+ANS($Int_x2->cmp);
+ANS($Int_x3->cmp);
+
+Section::End();
+###########################################
+
+Section::Begin("Part 3: Sketch \( f(x) \)");
+
+Context("Numeric");
+Context()->strings->add(A=>{}, B=>{}, C=>{}, D=>{}, E=>{}, F=>{}, G=>{}, H=>{}, I=>{}, J=>{}, K=>{}, L=>{}, M=>{}, N=>{}, O=>{}, P=>{} );
+
+#the correct picture must be loaded first
+if( ($equation->eval(x=>"$x1") < 0) && ($equation->eval(x=>"$x2") < 0) && ($equation->eval(x=>"$x3") < 0) && ($equation->eval(x=>"$x4") < 0))
+{
+    $pictID[1] = [
+    "three_roots_NNNN.png",  
+    "three_roots_NNNP.png",  
+    "three_roots_NNPN.png",  
+    "three_roots_NNPP.png",  
+    "three_roots_NPNN.png",  
+    "three_roots_NPPN.png",  
+    "three_roots_NPNP.png",  
+    "three_roots_NPPP.png",  
+    "three_roots_PPPP.png",  
+    "three_roots_PPPN.png",  
+    "three_roots_PPNP.png",  
+    "three_roots_PPNN.png",  
+    "three_roots_PNPP.png",  
+    "three_roots_PNPN.png",  
+    "three_roots_PNNP.png",  
+    "three_roots_PNNN.png",  
+    ];
+}
+elsif( ($equation->eval(x=>"$x1") < 0) && ($equation->eval(x=>"$x2") < 0) && ($equation->eval(x=>"$x3") < 0) && ($equation->eval(x=>"$x4") > 0))
+{
+    $pictID[1] = [
+    "three_roots_NNNP.png",  
+    "three_roots_NNNN.png",  
+    "three_roots_NNPN.png",  
+    "three_roots_NNPP.png",  
+    "three_roots_NPNN.png",  
+    "three_roots_NPPN.png",  
+    "three_roots_NPNP.png",  
+    "three_roots_NPPP.png",  
+    "three_roots_PPPP.png",  
+    "three_roots_PPPN.png",  
+    "three_roots_PPNP.png",  
+    "three_roots_PPNN.png",  
+    "three_roots_PNPP.png",  
+    "three_roots_PNPN.png",  
+    "three_roots_PNNP.png",  
+    "three_roots_PNNN.png",  
+    ];
+}
+elsif( ($equation->eval(x=>"$x1") < 0) && ($equation->eval(x=>"$x2") < 0) && ($equation->eval(x=>"$x3") > 0) && ($equation->eval(x=>"$x4") < 0))
+{
+    $pictID[1] = [
+    "three_roots_NNPN.png",  
+    "three_roots_NNNN.png",  
+    "three_roots_NNNP.png",  
+    "three_roots_NNPP.png",  
+    "three_roots_NPNN.png",  
+    "three_roots_NPPN.png",  
+    "three_roots_NPNP.png",  
+    "three_roots_NPPP.png",  
+    "three_roots_PPPP.png",  
+    "three_roots_PPPN.png",  
+    "three_roots_PPNP.png",  
+    "three_roots_PPNN.png",  
+    "three_roots_PNPP.png",  
+    "three_roots_PNPN.png",  
+    "three_roots_PNNP.png",  
+    "three_roots_PNNN.png",  
+    ];
+}
+elsif( ($equation->eval(x=>"$x1") < 0) && ($equation->eval(x=>"$x2") < 0) && ($equation->eval(x=>"$x3") > 0) && ($equation->eval(x=>"$x4") > 0))
+{
+    $pictID[1] = [
+    "three_roots_NNPP.png",  
+    "three_roots_NNNN.png",  
+    "three_roots_NNNP.png",  
+    "three_roots_NNPN.png",  
+    "three_roots_NPNN.png",  
+    "three_roots_NPPN.png",  
+    "three_roots_NPNP.png",  
+    "three_roots_NPPP.png",  
+    "three_roots_PPPP.png",  
+    "three_roots_PPPN.png",  
+    "three_roots_PPNP.png",  
+    "three_roots_PPNN.png",  
+    "three_roots_PNPP.png",  
+    "three_roots_PNPN.png",  
+    "three_roots_PNNP.png",  
+    "three_roots_PNNN.png",  
+    ];
+}
+elsif( ($equation->eval(x=>"$x1") < 0) && ($equation->eval(x=>"$x2") > 0) && ($equation->eval(x=>"$x3") < 0) && ($equation->eval(x=>"$x4") < 0))
+{
+    $pictID[1] = [
+    "three_roots_NPNN.png",  
+    "three_roots_NNNN.png",  
+    "three_roots_NNNP.png",  
+    "three_roots_NNPN.png",  
+    "three_roots_NNPP.png",  
+    "three_roots_NPPN.png",  
+    "three_roots_NPNP.png",  
+    "three_roots_NPPP.png",  
+    "three_roots_PPPP.png",  
+    "three_roots_PPPN.png",  
+    "three_roots_PPNP.png",  
+    "three_roots_PPNN.png",  
+    "three_roots_PNPP.png",  
+    "three_roots_PNPN.png",  
+    "three_roots_PNNP.png",  
+    "three_roots_PNNN.png",  
+    ];
+}
+elsif( ($equation->eval(x=>"$x1") < 0) && ($equation->eval(x=>"$x2") > 0) && ($equation->eval(x=>"$x3") > 0) && ($equation->eval(x=>"$x4") < 0))
+{
+    $pictID[1] = [
+    "three_roots_NPPN.png",  
+    "three_roots_NNNN.png",  
+    "three_roots_NNNP.png",  
+    "three_roots_NNPN.png",  
+    "three_roots_NNPP.png",  
+    "three_roots_NPNN.png",  
+    "three_roots_NPNP.png",  
+    "three_roots_NPPP.png",  
+    "three_roots_PPPP.png",  
+    "three_roots_PPPN.png",  
+    "three_roots_PPNP.png",  
+    "three_roots_PPNN.png",  
+    "three_roots_PNPP.png",  
+    "three_roots_PNPN.png",  
+    "three_roots_PNNP.png",  
+    "three_roots_PNNN.png",  
+    ];
+}
+elsif( ($equation->eval(x=>"$x1") < 0) && ($equation->eval(x=>"$x2") > 0) && ($equation->eval(x=>"$x3") < 0) && ($equation->eval(x=>"$x4") > 0))
+{
+    $pictID[1] = [
+    "three_roots_NPNP.png",  
+    "three_roots_NNNN.png",  
+    "three_roots_NNNP.png",  
+    "three_roots_NNPN.png",  
+    "three_roots_NNPP.png",  
+    "three_roots_NPNN.png",  
+    "three_roots_NPPN.png",  
+    "three_roots_NPPP.png",  
+    "three_roots_PPPP.png",  
+    "three_roots_PPPN.png",  
+    "three_roots_PPNP.png",  
+    "three_roots_PPNN.png",  
+    "three_roots_PNPP.png",  
+    "three_roots_PNPN.png",  
+    "three_roots_PNNP.png",  
+    "three_roots_PNNN.png",  
+    ];
+}
+elsif( ($equation->eval(x=>"$x1") < 0) && ($equation->eval(x=>"$x2") > 0) && ($equation->eval(x=>"$x3") > 0) && ($equation->eval(x=>"$x4") > 0))
+{
+    $pictID[1] = [
+    "three_roots_NPPP.png",  
+    "three_roots_NNNN.png",  
+    "three_roots_NNNP.png",  
+    "three_roots_NNPN.png",  
+    "three_roots_NNPP.png",  
+    "three_roots_NPNN.png",  
+    "three_roots_NPPN.png",  
+    "three_roots_NPNP.png",  
+    "three_roots_PPPP.png",  
+    "three_roots_PPPN.png",  
+    "three_roots_PPNP.png",  
+    "three_roots_PPNN.png",  
+    "three_roots_PNPP.png",  
+    "three_roots_PNPN.png",  
+    "three_roots_PNNP.png",  
+    "three_roots_PNNN.png",  
+    ];
+}
+elsif( ($equation->eval(x=>"$x1") > 0) && ($equation->eval(x=>"$x2") > 0) && ($equation->eval(x=>"$x3") > 0) && ($equation->eval(x=>"$x4") > 0))
+{
+    $pictID[1] = [
+    "three_roots_PPPP.png",  
+    "three_roots_NNNN.png",  
+    "three_roots_NNNP.png",  
+    "three_roots_NNPN.png",  
+    "three_roots_NNPP.png",  
+    "three_roots_NPNN.png",  
+    "three_roots_NPPN.png",  
+    "three_roots_NPNP.png",  
+    "three_roots_NPPP.png",  
+    "three_roots_PPPN.png",  
+    "three_roots_PPNP.png",  
+    "three_roots_PPNN.png",  
+    "three_roots_PNPP.png",  
+    "three_roots_PNPN.png",  
+    "three_roots_PNNP.png",  
+    "three_roots_PNNN.png",  
+    ];
+}
+elsif( ($equation->eval(x=>"$x1") > 0) && ($equation->eval(x=>"$x2") > 0) && ($equation->eval(x=>"$x3") > 0) && ($equation->eval(x=>"$x4") < 0))
+{
+    $pictID[1] = [
+    "three_roots_PPPN.png",  
+    "three_roots_NNNN.png",  
+    "three_roots_NNNP.png",  
+    "three_roots_NNPN.png",  
+    "three_roots_NNPP.png",  
+    "three_roots_NPNN.png",  
+    "three_roots_NPPN.png",  
+    "three_roots_NPNP.png",  
+    "three_roots_NPPP.png",  
+    "three_roots_PPPP.png",  
+    "three_roots_PPNP.png",  
+    "three_roots_PPNN.png",  
+    "three_roots_PNPP.png",  
+    "three_roots_PNPN.png",  
+    "three_roots_PNNP.png",  
+    "three_roots_PNNN.png",  
+    ];
+}
+elsif( ($equation->eval(x=>"$x1") > 0) && ($equation->eval(x=>"$x2") > 0) && ($equation->eval(x=>"$x3") < 0) && ($equation->eval(x=>"$x4") > 0))
+{
+    $pictID[1] = [
+    "three_roots_PPNP.png",  
+    "three_roots_NNNN.png",  
+    "three_roots_NNNP.png",  
+    "three_roots_NNPN.png",  
+    "three_roots_NNPP.png",  
+    "three_roots_NPNN.png",  
+    "three_roots_NPPN.png",  
+    "three_roots_NPNP.png",  
+    "three_roots_NPPP.png",  
+    "three_roots_PPPP.png",  
+    "three_roots_PPPN.png",  
+    "three_roots_PPNN.png",  
+    "three_roots_PNPP.png",  
+    "three_roots_PNPN.png",  
+    "three_roots_PNNP.png",  
+    "three_roots_PNNN.png",  
+    ];
+}
+elsif( ($equation->eval(x=>"$x1") > 0) && ($equation->eval(x=>"$x2") > 0) && ($equation->eval(x=>"$x3") < 0) && ($equation->eval(x=>"$x4") < 0))
+{
+    $pictID[1] = [
+    "three_roots_PPNN.png",  
+    "three_roots_NNNN.png",  
+    "three_roots_NNNP.png",  
+    "three_roots_NNPN.png",  
+    "three_roots_NNPP.png",  
+    "three_roots_NPNN.png",  
+    "three_roots_NPPN.png",  
+    "three_roots_NPNP.png",  
+    "three_roots_NPPP.png",  
+    "three_roots_PPPP.png",  
+    "three_roots_PPPN.png",  
+    "three_roots_PPNP.png",  
+    "three_roots_PNPP.png",  
+    "three_roots_PNPN.png",  
+    "three_roots_PNNP.png",  
+    "three_roots_PNNN.png",  
+    ];
+}
+elsif( ($equation->eval(x=>"$x1") > 0) && ($equation->eval(x=>"$x2") < 0) && ($equation->eval(x=>"$x3") > 0) && ($equation->eval(x=>"$x4") > 0))
+{
+    $pictID[1] = [
+    "three_roots_PNPP.png",  
+    "three_roots_NNNN.png",  
+    "three_roots_NNNP.png",  
+    "three_roots_NNPN.png",  
+    "three_roots_NNPP.png",  
+    "three_roots_NPNN.png",  
+    "three_roots_NPPN.png",  
+    "three_roots_NPNP.png",  
+    "three_roots_NPPP.png",  
+    "three_roots_PPPP.png",  
+    "three_roots_PPPN.png",  
+    "three_roots_PPNP.png",  
+    "three_roots_PPNN.png",  
+    "three_roots_PNPN.png",  
+    "three_roots_PNNP.png",  
+    "three_roots_PNNN.png",  
+    ];
+}
+elsif( ($equation->eval(x=>"$x1") > 0) && ($equation->eval(x=>"$x2") < 0) && ($equation->eval(x=>"$x3") > 0) && ($equation->eval(x=>"$x4") < 0))
+{
+    $pictID[1] = [
+    "three_roots_PNPN.png",  
+    "three_roots_NNNN.png",  
+    "three_roots_NNNP.png",  
+    "three_roots_NNPN.png",  
+    "three_roots_NNPP.png",  
+    "three_roots_NPNN.png",  
+    "three_roots_NPPN.png",  
+    "three_roots_NPNP.png",  
+    "three_roots_NPPP.png",  
+    "three_roots_PPPP.png",  
+    "three_roots_PPPN.png",  
+    "three_roots_PPNP.png",  
+    "three_roots_PPNN.png",  
+    "three_roots_PNPP.png",  
+    "three_roots_PNNP.png",  
+    "three_roots_PNNN.png",  
+    ];
+}
+elsif( ($equation->eval(x=>"$x1") > 0) && ($equation->eval(x=>"$x2") < 0) && ($equation->eval(x=>"$x3") < 0) && ($equation->eval(x=>"$x4") > 0))
+{
+    $pictID[1] = [
+    "three_roots_PNNP.png",  
+    "three_roots_NNNN.png",  
+    "three_roots_NNNP.png",  
+    "three_roots_NNPN.png",  
+    "three_roots_NNPP.png",  
+    "three_roots_NPNN.png",  
+    "three_roots_NPPN.png",  
+    "three_roots_NPNP.png",  
+    "three_roots_NPPP.png",  
+    "three_roots_PPPP.png",  
+    "three_roots_PPPN.png",  
+    "three_roots_PPNP.png",  
+    "three_roots_PPNN.png",  
+    "three_roots_PNPP.png",  
+    "three_roots_PNPN.png",  
+    "three_roots_PNNN.png",  
+    ];
+}
+else
+{
+    $pictID[1] = [
+    "three_roots_PNNN.png",  
+    "three_roots_NNNN.png",  
+    "three_roots_NNNP.png",  
+    "three_roots_NNPN.png",  
+    "three_roots_NNPP.png",  
+    "three_roots_NPNN.png",  
+    "three_roots_NPPN.png",  
+    "three_roots_NPNP.png",  
+    "three_roots_NPPP.png",  
+    "three_roots_PPPP.png",  
+    "three_roots_PPPN.png",  
+    "three_roots_PPNP.png",  
+    "three_roots_PPNN.png",  
+    "three_roots_PNPP.png",  
+    "three_roots_PNPN.png",  
+    "three_roots_PNNP.png",  
+    ];
+}
+
+
+for ($j = 0; $j <=15; $j++){
+  $fig[$j] = image($pictID[1][$j],width=>60, height=>60 )
+}
+
+@perm = NchooseK(16,16);
+@fig = @fig[@perm];
+@letter = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P");
+for ($j = 0; $j <= 15; $j++){ if ($perm[$j] == 0) {$answer = $letter[$j]; $j=16 }};
+
+Context()->texStrings;
+BEGIN_TEXT
+Use the information above to sketch \( f(x) \) and then select the graph that represents \( f(x) \) from the choices below. $BR
+$PAR
+\{
+$BCENTER.
+BeginTable().
+AlignedRow([$fig[0],$fig[1],$fig[2],$fig[3],$fig[4],$fig[5],$fig[6],$fig[7]]).
+TableSpace(5,0).
+AlignedRow(["A","B","C","D","E","F","G","h"]).
+TableSpace(25,6).
+AlignedRow([$fig[8],$fig[9],$fig[10],$fig[11],$fig[12],$fig[13],$fig[14],$fig[15]]).
+TableSpace(5,0).
+AlignedRow(["I","J","K","L","M","N","O","P"]).
+EndTable().
+$ECENTER
+\}
+
+$BR 
+$BITALIC You may click a graph to enlarge it. $EITALIC
+$BR $BR
+The graph of \(f(x)\) is identified by the letter \{ans_rule\}
+$BR $BR
+
+END_TEXT
+Context()->texStrings;
+
+#graph
+ANS(String($answer)->cmp());
+
+Section::End();
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

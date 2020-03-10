@@ -1,0 +1,134 @@
+##DESCRIPTION
+##  Derivative - Product Rule
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation of Functions')
+## KEYWORDS('chain differentiation', 'derivative', 'derivative of the product of functions')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+#"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,9,1);
+$b = random(2,8,1);
+$d = random(2,6,1);
+$n = random(3,9,1);
+
+$toggle = random(0,1,1);
+
+Context("Numeric");
+Context()->flags->set(useBaseTenLog => 1);
+$f = Compute("ln($b + $a x^2)")->reduce;
+
+if($toggle == 0) 
+{
+    $g = Compute("sin($d x^$n)")->reduce;
+}
+else
+{
+    $g = Compute("cos($d x^$n)")->reduce;
+}
+
+$g1 = $g**(-1);
+$df = $f->D('x');
+$dg1 = $g1->D('x');
+$equation = $f/$g;
+$dequation = $equation->D('x');
+
+Context("Numeric");
+Context()->flags->set(useBaseTenLog => 1);
+Context()->operators->undefine("/");
+
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => -1, maxPower => 9,
+message => "either -1 or 0",
+);
+$new_eq = Compute("$f*$g^(-1)");
+
+#box2
+$ans_eval2 = $f->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2 = $ans_hash2->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Let \( \displaystyle f(x) = $equation \). 
+Find \(f'(x)\) by using the product rule.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR$BITALIC$BBOLD Part 1: Rewriting the function $EBOLD$EITALIC $BR$BR
+
+Using laws of exponents, rewrite \( f(x) \) such that it does not contain a quotient. $BR $BR
+\(f(x) =\) \{ans_rule(25)\}
+
+$BR $BR
+$HR
+$BR$BITALIC$BBOLD Part 2: Finding the derivative $EBOLD$EITALIC $BR$BR
+
+
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f'(x) \)","\( = \)","\( \displaystyle \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \cdot \big( \)".ans_rule(10)."\( \big) + \big( \)".ans_rule(10)."\( \displaystyle \big) \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \)"], align=>LEFT, separation=>0).
+AlignedRow(["","","(apply the product rule)" ], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)","\( \big( \)".ans_rule(15)."\( \big) \big( \)".ans_rule(10)."\( \big) + \big( \)".ans_rule(10)."\( \big) \big( \)".ans_rule(15)."\( \big) \)"], align=>LEFT, separation=>0).
+AlignedRow(["","","(find the derivative)" ], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->texStrings;
+
+#Part 1
+ANS($new_eq->cmp);
+
+#Part 2
+if($TESTbox2)
+{
+    ANS($f->cmp);
+    ANS($g1->cmp);
+    ANS($f->cmp);
+    ANS($g1->cmp);
+
+    #derivative
+    ANS($df->cmp);
+    ANS($g1->cmp);
+    ANS($f->cmp);
+    ANS($dg1->cmp);
+}
+else
+{
+    ANS($g1->cmp);
+    ANS($f->cmp);
+    ANS($g1->cmp);
+    ANS($f->cmp);
+
+    #derivative
+    ANS($dg1->cmp);
+    ANS($f->cmp);
+    ANS($g1->cmp);
+    ANS($df->cmp);
+}
+ENDDOCUMENT();        # This should be the last executable line in the problem.

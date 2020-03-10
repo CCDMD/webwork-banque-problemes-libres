@@ -1,0 +1,145 @@
+##DESCRIPTION
+##  Marginal Analysis
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('economy', 'critical value')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"contextCurrency.pl",
+);
+
+TEXT(beginproblem());
+$showpartialcorrectanswers = 1;
+
+$a = random(50, 150, 10);
+$b = random(.1, 1, .1);
+$x = random(400,650,10);
+
+Context("Numeric");
+$equation = Compute("$a - $b x^2")->reduce;
+$dequation = $equation->D('x');
+
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+$answer = $dequation->eval(x=>"$x");
+$PositiveAnswer = -1*$answer;
+
+Context("Currency");
+$CurrencyAnswer = Currency($PositiveAnswer);
+
+Context("Numeric");
+$popVariableX = PopUp(["?", "x", "R", "MR"],"x");
+$popVariableMR = PopUp(["?", "x", "R", "MR"],"MR");
+
+$popUnit = PopUp(["Choose", "per day", "per week", "per month", "per year", "per toaster"],"per toaster");
+$popInc = PopUp(["Choose", "decreasing", "increasing"],"decreasing");
+
+#check box 4
+$ans_eval4 = $popVariableMR->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4 = $ans_hash4->{score};
+
+$WantSymbol = "";
+if ($TESTbox4) 
+{
+$WantSymbol = "MR";
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Question $EBOLD $BR $BR
+A company manufactures toasters and its total revenue (in dollars) from the sale of \(x\) toasters is given by the formula $BR
+\( \quad R(x) = $equation \)
+$BR
+Find the marginal revenue at a production level of \($x\) toasters.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point.
+$HR
+$HR
+$BR
+
+$HR
+$BR$BITALIC$BBOLD Step 1: Define the variables $EBOLD$EITALIC $BR$BR
+Let \(MR\) be the marginal revenue.
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 2: Identify what the problem is asking $EBOLD$EITALIC $BR$BR
+We want \{ $popVariableMR->menu() \} 
+when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 3: Find the appropriate formula $EBOLD$EITALIC $BR$BR
+
+We know \{ $popVariableMR->menu() \} \( = \displaystyle \frac{dR}{dx}\) 
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR$BITALIC$BBOLD Step 4: Solve for what the problem is asking $EBOLD$EITALIC $BR$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{dR}{dx} \)","\( = \)",ans_rule(30),"(write the derivative)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+and when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR $BR
+\( \displaystyle $WantSymbol = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( \frac{dR}{dx} \) $EITALIC)
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 5: Draw a conclusion $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD For the penultimate box, include the dollar sign in your answer. 
+$HR $HR
+$BR
+Thus, at a production level of \{ans_rule(5)\} toasters, the revenue is \{ $popInc->menu() \} at a rate of \{ans_rule(10)\} \{ $popUnit->menu() \}.
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popVariableMR->cmp);
+ANS($popVariableX->cmp);
+ANS(Compute("$x")->cmp);
+ANS($popVariableMR->cmp);
+
+ANS($dequation->cmp);
+
+ANS($popVariableX->cmp);
+ANS(Compute("$x")->cmp);
+ANS($answer->cmp);
+
+ANS(Compute("$x")->cmp);
+ANS($popInc->cmp);
+ANS($CurrencyAnswer->cmp);
+ANS($popUnit->cmp);
+
+
+ENDDOCUMENT();

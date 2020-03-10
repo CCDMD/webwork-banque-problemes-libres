@@ -1,0 +1,236 @@
+#DESCRIPTION
+##  Algebra: Inverse functions
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('function', 'reciprocal')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+####################################
+#  Initialization
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",     # Standard macros for PG language
+"PGcourse.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"contextLimitedPolynomial.pl",
+"contextAlternateIntervals.pl",
+"scaffold.pl",
+);
+ 
+TEXT(beginproblem()); 
+
+####################################
+#  Setup
+
+Context("Numeric")->variables->are(x=>"Real",y=>"Real");
+
+do
+{
+    $a = random(2,8,2);
+    $b = random(2,9,1);
+    $c = random(2,9,1);
+    $d = random(2,9,1);
+} until (gcd($a,$b) == 1 && gcd($c,$d)==1 && gcd($a,$c) == 1 && gcd($b,$d)==1 && $a != $c && $b != $d);
+
+
+$f = Compute("($a - $b x)/($c - $d x)")->reduce;
+
+
+$answer = Formula("($a - $c y)/($b - $d y)");
+
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR $BR
+The function \( \displaystyle f(x) = $f \) is one-to-one. Find the algebraic formula for the inverse of \( f(x) \) and then find the domain and range of both \(f(x)\) and its inverse.
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$BBOLD Part A: Find a formula for the inverse of \( f(x) \) $EBOLD 
+$BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Replace \(f(x)\) with \(y\)");
+
+Context("Numeric");
+Context()->variables->add(y => 'Real');
+$y = Compute("y");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f(x) \)","\( = \)","\( \displaystyle $f \)"], align=>CENTER, separation=>0).
+
+AlignedRow([ans_rule(2),"\( = \)",ans_rule(10),"(replace \(f(x)\) with \(y\))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($y->cmp);
+ANS($f->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Interchange \(x\) and \(y\)");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(2),"\( = \)",ans_rule(10),"(switch the \(x\) and \(y\))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($y->substitute(y=>"x")->cmp);
+ANS($f->substitute(x=>"y")->cmp);
+
+Section::End();
+
+
+###########################################
+Section::Begin("Solve for \(y\)");
+
+Context("Numeric");
+Context()->variables->add(y => 'Real');
+
+$LHS1 = Compute("x($c - $d y)")->reduce;
+$RHS1 = Compute("$a - $b y")->reduce;
+
+$LHS2 = Compute("-$d x  y + $b y")->reduce;
+$RHS2 = Compute("$a - $c x")->reduce;
+
+$RHS3Num = Compute("$a - x $c")->reduce;
+$RHS3Den = Compute("$b - $d x ")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(10),"\( = \)",ans_rule(10),"(rewrite with keeping \($RHS1\) on the RHS)"], align=>LEFT, separation=>0).
+
+AlignedRow([ans_rule(10),"\( = \)",ans_rule(10),"(rewrite with keeping the \(y\) variables on the LHS)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( y \)","\( = \)",ans_rule(10).$BR.$HR.ans_rule(10),"(solve for \( y\))"], align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($LHS1->cmp);
+ANS($RHS1->cmp);
+
+ANS($LHS2->cmp);
+ANS($RHS2->cmp);
+
+ANS($RHS3Num->cmp);
+ANS($RHS3Den->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("State the inverse");
+
+Context("Numeric");
+$Inverse = $RHS3Num/$RHS3Den;
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f^{-1}(x) \)","\( = \)",ans_rule(20)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Inverse->cmp());
+
+Section::End();
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B: Find the domain and range of \( f(x) \) and \( f^{-1}(x) \) $EBOLD 
+$BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+Section::Begin(" ");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$DomainFunction = Compute("(-infinity,$c/$d)U($c/$d,infinity)");
+$DomainInverse = Compute("(-infinity,$b/$d)U($b/$d,infinity)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD  $BR
+Express your answer in interval notation. $BR
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR 
+$HR $BR
+The domain of \( f(x)\) is \{ans_rule(30)\} $BR $BR
+The range of \( f(x)\) is \{ans_rule(30)\} $BR $BR
+The domain of \( f^{-1}(x)\) is \{ans_rule(30)\} $BR $BR
+The range of \( f^{-1}(x)\) is \{ans_rule(30)\} 
+END_TEXT
+Context()->normalStrings;
+
+ANS($DomainFunction->cmp);
+ANS($DomainInverse->cmp);
+ANS($DomainInverse->cmp);
+ANS($DomainFunction->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+
+ENDDOCUMENT();

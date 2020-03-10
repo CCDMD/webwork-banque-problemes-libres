@@ -1,0 +1,61 @@
+##DESCRIPTION
+##  Compute determinant
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('System of Linear Equations')
+## KEYWORDS('determinant')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+$a11 = non_zero_random(-5,5,1);
+$a22 = non_zero_random(-5,5,1);
+$a33 = non_zero_random(-5,5,1);
+$a44 = non_zero_random(-5,5,1);
+
+$a21 = random(-9,9,1);
+$a31 = non_zero_random(-9,9,1);
+$a32 = random(-9,9,1);
+$a41 = random(-9,9,1);
+$a42 = non_zero_random(-9,9,1);
+$a43 = random(-9,9,1);
+
+$A = Matrix([[$a11,0,0,0],[$a21,$a22,0,0],[$a31,$a32,$a33,0], 
+				   [$a41, $a42, $a43, $a44]]);
+$DetA = $A->det;
+
+Context("Numeric");
+$popType = PopUp(["Choose", "a diagonal", "a lower triangular", "an upper triangular"],"a lower triangular");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Compute the determinant of \( A = $A \) 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+Since \(A\) is \{ $popType->menu() \} matrix then \( \det(A) = a_{11} a_{22} ... a_{nn} \) $BR $BR
+Thus, \( \det (A)=\) \{ans_rule(15)\}.
+END_TEXT
+Context()->normalStrings;
+
+ANS($popType->cmp);
+ANS($DetA->cmp);
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

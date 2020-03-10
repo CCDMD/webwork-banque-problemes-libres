@@ -1,0 +1,298 @@
+##DESCRIPTION
+##  Differentiability & Continuity by using a graph
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('continuity', 'differentiability', 'discontinuity', 'graph', 'limit', 'left and right limit','domain')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+
+DOCUMENT();
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"PGgraphmacros.pl",
+"contextAlternateIntervals.pl",
+"parserPopUp.pl",
+"PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+$refreshCachedImages = 1; 
+
+Context("Numeric");
+Context()->strings->add(none=>{},UND=>{});
+
+
+$x = 0;             # the current x value
+$y = random(2,5,1); # the current y value
+$slope = $y;
+
+##########
+
+# the cube root
+$f1 = FEQ("(-1)*($slope)*(4*(2+$x-x))^(1/3) + ($slope)*2 +$y for x in [0,2) using color:blue and weight:2");
+
+$f2 = FEQ("($slope)*(4*(x-$x-2))^(1/3)+($slope)*2+$y for x in [2,4) using color:blue and weight=2");
+$limit2 = Compute("($slope)*(4*(2-$x-2))^(1/3)+($slope)*2+$y");
+$limit4 = Compute("($slope)*(4*(4-$x-2))^(1/3)+($slope)*2+$y");
+$x += 4;
+$y += $slope*4;
+
+# parabola
+$f3 = FEQ("$y + ($slope/2)*(x - $x)^2 for x in [4,6) using color:blue and weight=2");
+$limit6 = Compute("$y + ($slope/2)*(6 - $x)^2");
+$x += 2;
+$y += $slope*2;
+
+# piecewise 
+$f4 = FEQ("$y - ($slope/2)*(x - $x)^2 for x in [6,8) using color:blue and weight=2");
+$left8 = Compute("$y - ($slope/2)*(8 - $x)^2");
+$x += 2;
+
+$f5 = FEQ("$y + (-1)*($slope) + ($slope)*(x - $x) for x in [8,10) using color:blue and weight=2");
+$right8 = Compute("$y + (-1)*($slope) + ($slope)*(8 - $x)");
+$left10 = Compute("$y + (-1)*($slope) + ($slope)*(10 - $x)");
+$ymax = $y + (-1)*($slope) + ($slope)*(10 - $x);
+$x += 2;
+
+# horizontal line
+$f6 = FEQ("$y for x in (10,12) using color:blue and weight=2");
+$right10 = Compute("$y");
+$limit12 = Compute("$y");
+$x += 2;
+
+# the line
+$f7 = FEQ("$y - ($slope)*(x-$x) for x in [12,16) using color:blue and weight:2");
+$x += 2;
+$y += $slope*2;
+
+# now build the graph
+$graph = init_graph(-1,-1,17,$ymax+1,axes=>[0,0],'ticks'=>[18,$ymax+2],
+		 grid=>[18,$ymax+2],
+		 size=>[500,500]);
+         
+plot_functions($graph,$f1,$f2,$f3,$f4,$f5,$f6,$f7);
+
+#add labels on y-axis
+# add a label
+$graph->lb( new Label(0,$limit2,"$limit2",
+    'black','right','middle'));
+$graph->lb( new Label(0,$limit4,"$limit4",
+    'black','right','middle'));
+$graph->lb( new Label(0,$limit6,"$limit6",
+    'black','right','middle'));
+$graph->lb( new Label(0,$right8,"$right8",
+    'black','right','middle'));
+$graph->lb( new Label(0,$left10,"$left10",
+    'black','right','middle'));
+
+############
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$IDomain = Compute("[0,10)U(10,16)");
+
+$popCont = PopUp(["Choose", "discontinuous", "cusp/corner", "vertical tangent", "N/A"], "N/A");
+$popDis = PopUp(["Choose", "discontinuous", "cusp/corner", "vertical tangent", "N/A"],"discontinuous");
+$popCorner = PopUp(["Choose", "discontinuous", "cusp/corner", "vertical tangent", "N/A"],"cusp/corner");
+$popVT = PopUp(["Choose", "discontinuous", "cusp/corner", "vertical tangent", "N/A"],"vertical tangent");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+
+Let \(f(x)\) be the function defined graphically below.
+$PAR
+$BCENTER
+\{image(insertGraph($graph),width=>400,height=>400,tex_size=>500)\}
+$ECENTER 
+$BR$BR
+$HR
+$BBOLD Note: $EBOLD $BITALIC You can click on the graph to enlarge the image.$EITALIC
+$HR
+
+$PAR
+$BR
+The domain of the function is \(\text{dom}(f)=\)\{ans_rule(25)\}.$BR $BR
+$HR$BR
+
+Fill the following table:
+$BR
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+'\( \quad a \quad \)',
+'\(f(a)\)',
+'\(\displaystyle \lim_{x \rightarrow a^-} f(x) \)',
+'\(\displaystyle \lim_{x \rightarrow a^+} f(x) \)',
+'\(\displaystyle \lim_{x \rightarrow a} f(x) \)',
+'Is \(f(x) \) continuous at \( x = a \) ?',
+'Is \(f(x) \) differentiable at \( x = a \) ?',
+'If \(f(x) \) is NOT differentiable at \( x = a \), why?'],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\( 2 \)',
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+$popCont->menu()],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\( 4 \)',
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+$popCont->menu()],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\( 6 \)',
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+$popCont->menu()],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\( 8 \)',
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+$popCont->menu()],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\( 10 \)',
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+$popCont->menu()],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+'\( 12 \)',
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+ans_rule(5),
+$popCont->menu()],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+ EndTable();
+\}
+
+$BR
+$HR 
+$BBOLD Note: $EBOLD $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+$BR
+Enter $BBOLD YES $EBOLD or $BBOLD NO $EBOLD if \(f(x)\) is continuous/discontinuous at \( x = a \).$BR
+
+END_TEXT
+Context()->normalStrings;
+
+Context()->strings->add(yes=>{},Y=>{alias=>"yes"});
+Context()->strings->add(no=>{},N=>{alias=>"no"});
+Context()->strings->add(UND=>{});
+
+#domain
+ANS($IDomain->cmp);
+
+#2
+ANS($limit2->cmp);
+ANS($limit2->cmp);
+ANS($limit2->cmp);
+ANS($limit2->cmp);
+ANS(Compute("YES")->cmp);
+ANS(Compute("NO")->cmp);
+ANS($popVT->cmp);
+
+#4
+ANS($limit4->cmp);
+ANS($limit4->cmp);
+ANS($limit4->cmp);
+ANS($limit4->cmp);
+ANS(Compute("YES")->cmp);
+ANS(Compute("YES")->cmp);
+ANS($popCont->cmp);
+
+#6
+ANS($limit6->cmp);
+ANS($limit6->cmp);
+ANS($limit6->cmp);
+ANS($limit6->cmp);
+ANS(Compute("YES")->cmp);
+ANS(Compute("NO")->cmp);
+ANS($popCorner->cmp);
+
+#8
+ANS($right8->cmp);
+ANS($left8->cmp);
+ANS($right8->cmp);
+ANS(Compute("DNE")->cmp);
+ANS(Compute("NO")->cmp);
+ANS(Compute("NO")->cmp);
+ANS($popDis->cmp);
+
+#10
+ANS(Compute("UND")->cmp);
+ANS($left10->cmp);
+ANS($right10->cmp);
+ANS(Compute("DNE")->cmp);
+ANS(Compute("NO")->cmp);
+ANS(Compute("NO")->cmp);
+ANS($popDis->cmp);
+
+#12
+ANS($limit12->cmp);
+ANS($limit12->cmp);
+ANS($limit12->cmp);
+ANS($limit12->cmp);
+ANS(Compute("YES")->cmp);
+ANS(Compute("NO")->cmp);
+ANS($popCorner->cmp);
+
+ENDDOCUMENT();

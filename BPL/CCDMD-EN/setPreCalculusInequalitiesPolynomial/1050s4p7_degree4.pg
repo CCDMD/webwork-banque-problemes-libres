@@ -1,0 +1,245 @@
+##DESCRIPTION
+##  Algebra problem: polynomial inequalities
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Equations and Inequations)
+##KEYWORDS('interval', 'solving an inequality', 'table of signs')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"contextAlternateIntervals.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"parserPopUp.pl",
+"PGcourse.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+$r = random(2,6,1);
+$rsquared = $r*$r;
+$r1 = ($rsquared + 1)*($rsquared + 1);
+
+$popLess = PopUp(["?","<","<=","=",">",">="],"<");
+$popLessEqual = PopUp(["?","<","<=","=",">",">="],"<=");
+$popGreater = PopUp(["?","<","<=","=",">",">="],">");
+$popGreaterEqual = PopUp(["?","<","<=","=",">",">="],">=");
+
+@roots = num_sort((Compute("$r"),Compute("-$r")));
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+$case = random(1,4);
+if ($case == 1) 
+{
+  $Sign1 = '<';
+  $popAnswer = $popLess;
+  $SolSet = Compute("($roots[0],$roots[1])");
+} 
+elsif ($case == 2) 
+{
+  $Sign1 = '\leq';
+  $popAnswer = $popLessEqual;
+  $SolSet = Compute("[$roots[0],$roots[1]]");
+} 
+elsif ($case == 3) 
+{
+  $Sign1 = '>';
+  $popAnswer = $popGreater;
+  $SolSet = Compute("(-inf,$roots[0])U($roots[1],inf)");
+} 
+else 
+{
+  $Sign1 = '\geq';
+  $popAnswer = $popGreaterEqual;
+  $SolSet = Compute("(-inf,$roots[0]]U[$roots[1],inf)");
+}
+
+$LHS = "2 x^2 + 1";
+$RHS = "$r1 - x^4";
+$equation_tex = "$LHS $Sign1 $RHS";
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Solve \( \displaystyle $equation_tex \)
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Solve for \(x\)");
+
+Context("Numeric");
+$coeff_S1 = 1 - $r1;
+
+Context("LimitedPolynomial-Strict");
+$LHS_S1 = Compute("x^4 + 2 x^2 + $coeff_S1")->reduce;
+$RHS_S1 = Compute("0");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $LHS \)","\( $Sign1 \)","\( $RHS \)"], align=>CENTER, separation=>0, indent=>0).
+
+AlignedRow([ans_rule(15),$popLess->menu(),ans_rule(10),"(collect all terms on one side of the inequality, making sure \( x^4 \) remains positive)"], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($LHS_S1->cmp);
+ANS($popAnswer->cmp);
+ANS($RHS_S1->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 2,
+message => "either 0 or 1",
+);
+$myroot = -($rsquared + 1)-1;
+$factoredform = Compute("(x - $roots[0])(x - $roots[1])(x^2 - $myroot)")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+Now $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $LHS_S1 \)","\( = \)","\( 0 \)"], align=>CENTER, separation=>0, indent=>0).
+
+AlignedRow([ans_rule(15),"\( = \)","\( 0 \)","(factorized form)"], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+$BR $BR
+Solving for \(x\) gives us (in ascending order)
+$BR
+\(x_1 = \) \{ans_rule(10)\} and \(x_2 = \) \{ans_rule(10)\} 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($factoredform->cmp);
+
+ANS($roots[0]->cmp);
+ANS($roots[1]->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Construct the sign table of \( f(x) \) ");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+
+$I1 = Compute("(-inf,$roots[0])");
+$I2 = Compute("($roots[0],$roots[1])");
+$I3 = Compute("($roots[1],inf)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR 
+$BR
+$BBOLD Recall: $EBOLD 
+\( \displaystyle f(x) =  $factoredform \)
+$BR 
+$HR $BR
+\{
+BeginTable(border=>2, tex_border=>"2pt", spacing=>2, padding=>2, center=>0).
+
+AlignedRow([
+"\(x\)",
+ans_rule(10),ans_rule(10),ans_rule(10),"(write the intervals for \(x\), making sure to exclude the endpoints of each interval)"],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+  
+  AlignedRow([
+"Sign of \(f(x)\)",
+ans_rule(10),ans_rule(10),ans_rule(10),"(write \(+\), \(-\) or DNE)"],
+align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+
+EndTable();
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($I1->cmp);
+ANS($I2->cmp);
+ANS($I3->cmp);
+
+ANS(str_cmp("+"));
+ANS(str_cmp("-"));
+ANS(str_cmp("+"));
+
+Section::End();
+
+###########################################
+Section::Begin("State the solution");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD  $BR
+Express your answer in interval notation. $BR
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR 
+$HR $BR
+
+Thus, the solution set is \{ans_rule(35)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($SolSet->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

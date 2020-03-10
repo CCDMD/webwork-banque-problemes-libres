@@ -1,0 +1,111 @@
+#DESCRIPTION
+##  Algebra problem: f(x+h)-f(x)
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('composition')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,18,1);
+$b = random(1,8,1);
+$c = random(1,8,1);
+
+$equation = Formula("$c-$b x + $a x^2")->reduce;
+
+Context()->variables->add(a => 'Real');
+Context()->variables->add(h => 'Real');
+Context("LimitedPolynomial-Strict");
+$fa = $equation->substitute(x => "a"); 
+$fah = $equation->substitute(x => "a+h"); 
+
+Context()->variables->add(a => 'Real');
+Context()->variables->add(h => 'Real');
+$two_a = 2*$a;
+$answer = Formula("-$b h +$two_a a h + $a h^2");
+$quotient = Formula("-$b +$two_a a + $a h");
+
+Context("PolynomialFactors-Strict");
+Context()->variables->add(h => 'Real');
+Context()->variables->add(a => 'Real');
+Context()->flags->set(singleFactors=>1);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$factoredform = Compute("h  $quotient");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Let \( f(x)=$equation\). Calculate the following values:
+
+$BR  $BR
+\(f(a)= \) \{ans_rule(25) \}
+$BR  $BR
+\(f(a+h)= \) \{ans_rule(25) \} (fully expand and simplify)
+$BR $BR
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f(a+h)-f(a) \)".$BR.$HR."\( h \)","\( = \)",ans_rule(25)."\( - \big( \)".ans_rule(10)."\( \big) \)".$BR.$HR.ans_rule(2),"for \(h\not=0\)"], align=>CENTER, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(30).$BR.$HR.ans_rule(2),"(combine and simplify like terms for the numerator)" ], align=>CENTER, separation=>0, indent=>115).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(30).$BR.$HR.ans_rule(2),"(factor \(h\) in the numerator)" ], align=>CENTER, separation=>0, indent=>115).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(30),"(cancel \(h\))" ], align=>LEFT, separation=>0, indent=>115).
+EndTable()
+\}
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($fa->cmp);
+ANS($fah->cmp);
+
+ANS($fah->cmp);
+ANS($fa->cmp);
+ANS(fun_cmp("h",var=>['h']));
+
+ANS($answer->cmp);
+ANS(fun_cmp("h",var=>['h']));
+
+ANS($factoredform->cmp);
+ANS(fun_cmp("h",var=>['h']));
+
+ANS($quotient->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

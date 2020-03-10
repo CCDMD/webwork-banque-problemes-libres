@@ -1,0 +1,470 @@
+##DESCRIPTION
+##  Markov chains
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Matrix Algebra')
+## KEYWORDS('applications', 'Markov chain')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"PGmatrixmacros.pl",
+"MatrixReduce.pl",
+"contextLimitedPolynomial.pl",
+"parserPopUp.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+$KrustythenMcD = Compute(random(55,65));
+$McDthenKrusty = Compute(random(75,85));
+
+$a11 = 1-$KrustythenMcD/100;
+$a12 = $McDthenKrusty/100;
+$a21 = $KrustythenMcD/100;
+$a22 = 1-$McDthenKrusty/100;
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Consumers in Shelbyville have a choice of one of two
+fast food restaurants: Krusty's and McDonald's. Both have trouble
+keeping customers. Of those who last went to Krusty's, $KrustythenMcD%
+will go to McDonald's next time, and of those who last went to
+McDonald's, $McDthenKrusty% will go to Krusty's next time. $BR 
+Suppose that a customer goes out for fast food every Sunday, and just went
+to Krusty's. 
+$BR $BR
+$BBOLD (a) $EBOLD What is the probability that the customer will go to McDonald's two Sundays from now? $BR $BR
+$BBOLD (b) $EBOLD What is the probability that the customer will go to McDonald's many, many Sundays from now?
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("Define the transition matrix and initial condition");
+
+Context("Matrix");
+$M = Matrix([[$a11,$a12],[$a21,$a22]]);
+
+$X0 = Matrix( [[1],[0]]);
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(M\) be the matrix of transition. $BR
+Let \(\vec{x}_0\) be the initial probability distribution. $BR $BR
+Let \(\text{K}\) and \(\text{D}\) represent Krusty's and McDonald's, respectively. $BR $BR
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" "," ","","\(  \hspace{1cm} \text{K} \hspace{1.5cm}  \text{D}\)"], align=>LEFT, separation=>0).
+
+AlignedRow(["\( \quad M \)","\( = \)","\(  \text{K} \)".$BR.$BR."\(  \text{D} \)",$M->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \vec{x}_0 \)","\( = \)","\(  \text{K} \)".$BR.$BR."\(  \text{D} \)",$X0->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($M->cmp);
+ANS($X0->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(\vec{x}_n\) be the probability distribution \(n\) Sundays later. $BR $BR
+
+Which of the formula below corresponds to \(\vec{x}_2\) ? $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \vec{x}_2 = \vec{x}_1 M \) and \( \vec{x}_1 = \vec{x}_0 M \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \vec{x}_2 = M \vec{x}_1 \) and \( \vec{x}_1 = M \vec{x}_0 \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR 
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("2")->cmp );
+
+Section::End();
+
+Section::Begin("Find the probability distribution after 1 Sunday");
+
+Context("Matrix");
+$X1 = $M*$X0;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \vec{x}_1 \)","\( = \)","\( $M $X0 \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",$X1->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($X1->cmp);
+
+Section::End();
+
+Section::Begin("Find the probability distribution after 2 Sundays");
+
+Context("Matrix");
+$X2 = $M*$X1;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \vec{x}_2 \)","\( = \)","\( $M $X1 \)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",$X2->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Thus, two Sundays from now, the probability that the customer will go to McDonald's is \{ ans_rule(2) \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($X2->cmp);
+ANS(($X2->element(2,1))->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("RREF");
+
+Context("Numeric");
+$popPq = PopUp(["?","Mq","qM"],"Mq");
+$popFormula = PopUp(["Choose","q(I-M) = 0","(I-M)q = 0"],"(I-M)q = 0");
+
+$popAdd = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row"],"add a multiple of a row to another row");
+
+Context("Matrix");
+$A = Matrix([[1-$a11,-$a12],[-$a21,1-$a22]])->with(close=>"|");
+$B = Matrix([[0], [0]])->with(open=>".");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(\vec{q} = \{ display_matrix_mm([[q_1],[q_2]]) \}\) be the steady-state vector for \(M\). $BR $BR
+We know \(\vec{q} = \) \{ $popPq->menu() \} $BR $BR
+We need to find the general solution of \{ $popFormula->menu() \} $BR $BR
+We have $BR $BR
+\( \quad \) \{ $A->ans_array(2) \}\{ $B->ans_array(2) \}
+$BR $BR
+To find the RREF of the matrix above, I will \{ $popAdd->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popPq->cmp);
+ANS($popFormula->cmp);
+ANS($A->cmp);
+ANS($B->cmp);
+ANS($popAdd->cmp);
+
+Section::End();
+
+###########################################
+# Step 1
+###########################################
+
+Section::Begin(" ");
+
+Context("Numeric");
+$pop_1_Row1 = PopUp(["?", "R1", "R2"],"R1");
+$pop_1_Row2 = PopUp(["?", "R1", "R2"],"R2");
+$pop_2_Row1 = PopUp(["?", "R1", "R2"],"R1");
+$pop_2_Row2 = PopUp(["?", "R1", "R2"],"R2");
+$popSignPlus = PopUp(["?","+","-"],"+");
+
+$popMultiply = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row"],"multiply a row by a non-zero constant");
+$popRow = PopUp(["?", "row 1 column 1", "row 1 column 2", "row 2 column 1", "row 2 column 2"],"row 1 column 1");
+
+Context("Matrix");
+$A1 = row_add($A,2,1,1)->with(close=>"|");
+$B1 = Matrix([[0], [0]])->with(open=>".");
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(  \text{R1} \)".$BR."\(  \text{R2} \)","\( $A $B\)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)",$pop_1_Row1->menu().$popSignPlus->menu().ans_rule(2).$pop_2_Row2->menu(),$A1->ans_array(2),$B1->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+To create a leading 1 in \{ $popRow->menu() \}, I will \{ $popMultiply->menu() \}.
+END_TEXT
+Context()->normalStrings;
+
+ANS($pop_1_Row2->cmp());
+ANS($popSignPlus->cmp());
+ANS(Compute("1")->cmp);
+ANS($pop_2_Row1->cmp());
+
+ANS($A1->cmp);
+ANS($B1->cmp);
+
+ANS($popRow->cmp);
+ANS($popMultiply->cmp);
+
+Section::End();
+
+###########################################
+# Step 2
+###########################################
+
+Section::Begin(" ");
+
+Context("Matrix");
+$A2 = row_mult($A1,1,(1/$A1->element(1,1)))->with(close=>"|");
+$B2 = Matrix([[0], [0]])->with(open=>".");
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(  \text{R1} \)".$BR."\(  \text{R2} \)","\( $A1 $B1\)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \sim \)",ans_rule(1)."\(  \text{R1} \)".$BR.$BR."\( \text{R2} \)",$A2->ans_array(2),$B2->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS((1/$A1->element(1,1))->cmp);
+ANS($A2->cmp);
+ANS($B2->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Section::Begin("General solution");
+
+Context("Point");
+$P = Point(0,0);
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->variables->are(t=>"Real");
+$V = Vector(-$A2->element(1,2),1);
+
+#  for checking a particular vector parametric line
+sub mycheck {
+  my ($correct, $student, $ansHash) = @_;
+
+  if ( 
+       ($correct . i == $student . i) && 
+       ($correct . j == $student . j) 
+     ) 
+  { return 1; } else { return 0; }
+}
+
+$T = Formula("t");
+$Answer = $P + $T * $V;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR $BR
+\( \quad $A2 $B2 \) 
+
+$BR $BR
+Thus, the general solution is $BR $BR
+\( \quad (q_1,q_2) = \) \{ ans_rule(25) \} $BR $BR
+$HR
+$BBOLD Note: $EBOLD $BR
+Write the general solution in one of the following formats: $BR
+\( \quad P \) $BR
+\( \quad P + t \vec{v} \) $BR
+\( \quad P + s \vec{v} + t \vec{w} \)$BR
+\( \quad none \)
+END_TEXT
+Context()->normalStrings;
+
+ANS($Answer->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Section::Begin("Steady-state");
+
+Context("Numeric");
+$element12 = $A2->element(1,2);
+$coeff = Compute("-$element12 + 1");
+$ValueT = Compute("1/$coeff");
+$q1 = Compute("-$element12*$ValueT");
+$q2 = $ValueT;
+
+Context("LimitedPolynomial-Strict");
+Context()->variables->add(t => 'Real');
+$FormulaT = Compute("$coeff t");
+
+Context("Matrix");
+$Q = Matrix([[$q1],[$q2]]);
+
+Context()->texStrings;
+BEGIN_TEXT
+For the steady-state vector, we want $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( q_1 + q_2 \)","\( = \)",ans_rule(2)], align=>LEFT, separation=>0, indent=>70).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(10),"\( = \)",ans_rule(2),"(replace \(q_1\) and \(q_2\) with the values obtained from the general solution)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( t \)","\( = \)",ans_rule(2),"(solve for \(t\))"], align=>LEFT, separation=>0, indent=>110).
+
+EndTable()
+\}
+
+$BR $BR
+Thus, the steady-state vector is $BR $BR
+\( \quad \vec{q} = \) \{ $Q->ans_array(5) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("1")->cmp);
+ANS($FormulaT->cmp);
+ANS(Compute("1")->cmp);
+ANS($ValueT->cmp);
+
+ANS($Q->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Section::Begin("Conclusion");
+
+Context("Numeric");
+$W = Compute("1");
+
+Context("Matrix");
+$XK = $W*$Q;
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(W\) be the sum of all the entries of the initial condition \(\vec{x}_0\). $BR $BR
+We know that as \(k \to \infty\), \(\vec{x}_k \to W \vec{q} \) $BR $BR
+We have $BR 
+\( \quad W = \) \{ ans_rule(15) \} $BR $BR
+
+and $BR $BR
+\( \quad \vec{x}_k \to \) \{ $XK->ans_array(5) \} $BR $BR
+$BR $BR
+Thus, many, many Sundays from now, the probability that the customer will go to McDonald's is \{ ans_rule(2) \}. 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($W->cmp);
+ANS($XK->cmp);
+ANS(($XK->element(2,1))->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        

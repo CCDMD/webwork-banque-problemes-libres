@@ -1,0 +1,258 @@
+##DESCRIPTION
+##  Compute determinant using properties
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Matrix Algebra')
+## KEYWORDS('determinant of a matrix equation', 'properties')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"MatrixReduce.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+
+$a11 = non_zero_random(-3,3,2);
+$a21 = non_zero_random(-3,3,2);
+$a31 = random(2,5,1);
+$j = random(2,5,1);
+$k = random(-1,1,2);
+$l = random(-1,1,2);
+$p = random(-5,-1,1);
+$q = random(2,5,1);
+$a12 = $j*$a11;
+$a22 = $j*$a21+$k;
+$a32 = $j*$a31;
+$a13 = $p*$a11+$q*$a12+$l;
+$a23 = $p*$a21+$q*$a22;
+$a33 = $p*$a31+$q*$a32;
+
+$M = Matrix([[$a11,$a12,$a13],[$a21,$a22,$a23],[$a31,$a32,$a33]]);
+$DetM = $M->det;
+
+$k = random(2,3,1);
+$A1 = $M->transpose;
+$A = $k*$A1;
+$DetA = Compute("$k^3*$DetM");
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Let \(A=$M\) $BR $BR
+Use the fact that \(\det(A)=$DetM\) to compute $BR $BR
+\(  \quad \det{$A} \) 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+Section::Begin("Perform matrix operations");
+
+Context("Numeric");
+$popSwap = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row","transpose the matrix", "multiply the matrix by a non-zero constant"],"interchange two rows");
+$popTranspose = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row","transpose the matrix", "multiply the matrix by a non-zero constant"],"transpose the matrix");
+$popMatrix = PopUp(["Choose", "interchange two rows", "multiply a row by a non-zero constant", "add a multiple of a row to another row","transpose the matrix", "multiply the matrix by a non-zero constant"],"multiply the matrix by a non-zero constant");
+
+#check box 1
+$ans_eval1 = $popTranspose->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTTranspose = $ans_hash1->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+Starting with \(A = $M\), I will \{ $popSwap->menu() \}. 
+
+END_TEXT
+Context()->normalStrings;
+
+if($TESTTranspose)
+{
+    ANS($popTranspose->cmp() );
+}
+else
+{
+    ANS($popMatrix->cmp() );
+}
+
+Section::End();
+
+if($TESTTranspose)
+{
+Section::Begin(" ");
+
+Context("Matrix");
+$AS1 = $M->transpose;
+$DetAS1 = $AS1->det;
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( B \)","\( = \)","\( $M^T \)"],     align=>LEFT, separation=>0, indent=>10).
+AlignedRow(["","\( = \)",$AS1->ans_array(2)],     align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR 
+and $BR
+\( \quad \det(B) = \) \{ans_rule(15)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($AS1->cmp);
+ANS($DetAS1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+Starting with \(B = $AS1\), I will \{ $popSwap->menu() \}. 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popMatrix->cmp() );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Matrix");
+$AS2 = $k*$AS1;
+$DetAS2 = $AS2->det;
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( C \)","\( = \)",ans_rule(5)."\( $AS1 \)"],     align=>LEFT, separation=>0, indent=>10).
+AlignedRow(["","\( = \)",$AS2->ans_array(2)],     align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR 
+and $BR
+\( \quad \det(C) = \) \{ans_rule(15)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("$k")->cmp);
+ANS($AS2->cmp);
+ANS($DetAS2->cmp);
+
+Section::End();
+
+}
+else
+{
+Section::Begin(" ");
+
+Context("Matrix");
+$AS2 = $k*$M;
+$DetAS2 = $AS2->det;
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( B \)","\( = \)",ans_rule(5)."\( $M \)"],     align=>LEFT, separation=>0, indent=>10).
+AlignedRow(["","\( = \)",$AS2->ans_array(2)],     align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR 
+and $BR
+\( \quad \det(B) = \) \{ans_rule(15)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("$k")->cmp);
+ANS($AS2->cmp);
+ANS($DetAS2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+Starting with \(B = $AS2\), I will \{ $popSwap->menu() \}. 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popTranspose->cmp() );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Matrix");
+$AS1 = $AS2->transpose;
+$DetAS1 = $AS1->det;
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( C \)","\( = \)","\( $AS2^T \)"],     align=>LEFT, separation=>0, indent=>10).
+AlignedRow(["","\( = \)",$AS1->ans_array(2)],     align=>LEFT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR 
+and $BR
+\( \quad \det(C) = \) \{ans_rule(15)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($AS1->cmp);
+ANS($DetAS1->cmp);
+
+Section::End();
+
+}
+
+Section::Begin("Draw a conclusion");
+
+Context()->texStrings;
+BEGIN_TEXT
+Thus $BR
+\(  \quad \det{$A} = \) \{ans_rule(15)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($DetA->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

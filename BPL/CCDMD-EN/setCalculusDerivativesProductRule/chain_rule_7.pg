@@ -1,0 +1,101 @@
+##DESCRIPTION
+##  Derivative - Product Rule
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation of Functions')
+## KEYWORDS('chain differentiation', 'derivative', 'derivative of the product of functions')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,8,2);
+$b = random(1,9,1);
+$c = random(1,9,1);
+$d = random(1,9,1);
+$n = random(2,5,1);
+$m1 = random(4,9,1);
+$m2 = $m1 - 1;
+
+Context("Numeric");
+Context()->variables->set(x=>{limits=>[0,2]});
+$f = Compute("sqrt($a x^$n + $b)")->reduce;
+$g = Compute("($c x + $d)^{$m1/$m2}")->reduce;
+
+$df = $f->D('x');
+$dg = $g->D('x');
+$equation = $f*$g;
+$dequation = $equation->D('x');
+
+$expr = "\displaystyle \sqrt { $a x^$n + $b } \, ($c x + $d)^{$m1/$m2}";
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Let \( \displaystyle f(x) = $expr \). 
+Find \(f'(x)\).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( f'(x) \)","\( = \)","\( \displaystyle \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \cdot \big( \)".ans_rule(10)."\( \big) + \big( \)".ans_rule(10)."\( \displaystyle \big) \frac{d}{dx} \big( \)".ans_rule(10)."\( \big) \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["(apply the product rule)" ], align=>LEFT, separation=>0, indent=>60).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)","\( \big( \)".ans_rule(15)."\( \big) \big( \)".ans_rule(10)."\( \big) + \big( \)".ans_rule(10)."\( \big) \big( \)".ans_rule(15)."\( \big) \)"], align=>LEFT, separation=>0, indent=>40).
+
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["(find the derivative)" ], align=>LEFT, separation=>0, indent=>60).
+
+
+EndTable()
+\}
+
+END_TEXT
+Context()->texStrings;
+
+ANS($f->cmp);
+ANS($g->cmp);
+ANS($f->cmp);
+ANS($g->cmp);
+
+#derivative
+ANS($df->cmp);
+ANS($g->cmp);
+ANS($f->cmp);
+ANS($dg->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

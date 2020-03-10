@@ -1,0 +1,107 @@
+##DESCRIPTION
+##  Matrix Operations
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Matrix Algebra')
+## KEYWORDS('compatibility of an operation', 'minor matrix multiplication', 'transposition')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT() ;        
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+
+$U = Matrix([ 
+[non_zero_random(-10,10,1)],
+[non_zero_random(-10,10,1)], 
+[non_zero_random(-10,10,1)]
+]);
+
+Context("Numeric");
+$numRowU = Compute("3");
+$numColU = Compute("1");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Let \(u=$U\). $BR $BR
+Find \(u^T\), \(uu^T\) and \(u^Tu\).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+We know $BR $BR
+the size of \(u\) is \{ ans_rule(2) \} \( \times \) \{ ans_rule(2) \} ( $BITALIC enter the number of rows and then the number of columns $EITALIC )$BR $BR
+the size of \(u^T\) is \{ ans_rule(2) \} \( \times \) \{ ans_rule(2) \} $BR $BR
+the size of \(uu^T\) is \{ ans_rule(2) \} \( \times \) \{ ans_rule(2) \} $BR $BR
+the size of \(u^Tu\) is \{ ans_rule(2) \} \( \times \) \{ ans_rule(2) \}
+END_TEXT
+Context()->normalStrings;
+
+ANS( $numRowU->cmp() );
+ANS( $numColU->cmp() );
+
+ANS( $numColU->cmp() );
+ANS( $numRowU->cmp() );
+
+ANS( $numRowU->cmp() );
+ANS( $numRowU->cmp() );
+
+ANS( $numColU->cmp() );
+ANS( $numColU->cmp() );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Matrix");
+$Ut = $U->transpose;
+$UUt = $U*$Ut;
+$UtU = $Ut*$U;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR $BR
+\( \quad u^T = \) \{ $Ut->ans_array() \} $BR $BR
+$BR $BR
+\( \quad uu^T = \) \{ $UUt->ans_array() \} $BR $BR
+and $BR $BR
+\( \quad u^Tu = \) \{ $UtU->ans_array() \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $Ut->cmp() );
+ANS( $UUt->cmp() );
+ANS( $UtU->cmp() );
+
+Section::End();
+
+###########################################
+Scaffold::End();
+
+ENDDOCUMENT() ;        
+

@@ -1,0 +1,195 @@
+##DESCRIPTION
+##  Work
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the integral')
+## KEYWORDS('direct applications', 'physical')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+# Load whatever macros you need for the problem
+loadMacros("PG.pl",
+           "PGbasicmacros.pl",
+           "PGchoicemacros.pl",
+           "PGanswermacros.pl",
+           "PGauxiliaryFunctions.pl",
+           "PGgraphmacros.pl",
+"parserPopUp.pl",
+           "PGunion.pl"
+          );
+ 
+TEXT(beginproblem());
+## Show partial correct answers
+$showPartialCorrectAnswers = 1;
+
+$g=9.81;
+$G=6.67*10**(-11);
+$M=5.9736*10**(24);
+$R=6.371*10**(6);
+$p=random(710,930,10);
+$h=random(1,3,0.1);
+$mh=random(0.25,0.5,0.05);
+$r=random(2,4,0.1);
+$Fbottom=pi*$r*$r*$h*$g*$p;
+$Flat=pi*$r*$p*$g*$h*$h;
+$W=$g*pi*$r*$r*$p*($h*$h/2+$mh*$h);
+
+
+$popshape = PopUp(["Choose","a cone","an inverted cone", "a cube", "a cylinder", "a rectangular prism", "a triangular prism"],"a cylinder");
+
+$popslice = PopUp(["Choose","cylinder", "rectangular prism"],"cylinder");
+
+$displacement = "$h+$mh-xk";
+$radius = "$r";
+$D = $p;
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Bob is riding an elephant named Jamob. Bob and Jamob travel to a Coca Cola factory. They find a reservoir of Coca Cola. A cylinder with a radius of \($r\) m and a height of \($h\) m can describe the reservoir geometrically. Jamob is thirsty. The reservoir has no cover. The Coca Cola density is \($p\) kilograms per cubic meter. Suppose the reservoir is full of Coca Cola. $BR
+If Jamob brings his mouth \($mh\) m above the top of the reservoir to drink the Coca Cola (using his trunk, assuming it is long enough), then compute the work needed to bring the entire reservoir of Coca Cola to Jamob's mouth.
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD
+$HR
+$BR$BITALIC$BBOLD Part 1: Define and describe the situation $EBOLD$EITALIC $BR$BR
+The reservoir can be described geometrically as \{ $popshape->menu() \}. $BR $BR
+
+Partition the liquid held in the reservoir into \( n \) slices of equal width, where each slice can be described geometrically as a \{$popslice->menu\}. $BR $BR
+Let \( x \) be the height of the slice measured from the lower end of the reservoir 
+where \{ans_rule(2)\} \( \leq x \leq \) \{ans_rule(2)\}. $BR $BR 
+Let \( \Delta x \) be the width of each slice. $BR $BR
+The interval to partition is from \( x = \) \{ans_rule(5)\} to \( x = \) \{ans_rule(5)\}. $BR $BR
+
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 2: Compute an approximation of the work over each subinterval $EBOLD$EITALIC $BR$BR
+Consider the slice in the \( k^{th} \) subinterval \( [x_{k-1}, x_k] \). $BR $BR
+Choose \( x_k \) $BR $BR
+For that \( k^{th} \) subinterval, $BR $BR
+\( W_k = F_k d_k \) $BR $BR 
+where $BR $BR
+\( d_k \approx \) \{ans_rule(30)\} (the distance traveled by the slice to reach the top of the reservoir) $BR $BR
+\( F_k = m_k g \) where \( g = \) \{ans_rule(10)\} $BR $BR
+\( m_k = \rho V_k \) where \( \rho = \) \{ans_rule(10)\} $BR $BR
+\( V_k \approx \) \{ans_rule(10)\} (formula for the volume of a slice) $BR
+where \( h = \Delta x \) and \( r_k = \) \{ans_rule(30)\} $BR $BR
+
+Thus $BR $BR
+\( V_k \approx \big( \) \{ans_rule(30)\} \( \big) \Delta x \) $BR $BR
+\( F_k \approx \big( \) \{ans_rule(30)\} \( \big) \Delta x \) $BR $BR
+\( W_k \approx \big( \) \{ans_rule(30)\} \( \big) \Delta x \) $BR $BR
+
+Enter \( xk \) for \(x_k\) and \( rk \) for \(r_k\) $BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 3: Compute an approximation of the total work $EBOLD$EITALIC $BR$BR
+The total work can be approximated by $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle W \approx \sum _{k=1}^n W_k \)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle = \sum _{k=1}^n \)","\( \Big( \)".ans_rule(30)."\( \Big) \Delta x \)","(work in sigma notation)"], align=>LEFT, separation=>0, indent=>20).
+EndTable()
+\}
+
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 4: Compute the exact value of the work $EBOLD$EITALIC $BR$BR
+As \( n \) gets larger, \(\displaystyle W \approx \sum _{k=1}^n W_k \) gets closer to \( W \) $BR $BR
+
+Thus $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle W = \lim_{n\to\infty} \sum _{k=1}^n \)","\( \Big( \)".ans_rule(30)."\( \Big) \Delta x \)","(work in sigma notation)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \)",ans_rule(20),"\( \displaystyle \int \)",ans_rule(1).$BR.$BR.ans_rule(1),"\( \Big( \)".ans_rule(15)."\( \Big) \)","\( \displaystyle \, dx \, \)"],align => "LEFT",separation => 0,indent=>20). 
+  TableSpace(0,0).
+EndTable();
+\}
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["","(set up the appropriate bounds and functions for the integral in terms of \( x \)) "],align => "LEFT",separation => 0,indent=>20). 
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \)",ans_rule(20),"\( \displaystyle \Bigg[ \)",ans_rule(15),"\( \displaystyle \Bigg] \)",ans_rule(4).$BR.$BR.ans_rule(4),$SPACE,"(integrate in terms of \( x \))"],align => "LEFT",separation => 0,indent=>20). 
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \)",ans_rule(50),$SPACE,"(evaluate) "],align => "LEFT",separation => 0,indent=>20). 
+  TableSpace(0,0).
+EndTable();
+\}
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 5: Draw a conclusion $EBOLD$EITALIC $BR$BR
+Thus, the work required to bring the entire reservoir of Coca Cola to Jamob's mouth is \{ans_rule(50)\} joules.
+ $BR $BR
+
+
+END_TEXT
+
+#situation
+ANS( $popshape->cmp() );
+ANS( $popslice->cmp() );
+ANS(num_cmp("0"));
+ANS(num_cmp("$h+$mh"));
+ANS(num_cmp("0"));
+ANS(num_cmp("$h"));
+
+#subinterval
+ANS(fun_cmp($displacement,var=>["r","h","xk","x","rk"]));
+ANS(num_cmp("9.81"));
+ANS(num_cmp("$D"));
+ANS(fun_cmp("pi*rk^2*h",var=>["r","h","xk","x","rk"]));
+ANS(num_cmp("$radius"));
+
+ANS(fun_cmp("pi*($radius)^2",var=>["r","h","xk","x","rk"]));
+ANS(fun_cmp("9.81*$D*pi*($radius)^2",var=>["r","h","xk","x","rk"]));
+ANS(fun_cmp("9.81*$D*pi*($radius)^2*($displacement)",var=>["r","h","xk","x","rk"]));
+
+#all
+ANS(fun_cmp("9.81*$D*pi*($radius)^2*($displacement)",var=>["r","h","xk","x","rk"]));
+
+ANS(fun_cmp("9.81*$D*pi*($radius)^2*($displacement)",var=>["r","h","xk","x","rk"]));
+
+ANS(num_cmp("9.81*$D*pi*($radius)^2"));
+ANS(num_cmp("$h"));
+ANS(num_cmp("0"));
+ANS(fun_cmp("$h+$mh-x",var=>["r","h","xk","x","rk"]));
+
+ANS(num_cmp("9.81*$D*pi*($radius)^2"));
+ANS(fun_cmp("($h+$mh)*x-x^2/2",var=>["r","h","xk","x","rk"]));
+ANS(num_cmp("$h"));
+ANS(num_cmp("0"));
+
+ANS(num_cmp($W));
+ANS(num_cmp($W));
+
+ENDDOCUMENT();

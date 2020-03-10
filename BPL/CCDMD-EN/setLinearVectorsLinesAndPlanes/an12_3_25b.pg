@@ -1,0 +1,180 @@
+##DESCRIPTION
+##  Lines & Planes
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"contextLimitedPoint.pl",
+"parserParametricLine.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+#
+#  The points A, B and P
+#
+$A = non_zero_point3D();
+$B = non_zero_point3D();
+$P = non_zero_point3D();
+
+while (norm($B-$A) == 0) {$B = non_zero_point3D()};
+while (norm($P-$A) == 0) {$P = non_zero_point3D()};
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$AB = Vector($B - $A);
+$AP = Vector($P - $A);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find the distance from the point \(P = $P\) to the line going through the points
+\(A = $A\) and \(B = $B\).
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin(" ");
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "parallel"],"orthogonal");
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ image( "distance_point_points.png",width=>329, height=>201 ) \} $BR $BR
+Let \( \vec{v} = \overrightarrow{AB}\) be the generator vector of the line \( \ell \). $BR $BR
+Let \( C \) be the closest point to \( P \). $BR $BR
+We know $BR $BR
+\( \quad \overrightarrow{AP} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{AP} \) )$BR $BR
+\( \quad \vec{v} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{AB} \) )$BR $BR
+\( \quad C \) is the only point on \( \ell \) such that \( \overrightarrow{CP} \) is \{ $popOrthogonal->menu() \} to \( \vec{v} \). $BR $BR
+
+Which of the formulas below corresponds to the $BBOLD closest point \(C \)? $EBOLD $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \displaystyle \overrightarrow{CA} =  \textrm{proj}_{\vec{v}}\overrightarrow{AP} \quad \)","and","\( \quad \displaystyle C = A +  \textrm{proj}_{\vec{v}}\overrightarrow{AP}  \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \displaystyle \overrightarrow{AC} =  \textrm{proj}_{\vec{v}}\overrightarrow{AP} \quad \)","and","\( \quad \displaystyle C = A +  \textrm{proj}_{\vec{v}}\overrightarrow{AP} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 3:","\( \displaystyle \overrightarrow{CP} =  \textrm{proj}_{\vec{v}}\overrightarrow{AP} \quad \)","and","\( \quad \displaystyle C = P +  \textrm{proj}_{\vec{v}}\overrightarrow{AP}  \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 4:","\( \displaystyle \overrightarrow{PC} =  \textrm{proj}_{\vec{v}}\overrightarrow{AP} \quad \)","and","\( \quad \displaystyle C = P +  \textrm{proj}_{\vec{v}}\overrightarrow{AP} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($AP->cmp);
+ANS($AB->cmp);
+ANS($popOrthogonal->cmp);
+
+ANS(Compute("2")->cmp );
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$Proj = (($AP.$AB)/($AB.$AB))*$AB;
+
+Context("LimitedPoint");
+$C = $A + Point($Proj);
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$CP = Vector($P - $C);
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$Distance = norm($CP);
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad C \)", "\( = \)", "\( A \)", "\( + \)", "\( \displaystyle \textrm{proj}_{\vec{v}}\overrightarrow{AP} \)"], align=>CENTER, separation=>0).
+
+AlignedRow([" ", "\( = \)", ans_rule(10), "\( + \)", ans_rule(10),"(write the components)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ", "\( = \)", ans_rule(10)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+$BR $BR
+\( \quad \overrightarrow{CP} = \) \{ ans_rule(20) \} (write the components)
+$BR $BR
+and 
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \text{d} \big( \ell_1, \ell_2 \big) \)", "\( = \)", "\( \| \overrightarrow{CP} \| \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ", "\( = \)", ans_rule(30),"(compute the distance)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($A->cmp);
+ANS($Proj->cmp);
+ANS($C->cmp);
+ANS($CP->cmp);
+ANS($Distance->cmp);
+
+Section::End();
+
+###########################################
+Scaffold::End();
+
+ENDDOCUMENT();

@@ -1,0 +1,2094 @@
+##DESCRIPTION
+##  Lines & Planes
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"parserParametricLine.pl",
+"parserImplicitPlane.pl",
+"answerCustom.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#CASE 1: Creating a plane a line inside
+
+Context("Numeric");
+$d11_1=non_zero_random(-5,5,1);
+$d12_1=non_zero_random(-5,5,1);
+$d13_1=non_zero_random(-5,5,1);
+$d21_1=non_zero_random(-5,5,1);
+$d22_1=0;
+$d23_1=non_zero_random(-5,5,1);
+
+$p1_1=random(-5,5,1);
+$p2_1=random(-5,5,1);
+$p3_1=random(-5,5,1);
+
+$q1_1=random(-5,5,1);
+$q2_1=random(-5,5,1);
+$q3_1=random(-5,5,1);
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+#the normal vector
+$a_1 = Compute("$d12_1*$d23_1-$d13_1*$d22_1");
+$b_1 = Compute("$d13_1*$d21_1-$d11_1*$d23_1");
+$c_1 = Compute("$d11_1*$d22_1-$d12_1*$d21_1");
+$Normal_1 = Vector($a_1,$b_1,$c_1);
+
+$VL_1 = Vector($d11_1,$d12_1,$d13_1);
+
+Context("Point");
+#the point Q
+$Q_1 = Point($q1_1,$q2_1,$q3_1);
+
+#a point on the plane P
+$P_1 = Point($p1_1,$p2_1,$p3_1);
+
+#a point on the line L inside plane P
+$t1_1=non_zero_random(-3,3);
+$s1_1=non_zero_random(-3,3);
+$pl1_1 = Compute("$p1_1+$t1_1*$d11_1+$s1_1*$d21_1");
+$pl2_1 = Compute("$p2_1+$t1_1*$d12_1+$s1_1*$d22_1");
+$pl3_1 = Compute("$p3_1+$t1_1*$d13_1+$s1_1*$d23_1");
+$PL_1 = Point($pl1_1,$pl2_1,$pl3_1);
+
+Context("ImplicitPlane");
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)+y');
+$Plane_1 = ImplicitPlane($P_1,$Normal_1);
+
+Context("ParametricLine");
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->parens->set("(" => {type => "Vector", close => ")"});
+$Line_1 = ParametricLine(Point($PL_1),$VL_1);
+
+
+#CASE 2: Creating a plane a line parallel disjoints
+
+Context("Numeric");
+$d11_2=non_zero_random(-5,5,1);
+$d12_2=non_zero_random(-5,5,1);
+$d13_2=non_zero_random(-5,5,1);
+$d21_2=non_zero_random(-5,5,1);
+$d22_2=0;
+$d23_2=non_zero_random(-5,5,1);
+
+$p1_2=random(-5,5,1);
+$p2_2=random(-5,5,1);
+$p3_2=random(-5,5,1);
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+#the normal vector
+$a_2 = Compute("$d12_2*$d23_2-$d13_2*$d22_2");
+$b_2 = Compute("$d13_2*$d21_2-$d11_2*$d23_2");
+$c_2 = Compute("$d11_2*$d22_2-$d12_2*$d21_2");
+$Normal_2 = Vector($a_2,$b_2,$c_2);
+
+$VL_2 = Vector($d11_2,$d12_2,$d13_2);
+
+Context("Point");
+#a point a the plane P
+$P_2 = Point($p1_2,$p2_2,$p3_2);
+
+#the point Q outside Phi
+$q1_2 = Compute("$p1_2+$a_2+$d11_2+$d21_2");
+$q2_2 = Compute("$p2_2+$b_2+$d12_2+$d22_2");
+$q3_2 = Compute("$p3_2+$c_2+$d12_2+$d23_2");
+$Q_2 = Point($q1_2,$q2_2,$q3_2);
+
+#a point on the line L but not on plane P
+$PL_2 = Point($q1_2,$q2_2,$q3_2);
+
+Context("ImplicitPlane");
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)+y');
+$Plane_2 = ImplicitPlane($P_2,$Normal_2);
+
+Context("ParametricLine");
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->parens->set("(" => {type => "Vector", close => ")"});
+$Line_2 = ParametricLine(Point($PL_2),$VL_2);
+
+
+#CASE 3: Creating a plane and a non parallel line
+
+Context("Numeric");
+$d11_3=non_zero_random(-5,5,1);
+$d12_3=non_zero_random(-5,5,1);
+$d13_3=non_zero_random(-5,5,1);
+$d21_3=non_zero_random(-5,5,1);
+$d22_3=0;
+$d23_3=non_zero_random(-5,5,1);
+
+$p1_3=random(-5,5,1);
+$p2_3=random(-5,5,1);
+$p3_3=random(-5,5,1);
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+#the normal vector
+$a_3 = Compute("$d12_3*$d23_3-$d13_3*$d22_3");
+$b_3 = Compute("$d13_3*$d21_3-$d11_3*$d23_3");
+$c_3 = Compute("$d11_3*$d22_3-$d12_3*$d21_3");
+$Normal_3 = Vector($a_3,$b_3,$c_3);
+
+$vl1_3 = Compute("$a_3+$d11_3+$d21_3");
+$vl2_3 = Compute("$b_3+$d12_3+$d22_3");
+$vl3_3 = Compute("$c_3+$d12_3+$d23_3");
+$VL_3 = Vector($vl1_3,$vl2_3,$vl3_3);
+
+Context("Point");
+#a point a the plane P
+$P_3 = Point($p1_3,$p2_3,$p3_3);
+
+#the point Q outside Phi
+$temp1=non_zero_random(-3,3);
+$q1_3 = Compute("$p1_3+$temp1*($a_3+$d11_3+$d21_3)");
+$q2_3 = Compute("$p2_3+$temp1*($b_3+$d12_3+$d22_3)");
+$q3_3 = Compute("$p3_3+$temp1*($c_3+$d12_3+$d23_3)");
+$Q_3 = Point($q1_1,$q2_1,$q3_1);
+
+#a point on the line L and on the plane P
+$PL_3 = Point($q1_3,$q2_3,$q3_3);
+
+Context("ImplicitPlane");
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)+y');
+$Plane_3 = ImplicitPlane($P_3,$Normal_3);
+
+Context("ParametricLine");
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->parens->set("(" => {type => "Vector", close => ")"});
+$Line_3 = ParametricLine(Point($PL_3),$VL_3);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+For each question below, determine whether the line and the plane are parallel with the line disjoint to the plane, parallel with the line inside the plane, or intersecting.
+
+$BR
+$BR
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+$case=random(1,5);
+
+#1-2-3
+if($case == 1)
+{
+$String_1 = 1;
+$String_2 = 2;
+$String_3 = 3;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 1: parallel with the line inside the plane
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_1: (x,y,z) = $Line_1 \) where \(t\in\mathbb{R}\) $BR $BR
+\( \quad \Phi_$String_1: $Plane_1 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{v_$String_1} \) be the generator vector of the line \( \ell_$String_1 \). $BR 
+Let \( \vec{n_$String_1} \) be the normal vector of the plane \( \Phi_$String_1 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{v_$String_1} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_1} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VL_1->cmp);
+ANS($Normal_1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+$DotProduct = $VL_1.$Normal_1;
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"orthogonal");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad \vec{v_$String_1} \bullet \vec{n_$String_1} = \) \{ ans_rule(15) \} $BR $BR
+
+which gives us that 
+\( \vec{n_$String_1} \) and \( \vec{v_$String_1} \) are \{ $popOrthogonal->menu() \} $BR $BR
+and \( \ell_$String_1 \) and \( \Phi_$String_1 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($popOrthogonal->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$Avalue = $Normal_1->extract(1)*$PL_1->extract(1) + $Normal_1->extract(2)*$PL_1->extract(2) + $Normal_1->extract(3)*$PL_1->extract(3);
+
+$popEqual = PopUp(["Choose", "equal", "not equal"],"equal");
+$popCommon = PopUp(["Choose", "lies", "does not lie"],"lies");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( P \) be the support point of the line \( \ell_$String_1 \). $BR $BR
+
+We have $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( P \) ","\( = \)",ans_rule(15),"(let \(t = 0\) and write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Subbing \( P \) into the LHS of the equation for \( \Phi_$String_1: $Plane_1 \) gives us \{ ans_rule(15) \}, which is \{ $popEqual->menu() \} to the RHS. $BR $BR
+
+The point \( P \) \{ $popCommon->menu() \} on both the line \( \ell_$String_1 \) and the plane \( \Phi_$String_1 \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PL_1->cmp); 
+ANS($Avalue->cmp);
+
+ANS($popEqual->cmp);
+ANS($popCommon->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel with the line disjoint to the plane", "parallel with the line inside the plane", "intersecting"],"parallel with the line inside the plane");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_1 \) and the plane \( \Phi_$String_1 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 2: parallel with the line disjoint to the plane
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_2: (x,y,z) = $Line_2 \) where \(t\in\mathbb{R}\) $BR $BR
+\( \quad \Phi_$String_2: $Plane_2 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{v_$String_2} \) be the generator vector of the line \( \ell_$String_2 \). $BR 
+Let \( \vec{n_$String_2} \) be the normal vector of the plane \( \Phi_$String_2 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{v_$String_2} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_2} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VL_2->cmp);
+ANS($Normal_2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+$DotProduct = $VL_2.$Normal_2;
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"orthogonal");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad \vec{v_$String_2} \bullet \vec{n_$String_2} = \) \{ ans_rule(15) \} $BR $BR
+
+which gives us that 
+\( \vec{n_$String_2} \) and \( \vec{v_$String_2} \) are \{ $popOrthogonal->menu() \} $BR $BR
+and \( \ell_$String_2 \) and \( \Phi_$String_2 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($popOrthogonal->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$Avalue = $Normal_2->extract(1)*$PL_2->extract(1) + $Normal_2->extract(2)*$PL_2->extract(2) + $Normal_2->extract(3)*$PL_2->extract(3);
+
+$popEqual = PopUp(["Choose", "equal", "not equal"],"not equal");
+$popCommon = PopUp(["Choose", "lies", "does not lie"],"does not lie");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P \) be the support point of the line \( \ell_$String_2 \). $BR $BR
+
+We have $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( P \) ","\( = \)",ans_rule(15),"(let \(t = 0\) and write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Subbing \( P \) into the LHS of the equation for \( \Phi_$String_2: $Plane_2 \) gives us \{ ans_rule(15) \}, which is \{ $popEqual->menu() \} to the RHS. $BR $BR
+
+The point \( P \) \{ $popCommon->menu() \} on both the line \( \ell_$String_2 \) and the plane \( \Phi_$String_2 \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PL_2->cmp); 
+ANS($Avalue->cmp);
+
+ANS($popEqual->cmp);
+ANS($popCommon->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel with the line disjoint to the plane", "parallel with the line inside the plane", "intersecting"],"parallel with the line disjoint to the plane");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_2 \) and the plane \( \Phi_$String_2 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 3: a plane and a non parallel line
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_3: (x,y,z) = $Line_3 \) where \(t\in\mathbb{R}\) $BR $BR
+\( \quad \Phi_$String_3: $Plane_3 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{v_$String_3} \) be the generator vector of the line \( \ell_$String_3 \). $BR 
+Let \( \vec{n_$String_3} \) be the normal vector of the plane \( \Phi_$String_3 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{v_$String_3} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_3} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VL_3->cmp);
+ANS($Normal_3->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+$DotProduct = $VL_3.$Normal_3;
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"not orthogonal");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad \vec{v_$String_3} \bullet \vec{n_$String_3} = \) \{ ans_rule(15) \} $BR $BR
+
+which gives us that 
+\( \vec{n_$String_3} \) and \( \vec{v_$String_3} \) are \{ $popOrthogonal->menu() \} $BR $BR
+and \( \ell_$String_3 \) and \( \Phi_$String_3 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($popOrthogonal->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"not orthogonal");
+$popConclusion = PopUp(["Choose", "parallel with the line disjoint to the plane", "parallel with the line inside the plane", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( c \) such that 
+\( \vec{v_$String_3} = c \vec{n_$String_3} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_3} \) and \( \vec{v_$String_3} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \ell_$String_3 \) and \( \Phi_$String_3 \) are \{ $popOrthogonal->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popOrthogonal->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_3 \) and the plane \( \Phi_$String_3 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+#################
+}
+
+#1-3-2
+if($case == 2)
+{
+$String_1 = 1;
+$String_2 = 3;
+$String_3 = 2;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 1: parallel with the line inside the plane
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_1: (x,y,z) = $Line_1 \) where \(t\in\mathbb{R}\) $BR $BR
+\( \quad \Phi_$String_1: $Plane_1 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{v_$String_1} \) be the generator vector of the line \( \ell_$String_1 \). $BR 
+Let \( \vec{n_$String_1} \) be the normal vector of the plane \( \Phi_$String_1 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{v_$String_1} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_1} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VL_1->cmp);
+ANS($Normal_1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+$DotProduct = $VL_1.$Normal_1;
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"orthogonal");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad \vec{v_$String_1} \bullet \vec{n_$String_1} = \) \{ ans_rule(15) \} $BR $BR
+
+which gives us that 
+\( \vec{n_$String_1} \) and \( \vec{v_$String_1} \) are \{ $popOrthogonal->menu() \} $BR $BR
+and \( \ell_$String_1 \) and \( \Phi_$String_1 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($popOrthogonal->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$Avalue = $Normal_1->extract(1)*$PL_1->extract(1) + $Normal_1->extract(2)*$PL_1->extract(2) + $Normal_1->extract(3)*$PL_1->extract(3);
+
+$popEqual = PopUp(["Choose", "equal", "not equal"],"equal");
+$popCommon = PopUp(["Choose", "lies", "does not lie"],"lies");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( P \) be the support point of the line \( \ell_$String_1 \). $BR $BR
+
+We have $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( P \) ","\( = \)",ans_rule(15),"(let \(t = 0\) and write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Subbing \( P \) into the LHS of the equation for \( \Phi_$String_1: $Plane_1 \) gives us \{ ans_rule(15) \}, which is \{ $popEqual->menu() \} to the RHS. $BR $BR
+
+The point \( P \) \{ $popCommon->menu() \} on both the line \( \ell_$String_1 \) and the plane \( \Phi_$String_1 \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PL_1->cmp); 
+ANS($Avalue->cmp);
+
+ANS($popEqual->cmp);
+ANS($popCommon->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel with the line disjoint to the plane", "parallel with the line inside the plane", "intersecting"],"parallel with the line inside the plane");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_1 \) and the plane \( \Phi_$String_1 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 3: a plane and a non parallel line
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_3: (x,y,z) = $Line_3 \) where \(t\in\mathbb{R}\) $BR $BR
+\( \quad \Phi_$String_3: $Plane_3 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{v_$String_3} \) be the generator vector of the line \( \ell_$String_3 \). $BR 
+Let \( \vec{n_$String_3} \) be the normal vector of the plane \( \Phi_$String_3 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{v_$String_3} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_3} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VL_3->cmp);
+ANS($Normal_3->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+$DotProduct = $VL_3.$Normal_3;
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"not orthogonal");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad \vec{v_$String_3} \bullet \vec{n_$String_3} = \) \{ ans_rule(15) \} $BR $BR
+
+which gives us that 
+\( \vec{n_$String_3} \) and \( \vec{v_$String_3} \) are \{ $popOrthogonal->menu() \} $BR $BR
+and \( \ell_$String_3 \) and \( \Phi_$String_3 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($popOrthogonal->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"not orthogonal");
+$popConclusion = PopUp(["Choose", "parallel with the line disjoint to the plane", "parallel with the line inside the plane", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( c \) such that 
+\( \vec{v_$String_3} = c \vec{n_$String_3} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_3} \) and \( \vec{v_$String_3} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \ell_$String_3 \) and \( \Phi_$String_3 \) are \{ $popOrthogonal->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popOrthogonal->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_3 \) and the plane \( \Phi_$String_3 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 2: parallel with the line disjoint to the plane
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_2: (x,y,z) = $Line_2 \) where \(t\in\mathbb{R}\) $BR $BR
+\( \quad \Phi_$String_2: $Plane_2 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{v_$String_2} \) be the generator vector of the line \( \ell_$String_2 \). $BR 
+Let \( \vec{n_$String_2} \) be the normal vector of the plane \( \Phi_$String_2 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{v_$String_2} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_2} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VL_2->cmp);
+ANS($Normal_2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+$DotProduct = $VL_2.$Normal_2;
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"orthogonal");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad \vec{v_$String_2} \bullet \vec{n_$String_2} = \) \{ ans_rule(15) \} $BR $BR
+
+which gives us that 
+\( \vec{n_$String_2} \) and \( \vec{v_$String_2} \) are \{ $popOrthogonal->menu() \} $BR $BR
+and \( \ell_$String_2 \) and \( \Phi_$String_2 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($popOrthogonal->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$Avalue = $Normal_2->extract(1)*$PL_2->extract(1) + $Normal_2->extract(2)*$PL_2->extract(2) + $Normal_2->extract(3)*$PL_2->extract(3);
+
+$popEqual = PopUp(["Choose", "equal", "not equal"],"not equal");
+$popCommon = PopUp(["Choose", "lies", "does not lie"],"does not lie");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P \) be the support point of the line \( \ell_$String_2 \). $BR $BR
+
+We have $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( P \) ","\( = \)",ans_rule(15),"(let \(t = 0\) and write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Subbing \( P \) into the LHS of the equation for \( \Phi_$String_2: $Plane_2 \) gives us \{ ans_rule(15) \}, which is \{ $popEqual->menu() \} to the RHS. $BR $BR
+
+The point \( P \) \{ $popCommon->menu() \} on both the line \( \ell_$String_2 \) and the plane \( \Phi_$String_2 \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PL_2->cmp); 
+ANS($Avalue->cmp);
+
+ANS($popEqual->cmp);
+ANS($popCommon->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel with the line disjoint to the plane", "parallel with the line inside the plane", "intersecting"],"parallel with the line disjoint to the plane");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_2 \) and the plane \( \Phi_$String_2 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+#################
+
+}
+
+#2-1-3
+if($case == 3)
+{
+$String_1 = 2;
+$String_2 = 1;
+$String_3 = 3;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 2: parallel with the line disjoint to the plane
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_2: (x,y,z) = $Line_2 \) where \(t\in\mathbb{R}\) $BR $BR
+\( \quad \Phi_$String_2: $Plane_2 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{v_$String_2} \) be the generator vector of the line \( \ell_$String_2 \). $BR 
+Let \( \vec{n_$String_2} \) be the normal vector of the plane \( \Phi_$String_2 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{v_$String_2} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_2} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VL_2->cmp);
+ANS($Normal_2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+$DotProduct = $VL_2.$Normal_2;
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"orthogonal");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad \vec{v_$String_2} \bullet \vec{n_$String_2} = \) \{ ans_rule(15) \} $BR $BR
+
+which gives us that 
+\( \vec{n_$String_2} \) and \( \vec{v_$String_2} \) are \{ $popOrthogonal->menu() \} $BR $BR
+and \( \ell_$String_2 \) and \( \Phi_$String_2 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($popOrthogonal->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$Avalue = $Normal_2->extract(1)*$PL_2->extract(1) + $Normal_2->extract(2)*$PL_2->extract(2) + $Normal_2->extract(3)*$PL_2->extract(3);
+
+$popEqual = PopUp(["Choose", "equal", "not equal"],"not equal");
+$popCommon = PopUp(["Choose", "lies", "does not lie"],"does not lie");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P \) be the support point of the line \( \ell_$String_2 \). $BR $BR
+
+We have $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( P \) ","\( = \)",ans_rule(15),"(let \(t = 0\) and write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Subbing \( P \) into the LHS of the equation for \( \Phi_$String_2: $Plane_2 \) gives us \{ ans_rule(15) \}, which is \{ $popEqual->menu() \} to the RHS. $BR $BR
+
+The point \( P \) \{ $popCommon->menu() \} on both the line \( \ell_$String_2 \) and the plane \( \Phi_$String_2 \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PL_2->cmp); 
+ANS($Avalue->cmp);
+
+ANS($popEqual->cmp);
+ANS($popCommon->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel with the line disjoint to the plane", "parallel with the line inside the plane", "intersecting"],"parallel with the line disjoint to the plane");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_2 \) and the plane \( \Phi_$String_2 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 1: parallel with the line inside the plane
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_1: (x,y,z) = $Line_1 \) where \(t\in\mathbb{R}\) $BR $BR
+\( \quad \Phi_$String_1: $Plane_1 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{v_$String_1} \) be the generator vector of the line \( \ell_$String_1 \). $BR 
+Let \( \vec{n_$String_1} \) be the normal vector of the plane \( \Phi_$String_1 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{v_$String_1} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_1} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VL_1->cmp);
+ANS($Normal_1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+$DotProduct = $VL_1.$Normal_1;
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"orthogonal");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad \vec{v_$String_1} \bullet \vec{n_$String_1} = \) \{ ans_rule(15) \} $BR $BR
+
+which gives us that 
+\( \vec{n_$String_1} \) and \( \vec{v_$String_1} \) are \{ $popOrthogonal->menu() \} $BR $BR
+and \( \ell_$String_1 \) and \( \Phi_$String_1 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($popOrthogonal->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$Avalue = $Normal_1->extract(1)*$PL_1->extract(1) + $Normal_1->extract(2)*$PL_1->extract(2) + $Normal_1->extract(3)*$PL_1->extract(3);
+
+$popEqual = PopUp(["Choose", "equal", "not equal"],"equal");
+$popCommon = PopUp(["Choose", "lies", "does not lie"],"lies");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( P \) be the support point of the line \( \ell_$String_1 \). $BR $BR
+
+We have $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( P \) ","\( = \)",ans_rule(15),"(let \(t = 0\) and write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Subbing \( P \) into the LHS of the equation for \( \Phi_$String_1: $Plane_1 \) gives us \{ ans_rule(15) \}, which is \{ $popEqual->menu() \} to the RHS. $BR $BR
+
+The point \( P \) \{ $popCommon->menu() \} on both the line \( \ell_$String_1 \) and the plane \( \Phi_$String_1 \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PL_1->cmp); 
+ANS($Avalue->cmp);
+
+ANS($popEqual->cmp);
+ANS($popCommon->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel with the line disjoint to the plane", "parallel with the line inside the plane", "intersecting"],"parallel with the line inside the plane");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_1 \) and the plane \( \Phi_$String_1 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 3: a plane and a non parallel line
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_3: (x,y,z) = $Line_3 \) where \(t\in\mathbb{R}\) $BR $BR
+\( \quad \Phi_$String_3: $Plane_3 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{v_$String_3} \) be the generator vector of the line \( \ell_$String_3 \). $BR 
+Let \( \vec{n_$String_3} \) be the normal vector of the plane \( \Phi_$String_3 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{v_$String_3} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_3} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VL_3->cmp);
+ANS($Normal_3->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+$DotProduct = $VL_3.$Normal_3;
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"not orthogonal");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad \vec{v_$String_3} \bullet \vec{n_$String_3} = \) \{ ans_rule(15) \} $BR $BR
+
+which gives us that 
+\( \vec{n_$String_3} \) and \( \vec{v_$String_3} \) are \{ $popOrthogonal->menu() \} $BR $BR
+and \( \ell_$String_3 \) and \( \Phi_$String_3 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($popOrthogonal->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"not orthogonal");
+$popConclusion = PopUp(["Choose", "parallel with the line disjoint to the plane", "parallel with the line inside the plane", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( c \) such that 
+\( \vec{v_$String_3} = c \vec{n_$String_3} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_3} \) and \( \vec{v_$String_3} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \ell_$String_3 \) and \( \Phi_$String_3 \) are \{ $popOrthogonal->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popOrthogonal->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_3 \) and the plane \( \Phi_$String_3 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+#################
+
+}
+
+#2-3-1
+if($case == 4)
+{
+$String_1 = 3;
+$String_2 = 1;
+$String_3 = 2;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 2: parallel with the line disjoint to the plane
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_2: (x,y,z) = $Line_2 \) where \(t\in\mathbb{R}\) $BR $BR
+\( \quad \Phi_$String_2: $Plane_2 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{v_$String_2} \) be the generator vector of the line \( \ell_$String_2 \). $BR 
+Let \( \vec{n_$String_2} \) be the normal vector of the plane \( \Phi_$String_2 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{v_$String_2} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_2} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VL_2->cmp);
+ANS($Normal_2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+$DotProduct = $VL_2.$Normal_2;
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"orthogonal");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad \vec{v_$String_2} \bullet \vec{n_$String_2} = \) \{ ans_rule(15) \} $BR $BR
+
+which gives us that 
+\( \vec{n_$String_2} \) and \( \vec{v_$String_2} \) are \{ $popOrthogonal->menu() \} $BR $BR
+and \( \ell_$String_2 \) and \( \Phi_$String_2 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($popOrthogonal->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$Avalue = $Normal_2->extract(1)*$PL_2->extract(1) + $Normal_2->extract(2)*$PL_2->extract(2) + $Normal_2->extract(3)*$PL_2->extract(3);
+
+$popEqual = PopUp(["Choose", "equal", "not equal"],"not equal");
+$popCommon = PopUp(["Choose", "lies", "does not lie"],"does not lie");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P \) be the support point of the line \( \ell_$String_2 \). $BR $BR
+
+We have $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( P \) ","\( = \)",ans_rule(15),"(let \(t = 0\) and write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Subbing \( P \) into the LHS of the equation for \( \Phi_$String_2: $Plane_2 \) gives us \{ ans_rule(15) \}, which is \{ $popEqual->menu() \} to the RHS. $BR $BR
+
+The point \( P \) \{ $popCommon->menu() \} on both the line \( \ell_$String_2 \) and the plane \( \Phi_$String_2 \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PL_2->cmp); 
+ANS($Avalue->cmp);
+
+ANS($popEqual->cmp);
+ANS($popCommon->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel with the line disjoint to the plane", "parallel with the line inside the plane", "intersecting"],"parallel with the line disjoint to the plane");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_2 \) and the plane \( \Phi_$String_2 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 3: a plane and a non parallel line
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_3: (x,y,z) = $Line_3 \) where \(t\in\mathbb{R}\) $BR $BR
+\( \quad \Phi_$String_3: $Plane_3 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{v_$String_3} \) be the generator vector of the line \( \ell_$String_3 \). $BR 
+Let \( \vec{n_$String_3} \) be the normal vector of the plane \( \Phi_$String_3 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{v_$String_3} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_3} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VL_3->cmp);
+ANS($Normal_3->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+$DotProduct = $VL_3.$Normal_3;
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"not orthogonal");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad \vec{v_$String_3} \bullet \vec{n_$String_3} = \) \{ ans_rule(15) \} $BR $BR
+
+which gives us that 
+\( \vec{n_$String_3} \) and \( \vec{v_$String_3} \) are \{ $popOrthogonal->menu() \} $BR $BR
+and \( \ell_$String_3 \) and \( \Phi_$String_3 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($popOrthogonal->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"not orthogonal");
+$popConclusion = PopUp(["Choose", "parallel with the line disjoint to the plane", "parallel with the line inside the plane", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( c \) such that 
+\( \vec{v_$String_3} = c \vec{n_$String_3} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_3} \) and \( \vec{v_$String_3} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \ell_$String_3 \) and \( \Phi_$String_3 \) are \{ $popOrthogonal->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popOrthogonal->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_3 \) and the plane \( \Phi_$String_3 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 1: parallel with the line inside the plane
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_1: (x,y,z) = $Line_1 \) where \(t\in\mathbb{R}\) $BR $BR
+\( \quad \Phi_$String_1: $Plane_1 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{v_$String_1} \) be the generator vector of the line \( \ell_$String_1 \). $BR 
+Let \( \vec{n_$String_1} \) be the normal vector of the plane \( \Phi_$String_1 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{v_$String_1} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_1} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VL_1->cmp);
+ANS($Normal_1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+$DotProduct = $VL_1.$Normal_1;
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"orthogonal");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad \vec{v_$String_1} \bullet \vec{n_$String_1} = \) \{ ans_rule(15) \} $BR $BR
+
+which gives us that 
+\( \vec{n_$String_1} \) and \( \vec{v_$String_1} \) are \{ $popOrthogonal->menu() \} $BR $BR
+and \( \ell_$String_1 \) and \( \Phi_$String_1 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($popOrthogonal->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$Avalue = $Normal_1->extract(1)*$PL_1->extract(1) + $Normal_1->extract(2)*$PL_1->extract(2) + $Normal_1->extract(3)*$PL_1->extract(3);
+
+$popEqual = PopUp(["Choose", "equal", "not equal"],"equal");
+$popCommon = PopUp(["Choose", "lies", "does not lie"],"lies");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( P \) be the support point of the line \( \ell_$String_1 \). $BR $BR
+
+We have $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( P \) ","\( = \)",ans_rule(15),"(let \(t = 0\) and write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Subbing \( P \) into the LHS of the equation for \( \Phi_$String_1: $Plane_1 \) gives us \{ ans_rule(15) \}, which is \{ $popEqual->menu() \} to the RHS. $BR $BR
+
+The point \( P \) \{ $popCommon->menu() \} on both the line \( \ell_$String_1 \) and the plane \( \Phi_$String_1 \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PL_1->cmp); 
+ANS($Avalue->cmp);
+
+ANS($popEqual->cmp);
+ANS($popCommon->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel with the line disjoint to the plane", "parallel with the line inside the plane", "intersecting"],"parallel with the line inside the plane");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_1 \) and the plane \( \Phi_$String_1 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+#################
+
+}
+
+#3-1-2
+if($case == 5)
+{
+$String_1 = 2;
+$String_2 = 3;
+$String_3 = 1;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 3: a plane and a non parallel line
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_3: (x,y,z) = $Line_3 \) where \(t\in\mathbb{R}\) $BR $BR
+\( \quad \Phi_$String_3: $Plane_3 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{v_$String_3} \) be the generator vector of the line \( \ell_$String_3 \). $BR 
+Let \( \vec{n_$String_3} \) be the normal vector of the plane \( \Phi_$String_3 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{v_$String_3} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_3} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VL_3->cmp);
+ANS($Normal_3->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+$DotProduct = $VL_3.$Normal_3;
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"not orthogonal");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad \vec{v_$String_3} \bullet \vec{n_$String_3} = \) \{ ans_rule(15) \} $BR $BR
+
+which gives us that 
+\( \vec{n_$String_3} \) and \( \vec{v_$String_3} \) are \{ $popOrthogonal->menu() \} $BR $BR
+and \( \ell_$String_3 \) and \( \Phi_$String_3 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($popOrthogonal->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"cannot");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"not parallel");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"not orthogonal");
+$popConclusion = PopUp(["Choose", "parallel with the line disjoint to the plane", "parallel with the line inside the plane", "intersecting"],"intersecting");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( c \) such that 
+\( \vec{v_$String_3} = c \vec{n_$String_3} \)$BR $BR
+
+which gives us that 
+\( \vec{n_$String_3} \) and \( \vec{v_$String_3} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \ell_$String_3 \) and \( \Phi_$String_3 \) are \{ $popOrthogonal->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popOrthogonal->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_3 \) and the plane \( \Phi_$String_3 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 1: parallel with the line inside the plane
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_1: (x,y,z) = $Line_1 \) where \(t\in\mathbb{R}\) $BR $BR
+\( \quad \Phi_$String_1: $Plane_1 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{v_$String_1} \) be the generator vector of the line \( \ell_$String_1 \). $BR 
+Let \( \vec{n_$String_1} \) be the normal vector of the plane \( \Phi_$String_1 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{v_$String_1} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_1} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VL_1->cmp);
+ANS($Normal_1->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+$DotProduct = $VL_1.$Normal_1;
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"orthogonal");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad \vec{v_$String_1} \bullet \vec{n_$String_1} = \) \{ ans_rule(15) \} $BR $BR
+
+which gives us that 
+\( \vec{n_$String_1} \) and \( \vec{v_$String_1} \) are \{ $popOrthogonal->menu() \} $BR $BR
+and \( \ell_$String_1 \) and \( \Phi_$String_1 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($popOrthogonal->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$Avalue = $Normal_1->extract(1)*$PL_1->extract(1) + $Normal_1->extract(2)*$PL_1->extract(2) + $Normal_1->extract(3)*$PL_1->extract(3);
+
+$popEqual = PopUp(["Choose", "equal", "not equal"],"equal");
+$popCommon = PopUp(["Choose", "lies", "does not lie"],"lies");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( P \) be the support point of the line \( \ell_$String_1 \). $BR $BR
+
+We have $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( P \) ","\( = \)",ans_rule(15),"(let \(t = 0\) and write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Subbing \( P \) into the LHS of the equation for \( \Phi_$String_1: $Plane_1 \) gives us \{ ans_rule(15) \}, which is \{ $popEqual->menu() \} to the RHS. $BR $BR
+
+The point \( P \) \{ $popCommon->menu() \} on both the line \( \ell_$String_1 \) and the plane \( \Phi_$String_1 \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PL_1->cmp); 
+ANS($Avalue->cmp);
+
+ANS($popEqual->cmp);
+ANS($popCommon->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel with the line disjoint to the plane", "parallel with the line inside the plane", "intersecting"],"parallel with the line inside the plane");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_1 \) and the plane \( \Phi_$String_1 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR $HR $BR
+$BBOLD Part C $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+###########################################
+
+#CASE 2: parallel with the line disjoint to the plane
+Context()->texStrings;
+BEGIN_TEXT
+\( \quad \ell_$String_2: (x,y,z) = $Line_2 \) where \(t\in\mathbb{R}\) $BR $BR
+\( \quad \Phi_$String_2: $Plane_2 \) $BR
+$BR 
+$HR 
+$BBOLD Solution $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( \vec{v_$String_2} \) be the generator vector of the line \( \ell_$String_2 \). $BR 
+Let \( \vec{n_$String_2} \) be the normal vector of the plane \( \Phi_$String_2 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{v_$String_2} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_$String_2} = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($VL_2->cmp);
+ANS($Normal_2->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+$DotProduct = $VL_2.$Normal_2;
+
+Context("Numeric");
+$popOrthogonal = PopUp(["Choose", "orthogonal", "not orthogonal"],"orthogonal");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR $BR
+\( \quad \vec{v_$String_2} \bullet \vec{n_$String_2} = \) \{ ans_rule(15) \} $BR $BR
+
+which gives us that 
+\( \vec{n_$String_2} \) and \( \vec{v_$String_2} \) are \{ $popOrthogonal->menu() \} $BR $BR
+and \( \ell_$String_2 \) and \( \Phi_$String_2 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($DotProduct->cmp);
+ANS($popOrthogonal->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$Avalue = $Normal_2->extract(1)*$PL_2->extract(1) + $Normal_2->extract(2)*$PL_2->extract(2) + $Normal_2->extract(3)*$PL_2->extract(3);
+
+$popEqual = PopUp(["Choose", "equal", "not equal"],"not equal");
+$popCommon = PopUp(["Choose", "lies", "does not lie"],"does not lie");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( P \) be the support point of the line \( \ell_$String_2 \). $BR $BR
+
+We have $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( P \) ","\( = \)",ans_rule(15),"(let \(t = 0\) and write the components of the point)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Subbing \( P \) into the LHS of the equation for \( \Phi_$String_2: $Plane_2 \) gives us \{ ans_rule(15) \}, which is \{ $popEqual->menu() \} to the RHS. $BR $BR
+
+The point \( P \) \{ $popCommon->menu() \} on both the line \( \ell_$String_2 \) and the plane \( \Phi_$String_2 \).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($PL_2->cmp); 
+ANS($Avalue->cmp);
+
+ANS($popEqual->cmp);
+ANS($popCommon->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popConclusion = PopUp(["Choose", "parallel with the line disjoint to the plane", "parallel with the line inside the plane", "intersecting"],"parallel with the line disjoint to the plane");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Thus the line \( \ell_$String_2 \) and the plane \( \Phi_$String_2 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+#################
+
+}
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();
+

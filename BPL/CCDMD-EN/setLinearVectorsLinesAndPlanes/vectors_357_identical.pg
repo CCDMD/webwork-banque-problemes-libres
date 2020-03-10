@@ -1,0 +1,215 @@
+##DESCRIPTION
+##  Lines & Planes
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"parserParametricLine.pl",
+"parserImplicitPlane.pl",
+"answerCustom.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"contextFraction.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$N2 = Vector(non_zero_random(-9,9,1),random(-9,9,1),random(-9,9,1));
+$k = non_zero_random(-5,5,1);
+$N1 = $k*$N2;
+
+Context("Point");
+do
+{
+    $p1 = random(-9,9,1);
+    $p2 = non_zero_random(-9,9,1);
+    $p3 = random(-9,9,1);
+    $P = Point($p1, $p2, $p3);
+
+    #ensures that support point for plane is of the form (0,0,integer)
+    $tempValueP = ($N1->extract(1)*$P->extract(1) + $N1->extract(2)*$P->extract(2) + $N1->extract(3)*$P->extract(2));
+    
+} until( $tempValueP%($N1->extract(2)) == 0);
+$Q = $P;
+
+Context("ImplicitPlane");
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)+y');
+$Plane1 = ImplicitPlane($P,$N1);
+$Plane2 = ImplicitPlane($Q,$N2);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Let $BR
+\( \quad \Phi_1: $Plane1 \) $BR
+and the plane $BR
+\( \quad \Phi_2: $Plane2 \). $BR $BR
+Show that the planes \( \Phi_1 \) and \( \Phi_2 \) are identical. 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Section::Begin("Identify the required vectors");
+
+Context("Numeric");
+$d1_value = $N1->extract(1)*$P->extract(1) + $N1->extract(2)*$P->extract(2) + $N1->extract(3)*$P->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2->extract(1)*$Q->extract(1) + $N2->extract(2)*$Q->extract(2) + $N2->extract(3)*$Q->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_1} \) be the normal vector of the plane \( \Phi_1 \). $BR 
+Let \( d_1 \) be the constant associated with the plane \( \Phi_1 \). $BR $BR
+Let \( \vec{n_2} \) be the normal vector of the plane \( \Phi_2 \). $BR 
+Let \( d_2 \) be the constant associated with the plane \( \Phi_2 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_1} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_1 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_2} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_2 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1->cmp);
+ANS($D1->cmp);
+ANS($N2->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin("Check if the planes are parallel");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_1} = k \vec{n_2} \)$BR $BR
+
+which gives us that 
+\( \vec{n_1} \) and \( \vec{n_2} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_1 \) and \( \Phi_2 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin("Check if the planes are identical");
+
+Context("Point");
+$d1_value = $N1->extract(1)*$P->extract(1) + $N1->extract(2)*$P->extract(2) + $N1->extract(3)*$P->extract(3);
+$PointValue = ($N1->extract(1)*$P->extract(1) + $N1->extract(2)*$P->extract(2) + $N1->extract(3)*$P->extract(3))/$N1->extract(3);
+$SupportPoint = Point(0,0,$PointValue);
+
+Context("Numeric");
+$d_value = $N2->extract(3)*$PointValue;
+
+$popAnd = PopUp(["?", "and", "or"],"and");
+$popEqual = PopUp(["?", "=", "not ="],"=");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"identical");
+
+Context("Numeric");
+$coeff = $k*$D2;
+
+Context("Numeric");
+Context()->operators->undefine('*',' *','* ','**');
+$KValue = Compute("$k");
+$DValue = Compute("$coeff");
+
+Context()->texStrings;
+BEGIN_TEXT
+We know the planes \( \Phi_1 \) and \( \Phi_2 \) are identical if \( \vec{n_1} = k \vec{n_2} \quad \) \{ $popAnd->menu() \} \( \quad d_1 = k d_2 \) for the same \( k \). $BR $BR
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{n_1} \) ","\( = \)","\( k \vec{n_2} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $N1 \) ","\( = \)",ans_rule(2)."\( $N2 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+For that same \( k \), we have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( d_1 \) ",$popEqual->menu(),"\( k d_2 \)"], align=>LEFT, separation=>0,indent=>65).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),$popEqual->menu(),ans_rule(5),"(write the numerical value of \( d_1 \) and \( k d_2 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Thus the planes \( \Phi_1 \) and \( \Phi_2 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popAnd->cmp);
+ANS($KValue->cmp);
+
+ANS($popEqual->cmp);
+
+ANS($D1->cmp);
+ANS($popEqual->cmp);
+ANS($DValue->cmp);
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();

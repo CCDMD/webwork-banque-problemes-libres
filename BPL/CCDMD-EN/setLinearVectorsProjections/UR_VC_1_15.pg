@@ -1,0 +1,202 @@
+##DESCRIPTION
+##  Vector Operations
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('R^n', 'orthogonal projection', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$a1 = non_zero_random(-10, 10, 1);
+$a2 = random(-10, 10, 1);
+$a3 = random(-10, 10, 1);
+$a = Vector($a1, $a2, $a3);
+
+$u1 = random(-10, 10, 1);
+$u2 = non_zero_random(-10, 10, 1);
+$u3 = random(-10, 10, 1);
+$u = Vector($u1, $u2, $u3);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Let \(\vec{a} = $a \) and \(\vec{u} = $u \) be vectors in \(\mathbb{R}^3\). $BR
+Find the vector component of \(\vec{u} \) along \(\vec{a} \) and the vector component of \(\vec{u} \) orthogonal to \(\vec{a}\).
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Find the vector component of \(\vec{u} \) along \(\vec{a} \)");
+
+Context()->texStrings;
+BEGIN_TEXT
+Which of the formulas below corresponds to the $BBOLD vector component of \(\vec{u} \) along \(\vec{a}\)? $EBOLD $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \displaystyle \textrm{proj}_{\vec{u}}\vec{a} = \left( \frac{\vec{u} \bullet \vec{a}}{\vec{a} \bullet \vec{a}} \right) \vec{a}\)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \displaystyle \textrm{proj}_{\vec{u}}\vec{a} = \left( \frac{\vec{a} \bullet \vec{u}}{\vec{u} \bullet \vec{u}} \right) \vec{u}\)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 3:","\( \displaystyle \textrm{proj}_{\vec{a}}\vec{u} = \left( \frac{\vec{u} \bullet \vec{a}}{\vec{a} \bullet \vec{a}} \right) \vec{a}\)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 4:","\( \displaystyle \textrm{proj}_{\vec{a}}\vec{u} = \left( \frac{\vec{a} \bullet \vec{u}}{\vec{u} \bullet \vec{u}} \right) \vec{u}\)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("3")->cmp );
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$Num = $u.$a;
+$Den = $a.$a;
+$Proj = ($Num/$Den)*$a;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \textrm{proj}_{\vec{a}}\vec{u} \) ","\( = \)","\( \displaystyle \left( \frac{\vec{u} \bullet \vec{a}}{\vec{a} \bullet \vec{a}} \right) \vec{a} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)","\( \Bigg( \)",ans_rule(5).$BR.$HR.ans_rule(5),"\( \Bigg) \)".ans_rule(5),"(write the numerical value of \(\vec{u} \bullet \vec{a}\) and \( \vec{a} \bullet \vec{a} \) and the components of the vector \( \vec{a} \))" ], align=>LEFT, separation=>0, indent=>45).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(25),"(write the components of the vector)" ], align=>CENTER, separation=>0, indent=>30).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Num->cmp);
+ANS($Den->cmp);
+ANS($a->cmp);
+ANS($Proj->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Find the vector component of \(\vec{u} \) orthogonal to \(\vec{a}\)");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{w} \) be the vector component of \(\vec{u} \) orthogonal to \(\vec{a}\). $BR $BR
+Which of the formulas below corresponds to the $BBOLD vector component of \(\vec{u} \) orthogonal to \(\vec{a}\)? $EBOLD $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \displaystyle \vec{w} = \vec{a} - \textrm{proj}_{\vec{a}}\vec{u} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \displaystyle \vec{w} = \vec{u} - \textrm{proj}_{\vec{a}}\vec{u} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("2")->cmp );
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$w = $u - $Proj;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \vec{w} \) ","\( = \)","\( \displaystyle \vec{u} - \textrm{proj}_{\vec{a}}\vec{u} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(25),"(write the components of the vector)" ], align=>CENTER, separation=>0, indent=>10).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($w->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();
+

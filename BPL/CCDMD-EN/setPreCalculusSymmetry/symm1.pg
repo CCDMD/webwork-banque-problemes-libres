@@ -1,0 +1,182 @@
+##DESCRIPTION
+##  Algebra problem: symmetry
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('symmetry')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+#
+# First comes some stuff that appears at the beginning of every problem
+#
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+#loadMacros(
+#"PG.pl",
+#"PGbasicmacros.pl",
+#"PGchoicemacros.pl",
+#"PGanswermacros.pl",
+#"PGauxiliaryFunctions.pl",
+#"PGasu.pl"
+#);
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+);
+
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+#determine the exponent on x
+$a = random(1,6);
+
+#determine the exponent on y
+$b = random(1,6);
+
+#determine the coefficients for the equation
+$c = non_zero_random(-10,10);
+do {$d = non_zero_random(-10,10);} until ($c*$d<0);
+$e = non_zero_random(-10,10);
+
+#now determine if symmetric with respect to x-axis
+if (($b%2)==0)
+   {$popXaxis = PopUp(["Choose", "yes", "no"],"yes");
+$ans2 = "yes";}
+else
+   {$popXaxis = PopUp(["Choose", "yes", "no"],"no");
+$ans2 = "no";}
+
+#now determine if symmetric with respect to y-axis
+if (($a%2)==0)
+   {$popYaxis = PopUp(["Choose", "yes", "no"],"yes");
+$ans1 = "yes";}
+else
+   {$popYaxis = PopUp(["Choose", "yes", "no"],"no");
+$ans1 = "no";}
+
+#now determine if symmetric with respect to origin
+if ((($a%2)==0) and (($b%2)==0))
+   {$popOrigin = PopUp(["Choose", "yes", "no"],"yes");
+$ans3 = "yes";}
+else
+   {$popOrigin = PopUp(["Choose", "yes", "no"],"no");
+$ans3 = "no";}
+
+#symmetric with respect to line
+$popLine = PopUp(["Choose", "yes", "no"],"no");
+
+$popConditionXaxis = PopUp(["?", "(x,y)", "(x,-y)", "(-x,y)", "(-x,-y)", "(y,x)"],"(x,-y)");
+$popConditionYaxis = PopUp(["?", "(x,y)", "(x,-y)", "(-x,y)", "(-x,-y)", "(y,x)"],"(-x,y)");
+$popConditionOrigin = PopUp(["?", "(x,y)", "(x,-y)", "(-x,y)", "(-x,-y)", "(y,x)"],"(-x,-y)");
+$popConditionLine = PopUp(["?", "(x,y)", "(x,-y)", "(-x,y)", "(-x,-y)", "(y,x)"],"(y,x)");
+
+Context("Numeric");
+Context()->variables->add(y => 'Real');
+$equation = Compute("$c x^$a + $d y^$b")->reduce;
+
+Context("LimitedPolynomial-Strict");
+Context()->variables->add(y => 'Real');
+$ans2 = Compute("$e");
+$ans1Xaxis = $equation->substitute(y => "-y"); 
+$ans1Yaxis = $equation->substitute(x => "-x"); 
+$ans1Origin = $equation->substitute(x => "-x", y => "-y"); 
+$ans1Line = $equation->substitute(x => "y", y => "x");
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Determine if \( $equation = $e\) is symmetric with respect to the \(x\)-axis, to the \(y\)-axis, to the origin and to the line \( y=x\).
+$BR
+$BR
+$HR $HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR $BR
+\( $equation = $e \) is symmetric with respect to the \(x\)-axis if, for every point \( (x,y) \) on the graph, the point \{ $popConditionXaxis->menu() \} is also on the graph.
+$BR $BR
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(10),"\( = \)",ans_rule(5),"(replace \(x\) and/or \(y\) as in the condition above)" ], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+$BR
+Is the graph symmetric with respect to the \(x\)-axis? \{ $popXaxis->menu() \}
+$BR $BR
+$HR $BR
+\( $equation = $e \) is symmetric with respect to the \(y\)-axis if, for every point \( (x,y) \) on the graph, the point \{ $popConditionYaxis->menu() \} is also on the graph.
+$BR $BR
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(10),"\( = \)",ans_rule(5),"(replace \(x\) and/or \(y\) as in the condition above)" ], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+$BR
+Is the graph symmetric with respect to the \(y\)-axis? \{ $popYaxis->menu() \}
+$BR $BR
+$HR $BR
+\( $equation = $e \) is symmetric with respect to the origin if, for every point \( (x,y) \) on the graph, the point \{ $popConditionOrigin->menu() \} is also on the graph.
+$BR $BR
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(10),"\( = \)",ans_rule(5),"(replace \(x\) and/or \(y\) as in the condition above)" ], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+$BR
+Is the graph symmetric with respect to the origin? \{ $popOrigin->menu() \}
+
+$BR $BR
+$HR $BR
+\( $equation = $e \) is symmetric with respect to the line \(y=x\) if, for every point \( (x,y) \) on the graph, the point \{ $popConditionLine->menu() \} is also on the graph.
+$BR $BR
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(10),"\( = \)",ans_rule(5),"(replace \(x\) and/or \(y\) as in the condition above)" ], align=>LEFT, separation=>0, indent=>0).
+EndTable()
+\}
+$BR
+Is the graph symmetric with respect to the line \(y=x\)? \{ $popLine->menu() \}
+
+
+$BR
+
+END_TEXT
+Context()->texStrings;
+
+ANS($popConditionXaxis->cmp() );
+ANS($ans1Xaxis->cmp() );
+ANS($ans2->cmp() );
+ANS($popXaxis->cmp() );
+
+ANS($popConditionYaxis->cmp() );
+ANS($ans1Yaxis->cmp() );
+ANS($ans2->cmp() );
+ANS($popYaxis->cmp() );
+
+ANS($popConditionOrigin->cmp() );
+ANS($ans1Origin->cmp() );
+ANS($ans2->cmp() );
+ANS($popOrigin->cmp() );
+
+ANS($popConditionLine->cmp() );
+ANS($ans1Line->cmp() );
+ANS($ans2->cmp() );
+ANS($popLine->cmp() );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

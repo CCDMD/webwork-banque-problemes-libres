@@ -1,0 +1,66 @@
+##DESCRIPTION
+##  Unit vector
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('R^n', 'direction', 'vector', 'unit vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$a = non_zero_random(-10,10,1);
+$b = random(-10,10,1);
+$c = random(-10,10,1);
+$d = non_zero_random(-10,10,1);
+$e = random(-10,10,1);
+$f = random(-10,10,1);
+
+$v = Vector($a, $b, $c, $d, $e, $f);
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$Norm = norm($v);
+$u = unit($v);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find the unit vector with the same direction as \( \vec{a} = $v \) in \( \mathbb{R}^6 \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR
+$HR $BR
+Let \( \vec{u} \) be a unit vector. $BR $BR
+
+We know a unit vector is a vector whose norm is \{ ans_rule(5) \} ($BITALIC enter the numerical value of the norm $EITALIC) $BR $BR
+We have $BR $BR
+\( \| \vec{a} \| = \) \{ans_rule(10)\} $BR $BR
+Then \( \vec{u} = \) \{ans_rule(30)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("1")->cmp);
+ANS($Norm->cmp);
+ANS($u->cmp);
+
+ENDDOCUMENT();

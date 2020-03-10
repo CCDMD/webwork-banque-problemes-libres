@@ -1,0 +1,167 @@
+##DESCRIPTION
+##  Chain Rule
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation of Functions')
+## KEYWORDS('chain differentiation', 'derivative')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"PGcourse.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(2,9,1);
+$b = random(2,9,1);
+$c = random(2,9,1);
+$d = random(2,9,1);
+
+do{
+$e = random(2,9,1);
+$g = random(2,9,1);
+} until($g != $e);
+
+Context("Numeric");
+Context()->flags->set(useBaseTenLog => 1);
+Context()->variables->set(x=>{limits=>[2,3]});
+
+#  TeX
+$expr = "\displaystyle \ln \left( x^ {$a} (x + $d)^ {$b} ($g x + $e)^ {$c} \right)";
+
+$answer = Compute("$a * ln(x) + $b * ln(x + $d) + $c * ln($g x + $e)")->reduce;
+
+Context()->operators->undefine("/","^","**");
+Context()->functions->undefine("sqrt");
+
+# ensures proper order for inner & outer functions
+$ans_eval1 = Compute($answer)->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbreak = $ans_hash1->{score};
+
+$expression = "";
+if ($TESTbreak) 
+{
+$expression = $answer;
+}
+
+Context("Numeric");
+Context()->flags->set(useBaseTenLog => 1);
+Context()->variables->set(x=>{limits=>[2,3]});
+Context()->variables->add(u => ['Real', limits=>[2,3]]);
+
+$f = Compute("$a * ln(x) + $b * ln(x + $d) + $c * ln($g x + $e)");
+$df = $f->D('x');
+
+$inner1 = Formula("x");
+$dinner1 = $inner1->D('x');
+$inner2 = Formula("x + $d");
+$dinner2 = $inner2->D('x');
+$inner3 = Formula("$g x + $e");
+$dinner3 = $inner3->D('x');
+
+$outer1 = Formula("$a*ln(u)");
+$douter1 = $outer1->D('u');
+$outer2 = Formula("$b*ln(u)");
+$douter2 = $outer2->D('u');
+$outer3 = Formula("$c*ln(u)");
+$douter3 = $outer3->D('u');
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Find the derivative of \( \displaystyle f(x) = $expr \) .
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+Using laws of logarithms, write \( f(x) \) using sums and/or differences 
+of logarithmic expressions which do not contain 
+the logarithms of products, quotients, or powers.
+$BR
+$BR
+\( f(x) = \) \{ ans_rule(40) \}
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR
+
+Now find the derivative of \( f(x) \) by listing the outer and inner functions in this order: \( $expression \). $BR $BR
+Let $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( y = \)",ans_rule(5),"\( \hspace{1cm} \) ","\( y = \)",ans_rule(5),"\( \hspace{1cm} \) ","\( y = \)",ans_rule(5),"(outer functions in terms of \( u \))"], align=>LEFT, separation=>0).
+
+AlignedRow(["\( u = \)",ans_rule(5),"\( \hspace{1cm} \) ","\( u = \)",ans_rule(5),"\( \hspace{1cm} \) ","\( u = \)",ans_rule(5),"(corresponding inner functions in terms of \( x \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+We have $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{df}{dx} \)","\( = \)","\( \displaystyle \frac{d}{du} \big( \)".ans_rule(2)."\(\displaystyle \big) \cdot \frac{d}{dx} \big( \)".ans_rule(2)."\(\big) + \displaystyle \frac{d}{du} \big( \)".ans_rule(2)."\(\displaystyle \big) \cdot \frac{d}{dx} \big( \)".ans_rule(2)."\(\big) + \displaystyle \frac{d}{du} \big( \)".ans_rule(2)."\(\displaystyle \big) \cdot \frac{d}{dx} \big( \)".ans_rule(2)."\(\big)\)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+ 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["(write the outer function AND the inner function, keeping the order in which you listed the outer and inner functions)"], align=>LEFT, separation=>0, indent=>25).
+
+AlignedRow(["\( = \)".ans_rule(5)."\( \cdot \)".ans_rule(5)."\( + \)".ans_rule(5)."\( \cdot \)".ans_rule(5)."\( + \)".ans_rule(5)."\( \cdot \)".ans_rule(5)], align=>LEFT, separation=>0, indent=>20).
+
+AlignedRow(["(find the derivative of the outer functions AND the derivative of the inner functions)"], align=>LEFT, separation=>0,indent=>20).
+
+EndTable()
+\}
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(40),"(write the derivative in terms of \( x \))"], align=>LEFT, separation=>0, indent=>20).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($answer->cmp);
+
+ANS($outer1->cmp);
+ANS($outer2->cmp);
+ANS($outer3->cmp);
+ANS($inner1->cmp);
+ANS($inner2->cmp);
+ANS($inner3->cmp);
+
+ANS($outer1->cmp);
+ANS($inner1->cmp);
+ANS($outer2->cmp);
+ANS($inner2->cmp);
+ANS($outer3->cmp);
+ANS($inner3->cmp);
+
+ANS($douter1->cmp);
+ANS($dinner1->cmp);
+ANS($douter2->cmp);
+ANS($dinner2->cmp);
+ANS($douter3->cmp);
+ANS($dinner3->cmp);
+
+ANS($df->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

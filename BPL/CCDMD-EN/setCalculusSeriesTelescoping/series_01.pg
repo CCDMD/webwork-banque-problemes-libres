@@ -1,0 +1,156 @@
+##DESCRIPTION
+##  Telescoping Series
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Sequences, Summation and Series')
+## KEYWORDS('convergence and divergence', 'limit of a sequence', 'series', 'sum', 'telescopic sum')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"parserPopUp.pl",
+"PGunion.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = non_zero_random(-10,10,1);
+
+$case = random(0,1,1);
+
+$f="\sin";
+$p=0;
+$k=$p*2/pi;
+
+if ($case == 1){
+$f="\cos";
+$p=pi/2;
+$k=$p*2/pi;
+}
+
+$poptype = PopUp(["Choose","geometric","p", "telescoping", "other"],"telescoping");
+
+$popcon = PopUp(["Choose","converges","diverges"],"converges");
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Determine if the series is convergent or divergent by studying the limit of its partial sums. 
+$BR If it converges, determine the sum (if possible).
+$BR $BR 
+\( \displaystyle \sum_{n=1}^\infty \left( $f \left( \frac{$a}{n} \right) -$f \left( \frac{$a}{n+1}\right)\right) \)
+
+$BR
+$PAR
+$BBOLD Solution $EBOLD $BR $BR
+This is an example of a telescoping series.$BR$BR
+The partial sums are given by $BR $BR
+\( S_1 = \) \{ans_rule(8)\} \(-\) \{ans_rule(8)\}$BR $BR
+
+\( S_2 = \) \(\big(\) \{ans_rule(8)\} \(-\) \{ans_rule(8)\} \(\big)\) \(+\) \(\big(\) \{ans_rule(8)\} \(-\) \{ans_rule(8)\} \(\big)\) $BR
+\( S_2 = \) \{ans_rule(8)\} \(-\) \{ans_rule(8)\}(cancel terms)$BR $BR
+
+\( S_3 = \) \(\big(\) \{ans_rule(8)\} \(-\) \{ans_rule(8)\} \(\big)\) \(+\) \(\big(\) \{ans_rule(8)\} \(-\) \{ans_rule(8)\} \(\big)\) \(+\) \(\big(\) \{ans_rule(8)\} \(-\) \{ans_rule(8)\} \(\big)\) $BR
+\( S_3 = \) \{ans_rule(8)\} \(-\) \{ans_rule(8)\} (cancel terms)$BR $BR
+
+\( S_4 = \) \(\big(\) \{ans_rule(8)\} \(-\) \{ans_rule(8)\} \(\big)\) \(+\) \(\big(\) \{ans_rule(8)\} \(-\) \{ans_rule(8)\} \(\big)\) \(+\) \(\big(\) \{ans_rule(8)\} \(-\) \{ans_rule(8)\} \(\big)\) \(+\) \(\big(\) \{ans_rule(8)\} \(-\) \{ans_rule(8)\} \(\big)\) $BR
+\( S_4 = \) \{ans_rule(8)\} \(-\) \{ans_rule(8)\} (cancel terms)$BR $BR
+
+\( \vdots \) $BR $BR
+\( S_n = \) \{ans_rule(20)\} (simplify formula) $BR $BR $BR
+Now since \( \displaystyle \lim_{n\to\infty} S_n = \) \{ans_rule(10)\}, $BR $BR
+then the series \{ $popcon->menu() \} to \{ans_rule(10)\}.
+
+END_TEXT
+
+BEGIN_SOLUTION
+The explicit formula for the partial sum \(S_n\) is 
+$BR 
+\[ \begin{align} S_n &= 
+\left(\sin\left(\frac{$a}{1}\right)-\sin\left(\frac{$a}{2}\right)\right) + 
+\left(\sin\left(\frac{$a}{2}\right)-\sin\left(\frac{$a}{3}\right)\right) +
+\left(\sin\left(\frac{$a}{3}\right)-\sin\left(\frac{$a}{4}\right)\right) +
+... + 
+\left(\sin\left(\frac{$a}{n-1}\right)- \sin\left(\frac{$a}{n}\right)\right) +
+\left(\sin\left(\frac{$a}{n}\right)-\sin\left(\frac{$a}{n+1}\right)\right) \\
+&=\left(\sin\left(\frac{$a}{1}\right)-\cancel{\sin\left(\frac{$a}{2}\right)}\right) + 
+\left(\cancel{\sin\left(\frac{$a}{2}\right)}-\cancel{\sin\left(\frac{$a}{3}\right)}\right) +
+\left(\cancel{\sin\left(\frac{$a}{3}\right)}-\cancel{\sin\left(\frac{$a}{4}\right)}\right) +
+... + 
+\left(\cancel{\sin\left(\frac{$a}{n-1}\right)}-\cancel{\sin\left(\frac{$a}{n}\right)}\right) +
+\left(\cancel{\sin\left(\frac{$a}{n}\right)}-\sin\left(\frac{$a}{n+1}\right)\right) \\
+&= 
+\sin\left(\frac{$a}{1}\right)- \sin\left(\frac{$a}{n+1}\right) \\
+&=
+\sin($a) - \sin\left(\frac{$a}{n+1}\right).
+\end{align}\] 
+$BR $BR
+Thus $BR$BR\( \displaystyle 
+\sum_{n=1}^\infty \left( \sin \left( \frac{$a}{n} \right) -\sin \left( \frac{$a}{n+1}\right)\right) = 
+\lim_{n\to\infty} S_n = 
+\lim_{n\to\infty} \left( 
+\sin($a)- \sin\left(\frac{$a}{n+1}\right) \right) = 
+\sin($a)\).
+$BR
+Therefore the series converges to \( \sin($a) \). 
+END_SOLUTION
+
+
+#S1
+ANS(num_cmp("sin($a+$p)"));
+ANS(num_cmp("sin($a/2+$p)"));
+
+#S2
+ANS(num_cmp("sin($a+$p)"));
+ANS(num_cmp("sin($a/2+$p)"));
+ANS(num_cmp("sin($a/2+$p)"));
+ANS(num_cmp("sin($a/3+$p)"));
+
+ANS(num_cmp("sin($a+$p)"));
+ANS(num_cmp("sin($a/3+$p)"));
+
+#S3
+ANS(num_cmp("sin($a+$p)"));
+ANS(num_cmp("sin($a/2+$p)"));
+ANS(num_cmp("sin($a/2+$p)"));
+ANS(num_cmp("sin($a/3+$p)"));
+ANS(num_cmp("sin($a/3+$p)"));
+ANS(num_cmp("sin($a/4+$p)"));
+
+ANS(num_cmp("sin($a+$p)"));
+ANS(num_cmp("sin($a/4+$p)"));
+
+#S4
+ANS(num_cmp("sin($a+$p)"));
+ANS(num_cmp("sin($a/2+$p)"));
+ANS(num_cmp("sin($a/2+$p)"));
+ANS(num_cmp("sin($a/3+$p)"));
+ANS(num_cmp("sin($a/3+$p)"));
+ANS(num_cmp("sin($a/4+$p)"));
+ANS(num_cmp("sin($a/4+$p)"));
+ANS(num_cmp("sin($a/5+$p)"));
+
+ANS(num_cmp("sin($a+$p)"));
+ANS(num_cmp("sin($a/5+$p)"));
+
+#Sn
+ANS(fun_cmp("sin($a+$p)-sin($a/(n+1)+$p)",var=>'n'));
+
+#limit
+ANS(num_cmp("sin($a+$p)-$k"));
+
+#answer
+ANS( $popcon->cmp() );
+$answer = sin($a+$p)-$k;
+ANS(num_cmp($answer));
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

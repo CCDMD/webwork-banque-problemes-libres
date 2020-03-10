@@ -1,0 +1,93 @@
+##DESCRIPTION
+##  Limit - Hopital's rule
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('0/0', 'indeterminate form', 'limit', 'L'Hôpital's rule')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$bb = random(3,9,1);
+$b1 = $bb +1;
+
+#\( \displaystyle \lim_{x\to 1} \frac{$b1^x-$bb^x -1}{x^2-1}\)
+
+$aT = 1;
+
+Context("Numeric");
+Context()->strings->add(UND=>{});
+Context()->flags->set(useBaseTenLog => 1);
+$f = Compute("$b1^x-$bb^x -1")->reduce;
+$g = Compute("x^2-1")->reduce;
+$equation = $f/$g;
+$answer = Compute("($b1*ln($b1)-$bb*ln($bb))/2");
+
+$df = $f->D('x');
+$dg = $g->D('x');
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR 
+Find \( \displaystyle \lim_{x \rightarrow $aT} $equation \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We have $BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x \rightarrow $aT} $equation = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \(x\) with \( $aT \))"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x \rightarrow $aT} \) ",ans_rule(15).$BR.$HR.ans_rule(15),"(apply L'Hopital's Rule)"],align => "LEFT",separation => 0, indent => 120).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(10),"(evaluate)"],align => "LEFT",separation => 0, indent => 120).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#sub
+ANS(Compute("0")->cmp);
+ANS(Compute("0")->cmp);
+
+#HR
+ANS($df->cmp);
+ANS($dg->cmp);
+
+#answer
+ANS($answer->cmp);
+
+ENDDOCUMENT();

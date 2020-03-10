@@ -1,0 +1,126 @@
+##DESCRIPTION
+##  Derivative by using limit definition
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation - Definition and Interpretation')
+## KEYWORDS('definition')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$as = random(-1,1,2);
+$an = random(2,3,1);
+$a  = $as * $an;
+$bs = random(-1,1,2);
+$bn = random(2,9,1);
+$b  = $bs * $bn;
+$c = non_zero_random(-5, 5, 1);
+
+Context("Numeric");
+$f = Formula("$a x^3 + $b x + $c")->reduce;
+$df = $f->D('x');
+
+Context()->variables->add(h => 'Real');
+Context("LimitedPolynomial-Strict");
+$fx = $f->substitute(x => "x"); 
+$fxh = $f->substitute(x => "x+h"); 
+
+Context()->variables->add(h => 'Real');
+$three_a = 3*$a;
+$answer = Compute("$three_a x^2 h + $three_a x h^2 + $a h^3 +$b h");
+$quotient = Compute("$three_a x^2 + $three_a x h + $a h^2 +$b");
+
+Context("PolynomialFactors-Strict");
+Context()->variables->add(h => 'Real');
+Context()->flags->set(singleFactors=>1);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 2,
+message => "either 0 or 1 or 2",
+);
+$factoredform = Compute("h $quotient");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Find the derivative of \( f(x)=$f\) by using the limit definition of the derivative.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We have
+
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle f'(x) = \lim_{ h \rightarrow 0 } \frac{f(x+h)-f(x)}{h} \)","(limit definition of the derivative)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle = \lim_{ h \rightarrow 0 } \)",ans_rule(25)."\( - \big( \)".ans_rule(10)."\( \big) \)".$BR.$HR.ans_rule(2),"(write \(\frac{f(x+h)-f(x)}{h}\))"], align=>CENTER, separation=>0,indent=>40).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle = \lim_{ h \rightarrow 0 } \)",ans_rule(30).$BR.$HR.ans_rule(2),"(rewrite the numerator by combining like terms and simplifying)" ], align=>CENTER, separation=>0, indent=>40).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle = \lim_{ h \rightarrow 0 } \)",ans_rule(30).$BR.$HR.ans_rule(2),"(factor \(h\) in the numerator)" ], align=>CENTER, separation=>0, indent=>40).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle = \lim_{ h \rightarrow 0 } \)",ans_rule(30),"(cancel \(h\))" ], align=>LEFT, separation=>0, indent=>40).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(30),"(evaluate the limit)" ], align=>LEFT, separation=>0, indent=>40).
+EndTable()
+\}
+$BR
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($fxh->cmp);
+ANS($fx->cmp);
+ANS(Compute("h")->cmp);
+
+ANS($answer->cmp);
+ANS(Compute("h")->cmp);
+
+ANS($factoredform->cmp);
+ANS(Compute("h")->cmp);
+
+ANS($quotient->cmp);
+
+ANS($df->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

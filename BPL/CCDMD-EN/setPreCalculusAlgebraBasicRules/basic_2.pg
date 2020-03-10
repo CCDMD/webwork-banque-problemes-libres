@@ -1,0 +1,134 @@
+#DESCRIPTION
+##  Algebra problem: Simplify expression
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('rational fraction', 'simplification')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->variables->add(c => 'Real');
+$a = random(1,6,1);
+
+#\[\frac{1+\frac{$a}{c-$a}}{1-\frac{$a}{c-$a}}\] 
+$Equation = Compute("(1+$a/(c-$a))/(1-$a/(c-$a))")->reduce;
+
+#
+#  Common factor
+#
+Context("PolynomialFactors-Strict");
+Context()->variables->add(c => 'Real');
+Context()->flags->set(singleFactors=>1);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$FactorNum1 = Formula("c-$a");
+$FactorNum2 = Formula("$a");
+$FactorDen1 = Formula("c-$a");
+$FactorDen2 = Formula("$a");
+$CommonFactor = Compute("c-$a");
+
+Context("LimitedPolynomial-Strict");
+Context()->variables->add(c => 'Real');
+$Coeff1 = 2*$a;
+$Numerator = Compute("c");
+$Denominator = Compute("c-$Coeff1");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Simplify the expression $BR $BR
+\( \large \quad \displaystyle $Equation \) $BR
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \large \displaystyle $Equation \)","\( = \)",ans_rule(5).$BR.$HR.ans_rule(5),"\( + \)",ans_rule(5).$BR.$HR.ans_rule(5),"(find a common denominator for the numerator)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["_________________________"], align=>LEFT, separation=>0, indent=>90).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5).$BR.$HR.ans_rule(5),"\( - \)",ans_rule(5).$BR.$HR.ans_rule(5),"(find a common denominator for the denominator)"], align=>LEFT, separation=>0, indent=>90).
+EndTable()
+\}
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(10).$BR.$HR.ans_rule(10).$BR.$HR.ans_rule(10).$BR.$HR.ans_rule(10),"(simplify the numerator into one fraction and simplify the denominator into one fraction)" ], align=>LEFT, separation=>0, indent=>70).
+EndTable()
+\}
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(10).$BR.$HR.ans_rule(10),"\( \cdot \)",ans_rule(10).$BR.$HR.ans_rule(10),"(rewrite using the rule \( \displaystyle \frac{\frac{a}{b}}{\frac{c}{d}} = \frac{a}{b} \cdot \frac{d}{c} \))" ], align=>LEFT, separation=>0, indent=>70).
+EndTable()
+\}
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(10).$BR.$HR.ans_rule(10),"(simplify)" ], align=>LEFT, separation=>0, indent=>70).
+EndTable()
+\}
+
+$BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($FactorNum1->cmp);
+ANS($CommonFactor->cmp);
+ANS($FactorNum2->cmp);
+ANS($CommonFactor->cmp);
+
+ANS($FactorDen1->cmp);
+ANS($CommonFactor->cmp);
+ANS($FactorDen2->cmp);
+ANS($CommonFactor->cmp);
+
+#single fraction
+ANS($Numerator->cmp);
+ANS($CommonFactor->cmp);
+ANS($Denominator->cmp);
+ANS($CommonFactor->cmp);
+
+#fraction flipped
+ANS($Numerator->cmp);
+ANS($CommonFactor->cmp);
+ANS($CommonFactor->cmp);
+ANS($Denominator->cmp);
+
+#answer
+ANS($Numerator->cmp);
+ANS($Denominator->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

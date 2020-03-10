@@ -1,0 +1,119 @@
+##DESCRIPTION
+##  Geometric Series
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Sequences, Summation and Series')
+## KEYWORDS('series', 'geometric series', 'sum', 'sum of a series','partial sums')
+
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+
+#####################################################################
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGunion.pl",
+  "PGcourse.pl", 
+);
+
+#####################################################################
+
+$showPartialCorrectAnswers = 1;
+TEXT(beginproblem());
+
+
+Context("Numeric");
+
+$a = list_random(2,3);
+$k = list_random(3,5,2);
+
+$a1 = Compute("$k");
+$a2 = Compute("$k*$a");
+$a3 = Compute("$k*$a^2");
+$a4 = Compute("$k*$a^3");
+$a5 = Compute("$k*$a^4");
+$a6 = Compute("$k*$a^5");
+$a7 = Compute("$k*$a^6");
+$a8 = Compute("$k*$a^7");
+$a9 = Compute("$k*$a^8");
+$a10 = Compute("$k*$a^9");
+
+$ans = Compute("$k*(1-$a^10)/(1+$a)")->reduce;
+
+#####################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Definition $EBOLD$BR$BR
+For \(r\neq 1\) and \(a\neq 0\), a $BBOLD geometric sum $EBOLD is a sum of the form$BR$BR
+\[a+ar+ar^2+...+ar^{N-1}= \displaystyle \sum_{k=0}^{N-1} ar^k = \frac{a(1-r^N)}{1-r},\]$BR
+where \(r\) is the $BITALIC common ratio$EITALIC, \(a\) is the $BITALIC first term$EITALIC of the sum and \(N\) is the $BITALIC total number of terms$EITALIC in the sum.
+$BR
+$BR
+$HR
+$BBOLD Question $EBOLD$BR$BR
+Find the value of the geometric sum$BR$BR
+\[
+S = $a1 - $a2 + $a3 - $a4 + $a5 - $a6 + $a7 - $a8 + $a9 - $a10
+\]
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD$BR$BR
+The series is a $BBOLD geometric sum $EBOLD where $BR
+the$BITALIC common ratio$EITALIC is $BR
+\(r=\) \{ans_rule(3)\},$BR
+the$BITALIC first term$EITALIC is $BR
+\(a=\) \{ans_rule(3)\} and $BR
+the$BITALIC total number of terms $EITALIC is $BR
+\(N=\) \{ans_rule(3)\}.$BR$BR
+
+Thus using sigma notation this geometric sum \(S\) can be written as $BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \)","\(S\)","\( = \)",ans_rule(3).$BR."\(\displaystyle \sum\)".$BR."\(_{k=0}\)".$BR."$space".$BR."$space", ans_rule(3)."\((\)".ans_rule(3)."\()^k\)","(sum in sigma notation)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \)","\(S\)","\( = \)", ans_rule(10).$BR.$HR."\(\big( 1- \)".ans_rule(3)."\( \big) \)" ,"(use the geometric sum formula)" ], align=>CENTER, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \)","\(S\)","\( = \)", ans_rule(16),"."], align=>LEFT, separation=>0).
+EndTable()
+\}
+END_TEXT
+
+#####################################################################
+
+Context()->flags->set(  
+#La diffÃ©rence (en valeur absolue) entre la rÃ©ponse et celle de lâÃ©tudiant doit Ãªtre infÃ©rieure Ã 
+  tolType => "absolute",
+);
+
+
+ANS(Real(-$a)->cmp);
+ANS(Real($k)->cmp);
+ANS(Real(10)->cmp);
+
+ANS(Real(9)->cmp);
+ANS(Real($k)->cmp);
+ANS(Real(-$a)->cmp);
+
+ANS(Compute("$k*(1-$a**10)")->cmp);
+ANS(Real(-$a)->cmp);
+
+ANS(($ans)->cmp());
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

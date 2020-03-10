@@ -1,0 +1,352 @@
+##DESCRIPTION
+##  Find the area 
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications', 'R^3', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+           
+DOCUMENT();	# This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+              
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Point");
+
+$r1 = random(1, 5, 1);
+$r2 = random(1, 5, 1);
+$r3 = random(1, 5, 1);
+$r4 = random(1, 5, 1);
+$r5 = random(1, 5, 1);
+$r6 = random(1, 5, 1);
+
+$a1 = random(-5, 5, 1);
+$a2 = random(-5, 5, 1);
+$a3 = random(-5, 5, 1);
+
+$b1 = $a1 + $r1;
+$b2 = $a2 + $r2;
+$b3 = $a3 + $r3;
+
+$c1 = $b1 + $r4;
+$c2 = $b2 + $r5;
+$c3 = $b3 + $r6;
+
+$d1 = $c1 + $r1;
+$d2 = $c2 + $r2;
+$d3 = $c3 + $r3;
+
+$A=Point($a1,$a2,$a3);
+$B=Point($b1,$b2,$b3);
+$C=Point($c1,$c2,$c3);
+$D=Point($d1,$d2,$d3);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find the area of the parallelogram with vertices 
+\(A=$A,\qquad B= $B,\qquad C=$C,\qquad D= $D \).
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Formula");
+
+Context()->texStrings;
+BEGIN_TEXT
+Which of the formulas below corresponds to the $BBOLD area of the parallelogram? $EBOLD $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \displaystyle A = \frac{ \| \vec{u} \times \vec{v} \|}{\| \vec{u} \| \| \vec{v} \|} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" "], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \displaystyle A = \frac{1}{2} \| \vec{u} \times \vec{v} \| \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" "], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 3:","\( \displaystyle A = \| \vec{u} \times \vec{v} \| \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" "], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 4:","\( \displaystyle A = | \vec{u} \cdot ( \vec{v} \times \vec{w} ) | \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("3")->cmp );
+
+Section::End();
+
+###########################################
+Section::Begin("Construct the required vectors");
+
+Context("Numeric");
+Context()->strings->add( "AB"=>{}, "BA"=>{}, "BC"=>{}, "AD"=>{}, "CB"=>{}, "CD"=>{}, "DA"=>{}, "DC"=>{} );
+
+#check box 2
+# AB & AD
+$ans_eval2 = Compute("AD")->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2AD = $ans_hash2->{score};
+
+$ans_eval3 = Compute("AB")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3AB = $ans_hash3->{score};
+
+# BA & BC
+$ans_eval2 = Compute("BA")->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2BA = $ans_hash2->{score};
+
+$ans_eval3 = Compute("BC")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3BC = $ans_hash3->{score};
+
+$ans_eval3 = Compute("BA")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3BA = $ans_hash3->{score};
+
+$ans_eval2 = Compute("BC")->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2BC = $ans_hash2->{score};
+
+# CB & CD
+$ans_eval2 = Compute("CB")->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2CB = $ans_hash2->{score};
+
+$ans_eval3 = Compute("CD")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3CD = $ans_hash3->{score};
+
+$ans_eval3 = Compute("CB")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3CB = $ans_hash3->{score};
+
+$ans_eval2 = Compute("CD")->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2CD = $ans_hash2->{score};
+
+# DA & DC
+$ans_eval2 = Compute("DA")->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2DA = $ans_hash2->{score};
+
+$ans_eval3 = Compute("DC")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3DC = $ans_hash3->{score};
+
+$ans_eval3 = Compute("DA")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3DA = $ans_hash3->{score};
+
+$ans_eval2 = Compute("DC")->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2DC = $ans_hash2->{score};
+
+# AB & AD
+$InitialPoint1 = "A";
+$EndPoint1 = "B";
+$Side1 = "AB";
+
+$InitialPoint2 = "A";
+$EndPoint2 = "D";
+$Side2 = "AD";
+
+if($TESTbox2AD && $TESTbox3AB)
+{
+    $InitialPoint1 = "A";
+    $EndPoint1 = "D";
+    $Side1 = "AD";
+
+    $InitialPoint2 = "A";
+    $EndPoint2 = "B";
+    $Side2 = "AB";
+
+}
+
+# BA & BC
+if($TESTbox2BA && $TESTbox3BC)
+{
+    $InitialPoint1 = "B";
+    $EndPoint1 = "A";
+    $Side1 = "BA";
+
+    $InitialPoint2 = "B";
+    $EndPoint2 = "C";
+    $Side2 = "BC";
+
+}
+
+if($TESTbox3BA && $TESTbox2BC)
+{
+    $InitialPoint2 = "B";
+    $EndPoint2 = "A";
+    $Side2 = "BA";
+
+    $InitialPoint1 = "B";
+    $EndPoint1 = "C";
+    $Side1 = "BC";
+
+}
+
+# CB & CD
+if($TESTbox2CB && $TESTbox3CD)
+{
+    $InitialPoint1 = "C";
+    $EndPoint1 = "B";
+    $Side1 = "CB";
+
+    $InitialPoint2 = "C";
+    $EndPoint2 = "D";
+    $Side2 = "CD";
+
+}
+
+if($TESTbox3CB && $TESTbox2CD)
+{
+    $InitialPoint2 = "C";
+    $EndPoint2 = "B";
+    $Side2 = "CB";
+
+    $InitialPoint1 = "C";
+    $EndPoint1 = "D";
+    $Side1 = "CD";
+
+}
+
+# DA & DC
+if($TESTbox2DA && $TESTbox3DC)
+{
+    $InitialPoint1 = "D";
+    $EndPoint1 = "A";
+    $Side1 = "DA";
+
+    $InitialPoint2 = "D";
+    $EndPoint2 = "C";
+    $Side2 = "DC";
+
+}
+
+if($TESTbox3DA && $TESTbox2DC)
+{
+    $InitialPoint2 = "D";
+    $EndPoint2 = "A";
+    $Side2 = "DA";
+
+    $InitialPoint1 = "D";
+    $EndPoint1 = "C";
+    $Side1 = "DC";
+
+}
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$u = Vector($$EndPoint1-$$InitialPoint1);
+$v = Vector($$EndPoint2-$$InitialPoint2);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BITALIC Choose two directed line segments to create \( \vec{u} \) and \( \vec{v} \). Make sure that both directed line segments have the same initial point. $EITALIC $BR
+\{ image( "parallelogram_ABCD.png",width=>329, height=>201 ) \} $BR $BR
+Let \( \vec{u} \) be the vector corresponding to the directed line segment \{ ans_rule(2) \} ($BITALIC enter the letters corresponding to the chosen directed line segment $EITALIC) $BR $BR
+Let \( \vec{v}  \) be the vector corresponding to the directed line segment \{ ans_rule(2) \} ($BITALIC enter the letters corresponding to the chosen directed line segment $EITALIC) $BR $BR
+
+$BR
+We have $BR 
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{u} \) ","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{v} \) ","\( = \)",ans_rule(15),"(write the components of the vector)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(str_cmp("$Side1"));
+ANS(str_cmp("$Side2"));
+
+ANS($u->cmp);
+ANS($v->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Compute the area");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$Cross = $u x $v;
+$Area = norm($Cross);
+
+Context()->texStrings;
+BEGIN_TEXT
+Now $BR $BR
+
+\( \vec{u} \times \vec{v} = \) \{ ans_rule(15) \} $BR $BR
+
+and $BR $BR
+
+\( A = \) \{ ans_rule(15) \}
+$BR $BR
+Thus, the area of the parallelogram is \{ ans_rule(15) \} units\(^2\).
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Cross->cmp);
+
+ANS($Area->cmp);
+
+ANS(Real($Area)->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();	# This should be the last executable line in the problem.

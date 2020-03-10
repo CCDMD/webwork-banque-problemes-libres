@@ -1,0 +1,156 @@
+##DESCRIPTION
+##  find the equation of the line given two points 
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Affine and linear function)
+##KEYWORDS('equation of a straight line', 'linear function', 'ax + b form')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGcourse.pl",
+#"contextFraction.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$x1 = random(-6,-1,1);
+$y1 = random(2,10,2);
+$x2 = random(1,6,1);
+$y2 = random(-3,7,2);
+$DeltaY = $y2-$y1;
+$DeltaX = $x2-$x1;
+$BValue = $y1*$DeltaX - $DeltaY*$x1;
+$gcdB = gcd($BValue,$DeltaX);
+$BValueNum = $BValue/$gcdB;
+$BValueDen = $DeltaX/$gcdB;
+
+$popSlope = PopUp(["Choose", "Delta X / Delta Y", "Delta Y / Delta X"],"Delta Y / Delta X");
+
+#Box 2 
+$ans_eval2 = Compute($DeltaY)->cmp();
+$ans_hash2 = $ans_eval2->evaluate($inputs_ref->{ANS_NUM_TO_NAME(2)});
+$TESTbox2 = $ans_hash2->{score};
+
+if ($TESTbox2) 
+{
+    $DeltaYValue = Compute("$DeltaY");
+    $DeltaXValue = Compute("$DeltaX");
+}
+else
+{
+    $DeltaYValue = Compute("-$DeltaY");
+    $DeltaXValue = Compute("-$DeltaX");
+}
+
+#Box 4 
+$ans_eval4 = Compute("$y1")->cmp();
+$ans_hash4 = $ans_eval4->evaluate($inputs_ref->{ANS_NUM_TO_NAME(4)});
+$TESTbox4 = $ans_hash4->{score};
+
+if ($TESTbox4) 
+{
+    $YValue = Compute("$y1");
+    $XValue = Compute("$x1");
+}
+else
+{
+    $YValue = Compute("$y2");
+    $XValue = Compute("$x2");
+}
+
+
+#forces a fraction for exponents
+#Context("LimitedFraction");
+Context("Numeric");
+Context()->operators->undefine("+","-","*");
+$M = Compute("$DeltaY / $DeltaX");
+$B = Compute("$BValueNum/$BValueDen");
+
+Context("Numeric");
+Context()->variables->add(b => 'Real');
+#Box 8 
+$ans_eval8 = Compute("b")->cmp();
+$ans_hash8 = $ans_eval8->evaluate($inputs_ref->{ANS_NUM_TO_NAME(8)});
+$TESTbox8 = $ans_hash8->{score};
+
+if ($TESTbox8) 
+{
+    $Box_8 = Compute("b");
+    $Box_9 = $B;
+}
+else
+{
+    $Box_8 = $B;
+    $Box_9 = Compute("b");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find an equation of the line passing through the points \(($x1, $y1) \) and \(($x2,  $y2) \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR
+We know $BR
+\( \quad y = m x + b\) $BR where $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad m \)","\(= \)",$popSlope->menu()], align=>RIGHT, separation=>0).
+AlignedRow([" ","\( = \)",ans_rule(15).$BR.$HR.ans_rule(15),"(calculate \( \Delta x \) and \( \Delta y \) as per the formula above)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( y \)","\( = \)","\( m \)","\( x \)","\( + \)","\( b \)"], align=>CENTER, separation=>0).
+AlignedRow([ans_rule(5),"\( = \)",ans_rule(5),ans_rule(5),"\( + \)",ans_rule(5),"(if possible, replace \( y, m, x\) and \( b\) with their numerical value, otherwise rewrite the variables)"], align=>LEFT, separation=>0).
+AlignedRow([ans_rule(5),"\( = \)",ans_rule(5),"","","","(solve for the missing variable)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Thus, the equation of the line is 
+\( y = \) 
+\{ ans_rule(10) \} \( x + \) 
+\{ ans_rule(10) \}  
+$BR
+
+
+$BR
+END_TEXT
+
+ANS($popSlope->cmp() );
+
+ANS($DeltaYValue->cmp);
+ANS($DeltaXValue->cmp);
+
+ANS($YValue->cmp);
+ANS( $M->cmp() );
+ANS($XValue->cmp);
+ANS(Compute("b")->cmp);
+
+ANS($Box_8->cmp() );
+ANS($Box_9->cmp);
+
+ANS( $M->cmp() );
+ANS( $B->cmp() );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

@@ -1,0 +1,186 @@
+##DESCRIPTION
+##   Algebra: Exponential and Logarithmic Equations
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Exponential and Logarithmic Function)
+##KEYWORDS('exponential equation','exponential function')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"contextFraction.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$a1 = random(2,8,1);
+$b1 = random(2,8,1);
+do{$b2 = random(2,8,1);} until ($b2!=$b1 && gcd($b1,$b2)==1);
+$c1 = random(2,9,1);
+$d1 = random(2,9,1);
+
+$LHS = Compute("$a1 e^{-$c1 x}");
+$RHS = Compute("$d1 ($b1 x +$b2) e^{-$c1 x}");
+$equation = $LHS - $RHS;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Solve \($LHS = $RHS\) 
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+Section::Begin("Solve for \(x\)");
+
+Context("Numeric");
+$gcd_S1 = gcd($a1,$d1);
+$commonfactor = Compute("$gcd_S1 e^{-$c1 x}");
+$positiveden = Compute("e^{$c1 x}");
+
+$coeff_S1_1 = $a1/$gcd_S1 - $d1/$gcd_S1*$b2;
+$coeff_S1_2 = $d1/$gcd_S1*$b1;
+
+Context("LimitedPolynomial-Strict");
+$expandedform = Compute("$coeff_S1_1 - $coeff_S1_2 x")->reduce;
+
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$factoredform = Compute("$gcd_S1 ($coeff_S1_1 - $coeff_S1_2 x)");
+
+$gcd_S1_3 = gcd($coeff_S1_1,$coeff_S1_2);
+$coeff_S1_3 = $coeff_S1_1/$gcd_S1_3;
+$coeff_S1_4 = $coeff_S1_2/$gcd_S1_3;
+
+#forces a fraction 
+Context("LimitedFraction");
+Context()->operators->undefine("+","-","*");
+$roots[0] = Compute("$coeff_S1_3/$coeff_S1_4");
+
+Context("Numeric");
+#check box 1
+$ans_eval1 = $equation->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1 = $ans_hash1->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $LHS \)","\( = \)","\( $RHS \)"], align=>RIGHT, separation=>0, indent=>230).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(20),"\( = \)","\( 0 \)"], align=>LEFT, separation=>0, indent=>75).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(10)."\( \Big( \)".ans_rule(10)."\( \Big) \)","\( = \)","\( 0 \)","(factor the common factor)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(10).$BR.$HR.ans_rule(10),"\( = \)","\( 0 \)","(rewrite with only positive exponents)"], align=>LEFT, separation=>0, indent=>140).
+
+EndTable()
+\}
+$BR $BR
+Solving for \(x\) gives us \(x = \) \{ans_rule(10)\}
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+if($TESTbox1)
+{
+    ANS($equation->cmp);
+    ANS($commonfactor->cmp);
+    ANS($expandedform->cmp);
+
+    ANS($factoredform->cmp);
+    ANS($positiveden->cmp);
+}
+else
+{
+    ANS(Compute("-$equation")->cmp);
+    ANS($commonfactor->cmp);
+    ANS(Compute("-$expandedform")->cmp);
+
+    ANS(Compute("-$factoredform")->cmp);
+    ANS($positiveden->cmp);
+}
+
+ANS($roots[0]->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Check your solution");
+
+Section::End();
+
+###########################################
+Section::Begin("State the solution");
+
+Context("Numeric");
+$solution_set = List($roots[0]);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD $BR
+Enter your answer in a comma-separated list. $BR
+If the solution set is the empty set, write $BBOLD none$EBOLD.
+$BR $HR $BR
+Thus, the solution set is {\{ans_rule(30)\}}.$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($solution_set->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;
+

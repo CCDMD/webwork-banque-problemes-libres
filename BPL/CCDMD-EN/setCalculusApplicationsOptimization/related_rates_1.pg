@@ -1,0 +1,434 @@
+##DESCRIPTION
+##  Optimization
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('economy', 'maximum', 'minimum optimization')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"contextCurrency.pl",
+"contextLimitedPolynomial.pl",
+"contextAlternateIntervals.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->flags->set(
+      tolerance    => .00001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$a = random(60000,75000,1000);
+$b = random(40,80,10);
+$c = random(180,220,10);
+
+#the cost function
+$cost = Compute("$a + $b x")->reduce;
+
+#demand function 
+$price = Compute("$c - x/30")->reduce;
+$bound = int(30*$c);
+$MyBound = Compute("$bound");
+$CP_Revenue = int(15*$c);
+$MyCP_Revenue = Compute("$CP_Revenue");
+$CP_Profit = int(15*($c - $b));
+$MyCP_Profit = Compute("$CP_Profit");
+
+#the revenue function
+$quantity = Compute("x");
+
+$PriceAns = $price->eval(x=>"$CP_Profit");
+
+#Expanded Form
+Context("LimitedPolynomial-Strict");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$revenue = Compute("-x^2/30 + $c x");
+
+#the profit function
+$coeff1 = $c - $b;
+$profit = Compute("-x^2/30 + $coeff1 x - $a");
+
+Context("Numeric");
+#revenue
+$equationR = $price*$quantity;
+$dequationR = $equationR->D('x');
+
+$RevenueZero = $equationR->eval(x=>"0");
+$RevenueBound = $equationR->eval(x=>"$bound");
+$RevenueCP = $equationR->eval(x=>"$CP_Revenue");
+
+#profit
+$equationP = $price*$quantity - $cost;
+$dequationP = $equationP->D('x');
+
+$ProfitZero = $equationP->eval(x=>"0");
+$ProfitBound = $equationP->eval(x=>"$bound");
+$ProfitCP = $equationP->eval(x=>"$CP_Profit");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+Context()->flags->set(
+      tolerance    => .00001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$IBounds = Compute("[0,$bound]");
+
+Context("Numeric");
+Context()->flags->set(
+      tolerance    => .00001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$popVariableX = PopUp(["?", "x", "p", "C", "R", "P"],"x");
+$popVariablep = PopUp(["?", "x", "p", "C", "R", "P"],"p");
+$popVariableR = PopUp(["?", "x", "p", "C", "R", "P"],"R");
+$popVariableP = PopUp(["?", "x", "p", "C", "R", "P"],"P");
+
+$poprevenueformula = PopUp(["Choose", "quantity + price", "quantity x price"],"quantity x price");
+
+$popprofitformula = PopUp(["Choose", "revenue + cost", "revenue - cost", "revenue x cost"], "revenue - cost");
+
+#revenue
+#check box 1
+$ans_eval1 = $popVariableR->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1 = $ans_hash1->{score};
+
+$WantSymbolR = "";
+$WantWordR = "";
+$QuantityWordR = "";
+$PriceWordR = "";
+if ($TESTbox1) 
+{
+$WantSymbolR = "R";
+$WantWordR = "revenue";
+$QuantityWordR = "quantity";
+$PriceWordR = "price";
+}
+
+#check box 12
+$ans_eval12 = $IBounds->cmp();
+$ans_hash12 = $ans_eval12->evaluate($inputs_ref->{ANS_NUM_TO_NAME(12)});
+$TESTbox12 = $ans_hash12->{score};
+
+#check box 15
+$ans_eval15 = $MyCP_Revenue->cmp();
+$ans_hash15 = $ans_eval15->evaluate($inputs_ref->{ANS_NUM_TO_NAME(15)});
+$TESTbox15 = $ans_hash15->{score};
+
+$ConditionVariableR = "";
+$ValueZeroR = "";
+$ValueBoundR = "";
+$ValueCP_Revenue = "";
+if ($TESTbox12 && $TESTbox15) 
+{
+    $ConditionVariableR = "x";
+    $ValueZeroR = Compute("0");
+    $ValueBoundR = $bound;
+    $ValueCP_Revenue = $MyCP_Revenue;
+}
+
+#profit
+#check box 21
+$ans_eval21 = $popVariableP->cmp();
+$ans_hash21 = $ans_eval21->evaluate($inputs_ref->{ANS_NUM_TO_NAME(21)});
+$TESTbox21 = $ans_hash21->{score};
+
+$WantSymbolP = "";
+$WantWordP = "";
+$QuantityWordP = "";
+$PriceWordP = "";
+if ($TESTbox21) 
+{
+$WantSymbolP = "P";
+$WantWordP = "profit";
+$QuantityWordP = "quantity";
+$PriceWordP = "price";
+}
+
+#check box 29
+$ans_eval29 = $IBounds->cmp();
+$ans_hash29 = $ans_eval29->evaluate($inputs_ref->{ANS_NUM_TO_NAME(29)});
+$TESTbox29 = $ans_hash29->{score};
+
+#check box 32
+$ans_eval32 = $MyCP_Profit->cmp();
+$ans_hash32 = $ans_eval32->evaluate($inputs_ref->{ANS_NUM_TO_NAME(32)});
+$TESTbox32 = $ans_hash32->{score};
+
+$ConditionVariableP = "";
+$ValueZeroP = "";
+$ValueBoundP = "";
+$ValueCP_Profit = "";
+if ($TESTbox29 && $TESTbox32) 
+{
+    $ConditionVariableP = "x";
+    $ValueZeroP = Compute("0");
+    $ValueBoundP = $bound;
+    $ValueCP_Profit = $MyCP_Profit;
+}
+
+
+Context("Currency");
+$CurrencyAnswerPrice = Currency($PriceAns);
+Context("Numeric");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Question $EBOLD $BR $BR
+
+A company manufactures and sells \(x\) electric drills per month.
+The monthly cost equation is given by $BR
+\( \quad C(x) = $cost \) $BR
+and the price-demand equation is given by $BR
+\( \quad \displaystyle p = $price, \qquad 0 \leq x\leq 5000 \) $BR $BR
+(A) Find the production level that results in the maximum revenue.
+$BR
+$BR
+(B) Find the price that the company should charge for each drill
+in order to maximize profit.
+$BR $BR
+
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point.
+$HR
+$HR
+$BR
+Let \(R(x)\) be the revenue function. $BR
+Let \(P(x)\) be the profit function. $BR $BR
+
+$HR $HR
+$BITALIC$BBOLD Part A $EBOLD$EITALIC $BR
+$HR $HR
+$BR
+We want to maximize \{ $popVariableR->menu() \} 
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines. $EBOLD $BR $HR 
+$BR
+
+We know $BR
+\( \quad $WantSymbolR(x) = \) \{ $poprevenueformula->menu() \} ($BITALIC formula to find the $WantWordR function $EITALIC) $BR
+where $BR
+\( \quad \text{$QuantityWordR} = \) \{ans_rule(15)\} $BR 
+and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \text{$PriceWordR} \)","\( = \)",$popVariablep->menu(),"($BITALIC choose the variable that represents the $PriceWordR function $EITALIC)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(20),"($BITALIC write the $PriceWordR function $EITALIC)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+$BR
+\( \therefore $WantSymbolR(x) = \)\{ans_rule(20)\} ($BITALIC write the $WantWordR function $EITALIC)
+$BR $BR
+We want \{ $popVariableX->menu() \} when \( \text{$PriceWordR} = 0 \)
+$BR
+$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(15),"\( = \)","\( 0 \)","($BITALIC write the $PriceWordR function $EITALIC)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([$popVariableX->menu(),"\( = \)",ans_rule(20),"($BITALIC solve for the $QuantityWordR, which must be an integer. Round down if needed. $EITALIC)"], align=>LEFT, separation=>0, indent=>105).
+
+EndTable()
+\}
+$BR
+\( \therefore \) Bounds on \{ $popVariableX->menu()\} \( = \) \{ ans_rule(20) \} ($BITALIC write your answer in interval notation $EITALIC)
+$BR $BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d$WantSymbolR}{dx} \)","\( = \)",ans_rule(30),"(find the derivative with respect to \( x\))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d$WantSymbolR}{dx} = 0 \) when",ans_rule(10),"\( = \)","\( 0 \)","(write \( \frac{d$WantSymbolR}{dx} \))"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( x \)","\( = \)",ans_rule(2),"(isolate for \( x \), which must be an integer. Round down if needed.)"], align=>RIGHT, separation=>0).
+
+
+EndTable()
+\}
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR$BR
+
+When \( $ConditionVariableR = $ValueZeroR \), 
+\( \displaystyle \quad $WantSymbolR = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( $WantSymbolR(x) \) $EITALIC) $BR $BR
+When \( $ConditionVariableR = $ValueBoundR \), 
+\( \displaystyle \quad $WantSymbolR = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( $WantSymbolR(x) \) $EITALIC) $BR $BR
+When \( $ConditionVariableR = $ValueCP_Revenue \), 
+\( \displaystyle \quad $WantSymbolR = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( $WantSymbolR(x) \) $EITALIC) $BR $BR
+\( \therefore \) a maximum occurs when \( $ConditionVariableR = \)\{ans_rule(5) \} $BR
+$BR
+Thus, to maximize revenue, \{ans_rule(10)\} electric drills should be produced. $BR $BR
+
+
+$HR $HR
+$BITALIC$BBOLD Part B $EBOLD$EITALIC $BR
+$HR $HR
+$BR
+We want to maximize \{ $popVariableP->menu() \} 
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines. $EBOLD $BR $HR 
+$BR
+
+We know $BR
+\( \quad $WantSymbolP(x) = \) \{ $popprofitformula->menu() \} ($BITALIC formula to find the $WantWordP function $EITALIC) $BR $BR
+\( \hspace{1.5cm} = \)\{ans_rule(20)\} ($BITALIC formula of the $WantWordP function $EITALIC)
+
+$BR $BR
+We want \{ $popVariableX->menu() \} when \( \text{$PriceWordP} = 0 \)
+$BR
+$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(15),"\( = \)","\( 0 \)","($BITALIC write the $PriceWordP function $EITALIC)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([$popVariableX->menu(),"\( = \)",ans_rule(20),"($BITALIC solve for the $QuantityWordP, which must be an integer. Round down if needed. $EITALIC)"], align=>LEFT, separation=>0, indent=>105).
+
+EndTable()
+\}
+$BR
+\( \therefore \) Bounds on \{ $popVariableX->menu()\} \( = \) \{ ans_rule(20) \} ($BITALIC write your answer in interval notation $EITALIC)
+$BR $BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d$WantSymbolP}{dx} \)","\( = \)",ans_rule(30),"(find the derivative with respect to \( x\))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d$WantSymbolP}{dx} = 0 \) when",ans_rule(10),"\( = \)","\( 0 \)","(write \( \frac{d$WantSymbolP}{dx} \))"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( x \)","\( = \)",ans_rule(2),"(isolate for \( x \), which must be an integer. Round down if needed.)"], align=>RIGHT, separation=>0).
+
+
+EndTable()
+\}
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR$BR
+
+When \( $ConditionVariableP = $ValueZeroP \), 
+\( \displaystyle \quad $WantSymbolP = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( $WantSymbolP(x) \) $EITALIC) $BR $BR
+When \( $ConditionVariableP = $ValueBoundP \), 
+\( \displaystyle \quad $WantSymbolP = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( $WantSymbolP(x) \) $EITALIC) $BR $BR
+When \( $ConditionVariableP = $ValueCP_Profit \), 
+\( \displaystyle \quad $WantSymbolP = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( $WantSymbolP(x) \) $EITALIC) $BR $BR
+\( \therefore \) a maximum occurs when \( $ConditionVariableP = \)\{ans_rule(5) \} 
+and in that case, \( \text{price} = \)\{ans_rule(20) \}$BR
+$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD Include the dollar sign in your answer. 
+$HR $HR
+$BR
+Thus, to maximize profit, drills should be sold at \{ans_rule(10)\}.
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#Part A
+ANS($popVariableR->cmp);
+
+#revenue
+ANS($poprevenueformula->cmp() );
+ANS($quantity->cmp);
+ANS($popVariablep->cmp() );
+ANS($price->cmp);
+ANS($revenue->cmp() );
+
+ANS($popVariableX->cmp);
+ANS($price->cmp);
+ANS($popVariableX->cmp);
+ANS($MyBound->cmp);
+ANS($popVariableX->cmp);
+ANS($IBounds->cmp);
+
+ANS($dequationR->cmp);
+ANS($dequationR->cmp);
+ANS($MyCP_Revenue->cmp);
+
+ANS($RevenueZero->cmp);
+ANS($RevenueBound->cmp);
+ANS($RevenueCP->cmp);
+
+ANS($MyCP_Revenue->cmp);
+ANS($MyCP_Revenue->cmp);
+
+#Part B
+ANS($popVariableP->cmp);
+
+#profit
+ANS($popprofitformula->cmp() );
+ANS($profit->cmp() );
+
+ANS($popVariableX->cmp);
+ANS($price->cmp);
+ANS($popVariableX->cmp);
+ANS($MyBound->cmp);
+ANS($popVariableX->cmp);
+ANS($IBounds->cmp);
+
+ANS($dequationP->cmp);
+ANS($dequationP->cmp);
+ANS($MyCP_Profit->cmp);
+
+ANS($ProfitZero->cmp);
+ANS($ProfitBound->cmp);
+ANS($ProfitCP->cmp);
+
+ANS($MyCP_Profit->cmp);
+ANS($PriceAns->cmp);
+
+ANS($CurrencyAnswerPrice->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

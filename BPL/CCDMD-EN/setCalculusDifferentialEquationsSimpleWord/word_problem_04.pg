@@ -1,0 +1,177 @@
+##DESCRIPTION
+##  Integrals - Word problems
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the integral')
+## KEYWORDS('direct applications')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGauxiliaryFunctions.pl",
+"PGstandard.pl", 
+"MathObjects.pl", 
+"PGunion.pl",
+"parserMultiAnswer.pl",
+"PGcourse.pl"
+);
+
+TEXT(&beginproblem);
+$showPartialCorrectAnswers = 1;
+
+$H = random(10000,20000,1000);
+$k0 = random(0,3,1);
+$k = 0.05*2**($k0);
+
+$G=random(201,799,2);
+$g=$G/100;
+$h=random(150,450,100);
+$tmax=random(3,7,1);
+$hmax=$tmax*$g;
+
+$v0 = $tmax*$g;
+
+$a=-$g/2;
+
+$tground=(-$v0-sqrt($v0*$v0-4*$a*$h))/(2*$a);
+
+BEGIN_TEXT
+
+$BBOLD Question: $EBOLD
+
+$PAR
+Sarah is going skydiving. She jumps from the plane at an altitude of \($H\) meters.
+
+$PAR
+Let \(t\geq 0\) be the time in seconds elapsed after jumping from the plane. We want to model (directed) acceleration, (directed) speed and position of the free-falling Sarah by taking into account $BITALIC the air resistance: $EITALIC$BR$BR
+Let $BR 
+\(a(t)\) be the (directed) acceleration in \(m/s^2\) of the free-falling Sarah after \(t\) seconds,$BR
+\(v(t)\) be the (directed) speed in \(m/s\) of the free-falling Sarah after \(t\) seconds and$BR
+\(s(t)\) be the vertical position of the free-falling Sarah from the ground of the planet after \(t\) seconds.$BR
+
+$PAR
+$BBOLD$BITALIC Solution: $EITALIC$EBOLD
+
+$PAR
+$BBOLD Acceleration: $EBOLD$BR$BR
+The acceleration of the free-falling Sarah by taking into account $BITALIC the air resistance $EITALIC is modelled by$BR$BR
+
+\[a(t)=-9.81e^{-$k t}\quad m/s^2\]
+
+$PAR
+$BBOLD Speed: $EBOLD$BR$BR
+
+The speed of the free-falling Sarah is given by
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["\(v(t)\) = ","\(\displaystyle \int\)",ans_rule(16),"\(dt\)","(integrate acceleration)"], align=>LEFT, separation=>0).
+AlignedRow(["\(v(t)\) = "," ",ans_rule(16)," ","(general solution)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+$BR$BR
+The initial condition: When \(t=0\), the speed of the free-falling Sarah is \(v(0)=\) \{ans_rule(5)\} \(m/s\), thus
+$BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow([ans_rule(2),"\( = \)",ans_rule(16),"\(+C\)","(use the initial condition)"], align=>LEFT, separation=>0).
+AlignedRow(["\(C\)","\( = \)",ans_rule(16)," ","(isolate the constant of integration)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+$BR
+Thus the speed of the free-falling Sarah \(v(t)\) is given by:
+$BR$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["\(v(t)\)","\( = \)",ans_rule(20),"\(m/s\)."], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+
+$PAR
+$BBOLD Position: $EBOLD$BR$BR
+
+The vertical position (from the surface) of the free-falling Sarah is given by
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["\(s(t)\) = ","\(\displaystyle \int\)",ans_rule(30),"\(dt\)","(integrate speed)"], align=>LEFT, separation=>0).
+AlignedRow(["\(s(t)\) = "," ",ans_rule(30)," ","(general solution)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+$BR$BR
+The initial condition: When \(t=0\), the position of the free-falling Sarah is \(s(0)=\) \{ans_rule(5)\} \(m\), thus
+$BR$BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow([ans_rule(5),"\( = \)",ans_rule(15),"\(+C\)","(use the initial condition)"], align=>LEFT, separation=>0).
+AlignedRow(["\(C\)","\( = \)",ans_rule(15)," ","(isolate the constant of integration)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+$BR
+Thus the vertical position of the free-falling Sarah \(s(t)\) is given by:
+$BR$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2).
+AlignedRow(["\(s(t)\)","\( = \)",ans_rule(40),"\(m\)."], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+$PAR
+$BBOLD Terminal Velocity: $EBOLD$BR$BR
+
+Eventually, the velocity of a falling object when taking into account the air resistance becomes constant. This is called $BITALIC the terminal velocity$EITALIC and is denoted by \(v_F\). $BR$BR
+
+The terminal velocity can be computed as the limit of \(v(t)\) when \(t\) goes to infinity, i.e. \[v_f=\lim_{t\rightarrow \infty}v(t).\] 
+Compute Sarah's terminal velocity:$BR$BR
+\(v_f= \,\) \{ans_rule(15)\} \(m/s.\)
+
+END_TEXT
+
+#Acceleration Stuff
+
+# ANS(num_cmp(-$g));
+
+#Speed Stuff
+
+ANS(fun_cmp("-9.81*e**(-$k*t)", var=>["t","C"]));
+ANS(fun_cmp("9.81/$k*e**(-$k*t)+C", var=>["t","C"]));
+
+#initial condition
+ANS(num_cmp(0));
+
+ANS(num_cmp(0));
+ANS(num_cmp(9.81/$k));
+ANS(num_cmp(-9.81/$k));
+ANS(fun_cmp("9.81/$k*e**(-$k*t)-9.81/$k", var=>["t","C"], limits=>[[-100,100],[-100,100]]));
+
+#Position Stuff
+
+ANS(fun_cmp("9.81/$k*e**(-$k*t)-9.81/$k", var=>["t","C"], limits=>[[-100,100],[-100,100]]));
+ANS(fun_cmp("-9.81/($k*$k)*e**(-$k*t)-9.81/$k*t+C", var=>["t","C"], limits=>[[-100,100],[-100,100]]));
+
+ANS(num_cmp($H));
+
+ANS(num_cmp($H));
+ANS(num_cmp(-9.81/($k*$k)));
+ANS(num_cmp($H+9.81/($k*$k),tol=>0.1));
+ANS(fun_cmp("-9.81/($k*$k)*e**(-$k*t)-9.81/$k*t+$H+9.81/($k*$k)", var=>["t","C"], limits=>[[-100,100],[-100,100]],tol=>0.1 ));
+
+ANS(num_cmp(-9.81/$k));
+
+
+ENDDOCUMENT();

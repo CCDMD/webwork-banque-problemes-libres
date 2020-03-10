@@ -1,0 +1,198 @@
+## DESCRIPTION
+## Algebra, Inequalities
+## ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Equations and Inequations)
+##KEYWORDS('inequality with absolute value', 'solving an inequality')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"contextAlternateIntervals.pl",
+"contextLimitedPolynomial.pl",
+"contextFraction.pl",
+"parserPopUp.pl",
+"PGcourse.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$a = random(1,8,1);
+$c=random(3,8);
+do {$b = random(1,$c-1,1);} until ($b !=$a);
+$d = random(1,8,1);
+
+$e1=($c*$a-$c*$d)/$b;
+$e2=($c*$a+$c*$d)/$b;
+
+Context("Fraction-NoDecimals");
+$e1 = Fraction($c*$a-$c*$d,$b);
+$e2 = Fraction($c*$a+$c*$d,$b);
+
+@roots = num_sort(Compute("$e1"),Compute("$e2"));
+
+$popLess = PopUp(["?","<","<=","=",">",">="],"<");
+$popLessEqual = PopUp(["?","<","<=","=",">",">="],"<=");
+$popGreater = PopUp(["?","<","<=","=",">",">="],">");
+$popGreaterEqual = PopUp(["?","<","<=","=",">",">="],">=");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+$case = random(1,2);
+if ($case == 1) 
+{
+  $Sign = ">";
+  $SignOther = "<";
+  $popAnswer = $popGreater;
+  $popAnswerOther = $popLess;
+  $SolSet = Compute("(-inf,$roots[0])U($roots[1],inf)");
+} 
+else
+{
+  $Sign = "\geq";
+  $SignOther = "\leq";
+  $popAnswer = $popGreaterEqual;
+  $popAnswerOther = $popLessEqual;
+  $SolSet = Compute("(-inf,$roots[0]]U[$roots[1],inf)");
+}
+
+$LHS = "\left| $a-\frac{$b}{$c}x \right|";
+$RHS = "$d";
+
+$equation_tex = "$LHS $Sign $RHS";
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Solve \( \displaystyle $equation_tex \)
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Solve for \(x\)");
+
+# -$d > $a - $b/$c x > $d
+
+Context("Numeric");
+$coeff_ls1 = -$d - $a;
+$coeff_rs1 = $d - $a;
+
+$coeff_ls2 = $coeff_ls1*$c;
+$coeff_rs2 = $coeff_rs1*$c;
+
+$MHS_S1 = Compute("$a - $b/$c x");
+$MHS_S2 = Compute("-$b/$c x");
+
+$MHS_S2_tex = "\frac{-$b}{$c} x";
+
+Context("LimitedPolynomial-Strict");
+$LHS_S1 = Compute("-$d");
+$RHS_S1 = Compute("$d");
+
+$LHS_S2 = Compute("$coeff_ls1");
+$RHS_S2 = Compute("$coeff_rs1");
+
+$LHS_S3 = Compute("$coeff_ls2");
+$MHS_S3 = Compute("-$b x");
+$RHS_S3 = Compute("$coeff_rs2");
+
+Context("Fraction-NoDecimals");
+$LHS_S4 = Compute("-$coeff_ls2/$b");
+$MHS_S4 = Compute("x");
+$RHS_S4 = Compute("-$coeff_rs2/$b");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+\( \displaystyle $equation_tex \) can be rewritten as $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),$popLess->menu(),ans_rule(5),"OR",ans_rule(5),$popLess->menu(),ans_rule(5),"(rewrite by using \( |x| $Sign c \iff x $SignOther -c \) OR \( x $Sign c \) for \(c \ge 0 \) )"], align=>LEFT, separation=>0, indent=>0).
+
+AlignedRow([ans_rule(5),$popLess->menu(),ans_rule(5),"OR",ans_rule(5),$popLess->menu(),ans_rule(5),"(solve for \( $MHS_S2_tex \))"], align=>LEFT, separation=>0, indent=>0).
+
+AlignedRow([ans_rule(5),$popLess->menu(),ans_rule(5),"OR",ans_rule(5),$popLess->menu(),ans_rule(5),"(solve for \( $MHS_S4 \))"], align=>LEFT, separation=>0, indent=>0).
+
+EndTable()
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS($MHS_S1->cmp);
+ANS($popAnswerOther->cmp);
+ANS($LHS_S1->cmp);
+
+ANS($MHS_S1->cmp);
+ANS($popAnswer->cmp);
+ANS($RHS_S1->cmp);
+
+ANS($MHS_S2->cmp);
+ANS($popAnswerOther->cmp);
+ANS($LHS_S2->cmp);
+
+ANS($MHS_S2->cmp);
+ANS($popAnswer->cmp);
+ANS($RHS_S2->cmp);
+
+ANS($MHS_S4->cmp);
+ANS($popAnswer->cmp);
+ANS($LHS_S4->cmp(studentsMustReduceFractions=>1));
+
+ANS($MHS_S4->cmp);
+ANS($popAnswerOther->cmp);
+ANS($RHS_S4->cmp(studentsMustReduceFractions=>1));
+
+Section::End();
+
+###########################################
+Section::Begin("State the solution");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Note: $EBOLD  $BR
+Express your answer in interval notation. $BR
+If the answer includes more than one interval, write the intervals separated by the union symbol, U. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR 
+$HR $BR
+
+Thus, the solution set is \{ans_rule(35)\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($SolSet->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;
+
+
+

@@ -1,0 +1,249 @@
+##DESCRIPTION
+##  Describing a system
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('System of Linear Equations')
+## KEYWORDS('augmented matrix', 'number of solutions', 'graphical representation of a system')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextFraction.pl",
+"contextLimitedPolynomial.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+$a11 = 1;
+$a12 = 0;
+$a13 = 0;
+do 
+{ 
+    $a14 = non_zero_random(-9,9,1);
+} until ($a14!=1 && $a14!=-1);
+do 
+{ 
+    $a15 = non_zero_random(-9,9,1);
+} until ($a15!=1 && $a15!=-1);
+
+$a21 = 0;
+$a22 = 1;
+$a23 = 0;
+$a24 = 0;
+do 
+{ 
+    $a25 = non_zero_random(-9,9,1);
+} until ($a25!=1 && $a25!=-1);
+
+$a31 = 0;
+$a32 = 0;
+$a33 = 1;
+do 
+{ 
+    $a34 = non_zero_random(-9,9,1);
+} until ($a34!=1 && $a34!=-1);
+do 
+{ 
+    $a35 = non_zero_random(-9,9,1);
+} until ($a35!=1 && $a35!=-1);
+
+$b1 = random(-5,5,1);
+$b2 = random(-5,5,1);
+$b3 = random(-5,5,1);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {close=>'|',formMatrix => 1};
+Context()->lists->set(Matrix=>{close=>'|',formMatrix => 1});
+Context()->parens->set("[" => {type => "Matrix", close=>'|'});
+$A = Matrix([[$a11,$a12,$a13,$a14,$a15],[$a21,$a22,$a23,$a24,$a25],[$a31,$a32,$a33,$a34,$a35]]);
+
+Context("Matrix");
+Context()->{cmpDefaults}{Matrix} = {open=>'',formMatrix => 1};
+Context()->lists->set(Matrix=>{open=>'',formMatrix => 1});
+Context()->parens->set("" => {type => "Matrix", open=>"", close => "]"});
+$b = Matrix([[$b1],[$b2],[$b3]]);
+
+Context("Numeric");
+$Eq1 = "x_1 + $a14 x_4 + $a15 x_5";
+$Eq2 = "x_2 + $a25 x_5";
+$Eq3 = "x_3 + $a34 x_4 + $a35 x_5";
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Consider the following system of linear equations $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $Eq1 \)","\( = \)","\( $b1 \)"], align=>RIGHT, separation=>0, indent=>10).
+AlignedRow(["\( $Eq2 \)","\( = \)","\( $b2 \)"], align=>RIGHT, separation=>0, indent=>10).
+AlignedRow(["\( $Eq3 \)","\( = \)","\( $b3 \)"], align=>RIGHT, separation=>0, indent=>10).
+
+EndTable()
+\}
+$BR 
+${BBOLD}(a)$EBOLD
+Give the augmented matrix of the system. $BR $BR
+${BBOLD}(b)$EBOLD
+Find the general solution of the system. $BR $BR
+${BBOLD}(c)$EBOLD
+Does the general solution represent a point, a line or a plane? $BR $BR
+${BBOLD}(d)$EBOLD
+How many solutions does the system have?
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("Augmented matrix");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR $BR
+\( \quad \) \{ $A->ans_array() \} \{ $b->ans_array() \}
+END_TEXT
+Context()->normalStrings;
+
+ANS( $A->cmp() );
+ANS( $b->cmp() );
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("General solution");
+
+Context("LimitedPolynomial-Strict");
+Context()->variables->add("x4"=>'Real',"x5"=>'Real');
+$x1Value = Compute("$b1 - $a14 x4 - $a15 x5 ");
+$x2Value = Compute("$b2 - $a24 x4 - $a25 x5");
+$x3Value = Compute("$b3 - $a34 x4 - $a35 x5");
+
+Context("Point");
+$P = Point($b1,$b2,$b3,0,0);
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+Context()->variables->are(s=>"Real",t=>"Real");
+$V = Vector(-$a14,-$a24,-$a34,,1,0);
+$W = Vector(-$a15,-$a25,-$a35,,0,1);
+
+#  for checking a particular vector parametric line
+sub mycheck {
+  my ($correct, $student, $ansHash) = @_;
+
+  if ( 
+       ($correct . i == $student . i) && 
+       ($correct . j == $student . j) && 
+       ($correct . k == $student . k) 
+     ) 
+  { return 1; } else { return 0; }
+}
+
+$T = Formula("t");
+$S = Formula("s");
+$Answer = $P + $S * $V + $T * $W;
+
+Context()->texStrings;
+BEGIN_TEXT
+Solving for \(x_1\) in terms of \(x_4\) and \(x_5\) gives us $BR $BR
+\( \quad x_1 = \) \{ ans_rule(10) \} (write $BBOLD x4 $EBOLD for \(x_4\) and $BBOLD x5 $EBOLD for \(x_5\) )$BR $BR
+Solving for \(x_2\) in terms of \(x_4\) and \(x_5\) gives us $BR $BR
+\( \quad x_2 = \) \{ ans_rule(10) \} $BR $BR
+Solving for \(x_3\) in terms of \(x_4\) and \(x_5\) gives us $BR $BR
+\( \quad x_3 = \) \{ ans_rule(10) \} $BR $BR
+Let \( x_4 = s \) $BR $BR
+Let \( x_5 = t \) $BR $BR
+Thus, the general solution is $BR $BR
+\( \quad (x_1,x_2,x_3,x_4,x_5) = \) \{ ans_rule(35) \} $BR(write the general solution in the format \( P + s \vec{v} + t \vec{w} \))
+END_TEXT
+Context()->normalStrings;
+
+ANS( $x1Value->cmp() );
+ANS( $x2Value->cmp() );
+ANS( $x3Value->cmp() );
+ANS( $Answer->cmp() );
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part C & D$EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popGeo = PopUp(["?","a point","a line","a plane"],"a plane");
+$popSol = PopUp(["?","a unique solution","infinitely many solutions", "no solution"],"infinitely many solutions");
+
+Context()->texStrings;
+BEGIN_TEXT
+The general solution represents \{ $popGeo->menu() \}. $BR $BR
+The system has \{ $popSol->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popGeo->cmp);
+ANS($popSol->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();       # This should be the last executable line in the problem. 

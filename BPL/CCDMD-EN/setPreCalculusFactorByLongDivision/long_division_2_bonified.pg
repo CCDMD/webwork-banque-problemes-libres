@@ -1,0 +1,142 @@
+##DESCRIPTION
+##  Algebra problem: polynomial functions
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('polynomial division', 'factorization')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a = random(1,8,1);
+$b = random(1,8,1);
+$c = random(1,8,1);
+##P(x)=(x^2-$a x + $b)(x-1)
+$b1=-1-$a;
+$c1=$a+$b;
+$d1=-$b;
+
+$equation = Formula("x^3 + $b1 x^2 + $c1 x + $d1")->reduce; 
+
+Context("LimitedPolynomial-Strict");
+$divisor = Formula("x-1");
+$quotient = Formula("x^2-$a x + $b");
+$q1 = Formula("x^2");
+$q2 = Formula("-$a x");
+$q3 = Formula("$b");
+
+#(x-1)(x^2)
+$eq1 = Formula("x^3-x^2");
+$eq2 = Formula("-$a x^2 + $c1 x + $d1");
+
+#(x-1)(-a x)
+$eq3 = Formula("-$a x^2 + $a x");
+
+#(x-1)b
+$eq4 = Formula("$b x - $b");
+$eq5 = Formula("0");
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 2,
+message => "either 0 or 1 or 2",
+);
+$factoredform = Compute("(x^2 - $a x + $b)(x-1)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Factor \( \displaystyle $equation\)
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR
+$BR$BITALIC$BBOLD Part 1: Performing long division $EBOLD$EITALIC $BR$BR
+
+To factor \( $equation \), we can use long division with \{ ans_rule(5) \} ( $BITALIC factor of the form \(x - a\) where \( f(a) = 0\) $EITALIC)
+$BR $BR
+
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([$SPACE.$BR.$BR.ans_rule(10),$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(2)."\( + \)".ans_rule(2)."\( + \)".ans_rule(2).$BR.$HR."\( \Big) \)".$SPACE.$SPACE.$SPACE.ans_rule(25),"(write the Divisor and Dividend)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( - \)".$BR.$BR.$BR,"\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(15),"(determine the first term of the Quotient)"], align=>LEFT, separation=>0, indent=>120).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( - \)".$BR.$BR.$BR,"\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(15),"(determine the second term of the Quotient)"], align=>LEFT, separation=>0, indent=>140).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( - \)".$BR.$BR.$BR,"\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.$SPACE.ans_rule(12),"(determine the third term of the Quotient)"], align=>LEFT, separation=>0, indent=>180).
+
+EndTable()
+\}
+
+$BR
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 2: Writing the factored form  $EBOLD$EITALIC $BR$BR
+
+\( $equation = \) \{ ans_rule(15) \} ($BITALIC factorized as Quotient x Divisor $EITALIC)
+$BR  
+
+END_TEXT
+Context()->normalStrings;
+
+#Step 1
+ANS($divisor->cmp);
+ANS($divisor->cmp);
+
+ANS($q1->cmp);
+ANS($q2->cmp);
+ANS($q3->cmp);
+
+ANS($equation->cmp);
+ANS($eq1->cmp);
+ANS($eq2->cmp);
+ANS($eq3->cmp);
+ANS($eq4->cmp);
+ANS($eq4->cmp);
+ANS($eq5->cmp);
+
+#Step 2
+ANS($factoredform->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

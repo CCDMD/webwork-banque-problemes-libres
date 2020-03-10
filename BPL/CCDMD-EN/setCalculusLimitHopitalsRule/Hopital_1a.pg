@@ -1,0 +1,191 @@
+##DESCRIPTION
+##  Limit - Hopital's rule
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('1^inf / 0^0 / inf^0', 'indeterminate form', 'limit', 'L'Hôpital's rule')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a1 = random(2,4,1);
+$b1 = random(5,9,1);
+
+$aT = 0;
+$zero_zero = "0^0";
+
+Context("Numeric");
+Context()->strings->add(UND=>{});
+Context()->variables->set(x=>{limits=>[9,10]});
+
+$f = Compute("x")->reduce;
+$g = Compute("$a1 ln(x)")->reduce;
+$equation = Compute("x^{$a1 x}")->reduce;
+$answer = Compute("1");
+
+$newf = 1/$f;
+$df = $newf->D('x');
+$dg = $g->D('x');
+
+Context("Numeric");
+Context()->variables->set(x=>{limits=>[9,10]});
+Context()->operators->undefine("/","^","**");
+$SimplifiedForm = Compute("-$a1 x");
+$SimplifiedLn = Compute("$f*$g");
+
+Context("Numeric");
+Context()->strings->add(UND=>{});
+
+#box 3
+$ans_eval3 = Compute("0")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3 = $ans_hash3->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find \( \displaystyle \lim_{x \rightarrow $aT^{+}} $equation \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We have $BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x \rightarrow $aT^{+}} $equation = \) ",ans_rule(5),"(evaluate the indeterminate form by replacing \(x\) with \( $aT^{+} \))"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR 
+Now $BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x \rightarrow $aT^{+}} \ln($equation) = \lim_{x \rightarrow $aT^{+}} \) ",ans_rule(15),"(rewrite \( \ln($equation) \) without any powers)"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ","\( \big( \) ".ans_rule(5)."\( \big) \cdot \big( \) ".ans_rule(5)."\( \big) \) ","(evaluate the indeterminate form by replacing \(x\) with \( $aT^{+} \))"],align => "LEFT",separation => 0, indent => 90).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x \rightarrow $aT^{+}} \) ",ans_rule(10).$BR.$HR.ans_rule(10),"(rewrite \( \ln($equation) \) as a fraction)"],align => "LEFT",separation => 0, indent => 90).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \(x\) with \( $aT^{+} \))"],align => "LEFT",separation => 0, indent => 90).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x \rightarrow $aT^{+}} \) ",ans_rule(10).$BR.$HR.ans_rule(10),"(apply L'Hopital's Rule)"],align => "LEFT",separation => 0, indent => 90).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \displaystyle \lim_{x \rightarrow $aT^{+}} \) ",ans_rule(10),"(simplify)"],align => "LEFT",separation => 0, indent => 90).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5),"(evaluate)"],align => "LEFT",separation => 0, indent => 90).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+and $BR 
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x \rightarrow $aT^{+}} $equation = e \) ","\( \displaystyle \lim_{x \rightarrow $aT^{+}} \ln($equation) \) ".$BR.$BR.$BR],align => "LEFT",separation => 0).
+
+TableSpace(0,0).
+EndTable();
+\}
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = e\) ",ans_rule(2).$BR.$BR.$BR,"(write the numerical value of \(\displaystyle \lim_{x \rightarrow $aT^{+}} \ln($equation) \) )"],align => "LEFT",separation => 0, indent => 60).
+  TableSpace(0,0).
+EndTable();
+\}
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( = \) ",ans_rule(5),"(evaluate)"],align => "LEFT",separation => 0, indent => 60).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#sub
+ANS(str_cmp($zero_zero));
+
+ANS($SimplifiedLn->cmp);
+if($TESTbox3)
+{
+    ANS(Compute("0")->cmp);
+    ANS(Compute("-inf")->cmp);
+}
+else
+{
+    ANS(Compute("-inf")->cmp);
+    ANS(Compute("0")->cmp);
+}
+
+#rewrite
+ANS($g->cmp);
+ANS($newf->cmp);
+
+#sub
+ANS(Compute("-inf")->cmp);
+ANS(Compute("inf")->cmp);
+
+#HR
+ANS($dg->cmp);
+ANS($df->cmp);
+
+ANS($SimplifiedForm->cmp);
+ANS(Compute("0")->cmp);
+ANS(Compute("0")->cmp);
+
+#answer
+ANS($answer->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

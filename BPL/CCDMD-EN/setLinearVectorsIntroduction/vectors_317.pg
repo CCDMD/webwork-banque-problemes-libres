@@ -1,0 +1,134 @@
+##DESCRIPTION
+##  Vector algebra
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('vector arithmetic', 'direction', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"PGunion.pl",
+);
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$u1 = non_zero_random(-9,9,1);
+$u2 = random(-9,9,1);
+$u3 = random(-9,9,1);
+$u = Vector($u1,$u2,$u3);
+
+$v1 = random(-9,9,1);
+$v2 = non_zero_random(-9,9,1);
+$v3 = random(-9,9,1);
+$v = Vector($v1, $v2, $v3);
+
+$w1 = random(-9,9,1);
+$w2 = random(-9,9,1);
+$w3 = non_zero_random(-9,9,1);
+$w = Vector($w1,$w2,$w3);
+
+do
+{
+    $a = non_zero_random(-9,9,1);
+    $b = non_zero_random(-9,9,1);
+    $c = non_zero_random(-9,9,1);
+    $d = non_zero_random(-9,9,1);
+    $e = non_zero_random(-9,9,1);
+} until($c != $d && $a!=1 && $a!=-1 && $b!=1 && $b!=-1 && $c!=1 && $c!=-1 && $d!=1 && $d!=-1 && $e!=1 && $e!=-1);
+
+$x = ($e*$w - $b*$v - $a*$u)/($c-$d);
+
+$ansV1 = - $a*$u;
+$ansV2 = - $b*$v;
+$ansV3 = $e*$w;
+$ansV4 = $ansV1 + $ansV2 + $ansV3;
+$xCoeff = Compute("$c-$d");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Let \( \vec{u} = $u , \vec{v} = $v \), 
+and \( \vec{w} = $w \) be in \( \mathbb R ^3 \).  
+$BR $BR
+Find the vector \(\vec{x}\) that satisfies 
+\( $a \vec{u} + $b \vec{v} + $c \vec{x} = $d \vec{x} + $e \vec{w} \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR
+$HR $BR 
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $a \vec{u} + $b \vec{v} + $c \vec{x} \) ","\( = \)","\( $d \vec{x} + $e \vec{w} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(2)."\( \vec{x} \) ","\( = \)",ans_rule(2)."\( \vec{u} + \)".ans_rule(2)."\( \vec{v} + \)".ans_rule(2)."\( \vec{w} \)","(combine like vectors)"], align=>LEFT, separation=>0, indent=>25).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(2)."\( \vec{x} \) ","\( = \)",ans_rule(10)."\( + \)".ans_rule(10)."\( + \)".ans_rule(10),"(write the components of the corresponding vectors)"], align=>LEFT, separation=>0, indent=>25).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(2)."\( \vec{x} \) ","\( = \)",ans_rule(10),"(write the components of the resulting vector)"], align=>LEFT, separation=>0, indent=>25).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{x} \) ","\( = \)",ans_rule(20),"(write the components of vector \( \vec{x} \))"], align=>LEFT, separation=>0, indent=>95).
+
+EndTable()
+\}
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#step 1
+ANS($xCoeff->cmp);
+ANS(Compute("-$a")->cmp);
+ANS(Compute("-$b")->cmp);
+ANS(Compute("$e")->cmp);
+
+#step 2
+ANS($xCoeff->cmp);
+ANS($ansV1->cmp);
+ANS($ansV2->cmp);
+ANS($ansV3->cmp);
+
+#step 3
+ANS($xCoeff->cmp);
+ANS($ansV4->cmp);
+
+#answer
+ANS($x->cmp);
+
+ENDDOCUMENT();

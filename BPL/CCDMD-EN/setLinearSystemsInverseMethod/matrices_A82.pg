@@ -1,0 +1,166 @@
+##DESCRIPTION
+##  Solve a system using the inverse
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('System of Linear Equations')
+## KEYWORDS('inverse matrix method', 'unique solution', 'four-plus-variable system')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"MatrixUnits.pl",
+"MatrixReduce.pl",
+"PGmatrixmacros.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$a11 = random(-5,5,1);
+$a12 = random(-5,5,1);
+$a13 = random(-5,5,1);
+$a14 = random(-5,5,1);
+
+$a21 = random(-5,5,1);
+$a22 = random(-5,5,1);
+$a23 = random(-5,5,1);
+$a24 = random(-5,5,1);
+
+$a31 = random(-5,5,1);
+$a32 = random(-5,5,1);
+$a33 = random(-5,5,1);
+$a34 = random(-5,5,1);
+
+$a41 = random(-5,5,1);
+$a42 = random(-5,5,1);
+$a43 = random(-5,5,1);
+$a44 = random(-5,5,1);
+
+$b1 = random(-5,5,1);
+$b2 = random(-5,5,1);
+$b3 = random(-5,5,1);
+$b4 = random(-5,5,1);
+
+Context("Matrix");
+$Ainv = Matrix([[$a11,$a12,$a13,$a14], [$a21,$a22,$a23,$a24], [$a31,$a32,$a33,$a34],[$a41,$a42,$a43,$a44]]);
+$b = Matrix([[$b1],[$b2],[$b3],[$b4]]);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Solve the linear system \(A \vec{x} = \vec{b}\) using the inverse of \(A\) 
+where $BR $BR 
+\( \quad A^{-1} = $Ainv \) $BR $BR
+and $BR $BR
+\( \quad \vec{b} = $b\) 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+
+Section::Begin("General solution");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Which of the formulas below corresponds to $BBOLD solving a linear system by using the inverse of \(A\)? $EBOLD $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \vec{x} = A^{-1} \vec{b} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \vec{x} = \vec{b} A^{-1} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR $BR
+\( \vec{x} \) will be a matrix of size \{ ans_rule(2) \} \( \times \) \{ ans_rule(2) \} ($BITALIC enter the number of rows \( \times \) the number of columns $EITALIC)
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("1")->cmp );
+
+#size
+ANS(Compute("4")->cmp );
+ANS(Compute("1")->cmp );
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context("Matrix");
+$AnswerMatrix = $Ainv * $b;
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$Answer = Vector($AnswerMatrix->element(1,1),$AnswerMatrix->element(2,1),$AnswerMatrix->element(3,1),$AnswerMatrix->element(4,1));
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{x} \)","\( = \)", "\( A^{-1} \vec{b} \)"], align=>LEFT, separation=>0, indent=>75).
+
+EndTable()
+\}
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([display_matrix([["\(x_1\)"],["\(x_2\)"],["\(x_3\)"],["\(x_4\)"]]),"\( = \)", "\( $Ainv \)", "\( $b \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)", $AnswerMatrix->ans_array(2)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+$BR $BR
+Thus, the general solution is $BR $BR
+\( \quad (x_1,x_2,x_3,x_4) = \) \{ ans_rule(25) \} $BR $BR
+$HR
+$BBOLD Note: $EBOLD $BR
+Write the general solution in one of the following formats: $BR
+\( \quad P \) $BR
+\( \quad P + t \vec{v} \) $BR
+\( \quad P + s \vec{v} + t \vec{w} \) $BR
+\( \quad none \)
+END_TEXT
+Context()->normalStrings;
+
+ANS($AnswerMatrix->cmp);
+ANS($Answer->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();

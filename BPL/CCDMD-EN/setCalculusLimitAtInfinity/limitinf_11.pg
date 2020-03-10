@@ -1,0 +1,190 @@
+##DESCRIPTION
+##  Limit at Infinity
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('inf/inf', 'limit', 'limit at infinity', 'indeterminate form')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+);
+
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers=1;
+
+##################################
+#  Setup
+
+$a = random(5,9,1);
+$b = random(2,9,1);
+$c = random(2,5,1);
+$d = random(3,9,1);
+$e = random(2,9,1);
+$f = random(1,9,1);
+
+$dm1 = $d - 1;
+$dm2 = $d - 2;
+
+Context()->strings->add(UND=>{});
+
+$equation = Formula("($a x + $b)/($c x^{$d} + $f x^$dm2 + $e)") ->reduce;
+$limit = Formula("$a/$c");
+
+#######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR 
+Find \( \displaystyle \lim_{x\to\infty} $equation \) and \( \displaystyle \lim_{x\to-\infty} $equation \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+
+
+We have $BR $BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \lim_{x\to\infty} $equation = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \(x\) by \( \infty \) )"],align => "LEFT",separation => 0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \displaystyle \lim_{x\to\infty} \) ",ans_rule(3)."\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.ans_rule(3)."\( \big( \)".ans_rule(15)."\( \big) \)","(factor the highest power)"],align => "LEFT",separation => 0, indent => 140).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \displaystyle \lim_{x\to\infty} \) ",ans_rule(15).$BR.$HR.ans_rule(15),"(simplify)"],align => "LEFT",separation => 0, indent => 140).
+EndTable();
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate by replacing \(x\) by \( \infty \))" ], align=>LEFT, separation=>0, indent=>140).
+EndTable()
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \) ",ans_rule(5),"(evaluate)"],align => "LEFT",separation => 0, indent => 140).
+EndTable();
+\}
+$BR $BR
+and
+$BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \lim_{x\to-\infty} $equation = \) ",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate the indeterminate form by replacing \(x\) by \( -\infty \) )"],align => "LEFT",separation => 0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \displaystyle \lim_{x\to-\infty} \) ",ans_rule(3)."\( \big( \)".ans_rule(15)."\( \big) \)".$BR.$HR.ans_rule(3)."\( \big( \)".ans_rule(15)."\( \big) \)","(factor the highest power)"],align => "LEFT",separation => 0, indent => 140).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \displaystyle \lim_{x\to-\infty} \) ",ans_rule(15).$BR.$HR.ans_rule(15),"(simplify)"],align => "LEFT",separation => 0, indent => 140).
+EndTable();
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(5).$BR.$HR.ans_rule(5),"(evaluate by replacing \(x\) by \( -\infty \))" ], align=>LEFT, separation=>0, indent=>140).
+EndTable()
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \) ",ans_rule(5),"(evaluate)"],align => "LEFT",separation => 0, indent => 140).
+EndTable();
+\}
+$BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+
+
+END_TEXT
+Context()->normalStrings;
+
+#sub infinity
+ANS(Compute("INF")->cmp);
+ANS(Compute("INF")->cmp); 
+
+#factor
+ANS(Compute("x")->cmp);
+ANS(Compute("$a+$b/x")->cmp);
+ANS(Compute("x^$d")->cmp);
+ANS(Compute("$c + $f/x^2+ $e/x^$d")->cmp);
+
+#simplify
+ANS(Compute("$a+$b/x")->cmp);
+ANS(Compute("x^$dm1($c + $f/x^2+ $e/x^$d)")->cmp);
+
+ANS(Compute("$a")->cmp);
+ANS(Compute("INF")->cmp);
+
+#answer
+ANS(Compute("0")->cmp);
+
+
+#sub -infinity
+ANS(Compute("-INF")->cmp);
+if ($d % 2) ## d is odd
+{ 
+ANS(Compute("-INF")->cmp);  
+}
+else
+{
+ANS(Compute("INF")->cmp);
+}
+
+#factor
+ANS(Compute("x")->cmp);
+ANS(Compute("$a+$b/x")->cmp);
+ANS(Compute("x^$d")->cmp);
+ANS(Compute("$c + $f/x^2+ $e/x^$d")->cmp);
+
+#simplify
+ANS(Compute("$a+$b/x")->cmp);
+ANS(Compute("x^$dm1($c + $f/x^2+ $e/x^$d)")->cmp);
+
+ANS(num_cmp($a));
+if ($dm1 % 2) ## d is odd
+{ 
+ANS(Compute("-INF")->cmp);  
+}
+else
+{
+ANS(Compute("INF")->cmp);
+}
+
+#answer
+ANS(Compute("0")->cmp);
+
+ENDDOCUMENT();

@@ -1,0 +1,213 @@
+##DESCRIPTION
+##  Algebra problem: quadratic equation
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('contextual problem')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$h =  random(2,8,1);
+$a =  random(20,80,1);
+$vol = $h*($a-2*$h)**2;
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+A box with a square base and no top is to be made from a square piece of 
+carboard by cutting $h cm squares from each corner and folding up the sides. 
+The box is to hold $vol cm cube. How big a piece of cardboard is needed?
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Define the variables");
+
+Context("Numeric");
+Context()->variables->add(l => 'Real', h => 'Real', V => 'Real');
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( x \) be the length of the side of the cardboard $BR $BR
+Let \( l \) be the length of the box $BR $BR
+Let \( h \) be the height of the box $BR $BR
+Let \( V \) be the volume of the box $BR $BR
+Place the variables in the picture shown below. $BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow([ans_rule(5),image( "box_square_base.png",width=>329, height=>251 ),ans_rule(5)],align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+AlignedRow(["",ans_rule(5),""],align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+EndTable();
+\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("h")->cmp);
+ANS(Compute("x")->cmp);
+ANS(Compute("l")->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Identify what the problem is asking");
+
+Context("Numeric");
+Context()->variables->add(l => 'Real', h => 'Real', V => 'Real');
+
+$popVariablex = PopUp(["?", "x", "l", "h", "V"],"x");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We want \{ $popVariablex->menu() \} $BR
+when \{ans_rule(5)\} \(=\) \{ans_rule(10)\} ($BITALIC write the mathematical expression for $BBOLD the box is to hold $vol cm cube $EBOLD $EITALIC) 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popVariablex->cmp() );
+
+ANS(Compute("V")->cmp);
+ANS(Compute("$vol")->cmp);
+
+Section::End();
+###########################################
+
+###########################################
+Section::Begin("Find the appropriate formula");
+
+Context("Numeric");
+Context()->variables->add(l => 'Real', h => 'Real', V => 'Real');
+
+$length = Compute("x-2*$h");
+$volume = Compute("l^2*h")->reduce;
+
+Context()->texStrings;
+BEGIN_TEXT
+We know $BR $BR
+\{ans_rule(5)\} \(=\) \{ans_rule(10)\} ($BITALIC write the mathematical formula for $BBOLD the volume of the box $EBOLD $EITALIC) $BR $BR
+\{ans_rule(5)\} \(=\) \{ans_rule(10) \} ($BITALIC write the mathematical expression for $BBOLD the height of the box $EBOLD $EITALIC) $BR $BR
+\{ans_rule(5)\} \(=\) \{ans_rule(10) \} ($BITALIC write the mathematical expression for $BBOLD the length of the box $EBOLD $EITALIC) $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("V")->cmp);
+ANS($volume->cmp);
+
+ANS(Compute("h")->cmp);
+ANS(Compute("$h")->cmp);
+
+ANS(Compute("l")->cmp);
+ANS($length->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Solve for what the problem is asking");
+
+Context("Numeric");
+Context()->variables->add(l => 'Real', h => 'Real', V => 'Real');
+$VFormula = Compute("$length^2 $h");
+
+$coeff = $vol/$h;
+$roots[0] = Compute("2*$h-sqrt($coeff)");
+# 2*$h+sqrt($vol/$h) == $a
+$roots[1] = Compute("$a");
+
+Context("Numeric");
+Context()->operators->undefine('/',' /','/ ','//');
+Context()->operators->undefine('sqrt');
+$LHS = Compute("$coeff");
+$RHS = Compute("$length^2");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( V \)","\( = \)","\( $volume \)"], align=>LEFT, separation=>0, indent=>70).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),"\( = \)",ans_rule(20),"(replace the variables by their known value or formula)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),"\( = \)",ans_rule(20),"(isolate \( ($length)^2 \) by keeping it on the RHS)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Solving for \(x\) gives us (in ascending order)
+$BR
+\(x_1 = \) \{ans_rule(10)\} and \(x_2 = \) \{ans_rule(10)\} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("$vol")->cmp);
+ANS($VFormula->cmp);
+ 
+ANS($LHS->cmp);
+ANS($RHS->cmp);
+
+ANS($roots[0]->cmp);
+ANS($roots[1]->cmp);
+
+Section::End();
+
+###########################################
+Section::Begin("Draw a conclusion");
+
+Context()->texStrings;
+BEGIN_TEXT
+Thus, the piece of cardboard must be \{ans_rule(10) \} cm by \{ans_rule(10) \} cm.
+$BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($roots[1]->cmp);
+ANS($roots[1]->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

@@ -1,0 +1,184 @@
+##DESCRIPTION
+##  Matrix Operations
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Matrix Algebra')
+## KEYWORDS('compatibility of an operation', 'minor matrix multiplication')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+$a11 = non_zero_random(-9,9,1);
+$a12 = non_zero_random(-9,9,1);
+$a13 = non_zero_random(-9,9,1);
+$a14 = non_zero_random(-9,9,1);
+
+$b11 = non_zero_random(-9,9,1);
+$b21 = non_zero_random(-9,9,1);
+$b31 = random(-9,9,1);
+$b41 = random(-9,9,1);
+
+$A = Matrix( [ [$a11,$a12,$a13,$a14] ]);
+$B = Matrix( [ [$b11], [$b21], [$b31], [$b41] ]);
+
+Context("Numeric");
+$numRowA = Compute("1");
+$numColA = Compute("4");
+$numRowB = Compute("4");
+$numColB = Compute("1");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Let \( A = $A \) and \( B = $B \) 
+$BR $BR
+$BBOLD (a) $EBOLD Find \( AB \) $BR $BR
+$BBOLD (b) $EBOLD Find \( BA \) 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("Find \( AB \)");
+
+Context("Numeric");
+$popColA = PopUp(["?", "number of rows of A", "number of columns of A"],"number of columns of A");
+$popRowB = PopUp(["?", "number of rows of B", "number of columns of B"],"number of rows of B");
+
+Context()->texStrings;
+BEGIN_TEXT
+We know $BR $BR
+the size of \(A\) is \{ ans_rule(2) \} \( \times \) \{ ans_rule(2) \} ( $BITALIC enter the number of rows and then the number of columns $EITALIC )$BR $BR
+the size of \(B\) is \{ ans_rule(2) \} \( \times \) \{ ans_rule(2) \} $BR $BR
+Since \{ $popColA->menu() \} \( = \) \{ $popRowB->menu() \} then \(AB\) exists and its size is \{ ans_rule(2) \} \( \times \) \{ ans_rule(2) \}.
+END_TEXT
+Context()->normalStrings;
+
+ANS( $numRowA->cmp() );
+ANS( $numColA->cmp() );
+ANS( $numRowB->cmp() );
+ANS( $numColB->cmp() );
+
+ANS( $popColA->cmp() );
+ANS( $popRowB->cmp() );
+
+ANS( $numRowA->cmp() );
+ANS( $numColB->cmp() );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Matrix");
+$AB = $A*$B;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR $BR
+\( \quad AB = \) \{ $AB->ans_array() \} $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $AB->cmp() );
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("Find \( BA \)");
+
+Context("Numeric");
+$popColB = PopUp(["?", "number of rows of B", "number of columns of B"],"number of columns of B");
+$popRowA = PopUp(["?", "number of rows of A", "number of columns of A"],"number of rows of A");
+
+Context()->texStrings;
+BEGIN_TEXT
+We know $BR $BR
+the size of \(B\) is \{ ans_rule(2) \} \( \times \) \{ ans_rule(2) \} ( $BITALIC enter the number of rows and then the number of columns $EITALIC )$BR $BR
+the size of \(A\) is \{ ans_rule(2) \} \( \times \) \{ ans_rule(2) \} $BR $BR
+Since \{ $popColB->menu() \} \( = \) \{ $popRowA->menu() \} then \(BA\) exists and its size is \{ ans_rule(2) \} \( \times \) \{ ans_rule(2) \}.
+END_TEXT
+Context()->normalStrings;
+
+ANS( $numRowB->cmp() );
+ANS( $numColB->cmp() );
+ANS( $numRowA->cmp() );
+ANS( $numColA->cmp() );
+
+ANS( $popColB->cmp() );
+ANS( $popRowA->cmp() );
+
+ANS( $numRowB->cmp() );
+ANS( $numColA->cmp() );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Matrix");
+$BA = $B*$A;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR $BR
+\( \quad BA = \) \{ $BA->ans_array() \} $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS( $BA->cmp() );
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+
+ENDDOCUMENT();        

@@ -1,0 +1,139 @@
+##DESCRIPTION
+##  Algebra problem: factor
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Quadratic and Parabolic Function)
+##KEYWORDS('factorization','quadratic function','quadratic formula')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();     
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"contextFraction.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+do 
+{
+    $a=random(2,5,1);
+    $b=random(2,7,1);
+} until ($a != $b && ($b/$a)!= 2 && ($b/$a)!= 3);
+
+$a1=$a**2;
+$a2=2*$a*$b;
+$a3=$b**2;
+
+$gcdQuad = gcd($a,$b);
+
+Context("Numeric");
+$equation = Formula("$a1 x^2 - $a2 x +$a3")->reduce; 
+
+#
+# Forces a numerical answer as opposed to a formula
+#
+Context("LimitedPolynomial-Strict");
+$SqrtCoeff = sqrt($a2*$a2 - 4*$a1*$a3);
+$TwoaCoeff = 2*$a1;
+$bValue = Compute("$a2");
+$sqrtValue = Compute("$SqrtCoeff");
+$TwoaValue = Compute("$TwoaCoeff");
+
+$BQuad = $b/$gcdQuad;
+$AQuad = $a/$gcdQuad;
+
+#forces a fraction for exponents
+Context("LimitedFraction");
+Context()->operators->undefine("+","-","*");
+$x1Value = Compute("$BQuad/$AQuad");
+$x2Value = Compute("$BQuad/$AQuad");
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$coeff = $gcdQuad*$gcdQuad;
+$factor1 = Formula("$AQuad x-$BQuad");
+$factor2 = Formula("$AQuad x-$BQuad");
+$factoredform = Compute("$coeff $factor1 $factor2");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Factor \( $equation \) by using the quadratic formula.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+$HR
+$BR $BR
+We know $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( x \)","\( = \)","\( \displaystyle \frac{-b \pm \sqrt{b^2-4ac}}{2a} \)","(quadratic formula)" ], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(5)."\( \pm \)".ans_rule(5).$BR.$HR.ans_rule(5),"(give the numerical values of \( -b \), \(\sqrt{b^2-4ac}\) and \( 2a\))"], align=>CENTER, separation=>0, indent=>10).
+EndTable()
+\}
+$BR
+$BR
+The solutions are (in ascending order)
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\(x \)","\( = \)",ans_rule(5),$SPACE.$SPACE." and ".$SPACE.$SPACE,"\(x \)","\( = \)",ans_rule(5)], align=>RIGHT, separation=>0).
+AlignedRow([ans_rule(5),"\( = \)","\( 0 \)",$SPACE.$SPACE." and ".$SPACE.$SPACE,ans_rule(5),"\( = \)","\( 0 \)","(find the factors)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR $BR
+Thus, $BR
+
+
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equation \)","\( = \)",ans_rule(25),"(factorized)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+$BR $BR
+$BBOLD Note: $EBOLD \( (a+b)^2 \) must be entered as \( (a+b)(a+b) \).
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($bValue->cmp);
+ANS($sqrtValue->cmp);
+ANS($TwoaValue->cmp);
+ANS($x1Value->cmp);
+ANS($x2Value->cmp);
+
+ANS($factor1->cmp);
+ANS($factor2->cmp);
+ANS($factoredform->cmp);
+
+
+ENDDOCUMENT();

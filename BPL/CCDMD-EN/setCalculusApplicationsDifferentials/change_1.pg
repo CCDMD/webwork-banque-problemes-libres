@@ -1,0 +1,229 @@
+##DESCRIPTION
+##  Differentials - Change in Cost, Revenue, Profit
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('differential derivative', 'economy')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"contextCurrency.pl",
+"contextLimitedPolynomial.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a1 = random(2,5,1);
+$b1 = random(2,8,1);
+$c1 = random(2,4,1);
+$x1 = random(100,500,10);
+$d1 = random(100,400,10);
+$x2 = $x1 + $d1;
+$deriv1 = 2*$a1*$x1+$b1;
+
+Context("Numeric");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+#the revenue function
+$quantity = Compute("x");
+$price = Compute("$a1 x + $b1")->reduce;
+
+Context("LimitedPolynomial-Strict");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$revenue = Compute("$a1 x^2 + $b1 x");
+
+Context("Numeric");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$poprevenueformula = PopUp(["Choose", "price + quantity", "price x quantity"],"price x quantity");
+$poprevenueformula1 = PopUp(["Choose", "price = ", "quantity = "],"price = ");
+$poprevenueformula2 = PopUp(["Choose", "price = ", "quantity = "],"quantity = ");
+$popTime = PopUp(["Choose", "day", "week", "month", "year"],"day");
+
+$ans_eval6 = Compute($price)->cmp();
+$ans_hash6 = $ans_eval6->evaluate($inputs_ref->{ANS_NUM_TO_NAME(6)});
+$TESTrevenue = $ans_hash6->{score};
+
+$equation = $price*$quantity;
+$dequation = $equation->D('x');
+$answerMR = $dequation->eval(x=>"$x1");
+$answerDeltaR = Compute("$answerMR $d1");
+
+$popVariableX = PopUp(["?", "x", "R", "MR", "deltaR"],"x");
+$popVariableDeltaR = PopUp(["?", "x", "R", "MR", "deltaR"],"deltaR");
+$popVariableMR = PopUp(["?", "x", "R", "MR", "deltaR"],"MR");
+
+Context("Currency");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$CurrencyAnswer = Currency($answerDeltaR);
+
+Context("Numeric");
+#check box 1
+$ans_eval1 = $popVariableMR->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1 = $ans_hash1->{score};
+
+$WantSymbol = "";
+if ($TESTbox1) 
+{
+$WantSymbol = "MR";
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Question $EBOLD $BR $BR
+
+The daily demand function for producing \( x \) items of a product is given by \( D(x) = $price \) in dollars. 
+$BR
+Compute the marginal revenue when the demand is $x1 items and use this to estimate the change in the total revenue if the demand is increased to $x2 items. $BR
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point.
+$HR
+$HR
+$BR
+
+$HR
+$BR$BITALIC$BBOLD Step 1: Define the variables $EBOLD$EITALIC $BR$BR
+Let \(R(x)\) be the revenue function for the production of \( x \) items. $BR
+Let \(MR\) be the marginal revenue. $BR
+Let \( \Delta R \) be the change in the revenue.
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 2: Find the marginal revenue $EBOLD$EITALIC $BR$BR
+We want \{ $popVariableMR->menu() \} 
+when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR
+$BR
+We know \(R(x) = \) \{ $poprevenueformula->menu() \} ($BITALIC formula to find the revenue function $EITALIC) $BR
+where $BR
+\( \quad \) \{ $poprevenueformula1->menu() \}\{ans_rule(15)\} $BR
+and $BR
+\( \quad \) \{ $poprevenueformula2->menu() \}\{ans_rule(15)\} $BR $BR
+\( \therefore R(x) = \)\{ans_rule(20)\} ($BITALIC write the expanded form of the formula for the revenue function $EITALIC)
+
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{dR}{dx} \)","\( = \)",ans_rule(30),"(write the derivative)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+and when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR $BR
+\( \displaystyle $WantSymbol = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( \frac{dR}{dx} \) $EITALIC)
+
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 3: Find the change in the revenue $EBOLD$EITALIC $BR$BR
+
+We want \{ $popVariableDeltaR->menu() \} 
+when \{ $popVariableX->menu() \} \( = \) \{ans_rule(5)\} is increased to \{ans_rule(5)\} ($BITALIC write the given condition $EITALIC)
+$BR
+$BR
+We know \{ $popVariableDeltaR->menu() \} \( \approx MR \cdot \Delta x\) $BR
+where $BR
+\( \quad \) \( MR =\)\{ans_rule(15)\} $BR
+and $BR
+\( \quad \) \( \Delta x =\)\{ans_rule(15)\} ($BITALIC calculate the change in \(x\) $EITALIC)$BR $BR
+\( \therefore \) \{ $popVariableDeltaR->menu() \}\( \approx \)\{ans_rule(20)\} ($BITALIC calculate the change in the revenue $EITALIC)
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 4: Draw a conclusion $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD For the last box, include the dollar sign in your answer. 
+$HR $HR
+$BR
+Thus, the change in the revenue if the production is increased from \{ans_rule(5)\} to \{ans_rule(5)\} items per \{ $popTime->menu() \} is approximately \{ans_rule(10)\}.
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+#Step 2
+ANS($popVariableMR->cmp);
+ANS($popVariableX->cmp);
+ANS(Compute("$x1")->cmp);
+
+#revenue
+ANS($poprevenueformula->cmp() );
+
+if ($TESTrevenue) 
+{
+ANS($poprevenueformula1->cmp() );
+ANS($price->cmp() );
+ANS($poprevenueformula2->cmp() );
+ANS($quantity->cmp() );
+}
+else
+{
+ANS($poprevenueformula2->cmp() );
+ANS($quantity->cmp() );
+ANS($poprevenueformula1->cmp() );
+ANS($price->cmp() );
+}
+ANS($revenue->cmp() );
+
+ANS($dequation->cmp);
+
+ANS($popVariableX->cmp);
+ANS(Compute("$x1")->cmp);
+ANS($answerMR->cmp);
+
+#Step 3
+ANS($popVariableDeltaR->cmp);
+ANS($popVariableX->cmp);
+ANS(Compute("$x1")->cmp);
+ANS(Compute("$x2")->cmp);
+
+ANS($popVariableDeltaR->cmp);
+ANS($answerMR->cmp);
+ANS(Compute("$d1")->cmp);
+ANS($popVariableDeltaR->cmp);
+ANS($answerDeltaR->cmp);
+ANS(Compute("$x1")->cmp);
+ANS(Compute("$x2")->cmp);
+ANS($popTime->cmp);
+ANS($CurrencyAnswer->cmp);
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

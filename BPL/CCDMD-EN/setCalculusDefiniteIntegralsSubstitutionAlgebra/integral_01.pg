@@ -1,0 +1,165 @@
+##DESCRIPTION
+##  Integrals - Substitution method with algebra
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Integration of Functions')
+## KEYWORDS('change of bounds', 'change of variable', 'definite integral')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGunion.pl",
+"PGanswermacros.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"PGauxiliaryFunctions.pl"
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("LimitedPolynomial-Strict");
+Context()->flags->set(singlePowers=>1);
+Context()->variables->are(u=>"Real");
+
+$a = random(4,9,1);
+$b = random(5,9,1);
+if ($b == $a) {$b++;}
+$t1 = 2*($a+$b)**(7/2)/7-4*$b*($a+$b)**(5/2)/5+2*$b**2*($a+$b)**(3/2)/3;
+$t2 = 2*$b**(7/2)/7-4*$b*$b**(5/2)/5+2*$b**2*$b**(3/2)/3;
+$answ = ($t1-$t2)/$a**3;
+
+$int = "x^2\sqrt{$a x + $b}";
+$upper = 1;
+$lower = 0;
+
+$twob = 2*$b;
+$bb = $b*$b;
+$aa = $a*$a;
+
+$x_squared = Formula("$bb - $twob u + u^2")->reduce;
+
+Context("Numeric");
+Context()->variables->add('dx' => 'Real');
+
+#box 3
+$ans_eval3 = Compute("dx")->cmp();
+$ans_hash3 = $ans_eval3->evaluate($inputs_ref->{ANS_NUM_TO_NAME(3)});
+$TESTbox3 = $ans_hash3->{score};
+
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Evaluate
+$BR $BR
+\( \displaystyle \int_{$lower}^{$upper} $int \, dx \)
+$BR
+$BR
+$PAR
+$HR $BR
+$BBOLD Solution $EBOLD $BR $BR
+Let $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["\( u \)", "\( = \)",ans_rule(10),"(choose \(u\))"], align=>LEFT, separation=>0).
+AlignedRow([ans_rule(2).$BR.$HR.ans_rule(2), "\( = \)",ans_rule(10),"(differentiate \(u\))"], align=>LEFT, separation=>0).
+AlignedRow(["\( x \)", "\( = \)",ans_rule(15),"(isolate for \(x\))"], align=>LEFT, separation=>0).
+AlignedRow(["\( x^2 \)", "\( = \)",ans_rule(5)."\( \big( \)".ans_rule(15)."\( \big) \)","(compute \(x^2\). Make sure to factor out the appropriate constant)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR 
+When \( x = $upper \), we have \( u = \) \{ ans_rule(5) \}
+$BR $BR 
+When \( x = $lower \), we have \( u = \) \{ ans_rule(5) \}
+$BR $BR
+We have
+$BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["\(\displaystyle \int_{$lower}^{$upper} $int \, dx \)","\( = \)",ans_rule(2)."\( \displaystyle \int \)",ans_rule(4).$BR.$BR.ans_rule(4),"\( \Big(\)".ans_rule(5)."\(-\)".ans_rule(5)."\(+ \)".ans_rule(5)."\( \Big)\)".ans_rule(2)], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["(an integral with \(u\) where the powers of \(u\) are in descending order. Make sure to move the appropriate constant outside of the integral)"], align=>LEFT, separation=>0,indent=>180).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(3)."\( \Bigg[ \)".ans_rule(40)."\( \Bigg] \)",ans_rule(4).$BR.$BR.ans_rule(4)], align=>LEFT, separation=>0, indent=>140).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["(integrate with respect to \(u\))"], align=>LEFT, separation=>0,indent=>180).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>10, padding=>2, center=>0).
+AlignedRow(["","\( = \)",ans_rule(40),"(evaluate)"], align=>LEFT, separation=>0, indent=>140).
+EndTable()
+\}
+
+$BR
+
+END_TEXT
+
+#x^2\sqrt{$a x + $b}
+
+#u
+ANS(fun_cmp("$a x + $b", vars=>["u","x","du","dx"]));
+
+#du/dx
+ANS(fun_cmp("du", vars=>["u","x","du","dx"]));
+if ($TESTbox3) 
+{
+ANS(fun_cmp("dx", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("$a", vars=>["u","x","du","dx"]));
+}
+else
+{
+ANS(fun_cmp("$a", vars=>["u","x","du","dx"]));
+ANS(fun_cmp("dx", vars=>["u","x","du","dx"]));
+}
+
+ANS(fun_cmp("(u-$b)/$a", vars=>["u","x","du","dx"]));
+
+ANS(num_cmp("1/$aa"));
+ANS($x_squared->cmp());
+
+#upper & lower
+ANS(num_cmp("$a*$upper + $b"));
+ANS(num_cmp("$a*$lower + $b"));
+
+#integral with u
+ANS(num_cmp("1/($a*$aa)"));
+ANS(num_cmp("$a*$upper + $b"));
+ANS(num_cmp("$a*$lower + $b"));
+ANS(fun_cmp("u^(5/2)", vars=>["u","x","du","dx"],limits => [[0,10],[0,10],[-1,1],[-1,1]]));
+ANS(fun_cmp("$twob*u^(3/2)", vars=>["u","x","du","dx"],limits => [[0,10],[0,10],[-1,1],[-1,1]]));
+ANS(fun_cmp("$bb*u^(1/2)", vars=>["u","x","du","dx"],limits => [[0,10],[0,10],[-1,1],[-1,1]]));
+ANS(fun_cmp("du", vars=>["u","x","du","dx"]));
+
+#answer of integral with u
+ANS(num_cmp("1/($a*$aa)"));
+ANS(fun_cmp("u**(7/2)/(7/2)-$twob*u**(5/2)/(5/2)+$bb*u**(3/2)/(3/2)", mode=>"antider", vars=>["u","x","du","dx"], limits=>[[0,10],[0,10],[0,10],[0,10]]));
+ANS(num_cmp("$a*$upper + $b"));
+ANS(num_cmp("$a*$lower + $b"));
+
+ANS(num_cmp($answ));
+
+
+ENDDOCUMENT();

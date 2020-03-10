@@ -1,0 +1,221 @@
+##DESCRIPTION
+##  Area
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the integral')
+## KEYWORDS('area between two curves')
+
+## Author('MC Bonneau & R Hart')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PG.pl",
+"MathObjects.pl",
+"PGstandard.pl",
+"PGcourse.pl",
+"PGbasicmacros.pl",
+"PGchoicemacros.pl",
+"PGanswermacros.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"PGauxiliaryFunctions.pl",
+"CofIdaho_macros.pl"
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+#Context()->variables->are(x=>'Real');
+
+$p1 = random(-6,-2,2);
+$p2 = -1*$p1;
+
+$a = $p1 + 1;
+$b = $p2 + random(2,3,1);
+
+$c = ($p2*$p2);
+
+$fx = "x^2 - $c";
+$gx = "$c - x^2";
+
+$intfx = "x^3/3 - $c*x";
+$intgx = "$c*x - x^3/3";
+
+$ans2 = "2*($b)^3/3 - 2*$c*($b) - (2*($p2)^3/3 - 2*$c*($p2))";
+$ans1 = "2*$c*($p2) - 2*($p2)^3/3 - (2*$c*($a) - 2*($a)^3/3)";
+
+$poptypefx = PopUp(["Choose","an increasing line","a decreasing line","a constant line","an upward quadratic","a downward quadratic","a cubic function"],"an upward quadratic");
+$poptypegx = PopUp(["Choose","an increasing line","a decreasing line","a constant line","an upward quadratic","a downward quadratic","a cubic function"],"a downward quadratic");
+
+$poptypeS1 = PopUp(["Choose","and corresponds to an intersection point", "but does not correspond to an intersection point (outside of interval)", "but does not correspond to an intersection point (extraneous solution)"],"but does not correspond to an intersection point (outside of interval)");
+$poptypeS2 = PopUp(["Choose","and corresponds to an intersection point", "but does not correspond to an intersection point (outside of interval)", "but does not correspond to an intersection point (extraneous solution)"],"and corresponds to an intersection point");
+
+$poptypeI1 = PopUp(["Choose","above","below"],"below");
+$poptypeI2 = PopUp(["Choose","above","below"],"above");
+
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR $BR
+
+$PAR
+Find the area of the region between \( y = $fx \) and \( y = $gx \) over the interval 
+ \( [ $a , $b ] \).
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD
+$HR
+$BR$BITALIC$BBOLD Part 1: Describe the shape of the functions and their intercepts $EBOLD$EITALIC $BR$BR
+$BBOLD Reminder: \( f(x) = $fx \) and \( g(x) = $gx \) $EBOLD $BR$BR
+\( f(x)\) is \{ $poptypefx->menu() \} , $BR
+the \(y\)-intercept is \{ans_rule(5)\} and
+the \(x\)-intercepts are \{ans_rule(5)\} and \{ans_rule(5)\}. $BR $BR
+
+\( g(x)\) is \{ $poptypegx->menu() \} , $BR
+the \(y\)-intercept is \{ans_rule(5)\} and
+the \(x\)-intercepts are \{ans_rule(5)\} and \{ans_rule(5)\}.
+
+$BR $BR
+$BBOLD Remark: $EBOLD If there is no intercept, then enter $BITALIC none $EITALIC in the corresponding answer box.
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 2: Find the point(s) of intersection $EBOLD$EITALIC $BR$BR
+We have $BR
+\{
+ BeginTable(center=>0).
+  AlignedRow([
+   ans_rule(10),
+   '\( = \)', 
+   ans_rule(10),
+   '(set both functions equal to each other \(f(x)=g(x)\))'
+  ], align => "Left", separation=>2).
+
+ AlignedRow([
+    ans_rule(10),
+   '\( = \)', 
+    ans_rule(10),
+  '(move all terms with \( x^2 \) to the LHS)'
+  ], align => "Left", separation=>2).
+
+ EndTable();
+\}
+
+\{
+ BeginTable(center=>0).
+
+ AlignedRow([
+   '\( x^2 \, \)',
+   '\( = \)', 
+    ans_rule(10),
+  '(isolate for \( x^2 \))'
+  ], align => "Left", separation=>2,indent=>80).
+
+ EndTable();
+\}
+$BR
+
+
+The solutions are (in ascending order)
+$BR
+\(x_1 = \) \{ans_rule(5)\} \{ $poptypeS1->menu() \} and $BR
+\(x_2 = \) \{ans_rule(5)\} \{ $poptypeS1->menu() \} . 
+
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 3: Graph the region bounded by the given conditions $EBOLD$EITALIC $BR$BR
+$BBOLD Reminder: \( f(x) = $fx \) and \( g(x) = $gx \) $EBOLD $BR$BR
+Let \( c \) be the only valid point of intersection. $BR$BR
+Between \($a\) and \(c\), \(f(x)\) is \{ $poptypeI1->menu() \} \(g(x)\).$BR
+Between \(c\) and \($b\), \(f(x)\) is \{ $poptypeI2->menu() \} \(g(x)\).$BR
+
+$PAR
+$HR
+$BR$BITALIC$BBOLD Part 4: Find the area of the region graphed in Part 3 $EBOLD$EITALIC $BR$BR
+
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle A = \int \)",ans_rule(1).$BR.$BR.ans_rule(1),"\( \Big( \)",ans_rule(10),"\( \Big) \)","\( \displaystyle \, dx \, + \, \int \)",ans_rule(1).$BR.$BR.ans_rule(1),"\( \Big( \)",ans_rule(10),"\( \Big) \)","\( \displaystyle \, dx \, \)","(set the definite integrals to compute the area) "],align => "LEFT",separation => 0,indent=>0). 
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \Bigg[ \)",ans_rule(15),"\( \displaystyle \Bigg] \)",ans_rule(4).$BR.$BR.ans_rule(4),"\( \displaystyle \, + \, \Bigg[ \)",ans_rule(15),"\( \displaystyle \Bigg] \)",ans_rule(4).$BR.$BR.ans_rule(4),$SPACE,$SPACE,"(integrate in terms of \( x \))"],align => "LEFT",separation => 0,indent=>15). 
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \)",ans_rule(40),"\( \displaystyle \, + \, \)",ans_rule(40),$SPACE,$SPACE,"(evaluate) "],align => "LEFT",separation => 0,indent=>15). 
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle = \)",ans_rule(50),"\( \text{units}^2 \)"],align => "LEFT",separation => 0,indent=>15). 
+  TableSpace(0,0).
+EndTable();
+\}
+
+END_TEXT
+
+#shape
+ANS( $poptypefx->cmp() );
+ANS(num_cmp("-$c",strings =>['none'] ));
+ANS(num_cmp("-sqrt($c)",strings =>['none'] ));
+ANS(num_cmp("sqrt($c)",strings =>['none'] ));
+
+ANS($poptypegx->cmp() );
+ANS(num_cmp("$c"));
+ANS(num_cmp("-sqrt($c)",strings =>['none'] ));
+ANS(num_cmp("sqrt($c)",strings =>['none'] ));
+
+#pt of intersection
+ANS(fun_cmp($fx));
+ANS(fun_cmp($gx));
+ANS(fun_cmp("2x^2"));
+ANS(num_cmp("2*$c"));
+ANS(num_cmp("$c"));
+ANS(num_cmp("$p1"));
+ANS( $poptypeS1->cmp() );
+ANS(num_cmp("$p2"));
+ANS( $poptypeS2->cmp() );
+
+
+#Comparing fx and gx
+ANS( $poptypeI1->cmp() );
+ANS( $poptypeI2->cmp() );
+
+#integral
+ANS(num_cmp("$p2"));
+ANS(num_cmp("$a"));
+ANS(fun_cmp("$gx - ($fx)"));
+ANS(num_cmp("$b"));
+ANS(num_cmp("$p2"));
+ANS(fun_cmp("$fx - ($gx)"));
+
+#evaluate
+ANS(fun_cmp("$intgx - ($intfx)"));
+ANS(num_cmp("$p2"));
+ANS(num_cmp("$a"));
+ANS(fun_cmp("$intfx - ($intgx)"));
+ANS(num_cmp("$b"));
+ANS(num_cmp("$p2"));
+
+#sub
+ANS(num_cmp($ans1));
+ANS(num_cmp($ans2));
+
+ANS(num_cmp("$ans1+$ans2"));
+
+ENDDOCUMENT();

@@ -1,0 +1,134 @@
+##DESCRIPTION
+##  Algebra problem: factor
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('factorization','rational fraction','simplification')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+## [(2x+1)(x+$a)/(x-$b)(x+$c) \div (x+$a)(x+$d)/(x-$b)(2x-1)
+
+$a = random(2,4,1);
+$b = random(1,2,1);
+$c = $a+1;
+$d = $a-1;
+
+$b1 = 1+2*$a;
+$c1 = $a;
+$b2 = -$b+$c;
+$c2 = $b*$c;
+$b3 = $a+$d;
+$c3 = $a*$d;
+$b4 = 2*$b+1;
+$c4 = $b;
+
+Context("Numeric");
+$equation_tex = " \frac{2 x^2+$b1 x+$c1}{x^2+$b2 x-$c2}\div
+\frac{x^2+$b3 x+$c3}{2 x^2-$b4 x+$c4}";
+
+$equationNum1 = Compute("2 x^2+$b1 x+$c1");
+$equationDen1 = Compute("x^2+$b2 x-$c2");
+$equationNum2 = Compute("x^2+$b3 x+$c3");
+$equationDen2 = Compute("2 x^2-$b4 x+$c4");
+
+###########
+# Numerator
+###########
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$factoredformNum1 = Compute("(2x+1)(x+$a)");
+$factoredformNum2 = Compute("(x-$b)(2x-1)");
+$simplifiedNum = Compute("(2x+1)(2x-1)");
+
+##############
+# Denominator
+##############
+
+Context("Numeric");
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$factoredformDen1 = Compute("(x-$b)(x+$c)");
+$factoredformDen2 = Compute("(x+$a)(x+$d)");
+$simplifiedDen = Compute("(x+$c)(x+$d)");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+$BBOLD Question $EBOLD $BR $BR
+
+Factor and simplify \( \displaystyle $equation_tex \) 
+$BR $BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle $equation_tex \)","\( = \)",ans_rule(10).$BR.$HR.ans_rule(10),"\( \cdot \)",ans_rule(10).$BR.$HR.ans_rule(10),"(rewrite the expression as a multiplication, using the rule \( \displaystyle \frac{a}{b}\div\frac{c}{d} = \frac{a}{b}\cdot\frac{d}{c}\))"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(10).$BR.$HR.ans_rule(10),"\( \cdot \)",ans_rule(10).$BR.$HR.ans_rule(10),"(factorized form for the numerator and denominator)"], align=>LEFT, separation=>0,indent=>220).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(15).$BR.$HR.ans_rule(15),"(simplified)"], align=>LEFT, separation=>0, indent=>220).
+EndTable()
+\}
+$BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($equationNum1->cmp);
+ANS($equationDen1->cmp);
+ANS($equationDen2->cmp);
+ANS($equationNum2->cmp);
+
+ANS($factoredformNum1->cmp); 
+ANS($factoredformDen1->cmp); 
+
+ANS($factoredformNum2->cmp); 
+ANS($factoredformDen2->cmp); 
+
+#Final answer
+ANS($simplifiedNum->cmp);
+ANS($simplifiedDen->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

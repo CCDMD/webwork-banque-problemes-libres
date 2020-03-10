@@ -1,0 +1,141 @@
+##DESCRIPTION
+##  Derivative by using limit definition
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Differentiation - Definition and Interpretation')
+## KEYWORDS('definition')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();       
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$b = random(2,12,1);
+$r = random(1,10,1);
+
+Context("Numeric");
+$f = Formula("1/(x + $b)");
+$df = $f->D('x');
+
+Context()->variables->add(h => 'Real');
+$fx = $f->substitute(x => "x"); 
+$fxh = $f->substitute(x => "x+h"); 
+
+Context("LimitedPolynomial-Strict");
+Context()->variables->add(h => 'Real');
+$fxhden = Formula("x + h + $b");
+$fxden = Formula("x + $b");
+$result = Formula("-h");
+
+Context("PolynomialFactors-Strict");
+Context()->variables->add(h => 'Real');
+Context()->flags->set(singleFactors=>1);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 1,
+message => "either 0 or 1",
+);
+$commonD = Compute("$fxhden $fxden");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Find the derivative of \( \displaystyle f(x) = $f\) by using the limit definition of the derivative.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We have
+
+$BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle f'(x) = \lim_{ h \rightarrow 0 } \frac{f(x+h)-f(x)}{h} \)","(limit definition of the derivative)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle = \lim_{ h \rightarrow 0 } \)",ans_rule(10)."\( - \)".ans_rule(10).$BR.$HR.ans_rule(2),"(write \(\frac{f(x+h)-f(x)}{h}\))" ], align=>CENTER, separation=>0, indent=>40).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle = \lim_{ h \rightarrow 0 } \)",ans_rule(10)."\( - \)"."\( \big( \)".ans_rule(10)."\( \big) \)".$BR.$HR.ans_rule(33),"\( \cdot \)","\( 1 \)".$BR.$HR.ans_rule(2),"(find a common denominator and multiply by \( \frac{1}{h} \))" ], align=>CENTER, separation=>0, indent=>40).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["DO NOT EXPAND THE COMMON DENOMINATOR" ], align=>CENTER, separation=>0, indent=>80).
+EndTable()
+\}
+
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle = \lim_{ h \rightarrow 0 } \)",ans_rule(30).$BR.$HR.ans_rule(30),"\( \cdot \)","\( 1 \)".$BR.$HR.ans_rule(2),"(rewrite the numerator by combining like terms and simplifying)" ], align=>CENTER, separation=>0, indent=>40).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["DO NOT EXPAND THE DENOMINATOR" ], align=>CENTER, separation=>0, indent=>80).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle = \lim_{ h \rightarrow 0 } \)",ans_rule(30).$BR.$HR.ans_rule(30),"(cancel \( h \) )" ], align=>CENTER, separation=>0, indent=>40).
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["DO NOT EXPAND THE DENOMINATOR" ], align=>CENTER, separation=>0, indent=>80).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( = \)",ans_rule(30),"(evaluate the limit)" ], align=>LEFT, separation=>0, indent=>40).
+EndTable()
+\}
+$BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($fxh->cmp);
+ANS($fx->cmp);
+ANS(Compute("h")->cmp);
+
+ANS($fxden->cmp);
+ANS($fxhden->cmp);
+ANS($commonD->cmp);
+ANS(Compute("h")->cmp);
+
+ANS($result->cmp);
+ANS($commonD->cmp);
+ANS(Compute("h")->cmp);
+
+ANS(Compute("-1")->cmp);
+ANS($commonD->cmp);
+
+ANS($df->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

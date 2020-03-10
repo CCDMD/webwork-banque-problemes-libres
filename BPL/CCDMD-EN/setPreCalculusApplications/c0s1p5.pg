@@ -1,0 +1,273 @@
+##DESCRIPTION
+##   Algebra: Modeling
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('contextual problem')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$refreshCachedImages = 1;
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$width=random(3.0,12.0,0.1);
+$perimeter=random(4*$width,6*$width,0.1);
+
+#$pi=3.1415926;
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+A Norman window has the shape of a rectangle surmounted by a semicircle.
+If the perimeter of the window is $perimeter ft, find the area of the window in square feet when the width is $width ft.  
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Define the variables");
+
+$refreshCachedImages = 1;
+
+Context("Numeric");
+Context()->variables->add(w => 'Real', h => 'Real', r => 'Real', A => 'Real', P => 'Real');
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( w \) be the width of the rectangle $BR
+Let \( h \) be the height of the rectangle $BR
+Let \( r \) be the radius of the semicircle $BR
+Let \( A \) be the area of the window $BR 
+Let \( P \) be the perimeter of the window $BR $BR
+Place the variables in the picture shown below. $BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow([ans_rule(5),image( "norman_window_3.png",width=>129, height=>201 ),ans_rule(5)],align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+AlignedRow(["",ans_rule(5),""],align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+EndTable();
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("r")->cmp);
+ANS(Compute("h")->cmp);
+ANS(Compute("w")->cmp);
+
+Section::End();
+###########################################
+
+###########################################
+Section::Begin("Identify what the problem is asking");
+
+Context("Numeric");
+Context()->variables->add(w => 'Real', h => 'Real', r => 'Real', A => 'Real', P => 'Real');
+
+$popVariableA = PopUp(["?", "w", "h", "r", "A", "P"],"A");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We want \{ $popVariableA->menu() \} $BR
+when \{ans_rule(5)\} \(=\) \{ans_rule(10)\} ($BITALIC write the mathematical expression for $BBOLD the perimeter of the window is $perimeter ft $EBOLD $EITALIC) 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popVariableA->cmp() );
+
+ANS(Compute("P")->cmp);
+ANS(Compute("$perimeter")->cmp);
+
+Section::End();
+###########################################
+
+###########################################
+Section::Begin("Find the appropriate formula");
+
+Context("Numeric");
+Context()->variables->add(w => 'Real', h => 'Real', r => 'Real', A => 'Real', P => 'Real');
+
+$rFormula = Compute("w/2");
+$TworFormula = Compute("2r");
+
+#check box 9
+$ans_eval9 = Compute("r")->cmp();
+$ans_hash9 = $ans_eval9->evaluate($inputs_ref->{ANS_NUM_TO_NAME(9)});
+$TESTbox9r = $ans_hash9->{score};
+
+$ans_eval9 = Compute("w")->cmp();
+$ans_hash9 = $ans_eval9->evaluate($inputs_ref->{ANS_NUM_TO_NAME(9)});
+$TESTbox9w = $ans_hash9->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We know $BR $BR
+\{ans_rule(5)\} \(=\) \{ans_rule(10)\} ($BITALIC write the mathematical expression for $BBOLD the width is $width ft $EBOLD $EITALIC) $BR $BR
+\{ans_rule(5)\} \(=\) \{ans_rule(5)\} ($BITALIC write the mathematical formula relating $BBOLD \(r\) $EBOLD and $BBOLD \(w\) $EBOLD $EITALIC) $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("w")->cmp);
+ANS(Compute("$width")->cmp);
+
+if($TESTbox9r)
+{
+    ANS(Compute("r")->cmp);
+    ANS(Compute("$rFormula")->cmp);
+}
+elsif($TESTbox9w)
+{
+    ANS(Compute("w")->cmp);
+    ANS(Compute("$TworFormula")->cmp);
+}
+else
+{
+    ANS(Compute("$rFormula")->cmp);
+    ANS(Compute("r")->cmp);
+}
+
+Section::End();
+###########################################
+
+###########################################
+Section::Begin(" ");
+
+Context("Numeric");
+Context()->variables->add(w => 'Real', h => 'Real', r => 'Real', A => 'Real', P => 'Real');
+
+$PFormula = Compute("pi*r+2*h+w")->reduce;
+$AFormula = Compute("pi*r^2/2+w*h")->reduce;
+$radius = Compute("$width/2");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Solving for \(r\) gives us \(r = \) \{ans_rule(10)\} $BR $BR
+
+\{ans_rule(5)\} \(=\) \{ans_rule(10)\} ($BITALIC write the mathematical formula for $BBOLD the perimeter of a Norman window $EBOLD $EITALIC) $BR $BR
+\{ans_rule(5)\} \(=\) \{ans_rule(10)\} ($BITALIC write the mathematical formula for $BBOLD the area of a Norman window $EBOLD $EITALIC) $BR $BR
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($radius->cmp);
+
+ANS(Compute("P")->cmp);
+ANS($PFormula->cmp);
+
+ANS(Compute("A")->cmp);
+ANS($AFormula->cmp);
+
+Section::End();
+###########################################
+
+###########################################
+Section::Begin("Solve for what the problem is asking");
+
+Context("Numeric");
+$h = Compute("$perimeter/2-(pi*$width)/4-$radius");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( P \)","\( = \)","\( $PFormula \)"], align=>LEFT, separation=>0, indent=>70).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),"\( = \)",ans_rule(20),"(replace the known values)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Solving for \(h\) gives us \(h = \) \{ans_rule(10)\} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("$perimeter")->cmp);
+ANS(($PFormula->substitute(r=>"$radius",w=>"$width"))->cmp);
+ANS($h->cmp);
+
+Section::End();
+###########################################
+
+###########################################
+Section::Begin(" ");
+
+Context("Numeric");
+$area = Compute("$h*$width+pi*($width**2.0)/8");
+
+Context()->texStrings;
+BEGIN_TEXT
+Now $BR
+\( \quad \displaystyle A = $AFormula \)$BR $BR
+Solving for \(A\) gives us \(A = \) \{ans_rule(10)\} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($area->cmp() );
+
+Section::End();
+###########################################
+
+###########################################
+Section::Begin("Draw a conclusion");
+
+Context("Numeric");
+$answer = sprintf("%0.2f", $area ); 
+$solution1 = Real("$answer");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD NOTE: $EBOLD For the final answer, give 2 numbers after the decimal point.
+$BR $HR $BR
+Thus, the area of the window is \{ans_rule(10)\} square feet.
+END_TEXT
+Context()->normalStrings;
+
+ANS( $solution1->cmp() );
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

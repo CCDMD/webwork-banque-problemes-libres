@@ -1,0 +1,91 @@
+##DESCRIPTION
+##  Algebra problem: factor a polynomial of degree 4 of the form
+##  x^4 + ax^2 + c
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Algebraic Operations and Factorization)
+##KEYWORDS('factorization','sum-product method')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"contextPolynomialFactors.pl",
+"contextLimitedPowers.pl",
+"PGunion.pl",
+);
+
+
+TEXT(beginproblem());
+
+$showPartialCorrectAnswers = 1;
+
+$d = random(2,4,1);
+$a = random(1,4,1);
+$b = random(5,8,1);
+$t = $a+$b;
+$n = $a*$b;
+
+#
+# Formula $d(x^2+$a)(x^2+$b) where a != b
+# 
+$a1 = $d;
+$a2 = $t*$d;
+$a3 = $n*$d;
+
+$equation = Formula("$a1 x^4 + $a2 x^2 + $a3"); 
+
+#
+#  Expanded form
+#
+Context("LimitedPolynomial-Strict");
+$p[0] = $a3/$d;
+$p[1] = $a2/$d;
+$p[2] = $a1/$d;
+$expandedform = Formula("$p[2] x^4 + $p[1] x^2 + $p[0]")->reduce;
+
+#
+#  Factored form
+#
+Context("PolynomialFactors-Strict");
+Context()->flags->set(singleFactors=>0);
+LimitedPowers::OnlyIntegers(
+minPower => 0, maxPower => 2,
+message => "either 0 or 1 or 2",
+);
+$factoredform = Compute("$d(x^2+$a)(x^2+$b)");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+
+Factor \( $equation \) 
+$BR
+$BR
+
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $equation \)","\( = \)",ans_rule(1)."\( \Big( \)".ans_rule(10)."\( \Big) \)","(factor out the common factor)" ], align=>LEFT, separation=>0).
+AlignedRow([" ","\( = \)",ans_rule(22),"(factorized)"], align=>LEFT, separation=>0).
+EndTable()
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(num_cmp($d));
+ANS($expandedform->cmp);
+
+ANS($factoredform->cmp); 
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

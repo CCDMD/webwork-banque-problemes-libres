@@ -1,0 +1,379 @@
+##DESCRIPTION
+##  Optimization
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Applications of the Limit and Derivative')
+## KEYWORDS('economy', 'maximum', 'minimum optimization')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"contextCurrency.pl",
+"contextLimitedPolynomial.pl",
+"contextAlternateIntervals.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$a1 = random(19,30,1);
+$b1 = random(3,7,1);
+$c1 = random(8,12,1);
+$c2 = random(1,3,1);
+$c3 = $c1-$c2;
+$a= $a1*1000;
+$b = ($a1+$b1)*1000;
+$b2 =$b*2;
+
+$FixedCost = random(1000,5000,1000);
+$TicketPrice = random(2,9,1);
+
+#the cost function
+$fixed = Compute("$FixedCost");
+$variable = Compute("$TicketPrice x");
+$cost = Compute("$fixed + $variable");
+
+#demand function 
+$slope = Compute("($c1 - $c3)/($a - $b)");
+#$yint = Compute("$c1 - $slope * $a");
+#$price = Compute("$slope x + $yint * $a")->reduce;
+$yint = Compute("$c1 - ($c1 - $c3)/($a - $b) * $a");
+$price = Compute("($c1 - $c3)/($a - $b) x + $c1 - ($c1 - $c3)/($a - $b) * $a")->reduce;
+
+$bound = int(-$yint/$slope);
+$MyBound = Compute("$bound");
+$CP = int(-($yint - $TicketPrice)/(2*$slope));
+$MyCP = Compute("$CP");
+
+#the revenue function
+$quantity = Compute("x");
+
+$PriceAns = $price->eval(x=>"$CP");
+
+#Expanded Form
+Context("LimitedPolynomial-Strict");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$revenue = Compute("$slope x^2 + $yint x");
+
+#the profit function   $slope x^2 + $yint x -($FixedCost + $TicketPrice x)
+$coeff1 = $yint - $TicketPrice;
+$profit = Compute("$slope x^2 + $coeff1 x - $FixedCost");
+
+Context("Numeric");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+#$equation = Formula("$price*$quantity - ($cost)");
+#$equation = Compute("$slope x^2 + $coeff1 x - $FixedCost");
+$equation = Compute("($c1 - $c3)/($a - $b) x^2 + ($c1 - ($c1 - $c3)/($a - $b) * $a - $TicketPrice) x - $FixedCost");
+$dequation = $equation->D('x');
+
+$ProfitZero = $equation->eval(x=>"0");
+$ProfitBound = $equation->eval(x=>"$MyBound");
+$ProfitCP = $equation->eval(x=>"$MyCP");
+
+Context("AlternateIntervals");
+Context()->flags->set(
+           enterIntervals => "either",
+           displayIntervals => "alternate",
+);
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$IBounds = Compute("[0,$bound]");
+
+Context("Numeric");
+Context()->flags->set(
+      tolerance    => .0001,       # the relative or absolute tolerance
+      tolType      => 'absolute',  # or 'absolute'
+    );
+
+$popVariableX = PopUp(["?", "x", "p", "C", "R", "P"],"x");
+$popVariablep = PopUp(["?", "x", "p", "C", "R", "P"],"p");
+$popVariableP = PopUp(["?", "x", "p", "C", "R", "P"],"P");
+
+$popcostformula = PopUp(["Choose", "variable costs + fixed costs", "variable costs - fixed costs", "fixed costs -  variable costs", "variable costs x fixed costs"],"variable costs + fixed costs");
+
+$poprevenueformula = PopUp(["Choose", "quantity + price", "quantity x price"],"quantity x price");
+
+$popprofitformula = PopUp(["Choose", "revenue + cost", "revenue - cost", "revenue x cost"], "revenue - cost");
+
+#check box 1
+$ans_eval1 = $popVariableP->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TESTbox1 = $ans_hash1->{score};
+
+$WantSymbol = "";
+$WantWord = "";
+if ($TESTbox1) 
+{
+$WantSymbol = "P";
+$WantWord = "profit";
+}
+
+#check box 21
+$ans_eval21 = $IBounds->cmp();
+$ans_hash21 = $ans_eval21->evaluate($inputs_ref->{ANS_NUM_TO_NAME(21)});
+$TESTbox21 = $ans_hash21->{score};
+
+#check box 24
+$ans_eval24 = Compute("$CP")->cmp();
+$ans_hash24 = $ans_eval24->evaluate($inputs_ref->{ANS_NUM_TO_NAME(24)});
+$TESTbox24 = $ans_hash24->{score};
+
+$ConditionVariable = "";
+$ValueZero = "";
+$ValueBound = "";
+$ValueCP = "";
+if ($TESTbox21 && $TESTbox24) 
+{
+    $ConditionVariable = "x";
+    $ValueZero = Compute("0");
+    $ValueBound = $bound;
+    $ValueCP = Compute("$CP");
+}
+
+
+Context("Currency");
+$CurrencyAnswerPrice = Currency($PriceAns);
+Context("Numeric");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Question $EBOLD $BR $BR
+A baseball team plays in a stadium that holds $b2 spectators. With the
+ticket price at $c1 dollars, the attendance has been $a. When the price
+dropped to $c3 dollars, the attendance rose to $b. The stadium owners are charging a fixed cost of $FixedCost dollars plus a commission of $DOLLAR$TicketPrice per ticket. Determine the price per ticket that will maximize the total profit. 
+$BR $BR 
+Assume the equation relating the unit price of a ticket to the quantity 
+sold is linear.
+$BR
+Assume that the cost function is linear.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR
+$HR
+$BBOLD NOTE: $EBOLD For all decimal values, give at least 5 digits after the decimal point.
+$HR
+$HR
+$BR
+
+$HR
+$BR$BITALIC$BBOLD Step 1: Define the variables $EBOLD$EITALIC $BR$BR
+Let \(x\) be the number of tickets. $BR
+Let \(p\) be the unit price of a ticket (in dollars). $BR $BR
+
+Let \(C(x)\) be the cost function. $BR
+Let \(R(x)\) be the revenue function. $BR
+Let \(P(x)\) be the profit function. 
+
+$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 2: Find the function to maximize $EBOLD$EITALIC $BR$BR
+We want to maximize \{ $popVariableP->menu() \} 
+$BR $BR
+
+We know \(C(x) = \) \{ $popcostformula->menu() \} ($BITALIC formula to find the cost function $EITALIC) $BR
+where $BR
+\( \quad \text{fixed costs} = \) \{ans_rule(15)\} $BR
+and $BR
+\( \quad \text{variable costs} = \) \{ans_rule(15)\} $BR 
+$BR
+\( \therefore C(x) = \)\{ans_rule(20)\} ($BITALIC formula of the cost function $EITALIC)
+$BR $BR
+
+We know \(R(x) = \) \{ $poprevenueformula->menu() \} ($BITALIC formula to find the revenue function $EITALIC) $BR
+where $BR
+\( \quad \text{quantity} = \) \{ans_rule(15)\} $BR 
+and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \quad \text{price} \)","\( = \)",$popVariablep->menu(),"($BITALIC choose the variable that represents the price function $EITALIC)"], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)","\(a x + b \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+We have $BR
+\( \quad a = \) \{ans_rule(15)\} ($BITALIC numerical value of the slope $EITALIC)$BR
+and $BR
+\( \quad b = \) \{ans_rule(15)\} ($BITALIC numerical value of the y-intercept $EITALIC)$BR $BR
+\( \therefore \) \{ $popVariablep->menu() \} \( = \)\{ans_rule(20)\} ($BITALIC formula of the price function $EITALIC)
+$BR
+and $BR
+\( \quad R(x) = \)\{ans_rule(20)\} ($BITALIC formula of the revenue function $EITALIC)
+
+$BR $BR
+
+We know $BR
+\( \quad P(x) = \) \{ $popprofitformula->menu() \} ($BITALIC formula to find the profit function $EITALIC) 
+$BR $BR
+\( \hspace{1.5cm} = \)\{ans_rule(20)\} ($BITALIC formula of the profit function $EITALIC)
+
+$BR $BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 3: Find the bounds on the demand function $EBOLD$EITALIC $BR$BR
+
+We want \{ $popVariableX->menu() \} when \( \text{price} = 0 \)
+$BR
+$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(15),"\( = \)","\( 0 \)","($BITALIC write the price function $EITALIC)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([$popVariableX->menu(),"\( = \)",ans_rule(20),"($BITALIC solve for the quantity, which must be an integer. Round down if needed. $EITALIC)"], align=>LEFT, separation=>0, indent=>105).
+
+EndTable()
+\}
+$BR
+\( \therefore \) Bounds on \{ $popVariableX->menu()\} \( = \) \{ ans_rule(20) \} ($BITALIC write your answer in interval notation $EITALIC)
+
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 4: Find the critical point(s) $EBOLD$EITALIC $BR$BR
+We have $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d$WantSymbol}{dx} \)","\( = \)",ans_rule(30),"(find the derivative with respect to \( x\))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+and $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \displaystyle \frac{d$WantSymbol}{dx} = 0 \) when",ans_rule(10),"\( = \)","\( 0 \)","(write \( \frac{d$WantSymbol}{dx} \))"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( x \)","\( = \)",ans_rule(2),"(isolate for \( x \), which must be an integer. Round down if needed.)"], align=>RIGHT, separation=>0).
+
+
+EndTable()
+\}
+$BR $BR $HR 
+$BBOLD Submit your answer at this point to properly see the next lines and make sure all of the answers above are correct before proceeding. $EBOLD $BR $HR 
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 5: Find the maximum $EBOLD$EITALIC $BR$BR
+
+When \( $ConditionVariable = $ValueZero \), 
+\( \displaystyle \quad $WantSymbol = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( $WantSymbol(x) \) $EITALIC) $BR $BR
+When \( $ConditionVariable = $ValueBound \), 
+\( \displaystyle \quad $WantSymbol = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( $WantSymbol(x) \) $EITALIC) $BR $BR
+When \( $ConditionVariable = $ValueCP \), 
+\( \displaystyle \quad $WantSymbol = \)\{ans_rule(30) \} ($BITALIC replace the given condition into \( $WantSymbol(x) \) $EITALIC) $BR $BR
+Thus, a maximum occurs when \( $ConditionVariable = \)\{ans_rule(5) \} and in that case, \( \text{price} = \)\{ans_rule(20) \}$BR
+$BR
+$PAR
+$HR
+$BR$BITALIC$BBOLD Step 6: Draw a conclusion $EBOLD$EITALIC $BR$BR
+$HR $HR
+$BBOLD NOTE: $EBOLD Include the dollar sign in your answer. 
+$HR $HR
+$BR
+Thus, to maximize the income, tickets should be sold at \{ans_rule(10)\}.
+$BR
+
+
+END_TEXT
+Context()->normalStrings;
+
+#Step 2
+ANS($popVariableP->cmp);
+
+#cost
+ANS($popcostformula->cmp() );
+
+ANS($fixed->cmp() );
+ANS($variable->cmp() );
+ANS($cost->cmp() );
+
+#revenue
+ANS($poprevenueformula->cmp() );
+ANS($quantity->cmp);
+ANS($popVariablep->cmp() );
+
+ANS($slope->cmp);
+ANS($yint->cmp);
+ANS($popVariablep->cmp() );
+ANS($price->cmp);
+
+ANS($revenue->cmp() );
+
+#profit
+ANS($popprofitformula->cmp() );
+ANS($profit->cmp);
+
+#Step 3
+ANS($popVariableX->cmp);
+ANS($price->cmp);
+ANS($popVariableX->cmp);
+ANS($MyBound->cmp);
+ANS($popVariableX->cmp);
+ANS($IBounds->cmp);
+
+#Step 4
+ANS($dequation->cmp);
+ANS($dequation->cmp);
+ANS($MyCP->cmp);
+
+$mult_checker = sub {
+       my ($correct,$student,$ansHash) = @_;  # get correct and student MathObjects
+       my $r = Real(10**($n+1));
+       my $ans_stu = $student->value;        # get coordinates of student answer
+       my $ans_cor = $correct->value;
+       
+       $mult_stu = Real($r*$ans_stu);
+       $mult_cor = Real($r*$ans_cor);
+       
+       return ($mult_stu == $mult_cor ? 1 : 0);      # return 1 if correct, 0 otherwise
+     };
+
+ANS($ProfitZero->cmp(checker => $mult_checker));
+ANS($ProfitBound->cmp(checker => $mult_checker));
+ANS($ProfitCP->cmp(checker => $mult_checker));
+
+ANS($MyCP->cmp);
+ANS($PriceAns->cmp);
+
+ANS($CurrencyAnswerPrice->cmp);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

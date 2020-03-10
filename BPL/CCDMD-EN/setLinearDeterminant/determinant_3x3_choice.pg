@@ -1,0 +1,257 @@
+#DESCRIPTION
+##  Finding the determinant of a 3x3
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('System of Linear Equations')
+## KEYWORDS('determinant')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl"
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Matrix");
+$a11=non_zero_random(-3,5,1);
+$a12=non_zero_random(-3,5,1);
+$a13=non_zero_random(-3,5,1);
+$a21=non_zero_random(-3,5,1);
+$a22=0;
+$a23=non_zero_random(-3,5,1);
+$a31=0;
+$a32=non_zero_random(-3,5,1);
+$a33=non_zero_random(-3,5,1);
+
+$A = Matrix([[$a11,$a12,$a13],[$a21,$a22,$a23],[$a31,$a32,$a33]]);
+$Det = $A->det;
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Compute the determinant of \( A = $A \)
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popCPlus = PopUp(["?", "+1", "-1"],"+1");
+$popCMinus = PopUp(["?", "+1", "-1"],"-1");
+
+$popR1 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"row 1");
+$popR2 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"row 2");
+$popR3 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"row 3");
+$popC1 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"column 1");
+$popC2 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"column 2");
+$popC3 = PopUp(["Choose", "row 1", "row 2", "row 3", "column 1", "column 2", "column 3"],"column 3");
+
+#check box 1
+$ans_eval1 = $popR1->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TEST_R1 = $ans_hash1->{score};
+
+$ans_eval1 = $popR2->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TEST_R2 = $ans_hash1->{score};
+
+$ans_eval1 = $popR3->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TEST_R3 = $ans_hash1->{score};
+
+$ans_eval1 = $popC1->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TEST_C1 = $ans_hash1->{score};
+
+$ans_eval1 = $popC2->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TEST_C2 = $ans_hash1->{score};
+
+$ans_eval1 = $popC3->cmp();
+$ans_hash1 = $ans_eval1->evaluate($inputs_ref->{ANS_NUM_TO_NAME(1)});
+$TEST_C3 = $ans_hash1->{score};
+
+Context()->texStrings;
+BEGIN_TEXT
+To find the determinant of \(A\), I will expand along \{ $popR1->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+if($TEST_R1)
+{
+    ANS($popR1->cmp);
+}
+elsif($TEST_R2)
+{
+    ANS($popR2->cmp);
+}
+elsif($TEST_R3)
+{
+    ANS($popR3->cmp);
+}
+elsif($TEST_C1)
+{
+    ANS($popC1->cmp);
+}
+elsif($TEST_C2)
+{
+    ANS($popC2->cmp);
+}
+else
+{
+    ANS($popC3->cmp);
+}
+
+Section::End();
+
+if($TEST_R2 || $TEST_R3 || $TEST_C1 || $TEST_C2 )
+{
+Section::Begin(" ");
+
+Context("Matrix");
+if($TEST_R2)
+{
+    $M1 = Matrix([[$a12,$a13],[$a32,$a33]]);
+    $M2 = Matrix([[$a11,$a12],[$a31,$a32]]);
+
+    $Entry1 = Compute("$a21");
+    $DetM1 = $M1->det;
+    $Coeff1 = Compute("-1*$Entry1*$DetM1");
+    $Sign1 = $popCMinus;
+
+    $Entry2 = Compute("$a23");
+    $DetM2 = $M2->det;
+    $Coeff2 = Compute("-1*$Entry2*$DetM2");
+    $Sign2 = $popCMinus;
+}
+elsif($TEST_R3)
+{
+    $M1 = Matrix([[$a11,$a13],[$a21,$a23]]);
+    $M2 = Matrix([[$a11,$a12],[$a21,$a22]]);
+
+    $Entry1 = Compute("$a32");
+    $DetM1 = $M1->det;
+    $Coeff1 = Compute("-1*$Entry1*$DetM1");
+    $Sign1 = $popCMinus;
+
+    $Entry2 = Compute("$a33");
+    $DetM2 = $M2->det;
+    $Coeff2 = Compute("1*$Entry2*$DetM2");
+    $Sign2 = $popCPlus;
+}
+elsif($TEST_C1)
+{
+    $M1 = Matrix([[$a22,$a23],[$a32,$a33]]);
+    $M2 = Matrix([[$a12,$a13],[$a32,$a33]]);
+
+    $Entry1 = Compute("$a11");
+    $DetM1 = $M1->det;
+    $Coeff1 = Compute("1*$Entry1*$DetM1");
+    $Sign1 = $popCPlus;
+
+    $Entry2 = Compute("$a21");
+    $DetM2 = $M2->det;
+    $Coeff2 = Compute("-1*$Entry2*$DetM2");
+    $Sign2 = $popCMinus;
+}
+else #C2
+{
+    $M1 = Matrix([[$a21,$a23],[$a31,$a33]]);
+    $M2 = Matrix([[$a11,$a13],[$a21,$a23]]);
+
+    $Entry1 = Compute("$a12");
+    $DetM1 = $M1->det;
+    $Coeff1 = Compute("-1*$Entry1*$DetM1");
+    $Sign1 = $popCMinus;
+
+    $Entry2 = Compute("$a32");
+    $DetM2 = $M2->det;
+    $Coeff2 = Compute("-1*$Entry2*$DetM2");
+    $Sign2 = $popCMinus;
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \det(A) \)","\( = \)","\( \big( \)".ans_rule(2)."\( \big) \big( \)".$popCPlus->menu()."\( \big) \)"."\( \det \)".$M1->ans_array(2)."\( + \big( \)".ans_rule(2)."\( \big) \big( \)".$popCPlus->menu()."\( \big) \)"."\( \det \)".$M2->ans_array(2)], align=>LEFT, separation=>0).
+
+AlignedRow(["","","(write each non-zero term, where each term is of the form \( a_{i j}(-1)^{i j}M_{i j} )\)"], align=>LEFT, separation=>0).
+
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(5)."\( + \)".ans_rule(5)], align=>LEFT, separation=>0).
+
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+AlignedRow(["",""," "], align=>LEFT, separation=>0).
+
+AlignedRow(["","\( = \)",ans_rule(5)], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($Entry1->cmp);
+ANS($Sign1->cmp);
+ANS($M1->cmp);
+ANS($Entry2->cmp);
+ANS($Sign2->cmp);
+ANS($M2->cmp);
+
+ANS($Coeff1->cmp);
+ANS($Coeff2->cmp);
+
+ANS($Det->cmp);
+
+Section::End();
+}
+else
+{
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+It is best to choose a row or column with zeroes. Reopen the previous tab and choose a different option. $BR $BR
+Leave the following box empty: \{ans_rule(5)\}
+END_TEXT
+Context()->normalStrings;
+
+ANS(str_cmp("ok"));
+
+Section::End();
+}
+###########################################
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

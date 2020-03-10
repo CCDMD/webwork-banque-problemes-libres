@@ -1,0 +1,143 @@
+##DESCRIPTION
+##  Vector algebra
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('vector arithmetic', 'direction', 'vector')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"PGcourse.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedPoint.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#create the point P
+Context("Point");
+Context("Point");
+$P = Point(random(-10,10,1), random(-10,10,1), non_zero_random(-10,10,1));
+
+#create the vector PQ
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$V = Vector(random(-10,10,1), non_zero_random(-10,10,1), random(-10,10,1));
+
+#create the point Q
+Context("LimitedPoint");
+$Q = Point($P-$V);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find the initial point of a directed line segment with endpoint \( P = $P \) such that the directed line segment has the same length as \(\vec{v}\) and is pointing in the same direction as \(\vec{v}\), where \( \vec{v} = $V \). 
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Solve for the initial point");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \(\it Q \) be the initial point of the directed line segment. $BR $BR
+
+We want $BR 
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \displaystyle \overrightarrow{PQ} = \vec{v} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \displaystyle \overrightarrow{PQ} = -\vec{v} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 3:","\( \displaystyle \overrightarrow{QP} = \vec{v} \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 4:","\( \displaystyle \overrightarrow{QP} = -\vec{v} \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("3")->cmp );
+
+Section::End();
+
+###########################################
+Section::Begin(" ");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We have $BR
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{QP} \) ","\( = \)","\( \vec{v} \)"], align=>LEFT, separation=>0, indent=>105).
+
+EndTable()
+\}
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5)."\( - \; \overrightarrow{OQ} \; \)"."\( = \)".ans_rule(5)], align=>LEFT, separation=>0).
+
+AlignedRow(["(write the components of the vector associated to the point \( \it P \) and then the components of the vector \( \vec{v} \))"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \overrightarrow{OQ} \)","\( = \)",ans_rule(5),"(write the components of the vector associated to the point \( \it Q \) )"], align=>LEFT, separation=>0, indent=>100).
+
+EndTable()
+\}
+$BR
+Thus the point \( \it Q = \) \{ ans_rule(5) \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($P->cmp);
+ANS($V->cmp);
+ANS($Q->cmp);
+ANS($Q->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();

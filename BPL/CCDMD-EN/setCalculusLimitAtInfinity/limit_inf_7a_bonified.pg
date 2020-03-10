@@ -1,0 +1,157 @@
+##DESCRIPTION
+##  Limit at Infinity
+##ENDDESCRIPTION
+
+## DBsubject('Differential and Integral Calculation of One Variable')
+## DBchapter('Limit and Continuity')
+## KEYWORDS('inf-inf', 'limit', 'limit at infinity', 'indeterminate form')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"PGunion.pl",
+"PGcourse.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+$a1 = random(10,40,1);
+$b1 = random(10,40,1);
+
+$sa = random(-1,1,2);
+$sb = -1*$sa;
+
+$a  = $a1 * $sa;
+$b  = $b1 * $sb;
+
+$gcdab = gcd($a,$b);
+
+if ($sb == 1) 
+{
+    $equation = Compute("$b x^3 + $a x^2")->reduce;
+} 
+else 
+{
+    $equation = Compute("$a x^2 + $b x^3")->reduce;
+}
+
+
+Context("LimitedPolynomial-Strict");
+Context()->strings->add(UND=>{});
+$coeff1 = $a/$gcdab;
+$coeff2 = $b/$gcdab;
+$factor1 = Compute("$gcdab x^2");
+$factor2 = Compute("$coeff1 + $coeff2 x");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Find \( \displaystyle \lim_{x\to\infty} \Big( $equation \Big) \) and \( \displaystyle \lim_{x\to-\infty} \Big( $equation \Big) \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+We have $BR $BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x\to\infty} \Big( $equation \Big) = \) ",ans_rule(5)."\( - \)".ans_rule(5),"(evaluate the indeterminate form by replacing \(x\) by \( \infty \) )"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)","\( \displaystyle \lim_{x\to\infty} \)".ans_rule(5)."\( \big( \)".ans_rule(10)."\( \big) \)","(factor)" ], align=>LEFT, separation=>0, indent=>140).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(5)."\( \big( \)".ans_rule(10)."\( \big) \)","(evaluate by replacing \(x\) by \( \infty \))" ], align=>LEFT, separation=>0, indent=>140).
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(5),"(evaluate)" ], align=>LEFT, separation=>0, indent=>140).
+EndTable()
+\}
+$BR $BR
+and
+$BR $BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow(["\( \displaystyle \lim_{x\to-\infty} \Big( $equation \Big) = \) ",ans_rule(5)."\( - \)".ans_rule(5),"(evaluate the indeterminate form by replacing \(x\) by \( -\infty \) )"],align => "LEFT",separation => 0).
+  TableSpace(0,0).
+EndTable();
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([" ","\( = \)",ans_rule(5),"(evaluate)" ], align=>LEFT, separation=>0, indent=>150).
+EndTable()
+\}
+$BR
+$HR 
+$BBOLD Note: $EBOLD  $BR
+Enter $BBOLD UND $EBOLD for undefined expressions. $BR
+Enter $BBOLD DNE $EBOLD when an expression does not exist. $BR
+Enter $BBOLD INF $EBOLD for \(\infty\).$BR
+Enter $BBOLD -INF $EBOLD for \(-\infty\).$BR
+
+
+END_TEXT
+Context()->normalStrings;
+
+if ($sb == 1) 
+{
+   $box1 = 'INF';
+   $box2 = 'INF';
+   $box5 = 'INF';
+   $box6 = 'INF';
+   $ans1 = 'INF';
+
+   $box7 = '-INF';
+   $box8 = 'INF';
+   $ans2 = '-INF';
+} 
+else 
+{
+   $box1 = 'INF';
+   $box2 = 'INF';
+   $box5 = 'INF';
+   $box6 = '-INF';
+   $ans1 = '-INF';
+
+   $box7 = 'INF';
+   $box8 = '-INF';
+   $ans2 = 'INF';
+}
+
+ANS(Compute($box1)->cmp);
+ANS(Compute($box2)->cmp);
+
+ANS($factor1->cmp);
+ANS($factor2->cmp);
+
+ANS(Compute($box5)->cmp);
+ANS(Compute($box6)->cmp);
+
+ANS(Compute($ans1)->cmp);
+
+ANS(Compute($box7)->cmp);
+ANS(Compute($box8)->cmp);
+
+ANS(Compute($ans2)->cmp);
+
+
+ENDDOCUMENT();

@@ -1,0 +1,267 @@
+##DESCRIPTION
+##  Given the area of a rectangle, and the relation between length and width,
+##   find the length of the diagonal.
+##ENDDESCRIPTION
+
+## DBsubject(Algebraic Functions and Manipulations)
+## DBchapter(Functions, Relationships and Function Operations)
+##KEYWORDS('contextual problem')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"contextLimitedPolynomial.pl",
+"parserPopUp.pl",
+"PGunion.pl",
+"scaffold.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+
+$A = random(20,200,1);
+$k = random(1,9,1);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+The width of a rectangle is $k cm less than twice its length.  If the area of the 
+rectangle is $A cm\(^2\), what is the length of the diagonal?
+
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+Section::Begin("Define the variables");
+
+Context("Numeric");
+Context()->variables->add(w => 'Real', l => 'Real', d => 'Real', A => 'Real');
+
+Context()->texStrings;
+BEGIN_TEXT
+
+Let \( w \) be the width of the rectangle $BR
+Let \( l \) be the length of the rectangle $BR
+Let \( d \) be the length of the diagonal $BR
+Let \( A \) be the area of the rectangle $BR $BR
+Place the variables in the picture shown below. $BR
+\{
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+  AlignedRow([ans_rule(5),image( "rectangle_with_diagonal.png",width=>329, height=>201 ),ans_rule(5)],align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+AlignedRow(["",ans_rule(5),""],align => "CENTER",separation => 0). 
+  TableSpace(0,0).
+EndTable();
+\}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("d")->cmp);
+ANS(Compute("w")->cmp);
+ANS(Compute("l")->cmp);
+
+Section::End();
+###########################################
+
+###########################################
+Section::Begin("Identify what the problem is asking");
+
+Context("Numeric");
+Context()->variables->add(w => 'Real', l => 'Real', d => 'Real', A => 'Real');
+
+$popVariabled = PopUp(["?", "w", "l", "d", "A"],"d");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We want \{ $popVariabled->menu() \} $BR
+when \{ans_rule(5)\} \(=\) \{ans_rule(10)\} ($BITALIC write the mathematical expression for $BBOLD the area of the 
+rectangle is $A cm\(^2\) $EBOLD $EITALIC) 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popVariabled->cmp() );
+
+ANS(Compute("A")->cmp);
+ANS(Compute("$A")->cmp);
+
+Section::End();
+###########################################
+
+###########################################
+Section::Begin("Find the appropriate formula");
+
+Context("Numeric");
+Context()->variables->add(w => 'Real', l => 'Real', d => 'Real', A => 'Real');
+
+$w = Compute("2*l-$k")->reduce;
+$area = Compute("w l");
+
+#check box 7
+$ans_eval7 = Compute("w^2")->cmp();
+$ans_hash7 = $ans_eval7->evaluate($inputs_ref->{ANS_NUM_TO_NAME(7)});
+$TESTbox7 = $ans_hash7->{score};
+
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We know $BR $BR
+\(d^2 =\) \{ans_rule(5)\} \( + \) \{ans_rule(5)\} ($BITALIC from the triangle constructed in the first pane, write the mathematical formula for $BBOLD \(d^2\) $EBOLD $EITALIC) $BR $BR
+\{ans_rule(5)\} \(=\) \{ans_rule(10)\} ($BITALIC write the mathematical formula for $BBOLD the area of a rectangle $EBOLD $EITALIC) $BR $BR
+\{ans_rule(5)\} \(=\) \{ans_rule(10)\} ($BITALIC write the mathematical expression for $BBOLD the width of a rectangle is $k cm less than twice its length $EBOLD $EITALIC) $BR $BR
+
+
+END_TEXT
+Context()->normalStrings;
+
+if($TESTbox7)
+{
+    ANS(Compute("w^2")->cmp);
+    ANS(Compute("l^2")->cmp);
+}
+else
+{
+    ANS(Compute("l^2")->cmp);
+    ANS(Compute("w^2")->cmp);
+}
+
+ANS(Compute("A")->cmp);
+ANS($area->cmp);
+
+ANS(Compute("w")->cmp);
+ANS($w->cmp);
+
+Section::End();
+###########################################
+
+###########################################
+Section::Begin("Solve for what the problem is asking");
+
+Context("Numeric");
+$length[0] = Compute("($k - sqrt($k**2 + 8*$A))/4");
+$length[1] = Compute("($k + sqrt($k**2 + 8*$A))/4");
+
+Context("LimitedPolynomial-Strict");
+Context()->variables->add(w => 'Real', l => 'Real', d => 'Real', A => 'Real');
+$expandedform = Compute("2 l^2-$k l -$A");
+
+Context()->texStrings;
+BEGIN_TEXT
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( A \)","\( = \)","\( $area \)"], align=>LEFT, separation=>0, indent=>70).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),"\( = \)","\( \big( \)".ans_rule(10)."\( \big) l \quad \)","(replace \( A \) and \( w \) by their known value or formula)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( 0 \)","\( = \)",ans_rule(20),"(expand and simplify)"], align=>LEFT, separation=>0, indent=>70).
+
+EndTable()
+\}
+$BR $BR
+Solving for \(l\) gives us (in ascending order)
+$BR
+\(l_1 = \) \{ans_rule(10)\} and \(l_2 = \) \{ans_rule(10)\} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS(Compute("$A")->cmp);
+ANS($w->cmp);
+
+ANS($expandedform->cmp);
+ANS($length[0]->cmp);
+ANS($length[1]->cmp);
+
+Section::End();
+###########################################
+
+###########################################
+Section::Begin(" ");
+
+Context("Numeric");
+$width = Compute("2*$length[1] - $k");
+$distance[0] = Compute("-sqrt($length[1]**2 + $width**2)");
+$distance[1] = Compute("sqrt($length[1]**2 + $width**2)");
+
+$popLength = PopUp(["?", "l1", "l2"],"l1");
+$popExplanation = PopUp(["?", "less than zero", "equal to zero", "greater than zero"],"less than zero");
+
+Context()->texStrings;
+BEGIN_TEXT
+We reject \{ $popLength->menu() \} since its value is \{ $popExplanation->menu() \}.$BR $BR
+Solving for \(w\) gives us \(w = \) \{ans_rule(15)\} $BR $BR
+Now $BR
+\( \quad d^2 = w^2 + l^2 \)$BR $BR
+Solving for \(d\) gives us (in ascending order)
+$BR
+\(d_1 = \) \{ans_rule(10)\} and \(d_2 = \) \{ans_rule(10)\} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popLength->cmp() );
+ANS($popExplanation->cmp() );
+ANS($width->cmp);
+ANS($distance[0]->cmp);
+ANS($distance[1]->cmp);
+
+Section::End();
+###########################################
+
+###########################################
+Section::Begin("Draw a conclusion");
+
+Context("Numeric");
+$answer = sprintf("%0.2f", $distance[1] ); 
+$solution1 = Real("$answer");
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD NOTE: $EBOLD For the final answer, give 2 numbers after the decimal point.
+$BR $HR $BR
+Thus, the length of the diagonal is  \{ans_rule(10)\} cm.
+END_TEXT
+Context()->normalStrings;
+
+ANS( $solution1->cmp() );
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+

@@ -1,0 +1,178 @@
+##DESCRIPTION
+##  Find the rank and number of solutions to a system
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('System of Linear Equations')
+## KEYWORDS('infinity of solutions', 'number of solutions', 'rank', 'graphical representation of a system', 'free variable')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"PGmatrixmacros.pl",
+"PGunion.pl",
+"parserPopUp.pl",
+"scaffold.pl"
+);
+
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("Numeric");
+$a11 = 1;
+$a12 = non_zero_random(-9,9,1);
+$a13 = 0;
+$a14 = 0;
+$a15 = non_zero_random(-9,9,1);
+$a16 = 0;
+
+$a21 = 0;
+$a22 = 0;
+$a23 = 1;
+$a24 = 0;
+$a25 = 0;
+$a26 = 0;
+
+$a31 = 0;
+$a32 = 0;
+$a33 = 0;
+$a34 = 1;
+$a35 = non_zero_random(-9,9,1);
+$a36 = 0;
+
+$a41 = 0;
+$a42 = 0;
+$a43 = 0;
+$a44 = 0;
+$a45 = 0;
+$a46 = 1;
+
+$b1 = non_zero_random(-9,9,1);
+$b2 = 0;
+$b3 = random(-9,9,1);
+$b4 = non_zero_random(-9,9,1);
+
+Context("Matrix");
+$M = Matrix([[$a11,$a12,$a13,$a14,$a15,$a16,$b1],[$a21,$a22,$a23,$a24,$a25,$a26,$b2],
+[$a31,$a32,$a33,$a34,$a35,$a36,$b3],
+[$a41,$a42,$a43,$a44,$a45,$a46,$b4]]);
+
+###########################################
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Given the following augmented matrix $BR
+\( 
+    \{   display_matrix_mm($M, align=>'rrrrrr|r')  \} 
+\) 
+$BR $BR
+
+$BBOLD (a) $EBOLD Find the rank of the matrix of coefficients and the rank of the augmented matrix. $BR $BR
+$BBOLD (b) $EBOLD Determine the number of solutions of the system of linear equations corresponding to the augmented matrix and its geometrical representation.
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR $BR
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+Section::Begin(" ");
+
+Context("Numeric");
+$rA = Compute("4");
+$rAb = Compute("4");
+$n = Compute("6");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( A \) be the matrix of coefficients.$BR 
+Let \( A | b \) be the augmented matrix. $BR
+Let \( n \) be the number of variables. $BR $BR
+We know $BR
+\( \quad \text{rank}(A) = \) \{ ans_rule(2) \} $BR $BR
+\( \quad \text{rank}(A|b) = \) \{ ans_rule(2) \} $BR $BR
+\( \quad n = \) \{ ans_rule(2) \} $BR 
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($rA->cmp);
+ANS($rAb->cmp);
+ANS($n->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin(" ");
+
+Context("Numeric");
+$popSol = PopUp(["?","a unique solution","infinitely many solutions", "no solution"],"infinitely many solutions");
+$popRank = PopUp(["?","<", "=",">"],"=");
+$popN = PopUp(["?","<", "=",">"],"<");
+$popGeo = PopUp(["?","a point","a line","a plane", "N/A"], "a plane");
+$popFree = PopUp(["?", "0", "1", "2", "N/A"],"2");
+
+Context()->texStrings;
+BEGIN_TEXT
+We know $BR $BR
+\( \quad r(A) = $rA \) $BR $BR
+\( \quad r(A|b) = $rAb \) $BR $BR
+\( \quad n = $n \) $BR $BR
+
+Since $BR 
+\( \quad \text{rank}(A) \) \{ $popRank->menu() \} \( \text{rank}(A|b) \) \{ $popN->menu() \} \( n \) $BR
+then $BR $BR
+the system of linear equations has \{ $popSol->menu() \}, $BR $BR
+the system of linear equations has \{ $popFree->menu() \} free variable(s) and $BR $BR
+the general solution represents \{ $popGeo->menu() \}. $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popRank->cmp);
+ANS($popN->cmp);
+ANS($popSol->cmp);
+ANS($popFree->cmp);
+ANS($popGeo->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Scaffold::End();
+
+COMMENT("This problem gives infinitely many solutions.");
+
+ENDDOCUMENT();       # This should be the last executable line in the problem.
+

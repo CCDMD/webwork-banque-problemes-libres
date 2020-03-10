@@ -1,0 +1,349 @@
+##DESCRIPTION
+##  Lines & Planes
+##ENDDESCRIPTION
+
+## DBsubject('Linear Algebra')
+## DBchapter('Euclidean Vectors and Euclidean Space')
+## KEYWORDS('applications')
+
+## Author('MC Bonneau')
+## Institution('Cegep Heritage College')
+
+DOCUMENT();
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"parserVectorUtils.pl",
+"contextLimitedVector.pl",
+"parserParametricLine.pl",
+"parserImplicitPlane.pl",
+"answerCustom.pl",
+"PGcourse.pl",
+"PGunion.pl",
+"contextFraction.pl",
+"parserPopUp.pl",
+"scaffold.pl",
+);
+ 
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+
+$N1 = Vector(non_zero_random(-9,9,1),random(-9,9,1),random(-9,9,1));
+$k = non_zero_random(-5,5,1);
+$N2 = $k*$N1;
+
+Context("Point");
+do
+{
+    $p1 = random(-9,9,1);
+    $p2 = non_zero_random(-9,9,1);
+    $p3 = random(-9,9,1);
+    $P = Point($p1, $p2, $p3);
+
+    #ensures that support point for plane is of the form (0,0,integer)
+    $tempValueP = ($N1->extract(1)*$P->extract(1) + $N1->extract(2)*$P->extract(2) + $N1->extract(3)*$P->extract(3));
+    
+} until( $tempValueP%($N1->extract(3)) == 0);
+
+#$Q = Point($p1+1, $p2, $p3-1);
+do
+{
+    $random1 = random(1,9,1);
+    $random2 = random(1,9,1);
+    $Q = Point($p1+$random1, $p2, $p3-$random2);
+
+    #ensures that support point for plane is of the form (0,0,integer)
+    $tempValueQ = ($N2->extract(1)*$Q->extract(1) + $N2->extract(2)*$Q->extract(2) + $N2->extract(3)*$Q->extract(3));
+    
+} until( $tempValueQ%($N2->extract(1)) == 0);
+
+
+Context("ImplicitPlane");
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)+y');
+$Plane1 = ImplicitPlane($P,$N1);
+$Plane2 = ImplicitPlane($Q,$N2);
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Question $EBOLD $BR $BR
+Let $BR
+\( \quad \Phi_1: $Plane1 \) $BR
+and the plane $BR
+\( \quad \Phi_2: $Plane2 \). $BR $BR
+${BBOLD}(a)$EBOLD
+Show that the planes \( \Phi_1 \) and \( \Phi_2 \) are parallel disjoint. $BR $BR
+${BBOLD}(b)$EBOLD
+Find the distance between the planes \( \Phi_1 \) and \( \Phi_2 \).
+$BR
+$BR
+$HR
+$BBOLD Solution $EBOLD $BR 
+$HR $BR
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+#  The scaffold
+Scaffold::Begin();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BBOLD Part A $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+Section::Begin("Identify the required vectors");
+
+Context("Numeric");
+$d1_value = $N1->extract(1)*$P->extract(1) + $N1->extract(2)*$P->extract(2) + $N1->extract(3)*$P->extract(3);
+$D1 = Compute("$d1_value");
+$d2_value = $N2->extract(1)*$Q->extract(1) + $N2->extract(2)*$Q->extract(2) + $N2->extract(3)*$Q->extract(3);
+$D2 = Compute("$d2_value");
+
+Context()->texStrings;
+BEGIN_TEXT
+Let \( \vec{n_1} \) be the normal vector of the plane \( \Phi_1 \). $BR 
+Let \( d_1 \) be the constant associated with the plane \( \Phi_1 \). $BR $BR
+Let \( \vec{n_2} \) be the normal vector of the plane \( \Phi_2 \). $BR 
+Let \( d_2 \) be the constant associated with the plane \( \Phi_2 \). $BR $BR
+
+We know $BR $BR
+\( \quad \vec{n_1} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_1 = \) \{ ans_rule(15) \} $BR $BR
+\( \quad \vec{n_2} = \) \{ ans_rule(15) \} $BR $BR
+\( \quad d_2 = \) \{ ans_rule(15) \} $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($N1->cmp);
+ANS($D1->cmp);
+ANS($N2->cmp);
+ANS($D2->cmp);
+
+Section::End();
+
+Section::Begin("Check if the planes are parallel");
+
+Context("Numeric");
+$popExist = PopUp(["Choose", "can", "cannot"],"can");
+$popParallel = PopUp(["Choose", "parallel", "not parallel"],"parallel");
+
+Context()->texStrings;
+BEGIN_TEXT
+
+We \{ $popExist->menu() \} find a scalar \( k \) such that 
+\( \vec{n_1} = k \vec{n_2} \)$BR $BR
+
+which gives us that 
+\( \vec{n_1} \) and \( \vec{n_2} \) are \{ $popParallel->menu() \} $BR $BR
+and \( \Phi_1 \) and \( \Phi_2 \) are \{ $popParallel->menu() \}
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popExist->cmp);
+ANS($popParallel->cmp);
+ANS($popParallel->cmp);
+
+Section::End();
+
+Section::Begin("Check if the planes are identical");
+
+Context("Point");
+$d1_value = $N1->extract(1)*$P->extract(1) + $N1->extract(2)*$P->extract(2) + $N1->extract(3)*$P->extract(3);
+$PointValue = ($N1->extract(1)*$P->extract(1) + $N1->extract(2)*$P->extract(2) + $N1->extract(3)*$P->extract(3))/$N1->extract(3);
+$SupportPoint = Point(0,0,$PointValue);
+
+Context("Numeric");
+$d_value = $N2->extract(3)*$PointValue;
+
+$popAnd = PopUp(["Choose", "and", "or"],"and");
+$popEqual = PopUp(["Choose", "=", "not ="],"not =");
+$popConclusion = PopUp(["Choose", "parallel disjoint", "identical", "intersecting"],"parallel disjoint");
+
+Context("LimitedFraction");
+$KValue = Fraction(1,$k);
+$DValue = Fraction($D2,$k);
+
+Context()->texStrings;
+BEGIN_TEXT
+We know the planes \( \Phi_1 \) and \( \Phi_2 \) are identical if \( \vec{n_1} = k \vec{n_2} \quad \) \{ $popAnd->menu() \} \( \quad d_1 = k d_2 \) for the same \( k \). $BR $BR
+
+We have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \vec{n_1} \) ","\( = \)","\( k \vec{n_2} \) "], align=>LEFT, separation=>0,indent=>45).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( $N1 \) ","\( = \)",ans_rule(2)."\( $N2 \) ","(write the numerical value of \( k \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+For that same \( k \), we have $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( d_1 \) ",$popEqual->menu(),"\( k d_2 \)"], align=>LEFT, separation=>0,indent=>65).
+
+EndTable()
+\}
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow([ans_rule(5),$popEqual->menu(),ans_rule(5),"(write the numerical value of \( d_1 \) and \( k d_2 \) )"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+Thus the planes \( \Phi_1 \) and \( \Phi_2 \) are \{ $popConclusion->menu() \}.
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popAnd->cmp);
+ANS($KValue->cmp(studentsMustReduceFractions=>1));
+
+ANS($popEqual->cmp);
+
+ANS($D1->cmp);
+ANS($popEqual->cmp);
+ANS($DValue->cmp(studentsMustReduceFractions=>1));
+
+ANS($popConclusion->cmp);
+
+Section::End();
+
+###########################################
+###########################################
+
+Context()->texStrings;
+BEGIN_TEXT
+$BR
+$BBOLD Part B $EBOLD $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+###########################################
+
+Section::Begin("Find the distance");
+
+Context("Numeric");
+$popPoint = PopUp(["Choose", "a point on one plane AND a point on the other plane", "a point on one plane AND the other plane"],"a point on one plane AND the other plane");
+
+Context()->texStrings;
+BEGIN_TEXT
+We know \( \text{d} \big( \Phi_1, \Phi_2 \big) \), the distance between the planes \( \Phi_1 \) and \( \Phi_2 \), can be computed by finding the distance between \{ $popPoint->menu() \}.  $BR $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($popPoint->cmp);
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Point");
+$PointValue1 = ($N1->extract(1)*$P->extract(1) + $N1->extract(2)*$P->extract(2) + $N1->extract(3)*$P->extract(3))/$N1->extract(3);
+$P1 = Point(0,0,$PointValue1);
+$PointValue2 = ($N2->extract(1)*$Q->extract(1) + $N2->extract(2)*$Q->extract(2) + $N2->extract(3)*$Q->extract(3))/$N2->extract(1);
+$P2 = Point($PointValue2,0,0);
+
+Context("LimitedVector-coordinate");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$P2P1 = Vector($P1 - $P2);
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ image( "distance_plane_plane.png",width=>329, height=>201 ) \} $BR $BR
+
+Let \( P_1 \) be the support point of the plane \( \Phi_1 \). $BR 
+Let \( P_2 \) be the support point of the plane \( \Phi_2 \). $BR $BR
+We know $BR
+\( \quad P_1 = \) \{ ans_rule(15) \} (let \(x = 0, y = 0 \) and solve for \( z \). Then write the components of the point.) $BR $BR
+\( \quad P_2 = \) \{ ans_rule(15) \} (let \(y = 0 , z = 0\) and solve for \( x \). Then write the components of the point.) $BR $BR
+and $BR 
+\( \quad \overrightarrow{P_2 P_1} = \) \{ ans_rule(15) \} (write the components of the vector \( \overrightarrow{P_2 P_1} \))$BR $BR
+
+Which of the formulas below corresponds to the $BBOLD distance? $EBOLD $BR $BR
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["Option 1:","\( \displaystyle \| \textrm{proj}_{\vec{n_2}}\overrightarrow{P_2 P_1} \| = \left\lVert \left( \frac{\vec{n_2} \bullet \overrightarrow{P_2 P_1}}{\overrightarrow{P_2 P_1} \bullet \overrightarrow{P_2 P_1}} \right) \overrightarrow{P_2 P_1} \right\lVert = \frac{ | \vec{n_2} \bullet \overrightarrow{P_2 P_1} | }{ \| \overrightarrow{P_2 P_1} \| } \)"], align=>LEFT, separation=>0).
+
+AlignedRow([""], align=>LEFT, separation=>0).
+
+AlignedRow(["Option 2:","\( \displaystyle \| \textrm{proj}_{\vec{n_2}}\overrightarrow{P_2 P_1} \| = \left\lVert \left( \frac{\overrightarrow{P_2 P_1} \bullet \vec{n_2}}{\vec{n_2} \bullet \vec{n_2}} \right) \vec{n_2} \right\lVert  = \frac{ | \overrightarrow{P_2 P_1} \bullet \vec{n_2} | }{ \| \vec{n_2} \| } \)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+The correct formula is $BBOLD Option $EBOLD \{ ans_rule(2) \} ($BITALIC enter the number corresponding to the chosen option $EITALIC) $BR
+
+END_TEXT
+Context()->normalStrings;
+
+ANS($P1->cmp);
+ANS($P2->cmp);
+ANS($P2P1->cmp);
+
+ANS(Compute("2")->cmp );
+
+Section::End();
+
+Section::Begin(" ");
+
+Context("Vector");
+Context()->{cmpDefaults}{Vector} = {promotePoints => 1};
+Context()->lists->set(Vector=>{open=>'(', close=>')'});
+$N = $N2;
+
+$AbsDotProduct = abs($P2P1.$N);
+$NormN = norm($N);
+
+Context("Numeric");
+$Distance = $AbsDotProduct/$NormN;
+
+Context()->texStrings;
+BEGIN_TEXT
+We have
+\{ 
+BeginTable(border=>0, tex_border=>"1pt", spacing=>0, padding=>2, center=>0).
+AlignedRow(["\( \text{d} \big( \Phi_1,\Phi_2 \big) \) ","\( = \)","\( \displaystyle \frac{ | \overrightarrow{P_2 P_1} \bullet \vec{n_2} | }{ \| \vec{n_2} \| } \)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(15).$BR.$HR.ans_rule(15),"(write the appropriate numerical values)"], align=>LEFT, separation=>0).
+
+AlignedRow([" ","\( = \)",ans_rule(15),"(compute the distance)"], align=>LEFT, separation=>0).
+
+EndTable()
+\}
+$BR $BR
+END_TEXT
+Context()->normalStrings;
+
+ANS($AbsDotProduct->cmp);
+ANS($NormN->cmp);
+ANS($Distance->cmp);
+
+Section::End();
+
+###########################################
+
+Scaffold::End();
+
+ENDDOCUMENT();
