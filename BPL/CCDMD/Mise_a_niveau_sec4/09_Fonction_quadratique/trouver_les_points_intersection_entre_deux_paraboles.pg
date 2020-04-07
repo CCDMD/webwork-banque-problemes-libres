@@ -8,7 +8,7 @@
 ## KEYWORDS('factorisation', 'fonction quadratique', 'forme générale ax^2+bx+c', 'formule quadratique')
 
 ## Author('Diane Bergeron et Louise Pellerin')
-## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
+## Institution('CEGEP de Chicoutimi et La Cité collégiale')
 ## Taxonomie('Roxane Rodrigue')
 ###########################################################################
 
@@ -16,10 +16,14 @@ DOCUMENT();
 loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
+  "PGcourse.pl",
 );
 
 
 TEXT(beginproblem());
+
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)-y','(-x)+y');
 
 # définir les deux points d'intersection (x1,y1) et (x2,y2)
 $x1 = random(1,6);
@@ -28,13 +32,14 @@ $x2 = random(($x1+1),7);
 $d= random(2, ($x1+$x2));
 $e= random(1, ($x1*$x2));
 
-$y1 = ($d*$x1) + $e;
-$y2 = ($d*$x2) + $e;
+$y1 = $x1*$x1+($d*$x1) + $e;
+$y2 = $x2*$x2+($d*$x2) + $e;
 
 #déterminer l'équation de la parabole
 $a = 1;
-$b = ($y2-$y1 + ($x1*$x1) - ($x2*$x2) ) / ($x2 - $x1);
-$c = $y1 - ($x1*$x1) - ($b*$x1);
+#$b = ($y2-$y1 + ($x1*$x1) - ($x2*$x2) ) / ($x2 - $x1);
+$b = Compute("2*($x1+$x2) + $d");
+$c = $y1 + ($x1*$x1) - ($b*$x1);
 
 if ($b<0) {$signeaff = "-";}
 else {$signeaff = "+";}
@@ -48,9 +53,14 @@ else {$signeaffc = "+";}
 if ($c<0) {$signeinvaffc = "+";}
 else {$signeinvaffc = "-";}
 
+$parabole1 = Formula("x^2+$d*x+$e")->reduce;
+$parabole2 = Formula("-x^2 + $b*x + $c")->reduce;
+
 # déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
 Context()->variables->are(x=>"Real");
+Context()->strings->add(aucun=>{});
 $lettre="x";
+
 
 # référer les images à utiliser dans la solution
 $image1="deux_paraboles_deux_intersections.jpg";
@@ -82,29 +92,26 @@ $bdabsdiv2=$bdabs/2;
 $cediv2=$ce/2;
 $bddiv2=$bd/2;
 
-$discrim = ($bddiv2*$bddiv2) - (4*$cediv2);
+$discrim = Compute("($bddiv2*$bddiv2) - (4*$cediv2)");
 
 
-
+Context()->texStrings;
 BEGIN_TEXT
 <table cellpadding="10px" width="850px">
   <tr><td>
 
 <h1>Question : </h1>
-<br/>Trouver le(s) point(s) d'intersection entre les courbes \(y = $lettre^2 + $d $lettre + $e\)  et  \(y = -$lettre^2 $signeaff $babs $lettre $signeaffc $cabs\). <br/>
-
-<br/><br/>
-
-point(s) d'intersection: \{ans_rule(15)\} 
-<br/><br>
-&nbsp; &nbsp; &nbsp;&nbsp S'il y a un seul point d'intersection, inscrire ses coordonnées entre parenthèses. Par exemple:  (1,3).  <br/>
-&nbsp; &nbsp &nbsp;&nbsp; S'il y a deux points d'intersection, séparer ces deux points d'une virgule. Par exemple:  (1,3) , (2,5). <br/>
-&nbsp; &nbsp &nbsp;&nbsp; S'il n'y a aucune intersection possible, inscrire <strong>aucun</strong>.
-<br/><br/>
-
   </td></tr>
 </table>
+$BR Trouver le(s) point(s) d'intersection entre les courbes \(y = $parabole1\)  et  \(y = $parabole2\).$BR
+$PAR
+point(s) d'intersection: \{ans_rule(15)\} 
+$PAR
+$SPACE $SPACE $SPACE $SPACE S'il y a un seul point d'intersection, inscrire ses coordonnées entre parenthèses. Par exemple:  (1,3).  <br/>
+$SPACE $SPACE $SPACE $SPACE S'il y a deux points d'intersection, séparer ces deux points d'une virgule. Par exemple:  (1,3) , (2,5). <br/>
+$SPACE $SPACE $SPACE $SPACE S'il n'y a aucune intersection possible, inscrire <strong>aucun</strong>.
 END_TEXT
+Context()->normalStrings;
 
 BEGIN_HINT
 <script>
@@ -147,22 +154,22 @@ END_HINT
 ANS(List( Point($x1,$y1),Point($x2,$y2) )->cmp);
 
 
-SOLUTION(EV3(<<'END_SOLUTION'));
-<p><u>Solution</u></p>
-<br/>Trouver le(s) point(s) d'intersection entre les courbes y = $lettre<sup>2</sup> + $d$lettre + $e  et  y = -$lettre<sup>2</sup> $signeaff$babs$lettre $signeaffc $cabs . <br/>
+Context()->texStrings;
+BEGIN_SOLUTION
+Trouver le(s) point(s) d'intersection entre les courbes \(y = $parabole1\)  et  \(y = $parabole2\).$BR
 
-<br/><br/>
+$PAR
 
 point(s) d'intersection:_____________
-<br/><br>
+$PAR
 
-&nbsp; &nbsp; &nbsp;&nbsp S'il y a un seul point d'intersection, inscrire ses coordonnées entre parenthèses. Par exemple:  (1,3) . <br/>
-&nbsp; &nbsp &nbsp;&nbsp; S'il y a deux points d'intersection, séparer ces deux points d'une virgule. Par exemple:  (1,3) , (2,5) .<br/>
-&nbsp; &nbsp &nbsp;&nbsp; S'il n'y a aucune intersection possible, inscrire <strong>aucun</strong>.
-<br/><br/>
+$SPACE $SPACE $SPACE $SPACE S'il y a un seul point d'intersection, inscrire ses coordonnées entre parenthèses. Par exemple:  (1,3).  <br/>
+$SPACE $SPACE $SPACE $SPACE S'il y a deux points d'intersection, séparer ces deux points d'une virgule. Par exemple:  (1,3) , (2,5). <br/>
+$SPACE $SPACE $SPACE $SPACE S'il n'y a aucune intersection possible, inscrire <strong>aucun</strong>.
+$PAR
 
-
-Il y a trois cas possibles:<br/>
+Il y a trois cas possibles:
+$PAR
 <table cellpadding=5>
   <tr>
     <td align=center>Cas 1<br/> Deux points d'intersection</td>
@@ -175,86 +182,83 @@ Il y a trois cas possibles:<br/>
     <td align=center>\{ image( $image3, width=>250, height=>250) \} </td>
   </tr>
 </table>
-<br/>
+$BR
 
-Aux points d'intersection, les valeurs de x et de y sont les mêmes dans les deux équations:<br/><br/>
+Aux points d'intersection, les valeurs de \(x\) et de \(y\) sont les mêmes dans les deux équations:
+$PAR
 
- &nbsp;&nbsp;  y = $lettre<sup>2</sup> + $d$lettre + $e  et  y = -$lettre<sup>2</sup> $signeaff$babs$lettre $signeaffc $cabs .
-<br/><br/>
- 
-Par conséquent, nous pouvons poser l'égalité entre les deux valeurs de y. Nous obtenons:<br/><br/>
+$SPACE $SPACE \(y = $parabole1\)  et  \(y = $parabole2\).
+$PAR
+Par conséquent, nous pouvons poser l'égalité entre les deux valeurs de \(y\). Nous obtenons:
+$PAR
 
-&nbsp;&nbsp;  $lettre<sup>2</sup> + $d$lettre + $e =  -$lettre<sup>2</sup> $signeaff$babs$lettre $signeaffc $cabs <br/> 
-&nbsp;&nbsp; $lettre<sup>2</sup> + $d$lettre + $e  + $lettre<sup>2</sup> $signeinvaff$babs$lettre $signeinvaffc $cabs = 0<br/>
-&nbsp;&nbsp; 2$lettre<sup>2</sup> $signebdaff $bdabs$lettre $signeceaff $ceabs = 0 &nbsp;&nbsp;&nbsp;&nbsp; en regroupant les termes semblables<br/>
-&nbsp;&nbsp; $lettre<sup>2</sup> $signebdaff $bdabsdiv2$lettre $signeceaff $ceabsdiv2 = 0 &nbsp;&nbsp;&nbsp;&nbsp; en divisant tous les termes par 2<br/><br/>
+$SPACE $SPACE  \($parabole1 = $parabole2\) $BR
+$SPACE $SPACE \($lettre^2 + $d$lettre + $e  + $lettre^2 $signeinvaff$babs$lettre $signeinvaffc $cabs = 0\)$BR
+$SPACE $SPACE \(2$lettre^2 $signebdaff $bdabs$lettre $signeceaff $ceabs = 0 \) $SPACE $SPACE $SPACE $SPACE ; en regroupant les termes semblables $BR
+$SPACE $SPACE \($lettre^2 $signebdaff $bdabsdiv2$lettre $signeceaff $ceabsdiv2 = 0\) $SPACE $SPACE $SPACE $SPACE ; en divisant tous les termes par 2
+$PAR
 
 En trouvant le discriminant de cette fonction quadratique, on constate que celui-ci est plus grand que zéro. Donc, il y aura ainsi deux solutions possibles (cas 1 du tableau ci-haut):
-&nbsp; &nbsp; b<sup>2</sup> - 4ac = ($signebdaff$bdabsdiv2)<sup>2</sup> - 4*(1)($signeceaff$ceabsdiv2) = $discrim  
-<br/><br/>
+$SPACE $SPACE \(b^2- 4ac = ($signebdaff$bdabsdiv2)^2 - 4(1)($signeceaff$ceabsdiv2) = $discrim \) 
+$PAR
 
-Factorisons:<br/><br/>
-($lettre - $x1)($lettre - $x2)  = 0   
+Factorisons: 
+$PAR
+\( ($lettre - $x1)($lettre - $x2)  = 0 \)  
+$PAR
+Puisque nous avons deux facteurs, si l'un ou l'autre est égal à zéro, nous obtenons une bonne solution pour l'équation. Par conséquent, nous obtenons:
+$PAR
+$SPACE $SPACE \( ($lettre - $x1) = 0\)  ;   donc \(x_1 = $x1\) $BR
+ou $BR
+$SPACE $SPACE \(($lettre - $x2) = 0 \) ;   donc \(x_2 = $x2\) $BR
+$BR
+Il faut, par la suite, trouver les valeurs de \(y\) correspondantes.  Puisque les points appartiennent aux deux fonctions, nous pouvons utiliser l'une ou l'autre pour trouver les valeurs correspondantes de \(y\). Dans le cas ici, il est plus facile de résoudre l'équation de la courbe:   \( y = $parabole1\).
+$PAR
 
-<br/><br/>
+Nous obtenons:$PAR
 
-Puisque nous avons deux facteurs, si l'un ou l'autre est égal à zéro, nous obtenons une bonne solution pour l'équation. Par conséquent, nous obtenons: <br/><br/>
-
-&nbsp;&nbsp; ($lettre - $x1) = 0  ;   donc <strong> x<sub>1</sub> = $x1</strong> <br/>
-ou<br/>
-&nbsp;&nbsp; ($lettre - $x2) = 0  ;   donc <strong> x<sub>2</sub> = $x2</strong> <br/>
-<br/>
-
-Il faut, par la suite, trouver les valeurs de y correspondantes.  Puisque les points appartiennent aux deux fonctions, nous pouvons utiliser l'une ou l'autre pour trouver les valeurs correspondantes de y. Dans le cas ici, il est plus facile de résoudre l'équation de la droite:   y = $d$lettre + $e <br/><br/>
-
-Nous obtenons:<br/><br/>
-
-1. Pour $lettre = $x1 <br/>
+1. Pour \($lettre = $x1\) $BR
 <ul>
-   <li> f($lettre) =   $d$lettre + $e </li>
-   <li> f($x1) =   $d($x1) + $e </li>
-   <li> f($x1) = <strong>$y1</strong></li>
+   <li> \(f($lettre) =   $parabole1\) </li>
+   <li> \(f($x1) =   ($x1)^2 + $d($x1) + $e\) </li>
+   <li> \(f($x1) = $y1\)</li>
 </ul>
 
 <br/>
-2. Pour $lettre = $x2 <br/>
+2. Pour \($lettre = $x2\)$BR
 <ul>
-   <li>  f($lettre) =   $d$lettre + $e  </li>
-   <li>  f($x2) =   $d($x2) + $e  </li>
-   <li>  f($x2) = <strong>$y2</strong></li>
+   <li>  \(f($lettre) =  $parabole1\)  </li>
+   <li>  \(f($x2) =   ($x2)^2 + $d($x2) + $e\)  </li>
+   <li>  \(f($x2) = $y2\)</li>
 </ul>
+$PAR
+D'où les coordonnées des points d'intersection entre les deux courbes sont:
+$PAR
+\( ($x1, $y1), ($x2,$y2)\)
+$PAR
 
-<br/><br/>
-D'où les coordonnées des points d'intersection entre les deux courbes sont: <br/><br/>
-
-<strong> ($x1, $y1), ($x2,$y2)</strong>
-<br/><br/>
-
-<u>Vérifications:</u><br/><br/>
-
-Puisque les points appartiennent aux deux fonctions, nous allons maintenant vérifier l'exactitude de nos réponses en calculant les valeurs de y correspondantes dans l'équation de la courbe y = $lettre<sup>2</sup> $signeaff$babs$lettre + $c .<br/><br/>
-
-1. Pour $lettre<sub>1</sub> = $x1<br/>
+<u>Vérifications:</u>
+$PAR
+Puisque les points appartiennent aux deux fonctions, nous allons maintenant vérifier l'exactitude de nos réponses en calculant les valeurs de \(y\) correspondantes dans l'équation de la courbe \(y = $parabole2\).
+$PAR
+1. Pour \($lettre_1 = $x1\)$BR
 <ul>
-   <li> f($lettre) = -$lettre<sup>2</sup> $signeaff$babs$lettre + $c</li>
-   <li> f($x1) = -($x1)<sup>2</sup> $signeaff$babs($x1) + $c</li>
-   <li> f($x1) = $y1   => même valeur trouvée avec l'autre équation</li>
-</ul>
-<br/>
-2. Pour $lettre<sub>2</sub> = $x2<br/>
-<ul>
-   <li> f($lettre) = -$lettre<sup>2</sup> $signeaff$babs$lettre + $c</li>
-   <li> f($x2) = -($x2)<sup>2</sup> $signeaff$babs($x2) + $c</li>
-   <li> f($x2) = $y2   => même valeur trouvée avec l'autre équation</li>
+   <li> \(f($lettre) = -$lettre^2 $signeaff$babs$lettre + $c\)</li>
+   <li> \(f($x1) = -($x1)^2 $signeaff$babs($x1) + $c\)</li>
+   <li> \(f($x1) = $y1\)   => même valeur trouvée avec l'autre équation</li>
 </ul>
 <br/>
+2. Pour \($lettre_2 = $x2\)$BR
+<ul>
+   <li> \(f($lettre) = -$lettre^2 $signeaff$babs$lettre + $c\)</li>
+   <li> \(f($x2) = -($x2)^2 $signeaff$babs($x2) + $c\)</li>
+   <li> \(f($x2) = $y2\)   => même valeur trouvée avec l'autre équation</li>
+</ul>
+$BR
 Par conséquent, nous pouvons confirmer que les points d'intersection sont:
-<br/><br/>
-<strong> ($x1, $y1), ($x2,$y2)</strong>
-
-<br/>
-
-
+$PAR
+\( ($x1, $y1)\) et \(($x2,$y2)\)
 END_SOLUTION
+Context()->normalStrings;
 
 ENDDOCUMENT();
