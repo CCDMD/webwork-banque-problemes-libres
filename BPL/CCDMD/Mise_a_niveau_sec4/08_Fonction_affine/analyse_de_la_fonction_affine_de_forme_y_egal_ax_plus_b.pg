@@ -17,10 +17,18 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "PGgraphmacros.pl",
+  "PGcourse.pl",
 );
 
 
 TEXT(beginproblem());
+
+#Context("Interval");
+Context()->noreduce('(-x)-y');
+Context()->noreduce('(-x)-y','(-x)+y');
+Context()->strings->add(aucun=>{});
+Context()->strings->add(infini=>{} );
+
 
 # définir les valeurs de la pente et de la coordonnée à l'origine
 $m = random(2,9);
@@ -28,20 +36,21 @@ $m = random(2,9);
 do { $b = random(1,9);}
 until ($b != $m);
 
-$reste = ($b/$m) - int($b/$m);
-$bsurm=$b/$m;
-
 # déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
 Context()->variables->are(x=>"Real");
 $lettre="x";
+$f = Compute("$m*x+$b")->reduce;
 
 
 # déterminer les zéros de la fonction (il y en a un seul)
-if ($reste==0) {$zero="-"."$bsurm";}
-else {$zero="-"."$b"."/"."$m";}
-$z = -$b/$m;
-
-
+$reste = ($b/$m) - int($b/$m);
+$div = gcd($b,$m);
+($b2,$m2) = ($b/$div,$m/$div);
+$z = Compute("-$b2/$m2");
+if ($reste==0) {$zero= $z;}
+else {
+$zero = "-$b2/$m2";
+}
 
 # déterminer si c'est vrai ou faux que le domaine de la fonction est R
 $choix="vrai";
@@ -49,7 +58,8 @@ $choix="vrai";
 # déterminer l'intervalle où la fonction est négative, et celle où elle est positive
 $negatif= "("."-infini".","."$zero".")";
 $positif= "("."$zero".","."infini".")";
-
+#$negatif = Compute("(-inf,$b2/$m2)");
+#$positif = Compute("($b2/$m2,inf)");
 
 
 # créer le graphique de la parabole à afficher dans la solution
@@ -88,52 +98,47 @@ $gy=5;
     }
 
 $graphique1->stamps( closed_circle($z,0,'blue') );
-
+Context()->texStrings;
 BEGIN_TEXT
 <table cellpadding="10px" width="850px">
   <tr><td>
 
 <h1>Question : </h1>
-<br/>Pour la fonction suivante:  &nbsp; &nbsp; <b> \(f($lettre) = $m $lettre + $b \)</b>
-<br/><br/>
-
-a) Quelle est l'ordonnée à l'origine de cette fonction ? <br/>
-  &nbsp;&nbsp&nbsp;&nbsp; \{ans_rule(10)\} 
-
-<br/><br/>
-
-b) Donner tous les zéros de cette fonction. <br/>
-  &nbsp;&nbsp&nbsp;&nbsp; \{ans_rule(10)\} 
-<br/><br>
-
-&nbsp; &nbsp; &nbsp;&nbsp; Si l'équation a une seule solution, inscrire cette solution. <br/>
-&nbsp; &nbsp; &nbsp;&nbsp; Si la réponse est une fraction, utiliser la barre oblique / pour en séparer le numérateur du dénominateur.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp; Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
-<br/><br/>
-
-c) Vrai ou faux ? Est-ce que le domaine de cette fonction est \(\mathbb{R}\) ? <br/>
- &nbsp;&nbsp; (répondre par <strong>vrai</strong> ou <strong>faux</strong>) \{ans_rule(10)\} 
-
-<br/><br/>
-
-d) La fonction ci-dessus est négative sur l'intervalle:<br/>
-&nbsp; &nbsp; &nbsp;&nbsp  \{ans_rule(15)\} 
-
-<br/><br/>La fonction ci-dessus est positive sur l'intervalle:<br/>
-&nbsp; &nbsp; &nbsp;&nbsp  \{ans_rule(15)\} 
-
-<br/><br/>
-&nbsp; &nbsp; &nbsp;&nbsp; Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
-&nbsp; &nbsp; &nbsp;&nbsp; lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
-&nbsp; &nbsp; &nbsp;&nbsp; Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp; Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini).<br/>
-&nbsp; &nbsp; &nbsp;&nbsp; Pour l'ensemble des réels entier, entrer: <strong>(-infini, infini)</strong>.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp; Lorsqu'il n'y a aucune solution, entrer: <strong>aucun</strong>. <br/>
-
   </td></tr>
 </table>
+$BR Pour la fonction suivante: $SPACE $SPACE\(f($lettre) = $f \)
+$PAR
+
+a) Quelle est l'ordonnée à l'origine de cette fonction ?$BR
+   $SPACE $SPACE $SPACE $SPACE\{ans_rule(10)\} 
+$PAR
+b) Donner tous les zéros de cette fonction.$BR
+  $SPACE $SPACE $SPACE $SPACE \{ans_rule(10)\} 
+$PAR
+
+$SPACE $SPACE $SPACE $SPACE Si l'équation a une seule solution, inscrire cette solution.$BR
+$SPACE $SPACE $SPACE $SPACE Si la réponse est une fraction, utiliser la barre oblique / pour en séparer le numérateur du dénominateur.$BR
+$SPACE $SPACE $SPACE $SPACE Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.$BR
+$SPACE $SPACE $SPACE $SPACE Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+$PAR
+
+c) Vrai ou faux ? Est-ce que le domaine de cette fonction est \(\mathbb{R}\) ? $BR
+$SPACE $SPACE (répondre par $BBOLD vrai $EBOLD ou $BBOLD faux $EBOLD) \{ans_rule(10)\} 
+$PAR
+d) La fonction ci-dessus est négative sur l'intervalle:$BR
+$SPACE $SPACE $SPACE $SPACE  \{ans_rule(15)\} 
+$PAR
+La fonction ci-dessus est positive sur l'intervalle: $BR
+$SPACE $SPACE $SPACE $SPACE  \{ans_rule(15)\} 
+$PAR
+$SPACE $SPACE $SPACE $SPACE Donner votre réponse sous forme d'intervalles en utilisant $BBOLD"("$EBOLD ou $BBOLD")"$EBOLD $BR 
+$SPACE $SPACE $SPACE $SPACE lorsque la valeur de la borne est exclue et $BBOLD"["$EBOLD ou $BBOLD"]"$EBOLD lorsqu'elle est incluse.$BR
+$SPACE $SPACE $SPACE $SPACE Utiliser <b>infini</b> pour \(\infty\) et <b>U</b> (soit le u majuscule) pour l'union. $BR
+$SPACE $SPACE $SPACE $SPACE Par exemple, pour \( (-\infty, -3) \cup [4,\infty)\), entrer:  (-infini, -3) U [4, infini).$BR
+$SPACE $SPACE $SPACE $SPACE Pour l'ensemble des réels entier, entrer: $BBOLD (-infini, infini)$EBOLD.$BR
+$SPACE $SPACE $SPACE $SPACE Lorsqu'il n'y a aucune solution, entrer: $BBOLD aucun $EBOLD. <br/>
 END_TEXT
+Context()->normalStrings;
 
 BEGIN_HINT
 <script>
@@ -178,91 +183,87 @@ function resetHint(){document.getElementById("hintspace").style.display='none';d
 </div>
 END_HINT
 
-$showPartialCorrectAnswers = 0;
+$showPartialCorrectAnswers = 1;
 
 ANS(strict_num_cmp($b, .0));
 
-ANS(str_cmp($zero,'remove_whitespace'));
+ANS($z->cmp());
 
 ANS(str_cmp($choix,'remove_whitespace'));
 
 ANS(str_cmp($negatif,'remove_whitespace'));
-
+#ANS($negatif->cmp());
 ANS(str_cmp($positif,'remove_whitespace'));
+#ANS($positif->cmp());
 
+Context()->texStrings;
+BEGIN_SOLUTION
+$BR Pour la fonction suivante: $SPACE $SPACE\(f($lettre) = $f \)
+$PAR
 
-SOLUTION(EV3(<<'END_SOLUTION'));
-<p><u>Solution</u></p>
-<br/>Pour la fonction suivante:  &nbsp; &nbsp; <b> f($lettre) = $m$lettre + $b </b>
-<br/><br/>
+a) Quelle est l'ordonnée à l'origine de cette fonction ?$BR
+   $SPACE $SPACE $SPACE $SPACE _________
+$PAR
+b) Donner tous les zéros de cette fonction.$BR
+  $SPACE $SPACE $SPACE $SPACE _________
+$PAR
 
-a) Quelle est l'ordonnée à l'origine de cette fonction ? <br/>
-  &nbsp;&nbsp&nbsp;&nbsp; _________ 
+$SPACE $SPACE $SPACE $SPACE Si l'équation a une seule solution, inscrire cette solution.$BR
+$SPACE $SPACE $SPACE $SPACE Si la réponse est une fraction, utiliser la barre oblique / pour en séparer le numérateur du dénominateur.$BR
+$SPACE $SPACE $SPACE $SPACE Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.$BR
+$SPACE $SPACE $SPACE $SPACE Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
+$PAR
 
-<br/><br/>
-
-b) Donner tous les zéros de cette fonction. <br/>
-  &nbsp;&nbsp&nbsp;&nbsp; _________
-<br/><br>
-
-&nbsp; &nbsp; &nbsp;&nbsp; Si l'équation a une seule solution, inscrire cette solution. <br/>
-&nbsp; &nbsp; &nbsp;&nbsp; Si la réponse est une fraction, utiliser la barre oblique / pour en séparer le numérateur du dénominateur.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp; Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
-<br/><br/>
-
-c) Vrai ou faux ? Est-ce que le domaine de cette fonction est R ? <br/>
- &nbsp;&nbsp; (répondre par <strong>vrai</strong> ou <strong>faux</strong>) _________
-
-<br/><br/>
-
-d) La fonction ci-dessus est négative sur l'intervalle:<br/>
-&nbsp; &nbsp; &nbsp;&nbsp __________________
-
-<br/><br/>La fonction ci-dessus est positive sur l'intervalle:<br/>
-&nbsp; &nbsp; &nbsp;&nbsp  __________________
-
-<br/><br/>
-&nbsp; &nbsp; &nbsp;&nbsp; Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
-&nbsp; &nbsp; &nbsp;&nbsp; lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
-&nbsp; &nbsp; &nbsp;&nbsp; Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp; Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
-&nbsp; &nbsp; &nbsp;&nbsp; Pour l'ensemble des réels entier, entrer: (-infini, infini)<br/>
-&nbsp; &nbsp; &nbsp;&nbsp; Lorsqu'il n'y a aucune solution, entrer: aucun <br/><br/><br/>
+c) Vrai ou faux ? Est-ce que le domaine de cette fonction est \(\mathbb{R}\) ? $BR
+$SPACE $SPACE (répondre par $BBOLD vrai $EBOLD ou $BBOLD faux $EBOLD) _________ 
+$PAR
+d) La fonction ci-dessus est négative sur l'intervalle:$BR
+$SPACE $SPACE $SPACE $SPACE  __________________
+$PAR
+La fonction ci-dessus est positive sur l'intervalle: $BR
+$SPACE $SPACE $SPACE $SPACE  __________________
+$PAR
+$SPACE $SPACE $SPACE $SPACE Donner votre réponse sous forme d'intervalles en utilisant $BBOLD"("$EBOLD ou $BBOLD")"$EBOLD $BR 
+$SPACE $SPACE $SPACE $SPACE lorsque la valeur de la borne est exclue et $BBOLD"["$EBOLD ou $BBOLD"]"$EBOLD lorsqu'elle est incluse.$BR
+$SPACE $SPACE $SPACE $SPACE Utiliser <b>infini</b> pour \(\infty\) et <b>U</b> (soit le u majuscule) pour l'union. $BR
+$SPACE $SPACE $SPACE $SPACE Par exemple, pour \( (-\infty, -3) \cup [4,\infty)\), entrer:  (-infini, -3) U [4, infini).$BR
+$SPACE $SPACE $SPACE $SPACE Pour l'ensemble des réels entier, entrer: $BBOLD (-infini, infini)$EBOLD.$BR
+$SPACE $SPACE $SPACE $SPACE Lorsqu'il n'y a aucune solution, entrer: $BBOLD aucun $EBOLD. <br/>
 
 
 
-a) L'ordonnée à l'origine est la valeur de <strong>f($lettre)</strong> lorsque <strong>$lettre</strong> est égal à zéro. Donc:<br/>
-  &nbsp; &nbsp; f($lettre) = $m$lettre + $b <br/>
-  &nbsp; &nbsp; f(0) = $m(0) + $b <br/>
-  &nbsp; &nbsp; f(0) = 0 + $b<br/>
-  &nbsp; &nbsp; f(0) = <strong>$b</strong><br/><br/>
+a) L'ordonnée à l'origine est la valeur de \(f($lettre)\) lorsque \( x\) est égal à zéro. Donc: $BR
+  $SPACE $SPACE \(f($lettre) = $f\) $BR
+  $SPACE $SPACE \(f(0) = $m(0) + $b\) $BR
+  $SPACE $SPACE \(f(0) = 0 + $b\) $BR
+  $SPACE $SPACE \(f(0) = $b\) $BR$BR
 
-b) Le zéro d'une fonction est la valeur de <strong>$lettre</strong> lorsque <strong>f($lettre)</strong> est égal à zéro.  Donc:<br/>
-  &nbsp; &nbsp; 0 = $m$lettre + $b <br/>
-  &nbsp; &nbsp; -$b = $m$lettre<br/>
-  &nbsp; &nbsp; $m$lettre = -$b <br/>
-  &nbsp; &nbsp; $lettre = -$b / $m <br/>
-  &nbsp; &nbsp; $lettre = <strong>$zero</strong><br/><br/>
-  &nbsp; &nbsp; Il y a donc un seul zéro pour cette fonction. <br/><br/>
+b) Le zéro d'une fonction est la valeur de \(x\) lorsque \(f($lettre)\) est égal à zéro.  Donc:$BR
+  $SPACE $SPACE \(0 = $m$lettre + $b\) $BR
+  $SPACE $SPACE \(-$b = $m$lettre \)$BR
+  $SPACE $SPACE \($m$lettre = -$b\) $BR
+  $SPACE $SPACE \($lettre = -$b / $m\) $BR
+  $SPACE $SPACE \($lettre = $zero\) $BR$BR
+  $SPACE $SPACE Il y a donc un seul zéro pour cette fonction. $BR$BR
 
-c) Le domaine de la fonction représente l'ensemble des nombres que peut prendre la variable $lettre afin de donner un f($lettre) qui est un nombre réel.<br/>
+c) Le domaine de la fonction représente l'ensemble des nombres que peut prendre la variable \($lettre\) afin de donner un \(f($lettre)\) qui est un nombre réel.$BR
   <ul> 
-      <li>Ici, il est <strong>vrai</strong> que le domaine de cette fonction est R, car aucune valeur de $lettre donnerait une valeur de f($lettre) qui n'est pas un nombre réel.  En effet, il n'y a pas de division par 0 possible, ou encore on n'est pas en présence d'une racine dont l'intérieur pourrait être négatif pour cette fonction.</li>
-  </ul><br/>
+      <li>Ici, il est $BBOLD vrai $EBOLD que le domaine de cette fonction est \(\mathbb{R}\), car aucune valeur de \(x\) donnerait une valeur de \(f($lettre)\) qui n'est pas un nombre réel.  En effet, il n'y a pas de division par 0 possible, ou encore on n'est pas en présence d'une racine dont l'intérieur pourrait être négatif pour cette fonction.</li>
+  </ul>$BR
 
-d) La fonction f($lettre) sera négative (graphique situé sous l'axe des $lettre) pour toute valeur de x qui est inféieure au zéro de sa fonction.  Donc:
+d) La fonction \(f($lettre)\) sera négative (graphique situé sous l'axe des \(x\)) pour toute valeur de \(x\) qui est inférieure au zéro de sa fonction.  Donc:
   <ul> 
-      <li>La fonction ci-dessus est négative sur l'intervalle  <strong>$negatif</strong> .</li>
-  </ul><br/><br/>
+      <li>La fonction ci-dessus est négative sur l'intervalle  $BBOLD $negatif $EBOLD .</li>
+  </ul>$BR$BR
 
- &nbsp; &nbsp;La fonction f($lettre) sera positive (graphique situé sous l'axe des $lettre) pour toute valeur de x qui est supérieure au zéro de sa fonction.  Donc:
+ $SPACE $SPACELa fonction \(f($lettre)\) sera positive (graphique situé sous l'axe des \(x\)) pour toute valeur de \(x\) qui est supérieure au zéro de sa fonction.  Donc:
   <ul> 
-      <li>La fonction ci-dessus est positive sur l'intervalle  <strong>$positif</strong> .</li>
-  </ul><br/>
+      <li>La fonction ci-dessus est positive sur l'intervalle  $BBOLD $positif $EBOLD .</li>
+  </ul>$BR
 \{ image(insertGraph($graphique1), width=>250, height=>250, tex_size=>500) \}
-<br/><br/>
+$BR$BR
 
 END_SOLUTION
+Context()->normalStrings;
 
 ENDDOCUMENT();
