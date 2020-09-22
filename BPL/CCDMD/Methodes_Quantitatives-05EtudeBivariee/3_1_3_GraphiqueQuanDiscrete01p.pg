@@ -85,64 +85,76 @@ elsif ($TypeContexte == 3)
 }
 
 
+#Choisir un nombre fictif d'Unité statistique
+
+do {$n1 = random(12,40);
+$n2 = random(12,40);} 
+until ($n1 != $n2);
+
+
+#Filles
+$minFillesCas0 = int(0.2*$n1);
+$maxFilles = int(0.4*$n1);
+$minFillesCas2etplus = int(0.1*$n1);
+$Z01Effectif11 = random($minFillesCas0,$maxFilles);
+$Z01Effectif13 = random($minFillesCas2etplus,$maxFilles);
+$Z01Effectif12 = Compute("$n1 - $Z01Effectif11 - $Z01Effectif13");
+
+#Garçons
+$minGarconsCas0 = int(0.2*$n2);
+$maxGarcons = int(0.4*$n2);
+$minGarconsCas2etplus = int(0.1*$n2);
+
+$Z01Effectif21 = random($minGarconsCas0,$maxGarcons);
+$Z01Effectif23 = random($minGarconsCas2etplus,$maxGarcons);
+$Z01Effectif22 = Compute("$n2-$Z01Effectif21-$Z01Effectif23");
+
+#$Z01Effectif11t = Compute("($Z01Pourcentage11*$n1)/100");
+#$Z01Effectif11 = sprintf("%0.0f","$Z01Effectif11t ");
+#$Z01Effectif12t = Compute("($Z01Pourcentage12*$n1)/100");
+#$Z01Effectif12 = sprintf("%0.0f","$Z01Effectif12t ");
+#$Z01Effectif13t = Compute("($Z01Pourcentage13*$n1)/100");
+#$Z01Effectif13 = sprintf("%0.0f","$Z01Effectif13t ");
+#$Z01Effectif21t = Compute("($Z01Pourcentage21*$n2)/100");
+#$Z01Effectif21 = sprintf("%0.0f","$Z01Effectif21t ");
+#$Z01Effectif22t = Compute("($Z01Pourcentage22*$n2)/100");
+#$Z01Effectif22 = sprintf("%0.0f","$Z01Effectif22t ");
+#$Z01Effectif23t = Compute("($Z01Pourcentage23*$n2)/100");
+#$Z01Effectif23 = sprintf("%0.0f","$Z01Effectif23t ");
+
+
+$Z01EffectifTotal1 = $n1;
+$Z01EffectifTotal2 = $n2;
+
+@Z01Reponse = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13, $Z01EffectifTotal1, $Z01Effectif21, $Z01Effectif22, $Z01Effectif23, $Z01EffectifTotal2, $Z01Effectif31, $Z01Effectif32, $Z01Effectif33, $Z01EffectifTotal3);
+
+
+
 #Calcul des pourcentages en X et Y
 
-$Z01Pourcentage11t =random(20,40, 0.1);
+$Z01Pourcentage11t = Compute("$Z01Effectif11/$Z01EffectifTotal1*100");
 $Z01Pourcentage11 = sprintf("%0.1f","$Z01Pourcentage11t");
-$Z01Pourcentage13t =random(10,40, 0.1);
-$Z01Pourcentage13 = sprintf("%0.1f","$Z01Pourcentage13t");
-$Z01Pourcentage12t = Compute("100 - $Z01Pourcentage13 - $Z01Pourcentage11");
+$Z01Pourcentage12t = Compute("$Z01Effectif12/$Z01EffectifTotal1*100");
 $Z01Pourcentage12 = sprintf("%0.1f","$Z01Pourcentage12t");
+$Z01Pourcentage13t = Compute("$Z01Effectif13/$Z01EffectifTotal1*100");
+$Z01Pourcentage13 = sprintf("%0.1f","$Z01Pourcentage13t");
 $Z01PourcentageTotal1t = Compute("$Z01Pourcentage11 + $Z01Pourcentage12 + $Z01Pourcentage13");
 $Z01PourcentageTotal1 = sprintf("%0.1f","$Z01PourcentageTotal1t ");
-#Calcul des pourcentages
-$Z01Pourcentage21t =random(20,40, 0.1);
-if ($Z01Pourcentage11t ==$Z01Pourcentage21t)
-{$Z01Pourcentage21t++;}
+
+#Calcul des pourcentages des garçons
+$Z01Pourcentage21t = Compute("$Z01Effectif21/$Z01EffectifTotal2*100");
 $Z01Pourcentage21 = sprintf("%0.1f","$Z01Pourcentage21t");
-$Z01Pourcentage23t =random(10,40, 0.1);
-if ($Z01Pourcentage13t ==$Z01Pourcentage23t)
-{$Z01Pourcentage23t--;}
-$Z01Pourcentage23 = sprintf("%0.1f","$Z01Pourcentage23t");
-$Z01Pourcentage22t = Compute("100 - $Z01Pourcentage23 - $Z01Pourcentage21");
+$Z01Pourcentage22t = Compute("$Z01Effectif22/$Z01EffectifTotal2*100");
 $Z01Pourcentage22 = sprintf("%0.1f","$Z01Pourcentage22t");
+$Z01Pourcentage23t = Compute("$Z01Effectif23/$Z01EffectifTotal2*100");
+$Z01Pourcentage23 = sprintf("%0.1f","$Z01Pourcentage23t");
 $Z01PourcentageTotal2t = Compute("$Z01Pourcentage21 + $Z01Pourcentage22 + $Z01Pourcentage23");
 $Z01PourcentageTotal2 = sprintf("%0.1f","$Z01PourcentageTotal2t ");
-
-
 
 @Z01ReponsePourcentage = ($Z01Pourcentage11, $Z01Pourcentage12, $Z01Pourcentage13, $Z01PourcentageTotal1, $Z01Pourcentage21, $Z01Pourcentage22, $Z01Pourcentage23, $Z01PourcentageTotal2);
 
 
-#Choisir un nombre fictif d'Unité statistique
 
-$n1 = random(12,40);
-$n2 = random(12,40);
-
-if ($n1 == $n2)
-{$n1++;
-$n2--;}
-
-
-$Z01Effectif11t = Compute("($Z01Pourcentage11*$n1)/100");
-$Z01Effectif11 = sprintf("%0.0f","$Z01Effectif11t ");
-$Z01Effectif12t = Compute("($Z01Pourcentage12*$n1)/100");
-$Z01Effectif12 = sprintf("%0.0f","$Z01Effectif12t ");
-$Z01Effectif13t = Compute("($Z01Pourcentage13*$n1)/100");
-$Z01Effectif13 = sprintf("%0.0f","$Z01Effectif13t ");
-$Z01Effectif21t = Compute("($Z01Pourcentage21*$n2)/100");
-$Z01Effectif21 = sprintf("%0.0f","$Z01Effectif21t ");
-$Z01Effectif22t = Compute("($Z01Pourcentage22*$n2)/100");
-$Z01Effectif22 = sprintf("%0.0f","$Z01Effectif22t ");
-$Z01Effectif23t = Compute("($Z01Pourcentage23*$n2)/100");
-$Z01Effectif23 = sprintf("%0.0f","$Z01Effectif23t ");
-
-
-$Z01EffectifTotal1 = Compute("$Z01Effectif11 + $Z01Effectif12 + $Z01Effectif13");
-$Z01EffectifTotal2 = Compute("$Z01Effectif21 + $Z01Effectif22 + $Z01Effectif23");
-#$Z01EffectifTotal3 = Compute("$Z01Effectif31 + $Z01Effectif32 + $Z01Effectif33");
-
-@Z01Reponse = ($Z01Effectif11, $Z01Effectif12, $Z01Effectif13, $Z01EffectifTotal1, $Z01Effectif21, $Z01Effectif22, $Z01Effectif23, $Z01EffectifTotal2, $Z01Effectif31, $Z01Effectif32, $Z01Effectif33, $Z01EffectifTotal3);
 
 #Graphique
 #@x60 = (-2, 14, 2, 5, 8, 10);
@@ -321,7 +333,8 @@ Voici le graphique illustrant une enquête qui a été menée auprès d'un écha
 
 $PAR
 $BCENTER
-$imageG60
+$imageG60 $BR
+$BBOLD Cliquer pour agrandir l'image $EBOLD
 $ECENTER
 
 $PAR
@@ -347,28 +360,27 @@ EndTable()
 \}
 $BR
 
-
 END_TEXT
 Context()->normalStrings;
 
 
 
-ANS(num_cmp($Z01Reponse[0]));
-ANS(num_cmp($Z01ReponsePourcentage[0], tol => 0.0001, tolType => "absolute"));
-ANS(num_cmp($Z01Reponse[4]));
-ANS(num_cmp($Z01ReponsePourcentage[4], tol => 0.0001, tolType => "absolute"));
-ANS(num_cmp($Z01Reponse[1]));
-ANS(num_cmp($Z01ReponsePourcentage[1], tol => 0.0001, tolType => "absolute"));
-ANS(num_cmp($Z01Reponse[5]));
-ANS(num_cmp($Z01ReponsePourcentage[5], tol => 0.0001, tolType => "absolute"));
-ANS(num_cmp($Z01Reponse[2]));
-ANS(num_cmp($Z01ReponsePourcentage[2], tol => 0.0001, tolType => "absolute"));
-ANS(num_cmp($Z01Reponse[6]));
-ANS(num_cmp($Z01ReponsePourcentage[6], tol => 0.0001, tolType => "absolute"));
-ANS(num_cmp($Z01Reponse[3]));
-ANS(num_cmp($Z01ReponsePourcentage[3], tol => 0.0001, tolType => "absolute"));
-ANS(num_cmp($Z01Reponse[7]));
-ANS(num_cmp($Z01ReponsePourcentage[7], tol => 0.0001, tolType => "absolute"));
+ANS(num_cmp($Z01Reponse[0], tol => 0.1, tolType => "absolute"));
+ANS(num_cmp($Z01ReponsePourcentage[0], tol => 0.01, tolType => "absolute"));
+ANS(num_cmp($Z01Reponse[4], tol => 0.1, tolType => "absolute"));
+ANS(num_cmp($Z01ReponsePourcentage[4], tol => 0.01, tolType => "absolute"));
+ANS(num_cmp($Z01Reponse[1], tol => 0.1, tolType => "absolute"));
+ANS(num_cmp($Z01ReponsePourcentage[1], tol => 0.01, tolType => "absolute"));
+ANS(num_cmp($Z01Reponse[5], tol => 0.1, tolType => "absolute"));
+ANS(num_cmp($Z01ReponsePourcentage[5], tol => 0.01, tolType => "absolute"));
+ANS(num_cmp($Z01Reponse[2], tol => 0.1, tolType => "absolute"));
+ANS(num_cmp($Z01ReponsePourcentage[2], tol => 0.01, tolType => "absolute"));
+ANS(num_cmp($Z01Reponse[6], tol => 0.1, tolType => "absolute"));
+ANS(num_cmp($Z01ReponsePourcentage[6], tol => 0.01, tolType => "absolute"));
+ANS(num_cmp($Z01Reponse[3], tol => 0.1, tolType => "absolute"));
+ANS(num_cmp($Z01ReponsePourcentage[3], tol => 0.01, tolType => "absolute"));
+ANS(num_cmp($Z01Reponse[7], tol => 0.1, tolType => "absolute"));
+ANS(num_cmp($Z01ReponsePourcentage[7], tol => 0.01, tolType => "absolute"));
 
 
 
