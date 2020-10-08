@@ -49,23 +49,33 @@ TEXT(beginproblem());
 $showPartialCorrectAnswers = 1;
 
 Context("Numeric");
-for ($i=0; $i<4; $i++) {
-	$n[$i] = random(3,6,1);
-}
 
-for ($i=0; $i<4; $i++) {
-	$p[$i] = random(.1,.9,.1);
-}
+$n0 = random(3,6,1);
+$p0 = random(.1,.9,.1);
 
-$mean0 = $n[0]*$p[0];
-$mean1 = $n[1]*$p[1];
-$mean2 = $n[2]*$p[2];
-$mean3 = $n[3]*$p[3];
+do{
+$n1 = random(3,6,1);
+$p1 = random(.1,.9,.1); 
+$n2 = random(3,6,1);
+$p2 = random(.1,.9,.1); 
+$n3 = random(3,6,1);
+$p3 = random(.1,.9,.1); 
+} until( ($n1!=$n0 || $p1!=$p0) 
+        && ($n2!=$n0 || $p2!=$p0)
+        && ($n3!=$n0 || $p3!=$p0)
+        && ($n2!=$n1 || $p2!=$p1)
+        && ($n3!=$n1 || $p3!=$p1)
+        && ($n3!=$n2 || $p3!=$p2) );
 
-$var0 = $n[0]*$p[0]*(1-$p[0]);
-$var1 = $n[1]*$p[1]*(1-$p[1]);
-$var2 = $n[2]*$p[2]*(1-$p[2]);
-$var3 = $n[3]*$p[3]*(1-$p[3]);
+$mean0 = $n0*$p0;
+$mean1 = $n1*$p1;
+$mean2 = $n2*$p2;
+$mean3 = $n3*$p3;
+
+$var0 = $n0*$p0*(1-$p0);
+$var1 = $n1*$p1*(1-$p1);
+$var2 = $n2*$p2*(1-$p2);
+$var3 = $n3*$p3*(1-$p3);
 
 $sd0 = sqrt($var0);
 $sd1 = sqrt($var1);
@@ -74,22 +84,22 @@ $sd3 = sqrt($var3);
 
 BEGIN_TEXT
 Si \(X\) est une variable aléatoire binomiale, calculer l'espérance, la variance et l'écart-type de \(X\) dans chaque cas ci-dessous. $PAR
-a) \( \) \( n = $n[0], p = $p[0]\)
+a) \( \) \( n = $n0, p = $p0\)
 $BR
 \(\mu = \) \{ans_rule(10)\} $BR
 \(\sigma^2 = \) \{ans_rule(10)\} $BR
 \(\sigma =\) \{ans_rule(10)\}$PAR
-b) \( \) \( n = $n[1], p = $p[1]\)
+b) \( \) \( n = $n1, p = $p1\)
 $BR
 \(\mu = \) \{ans_rule(10)\} $BR
 \(\sigma^2 = \) \{ans_rule(10)\} $BR
 \(\sigma = \) \{ans_rule(10)\} $PAR
-c) \( \) \( n = $n[2], p = $p[2]\)
+c) \( \) \( n = $n2, p = $p2\)
 $BR
 \(\mu = \) \{ans_rule(10)\} $BR
 \(\sigma^2 = \) \{ans_rule(10)\} $BR
 \(\sigma = \) \{ans_rule(10)\} $PAR
-d) \( \) \( n = $n[3], p = $p[3]\)
+d) \( \) \( n = $n3, p = $p3\)
 $BR
 \(\mu = \) \{ans_rule(10)\} $BR
 \(\sigma^2 = \) \{ans_rule(10)\} $BR
@@ -112,3 +122,4 @@ ANS(Compute("$var3")->cmp);
 ANS(Compute("$sd3")->cmp);
 
 ENDDOCUMENT();       # This should be the last executable line in the problem.
+
