@@ -1,6 +1,6 @@
 #DESCRIPTION
-#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
-#     section Mise à niveau secondaire 5 - Analyse des fonctions 
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques
+#     section Mise à niveau secondaire 5 - Analyse des fonctions
 #     type de question - Analyse d'une fonction de forme a(x+b)/(x^2 - b^2)
 ##ENDDESCRIPTION
 ## DBsubject(Fonctions et manipulations algébriques)
@@ -10,17 +10,20 @@
 ## Author('Diane Bergeron et Louise Pellerin')
 ## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
 ## Taxonomie('Roxane Rodrigue')
+## Modifié par Julie Tremblay : 22/08/2021
 ###########################################################################
 
 DOCUMENT();
 loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
-  "contextFraction.pl",
   "PGgraphmacros.pl",
 );
 
 TEXT(beginproblem());
+
+Context()->variables->are(x=>"Real");
+Context()->strings->add(aucun=>{});
 
 # créer les valeurs pour a et b
 
@@ -30,11 +33,11 @@ $invb=-1*$b;
 $bcarre=$b*$b;
 $sbcarre=-1*$bcarre;
 
-# déterminer le signe qui sera dans la parenthèse au numérateur, 
+# déterminer le signe qui sera dans la parenthèse au numérateur,
 # ainsi que les autres facteur dépendant de ce signe
 $choix=non_zero_random(-1,1);
 
-if ($choix==1) 
+if ($choix==1)
 {
    $signe="+";
    $signeinv= "-";
@@ -43,57 +46,56 @@ if ($choix==1)
 }
 else
 {
-   $signe="-";  
+   $signe="-";
    $signeinv="+";
    $breel=-$b;
    $invbreel=$b;
 }
 
-
-# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
-Context()->variables->are(x=>"Real");
-$lettre="x";
-
 # déterminer les valeurs pour les réponses
 $ordonnee =Formula("$a/$invbreel");
-$zero = "aucun";
+$zero = Compute("aucun");
 
 
 #créer le graphique de cette fonction, afin de pouvoir l'afficher dans la solution
 
-$gxpos=$b+(2*$b); 
+$gxpos=$b+(2*$b);
 $gxneg=-$b-(2*$b);
 $gypos= 10;
 $gyneg= -10;
 
+$f = Compute("$a*(x $signe $b)/(x^2 - $bcarre)")->reduce;
+
+$refreshCachedImages = 1;
+
 $graphique=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
-add_functions($graphique, "($a($lettre $signe $b)/($lettre^2 - $bcarre) )  for x in <$gxneg,-$b> using color:blue and weight:2 ");
-add_functions($graphique, "($a($lettre $signe $b)/($lettre^2 - $bcarre) )  for x in <-$b,$b> using color:blue and weight:2 ");
-add_functions($graphique, "($a($lettre $signe $b)/($lettre^2 - $bcarre) )  for x in <$b,$gxpos> using color:blue and weight:2 ");
+add_functions($graphique, "$f for x in <$gxneg,-$b> using color:blue and weight:2 ");
+add_functions($graphique, "$f  for x in <-$b,$b> using color:blue and weight:2 ");
+add_functions($graphique, "$f  for x in <$b,$gxpos> using color:blue and weight:2 ");
 
 
-$gx=2; 
+$gx=2;
 $gy= 5;
 
 for ($i = 0; $i <= int( ($gxpos /2) +1); $i++)
   {
      $graphique->lb(new Label($gx*$i+$gx+0.2,-0.15,$gx*$i+$gx,'black','center','top'));
-     $graphique->moveTo($gx*$i+$gx+0.2,-0.15); 
+     $graphique->moveTo($gx*$i+$gx+0.2,-0.15);
    }
 for ($i = 0; $i <= int( ($gxpos /2) +1); $i++)
   {
      $graphique->lb(new Label(-$gx*$i-$gx-0.2,-0.15,-$gx*$i-$gx,'black','center','top'));
-     $graphique->moveTo(-$gx*$i-$gx-0.2,-0.15); 
+     $graphique->moveTo(-$gx*$i-$gx-0.2,-0.15);
    }
 for ($i = 0; $i <=  int( ($gypos /5) +1); $i++)
   {
      $graphique->lb(new Label(-0.5,$gy*$i+$gy,$gy*$i+$gy,'black','right','top'));
-     $graphique->moveTo(-0.5, $gy*$i+$gy); 
+     $graphique->moveTo(-0.5, $gy*$i+$gy);
    }
 for ($i = 0; $i <=  int( (-$gyneg/5) +1); $i++)
   {
      $graphique->lb(new Label(-0.5,-$gy*$i-$gy+0.4,-$gy*$i-$gy,'black','right','top'));
-     $graphique->moveTo(-0.5, -$gy*$i-$gy+0.4); 
+     $graphique->moveTo(-0.5, -$gy*$i-$gy+0.4);
    }
 
 foreach my $i (1..$gxpos) {  $graphique->h_ticks(0,"black",$i); }
@@ -104,7 +106,7 @@ foreach my $i ($gyneg..-1) {  $graphique->v_ticks(0,"black",$i); }
 $graphique->stamps( closed_circle(0,($a/$invbreel),'blue') );
 
 $limite=($a*(($invbreel-0.001) + $breel)) / (($invbreel-0.001)*($invbreel-0.001) - $bcarre);
-$graphique->stamps( closed_circle($invbreel,$limite,'white') );
+$graphique->stamps( open_circle($invbreel,$limite,'blue') );
 
 $graphique->moveTo($invb,$gypos);
 $graphique->lineTo($invb,$gyneg,'black',1,'dashed');
@@ -112,39 +114,30 @@ $graphique->lineTo($invb,$gyneg,'black',1,'dashed');
 $graphique->moveTo($b,$gypos);
 $graphique->lineTo($b,$gyneg,'black',1,'dashed');
 
+Context()->texStrings;
 BEGIN_TEXT
-<table cellpadding="10px" width="850px">
-  <tr><td>
+Pour la fonction suivante:  \( \displaystyle f(x) = $f \)
+$PAR
 
-<h1>Question : </h1>
-<br/>Pour la fonction suivante:  &nbsp; &nbsp; <b> \( f($lettre) = \dfrac{$a($lettre $signe $b)}{$lettre^2 - $bcarre} \)</b>
-<br/><br/>
+a) Quelle est l'ordonnée à l'origine de cette fonction ? \{ans_rule(10)\}
+$PAR
+b) Donner tous les zéros de cette fonction. \{ans_rule(10)\}
+$PAR
 
-a) Quelle est l'ordonnée à l'origine de cette fonction ? &nbsp;&nbsp; \{ans_rule(10)\} 
+$SPACE $SPACE Si l'équation a une seule solution, inscrire cette solution. $BR
+$SPACE $SPACE Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.$BR
+$SPACE $SPACE Si l'équation n'admet aucune solution, inscrire $BBOLD aucun $EBOLD.$BR
+$SPACE $SPACE Si l'équation admet une infinité de solutions, inscrire $BBOLD inf $EBOLD.
+$PAR
+c) Le domaine de cette fonction est \(\mathbb{R}\setminus $LB \) \{ans_rule(15)\} \($RB\) .
 
-<br/><br/>
-
-b) Donner tous les zéros de cette fonction. &nbsp;&nbsp; \{ans_rule(10)\} 
-<br/><br>
-
-&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
-&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
-&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
-<br/><br/>
-
-c) Le domaine de cette fonction est &nbsp;&nbsp; \(\mathbb{R}\setminus\){ \{ans_rule(15)\}    } .
-
-<br/><br/>
-&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
-&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
-&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
-<br/><br/>
-
-  </td></tr>
-</table>
+$PAR
+$SPACE $SPACE Si l'équation a une seule solution, inscrire cette solution. $BR
+$SPACE $SPACE Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.$BR
+$SPACE $SPACE Si l'équation n'admet aucune solution, inscrire $BBOLD aucun $EBOLD.$BR
+$SPACE $SPACE Si l'équation admet une infinité de solutions, inscrire $BBOLD inf $EBOLD.
 END_TEXT
+Context()->normalStrings;
 
 
 BEGIN_HINT
@@ -187,88 +180,62 @@ function resetHint(){document.getElementById("hintspace").style.display='none';d
 </div>
 END_HINT
 
-$showPartialCorrectAnswers = 0;
+#$showPartialCorrectAnswers = 0;
 
 ANS($ordonnee->cmp);
-
-ANS(str_cmp($zero,'remove_whitespace'));
-
+ANS($zero->cmp);
 ANS(List($invb,$b)->cmp);
 
 
-
+Context()->texStrings;
 BEGIN_SOLUTION
-<br/> <u>Solution</u> <br/>
+a) L'ordonnée à l'origine est la valeur de \(f( x)\) lorsque \( x\) est égal à zéro. Donc: $PAR
+\[\begin{align}
+f(x) &= $f \\
+f(0) &= \dfrac{$a( 0 $signe $b)}{(0)^2 - $bcarre} \\
+f(0) &= \dfrac{$a($breel)}{-$bcarre} \\
+f(0) &= \dfrac{$a}{$invbreel}
+\end{align}
+\]
 
-<br/>Pour la fonction suivante:  &nbsp; &nbsp; <b>  \( f($lettre) = \dfrac{$a($lettre $signe $b)}{$lettre^2 - $bcarre} \)</b>
-<br/><br/>
+Donc l'ordonnée à l'origine est \( \frac{$a}{$invbreel}\).
+$PAR
 
-a) Quelle est l'ordonnée à l'origine de cette fonction ? &nbsp;&nbsp; ____________
+b) Le zéro d'une fonction est la valeur de \( x\) lorsque \(f( x)\) est égal à zéro.  Donc:$PAR
 
-<br/><br/>
+\[\begin{align}
+0 &= $f \\
+0( x^2 - $bcarre) &= $a( x $signe $b) \\
+0 &= $a( x $signe $b) \\
+\dfrac{0}{$a} &=  x $signe $b \\
+0 &=  x $signe $b \\
+0 $signeinv $b &=  x \\
+$invbreel &=  x
+\end{align}
+\]
 
-b) Donner tous les zéros de cette fonction. &nbsp;&nbsp; ______________
-<br/><br>
-
-&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
-&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
-&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
-<br/><br/>
-
-c) Le domaine de cette fonction est R sauf &nbsp;&nbsp; _____________
-
-<br/><br/>
-&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
-&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
-&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
-<br/><br/>
-
-
-a) L'ordonnée à l'origine est la valeur de <strong>f($lettre)</strong> lorsque <strong>$lettre</strong> est égal à zéro. Donc: <br/><br/> 
-
-&nbsp; &nbsp; &nbsp; \( f($lettre) = \dfrac{$a($lettre $signe $b)}{$lettre^2 - $bcarre} \)<br/> 
-&nbsp; &nbsp; &nbsp; \( f(0) = \dfrac{$a( 0 $signe $b)}{(0)^2 - $bcarre} \) <br/> 
-&nbsp; &nbsp; &nbsp;\(  f(0) = \dfrac{$a($breel)}{-$bcarre} \) <br/> 
-&nbsp; &nbsp; &nbsp;\(  f(0) = \dfrac{$a}{$invbreel} \) <br/><br/>
-
-Donc l'ordonnée à l'origine est <strong>$a / $invbreel</strong>
-<br/><br/> 
-
-b) Le zéro d'une fonction est la valeur de <strong>$lettre</strong> lorsque <strong>f($lettre)</strong> est égal à zéro.  Donc:<br/><br/>
-
-&nbsp; &nbsp; &nbsp;\( 0 = \dfrac{$a($lettre $signe $b)}{$lettre^2 - $bcarre} \) <br/> 
-&nbsp; &nbsp; &nbsp;\( 0($lettre^2 - $bcarre) = $a($lettre $signe $b) \) <br/> 
-&nbsp; &nbsp; &nbsp;\( 0 = $a($lettre $signe $b) \) <br/> 
-&nbsp; &nbsp; &nbsp;\( \dfrac{0}{$a} = $lettre $signe $b \) <br/> 
-&nbsp; &nbsp; &nbsp;\( 0 = $lettre $signe $b \) <br/> 
-&nbsp; &nbsp; &nbsp;\( 0 $signeinv $b = $lettre \) <br/> 
-&nbsp; &nbsp; &nbsp;\( $invbreel = $lettre \) <br/>  
-<br/> <br/>
-
-Mais puisque <strong>$invbreel</strong> ne fait pas partie du domaine de la fonction (car il engendre une division par 0), il n'y a pas de zéro pour la fonction. Donc le zéro de cette fonction est  <strong>$zero</strong> .
-<br/><br/>
+Mais puisque \($invbreel\) ne fait pas partie du domaine de la fonction (car il engendre une division par 0), il n'y a pas de zéro pour la fonction. Donc le zéro de cette fonction est  \($zero\) .
+$PAR
 
 
 
-c) Le domaine de la fonction représente l'ensemble des nombres que peut prendre la variable $lettre afin de donner un f($lettre) qui est un nombre réel.<br/><br/>
+c) Le domaine de la fonction représente l'ensemble des nombres que peut prendre la variable \(x\) afin que \(f(x)\) soit un nombre réel.$PAR
 
-Ici, les seules valeurs de x qui ne permettent pas d'obtenir une valeur réelle de f(x) sont celles qui donnent un zéro au dénominateur (étant donné que la division par zéro n'est pas définie):
-<br/><br/>
-
- &nbsp; &nbsp; &nbsp;  $lettre<sup>2</sup> - $bcarre = 0 <br/>
- &nbsp; &nbsp; &nbsp;  $lettre<sup>2</sup> = $sbcarre  <br/>
- &nbsp; &nbsp; &nbsp;  $lettre = $b  ou $invb   <br/><br/>
-
-Ces points représentent l'emplacement des asymptotes verticales pour cette fonction.  Par conséquent, le domaine de la fonction sera R, sauf  <strong>$invb , $b</strong>
-<br/><br/>
+Ici, les seules valeurs de \(x\) qui ne permettent pas d'obtenir une valeur réelle de \(f(x)\) sont celles qui donnent un zéro au dénominateur (étant donné que la division par zéro n'est pas définie):
+$PAR
+\(\begin{array}{l}
+x^2 - $bcarre = 0 \\
+x^2 = $bcarre \\
+x = $b \text{ ou } x=$invb
+\end{array}\)
+$PAR
+Ces points représentent l'emplacement des asymptotes verticales pour cette fonction.  Par conséquent, le domaine de la fonction sera \(\mathbb{R}\setminus\lbrace $invb , $b \rbrace \).
+$PAR
 
 \{ image(insertGraph($graphique), width=>250, height=>250, tex_size=>500) \}
-<br/><br/>
-point: $invbreel , $limite<br/>
-limite= (a * (b-0.01) + bréel ) / ( (b-0.01)^2 - bcarré ) =   ($a*(($invbreel-0.01) + $breel)) / (($invbreel-0.01)*($invbreel-0.01) - $bcarre) <br/><br/>
+$PAR
 
 END_SOLUTION
+Context()->normalStrings;
 
 ENDDOCUMENT();

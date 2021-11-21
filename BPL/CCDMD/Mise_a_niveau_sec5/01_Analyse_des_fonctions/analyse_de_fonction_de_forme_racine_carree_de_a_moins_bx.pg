@@ -1,6 +1,6 @@
 #DESCRIPTION
-#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
-#     section Mise à niveau secondaire 5 - Analyse des fonctions 
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques
+#     section Mise à niveau secondaire 5 - Analyse des fonctions
 #     type de question - Analyse d'une fonction de forme racine carrée de (a - bx)
 ##ENDDESCRIPTION
 
@@ -11,18 +11,20 @@
 ## Author('Diane Bergeron et Louise Pellerin')
 ## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
 ## Taxonomie('Roxane Rodrigue')
+## Modifié par Julie Tremblay : 22/08/2021
 ###########################################################################
 
 DOCUMENT();
 loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
-  "contextFraction.pl",
   "PGgraphmacros.pl",
 );
 
 TEXT(beginproblem());
 
+Context("Interval");
+Context()->strings->add(aucun=>{});
 # créer les valeurs pour a et b
 
 $a=random(2,9);
@@ -34,28 +36,24 @@ $ordonnee= $a;
 # déterminer le signe dans l'équation, ainsi que les valeurs intermédiaires selon ce signe
 $choixa=non_zero_random(-1,1);
 
-if ($choixa==1) 
-{ 
+if ($choixa==1)
+{
    $signe="+";
    $zero=-1*$a;
-   $domaine="("."-infini".","."$zero".")";
+   $domaine= Compute("[$zero,inf)");
    $mot="inférieure";
-   $inequation="&#8805;";
 }
-else 
-{ 
+else
+{
    $signe="-";
    $zero=$a;
-   $domaine="("."$zero".","."infini".")";
+   $domaine= Compute("(-inf,$zero]");
    $mot="supérieure";
-   $inequation="&#8805;";
 }
 
 
 # déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
 Context()->variables->are(x=>"Real");
-$lettre="x";
-
 
 #créer le graphique de cette fonction, afin de pouvoir l'afficher dans la solution
 
@@ -66,31 +64,31 @@ $gypos=$ordonnee + 5;
 $gyneg= -5;
 
 $graphique=init_graph($gxneg,$gyneg, $gxpos, $gypos, axes=>[0,0], size=>[250,250] );
-add_functions($graphique, "($b $signe $a$lettre)^0.5 for x in <$gxneg,$gxpos> using color:blue and weight:2 ");
+add_functions($graphique, "($b $signe $a x)^0.5 for x in <$gxneg,$gxpos> using color:blue and weight:2 ");
 
 
-$gx=2; 
+$gx=2;
 $gy= 2;
 
 for ($i = 0; $i <= int( ($gxpos /2) +1); $i++)
   {
      $graphique->lb(new Label($gx*$i+$gx+0.2,-0.15,$gx*$i+$gx,'black','center','top'));
-     $graphique->moveTo($gx*$i+$gx+0.2,-0.15); 
+     $graphique->moveTo($gx*$i+$gx+0.2,-0.15);
    }
 for ($i = 0; $i <= int( ($gxpos /2) +1); $i++)
   {
      $graphique->lb(new Label(-$gx*$i-$gx-0.2,-0.15,-$gx*$i-$gx,'black','center','top'));
-     $graphique->moveTo(-$gx*$i-$gx-0.2,-0.15); 
+     $graphique->moveTo(-$gx*$i-$gx-0.2,-0.15);
    }
 for ($i = 0; $i <=  int( ($gypos /2) +1); $i++)
   {
      $graphique->lb(new Label(-0.5,$gy*$i+$gy,$gy*$i+$gy,'black','right','top'));
-     $graphique->moveTo(-0.5, $gy*$i+$gy); 
+     $graphique->moveTo(-0.5, $gy*$i+$gy);
    }
 for ($i = 0; $i <=  int( (-$gyneg/2) +1); $i++)
   {
      $graphique->lb(new Label(-0.5,-$gy*$i-$gy+0.4,-$gy*$i-$gy,'black','right','top'));
-     $graphique->moveTo(-0.5, -$gy*$i-$gy+0.4); 
+     $graphique->moveTo(-0.5, -$gy*$i-$gy+0.4);
    }
 
 foreach my $i (1..$gxpos) {  $graphique->h_ticks(0,"black",$i); }
@@ -103,41 +101,31 @@ $graphique->stamps( closed_circle($zero,0,'blue') );
 
 
 
-
+Context()->texStrings;
 BEGIN_TEXT
-<table cellpadding="10px" width="850px">
-  <tr><td>
+Pour la fonction suivante: \( f(x) = \sqrt{$b $signe $a x} \)
+$PAR
+a) Quelle est l'ordonnée à l'origine de cette fonction ? \{ans_rule(10)\}
 
-<h1>Question : </h1>
-<br/>Pour la fonction suivante:  &nbsp; &nbsp; <b> \( f($lettre) = \sqrt{$b $signe $a$lettre} \)</b>
-<br/><br/>
+$PAR
 
-a) Quelle est l'ordonnée à l'origine de cette fonction ? &nbsp;&nbsp; \{ans_rule(10)\} 
+b) Donner tous les zéros de cette fonction. \{ans_rule(10)\}
+$PAR
 
-<br/><br/>
+$SPACE $SPACE Si l'équation a une seule solution, inscrire cette solution. $BR
+$SPACE $SPACE Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.$BR
+$SPACE $SPACE Si l'équation n'admet aucune solution, inscrire $BBOLD aucun $EBOLD.$BR
+$SPACE $SPACE Si l'équation admet une infinité de solutions, inscrire $BBOLD inf $EBOLD.
+$PAR
 
-b) Donner tous les zéros de cette fonction. &nbsp;&nbsp; \{ans_rule(10)\} 
-<br/><br>
+c) Le domaine de cette fonction est : \{ans_rule(15)\}.
 
-&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
-&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
-&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
-<br/><br/>
-
-c) Le domaine de cette fonction est \(\mathbb{R}\) sauf : &nbsp;&nbsp;  \{ans_rule(15)\}. 
-
-<br/><br/>
-&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
-&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
-&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini).<br/>
-&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels, entrer: <b> R </b>.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: <b>aucun</b>. <br/>
-
-  </td></tr>
-</table>
+$PAR
+$SPACE $SPACE Donner votre réponse sous forme d'intervalles en utilisant "(" ou ")" lorsque la valeur de la borne est exclue et "[" ou "]" lorsqu'elle est incluse.$BR
+$SPACE $SPACE Utiliser $BBOLD inf $EBOLD pour \(\infty\) et $BBOLD U $EBOLD(soit le u majuscule) pour l'union. Par exemple, pour \( (-\infty, -3) \cup [4, \infty)\) , entrer: $BBOLD (-inf,-3) U [4, inf) $EBOLD. $BR
+$SPACE $SPACE Pour l'ensemble des réels (\(\mathbb{R}\)), entrer: $BBOLD R $EBOLD.
 END_TEXT
+Context()->normalStrings;
 
 
 BEGIN_HINT
@@ -180,84 +168,57 @@ function resetHint(){document.getElementById("hintspace").style.display='none';d
 </div>
 END_HINT
 
-$showPartialCorrectAnswers = 0;
+#$showPartialCorrectAnswers = 0;
 
-ANS(strict_num_cmp($ordonnee, .0));
+ANS(Compute("$ordonnee")->cmp);
+ANS(Compute("$zero")->cmp);
+ANS($domaine->cmp());
 
-ANS(strict_num_cmp($zero, .0));
-
-ANS(str_cmp($domaine,'remove_whitespace'));
-
-
+Context()->texStrings;
 BEGIN_SOLUTION
-<br/> <u>Solution</u> <br/>
+a) L'ordonnée à l'origine est la valeur de \(f(x)\) lorsque \(x\) est égal à zéro. Donc:
+$PAR
+\[\begin{align}
+f(x) &= \sqrt{ $b $signe $a x} \\
+f(0) &= \sqrt{ $b $signe $a(0)} \\
+f(0) &= \sqrt{$b} \\
+f(0) &= $a
+\end{align}
+\]
 
-<br/>Pour la fonction suivante:  &nbsp; &nbsp; <b> \( f($lettre) = \sqrt{$b $signe $a$lettre} \)</b>
-<br/><br/>
+Donc l'ordonnée à l'origine est \($a\).
 
-a) Quelle est l'ordonnée à l'origine de cette fonction ? &nbsp;&nbsp; ____________
+$PAR
 
-<br/><br/>
+b) Le zéro d'une fonction est la valeur de \(x\) lorsque \(f(x)\) est égal à zéro.  Donc:
+$PAR
+\[
+\begin{align}
+0 &= \sqrt{ $b $signe $a x} \\
+0 &= $b $signe $a x \\
+$zero x &= $b \\
+x &= \frac{$b}{$zero} = $zero
+\end{align}
+\]
+Donc il y a un seul zéro pour cette fonction, soit \( $zero\)
 
-b) Donner tous les zéros de cette fonction. &nbsp;&nbsp; ______________
-<br/><br>
+$PAR
 
-&nbsp; &nbsp; &nbsp;&nbsp Si l'équation a une seule solution, inscrire cette solution. <br/>
-&nbsp; &nbsp &nbsp;&nbsp; Si l'équation a deux solutions, énumérer ces solutions en les séparant d'une virgule.<br/>
-&nbsp; &nbsp &nbsp;&nbsp; Si l'équation n'admet aucune solution, inscrire <strong>aucun</strong>.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp Si l'équation admet une infinité de solutions, inscrire <strong>infini</strong>.
-<br/><br/>
+c) Le domaine de la fonction représente l'ensemble des nombres que peut prendre la variable \(x\) afin de donner un \( f(x) \) réel.
+$PAR
 
-c) Le domaine de cette fonction est R sauf &nbsp;&nbsp; _____________
+Ici, les seules valeurs de \(x\) qui ne permettent pas d'obtenir une valeur réelle de \(f(x)\) sont celles qui donnent un négatif sous la racine. Or, étant donné que le zéro de l'équation donne \( $zero\), toute valeur $mot à ce zéro donne un négatif sous la racine, ce qui est à éviter.
 
-<br/><br/>
-&nbsp; &nbsp; &nbsp;&nbsp Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> 
-&nbsp; &nbsp; &nbsp;&nbsp lorsque la valeur de la borne est exclue et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
-&nbsp; &nbsp; &nbsp;&nbsp Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
-&nbsp; &nbsp; &nbsp;&nbsp Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/>
-&nbsp; &nbsp; &nbsp;&nbsp Pour l'ensemble des réels, entrer: <b> R </b><br/>
-&nbsp; &nbsp; &nbsp;&nbsp Lorsqu'il n'y a aucune solution, entrer: <b>aucun</b>  <br/><br/>
+$PAR
+Algébriquement, pour que l'intérieur de la racine soit positif ou nul, il faut résoudre:
+\[ $b $signe $a x \ge  0\]
 
-
-a) L'ordonnée à l'origine est la valeur de <strong>f($lettre)</strong> lorsque <strong>$lettre</strong> est égal à zéro. Donc: <br/><br/> 
-
-&nbsp; &nbsp; &nbsp;\(  f($lettre) = \sqrt{ $b $signe $a$lettre} \) <br/> 
-&nbsp; &nbsp; &nbsp;\(  f(0) = \sqrt{ $b $signe $a(0) } \) <br/> 
-&nbsp; &nbsp; &nbsp;\(  f(0) = \sqrt{ $b $signe (0) } \) <br/> 
-&nbsp; &nbsp; &nbsp;\(  f(0) = \sqrt{ $b } \) <br/> 
-&nbsp; &nbsp; &nbsp;\(  f(0) = $a  \) <br/> <br/>
-
-Donc l'ordonnée à l'origine est <strong>$a</strong>
-<br/><br/> 
-
-b) Le zéro d'une fonction est la valeur de <strong>$lettre</strong> lorsque <strong>f($lettre)</strong> est égal à zéro.  Donc:<br/><br/>
-
-&nbsp; &nbsp; &nbsp;\(  0 = \sqrt{ $b $signe $a$lettre} \) <br/> 
-&nbsp; &nbsp; &nbsp;\(  0^2 = ( \sqrt{ $b $signe $a$lettre } )^2 \) <br/> 
-&nbsp; &nbsp; &nbsp;\(  0^2 = $b $signe $a$lettre \) <br/> 
-&nbsp; &nbsp; &nbsp;\(  0 = $b $signe $a$lettre \) <br/> 
-&nbsp; &nbsp; &nbsp;\(  $zero$lettre =  $b  \) <br/> 
-&nbsp; &nbsp; &nbsp;\(  $lettre = $b/$zero  =  $zero  \) <br/> <br/>
-
-Donc il y a un seul zéro pour cette fonction, soit <strong>$zero</strong>
-<br/><br/>
-
-
-
-c) Le domaine de la fonction représente l'ensemble des nombres que peut prendre la variable $lettre afin de donner un f($lettre) qui est un nombre réel.<br/><br/>
-
-Ici, les seules valeurs de $lettre qui ne permettent pas d'obtenir une valeur réelle de f($lettre) sont celles qui donnent un négatif sous la racine. Or, étant donné que le zéro de l'équation donne <strong>$zero</strong>, toute valeur $mot à ce zéro donne un négatif sous la racine, ce qui est à éviter.<br/><br/>
-
-Algébriquement, pour que l'intérieur de la racine soit positif ou nul, il faut résoudre: <br/>
-&nbsp; &nbsp; <strong> $b $signe $a$lettre $inequation  0  </strong><br/>
-
-Donc le domaine de cette fonction est R, sauf  <strong>$domaine</strong> 
-<br/><br/>
+Donc le domaine de cette fonction \($domaine\).
+$PAR
 
 \{ image(insertGraph($graphique), width=>250, height=>250, tex_size=>500) \}
-<br/><br/>
-
 
 END_SOLUTION
+Context()->normalStrings;
 
 ENDDOCUMENT();
