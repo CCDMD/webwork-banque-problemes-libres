@@ -1,0 +1,122 @@
+## DESCRIPTION
+## Webwork:  Question de tutoriel
+## Fait par Julie Tremblay, juin 2014
+## ENDDESCRIPTION
+
+## KEYWORDS('Tutoriel','français')
+
+## DBsubject(WeBWorK)
+## DBchapter(Tutoriel de WeBWorK)
+## DBsection('BdeB')
+## Author(Julie Tremblay)
+## Institution(Collège de Bois-de-Boulogne)
+
+
+DOCUMENT();
+
+
+loadMacros(
+"PGstandard.pl",
+"MathObjects.pl",
+"unionTables.pl",
+"contextLimitedNumeric.pl",
+"AnswerFormatHelp.pl",
+);
+
+TEXT(beginproblem());
+$showPartialCorrectAnswers = 1;
+
+#### Introduction aux opérations dans webwork
+
+
+BEGIN_TEXT
+<center><h2>Les opérations</h2></center>
+$PAR
+Pour écrire une expression contenant des additions, des soustractions, des multiplications ou des divisions dans WeBWorK, c'est assez simple. Il faut taper les nombres et les opérateurs selon le même ordre de priorité que celui utilisé avec les calculatrices courantes. Voici les symboles que WeBWorK reconnaît :
+$PAR
+\{
+  BeginTable().
+   Row([$BBOLD.'Symbole'.$EBOLD,
+       $BBOLD.'Opération'.$EBOLD,
+       $BBOLD.'Exemple'.$EBOLD]).
+    TableLine().
+    Row(["\(+\)",'Addition',"\(3+4 = 7\)"],align=>"CENTER").
+    Row(["\(-\)",'Soustraction',"\(3-4 = -1\)"],align=>"CENTER").
+    Row(["\(\ast\)",'Multiplication',"\(3\cdot 4 = 12\)"],align=>"CENTER").
+    Row(["\(/\)",'Division',"\( 3/4 = \frac{3}{4}\)"],align=>"CENTER").
+    Row(["\(\small\wedge\)",'Exposant',
+      "\( 3^\wedge 4 = 81 = 3^4\)"],align=>"CENTER").
+    TableLine().
+  EndTable()
+\}
+$PAR
+En cliquant dans la case réponse, vous avez également accès à un éditeur d'équations sous forme d'un menu vertical montrant plusieurs symboles, dont \{ image("mathquill_fraction.png", width=>40)\} et \{ image("mathquill_exposant.png", width=>40)\}. Il suffit de cliquer sur un des symboles afin d'avoir la structure désirée.
+$PAR
+WeBWorK utilise MathQuill pour l'entrée des réponses. Cela signifie que vous pouvez voir clairement l'expression entrée en temps réel. Par exemple, en entrant \(/\) avec le clavier, vous créez l'objet fraction \{ image("mathquill_fraction.png", width=>40)\}, ou en entrant \(x^\wedge 2\), vous créez l'objet exposant \{ image("mathquill_exposant.png", width=>40)\}. Il suffit ensuite d'utiliser les touches de direction du clavier pour se déplacer dans l'expression. Voyez ce qui se passe en entrant l'expression suivante.
+$PAR
+\(\displaystyle \frac{x^3-5x}{x^2+1} = \) \{ans_rule(10) \}
+END_TEXT
+
+Context("Numeric");
+
+$exp = Compute("(x^3-5x)/(x^2+1)")->reduce;
+
+ANS($exp->cmp());
+
+
+
+$a = non_zero_random(-5,5,1);
+$b = non_zero_random(-5,5,1);
+$c = non_zero_random(-3,3,1) * 2;
+$d = non_zero_random(-5,5,1);
+
+BEGIN_TEXT
+$PAR
+$HR
+Il est possible que WeBWorK vous $BBOLD oblige$EBOLD à effectuer les calculs pour trouver la valeur d'une expression avant d'écrire votre réponse. Par exemple, trouvez la valeur de l'expression \($c($a - $b) - ($c - $d)\) et écrivez votre réponse dans la case suivante. (${BITALIC}Vous devez entrer un nombre entier comme réponse${EITALIC}).
+
+$PAR
+\($c($a - $b) - ($c - $d)=\)  \{ans_rule(10)\}
+$PAR
+END_TEXT
+
+Context("LimitedNumeric");
+$ans = $c*($a - $b) - ($c - $d);
+ANS(Real($ans)->cmp);
+
+##################################################
+
+Context("Numeric");
+
+BEGIN_TEXT
+$PAR
+La plupart du temps, vous n'aurez pas à simplifier votre réponse, WeBWorK fera le calcul pour vous.
+$PAR
+WeBWorK interprète correctement deux valeurs qui se suivent comme des valeurs multipliées ensemble. Par exemple, vous pouvez écrire \((9)(7)\) au lieu de \(63\). Cette écriture est particulièrement utile pour écrire l'expression d'une constante multipliée avec une fonction, par exemple, \(2x\) ou \(3\sin(5x)\). Par conséquent, vous n'avez pas à écrire le symbole \(\ast\) à chaque fois, ce qui rend l'écriture de vos réponses moins ardue.$PAR
+Dans la case suivante, écrivez le nombre \(100\) avec l'expression \(4(30-5)\).
+$PAR
+\(100 =\) \{ans_rule(10)\}
+$PAR
+END_TEXT
+
+$moneval2 = sub {
+    my ($correct, $student, $ansHash ) = @_;
+    Value->Error("Entrer l'expression demandée. Vous ne pouvez pas écrire le nombre 100") if ($ansHash->{original_student_ans} == "100");
+    return ($student == Real(100));
+};
+
+ANS(Real(100)->cmp(checker => $moneval2 ));
+
+
+BEGIN_TEXT
+$HR
+$BITALIC
+Pour vérifier si vos réponses sont correctes, cliquez sur le bouton ${BBOLD}Aperçu de mes réponses.$EBOLD Observez la colonne $BBOLD Aperçu des réponses$EBOLD. S'il s'agit bien des expressions mathématiques que vous désirez entrer, cliquez sur ${BBOLD}Soumettre les réponses$EBOLD. Lorsque vos réponses seront correctes, cliquez sur le bouton ${BBOLD}Suivant $EBOLD au haut de la page.
+$EITALIC
+$HR
+END_TEXT
+
+
+
+ENDDOCUMENT();
+
