@@ -4,7 +4,7 @@
 ## Modifié par Éric Gaul, Collège Montmorency
 ## Date : mars 2017
 ## Language(fr)
-## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011
 
 
 ###############Source################
@@ -32,15 +32,11 @@
 
 
 DOCUMENT();
-loadMacros("PG.pl",
-           "PGbasicmacros.pl",
-           "PGchoicemacros.pl",
-           "PGanswermacros.pl",
-           "PGauxiliaryFunctions.pl",
-           "PGmatrixmacros.pl",
+loadMacros("PGstandard.pl",
+           "MathObjects.pl",
 );
- 
 
+Context("Vector");
 ## Do NOT show partial correct answers
 $showPartialCorrectAnswers = 1;
 
@@ -59,6 +55,7 @@ $q = $r**2 + $s**2 + $t**2;
 ##
 TEXT(beginproblem());
 
+Context()->texStrings;
 BEGIN_TEXT
 Soit la fonction \(f(x,y,z) = xy + yz^2 + xz^3\).
 $PAR
@@ -70,23 +67,38 @@ $BBOLD (b) $EBOLD Calculer le gradient de \(f\) au point \(($a, $b, $c)\) :
 $PAR
 \(\qquad\Big\langle\)\{ans_rule(20)\}, \{ans_rule(20)\}, \{ans_rule(20)\}\(\Big\rangle\)
 $PAR
-$BBOLD (c) $EBOLD Calculer le taux de variation de la fonction \(f\) au point \(($a, $b,$c)\)  dans la direction 
-\(\vec{u} = \langle $r/\sqrt{$q}, $s/\sqrt{$q}, $t/\sqrt{$q} \rangle\) :
+$BBOLD (c) $EBOLD Calculer le taux de variation de la fonction \(f\) au point \(($a, $b,$c)\)  dans la direction
+\(\vec{u} = \left\langle \frac{$r}{\sqrt{$q}}, \frac{$s}{\sqrt{$q}}, \frac{$t}{\sqrt{$q}} \right\rangle\) :
 $PAR
 \(\qquad\)\{ans_rule(60)\}
 END_TEXT
+Context()->normalStrings;
 
-ANS(fun_cmp("y + z**3", vars=>["x", "y","z"]));
-ANS(fun_cmp("x + z**2", vars=>["x", "y","z"]));
-ANS(fun_cmp("2*y*z + 3*x*z**2", vars=>["x", "y","z"]));
+Context()->variables->are(x=>"Real",y=>"Real",z=>"Real");
+$f1 = Compute("y + z^3");
+$f2 = Compute("x + z^2");
+$f3 = Compute("2*y*z + 3*x*z^2");
+ANS($f1->cmp());
+ANS($f2->cmp());
+ANS($f3->cmp());
 
-@gradf = ($b + ($c)**3, $a + ($c)**2, 2*$b*$c + 3*$a*($c)**2);
-@u = ($r/sqrt($q), $s/sqrt($q), $t/sqrt($q)); 
 
-ANS(num_cmp($b + ($c)**3));
-ANS(num_cmp($a + ($c)**2));
-ANS(num_cmp(2*$b*$c + 3*$a*($c)**2));
 
-ANS(num_cmp(vec_dot(~~@gradf, ~~@u)));
+$grad1 = Real("$b + ($c)^3");
+$grad2 = Real("$a + ($c)^2");
+$grad3 = Real("2*$b*$c + 3*$a*($c)^2");
+
+$gradf = Vector($grad1, $grad2, $grad3);
+$v = Vector($r, $s,$t);
+$u = unit($v);
+
+ANS($grad1->cmp);
+ANS($grad2->cmp);
+ANS($grad3->cmp);
+
+$ans = $gradf . $u;
+Context()->operators->undefine(".");
+
+ANS($ans->cmp());
 
 ENDDOCUMENT();

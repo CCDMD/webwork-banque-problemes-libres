@@ -4,7 +4,7 @@
 ## Modifié par Éric Gaul, Collège Montmorency
 ## Date : mars 2017
 ## Language(fr)
-## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011 
+## Translated from English to French by Sébastien Labbé, Université du Québec à Montréal, Fall 2011
 
 
 ###############Source################
@@ -32,15 +32,11 @@
 
 
 DOCUMENT();
-loadMacros("PG.pl",
-           "PGbasicmacros.pl",
-           "PGchoicemacros.pl",
-           "PGanswermacros.pl",
-           "PGauxiliaryFunctions.pl",
-           "PGmatrixmacros.pl",
+loadMacros("PGstandard.pl",
+           "MathObjects.pl",
 );
- 
 
+Context("Vector");
 ## Do NOT show partial correct answers
 $showPartialCorrectAnswers = 0;
 
@@ -56,23 +52,24 @@ $f = non_zero_random(-5,5);
 ##
 TEXT(beginproblem());
 
+Context()->texStrings;
 BEGIN_TEXT
 Déterminer la dérivée directionnelle de \(f(x,y,z) = $d x^2 + $e y^2 + $f z^2 \) au point \( ($a, $b, $c) \), dans la direction de l'origine.
 $PAR
-\{ans_rule(20)\}
+Réponse : \{ans_rule(20)\}
 END_TEXT
+Context()->normalStrings;
 
-@gradf = (2*$d*$a, 2*$e*$b, 2*$f*$c );
+$gradf = Vector(2*$d*$a, 2*$e*$b, 2*$f*$c );
 
-@v = (-$a, -$b, -$c);
-$length = sqrt(vec_dot(~~@v, ~~@v));
-@u = ($v[0]/$length, $v[1]/$length, $v[2]/$length); 
+$v = Vector(-$a, -$b, -$c);
+$u = unit($v);
 
-ANS(num_cmp(vec_dot(~~@gradf, ~~@u)));
+$ans = $gradf . $u;
+
+Context()->operators->undefine(".");
+
+ANS($ans->cmp());
 
 
 ENDDOCUMENT();
-
-
-
-
