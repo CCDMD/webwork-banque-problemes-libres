@@ -36,17 +36,19 @@ TEXT(beginproblem());
 
 Context("LimitedPolynomial-Strict");
 
+do{
 $a= random(2,5,1);
-$b= non_zero_random(-6,-1,1);   
+$b= random(1,6,1);
+} until($a != $b);
 
-$poly = Compute("$a*x + $b")->reduce;
+$poly = Compute("$a*x - $b")->reduce;
 
 ######################################
 #  Main text
 
 Context()->texStrings;
 BEGIN_TEXT
-Développer le binôme suivant sous la forme d'un polynôme. 
+Développer le binôme suivant sous la forme d'un polynôme simplifié, c'est-à-dire tel que les termes semblables sont regroupés.
 $PAR $BR
 \( ( $poly )^2 =  \)  \{ ans_rule(20) \}
 
@@ -57,7 +59,7 @@ Context()->normalStrings;
 #  Answer
 
 ($c2,$c1,$c0) = ($a*$a,2*$a*$b,$b*$b);
-$ans = Formula("$c2*x^2 + $c1*x+$c0")->reduce;
+$ans = Formula("$c2*x^2 - $c1*x+$c0")->reduce;
 ANS($ans->cmp); 
 
 $showPartialCorrectAnswers = 1;
@@ -70,8 +72,8 @@ Context()->texStrings;
 BEGIN_SOLUTION
 $PAR
 \[  \begin{array}{rl} ($poly )^2 &=  ($poly)($poly) \\
-&= $a^2 x^2 + ($a \cdot $b) x + ($b \cdot $a) x + ($b)^2   \\
-&= $c2 x^2 + $ab x + $ab x + $c0  \\
+&= $a^2\, x^2 + $a (-$b) x + (-$b)$a x + (-$b)^2   \\
+&= $c2 x^2 - $ab x - $ab x + $c0  \\
 &= $ans \end{array}
 \] 
 
