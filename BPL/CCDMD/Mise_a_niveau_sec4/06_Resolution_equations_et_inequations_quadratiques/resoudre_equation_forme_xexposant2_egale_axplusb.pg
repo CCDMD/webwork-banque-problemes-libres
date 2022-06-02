@@ -5,7 +5,7 @@
 ##ENDDESCRIPTION
 ## DBsubject(Fonctions et manipulations algébriques)
 ## DBchapter(Équations et inéquations algébriques)
-## KEYWORDS('forme factorisée', 'nombre de solutions', 'résolution d\'une équation', 'solution', 'équation linéaire', 'équation quadratique')
+## KEYWORDS('forme factorisée', 'résolution d\'une équation', 'équation quadratique')
 
 ## Author('Diane Bergeron et Louise Pellerin')
 ## Institution('CEGEP de Chicoutimi et La Cit&eacute; coll&eacute;giale')
@@ -20,6 +20,11 @@ loadMacros(
 
 TEXT(beginproblem());
 
+# déclarer la lettre qui seront la variable non-définie (variable réelle)
+Context()->variables->are(x=>"Real");
+Context()->strings->add(aucun=>{});
+Context()->noreduce('(-x)-y','(-x)+y');
+
 # créer les valeurs de la constante et des deux coefficients 
 
 do
@@ -32,74 +37,24 @@ until (($b != 0) && ($b != -1));
 
 $c=$n1*$n2;
 
-
-# déterminer les deux signes à mettre dans l'équation
-if ($b < 0) 
-{
-   $signe1 = " ";
-   $signe1inv= "- ";
-}
-else 
-{
-   $signe1="-";
-   $signe1inv="+"
-}
-
-
-if ($c < 0) 
-{
-   $signe2 = "+";
-   $signe2inv= "-";
-}
-else 
-{
-   $signe2="-";
-   $signe2inv= "+";
-}
-
-
-# déclarer la lettre qui seront la variable non-définie (variable réelle)
-Context()->variables->are(x=>"Real");
-$lettre="x";
-
+$gauche = Compute("-$b*x-$c")->reduce;
 
 # créer les réponses
 $rep1 =-1*$n1;
-$rep2=-1*$n2;
+$rep2= -1*$n2;
 
-
-# créer les valeurs intermédiaires
-$babs=abs($b);
-$cabs=abs($c);
-$n1abs=abs($n1);
-$n2abs=abs($n2);
-
-
-if ($n1<0) {$sn1="-";}
-else {$sn1="+";}
-
-if ($n2<0) {$sn2="-";}
-else {$sn2="+";}
-
-
-
-
+Context()->texStrings;
 BEGIN_TEXT
-<table cellpadding="10px" width="850px" >
-  <tr><td>
+Résoudre l'équation suivante: \(x^2 = $gauche \).
+$PAR
 
-<h1>Question:</h1><br/>
-Résoudre l'équation suivante: \($lettre^2 = $signe1 $babs $lettre $signe2 $cabs\).
-<br/><br/>
-
-\($lettre =\)  \{ans_rule(5)\}<br/><br/>
-Inscrire la réponse dans la case réponse ci-dessus.<br/>
-S'il y a deux réponses possibles, les inscrire en les séparant d'une virgule.<br/>
-S'il n'y a aucune réponse possible, inscrire <strong> aucun</strong>.
-  </td></tr>
-</table>
-<br/>
+\(x =\)  \{ans_rule(5)\}
+$PAR
+Inscrire la réponse dans la case réponse ci-dessus.$BR
+S'il y a deux réponses possibles, les inscrire en les séparant d'une virgule.$BR
+S'il n'y a aucune réponse possible, inscrire $BBOLD aucun $EBOLD.$BR
 END_TEXT
+Context()->normalStrings;
 
 
 BEGIN_HINT
@@ -138,46 +93,35 @@ END_HINT
 
 ANS(List($rep1, $rep2)->cmp);
 
+$gauinv = Compute("$b*x + $c")->reduce;
+
+Context()->texStrings;
 BEGIN_SOLUTION
-$PAR <u>Solution</u> $PAR
+Ramener tout d'abord tous les termes du même côté du signe égal, afin d'obtenir une équation quadratique égale à zéro:
 
-Résoudre l'équation suivante:  $lettre<sup>2</sup> = $signe1$babs$lettre $signe2 $cabs
-<br/><br/>
+\[
+\begin{align}
+x^2 &= $gauche \\
+x^2 + $gauinv &= 0
+\end{align}
+\]
 
-$lettre = _____<br/><br/>
-
-Inscrire la réponse dans la case réponse ci-dessus.<br/>
-S'il y a deux réponses possibles, les inscrire en les séparant d'une virgule.<br/>
-S'il n'y a aucune réponse possible, inscrire <strong> aucun</strong>.
-<br/><br/>
-
-Ramener tout d'abord tous les termes du même côté du signe égal, afin d'obtenir une équation quadratique égale à zéro:<br/>
-
-<ul>
-   <li>  $lettre<sup>2</sup> = $signe1$babs$lettre $signe2 $cabs</li>
-   <li> $lettre<sup>2</sup> <strong>$signe1inv $babs$lettre $signe2inv $cabs</strong>= 0</li>    
-</ul>
-<br/><br/>
-
-Factoriser ensuite l'équation quadratique ainsi obtenue, sous forme de deux parenthèses:<br/>
-
-<ul>
-   <li> $lettre<sup>2</sup> $signe1inv $babs$lettre $signe2inv $cabs= 0</li>
-   <li> ($lettre $sn1 $n1abs)($lettre $sn2 $n2abs)= 0</li>
-</ul>
-<br/><br/>
-
+Factoriser ensuite l'équation quadratique ainsi obtenue, sous forme de deux parenthèses:
+\[
+\begin{align}
+x^2 + $gauinv &= 0 \\
+(x + $n1)(x + $n2) &= 0
+\end{align}
+\]
 
 Les valeurs de $lettre sont celles qui permettent d'obtenir zéro dans chacune de ces parenthèses:
-<br/>
+$BCENTER
+ \( (x + $n1) = 0\)   donc: \(x = $rep1\). $BR
+\( (x + $n2)= 0 \)  donc: \(x = $rep2\).
 
-<ul>
-   <li> $lettre $sn1 $n1abs = 0   donc: $lettre = $rep1  </li>
-   <li> $lettre $sn2 $n2abs = 0  donc: $lettre = $rep2</li>
-</ul>
-<br/><br/>
-Donc les réponses possibles pour $lettre sont:  <strong>$rep1 , $rep2</strong> (ou $rep2 , $rep1)
-<br/>
+$ECENTER
+Donc les réponses possibles pour $lettre sont:  \( $rep1 \), \( $rep2\) (ou \($rep2\) , \($rep1\)).
+$BR
 
 END_SOLUTION
 
