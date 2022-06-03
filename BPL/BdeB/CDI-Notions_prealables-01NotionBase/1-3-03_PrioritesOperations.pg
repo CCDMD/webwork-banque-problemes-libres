@@ -1,0 +1,88 @@
+##DESCRIPTION
+## Priorités des opérations
+##Fait par Julie Tremblay, juin 2022
+##ENDDESCRIPTION
+
+## DBsubject(Nombres)
+## DBchapter(Arithmétique)
+## KEYWORDS('priorités des opérations','opérations arithmétiques','fraction','simplification','division')
+
+## Author('Julie Tremblay')
+## Institution('Cégep de Sherbrooke')
+## Level(2)
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   #"source.pl",        # allows code to be displayed on certain sites.
+   "PGcourse.pl",      # Customization file for the course
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Numeric");
+
+do{
+    $a = random(2,5);
+    $b = random(3,6);
+} until($a!=$b);
+
+$ab = $a*$b;
+$c = $b-1;
+$d = $ab + 1; 
+
+$num = $ab - $c;
+#$rep1 = Compute("1/$a2 + ($b/$c)^2 * $cc/$a")->reduce;
+$rep1 = Compute("$num/$d")->reduce;
+
+
+
+##############################################################
+#
+#  Text
+#
+#
+Context()->operators->undefine('*','+','-');
+Context()->texStrings;
+BEGIN_TEXT
+Effectuer l'opération suivante sans la calculatrice, en respectant les priorités des opérations.
+$PAR
+$SPACE $SPACE \( \displaystyle \frac{$a - \dfrac{$c}{$b}}{$a\times \dfrac{$d}{$ab}}= \) \{ans_rule(10)\} $BR
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+#
+#  Answers
+#
+#
+
+ANS($rep1->with(tolerance=>.0001)->cmp);
+
+# relative tolerance --3.1412 is incorrect but 3.1413 is correct
+# default tolerance is .01 or one percent.
+
+Context()->texStrings;
+BEGIN_SOLUTION
+\[ \begin{align}
+\frac{$a - \dfrac{$c}{$b}}{$a\times \dfrac{$d}{$ab}} &= \frac{$a - \dfrac{$c}{$b}}{\dfrac{$d}{$b}} &&;\text{ parenthèses : }$a\times \dfrac{$d}{$ab}=\cancel{$a}\times \dfrac{$d}{\cancelto{$b}{$ab}}=\dfrac{$d}{$b}\\
+&= \left($a - \dfrac{$c}{$b}\right)\times \frac{$b}{$d} \\
+&= \frac{$num}{$b}\times \frac{$b}{$d} &&;\text{ parenthèses : }$a - \dfrac{$c}{$b}=\frac{$ab}{$b} - \dfrac{$c}{$b}= \frac{$num}{$b}\\
+&= \frac{$num}{$d} &&;\text{ multiplication : } \frac{$num}{$b}\times \frac{$b}{$d}=\frac{$num}{\cancel{$b}}\times \frac{\cancel{$b}}{$d}= \frac{$num}{$d}\\
+\end{align}
+\]
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        

@@ -1,0 +1,108 @@
+##DESCRIPTION
+##Les ensembles
+##Fait par Julie Tremblay, juin 2022
+##ENDDESCRIPTION
+
+## DBsubject(Logique et théorie des ensembles)
+## DBchapter(Théorie des ensembles)
+## KEYWORDS('R (ensemble de nombres)', 'intervalle','en compréhension')
+
+## Level(2)
+## Language(fr)
+## Institution('Cégep de Sherbrooke')
+## Author('Julie Tremblay')
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   #"source.pl",        # allows code to be displayed on certain sites.
+   "PGcourse.pl",      # Customization file for the course
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Interval");
+
+$a1 = random(2,15);
+$a2 = $a1 + random(2,15);
+$inta = Compute("($a1,$a2)");
+
+$b1 = random(-15,-3);
+$b2 = random(2,9);
+@bsym = ("\le","<");
+$i = random(0,1);
+if ($i==0) {
+    $intb = Compute("[$b1,$b2)");
+    $i2 = 1;
+} else {
+    $intb = Compute("($b1,$b2]");
+    $i2 = 0;
+}
+
+$c = 3*random(2,5)+random(1,2);
+$intc = Compute("[$c/3,inf)");
+
+$d1 = list_random(6,8,10);
+$d2 = list_random(2,3,5);
+$intd = Compute("[-sqrt($d1),sqrt($d2)]");
+
+$e = random(8,20);
+$inte = Compute("(-inf,-$e)");
+
+
+
+
+##############################################################
+#
+#  Text
+#
+#
+
+Context()->texStrings;
+BEGIN_TEXT
+Donnez l'intervalle correspondant à l'ensemble donné.
+$PAR
+a) \( \lbrace x\in\mathbb{R} \vert $a1 < x < $a2 \rbrace = \) \{ans_rule()\}
+$BR
+b) \( \lbrace x\in\mathbb{R} \vert $b1 $bsym[$i] x $bsym[$i2] $b2 \rbrace = \) \{ans_rule()\}
+$BR
+c) \( \lbrace x\in\mathbb{R} \vert x \ge \frac{$c}{3} \rbrace = \) \{ans_rule()\}
+$BR
+d) \( \lbrace x\in\mathbb{R} \vert -\sqrt{$d1} \le x \le \sqrt{$d2} \rbrace = \) \{ans_rule()\}
+$BR
+e) \( \lbrace x\in\mathbb{R} \vert x < -$e \rbrace = \) \{ans_rule()\}
+$BR
+$HR
+$BBOLD Attention: $EBOLD
+Donner votre réponse sous forme d'intervalles en utilisant ( ou )
+lorsque la valeur de la borne est exclue et [ ou ] lorsqu'elle est incluse.
+Utiliser $BBOLD inf$EBOLD pour \(\infty\) et $BBOLD U $EBOLD (soit le u majuscule) pour l'union.
+Par exemple, pour \(]-\infty , -3[ \cup [4, \infty]\), entrer $BBOLD (-inf, -3) U [4, inf) $EBOLD.
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+#
+#  Answers
+#
+#
+
+ANS( $inta->cmp );
+ANS( $intb->cmp );
+ANS( $intc->cmp );
+ANS( $intd->cmp );
+ANS( $inte->cmp );
+ENDDOCUMENT();        

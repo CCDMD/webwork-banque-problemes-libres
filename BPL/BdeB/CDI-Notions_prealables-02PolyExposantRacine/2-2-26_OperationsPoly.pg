@@ -1,0 +1,83 @@
+###DESCRIPTION
+## Division de polynômes
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('division', 'fraction rationnelle', 'monôme', 'simplification','polynôme')
+## Traduction('Julie Tremblay')
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGbasicmacros.pl",
+  "contextLimitedPolynomialFr.pl",
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+
+Context("LimitedPolynomial-Strict");
+$a = random(2,6);
+$b= random(2,9);
+$c= random(3,7);
+
+$ac = $a*$c;
+
+$poly1 = Compute("$ac*x^3+$b*x^2-$c*x")->reduce;
+$poly2 = Compute("$c*x")->reduce;
+
+######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Effectuer la division de polynômes suivante.
+$PAR $BR
+\( \displaystyle \frac{$poly1}{$poly2} =  \)  \{ ans_rule(20) \}
+
+END_TEXT
+Context()->normalStrings;
+
+######################################
+#  Answer
+
+($c2,$c1,$c0) = ($a,$b/$c,-1);
+$ans = Formula("$c2*x^2 + $c1*x+ $c0")->reduce;
+ANS($ans->cmp); 
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+$div = gcd($b,$c);
+
+if($div == $c) {
+    $coef = Compute("$b/$c x")->reduce;
+} else {
+    $num = $b/$div;
+    $den = $c/$div;
+    $coef = "\frac{$num}{$den} x";
+}
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+\[  \begin{align} \frac{$poly1}{$poly2} &=  \frac{$ac x^3}{$poly2} + \frac{$b x^2}{$poly2} - \frac{$poly2}{$poly2} \\ 
+&= $c2 x^2 + $coef - 1 
+\end{align}
+\] 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

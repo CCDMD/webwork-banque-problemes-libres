@@ -1,0 +1,82 @@
+###DESCRIPTION
+## Polynomials
+## 
+##ENDDESCRIPTION
+
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('multiplication', 'polynôme','simplification')
+
+## Author('Julie Tremblay')
+## Institution('Cégep de Sherbrooke')
+
+DOCUMENT(); # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextLimitedPolynomialFr.pl",
+);
+
+TEXT(beginproblem());
+
+######################################
+#  Setup
+
+Context("LimitedPolynomial-Strict");
+$a = 2;
+
+$b= random(2,5,1);
+do{
+$c= random(2,4);
+$d= random(1,6);
+} until($c!=$d);
+
+$poly1 = Compute("$b - x")->reduce;
+$poly2 = Compute("$c*x + $d")->reduce;
+
+######################################
+#  Main text
+
+Context()->texStrings;
+BEGIN_TEXT
+Effectuer l'opération de polynômes suivante. La réponse doit être un polynôme simplifié, c'est-à-dire tel que les termes semblables sont regroupés.
+$PAR $BR
+\( $a x^2( $poly1 )( $poly2 ) =  \)  \{ ans_rule(20) \}
+
+END_TEXT
+Context()->normalStrings;
+
+######################################
+#  Answer
+
+($c4,$c3,$c2) = (-$a*$c,$a*$b*$c-$a*$d,$a*$b*$d);
+$ans = Formula("$c4*x^4 + $c3*x^3+ $c2 x^2")->reduce;
+ANS($ans->cmp); 
+
+$showPartialCorrectAnswers = 1;
+
+######################################
+
+$bc = $b*$c;
+$bd = $b*$d;
+$bcmoinsd = $bc - $d;
+
+
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+\[  \begin{align} $a x^2( $poly1 )( $poly2 ) &=  $a x^2($bc x+$bd-$c x^2 -$d x) \\
+&= $a x^2( $bcmoinsd x + $bd - $c x^2) \\
+&= $c3 x^3 + $c2 x^2 + $c4 x^4  \\
+&= $ans 
+\end{align}
+\] 
+
+END_SOLUTION
+Context()->normalStrings;
+
+
+COMMENT('MathObject version');
+ENDDOCUMENT();

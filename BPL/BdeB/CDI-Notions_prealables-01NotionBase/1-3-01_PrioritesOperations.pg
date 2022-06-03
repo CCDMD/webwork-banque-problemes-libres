@@ -1,0 +1,72 @@
+##DESCRIPTION
+## Priorités des opérations
+##Fait par Julie Tremblay, juin 2022
+##ENDDESCRIPTION
+
+## DBsubject(Nombres)
+## DBchapter(Arithmétique)
+## KEYWORDS('priorités des opérations','opérations arithmétiques')
+
+## Author('Julie Tremblay')
+## Institution('Cégep de Sherbrooke')
+## Level(2)
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   #"source.pl",        # allows code to be displayed on certain sites.
+   #"PGcourse.pl",      # Customization file for the course
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Numeric");
+
+$a = random(4,6);
+$b = random(9,12);
+$c = random(4,$b-2);
+$d = 3;
+
+$rep1 = Real("$a*$b - $c*$d");
+$rep2 = Real("$a*($b-$c)*$d");
+
+
+##############################################################
+#
+#  Text
+#
+#
+Context()->operators->undefine('*','/','+','-');
+Context()->texStrings;
+BEGIN_TEXT
+Effectuer les opérations suivantes sans la calculatrice, en respectant les priorités des opérations.
+$PAR
+\($a\times $b - $c \times $d =\) \{ans_rule(10)\} $BR
+\($a\times ($b - $c) \times $d =\) \{ans_rule(10)\} $BR
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+#
+#  Answers
+#
+#
+
+ANS($rep1->with(tolerance=>.0001)->cmp);
+ANS($rep2->with(tolerance=>.0001)->cmp);
+# relative tolerance --3.1412 is incorrect but 3.1413 is correct
+# default tolerance is .01 or one percent.
+
+
+ENDDOCUMENT();        

@@ -1,0 +1,86 @@
+##DESCRIPTION
+##Les opérations sur les fractions
+##Fait par Julie Tremblay, juin 2022
+##ENDDESCRIPTION
+
+## DBsubject(Nombres)
+## DBchapter(Arithmétique)
+## KEYWORDS('fraction', 'fraction irréductible', 'addition', 'opérations arithmétiques')
+
+## Author('Julie Tremblay')
+## Institution('Cégep de Sherbrooke')
+## Level(2)
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "PGchoicemacros.pl",
+   "contextFraction.pl",
+   #"source.pl",        # allows code to be displayed on certain sites.
+   "PGcourse.pl",      # Customization file for the course
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Fraction");
+
+do {
+$a = random(3,7);
+} until($a % 3 != 0);
+$den1 = 3*$a;
+
+do{
+    $b = random(4,$den1-1);
+} until($b != $a);
+$den2 = $a*$a;
+
+do{
+    $c = random($den2+1,2*$den2);
+} until($c % $a != 0 && $c!=$b);
+
+$num1 = $b;
+$num2 = $c;
+
+$operation = Compute("($num1/$den1) + ($num2/$den2)")->reduce;
+
+Context("LimitedFraction");
+
+##############################################################
+#
+#  Text
+#
+#
+
+Context()->texStrings;
+BEGIN_TEXT
+Effectuer l'opération suivante sans la calculatrice et simplifier le résultat.
+\[ \frac{$num1}{$den1} + \frac{$num2}{$den2} \]
+$PAR
+Réponse: \{ans_rule(10)\}
+
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+#
+#  Answers
+#
+#
+
+ANS($operation->cmp(
+    studentsMustReduceFractions=>1,
+    showFractionReductionWarnings=>1));
+
+
+ENDDOCUMENT();        

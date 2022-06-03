@@ -1,0 +1,81 @@
+##DESCRIPTION
+##Les opérations sur les fractions
+##Fait par Julie Tremblay, juin 2022
+##ENDDESCRIPTION
+
+## DBsubject(Nombres)
+## DBchapter(Arithmétique)
+## KEYWORDS('fraction', 'fraction irréductible', 'soustraction', 'opérations arithmétiques')
+
+## Author('Julie Tremblay')
+## Institution('Cégep de Sherbrooke')
+## Level(2)
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "PGchoicemacros.pl",
+   "contextFraction.pl",
+   #"source.pl",        # allows code to be displayed on certain sites.
+   "PGcourse.pl",      # Customization file for the course
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Fraction");
+
+$a = random(6,12);
+$b = int($a/2) + 1;
+$c = random(2,$a-1);
+
+$den2 = $a*$c;
+
+do{
+    $d = random(4,$den2-1);
+} until($d % $a != 0 && $d % $c);
+
+$num2 = $d;
+
+$operation = Compute("($b/$a) - ($num2/$den2)")->reduce;
+
+Context("LimitedFraction");
+
+##############################################################
+#
+#  Text
+#
+#
+
+Context()->texStrings;
+BEGIN_TEXT
+Effectuer l'opération suivante sans la calculatrice et simplifier le résultat.
+\[ \frac{$b}{$a} - \frac{$num2}{$den2} \]
+$PAR
+Réponse: \{ans_rule(10)\}
+
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+#
+#  Answers
+#
+#
+
+ANS($operation->cmp(
+    studentsMustReduceFractions=>1,
+    showFractionReductionWarnings=>1));
+
+
+ENDDOCUMENT();        
