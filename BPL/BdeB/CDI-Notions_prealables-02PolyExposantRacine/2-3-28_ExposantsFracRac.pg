@@ -28,8 +28,9 @@ DOCUMENT();        # This should be the first executable line in the problem.
 loadMacros(
 "PGstandard.pl",
 "MathObjects.pl",
-"PGbasicmacros.pl",
 "contextFraction.pl",
+"PGbasicmacros.pl",
+"unionTables.pl",
 "PGcourse.pl",
 );
 
@@ -37,36 +38,40 @@ TEXT(beginproblem());
 $showPartialCorrectAnswers = 1;
 
 Context("Fraction-NoDecimals")->operators->undefine("+","-","*");
+Context()->variables->add(y=>["Real", , limits=>[1,10]]);
 
+
+
+
+do{
 $a = random(2,6,1);
-$b = random(2,6,1);
-$c = random(2,9,1);
-
-while(gcf($b,$c)!=1){$c = random(2,9,1);}
-
+$c = random(3,9,2);
 $d = random(2,5,1);
+} until($a!=$d && $d % $c != 0);
 
-$num1 = $a*$b;
-$num2 = ($d-1)*$b;
+$ac = $a*$c;
 
-$ans1 = Compute("$num1/$c")->reduce;
-$ans2 = Compute("$num2/$c")->reduce;
 
-$ny1 = $d-1;
+
+$ans1 = Real("$a")->reduce;
+$ans2 = Compute("$d/$c")->reduce;
+
 
 Context()->texStrings;
 BEGIN_TEXT
+Simplifier l'expression suivante en utilisant les propriétés des radicaux.
+$BCENTER 
+$PAR
+\{
+ColumnTable(
+  "\( \displaystyle \sqrt[$c]{\frac{x^{$ac}}{y^{$d}}} = \)",ans_rule(5).$BR.$HR.ans_rule(5),
+  indent => 0, separation => 0, valign => "MIDDLE"
+  );
+\}
+$ECENTER
 
-L'expression
-\[\left(\frac{x^{$a} y}{y^{$d}}\right)^{$b/$c}  \text{, où } y \neq 0,\] 
 $BR
-se simplifie sous la forme \( \dfrac{x^n}{ y^m}\), où $BR
-$BR 
-\(n\), l'exposant de la variable \(x\), est : \{ans_rule(5) \} 
-$BR 
-et \(m\), l'exposant de la variable \(y\), est : \{ans_rule(5) \}
-$BR
-$BBOLD NOTE : Les réponses sont des nombres entiers ou des factions (a/b). Elles ne peuvent pas contenir d'opération d'addition (+), de soustraction (–) ou de multiplication (*).
+$BBOLD NOTE : Les exposants des variables sont des nombres entiers ou des factions (a/b). Elles ne peuvent pas contenir d'opération d'addition (+), de soustraction (–) ou de multiplication (*).
 $EBOLD
 
 
@@ -74,32 +79,38 @@ END_TEXT
 Context()->normalStrings;
 
 
+ANS(Compute("x^($a)")->cmp);
+ANS(Compute("y^($d/$c)")->cmp);
 
-ANS($ans1->cmp);
-ANS($ans2->cmp);
+$div = gcd($d,$c);
 
-
-
+if( $div==$c) { 
+$e = $d/$c;
+} else {
+$num = $d/$div;
+$den = $c/$div;
+$e = "$num/$den";
+}
 
 Context()->texStrings;
 BEGIN_SOLUTION
 
-L'expression \(\left(\dfrac{x^{$a} y}{y^{$d}}\right)^{$b/$c}\) se simplifie en utilisant les propriétés des exposants suivantes :
+L'expression \(\displaystyle \sqrt[$c]{\frac{x^{$ac}}{y^{$d}}}\) se simplifie en utilisant les propriétés des radicaux suivantes :
 $BR $BR
-\[   \begin{array}{lrl} 1.& \dfrac{a^n}{a^m} &= \dfrac{1}{a^{m-n}} \text{ où } m > n \\[0.8em] 
-2.& \left( a^n \right)^m & = a^{nm} \\
-  3.&  \left(\dfrac{a}{b}\right)^n &= \dfrac{a^n}{b^n}  \end{array}
+\[\begin{array}{lrl} 1.& \sqrt[n]{b^m} &= b^{m/n} \\[0.8em] 
+  2.& \displaystyle \sqrt[n]{\frac{a}{b}} &= \displaystyle \frac{\sqrt[n]{a}}{\sqrt[n]{b}} \text{ si }b\ne 0  \end{array}
 \]
 $BR
 Ainsi, on simplifie cette expression de la façon suivante :
 $BR
 $BR
-\[ \begin{array}{rlr}  \left(\dfrac{x^{$a} y}{y^{$d}}\right)^{$b/$c} &=  \left(\dfrac{x^{$a}}{y^{$d-1}}\right)^{$b/$c}\\[0.8em]
-&= \dfrac{x^{$a \cdot \frac{$b}{$c}}}{y^{$ny1 \cdot \frac{$b}{$c} }}  \\[0.8em] 
-&=  \dfrac{x^{$ans1}}{y^{$ans2 }}  \end{array}\]
+\[ \begin{align}
+\sqrt[$c]{\frac{x^{$ac}}{y^{$d}}} &= \frac{\sqrt[$c]{x^{$ac}}}{\sqrt[$c]{y^{$d}}} \\
+&= \frac{x^{$ac/$c}}{y^{$d/$c}} \\
+&= \frac{x^$a}{y^{$e}}
+\end{align}\]
 $BR
-$BR
-Par conséquent, \(n=$ans1\) et \(m=$ans2\).
+
 END_SOLUTION
 Context()->normalStrings;
 
