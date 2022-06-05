@@ -22,9 +22,6 @@ DOCUMENT();        # This should be the first executable line in the problem.
 loadMacros(
 "PGstandard.pl",
 "MathObjects.pl",
-"PGbasicmacros.pl",
-"PGchoicemacros.pl",
-"PGanswermacros.pl",
 "contextLimitedNumeric.pl",
 "PGauxiliaryFunctions.pl",
 "PGcourse.pl",
@@ -33,21 +30,26 @@ loadMacros(
 TEXT(beginproblem());
 
 Context("Numeric");
+Context()->noreduce('x^(-a)');
 
 $a = non_zero_random(-9,9,1);
-$b = random(2,7,1);
-$c = random(-5,5,1);
 
+do{
+    $b = random(2,7,1);
+    $c = non_zero_random(-5,5,1);
+} until($b!=$c);
 
 
 $ans1 = 2**$b;
 $ans2 = $a+$b-$c;
 
+$expression = Formula("(x^{$a}*(2x)^{$b})/(x^{$c})")->reduce;
+
 
 Context()->texStrings;
 BEGIN_TEXT
 L'expression 
-\[ \dfrac{ x^{$a} (2x)^{$b}}{x^{$c}} \text{, où } x \neq 0,\] $BR
+\[ $expression \text{, où } x \neq 0,\] $BR
 se simplifie sous la forme  \(c x^n\), où $BR $BR
 le coefficient \(c\) est \{ ans_rule(10) \}  
 et l'exposant \(n\) est \{ ans_rule(10) \}.
@@ -64,10 +66,10 @@ $ab = $a+$b;
 Context()->texStrings;
 BEGIN_SOLUTION
 
-L'expression \(\dfrac{ x^{$a} (2x)^{$b}}{x^{$c}}\) se simplifie de la façon suivante :
+L'expression \(\displaystyle $expression\) se simplifie de la façon suivante :
 $BR
 $BR
-\[ \begin{array}{rll} \dfrac{ x^{$a} (2x)^{$b}}{x^{$c}} &=  \dfrac{ x^{$a} 2^{$b} x^{$b}}{x^{$c}} &;\text{car } (ab)^n = a^nb^n \\[0.8em]
+\[ \begin{array}{rll} \displaystyle $expression &=  \dfrac{ x^{$a} 2^{$b} x^{$b}}{x^{$c}} &;\text{car } (ab)^n = a^nb^n \\[0.8em]
 &= \dfrac{2^{$b} x^{$a+$b}}{x^{$c}} &;\text{car } a^na^m = a^{n+m}\\[0.8em] 
 &= $ans1 x^{$ab-$c}&;\text{car }\frac{a^n}{a^m}=a^{n-m} \\[0.8em]
 &=  $ans1 x^{$ans2} &\end{array}\]
