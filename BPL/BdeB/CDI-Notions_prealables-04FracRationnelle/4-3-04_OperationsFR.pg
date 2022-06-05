@@ -7,7 +7,6 @@
 ## DBchapter(Opérations algébriques et factorisation)
 ## KEYWORDS('domaine', 'factorisation', 'fraction rationnelle', 'multiplication', 'restriction', 'simplification')
 ## Author(Julie Tremblay)
-## Institution(Collège de Bois-de-Boulogne)
 
 ## Level(2)
 ## Language(fr)
@@ -18,7 +17,7 @@ loadMacros(
   "PGstandard.pl",
   "PGchoicemacros.pl",
   "MathObjects.pl",
-    "parserMultiAnswer.pl",
+  "unionTables.pl",
   "PGcourse.pl",
 );
 
@@ -26,12 +25,12 @@ TEXT(beginproblem());
 
 ######################################
 #  Setup
-#  Form: (x-a)(x+a)/(x+a)(x+b) * (x+b)/x, -a neq b
+COMMENT("Form: (x-a)(x+a)/(x+a)(x+b) * (x+b)/x, -a neq b");
 
 Context("Numeric");
 
 $a = list_random(-5,-4,-3,-2,2,3,4,5);
-do {$b = non_zero_random(-5,5,1);} while ($a==-1*$b);
+do {$b = non_zero_random(-7,7,1);} while ($a==-1*$b);
 
 @polynomials = (Formula("(x^2 - $a*$a)/(x^2 + ($a+$b)x + $a*$b)")->reduce->TeX, Formula("(x + $b)/x")->reduce->TeX);
 @slice = NchooseK(2,2);
@@ -41,48 +40,26 @@ do {$b = non_zero_random(-5,5,1);} while ($a==-1*$b);
 $ans1 = Compute("x-$a");
 $ans2 = Compute("x");
 
-$mp = MultiAnswer($ans1,$ans2)->with(
-         singleResult => 0,
-         checker => sub {
-            my ($correct,$student,$self) = @_;  # get the parameters
-            my ( $p1, $p2 ) = @{$correct};      # get the correct num, denom
-            my ( $p1stu, $p2stu ) = @{$student};# get the student's num, denom
-          
-            $numeratorValid   = ( $p1==$p1stu || Compute("-1")*$p1==$p1stu );
-            $denominatorValid = ( $p2==$p2stu || Compute("-1")*$p2==$p2stu );
-            $quotientValid    = ( $p1/$p2 == Compute($p1stu)/Compute($p2stu) );
-
-	
-			if ($quotientValid) {
-				return[$numeratorValid,$denominatorValid];
-			} elsif ($numeratorValid && $denominatorValid ) {
-				return[0,$denominatorValid];
-			} elsif  ($numeratorValid || $denominatorValid ) {
-			   return[$numeratorValid,$denominatorValid];
-			} else {
-                           return[0,0];
-                        }
-		}
-        );
-
-
-
-
 ######################################
 #  Main text
 
 BEGIN_TEXT
-Effectuer la multiplication suivante et simplifier la réponse en donnant les restrictions sur le domaine.$BR
+Effectuer la multiplication suivante et simplifier la réponse en donnant les restrictions sur le domaine. Simplifier la réponse sous forme de fraction rationnelle irréductible, c'est-à-dire n'ayant que des exposants positifs et dont les numérateurs et dénominateurs n'ont aucun facteur commun.BR
 $BR
 \[$f[0] \cdot $f[1]\]
-$PAR
-Exprimer la réponse en fraction rationnelle simplifiée \(\dfrac{A}{B}\). $PAR 
-$BR
-Réponse : \(A =\) \{$mp->ans_rule(20)\} et \(B =\) \{$mp->ans_rule(20)\} 
 $PAR
 Restriction(s) : \(x \neq\) \{ ans_rule(10) \}
 $BR $BR
 ${BITALIC}${BBOLD}Note${EBOLD} : S'il y a plusieurs restrictions de \(x\), les séparer par une virgule. (Exemple : \(x \neq 1, –4,2\))$EITALIC
+$BCENTER
+\{ ColumnTable(
+  "\( \displaystyle $f[0] \cdot $f[1] = \)",
+  ans_rule(20) .$BR.$HR. ans_rule(20) ,
+  indent => 0, separation => 0, valign => "MIDDLE"
+  );
+\}
+$ECENTER
+
 END_TEXT
 
 
@@ -90,8 +67,6 @@ END_TEXT
 #  Answer
 
 $showPartialCorrectAnswers = 1;
-ANS( $mp->cmp() );
-
 
 if($a==$b){
 $rest = List("0,-$a");
@@ -99,6 +74,9 @@ $rest = List("0,-$a");
 $rest = List("0,-$a,-$b");
 }
 ANS($rest->cmp);
+
+ANS( $ans1->cmp );
+ANS( $ans2->cmp );
 
 
 
@@ -117,6 +95,4 @@ END_SOLUTION
 
 ######################################
 
-
-COMMENT('MathObject version');
 ENDDOCUMENT();

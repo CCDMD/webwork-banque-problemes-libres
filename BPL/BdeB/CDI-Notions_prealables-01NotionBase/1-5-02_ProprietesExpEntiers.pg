@@ -1,0 +1,122 @@
+##DESCRIPTION
+##  Propriétés des exposants entiers
+##ENDDESCRIPTION
+
+
+## DBsubject(Nombres)
+## DBchapter(Exposants et radicaux)
+## KEYWORDS(exposant, exposant entier, priorités des opérations, propriétés des exposants, puissance, simplification)
+
+## Date('5/6/2022')
+## Author('Julie Tremblay')
+## Institution('Cégep de Sherbrooke')
+
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   #"source.pl",        # allows code to be displayed on certain sites.
+   "PGcourse.pl",      # Customization file for the course
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Numeric");
+
+$base = random(2,4);
+do {
+$n1 = random(4,12);
+$n2 = random(2,9);
+$n3 = random(2,9);
+} until($n1!=$n2 && $n1!=$n3 && $n2!=$n3);
+
+$exposant = -$n1+4+4*$n2-$n3;
+
+if($exposant>=0) {
+    $rep = Compute("$base^($exposant)")->reduce;
+} else {
+    $exposant = -$exposant;
+    $rep = Compute("1/($base)^($exposant)");
+}
+
+
+Context()->operators->undefine('-','*');
+##############################################################
+#
+#  Text
+#
+#
+
+Context()->texStrings;
+BEGIN_TEXT
+Utiliser les propriétés des exposants pour évaluer l'expression suivante. La réponse doit être réduite à une seule base et comporter que des exposants positifs. Par exemple \(2^4\) ou \(\frac{1}{2^4}\) est acceptée.
+$PAR
+\( \displaystyle \frac{$base^{-$n1}\times \left($base \times $base^{$n2}\right)^4}{$base^$n3} =\) \{ans_rule()\}
+
+
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+#
+#  Answers
+#
+#
+
+ANS($rep->with(tolerance=>.0001)->cmp);
+
+# relative tolerance --3.1412 is incorrect but 3.1413 is correct
+# default tolerance is .01 or one percent.
+
+$n2p1 = $n2 + 1;
+$n2p1fois4 = $n2p1 * 4;
+$exp1 = $n2p1fois4 - $n1;
+$exp2 = -$n1+4+4*$n2-$n3;
+
+Context()->texStrings;
+BEGIN_SOLUTION
+\{ if ($exp1 > $n3) { 
+"\[\begin{align}
+\frac{$base^{-$n1}\times \left($base \times $base^{$n2}\right)^4}{$base^$n3} &= \frac{$base^{-$n1}\times \left($base^{$n2p1}\right)^4}{$base^$n3} &&;\text{ opération entre parenthèses }b^m\;b^n = b^{m+n}\\
+&= \frac{$base^{-$n1}\times $base^{$n2p1fois4}}{$base^$n3} &&;\; (b^m)^n=b^{mn}\\
+&= \frac{$base^{$exp1}}{$base^$n3} &&;\; b^m\;b^n = b^{m+n} \\
+&=  $base^{$exposant} &&;\; \frac{b^m}{b^n} = b^{m-n} 
+\end{align}
+\]" 
+} elsif( $exp1 == $n3) {
+"\[\begin{align}
+\frac{$base^{-$n1}\times \left($base \times $base^{$n2}\right)^4}{$base^$n3} &= \frac{$base^{-$n1}\times \left($base^{$n2p1}\right)^4}{$base^$n3} &&;\text{ opération entre parenthèses }b^m\;b^n = b^{m+n}\\
+&= \frac{$base^{-$n1}\times $base^{$n2p1fois4}}{$base^$n3} &&;\; (b^m)^n=b^{mn}\\
+&= \frac{$base^{$exp1}}{$base^$n3} &&;\; b^m\;b^n = b^{m+n} \\
+&=  $base^{$exposant} &&;\; \frac{b^m}{b^n} = b^{m-n} \\
+&=  $rep
+\end{align}
+\]"
+} else {
+"\[\begin{align}
+\frac{$base^{-$n1}\times \left($base \times $base^{$n2}\right)^4}{$base^$n3} &= \frac{$base^{-$n1}\times \left($base^{$n2p1}\right)^4}{$base^$n3} &&;\text{ opération entre parenthèses }b^m\;b^n = b^{m+n}\\
+&= \frac{$base^{-$n1}\times $base^{$n2p1fois4}}{$base^$n3} &&;\; (b^m)^n=b^{mn}\\
+&= \frac{$base^{$exp1}}{$base^$n3} &&;\; b^m\;b^n = b^{m+n} \\
+&=  $base^{$exp2} &&;\; \frac{b^m}{b^n} = b^{m-n} \\
+&= \frac{1}{$base^{$exposant}} &&;\; b^{-n} = \frac{1}{b^n} 
+\end{align}
+\]" 
+}
+\}
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();        

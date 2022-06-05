@@ -1,0 +1,85 @@
+##DESCRIPTION
+##  Algebra: exponents and radicals 
+##ENDDESCRIPTION
+
+## DBsubject(Fonctions et manipulations algébriques)
+## DBchapter(Opérations algébriques et factorisation)
+## KEYWORDS('addition', 'propriétés des radicaux', 'fraction algébrique', 'racine carrée','simplification')
+## Traduction('Julie Tremblay')
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "unionTables.pl",
+   "PGcourse.pl",      # Customization file for the course
+);
+
+TEXT(beginproblem());
+
+COMMENT("Forme:b/sqrt(x+a) + sqrt(x+a). Obtient 0 si une des réponses est incorrecte.");
+
+########################################################################
+
+$showPartialCorrectAnswers = 1;
+
+########################################################################
+
+Context("Numeric");
+
+
+$a = non_zero_random(-8,8,1);
+$b = random(1,15,1);
+
+$aplusb = $a + $b;
+
+
+$num = Compute("x + $aplusb")->reduce;
+$num->{limits} = [-15,-$a-1];
+$den = Compute("sqrt(x+$a)")->reduce;
+$den->{limits} = [-$a,15];
+
+$f = Formula("$b/sqrt(x+$a)+sqrt(x+$a)")->reduce;
+########################################################################
+
+#Context("LimitedPolynomial")->flags->set(singlePowers=>1);
+
+########################################################################
+
+Context()->texStrings;
+BEGIN_TEXT
+Effectuer l'opération suivante et simplifier la réponse sous forme de fraction.
+$BCENTER
+\{ ColumnTable(
+  "\( \displaystyle $f= \)",
+  ans_rule(20) .$BR.$HR. ans_rule(20) ,
+  indent => 0, separation => 0, valign => "MIDDLE"
+  );
+\}
+$ECENTER
+END_TEXT
+Context()->normalStrings;
+
+########################################################################
+
+$showPartialCorrectAnswers = 0;
+
+ANS( $num->cmp );
+ANS( $den->cmp );
+
+Context()->texStrings;
+BEGIN_SOLUTION
+\[   \begin{align} \displaystyle  $f &= \dfrac{$b}{$den} +  \frac{$den}{1} \cdot\dfrac{$den}{$den}  \\
+ &= \dfrac{$b + ($den)^2}{$den}  \\
+ &= \dfrac{$b + x + $a}{$den} \\
+ &= \dfrac{$num}{$den} \end{align}
+\]
+
+$BR
+END_SOLUTION
+Context()->normalStrings;
+
+ENDDOCUMENT();

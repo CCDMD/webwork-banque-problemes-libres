@@ -1,0 +1,81 @@
+##DESCRIPTION
+##  Propriétés des radicaux
+##ENDDESCRIPTION
+
+## DBsubject(Nombres)
+## DBchapter(Exposants et radicaux)
+## KEYWORDS(propriétés des radicaux, racine impaire, racine paire, radical, simplification)
+
+## Date('5/6/2022')
+## Author('Julie Tremblay')
+## Institution('Cégep de Sherbrooke')
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   #"source.pl",        # allows code to be displayed on certain sites.
+   "PGcourse.pl",      # Customization file for the course
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Numeric");
+
+# racine quatrième
+$a = random(2,4);
+$a4 = $a**4;
+# racine cubique d'un négatif
+$b = random(2,5);
+$b3 = $b**3;
+# racine carrée
+$n = random(3,5);
+$n2 = 2*$n;
+$c = random(3,4);
+$cn = $c**$n;
+##############################################################
+#
+#  Text
+#
+#
+
+Context()->operators->undefine('^','**');
+Context()->functions->undefine("sqrt");
+
+Context()->texStrings;
+BEGIN_TEXT
+Évaluer les expressions suivantes. Les valeurs obtenues sont toutes des entiers.
+$PAR
+a) \( \sqrt[4]{$a4} = \) \{ans_rule(10)\} $BR
+b) \( \sqrt[3]{-$b3} = \) \{ans_rule(10)\} $BR
+c) \( \sqrt{$c^{$n2}} = \) \{ans_rule(10)\} $BR
+
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+#
+#  Answers
+#
+#
+
+ANS(Real($a)->cmp);
+ANS(Real(-$b)->cmp);
+ANS(Real($cn)->cmp);
+# relative tolerance --3.1412 is incorrect but 3.1413 is correct
+# default tolerance is .01 or one percent.
+
+
+ENDDOCUMENT();        

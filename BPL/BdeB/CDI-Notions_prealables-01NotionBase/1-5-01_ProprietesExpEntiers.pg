@@ -1,0 +1,98 @@
+##DESCRIPTION
+##  Propriétés des exposants entiers
+##ENDDESCRIPTION
+
+
+## DBsubject(Nombres)
+## DBchapter(Exposants et radicaux)
+## KEYWORDS(exposant, exposant entier, propriétés des exposants, simplification)
+
+## Date('5/5/2022')
+## Author('Julie Tremblay')
+## Institution('Cégep de Sherbrooke')
+
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   #"source.pl",        # allows code to be displayed on certain sites.
+   "PGcourse.pl",      # Customization file for the course
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 1;
+
+##############################################################
+#
+#  Setup
+#
+#
+Context("Numeric");
+
+$a1 = random(2,4);
+$num1 = $a1**3;
+$nb1 = Compute("$num1/125");
+
+$a2 = random(2,5);
+$e2 = random(3,4);
+if($e2==4){ $a2 = $a2-1;}
+$den2 = (-$a2)**$e2;
+$nb2 = Compute("1/$den2");
+
+$a3 = random(3,9);
+$den3 = $a3**2;
+$nb3 = Compute("-$den3");
+
+$a4 = random(3,9);
+do{
+    $b4 = random(2,$a4-1);
+} until(gcd($a4,$b4) == 1);
+$num4 = $b4**2;
+$den4 = $a4**2;
+$nb4 = Compute("$num4/$den4");
+
+
+Context()->operators->undefine('^','**');
+##############################################################
+#
+#  Text
+#
+#
+
+Context()->texStrings;
+BEGIN_TEXT
+Utiliser les propriétés des exposants pour évaluer ou simplifier les expressions suivantes. Faire les calculs sans la calculatrice et écrire vos réponses sans utiliser la touche exposant.
+$PAR
+a) \( \left(\frac{$a1}{5}\right)^3=\) \{ans_rule()\}
+$BR
+b) \( \left(-$a2\right)^{-$e2}=\) \{ans_rule()\}
+$BR
+c) \( -$a3^{2}=\) \{ans_rule()\}
+$BR
+d) \( \left(\frac{$a4}{$b4}\right)^{-2}=\) \{ans_rule()\}
+
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+#
+#  Answers
+#
+#
+
+ANS($nb1->with(tolerance=>.0001)->cmp);
+ANS($nb2->with(tolerance=>.0001)->cmp);
+ANS($nb3->with(tolerance=>.0001)->cmp);
+ANS($nb4->with(tolerance=>.0001)->cmp);
+# relative tolerance --3.1412 is incorrect but 3.1413 is correct
+# default tolerance is .01 or one percent.
+
+
+ENDDOCUMENT();        

@@ -1,0 +1,77 @@
+##DESCRIPTION
+##  Définition : Exposant fractionnaire et radical
+##ENDDESCRIPTION
+
+## DBsubject(Nombres)
+## DBchapter(Exposants et radicaux)
+## KEYWORDS(exposant fractionnaire, notation, radical)
+
+## Date('5/6/2022')
+## Author('Julie Tremblay')
+## Institution('Cégep de Sherbrooke')
+
+########################################################################
+
+DOCUMENT();      
+
+loadMacros(
+   "PGstandard.pl",     # Standard macros for PG language
+   "MathObjects.pl",
+   "PGchoicemacros.pl",
+   #"source.pl",        # allows code to be displayed on certain sites.
+   "PGcourse.pl",      # Customization file for the course
+);
+
+# Print problem number and point value (weight) for the problem
+TEXT(beginproblem());
+
+# Show which answers are correct and which ones are incorrect
+$showPartialCorrectAnswers = 0;
+
+##############################################################
+#
+#  Setup
+#
+#
+# racine fractionnaire a/b
+$a = random(2,4);
+$b = $a + 1;
+
+$mc = new_multiple_choice();
+$mc->qa(
+"Sélectionner la forme équivalente à l'expression \(\displaystyle \sqrt[$b]{x^$a}\).", 
+"\(x^{$a/$b}\)"
+);
+$mc->extra(
+"\(x^{$b/$a}\)",
+"\(\dfrac{x^$a}{$b}\)",
+"\(\dfrac{$b}{$a}x\)",
+);
+
+
+##############################################################
+#
+#  Text
+#
+#
+
+Context()->texStrings;
+BEGIN_TEXT
+\{ $mc->print_q() \}
+$BR
+\{ $mc->print_a() \}
+END_TEXT
+Context()->normalStrings;
+
+##############################################################
+#
+#  Answers
+#
+#
+
+ANS( radio_cmp( $mc->correct_ans() ) );
+# relative tolerance --3.1412 is incorrect but 3.1413 is correct
+# default tolerance is .01 or one percent.
+
+
+ENDDOCUMENT();        
