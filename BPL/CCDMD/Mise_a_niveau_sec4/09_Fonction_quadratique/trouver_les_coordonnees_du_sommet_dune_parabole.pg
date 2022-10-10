@@ -1,5 +1,5 @@
 #DESCRIPTION
-#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques
 #     section Fonctions quadratiques
 #     type de question - Trouver les coordonnées du sommet d'une parabole
 ##ENDDESCRIPTION
@@ -25,7 +25,7 @@ TEXT(beginproblem());
 # définir les valeurs des coefficients et constantes de l'équation
 $a = random(2,5);
 
-do 
+do
 {
   $b = random(2,5);
   $gcdb=gcd($b,(2*$a));
@@ -36,23 +36,10 @@ $c = random(2,5);
 
 
 # déterminer le signe de b dans l'équation
-$choixb=non_zero_random(-1,1);
-if ($choixb==1) 
-{
-  $signeb="+";
-  $signexaff="";
-}
-else 
-{
-  $signeb="-";
-  $signexaff="-";
-}
-
-$bsigne= $b*$choixb;
+$bsigne= $b*non_zero_random(-1,1);
 
 # déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
 Context()->variables->are(x=>"Real");
-$lettre="x";
 
 
 # déterminer le sommet
@@ -71,38 +58,29 @@ else
 
 
 #donner les autres valeurs requises pour la solution
-$snum2=(4*$a*$c) - ($b*$b);
-$sdenum2= 4*$a;
+$xsnum2= $xsommetnumaff**2;
+$sdenum2 = $xsommetdenumaff**2;
+$bxs = $bsigne*$xsommetnumaff;
+$snum2 = $a*$xsnum2 + $bxs*$xsommetdenumaff + $c*$sdenum2;
 $gcds = gcd($snum2,$sdenum2);
 $num2= $snum2/$gcds;
 $denum2= $sdenum2/$gcds;
-$quatreac= 4*$a*$c;
-$bcarre= $b*$b;
-$quatrea=4*$a;
-$quatreacmoinsbcarre=$quatreac - $bcarre;
 
 #déterminer les deux coordonnées du sommet
-$repx = Formula("$xsommetnumaff/$xsommetdenumaff");
-$repy = Formula("$num2/$denum2");
+$repx = Compute("$xsommetnumaff/$xsommetdenumaff");
+$repy = Compute("$num2/$denum2");
 
-
+Context()->texStrings;
 BEGIN_TEXT
-<table cellpadding="10px" width="850px">
-  <tr><td>
+Donner les coordonnées du sommet de la fonction quadratique \( f(x) = $a x^2 + $bsigne x + $c\).
+$PAR
 
-<h1>Question : </h1>
-<br/>Donner les coordonnées du sommet de la fonction quadratique  &nbsp; &nbsp; <b> f($lettre) = $a$lettre<sup>2</sup> $signeb $b$lettre + $c</b>
-<br/><br/>
+Les coordonnées du sommet sont \((h,k)\), où
+$PAR
 
-Les coordonnées du sommet sont (x<sub>s</sub>, y<sub>s</sub>), où:<br/><br/>
-
-x<sub>s</sub> =  \{ans_rule(10)\}  &nbsp; &nbsp; et  y<sub>s</sub> =  \{ans_rule(10)\} 
-<br/><br/>
-Utiliser la barre oblique / pour séparer le numérateur du dénominateur d'un point qui n'est pas un entier. <br/>
-
-  </td></tr>
-</table>
+\(h =\)  \{ans_rule(10)\}   et \( k =\)  \{ans_rule(10)\}
 END_TEXT
+Context()->normalStrings;
 
 BEGIN_HINT
 <script>
@@ -145,34 +123,23 @@ ANS($repx->cmp);
 ANS($repy->cmp);
 
 
+Context()->texStrings;
+BEGIN_SOLUTION
+Les fonctions de degré deux de la forme: \(f(x) = a x^2 + bx + c\) sont représentées graphiquement par une parabole dont les coordonnées du sommet sont: \( S\left( \frac{-b}{2a} , f\left(\frac{-b}{2a}\right) \right) = (h, k)\).
+$PAR
+Trouvons ces coordonnées.$PAR
 
-SOLUTION(EV3(<<'END_SOLUTION'));
-<p><u>Solution</u></p>
-<br/>Donner les coordonnées du sommet de la fonction quadratique  &nbsp; &nbsp; <b> f($lettre) = $a$lettre<sup>2</sup> $signeb $b$lettre + $c</b>
-<br/><br/>
-
-Les coordonnées du sommet sont (x<sub>s</sub>, y<sub>s</sub>), où:<br/><br/>
-
-x<sub>s</sub> =  ______________   et   y<sub>s</sub> =  ______________
-<br/><br/>
-Utiliser la barre oblique / pour séparer le numérateur du dénominateur d'un point qui n'est pas un entier. <br/><br/>
-
-
-Les fonctions de degré deux de la forme: <i>f(x) = ax<sup>2</sup> + bx + c</i>  sont représentées graphiquement par une parabole dont les coordonnées du sommet sont: S( (-b/2a) , f(-b/2a) ) = (x<sub>s</sub>, y<sub>s</sub>), aussi représenté par  S( (-b/2a) ,  (4ac-b<sup>2</sup>)/(4a)  ).<br/><br/>
-
-Trouvons ces coordonnées.<br/<br/>
-
-Pour la fonction donnée<i> f($lettre) = $a$lettre<sup>2</sup> $signeb $b$lettre + $c</i> , nous avons que a = <strong>$a</strong>, b= <strong>$bsigne</strong> et c = <strong>$c</strong>. Par conséquent: <br/><br/>
-
-
-  &nbsp; &nbsp; \( x_{s} = \dfrac{-b}{2a} = \dfrac{-($bsigne)}{2($a)} = \dfrac{$xsommetnumaff}{$xsommetdenumaff} \)<br/><br/>
-  &nbsp; &nbsp;  \( y_{s} = - \dfrac{4ac - b^2}{4a} = \dfrac{4($a)($c) - {($bsigne)}^2}{4($a)} = \dfrac{$quatreac - $bcarre}{$quatrea} =  \dfrac{$quatreacmoinsbcarre}{$quatrea} = \dfrac{$num2}{$denum2} \)<br/><br/>
-
-Donc, les coordonnées du sommet de la parabole ayant pour équation <i>f(x) = f($lettre) = $a$lettre<sup>2</sup> $signeb $b$lettre + $c</i> sont:<br/><br/> 
-  &nbsp; &nbsp; x<sub>s</sub> = <strong>$xsommetnumaff / $xsommetdenumaff</strong><br/>
-  &nbsp; &nbsp; x<sub>s</sub> = <strong>$num2 / $denum2</strong><br/><br/>
-
-
+Pour la fonction donnée \(f(x) = $a x^2 + $bsigne x + $c\) , nous avons que \(a = $a\), \(b= $bsigne\) et \(c = $c\). Par conséquent:
+$PAR
+  \( h = \dfrac{-b}{2a} = \dfrac{-($bsigne)}{2($a)} = \dfrac{$xsommetnumaff}{$xsommetdenumaff} \) $PAR
+  \(\begin{align} k &= f\left(\frac{$xsommetnumaff}{$xsommetdenumaff}\right) \\
+  &= $a\left(\frac{$xsommetnumaff}{$xsommetdenumaff}\right)^2 + $bsigne\left(\frac{$xsommetnumaff}{$xsommetdenumaff}\right) + $c\\
+  &= $a \cdot \frac{$xsnum2}{$sdenum2} + \frac{$bxs}{$xsommetdenumaff} + $c \\
+  &= \dfrac{$num2}{$denum2}\end{align}\)
+ $PAR
+  Donc, les coordonnées du sommet de la parabole ayant pour équation \(f(x) = $a x^2 + $bsigne x + $c\) sont: $PAR
+  \(h = \frac{$xsommetnumaff}{$xsommetdenumaff}\)$BR
+  \(k = \frac{$num2}{$denum2}\)
 END_SOLUTION
 
 ENDDOCUMENT();

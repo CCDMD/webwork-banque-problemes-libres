@@ -1,5 +1,5 @@
 #DESCRIPTION
-#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques
 #     section Mise à niveau secondaire 5 - Fonctions quadratiques
 #     type de question - trouver la règle quadratique avec l'ordonnée à l'origine et deux points fournis
 ##ENDDESCRIPTION
@@ -22,106 +22,43 @@ loadMacros(
 
 TEXT(beginproblem());
 
-# déterminer la valeur des deux n de l'équation quadratique ainsi que la valeur 
+Context()->noreduce('(-x)-y','(-x)+y');
 # des coefficients a et b et de la constante c pour l'équation quadratique
-
-do {
-  $n1=non_zero_random(-8,8);
-  $n2=non_zero_random(-8,8);
-   $a = random(2,5);
-   $b = ($n1 + $n2)*$a;
-   $c=($n1*$n2)*$a;
-}  until  (($n1 != $n2) &($c > 0) && ($b != 0) ) ;
-
-
-#créer  les signes à insérer dans la question et dans la réponse
-if ($b<0) {$signe="-"; $s = -1;}
-else { $signe="+"; $s = 1;}
-
-# déclarer la lettre qui seront la variable non-définie (variable réelle)
-Context()->variables->are(x=>"Real");
-$lettre="x";
-
-
-# déterminer les autres valeurs requises dans la solution
-$babs = abs($b);
-$bdiva = $babs/$a;
-$cdiva= $c/$a;
-
-$zero1= $n1*(-1);
-$zero2=$n2*(-1);
+$a = random(-1,1,2)*random(2,3);
+$b = non_zero_random(-8,8);
+$c = non_zero_random(-15,15);
 
 # déterminer les deux points qui appartiennent à l'équation quadratique, à fournir dans la question
-do { $x1 = random(2,5);} until (($x1 != $zero1) & ($x1 != $zero2));
-$y1 = $a*$x1*$x1 + $s*$babs*$x1 + $c; 
-
-do {$x2 = non_zero_random(-5,5);} until ( ($x1 != $x2) & ($x2 != 1) & ($x2 != -1) );
-$y2 = $a*$x2*$x2 + $s*$babs*$x2 + $c; 
-
+$x1 = random(1,5);
+$y1 = Real("$a*($x1)^2 + $b*$x1 + $c");
+$x2 = random(-5,-1);
+$y2 = Real("$a*($x2)^2 + $b*$x2 + $c");
 
 # déterminer d'autres valeurs aussi requises dans la solution
 $x1carre= $x1*$x1;
 $x2carre=$x2*$x2;
-$x1abs= abs($x1);
-$x2abs= abs($x2);
-
-if ($x1<0) {$signex1 = "-"; $sx1 = -1;}
-  else {$signex1 = "+"; $sx1 = 1;}
-
-if ($x2<0) {$signex2 = "-"; $sx2 = -1;}
-  else {$signex2 = "+"; $sx2 = 1;}
-
 $y1c = $y1 - $c;
 $y2c = $y2 - $c;
 
-$x1zero1 = $x1-$zero1;
-$x1zero2= $x1-$zero2;
-$x1zero1zero2 = $x1zero1*$x1zero2;
-$n1abs= abs($n1);
-$n2abs=abs($n2);
-
-if ($n1<0) { $n1s= "-";}  else {$n1s="+";}
-if ($n2<0) { $n2s= "-";}  else {$n2s="+";}
-
-$y1cdivx1	=$y1c/$x1;
-$valequ2	= $x2*$y1cdivx1;
-
-if ($valequ2 < 0) {$signevalequ2 = "-"; $invsignevalequ2 = "+"; }  else {$signevalequ2 = "+"; $invsignevalequ2 = "-";}
-$valequ2abs =	 abs($valequ2);
-
-$x1x2 = -1*$x1*$x2;
-if ($x1x2<0) {$signex1x2="-";}  else {$signex1x2="+";}
-
-$x1x2abs	= abs($x1x2);
-$x2carrex1x2 = $x2carre+$x1x2;
-$y2cvalequ2 = $y2c-$valequ2;
+$ax1b = $a*$x1 + $b;
+$ax1bx2 = $ax1b*$x2;
+$x2x1 = $x2*$x1;
+$coefa = $x2carre - $x2x1;
+$const = $y2c - $ax1bx2;
 
 # créer la réponse
-$reponse=Formula("( $a$lettre^2 $signe $babs$lettre + $c)");        
+$reponse=Formula("( $a*x^2 + $b*x + $c)")->reduce;
 
-
-
+Context()->texStrings;
 BEGIN_TEXT
-<table cellpadding="10px" width="850px" >
-  <tr><td>
-
-<h1>Question:</h1><br/>
-Déterminer la règle sous forme générale de la fonction quadratique qui a les caractéristiques suivantes:<br/>    
-<ul>
-  <li>  l'ordonnée à l'origine est $c.</li>
-  <li> la fonction passe par les points ($x1, $y1) et ($x2, $y2).
-</ul><br/>
-
-\(f ($lettre) = \)  \{ans_rule(20)\} 
-
-<br/><br/>
-Note: Donner votre réponse sous la forme générale simplifiée. S'il y a des fractions, les donner sous une forme simplifiée et utiliser la barre oblique / pour en séparer le numérateur du dénominateur. Écrire les exposants sous la forme x^2 (pour indiquer x<sup>2</sup>).
-
-<br/><br/>
-  </td></tr>
-</table>
-<br/>
+Déterminer la règle de la fonction quadratique qui a les caractéristiques suivantes:
+$PAR
+- l'ordonnée à l'origine est \($c\) $BR
+- la fonction passe par les points \(($x1, $y1)\) et \(($x2, $y2)\)
+$PAR
+\(f(x) = \)   \{ans_rule(20)\}
 END_TEXT
+Context()->normalStrings;
 
 
 BEGIN_HINT
@@ -164,78 +101,63 @@ END_HINT
 
 ANS($reponse->cmp);
 
+Context()->texStrings;
 BEGIN_SOLUTION
-$PAR <u>Solution</u> $PAR
+Déterminons la règle de la fonction quadratique dont l'ordonnée à l'origine est \($c\) et qui passe par les points \(($x1,$y1)\) et \(($x2,$y2)\). Puisque nous avons l'ordonnée à l'origine, utilisons la forme générale:$PAR
 
-Déterminer la règle sous forme générale de la fonction quadratique qui a les caractéristiques suivantes:<br/>    
-<ul>
-  <li>  l'ordonnée à l'origine est: $c</li>
-  <li> la fonction passe par les points ($x1, $y1) et ($x2, $y2)
-</ul><br/>
+\( f(x) = ax^2+bx+c = ax^2 +bx + $c\) en remplaçant \( c \)par \($c\) (ordonnée à l'origine) $PAR
 
-<i> f ($lettre) = </i>  _____________________
-
-<br/><br/>
-Nota: Donner votre réponse sous la forme générale simplifiée. S'il y a des fractions, les donner sous une forme simplifiée et utiliser la barre oblique / pour en séparer le numérateur du dénominateur. Écrire les exposants sous la forme x^2 (pour indiquer x<sup>2</sup>).
-<br/><br/><br/>
-
-
-Déterminons la règle de la fonction quadratique dont l'ordonnée à l'origine est $c et qui passe par les points ($x1,$y1) et ($x2,$y2). Puisque nous avons l'ordonnée à l'origine, utilisons la forme générale:<br/><br/>
-
-<i> f($lettre) = a$lettre<sup>2</sup> + bx + c  =  a$lettre<sup>2</sup> + bx + $c</i> en remplaçant <i>c</i> par $c (ordonnée à l'origine)<br/><br/><br/>
-
-Il reste à déterminer les valeurs de a et de b. Puisque la parabole passe par le point ($x1,$y1), nous obtenons:<br/><br/>
-
-<i> f($lettre) =  a$lettre<sup>2</sup> + bx + $c</i><br/>
-<i> $y1 =  a($x1)<sup>2</sup> + b($x1) + $c</i>  en remplaçant $lettre et f($lettre) par les valeurs données pour le premier point, soit ($x1, $y1)<br/>
-<i>$y1 - $c =  a($x1carre) $signex1 $x1abs b<br/>
-D'où la première équation:  <strong> <i>$x1carre a $signex1 $x1abs b = $y1c </i></strong> 
-<br/><br/>
+Il reste à déterminer les valeurs de \(a\) et de \(b\). Puisque la parabole passe par le point \(($x1,$y1)\), nous obtenons: $BR
+\[\begin{align}
+f(x) &= ax^2+ bx + $c \\
+$y1 &= a($x1)^2+ b($x1) + $c \\
+$y1-$c &= a($x1carre) + $x1 b
+\end{align}\]
+D'où la première équation:  \( $x1carre a + $x1 b = $y1c\)
+$PAR
 
 
-De plus, la parabole passe par le point ($x2,$y2). Par conséquent, nous obtenons: <br/><br/>
-<i> f($lettre) =  a$lettre<sup>2</sup> + bx + $c</i><br/>
-<i> $y2 =  a($x2)<sup>2</sup> + b($x2) + $c</i>  en remplaçant $lettre et f($lettre) par les valeurs données pour le second point, soit ($x2, $y2)<br/>
-<i>$y2 - $c =  a($x2carre) $signex2 $x2abs b<br/>
-D'où la seconde équation:  <strong> <i>$x2carre a $signex2 $x2abs b = $y2c </i></strong> 
-<br/><br/>
+De plus, la parabole passe par le point \(($x2,$y2)\). Par conséquent, nous obtenons: $BR
+\[\begin{align}
+f(x) &= ax^2+ bx + $c \\
+$y2 &= a($x2)^2+ b($x2) + $c \\
+$y2-$c &= a($x2carre) + $x2 b
+\end{align}\]
 
-Nous obtenons le système d'équations suivant:<br/>
-<ul>
-  <li><i>$x1carre a $signex1 $x1abs b = $y1c </i> </li>
-  <li><i>$x2carre a $signex2 $x2abs b = $y2c </i> </li>
-</ul><br/>
+D'où la seconde équation:  \( $x2carre a + $x2 b = $y2c\)
+$PAR
 
+Nous obtenons le système d'équations suivant:
+\[\begin{cases}$x1carre a + $x1 b &= $y1c \\ $x2carre a + $x2 b &= $y2c \end{cases}\]
 
-Isolons <i>b</i> dans la première équation:<br/><br/>
+Isolons \(b\) dans la première équation:$BR
+\[\begin{align}
+$x1carre a + $x1 b &= $y1c\\
+$x1 b &= $y1c - $x1carre a \\
+b &= $ax1b - $x1 a
+\end{align}\]
 
-<i>$x1carre a $signex1 $x1abs b = $y1c </i><br/>
-<i>$x1 b = $y1c - $x1carre a </i><br/>
-<i>b = ( $y1c - $x1carre a ) / $x1 </i><br/>
-D'où:  b = $y1cdivx1 - $x1 a <br/><br/>
+Remplaçons maintenant cette valeur de \(b\) dans la seconde équation:$BR
+\[\begin{align}
+$x2carre a + $x2 b &= $y2c\\
+$x2carre a + $x2($ax1b - $x1 a)  &= $y2c \\
+$x2carre a + $ax1bx2 - $x2x1 a  &= $y2c \\
+$coefa a &= $y2c - $ax1bx2 \\
+$coefa a &= $const \\
+a &= \frac{$const}{$coefa}
+\end{align}\]
 
-Remplaçons maintenant cette valeur de <i>b</i> dans la seconde équation:<br/><br/>
-<i>$x2carre a $signex2 $x2abs b = $y2c </i> <br/>
-<i>$x2carre a $signex2 $x2abs ( $y1cdivx1 - $x1 a) = $y2c </i>  en remplaçant <i>b</i> par <i>b = $y1cdivx1 - $x1 a </i><br/>
-<i>$x2carre a $signevalequ2 $valequ2abs $signex1x2 $x1x2abs a = $y2c </i>  <br/>
-<i>$x2carre a  $signex1x2 $x1x2abs a = $y2c $invsignevalequ2 $valequ2abs </i>  <br/>
-<i>$x2carrex1x2 a  = $y2cvalequ2 </i>  <br/>
-D'où a = <strong>$a</strong><br/>
+D'où \(a = $a\). $PAR
+Déterminons maintenant la valeur de \(b\). $BR
+\[\begin{align}
+b &= $ax1b - $x1 a \\
+b &= $ax1b - $x1($a) \\
+b &= $b
+\end{align}\]
 
+Nous avons maintenant toutes les valeurs nécessaires pour présenter la réponse sous la forme générale :\(a = $a\), \(b= $b\) et \(c= $c\). $BR $BR
 
-<br/><br/><br/>
-Déterminons maintenant la valeur de <i>b</i>:<br/><br/>
-<i>b = $y1cdivx1 - $x1 a </i><br/>
-<i>b = $y1cdivx1 - $x1 ($a) </i> avec <i>a</i> = $a<br/><br/>
-<i> b = $b</i><br/><br/><br/>
- 
-Nous avons maintenant toutes les valeurs nécessaires pour présenter la réponse sous la forme générale :<br/>
-a = $a <br/>
-b= $b<br/>
-c= $c<br/><br/>
-
-Par conséquent, la règle de la fonction quadratique est :  <strong> <i>f($lettre) = $a$lettre<sup>2</sup> $signe $babs$lettre + $c</i></strong>
-
+Par conséquent, la règle de la fonction quadratique est \(f(x)=$reponse\).
 END_SOLUTION
 
 ENDDOCUMENT();

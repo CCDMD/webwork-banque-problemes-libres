@@ -1,5 +1,5 @@
 #DESCRIPTION
-#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques
 #     section Mise à niveau secondaire 5 - Fonctions quadratiques
 #     type de question - trouver la règle quadratique (sous forme canonique) avec le sommet et un point fournis
 ##ENDDESCRIPTION
@@ -22,8 +22,8 @@ loadMacros(
 
 TEXT(beginproblem());
 
-# déterminer la valeur des valeurs h et k de la forme canonique de l'équation quadratique 
-# ainsi que la valeur des coordonnées du point (x1, y1) passant par cette équation. 
+# déterminer la valeur des valeurs h et k de la forme canonique de l'équation quadratique
+# ainsi que la valeur des coordonnées du point (x1, y1) passant par cette équation.
 
 do {
   $h = random(2,9);
@@ -48,41 +48,26 @@ else { $anumabs= $anumabs;}
 if ($anumsimp>=0) {$asigneaffiche=""; $s = 1;}
 else { $asigneaffiche="-"; $s = -1;}
 
-# déclarer la lettre qui seront la variable non-définie (variable réelle)
-Context()->variables->are(x=>"Real");
-$lettre="x";
 
 # déterminer comment afficher la réponse, selon qu'il s'agisse d'une fraction ou non
-$afracgen= "$anumabs/$adenumsimp";
-if ($adenumsimp==1) {$afrac=$anumabsaff;}
-else {$afrac=$afracgen;}
+$afrac= Compute("$anumsimp/$adenumsimp");
+if ($afrac==1) {$afracaffiche= 1;}
+else {$afracaffiche= "\frac{$anumsimp}{$adenumsimp}";}
 
 
 # créer la réponse
-$reponse=Formula("( $asigneaffiche $afrac ($lettre - $h)^2 + $k )");        
+$reponse=Compute("( $afrac (x - $h)^2 + $k )")->reduce;
 
 
 
 BEGIN_TEXT
-<table cellpadding="10px" width="850px" >
-  <tr><td>
+Déterminer la règle de la fonction quadratique qui a les caractéristiques suivantes:
+$PAR
+- les coordonnées du sommet sont: \(($h, $k)\) $BR
+- la fonction passe par le point \(($x1, $y1)\)
+$PAR
+\(f(x) = \)   \{ans_rule(20)\}
 
-<h1>Question:</h1><br/>
-Déterminer la règle (sous la forme canonique) de la fonction quadratique qui a les caractéristiques suivantes:<br/>    
-<ul>
-  <li> les coordonnées du sommet sont: ($h, $k)</li>
-  <li> la fonction passe par le point ($x1, $y1)
-</ul><br/>
-
-\(f ($lettre) = \)   \{ans_rule(20)\} 
-
-<br/><br/>
-Note: Donner votre réponse sous la forme canonique. S'il y a des fractions, les donner sous une forme simplifiée et utiliser la barre oblique / pour en séparer le numérateur du dénominateur. Écrire les exposants sous la forme x^2 (pour indiquer x<sup>2</sup>).
-
-<br/><br/>
-  </td></tr>
-</table>
-<br/>
 END_TEXT
 
 
@@ -126,48 +111,29 @@ END_HINT
 
 ANS($reponse->cmp);
 
+Context()->texStrings;
 BEGIN_SOLUTION
-$PAR <u>Solution</u> $PAR
+Nous cherchons la règle d'une fonction quadratique qui a les caractéristiques suivantes:<br/>
+$PAR
+- les coordonnées du sommet sont: \(($h, $k)\) $BR
+- la fonction passe par le point \(($x1, $y1)\)
+$PAR
 
-Déterminer la règle (sous la forme canonique) de la fonction quadratique qui a les caractéristiques suivantes:<br/>    
-<ul>
-  <li> les coordonnées du sommet sont: ($h, $k)</li>
-  <li> la fonction passe par le point ($x1, $y1)
-</ul><br/>
+Étant donné que nous connaissons le sommet de la parabole, nous allons déterminer la forme canonique de l'équation. Nous obtenons:
+$PAR
+\[\begin{align}
+f(x) &= a(x-h)^2+k &&\text{; où (h,k) sont les coordonnées du sommet}\\
+f(x) &= a(x-$h)^2 + $k &&\text{; car } S(h,k) = ($h,$k) \\
+$y1 &= a($x1-$h)^2 + $k &&\text{; car } P(x,y) = ($x1, $y1)\\
+$y1- $k &= a($x1h)^2 \\
+$y1k &= a($x1hcarre) \\
+\frac{$y1k}{$x1hcarre} &= a
+\end{align}\]
 
-<i> f ($lettre) = </i>   ________________
-
-<br/><br/>
-Nota: Donner votre réponse sous la forme canonique. S'il y a des fractions, les donner sous une forme simplifiée et utiliser la barre oblique / pour en séparer le numérateur du dénominateur. Écrire les exposants sous la forme x^2 (pour indiquer x<sup>2</sup>).
-<br/><br/>
-
-
-Nous cherchons la règle (forme canonique demandée) d'une fonction quadratique qui a les caractéristiques suivantes:<br/>
-<ul>
-  <li> les coordonnées du sommet sont: ($h, $k)</li>
-  <li> la fonction passe par le point ($x1, $y1)
-</ul><br/>
-
-Avec la forme canonique, nous obtenons:<br/><br/>
-
-<i> f($lettre) = a($lettre - h)<sup>2</sup> + k</i>   où (h,k) sont les coordonnées du sommet<br/>
-<i> f($lettre) = a($lettre - $h)<sup>2</sup> + $k</i>  car S(h,k) = ($h,$k)<br/>
-<i> $y1 = a($x1 - $h)<sup>2</sup> + $k</i>  car P(x,y) = ($x1, $y1)<br/>
-<i> $y1- $k = a($x1h)<sup>2</sup></i><br/>
-<i> $y1k = a($x1hcarre)</i> <br/>
-<i> $y1k / $x1hcarre  =  a</i> <br/>
-
-D'où a = <strong> $afrac </strong> 
-<br/><br/>
+D'où \(a = $afracaffiche\).
 
 
-En remplaçant la valeur de a par $afrac et les coordonnées du sommet par ($h,$k), nous obtenons la forme canonique:  <br/><br/>
-<i>f($lettre) =  <strong>$asigneaffiche $afrac ($lettre - $h)<sup>2</sup> + $k </strong></i>
-<br/><br/>
-
-
-
-
+En remplaçant la valeur de \(a\) par \($afracaffiche\) et les coordonnées du sommet par \(($h,$k)\), nous obtenons la forme canonique:  \(f(x) =  $afracaffiche (x - $h)^2 + $k \)
 END_SOLUTION
 
 ENDDOCUMENT();

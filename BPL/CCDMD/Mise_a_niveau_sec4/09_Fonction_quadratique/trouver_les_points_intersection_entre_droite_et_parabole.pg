@@ -1,5 +1,5 @@
 #DESCRIPTION
-#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques
 #     section Fonctions quadratiques
 #     type de question - Trouver le(s) point(s) d'intersection entre une droite et une parabole
 ##ENDDESCRIPTION
@@ -20,6 +20,8 @@ loadMacros(
 
 
 TEXT(beginproblem());
+Context("Point");
+Context()->strings->add(aucun => {});
 
 # définir les deux points d'intersection (x1,y1) et (x2,y2)
 $x1 = random(1,6);
@@ -36,12 +38,6 @@ $a = 1;
 $b = ($y2-$y1 + ($x1*$x1) - ($x2*$x2) ) / ($x2 - $x1);
 $c = $y1 - ($x1*$x1) - ($b*$x1);
 
-if ($b<0) {$signeaff = "-";}
-else {$signeaff = "+";}
-
-# déclarer la lettre qui sera la variable non-définie (variable réelle) dans la question
-Context()->variables->are(x=>"Real");
-$lettre="x";
 
 # déterminer les autres valeurs pour la solution
 $babs = abs($b);
@@ -50,7 +46,6 @@ if ($babs == 1) {$baff="";}
 else {$baff="$babs";}
 
 $bd=$b - $d;
-$bdabs=abs($bd);
 $ce = $c - $e;
 $discrim = ($bd*$bd) - (4*$ce);
 
@@ -59,28 +54,22 @@ $image1="parabole_droite_deux_intersections.jpg";
 $image2="parabole_droite_une_intersection.jpg";
 $image3="parabole_droite_aucune_intersection.jpg";
 
+$droite = Compute("$d*x+$e")->reduce;
+$parabole = Compute("x^2+ $b*x + $c")->reduce;
 
-
-
+Context()->texStrings;
 BEGIN_TEXT
-<table cellpadding="10px" width="850px">
-  <tr><td>
+Trouver le(s) point(s) d'intersection entre la droite \( y = $droite\)  et la courbe  \(y = $parabole\).
 
-<h1>Question : </h1>
-<br/>Trouver le(s) point(s) d'intersection entre la droite \( y = $d $lettre + $e\)  et la courbe  \(y = $lettre^2 $signeaff $babs $lettre + $c\). <br/>
+$PAR
 
-<br/><br/>
-
-point(s) d'intersection: \{ans_rule(15)\} 
-<br/><br>
-&nbsp; &nbsp; &nbsp;&nbsp S'il y a un seul point d'intersection, inscrire ses coordonnées entre parenthèses. Par exemple:  (1,3).  <br/>
-&nbsp; &nbsp &nbsp;&nbsp; S'il y a deux points d'intersection, séparer ces deux points d'une virgule. Par exemple:  (1,3) , (2,5). <br/>
-&nbsp; &nbsp &nbsp;&nbsp; S'il n'y a aucune intersection possible, inscrire <strong>aucun</strong>.
-<br/><br/>
-
-  </td></tr>
-</table>
+point(s) d'intersection: \{ans_rule(15)\}
+$PAR
+S'il y a un seul point d'intersection, inscrire ses coordonnées entre parenthèses. Par exemple:  (1,3).  $BR
+S'il y a deux points d'intersection, séparer ces deux points d'une virgule. Par exemple:  (1,3) , (2,5). $BR
+S'il n'y a aucune intersection possible, inscrire $BBOLD aucun $EBOLD.
 END_TEXT
+Context()->normalStrings;
 
 BEGIN_HINT
 <script>
@@ -122,23 +111,9 @@ END_HINT
 
 ANS(List( Point($x1,$y1),Point($x2,$y2) )->cmp);
 
-
-SOLUTION(EV3(<<'END_SOLUTION'));
-<p><u>Solution</u></p>
-<br/>Trouver le(s) point(s) d'intersection entre la droite  y = $d$lettre + $e  et la courbe  y = $lettre<sup>2</sup> $signeaff$babs$lettre + $c. <br/>
-
-<br/><br/>
-
-point(s) d'intersection:_____________
-<br/><br>
-
-&nbsp; &nbsp; &nbsp;&nbsp S'il y a un seul point d'intersection, inscrire ses coordonnées entre parenthèses. Par exemple:  (1,3) . <br/>
-&nbsp; &nbsp &nbsp;&nbsp; S'il y a deux points d'intersection, séparer ces deux points d'une virgule. Par exemple:  (1,3) , (2,5) .<br/>
-&nbsp; &nbsp &nbsp;&nbsp; S'il n'y a aucune intersection possible, inscrire <strong>aucun</strong>.
-<br/><br/>
-
-
-Il y a trois cas possibles:<br/>
+Context()->texStrings;
+BEGIN_SOLUTION
+Il y a trois cas possibles:$BR
 <table cellpadding=5>
   <tr>
     <td align=center>Cas 1<br/> Deux points d'intersection</td>
@@ -153,81 +128,55 @@ Il y a trois cas possibles:<br/>
 </table>
 <br/>
 
-Aux points d'intersection, les valeurs de x et de y sont les mêmes dans les deux équations:<br/><br/>
+Aux points d'intersection, les valeurs de \(x\) et de \(y\) sont les mêmes dans les deux équations:$PAR
 
- &nbsp;&nbsp;  y = $lettre<sup>2</sup> $signeaff$babs$lettre + $c et y = $d$lettre + $e
-<br/><br/>
- 
-Par conséquent, nous pouvons poser l'égalité entre les deux valeurs de y. Nous obtenons:<br/><br/>
+ \( y = $parabole\) et \(y = $droite\)
+ $PAR
 
-&nbsp;&nbsp; $lettre<sup>2</sup> $signeaff$babs$lettre + $c = $d$lettre + $e <br/> 
-&nbsp;&nbsp; $lettre<sup>2</sup> $signeaff$babs$lettre + $c - $d$lettre - $e = 0<br/>
-&nbsp;&nbsp; $lettre<sup>2</sup> $signeaff$bdabs$lettre + $ce = 0<br/><br/>
+Par conséquent, nous pouvons poser l'égalité entre les deux valeurs de \(y\). Nous obtenons:$PAR
 
-En trouvant le discriminant de cette fonction quadratique, on constate que celui-ci est plus grand que zéro. Donc, il y aura ainsi deux solutions possibles (cas 1 du tableau ci-haut):
-&nbsp; &nbsp; b<sup>2</sup> - 4ac = ($signeaff$bdabs)<sup>2</sup> - 4*(1)($ce) = $discrim  
-<br/><br/>
+\[\begin{align}
+$parabole &= $droite \\
+$parabole - $d x - $e &= 0 \\
+ x^2 + $bd x + $ce &= 0
+\end{align}\]
 
-Factorisons:<br/><br/>
-($lettre - $x1)($lettre - $x2)     
+En trouvant le discriminant de cette fonction quadratique, on constate que celui-ci est plus grand que zéro. Donc, il y aura ainsi deux solutions possibles (cas 1 du tableau ci-haut): $BR
+\( b^2 - 4ac = ($bd)^2 - 4(1)($ce) = $discrim \)
+$PAR
 
-<br/><br/>
+Factorisons: \(x^2 + $bd x + $ce = (x - $x1)(x - $x2) \)
 
-Puisque nous avons deux facteurs, si l'un ou l'autre est égal à zéro, nous obtenons une bonne solution pour l'équation. Par conséquent, nous obtenons: <br/><br/>
+$PAR
 
-&nbsp;&nbsp; ($lettre - $x1) = 0  ;   donc <strong> x<sub>1</sub> = $x1</strong> <br/>
-ou<br/>
-&nbsp;&nbsp; ($lettre - $x2) = 0  ;   donc <strong> x<sub>2</sub> = $x2</strong> <br/>
-<br/>
+Puisque nous avons deux facteurs, si l'un ou l'autre est égal à zéro, nous obtenons une bonne solution pour l'équation. Par conséquent, nous obtenons: $PAR
 
-Il faut, par la suite, trouver les valeurs de y correspondantes.  Puisque les points appartiennent aux deux fonctions, nous pouvons utiliser l'une ou l'autre pour trouver les valeurs correspondantes de y. Dans le cas ici, il est plus facile de résoudre l'équation de la droite:   y = $d$lettre + $e <br/><br/>
+\((x - $x1) = 0\)  ;   donc \(x_1 = $x1\) $BR
+ou $BR
+\((x- $x2) = 0\)  ;   donc \(x_2 = $x2\)
 
-Nous obtenons:<br/><br/>
+$PAR
+Il faut, par la suite, trouver les valeurs de \(y\) correspondantes.  Puisque les points appartiennent aux deux fonctions, nous pouvons utiliser l'une ou l'autre pour trouver les valeurs correspondantes de \(y\). Dans le cas ici, il est plus facile de résoudre l'équation de la droite:  \( y = $droite\). $PAR
 
-1. Pour $lettre = $x1 <br/>
-<ul>
-   <li> f($lettre) =   $d$lettre + $e </li>
-   <li> f($x1) =   $d($x1) + $e </li>
-   <li> f($x1) = <strong>$y1</strong></li>
-</ul>
+Nous obtenons: $PAR
 
-<br/>
-2. Pour $lettre = $x2 <br/>
-<ul>
-   <li>  f($lettre) =   $d$lettre + $e  </li>
-   <li>  f($x2) =   $d($x2) + $e  </li>
-   <li>  f($x2) = <strong>$y2</strong></li>
-</ul>
+1. Pour \(x = $x1\) $BR
+\[\begin{align}
+f(x) &= $droite\\
+f($x1) &= $d($x1) + $e \\
+f($x1) &= $y1
+\end{align}\]
 
-<br/><br/>
-D'où les coordonnées des points d'intersection entre la droite et la courbe sont: <br/><br/>
+$BR
+2. Pour \(x = $x2\) $BR
+\[\begin{align}
+f(x) &= $droite\\
+f($x2) &= $d($x2) + $e \\
+f($x2) &= $y2
+\end{align}\]
 
-<strong> ($x1, $y1), ($x2,$y2)</strong>
-<br/><br/>
-
-<u>Vérifications:</u><br/><br/>
-
-Puisque les points appartiennent aux deux fonctions, nous allons maintenant vérifier l'exactitude de nos réponses en calculant les valeurs de y correspondantes dans l'équation de la courbe y = $lettre<sup>2</sup> $signeaff$babs$lettre + $c .<br/><br/>
-
-1. Pour $lettre<sub>1</sub> = $x1<br/>
-<ul>
-   <li> f($lettre) = $lettre<sup>2</sup> $signeaff$babs$lettre + $c</li>
-   <li> f($x1) = ($x1)<sup>2</sup> $signeaff$babs($x1) + $c</li>
-   <li> f($x1) = $y1   => même valeur trouvée avec l'autre équation</li>
-</ul>
-<br/>
-2. Pour $lettre<sub>2</sub> = $x2<br/>
-<ul>
-   <li> f($lettre) = $lettre<sup>2</sup> $signeaff$babs$lettre + $c</li>
-   <li> f($x2) = ($x2)<sup>2</sup> $signeaff$babs($x2) + $c</li>
-   <li> f($x2) = $y2   => même valeur trouvée avec l'autre équation</li>
-</ul>
-<br/>
-Par conséquent, nous pouvons confirmer que les points d'intersection sont:
-<br/><br/>
-<strong> ($x1, $y1), ($x2,$y2)</strong>
-<br/><br/>
-
+$BR
+D'où les coordonnées des points d'intersection entre la droite et la courbe sont \( ($x1, $y1), ($x2,$y2) \).
 
 END_SOLUTION
 

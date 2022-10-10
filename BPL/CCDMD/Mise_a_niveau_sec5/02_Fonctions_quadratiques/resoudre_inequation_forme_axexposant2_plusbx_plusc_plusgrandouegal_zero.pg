@@ -1,5 +1,5 @@
 #DESCRIPTION
-#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques
 #     section Résolution d'équations et inéquations quadratique
 #     type de question - Résoudre une inéquation de style ax^2+bx + c >= 0
 ##ENDDESCRIPTION
@@ -25,7 +25,7 @@ TEXT(beginproblem());
 # définir les variables ainsi que leurs signes
 $c=random(2,9);
 
-do 
+do
 {
    $c=random(2,9)*random(-1,1,2);
    $d=random(2,9)*random(-1,1,2);
@@ -35,32 +35,30 @@ until ($c < $d && $cplusd != 0) ;
 
 $cd=$c*$d;
 
-$f = Formula("x^2-$cplusd*x+$cd")->reduce;
+$f = Formula("x^2-$cplusd*x")->reduce;
+$droite = Compute("-$cd");
 
 
 $rep1= $c;
-$rep2= $d;  
+$rep2= $d;
 
 
-$reponse="("."-"."infini".","."$rep1"."]"."U"."["."$rep2".","."infini".")";
+#$reponse="("."-"."infini".","."$rep1"."]"."U"."["."$rep2".","."infini".")";
+$reponse = Compute("(-inf,$rep1] U [$rep2,inf)");
 
 Context()->texStrings;
 BEGIN_TEXT
-<table cellpadding="10px" width="850px">
-  <tr><td>
+Résoudre l'inéquation \( $f \geq $droite \). Écrire votre réponse sous forme d'intervalle.
+$PAR
 
-<h1>Question : </h1>
-<br/>Résoudre l'inéquation <b> \( $f \geq 0 \)</b> .
-<br/><br/>
-
-\{ans_rule(15)\} 
+\(x\in \) \{ans_rule(15)\}
 
 <br/><br/>
-Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> lorsque la valeur de la borne est excluse et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
-Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
-Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)<br/><br/>
-  </td></tr>
-</table>
+Donner votre réponse sous forme d'intervalles en utilisant $BBOLD"("$EBOLD  ou $BBOLD")"$EBOLD $BR
+lorsque la valeur de la borne est excluse et $BBOLD"["$EBOLD ou $BBOLD"]"$EBOLD lorsqu'elle est incluse.$BR
+Utiliser $BBOLD inf $EBOLD pour \(\infty\) et $BBOLD U $EBOLD (soit le u majuscule) pour l'union.$BR
+Par exemple, pour \(( -\infty , -3)\cup [4,\infty)\), entrer:  (-inf, -3) U [4, inf).
+
 END_TEXT
 Context()->normalStrings;
 
@@ -101,56 +99,32 @@ function resetHint(){document.getElementById("hintspace").style.display='none';d
 </div>
 END_HINT
 
-ANS(str_cmp($reponse,'remove_whitespace'));
+ANS($reponse->cmp());
 
 
 $facto = Formula("(x-$c)(x-$d)")->reduce;
 
 Context()->texStrings;
 BEGIN_SOLUTION
-<br/>Résoudre l'inéquation <b> \( $f \geq 0 \) </b> .<br/><br/>
+Pour résoudre l'inéquation \($f \geq $droite\), il faut d'abord ramener tous les termes du même côté de l'inégalité.
+\[$f + $cd \geq 0\]
+$BR
+Ensuite, factorisons l'expression quadratique.
+\[\begin{align}
+($f + $cd) &\geq 0 \\
+$facto &\geq 0
+\end{align}\]
+$BR
+Pour résoudre cette inéquation, vous pouvez: $PAR
 
-Donner votre réponse sous forme d'intervalles en utilisant <b>"("</b>  ou <b>")"</b> <br/> lorsque la valeur de la borne est excluse et <b>"["</b> ou <b>"]"</b> lorsqu'elle est incluse.<br>
-Utiliser <b>infini</b> pour &#8734; et <b>U</b> (soit le u majuscule) pour l'union.<br/>
-Par exemple, pour ( - &#8734; , -3) U [4, &#8734;)  , entrer:  (-infini, -3) U [4, infini)
-<br/><br/>
-
-
-<table>
-  <tr>
-    <td align=right> \( ($f) \geq 0 \) </td>
-    <td></td>
-  </tr>
-  <tr>
-     <td> &nbsp; </td>
-  </tr>
-  <tr>
-    <td align=right> \( $facto \geq 0 \)</td>
-    <td>  &nbsp;  en factorisant.</td>
-  </tr>
-  <tr>
-     <td> &nbsp; </td>
-  </tr>
-  <tr>
-    <td align=right> \( x =  $rep1   \text{  et }  $rep2  \)</td>
-    <td>  </td>
-  </tr>
-</table> 
-<br/>
-Pour résoudre cette inéquation, vous pouvez:<br/><br/>
-1. Faire un tableau des signes et trouver quand l'expression \( {$facto} \)  est négative ou nulle
-<br/>
-ou
-<br/>
-2. Faire l'exquisse du graphique de la fonction  \( { y = $f }\) 
+Faire l'exquisse du graphique de la fonction  \( { f(x) = $f + $cd }\)
 et donner comme réponse l'intervalle où la fonction est négative ou nulle (sous l'axe des x en incluant les zéros).
 <br/><br/>
-Voici le graphique de la fonction  \( y = $f \) , où les zéros de la fonction sont $rep1 et $rep2:
-<br/><br/>
-graphique 
-<br/><br/>
-Par conséquent, \(  $f \geq 0  \)  sur l'intervalle  <strong> ( -infini, $rep1] , [$rep2, infini ) </strong>.
-<br/>
+Voici le graphique de la fonction  \( f(x) = $f + $cd  \) , où les zéros de la fonction sont \($rep1\) et \($rep2\):
+$PAR
+graphique
+$PAR
+Par conséquent, \(  $f  \geq $droite  \)  sur l'intervalle  \($reponse\).
 
 END_SOLUTION
 Context()->normalStrings;

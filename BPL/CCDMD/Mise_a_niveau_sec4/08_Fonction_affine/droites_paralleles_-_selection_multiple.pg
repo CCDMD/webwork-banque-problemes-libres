@@ -1,5 +1,5 @@
 #DESCRIPTION
-#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques 
+#     question fran&ccedil;aise produite dans le cadre du projet de math&eacute;matiques
 #     section Fonctions affines
 #     type de question - Droites parallèles - sélection multiple
 ##ENDDESCRIPTION
@@ -13,10 +13,11 @@
 ###########################################################################
 
 
-DOCUMENT();  
+DOCUMENT();
 
 loadMacros(
 "PGstandard.pl",
+"MathObjects.pl",
 "PGchoicemacros.pl",
 );
 
@@ -40,25 +41,26 @@ do
 until ( ($a2 != $b2) && ($a1 != $a2) && ($a1 != $b2) && ($b1 != $b2) );
 
 
-#insérer les bonnes réponses 
-$mc -> qa (" ", 
-"y<sub>1</sub> = $a2 x - $b2  &nbsp;&nbsp; et  &nbsp;&nbsp; y<sub>2</sub> = $a2 x + <sup>1</sup>/<sub>$b2</sub>",
+#insérer les bonnes réponses
+$mc -> qa (" ",
+"\(y_1 = $a2 x - $b2 \text{ et } y_2 = $a2 x + \frac{1}{$b2}\)",
 );
 
 #insérer les autres réponses possibles
 $mc -> extra(
-"y<sub>1</sub> = x - $b1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   et  &nbsp;&nbsp&nbsp;&nbsp;  y<sub>2</sub> = $b1 - x", 
-"y<sub>1</sub> = $a1 x + $b1   &nbsp;&nbsp; et  &nbsp;&nbsp; y<sub>2</sub> = - <sup>1</sup>/<sub>$a1</sub> x + $b1",
-"y<sub>1</sub> = $a1 x + $b1  &nbsp;&nbsp; et &nbsp;&nbsp;  y<sub>2</sub> = $b1 x + $a1",
+"\(y_1 = x - $b1 \text{ et } y_2 = $b1 - x\)",
+"\(y_1 = $a1 x + $b1  \text{ et } y_2= - \frac{1}{$a1} x + $b1\)",
+"\(y_1 = $a1 x + $b1  \text{ et } y_2 = $b1 x + $a1\)",
 ,);
 
-
+Context()->texStrings;
 BEGIN_TEXT
-<br/>Quelle(s) paire(s) de droites suivantes sont parallèles entre elles ?<br/>
+Quelle(s) paire(s) de droites suivantes sont parallèles entre elles ?<br/>
 
 \{ $mc -> print_a() \}
 
 END_TEXT
+Context()->normalStrings;
 
 BEGIN_HINT
 <script>
@@ -100,23 +102,15 @@ $showPartialCorrectAnswers = 1;
 
 ANS( checkbox_cmp( $mc->correct_ans() ) );
 
-SOLUTION(EV3(<<'END_SOLUTION'));
+Context()->texStrings;
+BEGIN_SOLUTION
+Lorsque deux droites sont parallèles entre elles, leurs pentes sont égales.
+$PAR
+Il y a donc une seule réponse possible, soient les droites:  $PAR
 
-<p>&nbsp;<u>Solution</u></p>
+   \[ y_1 = $a2 x - $b2  \text{ et } y_2 = $a2 x + \frac{1}{$b2}\]
 
-<br/>Quelle(s) paire(s) de droites suivantes sont parallèles entre elles ?<br/><br/>
-
-y<sub>1</sub> = $a2 x - $b2  &nbsp;&nbsp; et  &nbsp;&nbsp; y<sub>2</sub> = $a2 x + <sup>1</sup>/<sub>$b2</sub> <br/>
-y<sub>1</sub> = x - $b1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   et  &nbsp;&nbsp&nbsp;&nbsp;  y<sub>2</sub> = $b1 - x <br/> 
-y<sub>1</sub> = $a1 x + $b1   &nbsp;&nbsp; et  &nbsp;&nbsp; y<sub>2</sub> = - <sup>1</sup>/<sub>$a1</sub> x + $b1 <br/>
-y<sub>1</sub> = $a1 x + $b1  &nbsp;&nbsp; et &nbsp;&nbsp;  y<sub>2</sub> = $b1 x + $a1 <br/><br/>
-
-Lorsque deux droites sont parallèles entre elles, leurs pentes sont égales.<br/><br/>
-Il y a donc une seule réponse possible, soient les droites:  <br/><br/>
-
-   &nbsp; &nbsp;  <strong>y<sub>1</sub> = $a2 x - $b2  &nbsp;&nbsp; et &nbsp;&nbsp;  y2 = $a2 x + <sup>1</sup>/<sub>$b2</sub></strong><br/><br/>
-
-Ces droites sont parallèles, car elles ont la même pente, soit <strong>$a2</strong>.<br/>
+Ces droites sont parallèles, car elles ont la même pente, soit \($a2\).
 
 END_SOLUTION
 
